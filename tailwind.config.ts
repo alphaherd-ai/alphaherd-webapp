@@ -31,6 +31,7 @@ const config: Config = {
       fontFamily: {
         "selected-14": "Satoshi",
         inherit: "inherit",
+        "heading-extralarge": "Satoshi",
       },
       borderRadius: {
         "3xs": "10px",
