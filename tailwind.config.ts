@@ -20,10 +20,14 @@ const config: Config = {
         textGrey1: '#A2A3A3',
         verticalBar: '#393939',
         navBar: '#17181A',
-        iconChangeColor: '#38F8E6'
+        iconChangeColor: '#38F8E6',
+        background: '#EDEDED'
       },
       boxShadow: {
         'navBar': '0px 4px 6px 0px rgba(0, 0, 0, 0.20)',
+      },
+      padding: {
+        '2p': '2vw',
       },
     }
   },
