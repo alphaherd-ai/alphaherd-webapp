@@ -9,3 +9,38 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
+
+model Product {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  itemName   String
+  defaultUnit String?
+  hsnCode    String?
+  tax        String?
+  category   String?
+  description String?
+  minStock   String?
+  maxStock   String?
+
+  @@map("products")
+}
+
+model Inventory {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId     String
+  updateStock   String   // Consider using an enum for 'stock in' and 'stock out'
+  quantity      String
+  batchNumber   String
+  expiry        DateTime
+  code          String
+  location      String
+  distributor   String
+  totalCost     String?
+  costPerItem   String?
+  sellingPrice  String?
+  profitMargin  String?
+  balanceDue    Boolean? // For 'Add as Balance due under distributor'
+
+  product       Product @relation(fields: [productId], references: [id])
+
+  @@map("inventory")
+}
