@@ -9,7 +9,7 @@ const Overview = () => {
   return (
     <>
       <Navbar/>
-    <div className='w-full bg-gray-300 p-5 px-10'>
+    <div className='w-full bg-gray-200 p-8 px-10'>
         <FinancesNavbar/>
      <FinancesOverviewTable/>
     </div>

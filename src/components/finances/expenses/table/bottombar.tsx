@@ -8,7 +8,7 @@ import Link from 'next/link';
 
 
 
-const FinancesPurchasesTableBottombar = () => {
+const FinancesExpensesTableBottombar = () => {
   return (
    
     <>
@@ -30,4 +30,4 @@ const FinancesPurchasesTableBottombar = () => {
   )
 }
 
-export default FinancesPurchasesTableBottombar;
+export default FinancesExpensesTableBottombar;

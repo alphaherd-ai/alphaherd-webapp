@@ -4,18 +4,21 @@ import Menu from '@/assets/icons/finance/Menu.svg';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
-const FinancesSalesTableItem = () => {
+const FinancesTransactionsTableItem = () => {
   return (
    
     <div className='flex  w-full  box-border h-16 py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  hover:bg-gray-200 hover:text-gray-500 transition'>
     <div className='w-1/12 flex items-center  px-6  text-neutral-400 text-base font-medium'>12/12/12</div>
     <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>11.00 pm</div>
-    <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>Purschase order</div>
     <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>wecare</div>
     <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>DE9F9EF9</div>
-    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>$ 2</div>
-    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>10 items</div>
-    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>32</div>
+    <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>hello</div>
+    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>PR-000001</div>
+    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>₹6,972</div>
+    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-sm font-medium text-red-500'><span className='bg-rose-100 px-1'>
+gdrdtghrd</span>
+
+ </div>
     <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium text-green-500'><span className='bg-green-100 px-1'> <Tooltip content="message" className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
 
  <Button className='bg-transparent border-none'>gdrdtghrd</Button>
@@ -65,4 +68,4 @@ const FinancesSalesTableItem = () => {
   )
 }
 
-export default FinancesSalesTableItem
+export default FinancesTransactionsTableItem

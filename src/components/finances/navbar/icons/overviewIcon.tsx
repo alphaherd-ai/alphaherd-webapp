@@ -1,7 +1,7 @@
 import React from 'react';
 
 const OverviewIcon = ({ fill }) => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="20" height="20" className="w-6 h-6" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
   <g id="1. Icons-24">
   <mask id="mask0_205_161" style={{ maskType: 'alpha' }} maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
   <rect id="Bounding box" width="20" height="20" fill="white"/>

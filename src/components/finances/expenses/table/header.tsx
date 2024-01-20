@@ -18,7 +18,7 @@ import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/reac
 
 
 
-const FinancesPurchasesTableHeader = () => {
+const FinancesExpensesTableHeader = () => {
     const currentRoute = usePathname();
 
     const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
@@ -45,30 +45,25 @@ const FinancesPurchasesTableHeader = () => {
             <div className='flex w-full bg-white h-20  p-4 px-6 mt-6 justify-between border border-solid border-gray-300 border-t-0.5 rounded-tl-lg rounded-tr-lg'>
 
             <div className='flex  text-gray-500 items-center w-5/12'>
-                    <Link className='no-underline flex item-center' href='/finance/purchases/all'>
+                    <Link className='no-underline flex item-center' href='/finance/expenses/all'>
 
-                        <div className={currentRoute.startsWith("/finance/purchases/all")
+                        <div className={currentRoute.startsWith("/finance/expenses/all")
                             ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white  rounded-tl-md rounded-bl-md"
                             : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500  rounded-tl-md rounded-bl-md"}>All</div>
                     </Link>
-                    <Link className='no-underline flex item-center' href='/finance/purchases/order'>
+                    <Link className='no-underline flex item-center' href='/finance/expenses/nonrecurring'>
 
-                        <div className={currentRoute.startsWith("/finance/purchases/order")
+                        <div className={currentRoute.startsWith("/finance/expenses/nonrecurring")
                             ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white"
-                            : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}>Purchase Order</div>
+                            : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}> Non Recurring Expenses</div>
                     </Link>
-                    <Link className='no-underline flex item-center' href='/finance/purchases/invoice'>
+                    <Link className='no-underline flex item-center' href='/finance/expenses/recurring'>
 
-                        <div className={currentRoute.startsWith("/finance/purchases/invoice")
+                        <div className={currentRoute.startsWith("/finance/expenses/recurring")
                             ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white"
-                            : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}>Purchase Invoices</div>
+                            : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}>Recurring Expenses</div>
                     </Link>
-                    <Link className='no-underline flex item-center' href='/finance/purchases/return'>
-
-                        <div className={currentRoute.startsWith("/finance/purchases/return")
-                            ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white  rounded-tr-md rounded-br-md"
-                            : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500  rounded-tr-md rounded-br-md"}>Purchase Return</div>
-                    </Link>
+                  
                 </div>
 <div className='flex items-center'>
     <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
@@ -163,15 +158,15 @@ const FinancesPurchasesTableHeader = () => {
                     
                     <Link className='no-underline flex item-center' href='/finance/overview'>
                     <div className='text-base p-4   text-white flex '>
-                    <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Purchase Order</div>
+                    <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div> Order</div>
                     </Link>
                     <Link className='no-underline flex item-center' href='/finance/overview'>
                     <div className='text-base p-4  text-white flex '>
-                    <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Purchase Invoice</div>
+                    <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div> Invoice</div>
                     </Link>
                     <Link className='no-underline flex item-center' href='/finance/overview'>
                     <div className='text-base p-4  text-white flex '>
-                    <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Purchase Return</div>
+                    <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>    Return</div>
                     </Link>
                   
                     </div>
@@ -192,4 +187,4 @@ const FinancesPurchasesTableHeader = () => {
     )
 }
 
-export default FinancesPurchasesTableHeader;
+export default FinancesExpensesTableHeader;

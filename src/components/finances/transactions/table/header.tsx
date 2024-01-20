@@ -19,7 +19,7 @@ import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/reac
 
 
 
-const FinancesSalesTableHeader = () => {
+const FinancesTransactionsTableHeader = () => {
    
     const currentRoute = usePathname();
     const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
@@ -42,29 +42,35 @@ const FinancesSalesTableHeader = () => {
 <div className='flex w-full bg-white h-20  p-4 px-6 mt-6 justify-between border border-solid border-gray-300 border-t-0.5 rounded-tl-lg rounded-tr-lg'>
 
 <div className='flex  text-gray-500 items-center w-5/12'>
-<Link className='no-underline flex item-center' href='/finance/sales/all'>
+<Link className='no-underline flex item-center' href='/finance/transactions/all'>
 
-<div className={currentRoute.startsWith("/finance/sales/all")
+<div className={currentRoute.startsWith("/finance/transactions/all")
     ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white  rounded-tl-md rounded-bl-md"
-    : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500  rounded-tl-md rounded-bl-md"}>All</div>
+    : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500  rounded-tl-md rounded-bl-md"}>All Transactions</div>
 </Link>
-<Link className='no-underline flex item-center' href='/finance/sales/order'>
+<Link className='no-underline flex item-center' href='/finance/transactions/cash'>
 
-<div className={currentRoute.startsWith("/finance/sales/order")
+<div className={currentRoute.startsWith("/finance/transactions/cash")
     ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white"
-    : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}>Sales Order</div>
+    : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}>Cash</div>
 </Link>
-<Link className='no-underline flex item-center' href='/finance/sales/invoice'>
+<Link className='no-underline flex item-center' href='/finance/transactions/upi'>
 
-<div className={currentRoute.startsWith("/finance/sales/invoice")
+<div className={currentRoute.startsWith("/finance/transactions/upi")
     ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white"
-    : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}>Sales Invoices</div>
+    : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}> UPI</div>
 </Link>
-<Link className='no-underline flex item-center' href='/finance/sales/return'>
+<Link className='no-underline flex item-center' href='/finance/transactions/card'>
 
-<div className={currentRoute.startsWith("/finance/sales/return")
+<div className={currentRoute.startsWith("/finance/transactions/card")
     ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white  rounded-tr-md rounded-br-md"
-    : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500  rounded-tr-md rounded-br-md"}>Sales Return</div>
+    : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500  rounded-tr-md rounded-br-md"}>Card</div>
+</Link>
+<Link className='no-underline flex item-center' href='/finance/transactions/netbanking'>
+
+<div className={currentRoute.startsWith("/finance/transactions/netbanking")
+    ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white"
+    : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}>Net Banking</div>
 </Link>
     </div>
 <div className='flex items-center'>
@@ -189,4 +195,4 @@ const FinancesSalesTableHeader = () => {
     )
 }
 
-export default FinancesSalesTableHeader;
+export default FinancesTransactionsTableHeader;

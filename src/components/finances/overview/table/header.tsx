@@ -17,7 +17,7 @@ import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/reac
 
 
 
-const FinacesOverviewHeader = () => {
+const FinacesOverviewTableHeader = () => {
    
 
     const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
@@ -36,22 +36,22 @@ const FinacesOverviewHeader = () => {
     return (
 
         <>
-            <div className='flex w-full bg-white  p-5 mt-5 justify-between border border-solid border-gray-300 border-t-0.5 rounded-tl-lg rounded-tr-lg'>
+            <div className='flex w-full bg-white h-20  p-4 px-6 mt-6 justify-between border border-solid border-gray-300 border-t-0.5 rounded-tl-lg rounded-tr-lg'>
 
-                <div className='flex  sm:text-lg md:text-xl  xl:text-2xl text-gray-500  items-center'>
-                    <div>OverView</div>
+                <div className='flex  text-gray-500  items-center'>
+                    <div className=' text-base'>Finance Timeline</div>
                 </div>
-                <div className='flex'>
-                    <Link className='no-underline flex item-center' href='/finance/overview'>
+                <div className='flex items-center'>
+                    <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
 
-                        <div className='flex items-center border border-solid border-gray-300 border-0.5 rounded-md  px-2'><Image src={Download} alt='Download' className='w-4  h-4' /></div>
+                        <div className='flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'><Image src={Download} alt='Download' className='w-4  h-4' /></div>
                     </Link>
-                    <Link className='no-underline flex item-center' href='/finance/overview'>
+                    <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
 
-                        <div className='flex items-center border border-solid border-gray-300 border-0.5 rounded-md  px-2 ml-1'><Image src={Chart} alt='Chart' className='w-4  h-4' /></div>
+                        <div  className='flex items-center justify-center w-7 h-7 border border-solid border-gray-300 border-0.5 rounded-md  p-1'><Image src={Chart} alt='Chart' className='w-4  h-4' /></div>
                     </Link>
-                    <div className='flex items-center justify-center  ml-1 border border-solid border-gray-300 border-0.5 rounded-lg p-2'>
-                        <div className='flex '><Image src={Sort} alt='Sort' className='w-5 h-5 ' /></div>
+                    <div className='flex items-center justify-center h-7   mr-4 border border-solid border-gray-300 border-0.5 rounded-lg p-2'>
+                        <div className='flex '><Image src={Sort} alt='Sort' className='w-3 h-3 mr-2' /></div>
 
                         <Dropdown>
                             <DropdownTrigger>
@@ -66,8 +66,8 @@ const FinacesOverviewHeader = () => {
                             </DropdownTrigger>
                             <DropdownMenu
                                 aria-label="Single selection example"
-                                color="black"
-                                className=" p-2 bg-gray-200 rounded-lg"
+                                color="gray-500"
+                                className=" text-base  text-gray-500 bg-gray-200 rounded-lg"
                                 variant="solid"
                                 disallowEmptySelection
                                 selectionMode="single"
@@ -75,22 +75,22 @@ const FinacesOverviewHeader = () => {
                                 onSelectionChange={setselectedSort}
                             >
                                 <DropdownItem
-                                    className=" p-2 " key="Category:text">Sort:Recently Used</DropdownItem>
+                                    className=" p-2 text-base" key="Category:text">Sort:Recently Used</DropdownItem>
                                 <DropdownItem
-                                    className=" p-2 " key="Category:number">Sort:Recently Used</DropdownItem>
+                                    className=" p-2 text-base" key="Category:number">Sort:Recently Used</DropdownItem>
                                 <DropdownItem
-                                    className=" p-2 " key="Category:date">Date</DropdownItem>
+                                    className=" p-2 text-base" key="Category:date">Date</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
-                    <div className='flex items-center  ml-1 p-2 border border-solid border-gray-300 border-0.5 rounded-lg'>
-                        <div className='flex '><Image src={Filter} alt='Filter' className='w-5 h-5 ' /></div>
+                    <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg '>
+                        <div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>
 
                         <Dropdown>
                             <DropdownTrigger>
                                 <Button
                                     //   variant="bordered" 
-                                    // color="gray-400"
+                                    color="gray-400"
                                     variant="solid"
                                     className="capitalize border-none bg-transparent rounded-lg"
                                 >
@@ -99,8 +99,8 @@ const FinacesOverviewHeader = () => {
                             </DropdownTrigger>
                             <DropdownMenu
                                 aria-label="Single selection example"
-                                color="black"
-                                className=" p-2 bg-gray-200 rounded-lg"
+                                color="gray-500"
+                                className=" text-base bg-gray-200 rounded-lg"
                                 variant="solid"
                                 disallowEmptySelection
                                 selectionMode="single"
@@ -117,30 +117,31 @@ const FinacesOverviewHeader = () => {
                         </Dropdown>
                     </div>
 
-                    <div className='flex items-center ml-2 py-1 px-3 bg-black justify-between rounded-lg '>
+                    <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '>
+                      
                         <Popover placement="bottom-end" showArrow offset={10}>
                             <PopoverTrigger>
                                 <Button color="gray-400"
                                     variant="solid"
-                                    className="capitalize flex border-none bg-black text-white rounded-lg">  Add
-                                    <div className='flex'><Image src={DownArrow} alt='DownArrow' className='w-6 h-6 ' /></div></Button>
+                                    className="capitalize flex border-none bg-black text-white rounded-lg ">  Add
+                                    <div className='flex pl-2'><Image src={DownArrow} alt='DownArrow' className='w-4 h-4 ' /></div></Button>
                             </PopoverTrigger>
-                            <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3">
+                            <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
                                 <div className="flex flex-col">
                                     <div className='text-xl '>Sales</div>
                                     <div className='flex flex-col'>
                                     <Link className='no-underline flex item-center' href='/finance/overview'>
 
-                                    <div className='text-lg p-4  pl-0 text-white flex '>
-                                    <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-6 h-6 ' /></div>Inverse</div>
+                                    <div className='text-base p-4  pl-0 text-white flex '>
+                                    <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Inverse</div>
                                     </Link>
                                     <Link className='no-underline flex item-center' href='/finance/overview'>
-                                    <div className='text-lg p-4 pl-0  text-white flex '>
-                                    <div className='flex pr-2'><Image src={Return} alt='Return' className='w-6 h-6 ' /></div>Return</div>
+                                    <div className='text-base p-4 pl-0  text-white flex '>
+                                    <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Return</div>
                                     </Link>
                                     <Link className='no-underline flex item-center' href='/finance/overview'>
-                                    <div className='text-lg p-4  pl-0 text-white flex '>
-                                    <div className='flex pr-2'><Image src={Return} alt='Return' className='w-6 h-6 ' /></div>Estimate</div>
+                                    <div className='text-base p-4  pl-0 text-white flex '>
+                                    <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Estimate</div>
                                     </Link>
                                 
                                     </div>
@@ -150,16 +151,16 @@ const FinacesOverviewHeader = () => {
                                     <div className='flex flex-col'>
                                     
                                     <Link className='no-underline flex item-center' href='/finance/overview'>
-                                    <div className='text-lg p-4   text-white flex '>
-                                    <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-6 h-6 ' /></div>Purchase Order</div>
+                                    <div className='text-base p-4   text-white flex '>
+                                    <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Purchase Order</div>
                                     </Link>
                                     <Link className='no-underline flex item-center' href='/finance/overview'>
-                                    <div className='text-lg p-4  text-white flex '>
-                                    <div className='flex pr-2'><Image src={Return} alt='Return' className='w-6 h-6 ' /></div>Purchase Invoice</div>
+                                    <div className='text-base p-4  text-white flex '>
+                                    <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Purchase Invoice</div>
                                     </Link>
                                     <Link className='no-underline flex item-center' href='/finance/overview'>
-                                    <div className='text-lg p-4  text-white flex '>
-                                    <div className='flex pr-2'><Image src={Return} alt='Return' className='w-6 h-6 ' /></div>Purchase Return</div>
+                                    <div className='text-base p-4  text-white flex '>
+                                    <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Purchase Return</div>
                                     </Link>
                                   
                                     </div>
@@ -170,8 +171,8 @@ const FinacesOverviewHeader = () => {
                                     <div className='flex flex-col'>
                                   
                                     <Link className='no-underline flex item-center' href='/finance/overview'>
-                                    <div className='text-lg p-4   text-white flex '>
-                                    <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-6 h-6 ' /></div>Record Expense</div>
+                                    <div className='text-base p-4   text-white flex '>
+                                    <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Record Expense</div>
                                     </Link>
                                     </div>
                                     </div>
@@ -180,8 +181,8 @@ const FinacesOverviewHeader = () => {
                                     <div className='flex flex-col'>
                                     <Link className='no-underline flex item-center' href='/finance/overview'>
 
-                                    <div className='text-lg p-4   text-white flex '>
-                                    <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-6 h-6 ' /></div>Record Transcations</div>
+                                    <div className='text-base p-4   text-white flex '>
+                                    <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Record Transcations</div>
                                     </Link></div>
                                    
                                     </div>
@@ -201,4 +202,4 @@ const FinacesOverviewHeader = () => {
     )
 }
 
-export default FinacesOverviewHeader;
+export default FinacesOverviewTableHeader;
