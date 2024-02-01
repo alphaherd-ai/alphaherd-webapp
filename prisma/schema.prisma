@@ -19,6 +19,14 @@ enum Location{
   Location1
   Location2
 }
+enum InventoryAllProductsFilter{
+  category
+  distributor
+}
+enum InventoryTimelineFilter{
+  party
+  dateRange
+}
 model Product {
   id         String @id @default(auto()) @map("_id") @db.ObjectId
   itemName   String

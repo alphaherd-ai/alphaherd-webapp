@@ -1,24 +1,26 @@
 import { connectToDB } from '../../../../utils/index';
 import prisma from '../../../../../prisma/index';
+import type { Product,Service } from "@prisma/client";
 
-
-export  const GET=async (req: Request)=> {
-  if (req.method !== 'GET') {
+export const POST=async(req: Request)=> {
+  if (req.method !== 'POST') {
     return new Response('Method not allowed',{status:405});
-}
+} 
     try {
+      const body: Service = await req.json();
         await connectToDB();
-        const products = await prisma.product.findMany();
-        return new Response(JSON.stringify(products), {
+        const service = await prisma.service.create({
+            data: body
+        });
+        return new Response(JSON.stringify(service), {
           status: 201,
           headers: {
               'Content-Type': 'application/json',
           },
       });
     } catch (error) {
-      return new Response("Internal server error",{status:500});
+      return new Response(JSON.stringify(error));
     } finally {
         await prisma.$disconnect();
     }
   }
-  

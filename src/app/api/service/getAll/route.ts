@@ -8,8 +8,8 @@ export  const GET=async (req: Request)=> {
 }
     try {
         await connectToDB();
-        const products = await prisma.product.findMany();
-        return new Response(JSON.stringify(products), {
+        const services = await prisma.service.findMany();
+        return new Response(JSON.stringify(services), {
           status: 201,
           headers: {
               'Content-Type': 'application/json',
