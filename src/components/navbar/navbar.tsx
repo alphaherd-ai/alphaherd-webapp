@@ -46,7 +46,7 @@ const currentRoute = usePathname();
             <div className="ml-1">Finances</div>
           </div>
           </Link>
-            <Link className='no-underline py-5 px-10 border-0 border-r-2 border-solid border-gray-800 '   href='/inventory'>
+            <Link className='no-underline py-5 px-10 border-0 border-r-2 border-solid border-gray-800 '   href='/inventory/products/all'>
           <div className={currentRoute.startsWith("/inventory") 
        ? " text-white  text-base font-medium leading-6  flex items-center justify-center " 
        : " text-gray-400  text-base font-medium leading-6  flex items-center justify-center"}>

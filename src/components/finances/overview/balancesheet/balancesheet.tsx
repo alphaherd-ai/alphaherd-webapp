@@ -19,125 +19,26 @@ import { Chart, ArcElement } from 'chart.js';
 Chart.register(ArcElement);
 
 
+const FinancesOverviewSheet = () => {
+    const [clickedIndex, setClickedIndex] = useState(0);
 
-    const FinancesOverviewSheet = () => {
-       
-    const [clicked1, setClicked1] = useState(true);
-    const [clicked2, setClicked2] = useState(false);
-    const [clicked3, setClicked3] = useState(false);
-    const [clicked4, setClicked4] = useState(false);
-    const [clicked5, setClicked5] = useState(false);
-    const [clicked6, setClicked6] = useState(false);
-    const handleCLick1 = () => {
-        if (!clicked1) {
-            setClicked1(!clicked1);
-        }
-        if (clicked2) {
-            setClicked2(!clicked2);
-        }
-        if (clicked3) {
-            setClicked3(!clicked3);
-        }
-        if (clicked4) {
-            setClicked4(!clicked4);
-        }
-        if (clicked5) {
-            setClicked5(!clicked5);
-        }
-        if (clicked6) {
-            setClicked6(!clicked6);
-        }
-    }
-    const handleCLick2 = () => {
-        setClicked2(!clicked2);
-        if (clicked1) {
-            setClicked1(!clicked1);
-        }
-        if (clicked3) {
-            setClicked3(!clicked3);
-        }
-        if (clicked4) {
-            setClicked4(!clicked4);
-        }
-        if (clicked5) {
-            setClicked5(!clicked5);
-        }
-        if (clicked6) {
-            setClicked6(!clicked6);
-        }
-    }
-    const handleCLick3 = () => {
-        setClicked3(!clicked3);
-        if (clicked2) {
-            setClicked2(!clicked2);
-        }
-        if (clicked1) {
-            setClicked1(!clicked1);
-        }
-        if (clicked4) {
-            setClicked4(!clicked4);
-        }
-        if (clicked5) {
-            setClicked5(!clicked5);
-        }
-        if (clicked6) {
-            setClicked6(!clicked6);
-        }
-    }
-    const handleCLick4 = () => {
-        setClicked4(!clicked4);
-        if (clicked2) {
-            setClicked2(!clicked2);
-        }
-        if (clicked1) {
-            setClicked1(!clicked1);
-        }
-        if (clicked3) {
-            setClicked3(!clicked3);
-        }
-        if (clicked5) {
-            setClicked5(!clicked5);
-        }
-        if (clicked6) {
-            setClicked6(!clicked6);
-        }
-    }
-    const handleCLick5 = () => {
-        setClicked5(!clicked5);
-        if (clicked2) {
-            setClicked2(!clicked2);
-        }
-        if (clicked1) {
-            setClicked1(!clicked1);
-        }
-        if (clicked4) {
-            setClicked4(!clicked4);
-        }
-        if (clicked3) {
-            setClicked3(!clicked3);
-        }
-        if (clicked6) {
-            setClicked6(!clicked6);
-        }
-    }
-    const handleCLick6 = () => {
-        setClicked6(!clicked6);
-        if (clicked2) {
-            setClicked2(!clicked2);
-        }
-        if (clicked1) {
-            setClicked1(!clicked1);
-        }
-        if (clicked4) {
-            setClicked4(!clicked4);
-        }
-        if (clicked3) {
-            setClicked3(!clicked3);
-        }
-        if (clicked5) {
-            setClicked5(!clicked5);
-        }
-    }
+    const handleClick = (index) => {
+        setClickedIndex(index);
+    };
+
+    const tabs = [
+        { label: 'Day', clicked: clickedIndex === 0 },
+        { label: 'Week', clicked: clickedIndex === 1 },
+        { label: 'Month', clicked: clickedIndex === 2 },
+        { label: 'Quarter', clicked: clickedIndex === 3 },
+        { label: 'Year', clicked: clickedIndex === 4 },
+        { label: 'All Time', clicked: clickedIndex === 5 }
+    ];
+
+    const handleTabClick = (index) => {
+        setClickedIndex(index);
+    };
+
     const chartData = {
         labels: ['Label 1', 'Label 2', 'Label 3'],
         datasets: [
@@ -149,59 +50,29 @@ Chart.register(ArcElement);
         ],
     };
 
-
     return (
-    <>
-       
+        <>
             <div className="flex flex-col mt-6">
-                <div className="flex flex-col  ">
-                    <div className="flex w-full h-14 p-4 bg-white border border-solid border-neutral-400 justify-between items-center">
+                <div className="flex flex-col">
+                    <div className="flex w-full h-14 p-4 bg-white border border-solid border-neutral-300 justify-between items-center">
                         <div className="h-6 justify-start items-center gap-4 inline-flex">
                             <div className="flex">
-                                <Image className="w-6 h-6 relative" src={lefticon} alt="left_icon"></Image>
-                                <Image className="w-6 h-6 relative" src={righticon} alt="right_icon"></Image>
+                                <Image className="w-6 h-6 relative" src={lefticon} alt="left_icon" />
+                                <Image className="w-6 h-6 relative" src={righticon} alt="right_icon" />
                             </div>
                             <div className="text-gray-500 text-sm font-medium font-['Satoshi']">
                                 July 17th - 23rd, 2023
                             </div>
                         </div>
                         <div className="flex h-[19px] justify-start items-start gap-6 inline-flex">
-                            <button className="border-none bg-transparent" onClick={handleCLick1} >
-                                <div className={`${clicked1 ? "text-center text-teal-400 font-bold" : "text-neutral-400"} text-neutral-400 text-sm font-medium font-['Satoshi']`}>
-                                    Day
-                                </div>
-                                <Image className={`${clicked1 ? "" : "hidden"}`} src={selecttab} alt="icon"></Image>
-                            </button>
-                            <button className="border-none bg-transparent" onClick={handleCLick2} >
-                                <div className={`${clicked2 ? "text-center text-teal-400 font-bold" : "text-neutral-400"} text-neutral-400 text-sm font-medium font-['Satoshi']`}>
-                                    Week
-                                </div>
-                                <Image className={`${clicked2 ? "" : "hidden"}`} src={selecttab} alt="icon"></Image>
-                            </button>
-                            <button className="border-none bg-transparent" onClick={handleCLick3} >
-                                <div className={`${clicked3 ? "text-center text-teal-400 font-bold" : "text-neutral-400"} text-neutral-400 text-sm font-medium font-['Satoshi']`}>
-                                    Month
-                                </div>
-                                <Image className={`${clicked3 ? "" : "hidden"}`} src={selecttab} alt="icon"></Image>
-                            </button>
-                            <button className="border-none bg-transparent" onClick={handleCLick4} >
-                                <div className={`${clicked4 ? "text-center text-teal-400 font-bold" : "text-neutral-400"} text-neutral-400 text-sm font-medium font-['Satoshi']`}>
-                                    Quarter
-                                </div>
-                                <Image className={`${clicked4 ? "" : "hidden"}`} src={selecttab} alt="icon"></Image>
-                            </button>
-                            <button className="border-none bg-transparent" onClick={handleCLick5} >
-                                <div className={`${clicked5 ? "text-center text-teal-400 font-bold" : "text-neutral-400"} text-neutral-400 text-sm font-medium font-['Satoshi']`}>
-                                    Year
-                                </div>
-                                <Image className={`${clicked5 ? "" : "hidden"}`} src={selecttab} alt="icon"></Image>
-                            </button>
-                            <button className="border-none bg-transparent" onClick={handleCLick6} >
-                                <div className={`${clicked6 ? "text-center text-teal-400 font-bold" : "text-neutral-400"} text-neutral-400 text-sm font-medium font-['Satoshi']`}>
-                                    All Time
-                                </div>
-                                <Image className={`${clicked6 ? "" : "hidden"}`} src={selecttab} alt="icon"></Image>
-                            </button>
+                            {tabs.map((tab, index) => (
+                                <button className="border-none bg-transparent" onClick={() => handleTabClick(index)} key={index}>
+                                    <div className={`${tab.clicked ? "text-center text-teal-400 font-bold" : "text-neutral-400"} text-neutral-400 text-sm font-medium font-['Satoshi']`}>
+                                        {tab.label}
+                                    </div>
+                                    {tab.clicked && <Image src={selecttab} alt="icon" />}
+                                </button>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -241,7 +112,7 @@ Chart.register(ArcElement);
                                 <div className="text-gray-500 text-[28px] font-bold font-['Satoshi']">₹ 12,499</div>
                                 <div className="text-gray-500 text-base font-medium font-['Satoshi']">Total balances due</div>
                                 <div className="w-[69px] h-7 px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center items-center inline-flex ">
-                                    {/* <Image className="w-4 h-4 relative" src={icn_icon} alt="inc"></Image> */}
+                                   
                                     <div className="text-orange-500 text-sm font-medium font-['Satoshi']">You owe</div>
                                     <div className="text-orange-500 text-sm font-medium font-['Satoshi']"></div>
                                 </div>
@@ -292,10 +163,10 @@ Chart.register(ArcElement);
                     </div>
                 </div>
             </div>
-       
-    </>
-
-)
-}
+        </>
+    );
+};
 
 export default FinancesOverviewSheet;
+
+             
