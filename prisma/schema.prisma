@@ -10,6 +10,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Stock{
+  NONE
+  StockIN
+  StockOUT
+}
+enum Location{
+  NONE
+  Location1
+  Location2
+}
 model Product {
   id         String @id @default(auto()) @map("_id") @db.ObjectId
   itemName   String
@@ -21,18 +31,35 @@ model Product {
   minStock   String?
   maxStock   String?
 
+  inventoryEntries Inventory[] // Add this line to create the reverse relation
+
   @@map("products")
 }
+model Service {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  sacCode       String?
+  description   String?
+  sellingPrice  String?
+  tax           String?
+  category      String?
+  providers     String[]
+  linkProducts  String[]
+  
+  inventoryEntries Inventory[] // Add this line to create the reverse relation
 
+  @@map("services")
+}
 model Inventory {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  productId     String
-  updateStock   String   // Consider using an enum for 'stock in' and 'stock out'
-  quantity      String
+  productId     String   @db.ObjectId
+  serviceId     String   @db.ObjectId
+  updateStock   Stock    @default(NONE)
+  quantity      Int
   batchNumber   String
   expiry        DateTime
   code          String
-  location      String
+  location      Location @default(NONE)
   distributor   String
   totalCost     String?
   costPerItem   String?
@@ -41,6 +68,8 @@ model Inventory {
   balanceDue    Boolean? // For 'Add as Balance due under distributor'
 
   product       Product @relation(fields: [productId], references: [id])
+  service       Service @relation(fields: [serviceId], references: [id])
 
   @@map("inventory")
 }
+
