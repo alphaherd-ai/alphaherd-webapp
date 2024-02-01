@@ -42,7 +42,7 @@ export const PUT=async (req: Request,
             const newStock: Stock = body.quantity > stockCount!.quantity
               ? 'StockIN'
               : body.quantity === stockCount!.quantity
-                ?'NONE'
+                ?body.updateStock
                 :'StockOUT';
 
             body.updateStock = newStock;
