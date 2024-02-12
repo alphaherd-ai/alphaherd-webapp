@@ -1,6 +1,6 @@
 import { connectToDB } from '../../../../utils/index';
 import prisma from '../../../../../prisma/index';
-import { Stock } from '@prisma/client';
+
 
 export const GET=async (req: Request,
     { params }: { params: {id: string; } } )=> {
@@ -10,10 +10,13 @@ export const GET=async (req: Request,
         } 
         try {
             await connectToDB();
-           const inventory= await prisma.inventory.findUnique({
+            const inventory= await prisma.inventory.findUnique({
                 where: { id: params.id },
-            });
-                        
+                include:{
+                    allProducts:true,
+                    allServices:true
+                }
+            });                       
             return new Response(JSON.stringify(inventory), {
                 status: 201,
                 headers: {
@@ -27,42 +30,46 @@ export const GET=async (req: Request,
         }
 }
 
-export const PUT=async (req: Request,
-    { params }: { params: {id: string; } } )=> {
-
-        if (req.method !== 'PUT') {
-            return new Response('Method not allowed',{status:405});
-        } 
-        try {
-            await connectToDB();
-            const body=await req.json();
-            const stockCount = await prisma.inventory.findUnique({
-              where: { id: params.id },
-            });
-            const newStock: Stock = body.quantity > stockCount!.quantity
-              ? 'StockIN'
-              : body.quantity === stockCount!.quantity
-                ?body.updateStock
-                :'StockOUT';
-
-            body.updateStock = newStock;
-           const inventory= await prisma.inventory.update({
-                where: { id: params.id },
-                data:body,
-            });     
-            return new Response(JSON.stringify(inventory), {
-                status: 201,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-        } catch (error) {
-          console.error(error)
-            return new Response( "Internal server error",{status:500});
-        } finally {
-            await prisma.$disconnect();
+export const PUT = async (req: Request, { params }: { params: { id: string } }) => {
+    if (req.method !== 'PUT') {
+        return new Response('Method not allowed', { status: 405 });
+    }
+    try {
+        await connectToDB();
+        const { stockStatus, body } = await req.json();
+        const item = await prisma.inventory.findUnique({
+            where: { id: params.id },
+        });
+        const product = await prisma.allProducts.findUnique({
+            where: { id: item?.allProductsId !== null ? item?.allProductsId : undefined },
+        });
+        if (!product || product.quantity === null || product.quantity === undefined) {
+            throw new Error("Product quantity is null or undefined.");
         }
+        const inventory = await prisma.inventory.create({
+            data: {
+                stockChange: stockStatus,
+                quantityChange: Math.abs(product.quantity - body.quantity)
+            }
+        });
+        const updateItem = await prisma.allProducts.update({
+            where: { id: item?.allProductsId !== null ? item?.allProductsId : undefined },
+            data: body
+        });
+        return new Response(JSON.stringify({ updateItem, inventory }), {
+            status: 201,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+    } catch (error) {
+        console.error(error);
+        return new Response("Internal server error", { status: 500 });
+    } finally {
+        await prisma.$disconnect();
+    }
 }
+
 
 export const DELETE=async (req: Request,
     { params }: { params: {id: string; } } )=> {

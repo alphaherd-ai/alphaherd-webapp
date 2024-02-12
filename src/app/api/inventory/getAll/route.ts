@@ -9,7 +9,13 @@ export const GET=async(req: Request)=> {
     }
     try {
         await connectToDB();
-        const inventory = await prisma.inventory.findMany();
+        const inventory = await prisma.inventory.findMany({
+            include: {
+                allProducts: true,
+                allServices:true
+            }
+        });
+        
         return new Response(JSON.stringify(inventory), {
             status: 201,
             headers: {

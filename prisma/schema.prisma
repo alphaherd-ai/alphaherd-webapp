@@ -10,73 +10,217 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Stock{
-  StockIN
-  StockOUT
-}
-enum Location{
+// enum Stock {
+//   StockIN
+//   StockOUT
+// }
+
+enum Location {
   NONE
   Location1
   Location2
 }
-enum InventoryAllProductsFilter{
-  category
-  distributor
-}
-enum InventoryTimelineFilter{
-  party
-  dateRange
-}
-model Product {
-  id         String @id @default(auto()) @map("_id") @db.ObjectId
-  itemName   String
-  defaultUnit String?
-  hsnCode    String?
-  tax        String?
-  category   String?
-  description String?
-  minStock   String?
-  maxStock   String?
 
-  inventoryEntries Inventory[] // Add this line to create the reverse relation
+// ------------------------------------------- INVENTORY SUB MODELS START----------------------------------------------------
+model Product {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  itemName    String
+  defaultUnit String?
+  hsnCode     String?
+  tax         String?
+  category    String?
+  description String?
+  minStock    Int?
+  maxStock    Int?
+
+  allProducts AllProducts[]
 
   @@map("products")
 }
+
+model AllProducts {
+  id               String      @id @default(auto()) @map("_id") @db.ObjectId
+  productId        String?     @db.ObjectId
+  distributors     String?
+  quantity         Int?
+  code             String?
+  batchNumber      String?
+  costPrice        Int?
+  location         Location    @default(NONE)
+  party            String
+  totalCost        Int?
+  costPerItem      Int?
+  profitMargin     String?
+  expiry           DateTime?
+  sellingPrice     Int?
+  date             DateTime?
+  balanceDue       Boolean?
+  product          Product?    @relation(fields: [productId], references: [id])
+  Items            Items[]
+  inventoryEntries Inventory[]
+
+  @@map("allProducts")
+}
+
 model Service {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  name          String
-  sacCode       String?
-  description   String?
-  sellingPrice  String?
-  tax           String?
-  category      String?
-  providers     String[]
-  linkProducts  String[]
-  
-  inventoryEntries Inventory[] // Add this line to create the reverse relation
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  sacCode      String?
+  description  String?
+  sellingPrice String?
+  tax          String?
+  category     String?
+  providers    String[]
+  linkProducts String[]
+
+  allServices AllServices[]
 
   @@map("services")
 }
-model Inventory {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  productId     String   @db.ObjectId
-  serviceId     String   @db.ObjectId
-  updateStock   Stock    @default(StockIN)
-  quantity      Int
-  batchNumber   String
-  expiry        DateTime
-  code          String
-  location      Location @default(NONE)
-  distributor   String
-  totalCost     String?
-  costPerItem   String?
-  sellingPrice  String?
-  profitMargin  String?
-  balanceDue    Boolean? // For 'Add as Balance due under distributor'
 
-  product       Product @relation(fields: [productId], references: [id])
-  service       Service @relation(fields: [serviceId], references: [id])
+model AllServices {
+  id               String      @id @default(auto()) @map("_id") @db.ObjectId
+  serviceId        String?     @db.ObjectId
+  serviceCost      Int?
+  serviceCharge    Int?
+  service          Service?    @relation(fields: [serviceId], references: [id])
+  inventoryEntries Inventory[]
+
+  @@map("allServices")
+}
+
+//------------------------------------------------INVENTORY SUB MODELS END---------------------------------------------------
+
+//-------------------------------------------FINANCE SUB MODELS START--------------------------------------------------
+model Sales {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  customer        String
+  date            DateTime
+  notes           String
+  subTotal        Int
+  invoiceNo       Int
+  dueDate         DateTime
+  shipping        Int
+  adjustment      Int
+  totalCost       Int
+  overallDiscount Int
+  totalQty        Int
+  status          String
+  type            String?
+  item            Items[]
+  financeEntries  Finance[]
+
+  @@map("sales")
+}
+
+model Purchases {
+  id                   String    @id @default(auto()) @map("_id") @db.ObjectId
+  distributor          String
+  date                 DateTime
+  dueDate              DateTime
+  returnLastDate       DateTime?
+  invoiceNo            String
+  purchaseOrderNumber  String?
+  distributorInvoiceNo String?
+  grnNo                String
+  notes                String
+  shipping             Int
+  adjustment           Int
+  totalCost            Int
+  totalQty             Int
+  status               String
+  type                 String?
+  item                 Items[]
+  financeEntries       Finance[]
+
+  @@map("purchases")
+}
+
+model Expenses {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  party           String
+  date            DateTime
+  invoiceNo       String?
+  subTotal        Int
+  overallDiscount Int
+  totalCost       Int?
+  totalQty        Int?
+  startedOn       DateTime?
+  recurringType   String? // this could be either 'week', 'month' or 'year'
+  recurringEnd    String?
+  dueDate         String
+  notes           String
+  status          String
+  type            String? // this is the params passed in our url telling if the expense is recurring or non-recurring.
+  item            Items[]
+  financeEntries  Finance[]
+
+  @@map("expenses")
+}
+
+model Transactions {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  partyName     String?
+  subject       String?
+  invoiceLink   String?
+  receiptNo     String?
+  date          DateTime?
+  amountPaid    Int
+  mode          String?
+  moneyChange   String?
+  invoiceSource String?
+}
+
+model Items {
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  taxPercent    Int
+  taxAmount     Int
+  totalAmount   Int
+  reasons       String?
+  category      String?
+  quantity      Int?
+  name          String?
+  allProductsId String?      @db.ObjectId
+  allProducts   AllProducts? @relation(fields: [allProductsId], references: [id])
+  salesId       String?      @db.ObjectId
+  sale          Sales?       @relation(fields: [salesId], references: [id])
+  Purchases     Purchases?   @relation(fields: [purchasesId], references: [id])
+  purchasesId   String?      @db.ObjectId
+  Expenses      Expenses?    @relation(fields: [expensesId], references: [id])
+  expensesId    String?      @db.ObjectId
+
+  @@map("items")
+}
+
+//------------------------------------------------------FINANCE SUB MODELS END--------------------------------------------------
+
+// Main Models to be created below:
+
+model Inventory {
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  allProductsId  String?      @db.ObjectId
+  allServicesId  String?      @db.ObjectId
+  stockChange    String?
+  invoiceType    String?
+  quantityChange Int?
+  party          String?
+  createdAt      DateTime  
+  allProducts    AllProducts? @relation(fields: [allProductsId], references: [id])
+  allServices    AllServices? @relation(fields: [allServicesId], references: [id])
 
   @@map("inventory")
 }
 
+model Finance {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  salesId     String?    @db.ObjectId
+  sale        Sales?     @relation(fields: [salesId], references: [id])
+  type        String?
+  createdAt   DateTime
+  Purchases   Purchases? @relation(fields: [purchasesId], references: [id])
+  purchasesId String?    @db.ObjectId
+  Expenses    Expenses?  @relation(fields: [expensesId], references: [id])
+  expensesId  String?    @db.ObjectId
+
+  @@map("finance")
+}

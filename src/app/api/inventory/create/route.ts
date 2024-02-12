@@ -10,24 +10,61 @@ export const POST = async (req: Request) => {
 
   try {
     await connectToDB();
-    const { productId, serviceId, ...restOfBody } = await req.json();
+    const { productId, serviceId, stockStatus,invoiceType,...restOfBody } = await req.json();
     console.log(restOfBody);
 
-    const inventory = await prisma.inventory.create({
-      data: {
-        ...restOfBody,
-        expiry: new Date(restOfBody.expiry),
-        product: { connect: { id: productId } },
-        service: { connect: { id: serviceId } }
-      },
-    });
+    let createData: any = {
+      ...restOfBody,
+      expiry: new Date(restOfBody.expiry),
+    };
 
-    return new Response(JSON.stringify(inventory), {
-      status: 201,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    if (productId) {
+      createData.product = { connect: { id: productId } };
+      const allProducts = await prisma.allProducts.create({
+        data: createData,
+      });
+      
+      const inventory= await prisma.inventory.create({
+        data:{
+          allProductsId:allProducts.id,
+          stockChange:stockStatus,
+          invoiceType:invoiceType,
+          quantityChange:createData.quantity
+        }
+      });
+  
+      return new Response(JSON.stringify({allProducts,inventory}), {
+        status: 201,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+
+    } else if (serviceId) {
+      createData.service = { connect: { id: serviceId } };
+      const allServices = await prisma.allServices.create({
+        data: createData,
+      });
+      
+      const inventory = await prisma.inventory.create({
+        data: {
+          allServicesId:allServices.id,
+          stockChange:stockStatus,
+          invoiceType:invoiceType,
+          
+        }
+      });
+  
+      return new Response(JSON.stringify({allServices,inventory}), {
+        status: 201,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    }
+
+   
   } catch (error) {
     console.error(error);
     return new Response(JSON.stringify(error));
