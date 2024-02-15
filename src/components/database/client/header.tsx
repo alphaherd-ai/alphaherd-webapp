@@ -1,13 +1,14 @@
 "use client";
 import React from 'react'
 
-import Sort from '../../../../assets/icons/finance/sort.svg';
-import Filter from '../../../../assets/icons/finance/filter.svg';
-import Chart from '../../../../assets/icons/finance/chart.svg';
-import Download from '../../../../assets/icons/finance/download.svg';
-import DownArrow from '../../../../assets/icons/finance/downArrow.svg';
-import Invoice from '../../../../assets/icons/finance/invoice.svg';
-import Return from '../../../../assets/icons/finance/Return.svg';
+import Sort from '../../../assets/icons/finance/sort.svg';
+import Filter from '../../../assets/icons/finance/filter.svg';
+import Chart from '../../../assets/icons/finance/chart.svg';
+import Download from '../../../assets/icons/finance/download.svg';
+import DownArrow from '../../../assets/icons/finance/downArrow.svg';
+
+import Update from '../../../assets/icons/inventory/update.svg';
+import Add from '../../../assets/icons/inventory/add.svg';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -18,17 +19,12 @@ import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/reac
 
 
 
-const FinancesExpensesTableHeader = () => {
+const DatabaseClientHeader = () => {
     const currentRoute = usePathname();
 
     const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
     const [selectedSort, setselectedSort] = React.useState(new Set(["Category: text"]));
-    const [showPopup, setShowPopup] = React.useState(false);
 
-
-    const togglePopup = () => {
-        setShowPopup(!showPopup);
-    }
 
     const selectedCategoryValue = React.useMemo(
         () => Array.from(selectedCategory).join(", ").replaceAll("_", " "),
@@ -49,26 +45,8 @@ const FinancesExpensesTableHeader = () => {
         
             <div className='flex w-full bg-white h-20  p-4 px-6 mt-6 justify-between border border-solid border-gray-300 border-t-0.5 rounded-tl-lg rounded-tr-lg'>
 
-            <div className='flex  text-gray-500 items-center w-5/12'>
-                    <Link className='no-underline flex item-center' href='/finance/expenses/all'>
-
-                        <div className={currentRoute.startsWith("/finance/expenses/all")
-                            ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white  rounded-tl-md rounded-bl-md"
-                            : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500  rounded-tl-md rounded-bl-md"}>All</div>
-                    </Link>
-                    <Link className='no-underline flex item-center' href='/finance/expenses/nonrecurring'>
-
-                        <div className={currentRoute.startsWith("/finance/expenses/nonrecurring")
-                            ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white"
-                            : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}> Non Recurring Expenses</div>
-                    </Link>
-                    <Link className='no-underline flex item-center' href='/finance/expenses/recurring'>
-
-                        <div className={currentRoute.startsWith("/finance/expenses/recurring")
-                            ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white"
-                            : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}>Recurring Expenses</div>
-                    </Link>
-                  
+            <div className='flex  text-gray-500  items-center'>
+                    <div className=' text-base'>Clients</div>
                 </div>
 <div className='flex items-center'>
     <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
@@ -85,7 +63,7 @@ const FinancesExpensesTableHeader = () => {
         <Dropdown>
             <DropdownTrigger>
                 <Button
-                    //   variant="bordered" 
+                
                     color="gray-400"
                     variant="solid"
                     className="capitalize border-none  bg-transparent rounded-lg"
@@ -152,7 +130,7 @@ const FinancesExpensesTableHeader = () => {
             <PopoverTrigger>
                 <Button color="gray-400"
                     variant="solid"
-                    className="capitalize flex border-none bg-black text-white rounded-lg ">  Create
+                    className="capitalize flex border-none bg-black text-white rounded-lg ">  New Clients
                     <div className='flex pl-2'><Image src={DownArrow} alt='DownArrow' className='w-4 h-4 ' /></div></Button>
             </PopoverTrigger>
             <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
@@ -162,17 +140,14 @@ const FinancesExpensesTableHeader = () => {
                     <div className='flex flex-col'>
                     
                     <Link className='no-underline flex item-center' href='/finance/overview'>
-                    <div className='text-base p-4   text-white flex '>
-                    <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div> Order</div>
+                    <div className='text-base p-4 text-white flex '>
+                    <div className='flex pr-2'><Image src={Update} alt='Update' className='w-5 h-5 ' /></div>Update Inventory</div>
                     </Link>
                     <Link className='no-underline flex item-center' href='/finance/overview'>
                     <div className='text-base p-4  text-white flex '>
-                    <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div> Invoice</div>
+                    <div className='flex pr-2'><Image src={Add} alt='Add' className='w-5 h-5 ' /></div>New Product</div>
                     </Link>
-                    <Link className='no-underline flex item-center' href='/finance/overview'>
-                    <div className='text-base p-4  text-white flex '>
-                    <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>    Return</div>
-                    </Link>
+                 
                   
                     </div>
                 </div>
@@ -192,4 +167,4 @@ const FinancesExpensesTableHeader = () => {
     )
 }
 
-export default FinancesExpensesTableHeader;
+export default  DatabaseClientHeader;
