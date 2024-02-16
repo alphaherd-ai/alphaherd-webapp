@@ -6,5 +6,10 @@
 * {
   box-sizing: border-box;
   padding: 0;
+  font-family: 'Satoshi', sans-serif;
   margin: 0;
+}
+button:focus {
+  outline: none;
+  
 }

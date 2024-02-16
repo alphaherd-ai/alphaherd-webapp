@@ -11,8 +11,15 @@ export const GET=async(req: Request)=> {
         await connectToDB();
         const inventory = await prisma.inventory.findMany({
             include: {
-                allProducts: true,
-                allServices:true
+                allProducts: {
+                    include:{
+                    product:true
+                }},
+                allServices:{
+                    include:{
+                        service:true
+                    }
+                }
             }
         });
         

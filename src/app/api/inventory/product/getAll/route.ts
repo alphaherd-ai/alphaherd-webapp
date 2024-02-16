@@ -8,7 +8,11 @@ export  const GET=async (req: Request)=> {
 }
     try {
         await connectToDB();
-        const products = await prisma.product.findMany();
+        const products = await prisma.allProducts.findMany({
+          include:{
+            product:true
+          }
+        });
         return new Response(JSON.stringify(products), {
           status: 201,
           headers: {
