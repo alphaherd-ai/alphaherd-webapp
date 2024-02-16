@@ -4,8 +4,8 @@ import Navbar from '@/components/navbar/navbar';
 
 
 import InventoryNavbar from '@/components/inventory/navbar/navbar';
-import InventoryProductAllTable from '@/components/inventory/product/producttable/allproducttable';
 import InventoryProductStockTable from '@/components/inventory/product/stocks/table';
+import InventoryProductTimelineTable from '@/components/inventory/product/producttable/timelinetable';
 
 
 const InventoryAllProductsTable = () => {
@@ -16,7 +16,8 @@ const InventoryAllProductsTable = () => {
   <InventoryNavbar/>
 
   <InventoryProductStockTable/>
-<InventoryProductAllTable/>
+
+<InventoryProductTimelineTable/>
      
     </div>
     </>
