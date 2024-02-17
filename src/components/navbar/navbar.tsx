@@ -56,11 +56,11 @@ const currentRoute = usePathname();
             <div className="ml-1">Inventory</div>
           </div>
           </Link>
-            <Link className='no-underline py-5 px-10 border-0 border-r-2 border-solid border-gray-800 ' href='/clients'>
-          <div className={currentRoute.startsWith("/clients")  
+            <Link className='no-underline py-5 px-10 border-0 border-r-2 border-solid border-gray-800 ' href='/database/clients'>
+          <div className={currentRoute.startsWith("/database")  
        ? " text-white  text-base font-medium leading-6  flex items-center justify-center " 
        : " text-gray-400  text-base font-medium leading-6  flex items-center justify-center"}>
-            <PatientlistIcon fill={currentRoute.startsWith("/clients") 
+            <PatientlistIcon fill={currentRoute.startsWith("/database") 
        ? "#38F8E6" 
        : "#A2A3A3"} />
             <div className="ml-1">Database</div>

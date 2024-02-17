@@ -23,7 +23,12 @@ const FinancesExpensesTableHeader = () => {
 
     const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
     const [selectedSort, setselectedSort] = React.useState(new Set(["Category: text"]));
+    const [showPopup, setShowPopup] = React.useState(false);
 
+
+    const togglePopup = () => {
+        setShowPopup(!showPopup);
+    }
 
     const selectedCategoryValue = React.useMemo(
         () => Array.from(selectedCategory).join(", ").replaceAll("_", " "),

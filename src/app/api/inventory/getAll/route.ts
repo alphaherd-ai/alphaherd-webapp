@@ -15,11 +15,7 @@ export const GET=async(req: Request)=> {
                     include:{
                     product:true
                 }},
-                allServices:{
-                    include:{
-                        service:true
-                    }
-                }
+                allServices:true
             }
         });
         
@@ -30,6 +26,7 @@ export const GET=async(req: Request)=> {
             },
         });
     } catch (error) {
+        console.error(error)
       return new Response("Internal server error",{status:500});
     } finally {
         await prisma.$disconnect();

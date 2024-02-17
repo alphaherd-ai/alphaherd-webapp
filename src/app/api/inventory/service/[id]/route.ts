@@ -9,7 +9,7 @@ export const GET=async (req: Request,
         } 
         try {
             await connectToDB();
-           const service= await prisma.service.findUnique({
+           const service= await prisma.allServices.findUnique({
                 where: { id: params.id },
             });
                         
@@ -35,7 +35,7 @@ export const PUT=async (req: Request,
         try {
             await connectToDB();
             const body=await req.json();
-           const service= await prisma.service.update({
+           const service= await prisma.allServices.update({
                 where: { id: params.id },
                 data:body,
             });     
@@ -60,11 +60,9 @@ export const DELETE=async (req: Request,
             try {
                 await connectToDB();
                 await prisma.allServices.deleteMany({
-                    where: { serviceId: params.id },
-                });
-                await prisma.service.delete({
                     where: { id: params.id },
                 });
+              
                             
             return new Response(`Service with id: ${params.id} Deleted Successfully`,{status:201})
             } catch (error) {

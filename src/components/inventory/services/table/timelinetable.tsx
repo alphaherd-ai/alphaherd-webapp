@@ -27,8 +27,6 @@ const InventoryServicesTimelineTable = () => {
                 <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12 '></div>
             </div>
            <ServicesTimelineItem/>
-           <ServicesTimelineItem/>
-           <ServicesTimelineItem/>
 <InventoryServicesTableBottombar/>
         </div>
    

@@ -17,8 +17,7 @@ const InventoryServicesAllTable = () => {
                 
             </div>
 <ServicesAllItem/>
-<ServicesAllItem/>
-<ServicesAllItem/>
+
 <InventoryServicesTableBottombar/>
      
         </div>

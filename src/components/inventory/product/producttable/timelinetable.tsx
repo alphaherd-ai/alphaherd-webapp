@@ -22,8 +22,6 @@ const InventoryProductTimelineTable = () => {
                 <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6 '>Categories</div>
             </div>
             <ProductTimelineItem/>
-            <ProductTimelineItem/>
-            <ProductTimelineItem/>
 <InventoryProductTableBottombar/>
         </div>
    

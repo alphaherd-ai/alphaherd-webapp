@@ -10,7 +10,7 @@ export const POST = async (req: Request) => {
 
   try {
     await connectToDB();
-    const { productId, serviceId, stockStatus,invoiceType,...restOfBody } = await req.json();
+    const { productId, allServicesId, stockStatus,invoiceType,...restOfBody } = await req.json();
     console.log(restOfBody);
 
     let createData: any = {
@@ -41,8 +41,7 @@ export const POST = async (req: Request) => {
       });
       
 
-    } else if (serviceId) {
-      createData.service = { connect: { id: serviceId } };
+    } else if (allServicesId) {
       const allServices = await prisma.allServices.create({
         data: createData,
       });

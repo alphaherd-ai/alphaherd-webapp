@@ -8,7 +8,7 @@ export  const GET=async (req: Request)=> {
 }
     try {
         await connectToDB();
-        const services = await prisma.service.findMany();
+        const services = await prisma.allServices.findMany();
         return new Response(JSON.stringify(services), {
           status: 201,
           headers: {

@@ -19,8 +19,6 @@ const InventoryProductAllTable = () => {
             </div>
 
 <ProductAllItem/>
-<ProductAllItem/>
-<ProductAllItem/>
 <InventoryProductTableBottombar/>
      
         </div>

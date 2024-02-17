@@ -62,28 +62,19 @@ model AllProducts {
   @@map("allProducts")
 }
 
-model Service {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  name         String
-  sacCode      String?
-  description  String?
-  sellingPrice String?
-  tax          String?
-  category     String?
-  providers    String[]
-  linkProducts String[]
-
-  allServices AllServices[]
-
-  @@map("services")
-}
-
 model AllServices {
   id               String      @id @default(auto()) @map("_id") @db.ObjectId
-  serviceId        String?     @db.ObjectId
+  name             String
+  sacCode          String?
+  description      String?
+  sellingPrice     String?
+  tax              String?
+  category         String?
+  quantity         Int?
+  providers        String[]
+  linkProducts     String[]
   serviceCost      Int?
   serviceCharge    Int?
-  service          Service?    @relation(fields: [serviceId], references: [id])
   inventoryEntries Inventory[]
 
   @@map("allServices")
@@ -203,8 +194,9 @@ model Inventory {
   stockChange    String?
   invoiceType    String?
   quantityChange Int?
+  receiptNo      Int?
   party          String?
-  createdAt      DateTime  
+  createdAt      DateTime?    @default(now())
   allProducts    AllProducts? @relation(fields: [allProductsId], references: [id])
   allServices    AllServices? @relation(fields: [allServicesId], references: [id])
 
