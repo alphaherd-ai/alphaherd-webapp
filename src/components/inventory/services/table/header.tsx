@@ -16,7 +16,7 @@ import { usePathname } from 'next/navigation';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 import Popup from './newservicepopup';
-import Popup2 from './updateinventorypopup';
+import Popup2 from '../../product/producttable/updateinventorypopup';
 
 
 
@@ -156,11 +156,7 @@ const InventoryServicesTableHeader = () => {
 
                                     <div className='flex flex-col'>
 
-                                        
-                                        <div className='text-base p-4  text-white flex '>
-                                            <div className='flex pr-2'><Image src={Update} alt='Update' className='w-5 h-5 ' /></div>
-                                            <button className='bg-transparent border-0 text-white text-base' onClick={togglePopup2}>Update Inventory</button>
-                                        </div>
+                    
                                      
                                         <div className='text-base p-4  text-white flex '>
                                             <div className='flex pr-2'><Image src={Add} alt='Add' className='w-5 h-5 ' /></div>

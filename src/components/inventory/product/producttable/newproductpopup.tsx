@@ -1,8 +1,8 @@
 "use client"
 import Image from "next/image"
 import React, { useState } from 'react'
-import closeicon from "../../../../../assets/icons/inventory/closeIcon.svg"
-import arrowicon from "../../../../../assets/icons/inventory/arrow.svg"
+import closeicon from "../../../../assets/icons/inventory/closeIcon.svg"
+import arrowicon from "../../../../assets/icons/inventory/arrow.svg"
 import Select from 'react-select';
 
 type PopupProps = {

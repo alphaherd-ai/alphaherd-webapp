@@ -8,6 +8,7 @@ import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
 import addicon from "../../../../../assets/icons/finance/add.svg"
 import add1icon from "../../../../../assets/icons/finance/add1.svg"
 import sellicon from "../../../../../assets/icons/finance/sell.svg"
+import Popup from '../../../../inventory/product/producttable/newproductpopup';
 
 import Invoice from '../../../../../assets/icons/finance/invoice.svg';
 import Update from '../../../../../assets/icons/inventory/update.svg';
@@ -18,7 +19,6 @@ import { useRef } from "react"
 import Image from "next/image"
 import Link from "next/Link"
 import NewExpensesHeader from "./header"
-import Popup from './newproductpopup';
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
 import NewExpensesBottomBar from './bottombar';
 import NewExpensesTotalAmout from './totalamount';
@@ -68,13 +68,6 @@ const NewExpensesTable = () => {
     const [items, setItems] = useState(initialItems);
 
 
-    const [showPopup, setShowPopup] = React.useState(false);
-
-
-    const togglePopup = () => {
-        setShowPopup(!showPopup);
-    }
-
     useEffect(() => {
         if (!disableButton && inputRef.current) {
             inputRef.current.focus();
@@ -95,6 +88,12 @@ const NewExpensesTable = () => {
         );
     };
 
+    const [showPopup, setShowPopup] = React.useState(false);
+
+
+    const togglePopup = () => {
+        setShowPopup(!showPopup);
+    }
     const handleQuantityDecClick = (itemId) => {
         setItems((prevItems) =>
             prevItems.map((item) => {
@@ -116,27 +115,7 @@ const NewExpensesTable = () => {
             })
         );
     };
-    const handleQuantityDecClick1 = (itemId) => {
-        setItems((prevItems) =>
-            prevItems.map((item) => {
-                if (item.id === itemId && item.quantity2 > 1) {
-                    return { ...item, quantity2: item.quantity2 - 1 };
-                }
-                return item;
-            })
-        );
-    };
 
-    const handleQuantityIncClick1 = (itemId) => {
-        setItems((prevItems) =>
-            prevItems.map((item) => {
-                if (item.id === itemId) {
-                    return { ...item, quantity2: item.quantity2 + 1 };
-                }
-                return item;
-            })
-        );
-    };
 
     return (
         <>
@@ -351,7 +330,8 @@ const NewExpensesTable = () => {
             <NewExpensesBottomBar />
         </div>
 
-        {showPopup && <Popup onClose={togglePopup} />}
+    {showPopup && <Popup onClose={togglePopup} />}
+       
 
         </>
 

@@ -2,7 +2,11 @@ import React from 'react'
 import ProductAllItem from './allitem'
 import InventoryProductTableBottombar from './bottombar'
 import InventoryProductTableHeader from './header'
+
 const InventoryProductAllTable = () => {
+  
+
+
   return (
         <div className='flex flex-col w-full box-border mb-10  cursor-default'>
             <InventoryProductTableHeader/>
@@ -24,7 +28,6 @@ const InventoryProductAllTable = () => {
 <InventoryProductTableBottombar/>
      
         </div>
-   
   )
 }
 
