@@ -21,7 +21,7 @@ const ServicesAllItem = () => {
   const [services, setServices] = useState<AllServices[]>([]);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/inventory/service/getAll`)
+    fetch(`/api/inventory/service/getAll`)
     .then(response => response.json())
     .then(data => setServices(data))
     .catch(error => console.error('Error fetching data:', error));

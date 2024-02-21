@@ -30,7 +30,7 @@ const ProductAllItem = () => {
   const [products, setProducts] = useState<Products[]>([]);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/inventory/product/getAll`)
+    fetch(`/api/inventory/product/getAll`)
     .then(response => response.json())
     .then(data => setProducts(data))
     .catch(error => console.error('Error fetching data:', error));

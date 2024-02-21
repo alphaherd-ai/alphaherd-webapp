@@ -26,7 +26,7 @@ const ServicesTimelineItem = () => {
     const [services, setServices] = useState<Inventory[]>([]);
 
     useEffect(() => {
-        fetch(`http://localhost:3000/api/inventory/getAll`)
+        fetch(`/api/inventory/getAll`)
             .then(response => response.json())
             .then(data => setServices(data.filter((inventory: { allServicesId: any; }) => inventory.allServicesId)))
             .catch(error => console.error('Error fetching services:', error));

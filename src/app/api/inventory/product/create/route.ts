@@ -8,6 +8,7 @@ export const POST=async(req: Request)=> {
 } 
     try {
       const body: Product = await req.json();
+      console.log(body)
         await connectToDB();
         const product = await prisma.product.create({
             data: body
