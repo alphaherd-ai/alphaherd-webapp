@@ -9,7 +9,7 @@ export const GET=async (req: Request,
         } 
         try {
             await connectToDB();
-           const product= await prisma.product.findUnique({
+           const product= await prisma.allProducts.findUnique({
                 where: { id: params.id },
             });
                         
@@ -34,18 +34,31 @@ export const PUT=async (req: Request,
         } 
         try {
             await connectToDB();
-            const body=await req.json();
-           const product= await prisma.product.update({
+            const { stockStatus,invoiceType,...body}=await req.json();
+           const product= await prisma.allProducts.findUnique({
                 where: { id: params.id },
-                data:body,
-            });     
-            return new Response(JSON.stringify(product), {
+            });  
+            const inventory = await prisma.inventory.create({
+                data: {
+                    allProductsId:params.id,
+                    stockChange:stockStatus,
+                    invoiceType:invoiceType,
+                    quantityChange: Math.abs((product?.quantity || 0) - (body.quantity || 0))
+                }
+            });
+            const updateItem = await prisma.allProducts.update({
+                where: { id: params.id },
+                data: body
+            });
+            return new Response(JSON.stringify({ updateItem, inventory }), {
                 status: 201,
                 headers: {
                     'Content-Type': 'application/json',
                 },
-            });
+            });   
+            
         } catch (error) {
+            console.error(error)
             return new Response( "Internal server error",{status:500});
         } finally {
             await prisma.$disconnect();
@@ -59,13 +72,12 @@ export const DELETE=async (req: Request,
             } 
             try {
                 await connectToDB();
-                await prisma.allProducts.deleteMany({
-                    where: {productId: params.id },
+                await prisma.allProducts.delete({
+                    where: {id: params.id },
                 });
-                await prisma.product.delete({
-                    where: { id: params.id },
+                await  prisma.inventory.deleteMany({
+                    where:{allProductsId:params.id}
                 });
-                            
             return new Response(`Product with id: ${params.id} Deleted Successfully`,{status:201})
             } catch (error) {
                 return new Response( "Internal server error",{status:500});

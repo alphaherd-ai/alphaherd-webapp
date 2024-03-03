@@ -5,12 +5,7 @@ import Link from 'next/link';
 import { Tooltip, Button } from "@nextui-org/react";
 import Inventory from '@/app/inventory/services/page';
 
-interface Product{
-  id:string;
-  itemName:string;
-  hsnCode:string;
-  category :string;
-}
+
 
 interface AllProducts {
   id: string;
@@ -20,10 +15,12 @@ interface AllProducts {
   batchNumber:string;
   party:string;
   expiry:string;
-  product:Product;
   distributors:string;
   costPrice:number;
   sellingPrice :number;
+  itemName:string;
+  hsnCode:string;
+  category :string;
 
 }
 interface Inventory{
@@ -62,7 +59,7 @@ const ProductAllItem = () => {
           <div className='w-1/12 flex items-center px-6 text-neutral-400 text-base font-medium'>{formatDateAndTime(inventory.createdAt).formattedTime}</div>
           <div className='w-2/12 flex items-center px-6 text-neutral-400 text-base font-medium'>
             <Link href='#' className='transition-colors duration-300 text-gray-400 no-underline hover:underline hover:text-teal-400'>
-              {inventory.allProducts?.product?.itemName}
+              {inventory.allProducts?.itemName}
             </Link>
           </div>
           
@@ -78,7 +75,7 @@ const ProductAllItem = () => {
     <div className='text-neutral-400 text-[10px] font-medium'>{inventory.allProducts?.expiry}</div></div>
     <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{inventory.allProducts?.party}</div>
     <div className='w-1/12 flex  items-center justify-center text-gray-500 text-sm font-medium px-2 py-1.5 bg-gray-200 rounded-md'>{inventory.invoiceType}</div>
-    <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{inventory.allProducts?.product?.hsnCode}</div>
+    <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{inventory.allProducts?.hsnCode}</div>
         </div>
       ))}
     </>

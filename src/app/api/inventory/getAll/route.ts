@@ -1,7 +1,7 @@
 // src/api/inventory/getAll.ts
 import { connectToDB } from '../../../../utils/index';
 import prisma from '../../../../../prisma/index';
-import type { Product } from "@prisma/client";
+import type { AllProducts } from "@prisma/client";
 
 export const GET=async(req: Request)=> {
     if (req.method !== 'GET') {
@@ -11,10 +11,7 @@ export const GET=async(req: Request)=> {
         await connectToDB();
         const inventory = await prisma.inventory.findMany({
             include: {
-                allProducts: {
-                    include:{
-                    product:true
-                }},
+                allProducts: true,
                 allServices:true
             }
         });

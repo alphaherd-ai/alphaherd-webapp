@@ -11,6 +11,8 @@ type PopupProps = {
 const Popup: React.FC<PopupProps> = ({ onClose }) => {
     const [lastStep, setLastStep] = useState(false);
     const [formData, setFormData] = useState<any>({});
+    const [buttonDisabled, setButtonDisabled] = useState(false);
+
 
 
     const handleContinueClick = () => {
@@ -19,11 +21,10 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
 
 
     const handleSaveClick = async () => {
-        
-        // const providers = formData.providers ? formData.providers.map((item: any) => item.value) : [];
-        // const linkProducts = formData.linkProducts ? formData.linkProducts.map((item: any) => item.value) : [];
-
         try {
+            setButtonDisabled(true);
+            const selectedProviders = formData.providers.map((provider:any) => provider.value);
+            const selectedProducts = formData.linkProducts.map((linkProducts:any) => linkProducts.value);
             const response = await fetch('/api/inventory/service/create', {
                 method: 'POST',
                 headers: {
@@ -31,11 +32,11 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                 },
                 body: JSON.stringify({
                     name: formData.name,
-                    // providers,
+                    providers: selectedProviders,
                     sellingPrice: parseInt(formData.sellingPrice),
                     quantity: parseInt(formData.quantity),
                     sacCode: formData.sacCode,
-                    // linkProducts:formData.linkProducts,
+                    linkProducts:selectedProducts,
                     serviceCost: parseInt(formData.serviceCost),
                     serviceCharge: parseInt(formData.serviceCharge),
                     tax: formData.tax ? formData.tax.value : undefined,
@@ -169,13 +170,14 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                                 isClearable={false}
                                 isSearchable={true}
                                 options={gstOptions}
+                                isMulti={true}
                                 name="linkProducts"
                             onChange={(value) => handleChange("linkProducts", value)}
                             />
                         </div>
                     </div>
                     <div className="self-end items-start gap-6 flex">
-                        <button onClick={handleSaveClick} className="px-4 py-2.5 bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex">
+                        <button onClick={handleSaveClick} disabled={buttonDisabled} className="px-4 py-2.5 bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex">
                             <div className="text-neutral-400 text-base font-bold font-['Satoshi']">Save</div>
                         </button>
                     </div>

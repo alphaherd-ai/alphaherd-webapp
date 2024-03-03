@@ -11,9 +11,11 @@ type PopupProps = {
     onClose: () => void;
 }
 
+
 const Popup: React.FC<PopupProps> = ({ onClose }) => {
     const [lastStep, setLastStep] = useState(false);
     const [formData, setFormData] = useState<any>({});
+    const [buttonDisabled, setButtonDisabled] = useState(false);
 
     const handleContinueClick = () => {
         setLastStep(true);
@@ -21,6 +23,9 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
 
     const handleSaveClick = async () => {
         try {
+            setButtonDisabled(true);
+            const selectedProviders = formData.providers.map((provider:any) => provider.value);
+    
             const response = await fetch('/api/inventory/product/create', {
                 method: 'POST',
                 headers: {
@@ -28,10 +33,10 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                 },
                 body: JSON.stringify({
                     itemName: formData.name,
-                    defaultUnit: formData.providers ? formData.providers[0].value : undefined,
+                    providers: selectedProviders,
                     hsnCode: formData.hsnCode,
                     tax: formData.tax ? formData.tax[0].value : undefined,
-                    category:formData.category ? formData.category[0].value:undefined,
+                    category: formData.category ? formData.category[0].value : undefined,
                     description: formData.description,
                     minStock: parseInt(formData.minStock),
                     maxStock: parseInt(formData.maxStock)
@@ -39,14 +44,17 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
             });
             if (response.ok) {
                 console.log('Data saved successfully');
-                onClose(); 
+                onClose();
             } else {
                 console.error('Failed to save data:', response.statusText);
             }
         } catch (error) {
             console.error('Error while saving data:', error);
+        } finally {
+            setButtonDisabled(false);
         }
-    }
+    };
+    
 
     const handleChange = (field: string, value: any) => {
         setFormData({ ...formData, [field]: value });
@@ -188,7 +196,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                     </div>
                    
                     <div className="self-end items-start gap-6 flex">
-                        <button onClick={handleSaveClick} className="px-4 py-2.5 bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex">
+                        <button onClick={handleSaveClick} disabled={buttonDisabled} className="px-4 py-2.5 bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex">
                             <div className="text-neutral-400 text-base font-bold font-['Satoshi']">Save</div>
                         </button>
                     </div>
@@ -199,3 +207,5 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
 }
 
 export default Popup;
+
+

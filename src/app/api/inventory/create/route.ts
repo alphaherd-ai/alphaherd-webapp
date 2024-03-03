@@ -1,7 +1,7 @@
 // src/api/inventory/create.ts
 import { connectToDB } from '../../../../utils/index';
 import prisma from '../../../../../prisma/index';
-import type { Product } from "@prisma/client";
+import type { AllProducts } from "@prisma/client";
 
 export const POST = async (req: Request) => {
   if (req.method !== 'POST') {

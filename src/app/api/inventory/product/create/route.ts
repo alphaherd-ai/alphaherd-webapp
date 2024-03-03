@@ -1,16 +1,19 @@
 import { connectToDB } from '../../../../../utils/index';
 import prisma from '../../../../../../prisma/index';
-import type { Product } from "@prisma/client";
+import type { AllProducts } from "@prisma/client";
 
 export const POST=async(req: Request)=> {
   if (req.method !== 'POST') {
     return new Response('Method not allowed',{status:405});
 } 
     try {
-      const body: Product = await req.json();
+      const body: AllProducts = await req.json();
       console.log(body)
         await connectToDB();
-        const product = await prisma.product.create({
+        if(body.quantity==null){
+          body.quantity=0;
+        }
+        const product = await prisma.allProducts.create({
             data: body
         });
         return new Response(JSON.stringify(product), {
@@ -20,6 +23,7 @@ export const POST=async(req: Request)=> {
           },
       });
     } catch (error) {
+      console.error(error)
       return new Response(JSON.stringify(error));
     } finally {
         await prisma.$disconnect();

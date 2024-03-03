@@ -48,7 +48,7 @@ const ServicesTimelineItem = () => {
             <div className='w-2/12 flex items-center  px-6  text-neutral-400 text-base font-medium'><Link className='transition-colors duration-300 text-gray-400 no-underline hover:underline hover:text-teal-400 ' href='#'>{inventory.allServices?.name}</Link>  </div>
             <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium text-red-500'>{inventory.quantityChange}</div>
             <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{inventory.party}</div>
-            <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{inventory.allServices.serviceCost}</div>
+            <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{inventory.allServices?.serviceCost}</div>
     
             <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium text-gray-500'><span className='bg-gray-200 px-1'> <Tooltip content="message" className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
 

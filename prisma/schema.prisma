@@ -22,32 +22,24 @@ enum Location {
 }
 
 // ------------------------------------------- INVENTORY SUB MODELS START----------------------------------------------------
-model Product {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
-  itemName    String
-  defaultUnit String?
-  hsnCode     String?
-  tax         String?
-  category    String?
-  description String?
-  minStock    Int?
-  maxStock    Int?
-
-  allProducts AllProducts[]
-
-  @@map("products")
-}
 
 model AllProducts {
   id               String      @id @default(auto()) @map("_id") @db.ObjectId
-  productId        String?     @db.ObjectId
+  itemName         String?
+  defaultUnit      String?
+  hsnCode          String?
+  tax              String?
+  category         String?
+  description      String?
+  minStock         Int?
+  maxStock         Int?
   distributors     String?
   quantity         Int?
   code             String?
   batchNumber      String?
   costPrice        Int?
   location         Location    @default(NONE)
-  party            String
+  providers        String[]
   totalCost        Int?
   costPerItem      Int?
   profitMargin     String?
@@ -55,7 +47,6 @@ model AllProducts {
   sellingPrice     Int?
   date             DateTime?
   balanceDue       Boolean?
-  product          Product?    @relation(fields: [productId], references: [id])
   Items            Items[]
   inventoryEntries Inventory[]
 
