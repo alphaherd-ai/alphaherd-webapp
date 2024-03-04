@@ -21,6 +21,13 @@ enum Location {
   Location2
 }
 
+enum Role {
+  Staff
+  Admin
+  Manager
+  Veterinarian
+}
+
 // ------------------------------------------- INVENTORY SUB MODELS START----------------------------------------------------
 
 model AllProducts {
@@ -177,6 +184,34 @@ model Items {
 //------------------------------------------------------FINANCE SUB MODELS END--------------------------------------------------
 
 // Main Models to be created below:
+
+model Organisation {
+  id           String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String  @db.ObjectId
+  name         String?
+  GSTIN_no     String?
+  contact      String?
+  companyEmail String?
+  address      String?
+  state        String?
+  pincode      String?
+  description  String?
+  logo_img     String?
+  members      User?   @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  name         String?
+  email        String?
+  profile_img  String?
+  contact      String?
+  alt_contact  String?
+  password     String?
+  role         Role
+  isSignedin   Boolean?
+  organisation Organisation[]
+}
 
 model Inventory {
   id             String       @id @default(auto()) @map("_id") @db.ObjectId
