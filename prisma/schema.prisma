@@ -189,28 +189,32 @@ model Organisation {
   id           String  @id @default(auto()) @map("_id") @db.ObjectId
   userId       String  @db.ObjectId
   name         String?
-  GSTIN_no     String?
+  gstinNo      String?
   contact      String?
   companyEmail String?
   address      String?
   state        String?
   pincode      String?
   description  String?
-  logo_img     String?
+  logoImg      String?
   members      User?   @relation(fields: [userId], references: [id])
+
+  @@map("organisation")
 }
 
 model User {
-  id           String         @id @default(auto()) @map("_id") @db.ObjectId
-  name         String?
-  email        String?
-  profile_img  String?
-  contact      String?
-  alt_contact  String?
-  password     String?
-  role         Role
-  isSignedin   Boolean?
-  organisation Organisation[]
+  id             String         @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  email          String        @unique
+  profileImg     String?
+  contact        String
+  altContact     String?
+  hashedPassword String
+  role           Role
+  isSignedin     Boolean?
+  organisation   Organisation[]
+
+  @@map("user")
 }
 
 model Inventory {

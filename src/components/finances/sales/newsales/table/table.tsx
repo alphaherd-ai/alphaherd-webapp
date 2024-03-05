@@ -15,7 +15,7 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { useRef } from "react"
 import Image from "next/image"
-import Link from "next/Link"
+import Link from "next/link"
 import NewsalesHeader from "./header"
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
 import NewsalesBottomBar from './bottombar';
@@ -153,15 +153,15 @@ const NewsalesTable = () => {
 
                                         <Link className='no-underline flex item-center' href='/finance/overview'>
                                             <div className='text-base p-4   text-white flex '>
-                                                <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Inverse</div>
+                                                <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Sales Estimate</div>
                                         </Link>
                                         <Link className='no-underline flex item-center' href='/finance/overview'>
                                             <div className='text-base p-4  text-white flex '>
-                                                <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Return</div>
+                                                <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Sales Invoice</div>
                                         </Link>
                                         <Link className='no-underline flex item-center' href='/finance/overview'>
                                             <div className='text-base p-4  text-white flex '>
-                                                <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Estimate</div>
+                                                <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Sales Return</div>
                                         </Link>
 
                                     </div>

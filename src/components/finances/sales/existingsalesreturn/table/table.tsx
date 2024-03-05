@@ -16,7 +16,7 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { useRef } from "react"
 import Image from "next/image"
-import Link from "next/Link"
+import Link from "next/link"
 import ExistingsalesReturnHeader from "./header"
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
 import ExistingsalesReturnBottomBar from './bottombar';

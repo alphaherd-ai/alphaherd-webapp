@@ -158,17 +158,17 @@ const FinancesSalesTableHeader = () => {
        
         <div className='flex flex-col'>
         
-        <Link className='no-underline flex item-center' href='/finance/overview'>
+        <Link className='no-underline flex item-center' href='/finance/sales/newsalesestimate'>
         <div className='text-base p-4   text-white flex '>
-        <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Inverse</div>
+        <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Sales Estimate</div>
         </Link>
-        <Link className='no-underline flex item-center' href='/finance/overview'>
+        <Link className='no-underline flex item-center' href='/finance/sales/newsales'>
         <div className='text-base p-4  text-white flex '>
-        <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Return</div>
+        <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Sales Invoice</div>
         </Link>
-        <Link className='no-underline flex item-center' href='/finance/overview'>
+        <Link className='no-underline flex item-center' href='/finance/sales/newsalesreturn'>
         <div className='text-base p-4  text-white flex '>
-        <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Estimate</div>
+        <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Sales Return</div>
         </Link>
       
         </div>

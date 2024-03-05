@@ -9,7 +9,7 @@ import add1icon from "../../../../assets/icons/inventory/add (1).svg"
 import RadioButton from './RadioButton';
 import subicon from "../../../../assets/icons/inventory/1. Icons-24 (6) (2).svg"
 import checkicon from "../../../../assets/icons/inventory/check (1).svg"
-
+import Select from 'react-select';
 type PopupProps = {
     onClose: () => void;
 }
@@ -22,11 +22,16 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
     const handleRadioChange = (value: string) => {
         setSelectedOption(value);
     };
-
+    const colourOptions = [
+        { value: 'chocolate', label: 'Chocolate' },
+        { value: 'strawberry', label: 'Strawberry' },
+        { value: 'vanilla', label: 'Vanilla' }
+    ]
     const handleQuantityDecClick = () => {
         setItems(items - 1);
     };
-
+    const [isClearable, setIsClearable] = useState(true);
+    const [isSearchable, setIsSearchable] = useState(true);
     const handleQuantityIncClick = () => {
         setItems(items + 1);
     };
@@ -91,7 +96,26 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                             <Image src={add1icon} alt="+"></Image>
                         </button>
                     </div>
-                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>12345702</div>
+                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+                        <Select
+                            className="text-gray-500 text-base font-medium font-['Satoshi'] w-full border-0 boxShadow-0"
+                            classNamePrefix="select"
+                            defaultValue={colourOptions[0]}
+                            isClearable={isClearable}
+                            isSearchable={isSearchable}
+                            name="color"
+                            options={colourOptions}
+                            styles={{
+                                control: (provided, state) => ({
+                                    ...provided,
+                                    border: state.isFocused ? 'none' : 'none',
+                                }),
+
+                            }}
+                        />
+
+</div>
+
                     <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>09/04/24</div>
                     <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>123456</div>
                     <div className="w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center gap-2 flex text-orange-500 text-sm font-medium font-['Satoshi']">Shelf A1</div>

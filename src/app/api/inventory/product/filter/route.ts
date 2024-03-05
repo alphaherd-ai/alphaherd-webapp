@@ -1,7 +1,7 @@
 // src/api/products/filter.ts
 import { connectToDB } from '../../../../../utils/index';
 import prisma from '../../../../../../prisma/index';
-import { AllProducts, Product } from '@prisma/client';
+import { AllProducts} from '@prisma/client';
 
 export const POST = async (req: Request) => {
   if (req.method !== 'POST') {
@@ -34,11 +34,6 @@ export const POST = async (req: Request) => {
     const filteredProducts: AllProducts[] = await prisma.allProducts.findMany({
       where: {
         ...filterOptions,
-      },
-      include: {
-        product: {
-          where: filterOptions.product,
-        },
       },
     });
 
