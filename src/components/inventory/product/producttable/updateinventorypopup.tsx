@@ -1,6 +1,6 @@
 "use client"
 import Image from "next/image"
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import closeicon from "../../../../assets/icons/inventory/closeIcon.svg"
 import arrowicon from "../../../../assets/icons/inventory/arrow.svg"
 import minicon from "../../../../assets/icons/inventory/mini.svg"
@@ -14,19 +14,38 @@ type PopupProps = {
     onClose: () => void;
 }
 
+interface AllProducts {
+    id: string;
+    date: string;
+    time: string;
+    quantity: number;
+    batchNumber:string;
+    expiry:string;
+    costPrice:number;
+    sellingPrice :number;
+    itemName:string;
+    hsnCode:string;
+    category :string;
+    providers:string[];
+  }
 const Popup2: React.FC<PopupProps> = ({ onClose }) => {
     const [selectedOption, setSelectedOption] = useState<string>('option1');
     const [items, setItems] = useState(5);
     const [isChecked, setChecked] = useState(false);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [products, setProducts] = useState<{ value: string; label: string }[]>(
+        []
+      );
 
     const handleRadioChange = (value: string) => {
         setSelectedOption(value);
     };
-    const colourOptions = [
-        { value: 'chocolate', label: 'Chocolate' },
-        { value: 'strawberry', label: 'Strawberry' },
-        { value: 'vanilla', label: 'Vanilla' }
+    const locationOptions = [
+        { value: 'shell1', label: 'Shell 3' },
+        { value: 'shell2', label: 'Shell 2' },
+        { value: 'shell3', label: 'Shell 1' }
     ]
+  
     const handleQuantityDecClick = () => {
         setItems(items - 1);
     };
@@ -39,6 +58,29 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
     const handleCheckBoxChange = () => {
         setChecked(!isChecked);
     };
+    const handleAddItemClick = () => {
+        setIsDropdownOpen(!isDropdownOpen);
+    };
+
+    const handleProductSelect = (selectedProduct: any) => {
+        console.log('Selected product:', selectedProduct);
+        setIsDropdownOpen(false);
+    };
+
+    useEffect(() => {
+        fetch("/api/inventory/product/getAll")
+          .then((response) => response.json())
+          .then((data) => {
+            const formattedProducts = data.map((product: AllProducts) => ({
+              value: product.id,
+              label: product.itemName,
+            }));
+            setProducts(formattedProducts);
+          })
+          .catch((error) =>
+            console.error("Error fetching data from API:", error)
+          );
+      }, []);
 
     return <>
     <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 fixed inset-0 backdrop-blur-sm bg-gray-100 bg-opacity-50 z-50">
@@ -65,10 +107,29 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                     />
 
                 </div>
-                <div className="w-[132px] h-11 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
-                    <Image src={addicon} alt="add"></Image>
-                    <button className="text-white text-base font-bold font-['Satoshi'] bg-transparent border-0">Add Item</button>
-                </div>
+                <div className="relative">
+                            <div className="w-[132px] h-11 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+                                <Image src={addicon} alt="add"></Image>
+                                <button className="text-white text-base font-bold font-['Satoshi'] bg-transparent border-0" onClick={handleAddItemClick}>
+                                    Add Item
+                                </button>
+                            </div>
+                            {isDropdownOpen && (
+                                <div className="absolute top-[calc(-40px - 240px)] left-0 z-50 w-[150px] bg-white border border-gray-300 rounded-md shadow-md">
+                                    <Select
+                                        className="text-gray-500 text-base font-medium font-['Satoshi'] w-full border-0 boxShadow-0"
+                                        classNamePrefix="select"
+                                        defaultValue={products[0]}
+                                        isClearable={false}
+                                        isSearchable={true}
+                                        name="productName"
+                                        options={products}
+                                        onChange={handleProductSelect}
+                                    />
+                                </div>
+                            )}
+                        </div>
+
             </div>
             <div className="pb-6">
                 <div className='flex  w-full justify-evenly items-center box-border bg-gray-100  h-12 py-4 border-b border-neutral-400 text-gray-500'>
@@ -97,14 +158,24 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                         </button>
                     </div>
                     <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
-                        <Select
+                    <input type="text" defaultValue="asdfdaf3243" className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium" name="code"/>
+                    </div>
+
+                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+                    <input type="text" defaultValue="asdfdaf3243" className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium" name="expiry"/>
+                    </div>
+                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+                        <input type="text" defaultValue="asdfdaf3243" className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium" name="code"/>
+                        </div>
+                    <div className="w-1/8 px-6 flex items-center text-neutral-400 text-base font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center gap-2 flex text-orange-500 text-sm font-medium font-['Satoshi']">
+                    <Select
                             className="text-gray-500 text-base font-medium font-['Satoshi'] w-full border-0 boxShadow-0"
                             classNamePrefix="select"
-                            defaultValue={colourOptions[0]}
+                            defaultValue={locationOptions[0]}
                             isClearable={isClearable}
                             isSearchable={isSearchable}
-                            name="color"
-                            options={colourOptions}
+                            name="batchNumber"
+                            options={locationOptions}
                             styles={{
                                 control: (provided, state) => ({
                                     ...provided,
@@ -113,16 +184,19 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
 
                             }}
                         />
-
-</div>
-
-                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>09/04/24</div>
-                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>123456</div>
-                    <div className="w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center gap-2 flex text-orange-500 text-sm font-medium font-['Satoshi']">Shelf A1</div>
-                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>WeCare</div>
-                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹400</div>
-                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹400</div>
-                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹400</div>
+                    </div>
+                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+                    <input type="text" defaultValue="asdfdaf3243" className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium" name="distributor"/>
+                    </div>
+                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹
+                    <input type="text" defaultValue="400" className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium" name="totalCost"/>
+                    </div>
+                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹
+                    <input type="text" defaultValue="400" className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium" name="cost"/>
+                    </div>
+                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹
+                    <input type="text" defaultValue="400" className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium" name="sellingPrice"/>
+                    </div>
                 </div>
             </div>
             <div>
