@@ -84,7 +84,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
 
     return <>
     <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 fixed inset-0 backdrop-blur-sm bg-gray-100 bg-opacity-50 z-50">
-    <div className="w-[1392px] h-[481px] flex-col p-8 bg-gray-200 gap-6">
+    <div className="w-[1392px] min-h-[481px] flex-col p-8 bg-gray-200 gap-6">
             <div className="flex justify-end p-8 gap-4">
                 <button><Image src={minicon} alt="minimize"></Image></button>
                 <button onClick={onClose}><Image src={closeicon} alt="minimize"></Image></button>
@@ -114,20 +114,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                                     Add Item
                                 </button>
                             </div>
-                            {isDropdownOpen && (
-                                <div className="absolute top-[calc(-40px - 240px)] left-0 z-50 w-[150px] bg-white border border-gray-300 rounded-md shadow-md">
-                                    <Select
-                                        className="text-gray-500 text-base font-medium font-['Satoshi'] w-full border-0 boxShadow-0"
-                                        classNamePrefix="select"
-                                        defaultValue={products[0]}
-                                        isClearable={false}
-                                        isSearchable={true}
-                                        name="productName"
-                                        options={products}
-                                        onChange={handleProductSelect}
-                                    />
-                                </div>
-                            )}
+                       
                         </div>
 
             </div>
@@ -198,6 +185,59 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                     <input type="text" defaultValue="400" className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium" name="sellingPrice"/>
                     </div>
                 </div>
+                <div className='flex justify-evenly items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>1</div>
+                    <div className='w-2/12 px-6 flex items-center text-neutral-400 text-base font-medium'>Metaclopramide</div>
+                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
+                        <button className="bg-white rounded-[5px] border-2 border-gray-100" onClick={handleQuantityDecClick}>
+                            <Image src={subicon} alt="-"></Image>
+                        </button>
+                        <div>{items}</div>
+                        <button className="bg-white rounded-[5px] border-2 border-gray-100" onClick={handleQuantityIncClick}>
+                            <Image src={add1icon} alt="+"></Image>
+                        </button>
+                    </div>
+                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+                    <input type="text" defaultValue="asdfdaf3243" className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium" name="code"/>
+                    </div>
+
+                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+                    <input type="text" defaultValue="asdfdaf3243" className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium" name="expiry"/>
+                    </div>
+                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+                        <input type="text" defaultValue="asdfdaf3243" className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium" name="code"/>
+                        </div>
+                    <div className="w-1/8 px-6 flex items-center text-neutral-400 text-base font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center gap-2 flex text-orange-500 text-sm font-medium font-['Satoshi']">
+                    <Select
+                            className="text-gray-500 text-base font-medium font-['Satoshi'] w-full border-0 boxShadow-0"
+                            classNamePrefix="select"
+                            defaultValue={locationOptions[0]}
+                            isClearable={isClearable}
+                            isSearchable={isSearchable}
+                            name="batchNumber"
+                            options={locationOptions}
+                            styles={{
+                                control: (provided, state) => ({
+                                    ...provided,
+                                    border: state.isFocused ? 'none' : 'none',
+                                }),
+
+                            }}
+                        />
+                    </div>
+                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+                    <input type="text" defaultValue="asdfdaf3243" className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium" name="distributor"/>
+                    </div>
+                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹
+                    <input type="text" defaultValue="400" className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium" name="totalCost"/>
+                    </div>
+                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹
+                    <input type="text" defaultValue="400" className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium" name="cost"/>
+                    </div>
+                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹
+                    <input type="text" defaultValue="400" className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium" name="sellingPrice"/>
+                    </div>
+                </div> 
             </div>
             <div>
                 <div>
