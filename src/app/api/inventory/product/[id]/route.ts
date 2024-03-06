@@ -46,11 +46,19 @@ export const PUT=async (req: Request,
                     quantityChange: Math.abs((product?.quantity || 0) - (body.quantity || 0))
                 }
             });
-            const updateItem = await prisma.allProducts.update({
-                where: { id: params.id },
-                data: body
-            });
-            return new Response(JSON.stringify({ updateItem, inventory }), {
+            if(stockStatus=="Stock In"){
+                const item= await prisma.allProducts.create({
+                    data:body
+                })
+            }
+            else{
+                const updateItem = await prisma.allProducts.update({
+                    where: { id: params.id },
+                    data: body
+                });
+            }
+           
+            return new Response(JSON.stringify({ inventory }), {
                 status: 201,
                 headers: {
                     'Content-Type': 'application/json',
