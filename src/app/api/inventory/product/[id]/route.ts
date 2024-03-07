@@ -38,26 +38,27 @@ export const PUT=async (req: Request,
            const product= await prisma.allProducts.findUnique({
                 where: { id: params.id },
             });  
-            const inventory = await prisma.inventory.create({
-                data: {
-                    allProductsId:params.id,
-                    stockChange:stockStatus,
-                    invoiceType:invoiceType,
-                    quantityChange: Math.abs((product?.quantity || 0) - (body.quantity || 0))
-                }
-            });
+            
             if(stockStatus=="Stock In"){
                 const item= await prisma.allProducts.create({
                     data:body
                 })
             }
             else{
+                body.quantity=Math.abs((product?.quantity || 0) - (body.quantity || 0));
                 const updateItem = await prisma.allProducts.update({
                     where: { id: params.id },
                     data: body
                 });
             }
-           
+            const inventory = await prisma.inventory.create({
+                data: {
+                    allProductsId:params.id,
+                    stockChange:stockStatus,
+                    invoiceType:invoiceType,
+                    quantityChange:body.quantity
+                }
+            });
             return new Response(JSON.stringify({ inventory }), {
                 status: 201,
                 headers: {
