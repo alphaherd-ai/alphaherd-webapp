@@ -64,6 +64,49 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
         updatedInventory[index].quantity += 1;
         setInventory(updatedInventory);
     };
+    
+    const handleBatchNoChange = (index: number, value: string) => {
+        const updatedInventory = [...inventory];
+        updatedInventory[index].batchNumber = value;
+        setInventory(updatedInventory);
+    };
+    
+    const handleExpiryChange = (index: number, value: string) => {
+        const updatedInventory = [...inventory];
+        updatedInventory[index].expiry = value;
+        setInventory(updatedInventory);
+    };
+    
+    const handleCostPriceChange = (index: number, value: string) => {
+        const updatedInventory = [...inventory];
+        updatedInventory[index].costPrice = parseFloat(value);
+        setInventory(updatedInventory);
+    };
+    
+    const handleSellingPriceChange = (index: number, value: string) => {
+        const updatedInventory = [...inventory];
+        updatedInventory[index].sellingPrice = parseFloat(value);
+        setInventory(updatedInventory);
+    };
+    
+    const handleHsnCodeChange = (index: number, value: string) => {
+        const updatedInventory = [...inventory];
+        updatedInventory[index].hsnCode = value;
+        setInventory(updatedInventory);
+    };
+    
+    const handleCategoryChange = (index: number, value: string) => {
+        const updatedInventory = [...inventory];
+        updatedInventory[index].category = value;
+        setInventory(updatedInventory);
+    };
+    
+    const handleProvidersChange = (index: number, value: string) => {
+        const updatedInventory = [...inventory];
+        updatedInventory[index].providers = value;
+        setInventory(updatedInventory);
+    };
+    
 
     const handleCheckBoxChange = () => {
         setChecked(!isChecked);
@@ -87,10 +130,10 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                         date: data.date,
                         time: data.time,
                         quantity: selectedOption === 'Stock In' ? 0 : data.quantity,
-                        batchNumber: data.batchNumber,
-                        expiry: expiry,
-                        costPrice: data.costPrice,
-                        sellingPrice: data.sellingPrice,
+                        batchNumber:selectedOption === 'Stock In' ? "" : data.batchNumber,
+                        expiry: selectedOption === 'Stock In' ? "" :expiry,
+                        costPrice: selectedOption === 'Stock In' ? "" :data.costPrice,
+                        sellingPrice: selectedOption === 'Stock In' ? "" :data.sellingPrice,
                         itemName: data.itemName,
                         hsnCode: data.hsnCode,
                         category: data.category,
@@ -222,28 +265,70 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                                     </button>
                                 </div>
                                 <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
-                                    <input type="text" defaultValue={item.batchNumber} className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium" name="batchNumber" />
-                                </div>
-                                <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
-                                    <input type="text" defaultValue={item.expiry} className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium" name="expiry" />
-                                </div>
-                                <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
-                                    <input type="text" defaultValue={item.hsnCode} className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium" name="hsnCode" />
-                                </div>
-                                <div className="w-1/8 px-6 flex items-center text-neutral-400 text-base font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center gap-2 flex text-orange-500 text-sm font-medium font-['Satoshi']">
-                                    {/* Location Select */}
-                                </div>
-                                <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
-                                    <input type="text" defaultValue={item.providers} className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium" name="providers" />
-                                </div>
-                                <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹
-                                    <input type="text" defaultValue={item.costPrice} className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium" name="costPrice" />
-                                </div>
-                                <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹
-                                    <input type="text" defaultValue={item.sellingPrice} className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium" name="sellingPrice" />
-                                </div>
-                            </div>
-                        ))}
+            <input
+                type="text"
+                value={item.batchNumber}
+                onChange={(e) => handleBatchNoChange(index, e.target.value)}
+                className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
+                name={`batchNumber-${index}`}
+            />
+        </div>
+        <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+            <input
+                type="text"
+                value={item.expiry}
+                onChange={(e) => handleExpiryChange(index, e.target.value)}
+                className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
+                name={`expiry-${index}`}
+            />
+        </div>
+        <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+            <input
+                type="text"
+                value={item.hsnCode}
+                onChange={(e) => handleHsnCodeChange(index, e.target.value)}
+                className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
+                name={`hsnCode-${index}`}
+            />
+        </div>
+        <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+            <input
+                type="text"
+                value={item.category}
+                onChange={(e) => handleCategoryChange(index, e.target.value)}
+                className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
+                name={`category-${index}`}
+            />
+        </div>
+        <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+            <input
+                type="text"
+                value={item.providers}
+                onChange={(e) => handleProvidersChange(index, e.target.value)}
+                className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
+                name={`providers-${index}`}
+            />
+        </div>
+        <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹
+            <input
+                type="text"
+                value={item.costPrice}
+                onChange={(e) => handleCostPriceChange(index, e.target.value)}
+                className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
+                name={`costPrice-${index}`}
+            />
+        </div>
+        <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹
+            <input
+                type="text"
+                value={item.sellingPrice}
+                onChange={(e) => handleSellingPriceChange(index, e.target.value)}
+                className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
+                name={`sellingPrice-${index}`}
+            />
+        </div>
+    </div>
+))}
                     </div>
                     <div>
                         <div className="flex justify-between items-center">
