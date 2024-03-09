@@ -183,7 +183,12 @@ const NewsalesTable = () => {
                             <div className="text-gray-500 text-xl font-medium font-['Satoshi']">
                                 Items
                             </div>
-
+                            <div className="w-[132px] h-11 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+                                <Image src={addicon} alt="add" />
+                                <button className="text-white text-base font-bold font-['Satoshi'] bg-transparent border-0" >
+                                    Add Item
+                                </button>
+                            </div>
                         </div>
                         <div>
                             <div className='flex  w-full justify-evenly items-center box-border bg-gray-100  h-12  border-b border-neutral-400 text-gray-500'>
