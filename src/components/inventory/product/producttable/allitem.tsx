@@ -58,7 +58,7 @@ const ProductAllItem = () => {
           <div className='w-1/12 flex items-center px-6 text-neutral-400 text-base font-medium'>{formatDateAndTime(inventory.createdAt).formattedDate}</div>
           <div className='w-1/12 flex items-center px-6 text-neutral-400 text-base font-medium'>{formatDateAndTime(inventory.createdAt).formattedTime}</div>
           <div className='w-2/12 flex items-center px-6 text-neutral-400 text-base font-medium'>
-            <Link href='#' className='transition-colors duration-300 text-gray-400 no-underline hover:underline hover:text-teal-400'>
+            <Link href='/products/productoverview' className='transition-colors duration-300 text-gray-400 no-underline hover:underline hover:text-teal-400'>
               {inventory.allProducts?.itemName}
             </Link>
           </div>
