@@ -42,14 +42,14 @@ const ProductAllItem = () => {
       .then(response => response.json())
       .then(data => setProducts(data.filter((inventory: { allProductsId: any; }) => inventory.allProductsId)))
       .catch(error => console.error('Error fetching products:', error));
-  }, []); 
+  }, []);
 
   const formatDateAndTime = (dateTime: string) => {
     const dateObject = new Date(dateTime);
-    const formattedDate = dateObject.toLocaleDateString(); 
-    const formattedTime = dateObject.toLocaleTimeString(); 
+    const formattedDate = dateObject.toLocaleDateString();
+    const formattedTime = dateObject.toLocaleTimeString();
     return { formattedDate, formattedTime };
-};
+  };
 
   return (
     <>
@@ -58,11 +58,10 @@ const ProductAllItem = () => {
           <div className='w-1/12 flex items-center px-6 text-neutral-400 text-base font-medium'>{formatDateAndTime(inventory.createdAt).formattedDate}</div>
           <div className='w-1/12 flex items-center px-6 text-neutral-400 text-base font-medium'>{formatDateAndTime(inventory.createdAt).formattedTime}</div>
           <div className='w-2/12 flex items-center px-6 text-neutral-400 text-base font-medium'>
-            <Link href='#' className='transition-colors duration-300 text-gray-400 no-underline hover:underline hover:text-teal-400'>
+            <Link href={{pathname:'overview',query:{id:`${inventory.allProducts?.id}`}}} className='transition-colors duration-300 text-gray-400 no-underline hover:underline hover:text-teal-400'>
               {inventory.allProducts?.itemName}
             </Link>
           </div>
-          
           <div className='w-1/12 flex items-center px-6 text-neutral-400 text-base font-medium'>{inventory.quantityChange}</div>
           <div className='w-1/12 flex items-center px-6 text-neutral-400 text-base font-medium text-green-500'>
             <span className='bg-green-100 px-1'>
@@ -71,11 +70,13 @@ const ProductAllItem = () => {
               </Tooltip>
             </span>
           </div>
-          <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium flex-col'><div className='text-gray-500 text-xs'>{inventory.allProducts?.batchNumber}</div>
-    <div className='text-neutral-400 text-[10px] font-medium'>{formatDateAndTime(inventory.allProducts?.expiry).formattedDate}</div></div>
-    <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{inventory.allProducts?.party}</div>
-    <div className='w-1/12 flex  items-center justify-center text-gray-500 text-sm font-medium px-2 py-1.5 bg-gray-200 rounded-md'>{inventory.invoiceType}</div>
-    <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{inventory.allProducts?.hsnCode}</div>
+          <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium flex-col'>
+            <div className='text-gray-500 text-xs'>{inventory.allProducts?.batchNumber}</div>
+            <div className='text-neutral-400 text-[10px] font-medium'>{formatDateAndTime(inventory.allProducts?.expiry).formattedDate}</div>
+          </div>
+          <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{inventory.allProducts?.party}</div>
+          <div className='w-1/12 flex  items-center justify-center text-gray-500 text-sm font-medium px-2 py-1.5 bg-gray-200 rounded-md'>{inventory.invoiceType}</div>
+          <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{inventory.allProducts?.hsnCode}</div>
         </div>
       ))}
     </>
