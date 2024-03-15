@@ -39,7 +39,7 @@ const ProductAllItem = () => {
   const [products, setProducts] = useState<Inventory[]>([]);
   
   useEffect(() => {
-    fetch(`/api/inventory/getAll`)
+    fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/getAll`)
       .then(response => response.json())
       .then(data => setProducts(data.filter((inventory: { allProductsId: any; }) => inventory.allProductsId).reverse()))
       .catch(error => console.error('Error fetching products:', error));
