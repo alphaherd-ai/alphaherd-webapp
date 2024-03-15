@@ -26,7 +26,7 @@ const ProductAllItem = () => {
   useEffect(() => {
     fetch(`/api/inventory/product/getAll`)
     .then(response => response.json())
-    .then(data => setProducts(data))
+    .then(data => setProducts(data.reverse()))
     .catch(error => console.error('Error fetching data:', error));
 }, []); 
 

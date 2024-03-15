@@ -74,7 +74,9 @@ interface AllProducts {
       fetch(`/api/inventory/product/getAll`)
         .then(response => response.json())
         .then(data => {
-          const filteredProducts = data.filter((item: AllProducts) => item.itemName === product?.itemName).slice(0,5);
+          const filteredProducts = data.filter((item: AllProducts) => item.itemName === product?.itemName)
+          .reverse()
+          .slice(0,5);
           setProducts(filteredProducts);
         })
         .catch(error => console.error('Error fetching products:', error));
@@ -87,7 +89,9 @@ interface AllProducts {
           .then(data => {
             const filteredInventory = data.filter((item: Inventory) =>
               products.some((p: AllProducts) => item.allProductsId === p.id)   
-            ).slice(0,5);
+            )
+            .reverse()
+            .slice(0,5);
             setInventory(filteredInventory);
           })
           .catch(error => console.error('Error fetching inventory:', error));

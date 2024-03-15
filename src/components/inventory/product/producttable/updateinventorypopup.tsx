@@ -150,8 +150,20 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
     const handleUpdateInventory = async () => {
         try {
             for (const item of inventory) {
-                const { id, date, time, quantity, batchNumber, expiry, costPrice, sellingPrice, itemName, hsnCode, category, providers } = item;
+                const { id, date, time, quantity, batchNumber, itemName, hsnCode, category, providers } = item;
                 const invoiceType="Manual";
+                let {expiry,costPrice,sellingPrice}=item;
+               
+                expiry = expiry || null;
+                costPrice = costPrice ||null;
+                sellingPrice = sellingPrice || null;
+                if(expiry){
+                let datetime = new Date(expiry);
+                let isoString = datetime.toISOString(); 
+                expiry = isoString.substring(0, 23) + "+00:00";
+                }
+                 
+
                 const stockStatus=selectedOption;
                 const body = {
                     invoiceType,
@@ -275,7 +287,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
         </div>
         <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
             <input
-                type="text"
+                type="datetime-local"
                 value={item.expiry}
                 onChange={(e) => handleExpiryChange(index, e.target.value)}
                 className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
@@ -311,7 +323,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
         </div>
         <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹
             <input
-                type="text"
+                type="number"
                 value={item.costPrice}
                 onChange={(e) => handleCostPriceChange(index, e.target.value)}
                 className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
@@ -320,7 +332,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
         </div>
         <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹
             <input
-                type="text"
+                type="number"
                 value={item.sellingPrice}
                 onChange={(e) => handleSellingPriceChange(index, e.target.value)}
                 className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
