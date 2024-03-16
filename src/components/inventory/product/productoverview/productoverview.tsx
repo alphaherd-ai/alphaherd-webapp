@@ -18,8 +18,94 @@ import Slider from '@mui/material/Slider';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from "next/navigation"
+import { response } from "express"
 
-const ProductDetails = () => {
+
+interface AllProducts {
+    id: string;
+    date: string;
+    time: string;
+    quantity: number;
+    batchNumber:string;
+    party:string;
+    expiry:string;
+    distributors:string;
+    costPrice:number;
+    sellingPrice :number;
+    itemName:string;
+    hsnCode:string;
+    category :string;
+    description:string;
+    tax:string;
+    providers:string[];
+    minStock:number;
+    maxStock:number;
+    location:string;
+  
+  }
+  interface Inventory{
+    id:string;
+    allProductsId:string;
+    stockChange:string;
+    invoiceType:string;
+    quantityChange:number;
+    party:string;
+    allProducts:AllProducts;
+    createdAt:string;
+  
+  }
+
+  const ProductDetails = () => {
+    const [product, setProduct] = useState<AllProducts | null>(null);
+    const [products, setProducts] = useState<AllProducts[]>([]);
+    const [inventory, setInventory] = useState<Inventory[]>([]);
+    const url = useSearchParams();
+    const id = url.get('id');
+  
+    useEffect(() => {
+      fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/product/${id}`)
+        .then(response => response.json())
+        .then(data => setProduct(data))
+        .catch(error => console.error('Error fetching product:', error));
+    }, [id]);
+  
+    useEffect(() => {
+      fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/product/getAll`)
+        .then(response => response.json())
+        .then(data => {
+          const filteredProducts = data.filter((item: AllProducts) => item.itemName === product?.itemName)
+          .reverse()
+          .slice(0,5);
+          setProducts(filteredProducts);
+        })
+        .catch(error => console.error('Error fetching products:', error));
+    }, [product]);
+  
+    useEffect(() => {
+      if (product && products.length > 0) {
+        fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/getAll`)
+          .then(response => response.json())
+          .then(data => {
+            const filteredInventory = data.filter((item: Inventory) =>
+              products.some((p: AllProducts) => item.allProductsId === p.id)   
+            )
+            .reverse()
+            .slice(0,5);
+            setInventory(filteredInventory);
+          })
+          .catch(error => console.error('Error fetching inventory:', error));
+      }
+    }, [product, products]);
+    const formatDateAndTime = (dateTime: string) => {
+      const dateObject = new Date(dateTime);
+      const formattedDate = dateObject.toLocaleDateString();
+      const formattedTime = dateObject.toLocaleTimeString();
+      return { formattedDate, formattedTime };
+    };
+
+
+
 
     const [value, setValue] = useState(30);
 
@@ -48,7 +134,7 @@ const ProductDetails = () => {
 
                     </div>
                     <div className="text-gray-500 text-[28px] font-bold font-['Satoshi']">
-                        Dolo 650
+                        {product?.itemName}
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -114,19 +200,19 @@ const ProductDetails = () => {
             <div className="w-full mt-[25px] pt-8 bg-white rounded-[10px] border border-solid border-neutral-400 flex-col justify-start items-start gap-8 flex">
                 <div className="w-full px-6 justify-start items-center gap-8 flex">
                     <div className="w-40 text-gray-500 text-[28px] font-bold font-['Satoshi']">
-                        {value} Strips
+                        {product?.quantity} Strips
                     </div>
                     <div className="w-full rounded-[10px] flex items-center">
                         <ThemeProvider theme={theme}>
                             <Slider
                                 aria-label="Temperature"
-                                defaultValue={30}
+                                defaultValue={product?.quantity}
                                 getAriaValueText={valuetext}
                                 color="secondary"
                                 value={typeof value === 'number' ? value : 0}
                                 onChange={handleSliderChange}
-                                min={30}
-                                max={110}
+                                min={product?.minStock}
+                                max={product?.maxStock}
                             />
                         </ThemeProvider>
                     </div>
@@ -155,34 +241,34 @@ const ProductDetails = () => {
                     <div className="w-full border-b border-solid border-0 border-stone-300">
                         <div className="w-full flex gap-2 items-center p-6 h-3/12">
                             <div className="text-neutral-400 text-base font-medium font-['Satoshi']">Description:</div>
-                            <div className="text-gray-500 text-base font-medium font-['Satoshi']">Contains paracetamol and is used to treat mild pain</div>
+                            <div className="text-gray-500 text-base font-medium font-['Satoshi']">{product?.description}</div>
                         </div>
                     </div>
                     <div className="w-full border-b border-solid border-0 border-stone-300 flex  gap-8">
                         <div className="w-6/12 p-6 border-r border-solid border-0 border-stone-300 flex-col items-center justify-between">
                             <div className="text-neutral-400 text-base font-medium font-['Satoshi']">Category</div>
                             <div className="w-[114px] h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">
-                                <div className="text-green-600 text-sm font-medium font-['Satoshi']">Pharmaceutical</div>
+                                <div className="text-green-600 text-sm font-medium font-['Satoshi']">{product?.category}</div>
                             </div>
                         </div>
                         <div className="w-6/12 p-6 flex-col items-center justify-between">
                             <div className="text-neutral-400 text-base font-medium font-['Satoshi']">Location</div>
                             <div className="w-[66px] h-7 px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center items-center gap-2 flex">
-                                <div className="text-orange-500 text-sm font-medium font-['Satoshi']">Shelf A1</div>
+                                <div className="text-orange-500 text-sm font-medium font-['Satoshi']">{product?.location}</div>
                             </div>
                         </div>
                     </div>
                     <div className="w-full border-b border-solid border-0 border-stone-300">
                         <div className="w-full flex gap-2 items-center p-6 h-3/12">
                             <div className="text-neutral-400 text-base font-medium font-['Satoshi']">HSN Code:</div>
-                            <div className="text-gray-500 text-base font-medium font-['Satoshi']">998766</div>
+                            <div className="text-gray-500 text-base font-medium font-['Satoshi']">{product?.hsnCode}</div>
                         </div>
                     </div>
                     <div className="w-full border-b border-solid border-0 border-stone-300">
                         <div className="w-full flex gap-2 items-center p-6 h-3/12">
                             <div className="text-neutral-400 text-base font-medium font-['Satoshi']">Tax Rate:</div>
                             <div className="px-2 py-1.5 bg-gray-100 rounded-[5px] justify-center items-center gap-2 flex">
-                                <div className="text-gray-500 text-base font-medium font-['Satoshi']">GST@18%</div>
+                                <div className="text-gray-500 text-base font-medium font-['Satoshi']">{product?.tax}</div>
                             </div>
                         </div>
                     </div>
@@ -190,11 +276,9 @@ const ProductDetails = () => {
                         <div className="w-full flex gap-2 items-center p-6 h-3/12">
                             <div className="text-neutral-400 text-base font-medium font-['Satoshi']">Vendors:</div>
                             <div className="px-2 py-1.5 bg-gray-100 rounded-[5px] justify-center items-center gap-2 flex">
-                                <div className="text-gray-500 text-base font-medium font-['Satoshi']">WeCare</div>
+                                <div className="text-gray-500 text-base font-medium font-['Satoshi']">{product?.providers}</div>
                             </div>
-                            <div className="px-2 py-1.5 bg-gray-100 rounded-[5px] justify-center items-center gap-2 flex">
-                                <div className="text-gray-500 text-base font-medium font-['Satoshi']">SafeCure</div>
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -229,151 +313,40 @@ const ProductDetails = () => {
                             </div>
                         </div>
                     </div>
+    {inventory.map(item=>(
                     <div className="w-full border-b border-solid border-0 border-stone-300 flex items-start justify-between">
                         <div className="w-full flex p-6">
                             <div className="w-full flex items-center justify-between">
                                 <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    22/06/24
+                                    {formatDateAndTime(item.createdAt).formattedDate}
                                 </div>
                                 <div className="w-[69px] text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    05:12pm
+                                {formatDateAndTime(item.createdAt).formattedTime}
                                 </div>
                                 <div className="text-gray-500 text-base font-medium font-['Satoshi']">
-                                    24 Strips
+                                   {item.quantityChange} Strips
                                 </div>
-                                <div className="w-7 h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">
+                                <div className="w-15 h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">
                                     <div className="text-green-600 text-sm font-medium font-['Satoshi']">
-                                        In
+                                        {item.stockChange}
                                     </div>
                                 </div>
                                 <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    036521036
+                                    {item.allProducts.batchNumber}
                                 </div>
                                 <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    SafeCure
+                                    {item.party}
                                 </div>
                                 <div className="text-teal-400 text-base font-medium font-['Satoshi'] underline">
-                                    PI-23141
+                                    {item.invoiceType}
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div className="w-full border-b border-solid border-0 border-stone-300 flex items-start justify-between">
-                        <div className="w-full flex p-6">
-                            <div className="w-full flex items-center justify-between">
-                                <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    22/06/24
-                                </div>
-                                <div className="w-[69px] text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    05:12pm
-                                </div>
-                                <div className="text-gray-500 text-base font-medium font-['Satoshi']">
-                                    24 Strips
-                                </div>
-                                <div className="w-10 h-7 px-2 py-1.5 bg-rose-100 rounded-[5px] justify-center items-center gap-2 flex">
-                                    <div className="text-red-500 text-sm font-medium font-['Satoshi']">
-                                        Out
-                                    </div>
-                                </div>
-                                <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    036521036
-                                </div>
-                                <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    SafeCure
-                                </div>
-                                <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    PI-23141
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="w-full border-b border-solid border-0 border-stone-300 flex items-start justify-between">
-                        <div className="w-full flex p-6">
-                            <div className="w-full flex items-center justify-between">
-                                <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    22/06/24
-                                </div>
-                                <div className="w-[69px] text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    05:12pm
-                                </div>
-                                <div className="text-gray-500 text-base font-medium font-['Satoshi']">
-                                    24 Strips
-                                </div>
-                                <div className="w-7 h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">
-                                    <div className="text-green-600 text-sm font-medium font-['Satoshi']">
-                                        In
-                                    </div>
-                                </div>
-                                <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    036521036
-                                </div>
-                                <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    SafeCure
-                                </div>
-                                <div className="text-teal-400 text-base font-medium font-['Satoshi'] underline">
-                                    PI-23141
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="w-full border-b border-solid border-0 border-stone-300 flex items-start justify-between">
-                        <div className="w-full flex p-6">
-                            <div className="w-full flex items-center justify-between">
-                                <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    22/06/24
-                                </div>
-                                <div className="w-[69px] text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    05:12pm
-                                </div>
-                                <div className="text-gray-500 text-base font-medium font-['Satoshi']">
-                                    24 Strips
-                                </div>
-                                <div className="w-7 h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">
-                                    <div className="text-green-600 text-sm font-medium font-['Satoshi']">
-                                        In
-                                    </div>
-                                </div>
-                                <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    036521036
-                                </div>
-                                <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    SafeCure
-                                </div>
-                                <div className="text-teal-400 text-base font-medium font-['Satoshi'] underline">
-                                    PI-23141
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="w-full flex items-start justify-between">
-                        <div className="w-full flex p-6">
-                            <div className="w-full flex items-center justify-between">
-                                <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    22/06/24
-                                </div>
-                                <div className="w-[69px] text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    05:12pm
-                                </div>
-                                <div className="text-gray-500 text-base font-medium font-['Satoshi']">
-                                    24 Strips
-                                </div>
-                                <div className="w-7 h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">
-                                    <div className="text-green-600 text-sm font-medium font-['Satoshi']">
-                                        In
-                                    </div>
-                                </div>
-                                <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    036521036
-                                </div>
-                                <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    SafeCure
-                                </div>
-                                <div className="text-teal-400 text-base font-medium font-['Satoshi'] underline">
-                                    PI-23141
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    ))}
+                   
+                    
+                    
                 </div>
             </div>
             <div className="rounded-md">
@@ -397,18 +370,20 @@ const ProductDetails = () => {
                             <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'>Location</div>
                             <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'></div>
                         </div>
+                    
+                        {products.map(item=>(
                         <div className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>50 Strips</div>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>WeCare</div>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>12345678</div>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>22/06/24</div>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>12345678</div>
+                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{item.quantity} Strips</div>
+                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>providers</div>
+                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{item.batchNumber}</div>
+                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{formatDateAndTime(item.expiry).formattedDate}</div>
+                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{item.hsnCode}</div>
+                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{item.costPrice}</div>
                             <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹399</div>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹399</div>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹399</div>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>22%</div>
+                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{item.sellingPrice}</div>
+                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{(item.quantity/item.maxStock)*100}%</div>
                             <div className="w-2/12 px-6 flex items-center gap-2">
-                                <div className="w-[80px] flex items-center text-orange-500 text-sm font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center font-['Satoshi']">Shelf A1</div>
+                                <div className="w-[80px] flex items-center text-orange-500 text-sm font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center font-['Satoshi']">{item.location}</div>
                                 <div className="w-[80px] flex items-center text-orange-500 text-sm font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center font-['Satoshi']">Shelf A2</div>
                             </div>
                             <div className="w-1/12 px-6 flex items-center gap-2">
@@ -453,118 +428,7 @@ const ProductDetails = () => {
                               
                             </div>
                         </div>
-                        <div className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>50 Strips</div>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>WeCare</div>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>12345678</div>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>22/06/24</div>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>12345678</div>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹399</div>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹399</div>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹399</div>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>22%</div>
-                            <div className="w-2/12 px-6 flex items-center gap-2">
-                                <div className="w-[80px] flex items-center text-orange-500 text-sm font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center font-['Satoshi']">Shelf A1</div>
-                                <div className="w-[80px] flex items-center text-orange-500 text-sm font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center font-['Satoshi']">Shelf A2</div>
-                            </div>
-                            <div className="w-1/12 px-6 flex items-center gap-2">
-                                <div className='w-6 h-6 p-1 bg-gray-100 rounded-[5px] justify-start items-center flex '>
-
-                                    <Popover placement="left" showArrow offset={10}>
-                                        <PopoverTrigger>
-                                            <Button color="gray-400"
-                                                variant="solid"
-                                                className="capitalize flex border-none  text-gray rounded-lg ">
-                                                <div className='w-4 h-4 px-[11px] py-2.5 bg-white rounded-[5px] border border-solid border-stone-300 justify-center items-center gap-2 flex'>   <Image src={optionicon} alt="option"></Image></div></Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="p-5 text-gray-500 bg-white text-sm p-2 font-medium flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
-
-                                            <div className="flex flex-col ">
-
-                                                <div className='flex flex-col'>
-
-                                                    <Link className='no-underline flex item-center' href='/finance/overview'>
-                                                        <div className='text-gray-500 text-sm p-3 font-medium flex '>
-                                                            gtr</div>
-                                                    </Link>
-                                                    <Link className='no-underline flex item-center' href='/finance/overview'>
-                                                        <div className='text-gray-500 text-sm p-3 font-medium flex '>
-                                                            grtt</div>
-                                                    </Link>
-                                                    <Link className='no-underline flex item-center' href='/finance/overview'>
-                                                        <div className='text-gray-500 text-sm p-3 font-medium flex '>
-                                                            gtrt</div>
-                                                    </Link>
-
-                                                </div>
-                                            </div>
-
-
-                                        </PopoverContent>
-                                    </Popover>
-
-
-
-                                </div>
-                              
-                            </div>
-                        </div>
-                        <div className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>50 Strips</div>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>WeCare</div>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>12345678</div>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>22/06/24</div>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>12345678</div>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹399</div>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹399</div>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹399</div>
-                            <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>22%</div>
-                            <div className="w-2/12 px-6 flex items-center gap-2">
-                                <div className="w-[80px] flex items-center text-orange-500 text-sm font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center font-['Satoshi']">Shelf A1</div>
-                                <div className="w-[80px] flex items-center text-orange-500 text-sm font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center font-['Satoshi']">Shelf A2</div>
-                            </div>
-                            <div className="w-1/12 px-6 flex items-center gap-2">
-                                <div className='w-6 h-6 p-1 bg-gray-100 rounded-[5px] justify-start items-center flex '>
-
-                                    <Popover placement="left" showArrow offset={10}>
-                                        <PopoverTrigger>
-                                            <Button color="gray-400"
-                                                variant="solid"
-                                                className="capitalize flex border-none  text-gray rounded-lg ">
-                                                <div className='w-4 h-4 px-[11px] py-2.5 bg-white rounded-[5px] border border-solid border-stone-300 justify-center items-center gap-2 flex'>   <Image src={optionicon} alt="option"></Image></div></Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="p-5 text-gray-500 bg-white text-sm p-2 font-medium flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
-
-                                            <div className="flex flex-col ">
-
-                                                <div className='flex flex-col'>
-
-                                                    <Link className='no-underline flex item-center' href='/finance/overview'>
-                                                        <div className='text-gray-500 text-sm p-3 font-medium flex '>
-                                                            gtr</div>
-                                                    </Link>
-                                                    <Link className='no-underline flex item-center' href='/finance/overview'>
-                                                        <div className='text-gray-500 text-sm p-3 font-medium flex '>
-                                                            grtt</div>
-                                                    </Link>
-                                                    <Link className='no-underline flex item-center' href='/finance/overview'>
-                                                        <div className='text-gray-500 text-sm p-3 font-medium flex '>
-                                                            gtrt</div>
-                                                    </Link>
-
-                                                </div>
-                                            </div>
-
-
-                                        </PopoverContent>
-                                    </Popover>
-
-
-
-                                </div>
-                              
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </div>

@@ -45,10 +45,12 @@ export const PUT=async (req: Request,
                 })
             }
             else{
-                body.quantity=Math.abs((product?.quantity || 0) - (body.quantity || 0));
                 const updateItem = await prisma.allProducts.update({
                     where: { id: params.id },
-                    data: body
+                    data: {
+                        ...body,
+                        quantity:Math.abs((product?.quantity || 0) - (body.quantity || 0))
+                    }
                 });
             }
             const inventory = await prisma.inventory.create({

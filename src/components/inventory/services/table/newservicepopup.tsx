@@ -25,7 +25,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
             setButtonDisabled(true);
             const selectedProviders = formData.providers.map((provider:any) => provider.value);
             const selectedProducts = formData.linkProducts.map((linkProducts:any) => linkProducts.value);
-            const response = await fetch('/api/inventory/service/create', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/service/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
