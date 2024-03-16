@@ -5,6 +5,7 @@ import closeicon from "../../../../assets/icons/inventory/closeIcon.svg";
 import arrowicon from "../../../../assets/icons/inventory/arrow.svg";
 import minicon from "../../../../assets/icons/inventory/mini.svg";
 import addicon from "../../../../assets/icons/inventory/add.svg";
+import deleteicon from "../../../../assets/icons/loginsignup/delete.svg";
 import add1icon from "../../../../assets/icons/inventory/add (1).svg";
 import RadioButton from './RadioButton';
 import subicon from "../../../../assets/icons/inventory/1. Icons-24 (6) (2).svg";
@@ -318,6 +319,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                 name={`costPrice-${index}`}
             />
         </div>
+
         <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹
             <input
                 type="text"
@@ -327,6 +329,11 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                 name={`sellingPrice-${index}`}
             />
         </div>
+        <button className=" border-0 flex-col justify-start items-end gap-2.5 flex">
+                                <div className="h-6 px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
+                                    <Image className="w-4 h-4 relative" src={deleteicon} alt="delete" />
+                                </div>
+                            </button>
     </div>
 ))}
                     </div>
