@@ -7,3 +7,5 @@ services:
       dockerfile: Dockerfile
     ports:
       - '3025:3000'
+    env_file:
+      - .env
