@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Tooltip, Button } from "@nextui-org/react";
 
 
+
 interface AllProducts {
   id: string;
   date: string;
@@ -22,11 +23,10 @@ interface AllProducts {
 
 const ProductAllItem = () => {
   const [products, setProducts] = useState<AllProducts[]>([]);
-
   useEffect(() => {
-    fetch(`/api/inventory/product/getAll`)
+    fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/product/getAll`)
     .then(response => response.json())
-    .then(data => setProducts(data))
+    .then(data => setProducts(data.reverse()))
     .catch(error => console.error('Error fetching data:', error));
 }, []); 
 

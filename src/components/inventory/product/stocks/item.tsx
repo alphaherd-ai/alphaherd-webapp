@@ -24,7 +24,7 @@ const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
   const [products, setProducts] = useState<AllProducts[]>([]);
 
   useEffect(() => {
-    fetch('/api/inventory/product/getAll')
+    fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/product/getAll`)
       .then(response => response.json())
       .then(data => setProducts(data))
       .catch(error => console.error('Error fetching products:', error));

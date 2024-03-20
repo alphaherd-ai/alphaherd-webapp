@@ -159,7 +159,7 @@ const InventoryServicesTableHeader = () => {
                                      
                                         <div className='text-base p-4  text-white flex '>
                                             <div className='flex pr-2'><Image src={Add} alt='Add' className='w-5 h-5 ' /></div>
-                                            <button className='bg-transparent border-0 text-white text-base' onClick={togglePopup}>New Product</button>
+                                            <button className='bg-transparent border-0 text-white text-base' onClick={togglePopup}>New Service</button>
                                         </div>
                                    
 

@@ -4,6 +4,7 @@ import Link from 'next/link';
 
 import { Tooltip, Button } from "@nextui-org/react";
 import Inventory from '@/app/inventory/services/page';
+import { reverse } from 'dns';
 
 
 
@@ -36,14 +37,14 @@ interface Inventory{
 
 const ProductAllItem = () => {
   const [products, setProducts] = useState<Inventory[]>([]);
-
+  
   useEffect(() => {
-    fetch(`/api/inventory/getAll`)
+    fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/getAll`)
       .then(response => response.json())
-      .then(data => setProducts(data.filter((inventory: { allProductsId: any; }) => inventory.allProductsId)))
+      .then(data => setProducts(data.filter((inventory: { allProductsId: any; }) => inventory.allProductsId).reverse()))
       .catch(error => console.error('Error fetching products:', error));
   }, []);
-
+  
   const formatDateAndTime = (dateTime: string) => {
     const dateObject = new Date(dateTime);
     const formattedDate = dateObject.toLocaleDateString();
