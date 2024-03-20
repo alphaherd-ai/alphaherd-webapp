@@ -33,7 +33,7 @@ export const POST = async (req: Request) => {
       expiresIn = '7d'; 
     }
 
-    const token = jwt.sign({ id: user.id }, "process.env.SECRET_KEY", { expiresIn });
+    const token = jwt.sign({ id: user.id }, `${process.env.NEXT_PUBLIC_SECRET_KEY}`, { expiresIn });
 
     return new Response(JSON.stringify({ token }), {
       status: 200,
