@@ -1,6 +1,6 @@
 import React from 'react'
 import DatabaseDistributorBottombar from './bottombar'
-import RightArrow from '../../../assets/icons/finance/RightArrow.svg';
+import RightArrow from '../../../assets/icons/finance/rightArrow.svg';
 import IncrementIcon from '../../../assets/icons/finance/increment_icon.svg';
 
 import Image from 'next/image';
