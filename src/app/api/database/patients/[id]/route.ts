@@ -9,11 +9,11 @@ export const GET=async (req: Request,
         } 
         try {
             await connectToDB();
-           const client= await prisma.clients.findUnique({
+           const patient= await prisma.patients.findUnique({
                 where: { id: params.id },
             });
                         
-            return new Response(JSON.stringify(client), {
+            return new Response(JSON.stringify(patient), {
                 status: 201,
                 headers: {
                     'Content-Type': 'application/json',
@@ -35,11 +35,11 @@ export const PUT=async (req: Request,
         try {
             await connectToDB();
             const body=await req.json();
-           const client= await prisma.clients.update({
+           const patient= await prisma.patients.update({
                 where: { id: params.id },
                 data:body,
             });     
-            return new Response(JSON.stringify(client), {
+            return new Response(JSON.stringify(patient), {
                 status: 201,
                 headers: {
                     'Content-Type': 'application/json',
@@ -59,12 +59,12 @@ export const DELETE=async (req: Request,
             } 
             try {
                 await connectToDB();
-                await prisma.clients.deleteMany({
+                await prisma.patients.deleteMany({
                     where: { id: params.id },
                 });
               
                             
-            return new Response(`Client with id: ${params.id} Deleted Successfully`,{status:201})
+            return new Response(`Patient with id: ${params.id} Deleted Successfully`,{status:201})
             } catch (error) {
                 return new Response( "Internal server error",{status:500});
             } finally {

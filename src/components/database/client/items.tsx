@@ -1,18 +1,46 @@
-import React from 'react'
+'use client';
+import React, { useEffect, useState } from 'react';
 
-const DatabaseClientTableItem = () => {
-    return (
-
-        <div className='flex justify-evenly w-full  box-border h-16 py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-            <div className='w-1/6 flex items-center  px-6  text-neutral-400 text-base font-medium'>Rhea Pais</div>
-            <div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>Pink, Stephen Jr.</div>
-            <div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>3895472914</div>
-            <div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>abdd@gmail.com</div>
-            <div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>05/1/2023</div>
-
-        </div>
-
-    )
+interface Clients {
+    id: string;
+    clientName: string;
+    email: string;
+    contact: string;
+    address: string;
+    city: string;
+    pinCode: string;
 }
 
-export default DatabaseClientTableItem
+const DatabaseClientTableItem = () => {
+    const [clients, setClients] = useState<Clients[]>([]);
+
+    useEffect(() => {
+        fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/database/clients/getAll`)
+            .then(response => response.json())
+            .then(data => setClients(data))
+            .catch(error => console.error('Error fetching clients:', error));
+    }, []);
+
+    const formatDateAndTime = (dateTime: string) => {
+        const dateObject = new Date(dateTime);
+        const formattedDate = dateObject.toLocaleDateString();
+        const formattedTime = dateObject.toLocaleTimeString();
+        return { formattedDate, formattedTime };
+    };
+
+    return (
+        <>
+            {clients.map(client => (
+                <div key={client.id} className='flex justify-evenly w-full box-border h-16 py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
+                    <div className='w-1/6 flex items-center px-6 text-neutral-400 text-base font-medium'>{client.clientName}</div>
+                    <div className='w-1/6 flex items-center px-6 text-neutral-400 text-base font-medium'>{client.email}</div>
+                    <div className='w-1/6 flex items-center px-6 text-neutral-400 text-base font-medium'>{client.contact}</div>
+                    <div className='w-1/6 flex items-center px-6 text-neutral-400 text-base font-medium'>{client.address}</div>
+                    <div className='w-1/6 flex items-center px-6 text-neutral-400 text-base font-medium'>{client.city}</div>
+                </div>
+            ))}
+        </>
+    );
+};
+
+export default DatabaseClientTableItem;

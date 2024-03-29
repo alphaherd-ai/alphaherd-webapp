@@ -196,6 +196,19 @@ model Clients{
   @@map("client")
 }
 
+model Patients{
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  patientName String?
+  clientName  String?
+  species  String?
+  breed String?
+  dateOfBirth DateTime?
+  age Int?
+  gender String?
+  isInpatient Boolean?
+
+  @@map("patient")
+}
 
 
 
