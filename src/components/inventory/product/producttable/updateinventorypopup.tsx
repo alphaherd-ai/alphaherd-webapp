@@ -49,7 +49,11 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
         }));
         setInventory(updatedInventory);
     };
-
+    const handleDeleteRow = (index: number) => {
+        const updatedInventory = [...inventory];
+        updatedInventory.splice(index, 1); 
+        setInventory(updatedInventory);
+    };
     const handleQuantityDecClick = (index: number) => {
         const updatedInventory = [...inventory];
         updatedInventory[index].quantity = Math.max(updatedInventory[index].quantity - 1, 0);
@@ -261,7 +265,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                         {inventory.map((item, index) => (
                             <div key={index} className='flex justify-evenly items-center w-full  box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
                                 <div className='w-1/36 px-6 flex items-center text-neutral-400 text-base font-medium'>{index + 1}</div>
-                                <div className='w-2/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+                                <div className='w-1/5 px-6 flex items-center text-neutral-400 text-base font-medium'>
                                     <Select
                                         className="text-gray-500 text-base font-medium font-['Satoshi'] w-full border-0 boxShadow-0"
                                         classNamePrefix="select"
@@ -282,12 +286,12 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                                         <Image src={add1icon} alt="+" />
                                     </button>
                                 </div>
-                                <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+                                <div className='w-1/12 px-1 flex items-center text-neutral-400 text-base font-medium ml-10'>
             <input
                 type="text"
                 value={item.batchNumber}
                 onChange={(e) => handleBatchNoChange(index, e.target.value)}
-                className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
+                className="w-full border border-gray-300 focus:border-gray-500 outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
                 name={`batchNumber-${index}`}
             />
         </div>
@@ -304,31 +308,40 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
     )}
 </div>
 
-        <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+        <div className='w-1/12 px-1 flex items-center text-neutral-400 text-base font-medium'>
             <input
                 type="text"
                 value={item.hsnCode}
                 onChange={(e) => handleHsnCodeChange(index, e.target.value)}
-                className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
-                name={`hsnCode-${index}`}
+                className="w-full border border-gray-300 focus:border-gray-500 outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded "
+            name={`hsnCode-${index}`}
             />
         </div>
-        <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+        <div className='w-1/12 px-4 flex items-center text-neutral-400 text-base font-medium'>
             <input
                 type="text"
                 value={item.category}
                 onChange={(e) => handleCategoryChange(index, e.target.value)}
-                className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
-                name={`category-${index}`}
+                className="w-full border border-gray-300 focus:border-gray-500 outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
+            name={`category-${index}`}
             />
         </div>
-        <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+        <div className='w-1/12 px-1 flex items-center text-neutral-400 text-base font-medium '>
+        <input
+            type="text"
+            value={item.providers}
+            onChange={(e) => handleProvidersChange(index, e.target.value)}
+            className="w-full border border-gray-300 focus:border-gray-500 outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
+            name={`providers-${index}`}
+        />
+        </div>
+        <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹
             <input
-                type="text"
-                value={item.providers}
-                onChange={(e) => handleProvidersChange(index, e.target.value)}
+                type="number"
+                value={item.costPrice}
+                onChange={(e) => handleCostPriceChange(index, e.target.value)}
                 className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
-                name={`providers-${index}`}
+                name={`costPrice-${index}`}
             />
         </div>
         <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹
@@ -350,7 +363,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                 name={`sellingPrice-${index}`}
             />
         </div>
-        <button className=" border-0 flex-col justify-start items-end gap-2.5 flex">
+        <button onClick={() => handleDeleteRow(index)} className=" border-0 flex-col justify-start items-end gap-2.5 flex">
                                 <div className="h-6 px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
                                     <Image className="w-4 h-4 relative" src={deleteicon} alt="delete" />
                                 </div>
