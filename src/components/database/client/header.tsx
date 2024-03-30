@@ -12,7 +12,7 @@ import Add from '../../../assets/icons/inventory/add.svg';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-
+import Popup from './newclientpopoup';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 
@@ -22,10 +22,14 @@ import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/reac
 const DatabaseClientHeader = () => {
     const currentRoute = usePathname();
 
-    const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
     const [selectedSort, setselectedSort] = React.useState(new Set(["Category: text"]));
+    const [showPopup, setShowPopup] = React.useState(false);
 
-
+    const togglePopup = () => {
+        setShowPopup(!showPopup);
+    }
+    
+    const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
     const selectedCategoryValue = React.useMemo(
         () => Array.from(selectedCategory).join(", ").replaceAll("_", " "),
         [selectedCategory]
@@ -130,28 +134,12 @@ const DatabaseClientHeader = () => {
             <PopoverTrigger>
                 <Button color="gray-400"
                     variant="solid"
-                    className="capitalize flex border-none bg-black text-white rounded-lg ">  New Clients
+                    className="capitalize flex border-none bg-black text-white rounded-lg " onClick={togglePopup}>  New Clients
                     <div className='flex pl-2'><Image src={DownArrow} alt='DownArrow' className='w-4 h-4 ' /></div></Button>
             </PopoverTrigger>
             <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
       
-                <div className="flex flex-col ">
-                   
-                    <div className='flex flex-col'>
-                    
-                    <Link className='no-underline flex item-center' >
-                    <div className='text-base p-4 text-white flex '>
-                    <div className='flex pr-2'><Image src={Update} alt='Update' className='w-5 h-5 ' /></div>Update Inventory</div>
-                    </Link>
-                    <Link className='no-underline flex item-center' >
-                    <div className='text-base p-4  text-white flex '>
-                    <div className='flex pr-2'><Image src={Add} alt='Add' className='w-5 h-5 ' /></div>New Product</div>
-                    </Link>
-                 
-                  
-                    </div>
-                </div>
-              
+         
 
             </PopoverContent>
         </Popover>
@@ -163,8 +151,8 @@ const DatabaseClientHeader = () => {
 </div >
 
 
+{showPopup && <Popup onClose={togglePopup} />}
         </>
     )
 }
-
 export default  DatabaseClientHeader;
