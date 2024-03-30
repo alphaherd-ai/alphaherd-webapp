@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-
+import formatDateAndTime from '@/utils/formateDateTime';
 interface Clients {
     id: string;
     clientName: string;
@@ -21,12 +21,7 @@ const DatabaseClientTableItem = () => {
             .catch(error => console.error('Error fetching clients:', error));
     }, []);
 
-    const formatDateAndTime = (dateTime: string) => {
-        const dateObject = new Date(dateTime);
-        const formattedDate = dateObject.toLocaleDateString();
-        const formattedTime = dateObject.toLocaleTimeString();
-        return { formattedDate, formattedTime };
-    };
+    
 
     return (
         <>

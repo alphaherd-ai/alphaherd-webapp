@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Tooltip, Button } from "@nextui-org/react";
 import Link from 'next/link';
-
+import formatDateAndTime from '@/utils/formateDateTime';
 interface AllServices {
     id: string;
     name: string;
@@ -32,12 +32,7 @@ const ServicesTimelineItem = () => {
             .catch(error => console.error('Error fetching services:', error));
     }, []);
 
-    const formatDateAndTime = (dateTime: string) => {
-        const dateObject = new Date(dateTime);
-        const formattedDate = dateObject.toLocaleDateString(); 
-        const formattedTime = dateObject.toLocaleTimeString(); 
-        return { formattedDate, formattedTime };
-    };
+  
 
     return (
         <>

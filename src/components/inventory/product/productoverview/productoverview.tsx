@@ -13,7 +13,7 @@ import tuneicon from "../../../../assets/icons/inventory/bar_chart.svg"
 import downarrow from "../../../../assets/icons/inventory/Icons16.svg"
 import optionarrow from "../../../../assets/icons/inventory/more_vert.svg"
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
-
+import formatDateAndTime from "@/utils/formateDateTime";
 import Slider from '@mui/material/Slider';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
@@ -97,12 +97,7 @@ interface AllProducts {
           .catch(error => console.error('Error fetching inventory:', error));
       }
     }, [product, products]);
-    const formatDateAndTime = (dateTime: string) => {
-      const dateObject = new Date(dateTime);
-      const formattedDate = dateObject.toLocaleDateString();
-      const formattedTime = dateObject.toLocaleTimeString();
-      return { formattedDate, formattedTime };
-    };
+  
 
 
 
