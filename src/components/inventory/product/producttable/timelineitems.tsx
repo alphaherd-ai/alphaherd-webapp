@@ -24,7 +24,7 @@ interface AllProducts {
 const ProductAllItem = () => {
   const [products, setProducts] = useState<AllProducts[]>([]);
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/product/getAll`)
+    fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/product/getBySorting`)
     .then(response => response.json())
     .then(data => setProducts(data.reverse()))
     .catch(error => console.error('Error fetching data:', error));

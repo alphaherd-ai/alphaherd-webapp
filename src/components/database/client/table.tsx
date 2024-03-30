@@ -16,8 +16,6 @@ const DatabaseClientTable = () => {
             
             </div>
 <DatabaseClientTableItem/>
-<DatabaseClientTableItem/>
-<DatabaseClientTableItem/>
 <DatabaseClientBottombar/>
      
         </div>

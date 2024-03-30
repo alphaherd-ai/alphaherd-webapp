@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Tooltip, Button } from "@nextui-org/react";
 import Inventory from '@/app/inventory/services/page';
 import { reverse } from 'dns';
-
+import formatDateAndTime from '@/utils/formateDateTime';
 
 
 interface AllProducts {
@@ -44,14 +44,7 @@ const ProductAllItem = () => {
       .then(data => setProducts(data.filter((inventory: { allProductsId: any; }) => inventory.allProductsId).reverse()))
       .catch(error => console.error('Error fetching products:', error));
   }, []);
-  
-  const formatDateAndTime = (dateTime: string) => {
-    const dateObject = new Date(dateTime);
-    const formattedDate = dateObject.toLocaleDateString();
-    const formattedTime = dateObject.toLocaleTimeString();
-    return { formattedDate, formattedTime };
-  };
-
+ 
   return (
     <>
       {products.map(inventory => (

@@ -182,7 +182,37 @@ model Items {
 }
 
 //------------------------------------------------------FINANCE SUB MODELS END--------------------------------------------------
+//-------------------------------------------------------DATABASE SUB MODELS START --------------------------------------------//
 
+model Clients{
+  id String   @id @default(auto()) @map("_id") @db.ObjectId
+  clientName String?
+  email   String?
+  contact String?
+  address String?
+  city String?
+  pinCode String?
+
+  @@map("client")
+}
+
+model Patients{
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  patientName String?
+  clientName  String?
+  species  String?
+  breed String?
+  dateOfBirth DateTime?
+  age Int?
+  gender String?
+  isInpatient Boolean?
+
+  @@map("patient")
+}
+
+
+
+//-------------------------------------------------------DATABASE SUB MODELS END-------------------------------------------------------//
 // Main Models to be created below:
 
 model Organisation {

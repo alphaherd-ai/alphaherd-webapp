@@ -11,6 +11,7 @@ import RadioButton from './RadioButton';
 import subicon from "../../../../assets/icons/inventory/1. Icons-24 (6) (2).svg";
 import checkicon from "../../../../assets/icons/inventory/check (1).svg";
 import Select from 'react-select';
+import formatDateAndTime from "@/utils/formateDateTime";
 
 type PopupProps = {
     onClose: () => void;
@@ -31,12 +32,7 @@ interface AllProducts {
     providers:string[];
 }
 
-const formatDateAndTime = (dateTime: string) => {
-    const dateObject = new Date(dateTime);
-    const formattedDate = dateObject.toLocaleDateString(); 
-    const formattedTime = dateObject.toLocaleTimeString(); 
-    return { formattedDate, formattedTime };
-};
+
 
 const Popup2: React.FC<PopupProps> = ({ onClose }) => {
     const [selectedOption, setSelectedOption] = useState<string>('Stock In');
@@ -44,12 +40,12 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
     const [isChecked, setChecked] = useState(false);
     const [products, setProducts] = useState<{ value: string; label: string }[]>([]);
     const [inventory, setInventory] = useState<any[]>([]);
-
     const handleRadioChange = (value: string) => {
         setSelectedOption(value);
         const updatedInventory = inventory.map((item) => ({
             ...item,
             quantity: value === 'Stock In' ? 0 : item.quantity,
+            expiry: value==='Stock In'?"":item.expiry
         }));
         setInventory(updatedInventory);
     };
@@ -62,7 +58,9 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
 
     const handleQuantityIncClick = (index: number) => {
         const updatedInventory = [...inventory];
-        updatedInventory[index].quantity += 1;
+        if(updatedInventory[index].quantity<updatedInventory[index].maxQuantity){
+                updatedInventory[index].quantity += 1;
+            }  
         setInventory(updatedInventory);
     };
     
@@ -123,7 +121,6 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
             fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/product/${selectedProduct.value}`)
                 .then((response) => response.json())
                 .then((data) => {
-                    const expiry = data.expiry;
                     const updatedInventory = [...inventory];
                     updatedInventory[index] = {
                         ...updatedInventory[index],
@@ -131,8 +128,9 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                         date: data.date,
                         time: data.time,
                         quantity: selectedOption === 'Stock In' ? 0 : data.quantity,
+                        maxQuantity:data.quantity,
                         batchNumber:selectedOption === 'Stock In' ? "" : data.batchNumber,
-                        expiry: selectedOption === 'Stock In' ? "" :expiry,
+                        expiry: selectedOption === 'Stock In' ? "" :data.expiry,
                         costPrice: selectedOption === 'Stock In' ? "" :data.costPrice,
                         sellingPrice: selectedOption === 'Stock In' ? "" :data.sellingPrice,
                         itemName: data.itemName,
@@ -141,6 +139,11 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                         providers: data.providers,
                     };
                     setInventory(updatedInventory);
+                    if(selectedOption==='Stock Out'){
+                        const updatedProducts = products.filter((product) => product.value !== selectedProduct.value);
+                        setProducts(updatedProducts);
+                    }
+                    
                 })
                 .catch((error) =>
                     console.error("Error fetching product details from API:", error)
@@ -191,19 +194,21 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
     };
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/product/getAll`)
+        fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/product/getBySorting`)
             .then((response) => response.json())
             .then((data) => {
-                const formattedProducts = data.map((product: AllProducts) => ({
+              const formattedProducts =data.map((product:AllProducts) => ({
                     value: product.id,
                     label: product.itemName,
                 }));
+                console.log(formattedProducts)
                 setProducts(formattedProducts);
             })
             .catch((error) =>
                 console.error("Error fetching data from API:", error)
             );
     }, []);
+    
 
     return (
         <>
@@ -287,14 +292,18 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
             />
         </div>
         <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
-            <input
-                type="datetime-local"
-                value={item.expiry}
-                onChange={(e) => handleExpiryChange(index, e.target.value)}
-                className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
-                name={`expiry-${index}`}
-            />
-        </div>
+    <input
+        type="datetime-local"
+        value={item.expiry}
+        onChange={(e) => handleExpiryChange(index, e.target.value)}
+        className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
+        name={`expiry-${index}`}
+    />
+    {item.expiry && selectedOption !== 'Stock In' && (
+        <div>{formatDateAndTime(item.expiry).formattedDate}</div>
+    )}
+</div>
+
         <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
             <input
                 type="text"
