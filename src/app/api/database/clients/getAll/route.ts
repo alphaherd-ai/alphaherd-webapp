@@ -8,7 +8,11 @@ export  const GET=async (req: Request)=> {
 }
     try {
         await connectToDB();
-        const clients = await prisma.clients.findMany();
+        const clients = await prisma.clients.findMany({
+          include:{
+            patients:true
+          }
+        });
         return new Response(JSON.stringify(clients), {
           status: 201,
           headers: {

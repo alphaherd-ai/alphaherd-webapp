@@ -12,7 +12,7 @@ import Add from '../../../assets/icons/inventory/add.svg';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import Popup from './newclientpopoup';
+import ClientPopup from './newclientpopoup';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 
@@ -151,7 +151,7 @@ const DatabaseClientHeader = () => {
 </div >
 
 
-{showPopup && <Popup onClose={togglePopup} />}
+{showPopup && <ClientPopup onClose={togglePopup} />}
         </>
     )
 }

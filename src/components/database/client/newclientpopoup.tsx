@@ -6,36 +6,34 @@ import Link from 'next/link';
 import closeicon from "../../../assets/icons/inventory/closeIcon.svg";
 import arrowicon from "../../../assets/icons/inventory/arrow.svg";
 import Select from 'react-select';
-
+import PatientPopup from '../patient/newpatientpopup'
+import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 type PopupProps = {
     onClose: () => void;
 }
 
-
-const Popup: React.FC<PopupProps> = ({ onClose }) => {
+const ClientPopup: React.FC<PopupProps> = ({ onClose }) => {
     const [formData, setFormData] = useState<any>({});
-
+    const [showPopup, setShowPopup] = React.useState(false);
+    const togglePopup = () => {
+        setShowPopup(!showPopup);
+    }
     
-
-
     const handleSaveClick = async () => {
-        try {
-            const selectedProviders = formData.providers.map((provider:any) => provider.value);
-    
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/product/create`, {
+        try {   
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/database/clients/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    itemName: formData.name,
-                    providers: selectedProviders,
-                    hsnCode: formData.hsnCode,
-                    tax: formData.tax ? formData.tax[0].value : undefined,
-                    category: formData.category ? formData.category[0].value : undefined,
-                    description: formData.description,
-                    minStock: parseInt(formData.minStock),
-                    maxStock: parseInt(formData.maxStock)
+                    clientName: formData.name,
+                    email: formData.email,
+                    contact: formData.contact,
+                    address: formData.address,
+                    city: formData.city?formData.city[0].value:undefined,
+                    pinCode: formData.pinCode,
+                   
                 }),
             });
             if (response.ok) {
@@ -82,7 +80,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                 <div className="flex items-center gap-[88px]">
                     <div className="text-gray-500 text-base font-medium font-['Satoshi']">Email</div>
                     <div>
-                        <input className="w-[440px] h-8" type="text" name="hsnCode" onChange={(e) => handleChange("hsnCode", e.target.value)} />
+                        <input className="w-[440px] h-8" type="text" name="email" onChange={(e) => handleChange("email", e.target.value)} />
                     </div>
                 </div>
                 <div className="flex items-center gap-[70px] w-full">
@@ -96,12 +94,12 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                             isSearchable={true}
                             options={gstOptions}
                             isMulti={true}
-                            name="providers"
-                            onChange={(value) => handleChange("providers", value)}
+                            name="contact-initials"
+                            onChange={(value) => handleChange("contact-initials", value)}
                         />
                     </div>
                     <div className="flex-1 ml-1">
-                        <input className="h-9 w-full" type="text" name="hsnCode" onChange={(e) => handleChange("hsnCode", e.target.value)} />
+                        <input className="h-9 w-full" type="text" name="contact" onChange={(e) => handleChange("contact", e.target.value)} />
                     </div>
                     <div className=" ml-1  w-9 h-9 ">
                     <button  className="w-full h-full rounded-[5px] justify-center text-2xl items-center gap-2 flex">
@@ -115,7 +113,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                     <div className="flex w-10/12">
                   
                     <div className="flex-1 ml-1">
-                        <input className="h-9 w-full" type="text" name="hsnCode" onChange={(e) => handleChange("hsnCode", e.target.value)} />
+                        <input className="h-9 w-full" type="text" name="address" onChange={(e) => handleChange("address", e.target.value)} />
                     </div>
                     <div className=" ml-1  w-9 h-9 ">
                     <button  className="w-full h-full rounded-[5px] justify-center text-2xl items-center gap-2 flex">
@@ -138,8 +136,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                             isSearchable={true}
                             options={gstOptions}
                             isMulti={true}
-                            name="providers"
-                            onChange={(value) => handleChange("providers", value)}
+                            name="city"
+                            onChange={(value) => handleChange("city", value)}
                         />
          
               
@@ -152,26 +150,37 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                     <div className="flex w-9/12 h-11">
            
                    
-                        <input className="h-9 w-full" type="text" name="hsnCode" onChange={(e) => handleChange("hsnCode", e.target.value)} />
+                        <input className="h-9 w-full" type="text" name="pinCode" onChange={(e) => handleChange("pinCode", e.target.value)} />
             
                    
                     </div>
                 </div>
                 </div>
-             
+            
                 <div className="self-end items-start gap-6 flex">
-                    <button className="px-4 py-2.5 bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex">
-                        <div className="text-neutral-400 text-base font-bold font-['Satoshi']">Continue</div>
-                        <Image src={arrowicon} alt="arrow"></Image>
+                <Popover placement="bottom-end" showArrow offset={10}>
+            <PopoverTrigger>
+                    <button className="px-4 py-2.5 bg-greenButton border-none rounded-[5px] justify-start items-center gap-2 flex"onClick={togglePopup}>
+                        <div className="text-white text-base font-bold font-['Satoshi']">Add Patient</div>
                     </button>
+                    </PopoverTrigger>
+            <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
+      
+         
+
+            </PopoverContent>
+        </Popover>
+                    <button className="px-4 py-2 bg-black rounded-[5px] justify-start items-center gap-2 flex" onClick={handleSaveClick}>
+                        <div className="text-white border-none text-base font-bold font-['Satoshi']">Save</div>
+                    </button>   
                 </div>
             </div>
         </div>
       
-     
+        {showPopup && <PatientPopup onClose={togglePopup} client_name={formData.name} />}
     </>;
 }
 
-export default Popup;
+export default ClientPopup;
 
 

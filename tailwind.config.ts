@@ -21,7 +21,8 @@ const config: Config = {
         verticalBar: '#393939',
         navBar: '#17181A',
         iconChangeColor: '#38F8E6',
-        background: '#EDEDED'
+        background: '#EDEDED',
+        greenButton:'#35BEB1'
       },
       boxShadow: {
         'navBar': '0px 4px 6px 0px rgba(0, 0, 0, 0.20)',

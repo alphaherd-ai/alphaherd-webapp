@@ -11,6 +11,9 @@ export const GET=async (req: Request,
             await connectToDB();
            const client= await prisma.clients.findUnique({
                 where: { id: params.id },
+                include:{
+                    patients:true
+                }
             });
                         
             return new Response(JSON.stringify(client), {
