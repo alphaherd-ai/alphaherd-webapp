@@ -185,34 +185,47 @@ model Items {
 
 // Main Models to be created below:
 
-model Organisation {
-  id           String  @id @default(auto()) @map("_id") @db.ObjectId
-  userId       String  @db.ObjectId
-  name         String?
-  gstinNo      String?
-  contact      String?
-  companyEmail String?
-  address      String?
-  state        String?
-  pincode      String?
-  description  String?
-  logoImg      String?
-  members      User?   @relation(fields: [userId], references: [id])
+// model Organisation {
+//   id           String  @id @default(auto()) @map("_id") @db.ObjectId
+//   userId       String  @db.ObjectId
+//   name         String?
+//   gstinNo      String?
+//   contact      String?
+//   companyEmail String?
+//   address      String?
+//   state        String?
+//   pincode      String?
+//   description  String?
+//   logoImg      String?
+//   members      User?   @relation(fields: [userId], references: [id])
 
-  @@map("organisation")
+//   @@map("organisation")
+// }
+
+model Organization{
+  id                 String      @id @default(auto()) @map("_id") @db.ObjectId
+  orgName            String      @unique
+  orgEmail          String
+  gstNo             String
+  address            String
+  state              String
+  pincode            String
+  description        String
+  phoneNo           String
+  adminUsers User[] @relation(fields: [adminUserIds], references: [id])
+  adminUserIds String[] @db.ObjectId @default([])
 }
+
 
 model User {
   id             String         @id @default(auto()) @map("_id") @db.ObjectId
   name           String
   email          String        @unique
-  profileImg     String?
-  contact        String
-  altContact     String?
+  phoneNo       String
+  altPhoneNo     String?
   hashedPassword String
-  role           Role
-  isSignedin     Boolean?
-  organisation   Organisation[]
+  organizations  Organization[] @relation(fields: [organizationIds], references: [id])
+  organizationIds   String[] @db.ObjectId @default([])
 
   @@map("user")
 }

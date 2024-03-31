@@ -18,10 +18,19 @@ export const POST = async (req: Request) => {
       expiry: new Date(restOfBody.expiry),
     };
 
+
     if (productId) {
+
       createData.product = { connect: { id: productId } };
       const allProducts = await prisma.allProducts.create({
         data: createData,
+      });
+
+      console.log({
+        allProductsId:allProducts.id,
+        stockChange:stockStatus,
+        invoiceType:invoiceType,
+        quantityChange:createData.quantity
       });
       
       const inventory= await prisma.inventory.create({

@@ -3,49 +3,45 @@ import prisma from '../../../../../prisma/index';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import type { User } from "@prisma/client";
+import { login } from '../../../../../auth';
 
 export const POST = async (req: Request) => {
-  if (req.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405 });
-  }
 
-  try {
-    await connectToDB();
-    const { email, password, staySignedIn } = await req.json();
+  return await login(req);
 
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
+  // if (req.method !== 'POST') {
+  //   return new Response('Method not allowed', { status: 405 });
+  // }
 
-    if (!user) {
-      return new Response(JSON.stringify({ error: 'User not found' }), { status: 404 });
-    }
+  // try {
+  //   await connectToDB();
+  //   const { email, password } = await req.json();
 
-    const validPassword = await bcrypt.compare(password, user.hashedPassword);
+  //   const user = await prisma.user.findUnique({
+  //     where: { email },
+  //   });
 
-    if (!validPassword) {
-      return new Response(JSON.stringify({ error: 'Invalid password' }), { status: 401 });
-    }
+  //   if (!user) {
+  //     return new Response(JSON.stringify({ "message": 'User not found' }), { status: 404 });
+  //   }
 
-    let expiresIn = '1h'; 
+  //   const validPassword = await bcrypt.compare(password, user.hashedPassword);
 
-    if (staySignedIn) {
-      expiresIn = '7d'; 
-    }
+  //   if (!validPassword) {
+  //     return new Response(JSON.stringify({ "message": 'Invalid password' }), { status: 401 });
+  //   }
 
-    const token = jwt.sign({ id: user.id }, "process.env.SECRET_KEY", { expiresIn });
+  //   return new Response(JSON.stringify({ user }), {
+  //     status: 200,
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //   });
 
-    return new Response(JSON.stringify({ token }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-  } catch (error) {
-    console.error('Error:', error);
-    return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });
-  } finally {
-    await prisma.$disconnect();
-  }
+  // } catch (error) {
+  //   console.error('Error:', error);
+  //   return new Response(JSON.stringify({ "message": 'Internal server error' }), { status: 500 });
+  // } finally {
+  //   await prisma.$disconnect();
+  // }
 };

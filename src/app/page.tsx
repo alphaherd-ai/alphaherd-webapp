@@ -1,9 +1,19 @@
-import Navbar from '@/components/navbar/navbar'
+"use client"
+import { redirect } from 'next/navigation';
+import {getServerSession} from 'next-auth'
+import { useAppDispatch, useAppSelector, useAppStore } from '@/lib/hooks';
+import { useRef } from 'react';
 
-export default function Home() {
+export default async function Home() {
+
+  const store = useAppStore();
+  const user= useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
+
+  console.log("user", user)
+
   return (
     <>
-    <Navbar/>
     <p className='m-0'>Home</p>
     </>
   )
