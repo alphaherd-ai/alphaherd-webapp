@@ -23,7 +23,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
         try {
             const selectedProviders = formData.providers.map((provider:any) => provider.value);
     
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/product/create`, {
+            const response = await fetch(`${process.env.NEXT_API_BASE_PATH}/api/inventory/product/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

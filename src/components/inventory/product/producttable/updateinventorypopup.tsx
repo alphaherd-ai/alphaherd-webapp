@@ -122,7 +122,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
     const handleProductSelect = (selectedProduct: any, index: number) => {
         console.log('Selected product:', selectedProduct);
         if (selectedProduct.value) {
-            fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/product/${selectedProduct.value}`)
+            fetch(`${process.env.NEXT_API_BASE_PATH}/api/inventory/product/${selectedProduct.value}`)
                 .then((response) => response.json())
                 .then((data) => {
                     const updatedInventory = [...inventory];
@@ -187,7 +187,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                     category,
                     providers,
                 };
-                const response = await axios.put(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/product/${id}`, body);
+                const response = await axios.put(`${process.env.NEXT_API_BASE_PATH}/api/inventory/product/${id}`, body);
                 console.log('Updated inventory item:', response.data);
             }
             alert('Inventory updated successfully');
@@ -198,7 +198,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
     };
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/product/getBySorting`)
+        fetch(`${process.env.NEXT_API_BASE_PATH}/api/inventory/product/getBySorting`)
             .then((response) => response.json())
             .then((data) => {
               const formattedProducts =data.map((product:AllProducts) => ({

@@ -48,7 +48,7 @@ const OrgSetup = () => {
     console.log("form button")
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/auth/orgRegister`,
+      const res = await fetch(`${process.env.NEXT_API_BASE_PATH}/api/auth/orgRegister`,
         {
           method: 'POST',
           headers: {

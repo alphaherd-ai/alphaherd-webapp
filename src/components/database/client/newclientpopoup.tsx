@@ -21,7 +21,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }) => {
     
     const handleSaveClick = async () => {
         try {   
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/database/clients/create`, {
+            const response = await fetch(`${process.env.NEXT_API_BASE_PATH}/api/database/clients/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
