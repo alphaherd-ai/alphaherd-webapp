@@ -23,7 +23,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, client_name }) => {
 
     const handleSaveClick = async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_API_BASE_PATH}/api/database/patients/create`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/patients/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -66,7 +66,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, client_name }) => {
     };
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_API_BASE_PATH}/api/database/clients/getAll`)
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll`)
             .then((response) => response.json())
             .then((data) => {
                 const formattedClients = data.map((client: Clients) => ({

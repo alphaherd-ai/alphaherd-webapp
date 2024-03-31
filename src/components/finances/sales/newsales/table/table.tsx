@@ -73,7 +73,7 @@ const NewsalesTable = () => {
     const handleProductSelect = (selectedProduct: any, index: number) => {
         console.log('Selected product:', selectedProduct);
         if (selectedProduct.value) {
-            fetch(`${process.env.NEXT_API_BASE_PATH}/api/inventory/product/${selectedProduct.value}`)
+            fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${selectedProduct.value}`)
                 .then((response) => response.json())
                 .then((data) => {
                     const expiry = data.expiry;
@@ -119,7 +119,7 @@ const NewsalesTable = () => {
                     category,
                     providers,
                 };
-                const response = await axios.put(`${process.env.NEXT_API_BASE_PATH}/api/inventory/product/${id}`, body);
+                const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${id}`, body);
                 console.log('Updated inventory item:', response.data);
             }
             alert('Inventory updated successfully');
@@ -130,7 +130,7 @@ const NewsalesTable = () => {
     };
 
     useEffect(() => {
-        fetch("${process.env.NEXT_API_BASE_PATH}/api/inventory/product/getAll")
+        fetch("${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll")
             .then((response) => response.json())
             .then((data) => {
                 const formattedProducts = data.map((product: AllProducts) => ({
