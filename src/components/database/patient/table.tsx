@@ -16,8 +16,6 @@ const DatabasePatientTable = () => {
             
             </div>
 <DatabasePatientTableItem/>
-<DatabasePatientTableItem/>
-<DatabasePatientTableItem/>
 <DatabasePatientBottombar/>
      
         </div>

@@ -11,6 +11,7 @@ import RadioButton from './RadioButton';
 import subicon from "../../../../assets/icons/inventory/1. Icons-24 (6) (2).svg";
 import checkicon from "../../../../assets/icons/inventory/check (1).svg";
 import Select from 'react-select';
+import formatDateAndTime from "@/utils/formateDateTime";
 
 type PopupProps = {
     onClose: () => void;
@@ -31,12 +32,7 @@ interface AllProducts {
     providers:string[];
 }
 
-const formatDateAndTime = (dateTime: string) => {
-    const dateObject = new Date(dateTime);
-    const formattedDate = dateObject.toLocaleDateString(); 
-    const formattedTime = dateObject.toLocaleTimeString(); 
-    return { formattedDate, formattedTime };
-};
+
 
 const Popup2: React.FC<PopupProps> = ({ onClose }) => {
     const [selectedOption, setSelectedOption] = useState<string>('Stock In');
@@ -44,16 +40,20 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
     const [isChecked, setChecked] = useState(false);
     const [products, setProducts] = useState<{ value: string; label: string }[]>([]);
     const [inventory, setInventory] = useState<any[]>([]);
-
     const handleRadioChange = (value: string) => {
         setSelectedOption(value);
         const updatedInventory = inventory.map((item) => ({
             ...item,
             quantity: value === 'Stock In' ? 0 : item.quantity,
+            expiry: value==='Stock In'?"":item.expiry
         }));
         setInventory(updatedInventory);
     };
-
+    const handleDeleteRow = (index: number) => {
+        const updatedInventory = [...inventory];
+        updatedInventory.splice(index, 1); 
+        setInventory(updatedInventory);
+    };
     const handleQuantityDecClick = (index: number) => {
         const updatedInventory = [...inventory];
         updatedInventory[index].quantity = Math.max(updatedInventory[index].quantity - 1, 0);
@@ -62,7 +62,9 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
 
     const handleQuantityIncClick = (index: number) => {
         const updatedInventory = [...inventory];
-        updatedInventory[index].quantity += 1;
+        if(updatedInventory[index].quantity<updatedInventory[index].maxQuantity){
+                updatedInventory[index].quantity += 1;
+            }  
         setInventory(updatedInventory);
     };
     
@@ -123,7 +125,6 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
             fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/product/${selectedProduct.value}`)
                 .then((response) => response.json())
                 .then((data) => {
-                    const expiry = data.expiry;
                     const updatedInventory = [...inventory];
                     updatedInventory[index] = {
                         ...updatedInventory[index],
@@ -131,8 +132,9 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                         date: data.date,
                         time: data.time,
                         quantity: selectedOption === 'Stock In' ? 0 : data.quantity,
+                        maxQuantity:data.quantity,
                         batchNumber:selectedOption === 'Stock In' ? "" : data.batchNumber,
-                        expiry: selectedOption === 'Stock In' ? "" :expiry,
+                        expiry: selectedOption === 'Stock In' ? "" :data.expiry,
                         costPrice: selectedOption === 'Stock In' ? "" :data.costPrice,
                         sellingPrice: selectedOption === 'Stock In' ? "" :data.sellingPrice,
                         itemName: data.itemName,
@@ -141,6 +143,11 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                         providers: data.providers,
                     };
                     setInventory(updatedInventory);
+                    if(selectedOption==='Stock Out'){
+                        const updatedProducts = products.filter((product) => product.value !== selectedProduct.value);
+                        setProducts(updatedProducts);
+                    }
+                    
                 })
                 .catch((error) =>
                     console.error("Error fetching product details from API:", error)
@@ -191,19 +198,21 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
     };
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/product/getAll`)
+        fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/product/getBySorting`)
             .then((response) => response.json())
             .then((data) => {
-                const formattedProducts = data.map((product: AllProducts) => ({
+              const formattedProducts =data.map((product:AllProducts) => ({
                     value: product.id,
                     label: product.itemName,
                 }));
+                console.log(formattedProducts)
                 setProducts(formattedProducts);
             })
             .catch((error) =>
                 console.error("Error fetching data from API:", error)
             );
     }, []);
+    
 
     return (
         <>
@@ -256,7 +265,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                         {inventory.map((item, index) => (
                             <div key={index} className='flex justify-evenly items-center w-full  box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
                                 <div className='w-1/36 px-6 flex items-center text-neutral-400 text-base font-medium'>{index + 1}</div>
-                                <div className='w-2/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+                                <div className='w-1/5 px-6 flex items-center text-neutral-400 text-base font-medium'>
                                     <Select
                                         className="text-gray-500 text-base font-medium font-['Satoshi'] w-full border-0 boxShadow-0"
                                         classNamePrefix="select"
@@ -277,49 +286,62 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                                         <Image src={add1icon} alt="+" />
                                     </button>
                                 </div>
-                                <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+                                <div className='w-1/12 px-1 flex items-center text-neutral-400 text-base font-medium ml-10'>
             <input
                 type="text"
                 value={item.batchNumber}
                 onChange={(e) => handleBatchNoChange(index, e.target.value)}
-                className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
+                className="w-full border border-gray-300 focus:border-gray-500 outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
                 name={`batchNumber-${index}`}
             />
         </div>
         <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
-            <input
-                type="datetime-local"
-                value={item.expiry}
-                onChange={(e) => handleExpiryChange(index, e.target.value)}
-                className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
-                name={`expiry-${index}`}
-            />
-        </div>
-        <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+    <input
+        type="datetime-local"
+        value={item.expiry}
+        onChange={(e) => handleExpiryChange(index, e.target.value)}
+        className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
+        name={`expiry-${index}`}
+    />
+    {item.expiry && selectedOption !== 'Stock In' && (
+        <div>{formatDateAndTime(item.expiry).formattedDate}</div>
+    )}
+</div>
+
+        <div className='w-1/12 px-1 flex items-center text-neutral-400 text-base font-medium'>
             <input
                 type="text"
                 value={item.hsnCode}
                 onChange={(e) => handleHsnCodeChange(index, e.target.value)}
-                className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
-                name={`hsnCode-${index}`}
+                className="w-full border border-gray-300 focus:border-gray-500 outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded "
+            name={`hsnCode-${index}`}
             />
         </div>
-        <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+        <div className='w-1/12 px-4 flex items-center text-neutral-400 text-base font-medium'>
             <input
                 type="text"
                 value={item.category}
                 onChange={(e) => handleCategoryChange(index, e.target.value)}
-                className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
-                name={`category-${index}`}
+                className="w-full border border-gray-300 focus:border-gray-500 outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
+            name={`category-${index}`}
             />
         </div>
-        <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+        <div className='w-1/12 px-1 flex items-center text-neutral-400 text-base font-medium '>
+        <input
+            type="text"
+            value={item.providers}
+            onChange={(e) => handleProvidersChange(index, e.target.value)}
+            className="w-full border border-gray-300 focus:border-gray-500 outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
+            name={`providers-${index}`}
+        />
+        </div>
+        <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹
             <input
-                type="text"
-                value={item.providers}
-                onChange={(e) => handleProvidersChange(index, e.target.value)}
+                type="number"
+                value={item.costPrice}
+                onChange={(e) => handleCostPriceChange(index, e.target.value)}
                 className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
-                name={`providers-${index}`}
+                name={`costPrice-${index}`}
             />
         </div>
         <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹
@@ -341,7 +363,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                 name={`sellingPrice-${index}`}
             />
         </div>
-        <button className=" border-0 flex-col justify-start items-end gap-2.5 flex">
+        <button onClick={() => handleDeleteRow(index)} className=" border-0 flex-col justify-start items-end gap-2.5 flex">
                                 <div className="h-6 px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
                                     <Image className="w-4 h-4 relative" src={deleteicon} alt="delete" />
                                 </div>
