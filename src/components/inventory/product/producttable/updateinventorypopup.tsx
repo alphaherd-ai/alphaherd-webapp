@@ -173,7 +173,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                     category,
                     providers,
                 };
-                const response = await axios.put(`${process.env.NEXT_API_BASE_PATH}/api/inventory/product/${id}`, body);
+                const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${id}`, body);
                 console.log('Updated inventory item:', response.data);
             }
             alert('Inventory updated successfully');

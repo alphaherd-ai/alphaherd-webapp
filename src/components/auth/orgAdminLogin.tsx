@@ -49,7 +49,7 @@ const OrgAdminLogin = () => {
     
         try {
 
-          const res = await fetch(`${process.env.NEXT_API_BASE_PATH}/api/auth/login`,
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/login`,
             {
               method: 'POST',
               headers: {

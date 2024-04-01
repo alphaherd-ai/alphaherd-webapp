@@ -23,7 +23,7 @@ const DatabaseClientTableItem = () => {
     const [clients, setClients] = useState<Clients[]>([]);
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_API_BASE_PATH}/api/database/clients/getAll`)
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll`)
             .then(response => response.json())
             .then(data => setClients(data))
             .catch(error => console.error('Error fetching clients:', error));
