@@ -1,6 +1,4 @@
 import React from 'react'
-
-import Navbar from '@/components/navbar/navbar';
 import FinancesNavbar from '@/components/finances/navbar/navbar';
 import FinancesSalesTable from '@/components/finances/sales/table/table';
 
@@ -8,7 +6,6 @@ import FinancesSalesTable from '@/components/finances/sales/table/table';
 const SalesOrder = () => {
   return (
     <>
-      <Navbar/>
     <div className='w-full bg-gray-200 p-8 px-10'>
     <FinancesNavbar/>
 <FinancesSalesTable/>

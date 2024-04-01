@@ -64,14 +64,14 @@ interface AllProducts {
     const id = url.get('id');
   
     useEffect(() => {
-      fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/product/${id}`)
+      fetch(`${process.env.NEXT_API_BASE_PATH}/api/inventory/product/${id}`)
         .then(response => response.json())
         .then(data => setProduct(data))
         .catch(error => console.error('Error fetching product:', error));
     }, [id]);
   
     useEffect(() => {
-      fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/product/getAll`)
+      fetch(`${process.env.NEXT_API_BASE_PATH}/api/inventory/product/getAll`)
         .then(response => response.json())
         .then(data => {
           const filteredProducts = data.filter((item: AllProducts) => item.itemName === product?.itemName)
@@ -84,7 +84,7 @@ interface AllProducts {
   
     useEffect(() => {
       if (product && products.length > 0) {
-        fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/getAll`)
+        fetch(`${process.env.NEXT_API_BASE_PATH}/api/inventory/getAll`)
           .then(response => response.json())
           .then(data => {
             const filteredInventory = data.filter((item: Inventory) =>

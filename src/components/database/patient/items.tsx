@@ -22,12 +22,12 @@ const DatabasePatientTableItem = () => {
     const [clients, setClients] = useState<{ [key: string]: string }>({});
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/database/patients/getAll`)
+        fetch(`${process.env.NEXT_API_BASE_PATH}/api/database/patients/getAll`)
             .then(response => response.json())
             .then(data => setPatients(data))
             .catch(error => console.error('Error fetching patients from API:', error));
 
-        fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/database/clients/getAll`)
+        fetch(`${process.env.NEXT_API_BASE_PATH}/api/database/clients/getAll`)
             .then(response => response.json())
             .then(data => {
                 const clientNames = data.reduce((acc: { [key: string]: string }, client: Clients) => {
