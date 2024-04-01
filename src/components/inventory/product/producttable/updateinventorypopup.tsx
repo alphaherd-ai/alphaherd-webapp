@@ -45,7 +45,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
 
     const fetchProducts = async () => {
         try {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/product/getBySorting`);
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getBySorting`);
             const formattedProducts = response.data.map((product: AllProducts) => ({
                 value: product.id,
                 label: product.itemName,
@@ -111,7 +111,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
     const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
         if (selectedProduct.value) {
             try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_PATH}/api/inventory/product/${selectedProduct.value}`);
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${selectedProduct.value}`);
                 const data = response.data;
                 const updatedInventory = [...inventory];
                 updatedInventory[index] = {
