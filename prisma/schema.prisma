@@ -59,7 +59,7 @@ model Organization {
   phoneNo      String
   adminUsers   User[]      @relation(fields: [adminUserIds], references: [id])
   adminUserIds String[]    @default([]) @db.ObjectId
-  OrgBranch    OrgBranch[]
+  orgBranches  OrgBranch[] // doesn't exist in db 1-n
 }
 
 model OrgBranch {
@@ -67,16 +67,16 @@ model OrgBranch {
   branchName        String
   org               Organization        @relation(fields: [orgId], references: [id])
   orgId             String              @db.ObjectId
-  OrgBranchUserRole OrgBranchUserRole[]
+  orgBranchUserRoles OrgBranchUserRole[] // doesn't exist in db 1-n
 }
 
 model OrgBranchUserRole {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
   orgBranch   OrgBranch @relation(fields: [orgBranchId], references: [id])
   orgBranchId String    @db.ObjectId
-  User        User      @relation(fields: [userId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
   userId      String    @db.ObjectId
-  Role        Role
+  role        Role
 }
 
 model User {
@@ -88,8 +88,7 @@ model User {
   hashedPassword       String
   adminOrganizations   Organization[]      @relation(fields: [adminOrganizationIds], references: [id])
   adminOrganizationIds String[]            @default([]) @db.ObjectId // admin of which organizations
-  OrgBranchUserRole    OrgBranchUserRole[]
-
+  OrgBranchUserRole    OrgBranchUserRole[] // doesn't exist in db 1-n
   @@map("user")
 }
 
