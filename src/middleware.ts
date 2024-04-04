@@ -29,7 +29,6 @@ export async function middleware(request: NextRequest) {
     // return await updateSession(request);
     // return NextResponse.redirect(new URL('/alphaherd/finance/overview', request.url))
   }
-
   // return await updateSession(request);
 }
 
