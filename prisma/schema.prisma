@@ -59,13 +59,13 @@ model Organization {
   phoneNo      String
   adminUsers   User[]      @relation(fields: [adminUserIds], references: [id])
   adminUserIds String[]    @default([]) @db.ObjectId
-  orgBranches  OrgBranch[] // doesn't exist in db 1-n
+  orgBranches  OrgBranch[] @relation("orgBranch") // doesn't exist in db 1-n
 }
 
 model OrgBranch {
   id                String              @id @default(auto()) @map("_id") @db.ObjectId
   branchName        String
-  org               Organization        @relation(fields: [orgId], references: [id])
+  org               Organization        @relation("orgBranch",fields: [orgId], references: [id])
   orgId             String              @db.ObjectId
   orgBranchUserRoles OrgBranchUserRole[] // doesn't exist in db 1-n
 }
