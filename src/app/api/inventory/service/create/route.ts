@@ -1,6 +1,6 @@
 import { connectToDB } from '../../../../../utils/index';
 import prisma from '../../../../../../prisma/index';
-import type { AllServices } from "@prisma/client";
+import { Inventory, type Services } from "@prisma/client";
 
 export const POST=async(req: Request)=> {
   if (req.method !== 'POST') {
@@ -9,15 +9,16 @@ export const POST=async(req: Request)=> {
     try {
       const {source,...body}  = await req.json();
         await connectToDB();
-        const service = await prisma.allServices.create({
+        const service = await prisma.services.create({
             data: body
       
         });
-        const inventory= await prisma.inventory.create({
+        const inventory= await prisma.inventoryTimeline.create({
           data:{
             quantityChange:body.quantity,
             invoiceType:source,
-            allServicesId:service.id
+            objectId:service.id,
+            inventoryType:Inventory.Service
           }
         })
         return new Response(JSON.stringify({service,inventory}), {

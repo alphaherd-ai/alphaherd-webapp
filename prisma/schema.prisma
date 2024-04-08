@@ -10,10 +10,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// enum Stock {
-//   StockIN
-//   StockOUT
-// }
+enum Stock {
+  StockIN
+  StockOUT
+}
+
+enum Inventory {
+  None
+  Product
+  Service
+}
 
 enum Location {
   NONE
@@ -29,60 +35,70 @@ enum Role {
 }
 
 // ------------------------------------------- INVENTORY SUB MODELS START----------------------------------------------------
+model Products {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  itemName      String?
+  defaultUnit   String?
+  hsnCode       String?
+  tax           String?
+  category      String?
+  description   String?
+  providers     String[]
+  totalQuantity Int?
+  minStock      Int?
+  maxStock      Int?
+  productBatch  ProductBatch[]
+  Items         Items[]
 
-model AllProducts {
-  id               String      @id @default(auto()) @map("_id") @db.ObjectId
-  itemName         String?
-  defaultUnit      String?
-  hsnCode          String?
-  tax              String?
-  category         String?
-  description      String?
-  minStock         Int?
-  maxStock         Int?
-  distributors     String?
-  quantity         Int?
-  code             String?
-  batchNumber      String?
-  costPrice        Int?
-  location         Location    @default(NONE)
-  providers        String[]
-  totalCost        Int?
-  costPerItem      Int?
-  profitMargin     String?
-  expiry           DateTime?
-  sellingPrice     Int?
-  date             DateTime?
-  balanceDue       Boolean?
-  Items            Items[]
-  inventoryEntries Inventory[]
-
-  @@map("allProducts")
+  @@map("products")
 }
 
-model AllServices {
-  id               String      @id @default(auto()) @map("_id") @db.ObjectId
-  name             String
-  sacCode          String?
-  description      String?
-  sellingPrice     String?
-  tax              String?
-  category         String?
-  quantity         Int?
-  providers        String[]
-  linkProducts     String[]
-  serviceCost      Int?
-  serviceCharge    Int?
-  inventoryEntries Inventory[]
+model ProductBatch {
+  id                String              @id @default(auto()) @map("_id") @db.ObjectId
+  distributors      String[]
+  quantity          Int?
+  productId         String              @db.ObjectId
+  batchNumber       String?
+  costPrice         Int?
+  location          Location            @default(NONE)
+  totalCost         Int?
+  costPerItem       Int?
+  profitMargin      String?
+  expiry            DateTime?
+  sellingPrice      Int?
+  date              DateTime?
+  balanceDue        Boolean?
+  Items             Items[]
+  Inventory         Inventory[]
+  product           Products?           @relation(fields: [productId], references: [id])
+  InventoryTimeline InventoryTimeline[]
 
-  @@map("allServices")
+  @@map("productBatch")
+}
+
+model Services {
+  id                String              @id @default(auto()) @map("_id") @db.ObjectId
+  name              String
+  sacCode           String?
+  description       String?
+  sellingPrice      String?
+  tax               String?
+  category          String?
+  providers         String[]
+  linkProducts      String[]
+  serviceCost       Int?
+  serviceCharge     Int?
+  inventoryEntries  Inventory[]
+  InventoryTimeline InventoryTimeline[]
+
+  @@map("services")
 }
 
 //------------------------------------------------INVENTORY SUB MODELS END---------------------------------------------------
 
 //-------------------------------------------FINANCE SUB MODELS START--------------------------------------------------
 model Sales {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  id              String            @id @default(auto()) @map("_id") @db.ObjectId
   customer        String
   date            DateTime
   notes           String
@@ -97,13 +113,13 @@ model Sales {
   status          String
   type            String?
   item            Items[]
-  financeEntries  Finance[]
+  financeEntries  FinanceTimeline[]
 
   @@map("sales")
 }
 
 model Purchases {
-  id                   String    @id @default(auto()) @map("_id") @db.ObjectId
+  id                   String            @id @default(auto()) @map("_id") @db.ObjectId
   distributor          String
   date                 DateTime
   dueDate              DateTime
@@ -120,13 +136,13 @@ model Purchases {
   status               String
   type                 String?
   item                 Items[]
-  financeEntries       Finance[]
+  financeEntries       FinanceTimeline[]
 
   @@map("purchases")
 }
 
 model Expenses {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  id              String            @id @default(auto()) @map("_id") @db.ObjectId
   party           String
   date            DateTime
   invoiceNo       String?
@@ -142,7 +158,7 @@ model Expenses {
   status          String
   type            String? // this is the params passed in our url telling if the expense is recurring or non-recurring.
   item            Items[]
-  financeEntries  Finance[]
+  financeEntries  FinanceTimeline[]
 
   @@map("expenses")
 }
@@ -161,22 +177,24 @@ model Transactions {
 }
 
 model Items {
-  id            String       @id @default(auto()) @map("_id") @db.ObjectId
-  taxPercent    Int
-  taxAmount     Int
-  totalAmount   Int
-  reasons       String?
-  category      String?
-  quantity      Int?
-  name          String?
-  allProductsId String?      @db.ObjectId
-  allProducts   AllProducts? @relation(fields: [allProductsId], references: [id])
-  salesId       String?      @db.ObjectId
-  sale          Sales?       @relation(fields: [salesId], references: [id])
-  Purchases     Purchases?   @relation(fields: [purchasesId], references: [id])
-  purchasesId   String?      @db.ObjectId
-  Expenses      Expenses?    @relation(fields: [expensesId], references: [id])
-  expensesId    String?      @db.ObjectId
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  taxPercent     Int
+  taxAmount      Int
+  totalAmount    Int
+  reasons        String?
+  category       String?
+  quantity       Int?
+  name           String?
+  productId      String?       @db.ObjectId
+  products       Products?     @relation(fields: [productId], references: [id])
+  salesId        String?       @db.ObjectId
+  sale           Sales?        @relation(fields: [salesId], references: [id])
+  Purchases      Purchases?    @relation(fields: [purchasesId], references: [id])
+  purchasesId    String?       @db.ObjectId
+  Expenses       Expenses?     @relation(fields: [expensesId], references: [id])
+  expensesId     String?       @db.ObjectId
+  ProductBatch   ProductBatch? @relation(fields: [productBatchId], references: [id])
+  productBatchId String?       @db.ObjectId
 
   @@map("items")
 }
@@ -204,12 +222,26 @@ model Patients {
   species     String?
   breed       String?
   dateOfBirth DateTime?
-  age         Int?
+  age         String?
   gender      String?
   isInpatient Boolean?
   clients     Clients?  @relation(fields: [clientId], references: [id])
 
   @@map("patient")
+}
+
+model Distributors {
+  id              String  @id @default(auto()) @map("_id") @db.ObjectId
+  distributorName String?
+  email           String?
+  contact         String?
+  gstinNo         String?
+  panNo           String?
+  address         String?
+  city            String?
+  pinCode         String?
+  
+  @@map("distributor")
 }
 
 //-------------------------------------------------------DATABASE SUB MODELS END-------------------------------------------------------//
@@ -232,51 +264,50 @@ model Patients {
 //   @@map("organisation")
 // }
 
-model Organization{
-  id                 String      @id @default(auto()) @map("_id") @db.ObjectId
-  orgName            String      @unique
-  orgEmail          String
-  gstNo             String
-  address            String
-  state              String
-  pincode            String
-  description        String
-  phoneNo           String
-  adminUsers User[] @relation(fields: [adminUserIds], references: [id])
-  adminUserIds String[] @db.ObjectId @default([])
+model Organization {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  orgName      String   @unique
+  orgEmail     String
+  gstNo        String
+  address      String
+  state        String
+  pincode      String
+  description  String
+  phoneNo      String
+  adminUsers   User[]   @relation(fields: [adminUserIds], references: [id])
+  adminUserIds String[] @default([]) @db.ObjectId
 }
 
-
 model User {
-  id             String         @id @default(auto()) @map("_id") @db.ObjectId
-  name           String
-  email          String        @unique
-  phoneNo       String
-  altPhoneNo     String?
-  hashedPassword String
-  organizations  Organization[] @relation(fields: [organizationIds], references: [id])
-  organizationIds   String[] @db.ObjectId @default([])
+  id              String         @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  email           String         @unique
+  phoneNo         String
+  altPhoneNo      String?
+  hashedPassword  String
+  organizations   Organization[] @relation(fields: [organizationIds], references: [id])
+  organizationIds String[]       @default([]) @db.ObjectId
 
   @@map("user")
 }
 
-model Inventory {
-  id             String       @id @default(auto()) @map("_id") @db.ObjectId
-  allProductsId  String?      @db.ObjectId
-  allServicesId  String?      @db.ObjectId
-  stockChange    String?
+model InventoryTimeline {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  objectId       String?       @db.ObjectId
+  inventoryType  Inventory?    @default(None)
+  stockChange    Stock?        @default(StockIN)
   invoiceType    String?
   quantityChange Int?
   receiptNo      Int?
   party          String?
-  createdAt      DateTime?    @default(now())
-  allProducts    AllProducts? @relation(fields: [allProductsId], references: [id])
-  allServices    AllServices? @relation(fields: [allServicesId], references: [id])
+  createdAt      DateTime?     @default(now())
+  productBatch   ProductBatch? @relation(fields: [objectId], references: [id])
+  allServices    Services?     @relation(fields: [objectId], references: [id])
 
-  @@map("inventory")
+  @@map("inventoryTimeline")
 }
 
-model Finance {
+model FinanceTimeline {
   id          String     @id @default(auto()) @map("_id") @db.ObjectId
   salesId     String?    @db.ObjectId
   sale        Sales?     @relation(fields: [salesId], references: [id])

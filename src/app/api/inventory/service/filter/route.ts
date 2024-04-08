@@ -1,7 +1,7 @@
 // src/api/Services/filter.ts
 import { connectToDB } from '../../../../../utils/index';
 import prisma from '../../../../../../prisma/index';
-import { AllServices, Service } from '@prisma/client';
+import {  Services } from '@prisma/client';
 
 export const POST = async (req: Request) => {
   if (req.method !== 'POST') {
@@ -31,7 +31,7 @@ export const POST = async (req: Request) => {
       filterOptions.distributors = { in: distributors.map(String) };
     }
 
-    const filteredServices: AllServices[] = await prisma.allServices.findMany({
+    const filteredServices: Services[] = await prisma.services.findMany({
       where: {
         ...filterOptions,
       },

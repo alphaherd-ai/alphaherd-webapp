@@ -13,12 +13,19 @@ import subicon from "../../../../assets/icons/inventory/1. Icons-24 (6) (2).svg"
 import checkicon from "../../../../assets/icons/inventory/check (1).svg";
 import Select from 'react-select';
 import formatDateAndTime from "@/utils/formateDateTime";
+import { Stock } from "@prisma/client";
+import { select } from "@nextui-org/react";
 
 type PopupProps = {
     onClose: () => void;
 }
-
-interface AllProducts {
+interface Products{
+    id :string,
+    itemName:string,
+    productBatch:ProductBatch[]
+    hsnCode:string
+}
+interface ProductBatch {
     id: string;
     date: string;
     time: string;
@@ -27,16 +34,17 @@ interface AllProducts {
     expiry:string;
     costPrice:number;
     sellingPrice :number;
-    itemName:string;
     hsnCode:string;
     category :string;
-    providers:string[];
+    distributors:string[];
 }
 
 const Popup2: React.FC<PopupProps> = ({ onClose }) => {
-    const [selectedOption, setSelectedOption] = useState<string>('Stock In');
+    const [selectedOption, setSelectedOption] = useState<string>(Stock.StockIN);
+    const [selectedProductDetails,setSelectedProduct]= useState<Products>()
     const [isChecked, setChecked] = useState(false);
     const [products, setProducts] = useState<{ value: string; label: string }[]>([]);
+    const [batches,setBatches] = useState<{value:string;label:string}[]>([])
     const [inventory, setInventory] = useState<any[]>([]);
 
     useEffect(() => {
@@ -45,8 +53,8 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
 
     const fetchProducts = async () => {
         try {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getBySorting`);
-            const formattedProducts = response.data.map((product: AllProducts) => ({
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll`);
+            const formattedProducts = response.data.map((product: Products) => ({
                 value: product.id,
                 label: product.itemName,
             }));
@@ -55,15 +63,28 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
             console.error("Error fetching products:", error);
         }
     };
-
+  const fetchProductBatch= async (selectedProduct:any) =>{
+    try{
+        console.log(selectedProduct)
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll/${selectedProduct.value}`);
+        const formattedProductBatches=response.data.map((product:ProductBatch)=>({
+            value:product.id,
+            label:product.batchNumber
+        }));
+        console.log(formattedProductBatches)
+        setBatches(formattedProductBatches)
+    }catch(error){
+        console.error("Error fetching Batches:",error);
+    }
+  }
 
     //Handlers
     const handleRadioChange = useCallback((value: string) => {
         setSelectedOption(value);
         const updatedInventory = inventory.map((item) => ({
             ...item,
-            quantity: value === 'Stock In' ? 0 : item.quantity,
-            expiry: value === 'Stock In' ? "" : item.expiry
+            quantity: value === Stock.StockIN ? 0 : item.quantity,
+            expiry: value === Stock.StockIN ? "" : item.expiry
         }));
         setInventory(updatedInventory);
     }, [inventory]);
@@ -82,7 +103,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
 
     const handleQuantityIncClick = useCallback((index: number) => {
         const updatedInventory = [...inventory];
-        if(selectedOption==='Stock Out'){
+        if(selectedOption===Stock.StockOUT){
             if(updatedInventory[index].quantity<updatedInventory[index].maxQuantity){
                 updatedInventory[index].quantity += 1;
             }  
@@ -113,25 +134,44 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
             try {
                 const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${selectedProduct.value}`);
                 const data = response.data;
+                setSelectedProduct(data);
+                fetchProductBatch(selectedProduct);   
+                const updatedInventory = [...inventory];
+                updatedInventory[index] = {
+                    ...updatedInventory[index],
+                    quantity: selectedOption === Stock.StockIN ? 0 : data.quantity,
+                    productId:selectedProduct.value
+                };
+                setInventory(updatedInventory);   
+            } catch (error) {
+                console.error("Error fetching product details from API:", error);
+            }
+        }
+    }, [inventory, products, selectedOption]);
+    const handleBatchSelect = useCallback(async (selectedProduct: any, index: number) => {
+        if (selectedProduct.value) {
+            try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${selectedProduct.value}`);
+                const data = response.data;
                 const updatedInventory = [...inventory];
                 updatedInventory[index] = {
                     ...updatedInventory[index],
                     id: data.id,
                     date: data.date,
                     time: data.time,
-                    quantity: selectedOption === 'Stock In' ? 0 : data.quantity,
+                    quantity: selectedOption === Stock.StockIN ? 0 : data.quantity,
                     maxQuantity: data.quantity,
-                    batchNumber: selectedOption === 'Stock In' ? "" : data.batchNumber,
-                    expiry: selectedOption === 'Stock In' ? "" : data.expiry,
-                    costPrice: selectedOption === 'Stock In' ? "" : data.costPrice,
-                    sellingPrice: selectedOption === 'Stock In' ? "" : data.sellingPrice,
-                    itemName: data.itemName,
-                    hsnCode: data.hsnCode,
-                    category: data.category,
-                    providers: data.providers,
+                    batchNumber: selectedOption === Stock.StockIN ? "" : data.batchNumber,
+                    expiry: selectedOption === Stock.StockIN ? "" : data.expiry,
+                    costPrice: selectedOption === Stock.StockIN ? "" : data.costPrice,
+                    sellingPrice: selectedOption === Stock.StockIN ? "" : data.sellingPrice,
+                    hsnCode: selectedProductDetails?.hsnCode,
+                    distributors: data.category,
+                    providers: data.distributors,
+                    productId:selectedProductDetails?.id
                 };
                 setInventory(updatedInventory);
-                if (selectedOption === 'Stock Out') {
+                if (selectedOption === Stock.StockOUT) {
                     const updatedProducts = products.filter((product) => product.value !== selectedProduct.value);
                     setProducts(updatedProducts);
                 }
@@ -144,10 +184,10 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
     const handleUpdateInventory = useCallback(async () => {
         try {
             for (const item of inventory) {
-                const { id, date, time, quantity, batchNumber, itemName, hsnCode, category, providers } = item;
+                const { id, date, quantity, batchNumber, distributors,productId} = item;
                 const invoiceType="Manual";
                 let {expiry,costPrice,sellingPrice}=item;
-               
+                console.log("here is the product",productId)
                 expiry = expiry || null;
                 costPrice = costPrice ||null;
                 sellingPrice = sellingPrice || null;
@@ -157,7 +197,6 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                 expiry = isoString.substring(0, 23) + "+00:00";
                 }
                  
-
                 const stockStatus=selectedOption;
                 const body = {
                     invoiceType,
@@ -168,13 +207,18 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                     expiry,
                     costPrice,
                     sellingPrice,
-                    itemName,
-                    hsnCode,
-                    category,
-                    providers,
+                    distributors,
+                    productId,
                 };
-                const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${id}`, body);
-                console.log('Updated inventory item:', response.data);
+                if(selectedOption===Stock.StockOUT){
+                    const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${id}`, body);
+                    console.log('Updated inventory item:', response.data);
+                }else if(selectedOption===Stock.StockIN){
+                    console.log("saving new batch")
+                    const response =await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/create`,body);
+                    console.log('Created New Batch Item:', response.data);
+                }
+                
             }
             alert('Inventory updated successfully');
         } catch (error) {
@@ -198,14 +242,14 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                         <div className="flex gap-4">
                             <RadioButton
                                 label="Stock In"
-                                value="Stock In"
-                                checked={selectedOption === 'Stock In'}
+                                value={Stock.StockIN}
+                                checked={selectedOption === Stock.StockIN}
                                 onChange={handleRadioChange}
                             />
                             <RadioButton
                                 label="Stock Out"
-                                value="Stock Out"
-                                checked={selectedOption === 'Stock Out'}
+                                value={Stock.StockOUT}
+                                checked={selectedOption === Stock.StockOUT}
                                 onChange={handleRadioChange}
                             />
                         </div>
@@ -257,13 +301,28 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                                     </button>
                                 </div>
                                 <div className='w-1/12 px-1 flex items-center text-neutral-400 text-base font-medium ml-10'>
-            <input
-                type="text"
-                value={item.batchNumber}
-                onChange={(e) => handleInputChange(index,'batchNumber', e.target.value)}
-                className="w-full border border-gray-300 focus:border-gray-500 outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
-                name={`batchNumber-${index}`}
-            />
+                                    { selectedOption===Stock.StockIN ?(
+                                    <input
+                                    type="text"
+                                    value={item.batchNumber}
+                                    onChange={(e) => handleInputChange(index,'batchNumber', e.target.value)}
+                                    className="w-full border border-gray-300 focus:border-gray-500 outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
+                                    name={`batchNumber-${index}`}
+                                    />
+                                    ):
+                                    (
+                                      <Select
+                                      className="text-gray-500 text-base font-medium font-['Satoshi'] w-full border-0 boxShadow-0"
+                                      classNamePrefix="select"
+                                      value={products.find((prod) => prod.value === item.id)}
+                                      isClearable={false}
+                                      isSearchable={true}
+                                      name={`batchNumber=${index}`}
+                                      options={batches}
+                                      onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
+                                  />  
+                                    )}
+           
         </div>
         <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
     <input
@@ -273,7 +332,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
         className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
         name={`expiry-${index}`}
     />
-    {item.expiry && selectedOption !== 'Stock In' && (
+    {item.expiry && selectedOption !== Stock.StockIN && (
         <div>{formatDateAndTime(item.expiry).formattedDate}</div>
     )}
 </div>

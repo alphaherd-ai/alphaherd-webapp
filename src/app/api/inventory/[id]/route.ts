@@ -10,10 +10,10 @@ export const GET=async (req: Request,
         } 
         try {
             await connectToDB();
-            const inventory= await prisma.inventory.findUnique({
+            const inventory= await prisma.inventoryTimeline.findUnique({
                 where: { id: params.id },
                 include:{
-                    allProducts:true,
+                    productBatch:true,
                     allServices:true
                 }
             });                       
@@ -37,23 +37,23 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
     try {
         await connectToDB();
         const { stockStatus, body } = await req.json();
-        const item = await prisma.inventory.findUnique({
+        const item = await prisma.inventoryTimeline.findUnique({
             where: { id: params.id },
         });
-        const product = await prisma.allProducts.findUnique({
-            where: { id: item?.allProductsId !== null ? item?.allProductsId : undefined },
+        const product = await prisma.productBatch.findUnique({
+            where: { id: item?.objectId !== null ? item?.objectId : undefined },
         });
         if (!product || product.quantity === null || product.quantity === undefined) {
             throw new Error("Product quantity is null or undefined.");
         }
-        const inventory = await prisma.inventory.create({
+        const inventory = await prisma.inventoryTimeline.create({
             data: {
                 stockChange: stockStatus,
                 quantityChange: Math.abs(product.quantity - body.quantity)
             }
         });
-        const updateItem = await prisma.allProducts.update({
-            where: { id: item?.allProductsId !== null ? item?.allProductsId : undefined },
+        const updateItem = await prisma.inventoryTimeline.update({
+            where: { id: item?.objectId !== null ? item?.objectId : undefined },
             data: body
         });
         return new Response(JSON.stringify({ updateItem, inventory }), {
@@ -78,7 +78,7 @@ export const DELETE=async (req: Request,
             } 
             try {
                 await connectToDB();
-                await prisma.inventory.deleteMany({
+                await prisma.inventoryTimeline.deleteMany({
                     where: { id: params.id },
                 });
 

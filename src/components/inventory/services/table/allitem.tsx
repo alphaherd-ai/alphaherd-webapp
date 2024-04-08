@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Tooltip, Button } from "@nextui-org/react";
 
 
-interface AllServices{
+interface Services{
   id:string;
   name:string;
   providers:string[];
@@ -18,7 +18,7 @@ interface AllServices{
 
 
 const ServicesAllItem = () => {
-  const [services, setServices] = useState<AllServices[]>([]);
+  const [services, setServices] = useState<Services[]>([]);
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/getAll`)

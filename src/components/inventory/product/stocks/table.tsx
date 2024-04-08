@@ -22,7 +22,8 @@ const InventoryProductStockTable = () => {
                 <div className=' flex text-gray-500 text-base font-medium px-6 w-2/6'>Item</div>
                 <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6'>Batch No.</div>
                 <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6'>Vendor</div>
-                <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6'>Min. Stock</div>
+                {activeTab==='Excess'?(<div className=' flex text-gray-500 text-base font-medium px-6 w-1/6'>Max. Stock</div>):(<div className=' flex text-gray-500 text-base font-medium px-6 w-1/6'>Min. Stock</div>)}
+                
                 <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6'>Quantity</div>
                 
             </div>

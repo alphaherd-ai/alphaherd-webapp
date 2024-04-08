@@ -58,8 +58,6 @@ const DatabaseDistributorTable = () => {
 
       </div>
       <DatabaseDistributorTableItem />
-      <DatabaseDistributorTableItem />
-      <DatabaseDistributorTableItem />
       <DatabaseDistributorBottombar />
 
     </div>

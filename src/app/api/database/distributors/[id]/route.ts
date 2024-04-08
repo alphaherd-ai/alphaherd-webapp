@@ -1,6 +1,5 @@
 import { connectToDB } from '../../../../../utils/index';
 import prisma from '../../../../../../prisma/index';
-import { Stock } from '@prisma/client';
 
 export const GET=async (req: Request,
     { params }: { params: {id: string; } } )=> {
@@ -10,14 +9,11 @@ export const GET=async (req: Request,
         } 
         try {
             await connectToDB();
-           const product= await prisma.products.findUnique({
+           const distributor= await prisma.distributors.findUnique({
                 where: { id: params.id },
-                include:{
-                    productBatch:true
-                }
             });
                         
-            return new Response(JSON.stringify(product), {
+            return new Response(JSON.stringify(distributor), {
                 status: 201,
                 headers: {
                     'Content-Type': 'application/json',
@@ -38,23 +34,18 @@ export const PUT=async (req: Request,
         } 
         try {
             await connectToDB();
-            const { stockStatus,invoiceType,...body}=await req.json();
-           const product= await prisma.productBatch.update({
+            const body=await req.json();
+           const distributor= await prisma.distributors.update({
                 where: { id: params.id },
-                data:body
-            });  
-            
-           
-          
-            return new Response(JSON.stringify({ product }), {
+                data:body,
+            });     
+            return new Response(JSON.stringify(distributor), {
                 status: 201,
                 headers: {
                     'Content-Type': 'application/json',
                 },
-            });   
-            
+            });
         } catch (error) {
-            console.error(error)
             return new Response( "Internal server error",{status:500});
         } finally {
             await prisma.$disconnect();
@@ -68,13 +59,12 @@ export const DELETE=async (req: Request,
             } 
             try {
                 await connectToDB();
-                await prisma.products.delete({
-                    where: {id: params.id },
+                await prisma.distributors.deleteMany({
+                    where: { id: params.id },
                 });
-                await  prisma.inventoryTimeline.deleteMany({
-                    where:{objectId:params.id}
-                });
-            return new Response(`Product with id: ${params.id} Deleted Successfully`,{status:201})
+              
+                            
+            return new Response(`distributor with id: ${params.id} Deleted Successfully`,{status:201})
             } catch (error) {
                 return new Response( "Internal server error",{status:500});
             } finally {
