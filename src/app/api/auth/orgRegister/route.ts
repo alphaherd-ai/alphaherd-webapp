@@ -14,7 +14,7 @@ export const POST = async (req: Request) => {
     const url = new URL(req.url);
     const { orgDetails, adminUserDetails } = await req.json();
     const hashedPassword = await bcrypt.hash(adminUserDetails.password, 10);
-
+    console.log("here here");
     let duplicateOrg = await prisma.organization.findUnique({
       where: {
         orgName: orgDetails.orgName
@@ -86,7 +86,7 @@ export const POST = async (req: Request) => {
     });
 
   } catch (error) {
-    console.error(error);
+    console.log(error);
     return new Response(JSON.stringify(error));
   } finally {
     await prisma.$disconnect();

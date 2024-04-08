@@ -1,20 +1,13 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql" // Use PostgreSQL as the database provider
   url      = env("DATABASE_URL")
 }
 
-// enum Stock {
-//   StockIN
-//   StockOUT
-// }
-
+// Enum definitions
 enum Location {
   NONE
   Location1
@@ -28,28 +21,20 @@ enum Role {
   Veterinarian
 }
 
-//-------------------------------------------------------DATABASE SUB MODELS END-------------------------------------------------------//
-// Main Models to be created below:
+// User model with PostgreSQL-specific adjustments
+model User {
+  id             Int       @id @default(autoincrement())
+  name           String
+  email          String    @unique
+  phoneNo        String
+  altPhoneNo     String?
+  hashedPassword String
+}
 
-// model Organisation {
-//   id           String  @id @default(auto()) @map("_id") @db.ObjectId
-//   userId       String  @db.ObjectId
-//   name         String?
-//   gstinNo      String?
-//   contact      String?
-//   companyEmail String?
-//   address      String?
-//   state        String?
-//   pincode      String?
-//   description  String?
-//   logoImg      String?
-//   members      User?   @relation(fields: [userId], references: [id])
-//   @@map("organisation")
-// }
-
+// Organization model
 model Organization {
-  id           String      @id @default(auto()) @map("_id") @db.ObjectId
-  orgName      String      @unique
+  id           Int       @id @default(autoincrement())
+  orgName      String    @unique
   orgEmail     String
   gstNo        String
   address      String
@@ -57,126 +42,82 @@ model Organization {
   pincode      String
   description  String
   phoneNo      String
-  adminUsers   User[]      @relation(fields: [adminUserIds], references: [id])
-  adminUserIds String[]    @default([]) @db.ObjectId
-  orgBranches  OrgBranch[] @relation("orgBranch") // doesn't exist in db 1-n
+  orgBranches OrgBranch[]
 }
 
+// OrgBranch model
 model OrgBranch {
-  id                String              @id @default(auto()) @map("_id") @db.ObjectId
-  branchName        String
-  org               Organization        @relation("orgBranch",fields: [orgId], references: [id])
-  orgId             String              @db.ObjectId
-  orgBranchUserRoles OrgBranchUserRole[] // doesn't exist in db 1-n
+  id           Int       @id @default(autoincrement())
+  branchName   String
+  orgId        Int       // Foreign key to Organization
+  org          Organization @relation(fields: [orgId], references: [id])
 }
 
+// OrgBranchUserRole model
 model OrgBranchUserRole {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  orgBranch   OrgBranch @relation(fields: [orgBranchId], references: [id])
-  orgBranchId String    @db.ObjectId
-  user        User      @relation(fields: [userId], references: [id])
-  userId      String    @db.ObjectId
-  role        Role
+  id           Int       @id @default(autoincrement())
+  orgBranchId  Int       // Foreign key to OrgBranch
+  userId       Int       // Foreign key to User
+  role         Role
 }
 
-model User {
-  id                   String              @id @default(auto()) @map("_id") @db.ObjectId
-  name                 String
-  email                String              @unique
-  phoneNo              String
-  altPhoneNo           String?
-  hashedPassword       String
-  adminOrganizations   Organization[]      @relation(fields: [adminOrganizationIds], references: [id])
-  adminOrganizationIds String[]            @default([]) @db.ObjectId // admin of which organizations
-  OrgBranchUserRole    OrgBranchUserRole[] // doesn't exist in db 1-n
-  @@map("user")
-}
-
+// Inventory model
 model Inventory {
-  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  id             Int       @id @default(autoincrement())
   stockChange    String?
   invoiceType    String?
   quantityChange Int?
   receiptNo      Int?
   party          String?
-  createdAt      DateTime?    @default(now())
-  allProducts    AllProducts? @relation(fields: [allProductsId], references: [id])
-  allProductsId  String?      @db.ObjectId
-  allServices    AllServices? @relation(fields: [allServicesId], references: [id])
-  allServicesId  String?      @db.ObjectId
-
-  @@map("inventory")
+  createdAt      DateTime  @default(now())
+  allProductsId  Int?      // Foreign key to AllProducts
+  allServicesId  Int?      // Foreign key to AllServices
 }
 
+// Finance model
 model Finance {
-  id          String     @id @default(auto()) @map("_id") @db.ObjectId
-  salesId     String?    @db.ObjectId
-  sale        Sales?     @relation(fields: [salesId], references: [id])
+  id          Int       @id @default(autoincrement())
+  salesId     Int?      // Foreign key to Sales
   type        String?
   createdAt   DateTime
-  Purchases   Purchases? @relation(fields: [purchasesId], references: [id])
-  purchasesId String?    @db.ObjectId
-  Expenses    Expenses?  @relation(fields: [expensesId], references: [id])
-  expensesId  String?    @db.ObjectId
-
-  @@map("finance")
+  purchasesId Int?      // Foreign key to Purchases
+  expensesId  Int?      // Foreign key to Expenses
 }
 
-// ------------------------------------------- INVENTORY SUB MODELS START----------------------------------------------------
-
+// AllProducts model
 model AllProducts {
-  id               String      @id @default(auto()) @map("_id") @db.ObjectId
-  itemName         String?
-  defaultUnit      String?
-  hsnCode          String?
-  tax              String?
-  category         String?
-  description      String?
-  minStock         Int?
-  maxStock         Int?
-  distributors     String?
-  quantity         Int?
-  code             String?
-  batchNumber      String?
-  costPrice        Int?
-  location         Location    @default(NONE)
-  providers        String[]
-  totalCost        Int?
-  costPerItem      Int?
-  profitMargin     String?
-  expiry           DateTime?
-  sellingPrice     Int?
-  date             DateTime?
-  balanceDue       Boolean?
-  Items            Items[]
-  inventoryEntries Inventory[]
-
-  @@map("allProducts")
+  id            Int       @id @default(autoincrement())
+  itemName      String?
+  defaultUnit   String?
+  hsnCode       String?
+  tax           String?
+  category      String?
+  description   String?
+  minStock      Int?
+  maxStock      Int?
+  distributors  String?
+  quantity      Int?
+  code          String?
+  batchNumber   String?
+  costPrice     Int?
+  location      Location  @default(NONE)
 }
 
+// AllServices model
 model AllServices {
-  id               String      @id @default(auto()) @map("_id") @db.ObjectId
-  name             String
-  sacCode          String?
-  description      String?
-  sellingPrice     String?
-  tax              String?
-  category         String?
-  quantity         Int?
-  providers        String[]
-  linkProducts     String[]
-  serviceCost      Int?
-  serviceCharge    Int?
-  inventoryEntries Inventory[]
-
-  @@map("allServices")
+  id             Int       @id @default(autoincrement())
+  name           String
+  sacCode        String?
+  description    String?
+  sellingPrice   String?
+  tax            String?
+  category       String?
+  quantity       Int?
 }
 
-//------------------------------------------------INVENTORY SUB MODELS END---------------------------------------------------
-
-//-------------------------------------------FINANCE SUB MODELS START--------------------------------------------------
+// Sales model
 model Sales {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  id              Int       @id @default(autoincrement())
   customer        String
   date            DateTime
   notes           String
@@ -189,15 +130,11 @@ model Sales {
   overallDiscount Int
   totalQty        Int
   status          String
-  type            String?
-  item            Items[]
-  financeEntries  Finance[]
-
-  @@map("sales")
 }
 
+// Purchases model
 model Purchases {
-  id                   String    @id @default(auto()) @map("_id") @db.ObjectId
+  id                   Int       @id @default(autoincrement())
   distributor          String
   date                 DateTime
   dueDate              DateTime
@@ -212,15 +149,11 @@ model Purchases {
   totalCost            Int
   totalQty             Int
   status               String
-  type                 String?
-  item                 Items[]
-  financeEntries       Finance[]
-
-  @@map("purchases")
 }
 
+// Expenses model
 model Expenses {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  id              Int       @id @default(autoincrement())
   party           String
   date            DateTime
   invoiceNo       String?
@@ -229,20 +162,16 @@ model Expenses {
   totalCost       Int?
   totalQty        Int?
   startedOn       DateTime?
-  recurringType   String? // this could be either 'week', 'month' or 'year'
+  recurringType   String?
   recurringEnd    String?
   dueDate         String
   notes           String
   status          String
-  type            String? // this is the params passed in our url telling if the expense is recurring or non-recurring.
-  item            Items[]
-  financeEntries  Finance[]
-
-  @@map("expenses")
 }
 
+// Transactions model
 model Transactions {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  id            Int       @id @default(autoincrement())
   partyName     String?
   subject       String?
   invoiceLink   String?
@@ -254,8 +183,9 @@ model Transactions {
   invoiceSource String?
 }
 
+// Items model
 model Items {
-  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  id            Int       @id @default(autoincrement())
   taxPercent    Int
   taxAmount     Int
   totalAmount   Int
@@ -263,45 +193,32 @@ model Items {
   category      String?
   quantity      Int?
   name          String?
-  allProductsId String?      @db.ObjectId
-  allProducts   AllProducts? @relation(fields: [allProductsId], references: [id])
-  salesId       String?      @db.ObjectId
-  sale          Sales?       @relation(fields: [salesId], references: [id])
-  Purchases     Purchases?   @relation(fields: [purchasesId], references: [id])
-  purchasesId   String?      @db.ObjectId
-  Expenses      Expenses?    @relation(fields: [expensesId], references: [id])
-  expensesId    String?      @db.ObjectId
-
-  @@map("items")
+  allProductsId Int?      // Foreign key to AllProducts
+  salesId       Int?      // Foreign key to Sales
+  purchasesId   Int?      // Foreign key to Purchases
+  expensesId    Int?      // Foreign key to Expenses
 }
 
-//------------------------------------------------------FINANCE SUB MODELS END--------------------------------------------------
-//-------------------------------------------------------DATABASE SUB MODELS START --------------------------------------------//
-
+// Clients model
 model Clients {
-  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  id         Int       @id @default(autoincrement())
   clientName String?
   email      String?
   contact    String?
   address    String?
   city       String?
   pinCode    String?
-  patients   Patients[]
-
-  @@map("client")
 }
 
+// Patients model
 model Patients {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  id          Int       @id @default(autoincrement())
   patientName String?
-  clientId    String?   @db.ObjectId
+  clientId    Int?      // Foreign key to Clients
   species     String?
   breed       String?
   dateOfBirth DateTime?
   age         Int?
   gender      String?
   isInpatient Boolean?
-  clients     Clients?  @relation(fields: [clientId], references: [id])
-
-  @@map("patient")
 }
