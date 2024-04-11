@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Tooltip, Button } from "@nextui-org/react";
 import Link from 'next/link';
 import formatDateAndTime from '@/utils/formateDateTime';
+import { Inventory } from '@prisma/client';
 interface AllServices {
     id: string;
     name: string;
@@ -12,7 +13,7 @@ interface AllServices {
     serviceCharge: number;
 }
 
-interface Inventory {
+interface InventoryTimeline {
     id: string;
     stockChange: string;
     invoiceType: string;
@@ -23,12 +24,12 @@ interface Inventory {
 }
 
 const ServicesTimelineItem = () => {
-    const [services, setServices] = useState<Inventory[]>([]);
+    const [services, setServices] = useState<InventoryTimeline[]>([]);
 
     useEffect(() => {
         fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/getAll`)
             .then(response => response.json())
-            .then(data => setServices(data.filter((inventory: { allServicesId: any; }) => inventory.allServicesId)))
+            .then(data => setServices(data.filter((inventory: { inventoryType: any; }) => inventory.inventoryType===Inventory.Service)))
             .catch(error => console.error('Error fetching services:', error));
     }, []);
 

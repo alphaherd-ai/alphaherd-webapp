@@ -7,10 +7,11 @@ import closeicon from "../../../assets/icons/inventory/closeIcon.svg";
 import arrowicon from "../../../assets/icons/inventory/arrow.svg";
 import Select from 'react-select';
 import calicon from "../../../assets/icons/finance/calendar_today.svg"
-import DatePicker from "react-date-picker"
 import Attachment from "../../../assets/icons/finance/attachment.svg"
 import { response } from "express";
 import { Clients } from "@prisma/client";
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 type PopupProps = {
     onClose: () => void;
@@ -19,7 +20,24 @@ type PopupProps = {
 
 const PatientPopup: React.FC<PopupProps> = ({ onClose, client_name }) => {
     const [formData, setFormData] = useState<any>({});
-    const [clients, setClients] = useState<{ value: string; label: string }[]>([])
+    const [clients, setClients] = useState<{ value: string; label: string }[]>([]);
+    const [startDate, setStartDate] = useState(new Date());
+    const [selectedGender, setSelectedGender] = useState('female');
+
+    useEffect(() => {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll`)
+            .then((response) => response.json())
+            .then((data) => {
+                const formattedClients = data.map((client: Clients) => ({
+                    value: client.id,
+                    label: client.clientName
+                }))
+                setClients(formattedClients)
+            })
+            .catch((error) =>
+                console.error("Error fetching client from API: ", error)
+            );
+    }, []); 
 
     const handleSaveClick = async () => {
         try {
@@ -32,11 +50,11 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, client_name }) => {
                     patientName: formData.patientName,
                     clientId: formData.clientName.value,
                     species: formData.species,
-                    breed: formData.breed?formData.breed[0].value:undefined,
-                    // dateOfBirth: formData.dateOfBirth,
-                    // age: formData.age,
-                    // gender: formData.gender,
-                    // inPatient: formData.inPatient
+                    breed: formData.breed ? formData.breed[0].value : undefined,
+                    dateOfBirth: formData.dateOfBirth,
+                    age: calculateAge(formData.years, formData.months, formData.days),
+                    gender: selectedGender,
+                    inPatient: formData.inPatient
                 }),
             });
             if (response.ok) {
@@ -53,32 +71,25 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, client_name }) => {
     const handleChange = (field: string, value: any) => {
         setFormData({ ...formData, [field]: value });
     };
-    const [startDate, setStartDate] = useState(new Date());
+
+    const calculateAge = (years: number, months: number, days: number): string => {
+        const currentDate = new Date();
+        const birthDate = new Date(currentDate.getFullYear() - years, currentDate.getMonth() - months, currentDate.getDate() - days);
+        const ageDate = new Date(currentDate.getTime() - birthDate.getTime());
+        const ageYears = Math.abs(ageDate.getUTCFullYear() - 1970);
+        const ageMonths = ageDate.getUTCMonth();
+        const ageDays = ageDate.getUTCDate() - 1; 
+        return `${ageYears} years, ${ageMonths} months, ${ageDays} days`;
+    };
 
     const gstOptions = [
         { value: 'GST@18%.', label: 'GST@18%.' },
         { value: 'GST@9%.', label: 'GST@9%.' }
     ];
-    const [selectedGender, setSelectedGender] = useState('female');
 
     const handleGenderChange = (gender: any) => {
         setSelectedGender(gender);
-    };
-
-    useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll`)
-            .then((response) => response.json())
-            .then((data) => {
-                const formattedClients = data.map((client: Clients) => ({
-                    value: client.id,
-                    label: client.clientName
-                }))
-                setClients(formattedClients)
-            })
-            .catch((error) =>
-                console.error("Error fetching client from API: ", error)
-            );
-    }, []); 
+    };  
 
     return <>
         <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
@@ -140,60 +151,79 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, client_name }) => {
                 </div>
 
                 <div className="flex items-center gap-[70px] w-full">
-
-
-
                     <div className="flex w-full flex justify-between w-full pb-[16px] ">
-
-
-                        <div className=" rounded-[10px] justify-between items-center gap-4 flex w-full ">
+                        <div className="rounded-[10px] justify-between items-center gap-4 flex w-full">
                             <div className="flex gap-[16px] items-center w-full">
-                                <div className="text-gray-500 text-base font-bold font-['Satoshi'] w-2/12"> Date of Birth:</div>
-                                <DatePicker
-                                    className={"text-gray-500 text-base font-medium font-['Satoshi'] w-fullborder-0 w-full boxShadow-0"}
-                                    value={startDate}
-                                    name="dateOfBirth"
-                                    onChange={(date) => {
-                                        if (date instanceof Date) {
-                                            setStartDate(date);
-                                        } else if (Array.isArray(date) && date.length === 2 && date[0] instanceof Date) {
-                                            // Assuming you want the start date of the range
-                                            setStartDate(date[0]);
+                                <div className="text-gray-500 text-base font-bold font-['Satoshi'] w-2/12">Date of Birth:</div>
+                                <div className="w-full relative">
+                                    <DatePicker
+                                        selected={startDate}
+                                        onChange={(date:any) => setStartDate(date as Date)}
+                                        calendarClassName="react-datepicker-custom"
+                                        customInput={
+                                            <div className="relative">
+                                                <input
+                                                    className="w-full h-8 pl-3 pr-10 rounded-md border border-neutral-400 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                                    value={startDate.toLocaleDateString()}
+                                                    readOnly
+                                                />
+                                                <Image
+                                                    src={calicon}
+                                                    alt="Calendar Icon"
+                                                    className="absolute right-2 top-2 cursor-pointer"
+                                                    width={20}
+                                                    height={20}
+                                                />
+                                            </div>
                                         }
-                                    }}
-                                    clearIcon={() => null}
-                                    calendarIcon={() => (
-                                        <Image src={calicon} alt="Calendar Icon" width={20} height={20} />
-                                    )}
-                                />
+                                    />
+                                </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
-                <div className="w-[576px] h-11 justify-start items-center gap-6 inline-flex">
-                    <div className="w-[120px] text-gray-500 text-base font-medium font-['Roboto']">Age</div>
-                    <div className="justify-start items-center gap-4 flex">
-                        <div className="w-16 h-11 border-0 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
-                            <input className="text-gray-500 text-base w-16 h-11 border-0 font-medium font-['Roboto']" />
+                <div className="flex items-center gap-[50px] w-full">
+                        <div className="text-gray-500 text-base font-medium font-['Satoshi']">Age*</div>
+                        <div className="flex justify-start items-center gap-4">
+                            <div className="w-16 h-11 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
+                                <input
+                                    className="text-gray-500 text-base w-16 h-11 border-0 font-medium font-['Roboto']"
+                                    type="number"
+                                    min="0"
+                                    name="years"
+                                    placeholder="Years"
+                                    onChange={(e) => handleChange("years", parseInt(e.target.value))}
+                                />
+                            </div>
+                            <div className="text-gray-500 text-base font-medium font-['Roboto']">Years</div>
                         </div>
-                        <div className="text-gray-500 text-base font-medium font-['Roboto']">Years</div>
-                    </div>
-                    <div className="justify-start items-center gap-4 flex">
-                        <div className="w-16 h-11 border-0 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
-                            <input className="text-gray-500 text-base w-16 h-11 border-0 font-medium font-['Roboto']" />
-
+                        <div className="flex justify-start items-center gap-4">
+                            <div className="w-16 h-11 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
+                                <input
+                                    className="text-gray-500 text-base w-16 h-11 border-0 font-medium font-['Roboto']"
+                                    type="number"
+                                    min="0"
+                                    name="months"
+                                    placeholder="Months"
+                                    onChange={(e) => handleChange("months", parseInt(e.target.value))}
+                                />
+                            </div>
+                            <div className="text-gray-500 text-base font-medium font-['Roboto']">Months</div>
                         </div>
-                        <div className="text-gray-500 text-base font-medium font-['Roboto']">Months</div>
-                    </div>
-                    <div className="justify-start items-center gap-4 flex">
-                        <div className="w-20 h-11 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
-                            <input className="text-gray-500 text-base w-16 h-11 border-0 font-medium font-['Roboto']" />
-
+                        <div className="flex justify-start items-center gap-4">
+                            <div className="w-20 h-11 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
+                                <input
+                                    className="text-gray-500 text-base w-16 h-11 border-0 font-medium font-['Roboto']"
+                                    type="number"
+                                    min="0"
+                                    name="days"
+                                    placeholder="Days"
+                                    onChange={(e) => handleChange("days", parseInt(e.target.value))}
+                                />
+                            </div>
+                            <div className="text-gray-500 text-base font-medium font-['Roboto']">Days</div>
                         </div>
-                        <div className="text-gray-500 text-base font-medium font-['Roboto']">Days</div>
                     </div>
-                </div>
 
                 <div className="w-full sm:w-[464px] h-auto justify-start items-center gap-6 inline-flex">
                     <div className="w-[120px] text-gray-500 text-base font-medium font-['Roboto']">Gender</div>

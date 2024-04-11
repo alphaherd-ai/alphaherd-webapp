@@ -22,7 +22,9 @@ const InventoryProductTimelineTable = () => {
                 <div className=' flex text-gray-500 text-base font-medium px-6 w-1/4 '>Categories</div>
             </div>
             <ProductTimelineItem/>
-<InventoryProductTableBottombar/>
+       <InventoryProductTableBottombar productsPerPage={10} totalProducts={0} paginate={function (pageNumber: number): void {
+        throw new Error('Function not implemented.')
+      } }/>
         </div>
    
   )

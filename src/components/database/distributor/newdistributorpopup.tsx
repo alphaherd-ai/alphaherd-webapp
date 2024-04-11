@@ -21,22 +21,21 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
 
     const handleSaveClick = async () => {
         try {
-            const selectedProviders = formData.providers.map((provider:any) => provider.value);
-    
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/create`, {
+            
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributor/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    itemName: formData.name,
-                    providers: selectedProviders,
-                    hsnCode: formData.hsnCode,
-                    tax: formData.tax ? formData.tax[0].value : undefined,
-                    category: formData.category ? formData.category[0].value : undefined,
-                    description: formData.description,
-                    minStock: parseInt(formData.minStock),
-                    maxStock: parseInt(formData.maxStock)
+                    distributorName: formData.name,
+                    email: formData.email,
+                    contact: formData.contact,
+                    gstinNo: formData.gstinNo,
+                    panNo: formData.panNo,
+                    address:formData.address,
+                    city:formData.city,
+                    pinCode:formData.pinCode,
                 }),
             });
             if (response.ok) {
@@ -83,7 +82,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                 <div className="flex items-center gap-[88px]">
                     <div className="text-gray-500 text-base font-medium font-['Satoshi']">Email</div>
                     <div>
-                        <input className="w-[440px] h-8" type="text" name="hsnCode" onChange={(e) => handleChange("hsnCode", e.target.value)} />
+                        <input className="w-[440px] h-8" type="text" name="email" onChange={(e) => handleChange("email", e.target.value)} />
                     </div>
                 </div>
                 <div className="flex items-center gap-[70px] w-full">
@@ -102,7 +101,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                         />
                     </div>
                     <div className="flex-1 ml-1">
-                        <input className="h-9 w-full" type="text" name="hsnCode" onChange={(e) => handleChange("hsnCode", e.target.value)} />
+                        <input className="h-9 w-full" type="text" name="contact" onChange={(e) => handleChange("contact", e.target.value)} />
                     </div>
                     <div className=" ml-1  w-9 h-9 ">
                     <button  className="w-full h-full rounded-[5px] justify-center text-2xl items-center gap-2 flex">
@@ -114,7 +113,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                 <div className="flex items-center gap-[88px]">
                     <div className="text-gray-500 text-base font-medium font-['Satoshi']">GSTIN </div>
       
-                        <input className="w-[440px] h-8" type="text" name="hsnCode" onChange={(e) => handleChange("hsnCode", e.target.value)} />
+                        <input className="w-[440px] h-8" type="text" name="gstinNo" onChange={(e) => handleChange("gstinNo", e.target.value)} />
                   
                     <div className="w-[97px] h-6 px-2 py-1.5 bg-teal-400 rounded-[5px] justify-center items-center gap-2 inline-flex absolute right-12">
 <div className="text-white text-sm font-medium font-['Roboto']">Fetch Details</div>
@@ -123,7 +122,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                 <div className="flex items-center gap-[88px]">
                     <div className="text-gray-500 text-base font-medium font-['Satoshi']">PAN Number</div>
                     <div>
-                        <input className="w-[440px] h-8" type="text" name="hsnCode" onChange={(e) => handleChange("hsnCode", e.target.value)} />
+                        <input className="w-[440px] h-8" type="text" name="panNo" onChange={(e) => handleChange("panNo", e.target.value)} />
                     </div>
                 </div>
                 <div className="flex items-center gap-[70px] w-full">
@@ -131,7 +130,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                     <div className="flex w-10/12">
                   
                     <div className="flex-1 ml-1">
-                        <input className="h-9 w-full" type="text" name="hsnCode" onChange={(e) => handleChange("hsnCode", e.target.value)} />
+                        <input className="h-9 w-full" type="text" name="address" onChange={(e) => handleChange("address", e.target.value)} />
                     </div>
                     <div className=" ml-1  w-9 h-9 ">
                     <button  className="w-full h-full rounded-[5px] justify-center text-2xl items-center gap-2 flex">
@@ -154,8 +153,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                             isSearchable={true}
                             options={gstOptions}
                             isMulti={true}
-                            name="providers"
-                            onChange={(value) => handleChange("providers", value)}
+                            name="city"
+                            onChange={(value) => handleChange("city", value)}
                         />
          
               
@@ -168,7 +167,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                     <div className="flex w-9/12 h-11">
            
                    
-                        <input className="h-9 w-full" type="text" name="hsnCode" onChange={(e) => handleChange("hsnCode", e.target.value)} />
+                        <input className="h-9 w-full" type="text" name="pinCode" onChange={(e) => handleChange("pinCode", e.target.value)} />
             
                    
                     </div>
@@ -185,7 +184,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                         </div>
                     </div>
                     <button className="px-4 py-2.5 bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex">
-                        <div className="text-neutral-400 text-base font-bold font-['Satoshi']">Save</div>
+                        <div className="text-neutral-400 text-base font-bold font-['Satoshi']" onClick={handleSaveClick}>Save</div>
                         <Image src={arrowicon} alt="arrow"></Image>
                     </button>
                   

@@ -1,7 +1,7 @@
 // src/api/inventory/getAll.ts
 import { connectToDB } from '../../../../utils/index';
 import prisma from '../../../../../prisma/index';
-import type { AllProducts } from "@prisma/client";
+import type { ProductBatch } from "@prisma/client";
 
 export const GET=async(req: Request)=> {
     if (req.method !== 'GET') {
@@ -9,9 +9,13 @@ export const GET=async(req: Request)=> {
     }
     try {
         await connectToDB();
-        const inventory = await prisma.inventory.findMany({
+        const inventory = await prisma.inventoryTimeline.findMany({
             include: {
-                allProducts: true,
+                productBatch: {
+                    include:{
+                        product:true
+                    }
+                },
                 allServices:true
             }
         });

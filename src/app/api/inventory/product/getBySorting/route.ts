@@ -8,10 +8,9 @@ export const GET = async (req: Request) => {
   }
   try {
       await connectToDB();
-      const products = await prisma.allProducts.findMany({
+      const products = await prisma.products.findMany({
           orderBy: [
-              { itemName: 'asc' },
-              { expiry: 'asc' }
+              { itemName: 'asc' }
           ]
       });
       return new Response(JSON.stringify(products), {

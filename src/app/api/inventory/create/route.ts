@@ -1,7 +1,7 @@
 // src/api/inventory/create.ts
 import { connectToDB } from '../../../../utils/index';
 import prisma from '../../../../../prisma/index';
-import type { AllProducts } from "@prisma/client";
+import { Inventory, type ProductBatch } from "@prisma/client";
 
 export const POST = async (req: Request) => {
   if (req.method !== 'POST') {
@@ -10,7 +10,7 @@ export const POST = async (req: Request) => {
 
   try {
     await connectToDB();
-    const { productId, allServicesId, stockStatus,invoiceType,...restOfBody } = await req.json();
+    const {objectId,inventoryType, stockStatus,invoiceType,...restOfBody } = await req.json();
     console.log(restOfBody);
 
     let createData: any = {
@@ -19,10 +19,10 @@ export const POST = async (req: Request) => {
     };
 
 
-    if (productId) {
+    if (inventoryType===Inventory.Product) {
 
-      createData.product = { connect: { id: productId } };
-      const allProducts = await prisma.allProducts.create({
+      createData.product = { connect: { id: objectId } };
+      const allProducts = await prisma.productBatch.create({
         data: createData,
       });
 
@@ -33,9 +33,9 @@ export const POST = async (req: Request) => {
         quantityChange:createData.quantity
       });
       
-      const inventory= await prisma.inventory.create({
+      const inventory= await prisma.inventoryTimeline.create({
         data:{
-          allProductsId:allProducts.id,
+          objectId:allProducts.id,
           stockChange:stockStatus,
           invoiceType:invoiceType,
           quantityChange:createData.quantity
@@ -50,14 +50,14 @@ export const POST = async (req: Request) => {
       });
       
 
-    } else if (allServicesId) {
-      const allServices = await prisma.allServices.create({
+    } else if (objectId===Inventory.Service) {
+      const allServices = await prisma.services.create({
         data: createData,
       });
       
-      const inventory = await prisma.inventory.create({
+      const inventory = await prisma.inventoryTimeline.create({
         data: {
-          allServicesId:allServices.id,
+          objectId:allServices.id,
           stockChange:stockStatus,
           invoiceType:invoiceType,
           

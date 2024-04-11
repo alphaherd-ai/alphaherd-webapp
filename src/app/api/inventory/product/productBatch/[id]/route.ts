@@ -1,6 +1,6 @@
-import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma/index';
-import { Stock } from '@prisma/client';
+import { connectToDB } from '../../../../../../utils/index';
+import prisma from '../../../../../../../prisma/index';
+import { Inventory, Stock } from '@prisma/client';
 
 export const GET=async (req: Request,
     { params }: { params: {id: string; } } )=> {
@@ -10,14 +10,11 @@ export const GET=async (req: Request,
         } 
         try {
             await connectToDB();
-           const product= await prisma.products.findUnique({
+           const productBatch= await prisma.productBatch.findUnique({
                 where: { id: params.id },
-                include:{
-                    productBatch:true
-                }
             });
                         
-            return new Response(JSON.stringify(product), {
+            return new Response(JSON.stringify(productBatch), {
                 status: 201,
                 headers: {
                     'Content-Type': 'application/json',
@@ -38,15 +35,36 @@ export const PUT=async (req: Request,
         } 
         try {
             await connectToDB();
-            const { stockStatus,invoiceType,...body}=await req.json();
-           const product= await prisma.productBatch.update({
+            const { productId,stockStatus,invoiceType,...body}=await req.json();
+           const productBatch= await prisma.productBatch.findUnique({
                 where: { id: params.id },
-                data:body
             });  
-            
-           
-          
-            return new Response(JSON.stringify({ product }), {
+            const product = await prisma.products.update({
+                where:{id:productId},
+                data:{
+                    totalQuantity:{
+                        decrement:body.quantity
+                    }
+                }
+            })
+            const updateItem = await prisma.productBatch.update({
+                where: { id: params.id },
+                data: {
+                    ...body,
+                    quantity:Math.abs((productBatch?.quantity || 0) - (body.quantity || 0))
+                }
+            });
+        
+            const inventory = await prisma.inventoryTimeline.create({
+                data: {
+                    objectId:params.id,
+                    stockChange:stockStatus,
+                    invoiceType:invoiceType,
+                    quantityChange:body.quantity,
+                    inventoryType:Inventory.Product
+                }
+            });
+            return new Response(JSON.stringify({ inventory }), {
                 status: 201,
                 headers: {
                     'Content-Type': 'application/json',
@@ -68,12 +86,10 @@ export const DELETE=async (req: Request,
             } 
             try {
                 await connectToDB();
-                await prisma.products.delete({
+                await prisma.productBatch.delete({
                     where: {id: params.id },
                 });
-                await  prisma.inventoryTimeline.deleteMany({
-                    where:{objectId:params.id}
-                });
+               
             return new Response(`Product with id: ${params.id} Deleted Successfully`,{status:201})
             } catch (error) {
                 return new Response( "Internal server error",{status:500});

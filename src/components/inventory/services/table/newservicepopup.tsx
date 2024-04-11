@@ -34,7 +34,6 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                     name: formData.name,
                     providers: selectedProviders,
                     sellingPrice: parseInt(formData.sellingPrice),
-                    quantity: parseInt(formData.quantity),
                     sacCode: formData.sacCode,
                     linkProducts:selectedProducts,
                     serviceCost: parseInt(formData.serviceCost),
