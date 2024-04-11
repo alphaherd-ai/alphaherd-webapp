@@ -31,54 +31,50 @@ enum Role {
   Veterinarian
 }
 
-model User {
-  id             Int       @id @default(autoincrement())
-  name           String
-  email          String    @unique
-  phoneNo        String
-  altPhoneNo     String?
-  hashedPassword String
-  orgBranchUserRoles OrgBranchUserRole[] // Add this field to establish the relation
-
-  @@map("user") // Optional: Specify custom table name if needed
-}
-
 model Organization {
-  id           Int       @id @default(autoincrement())
-  orgName      String    @unique
-  orgEmail     String
-  gstNo        String
-  address      String
-  state        String
-  pincode      String
-  description  String
-  phoneNo      String
-  orgBranches  OrgBranch[]
+  id             Int        @id @default(autoincrement())
+  orgName        String     @unique
+  orgEmail       String
+  gstNo          String
+  address        String
+  state          String
+  pincode        String
+  description    String
+  phoneNo        String
+  adminUsers     User[]
+  orgBranches    OrgBranch[]
 }
 
 model OrgBranch {
-  id                Int       @id @default(autoincrement())
+  id                Int        @id @default(autoincrement())
   branchName        String
-  orgId             Int       // Foreign key to Organization
   org               Organization @relation(fields: [orgId], references: [id])
+  orgId             Int
   orgBranchUserRoles OrgBranchUserRole[]
-
-  @@map("orgBranch")
 }
 
 model OrgBranchUserRole {
-  id           Int       @id @default(autoincrement())
-  orgBranch    OrgBranch @relation(fields: [orgBranchId], references: [id])
-  orgBranchId  Int       // Foreign key to OrgBranch
-  user         User      @relation(fields: [userId], references: [id])
-  userId       Int       // Foreign key to User
-  role         Role
+  id          Int        @id @default(autoincrement())
+  orgBranch   OrgBranch  @relation(fields: [orgBranchId], references: [id])
+  orgBranchId Int
+  user        User       @relation(fields: [userId], references: [id])
+  userId      Int
+  role        Role
+}
 
-  @@map("orgBranchUserRole")
+model User {
+  id                   Int        @id @default(autoincrement())
+  name                 String
+  email                String     @unique
+  phoneNo              String
+  altPhoneNo           String?
+  hashedPassword       String
+  adminOrganizations   Organization[]
+  userRoles            OrgBranchUserRole[]
 }
 
 model Products {
-  id            Int       @id @default(autoincrement())
+  id            Int        @id @default(autoincrement())
   itemName      String?
   defaultUnit   String?
   hsnCode       String?
@@ -90,17 +86,17 @@ model Products {
   minStock      Int?
   maxStock      Int?
   productBatches ProductBatch[]
-  Items         Item[]
+  items         Item[]
 }
 
 model ProductBatch {
-  id                Int       @id @default(autoincrement())
+  id                Int        @id @default(autoincrement())
   distributors      String[]
   quantity          Int?
-  productId         Int       // Foreign key to Products
+  productId         Int
   batchNumber       String?
   costPrice         Int?
-  location          Location  @default(NONE)
+  location          Location   @default(NONE)
   totalCost         Int?
   costPerItem       Int?
   profitMargin      String?
@@ -108,16 +104,13 @@ model ProductBatch {
   sellingPrice      Int?
   date              DateTime?
   balanceDue        Boolean?
-  Items             Item[]
-  Inventory         Inventory[]
-  product           Products? @relation(fields: [productId], references: [id])
-  inventoryTimeline InventoryTimeline[] // Add this field to establish the relation
-
-  @@map("productBatch") // Optional: Specify custom table name if needed
+  items             Item[]
+  product           Products   @relation(fields: [productId], references: [id])
+  inventoryTimeline InventoryTimeline[] // Add the opposite relation
 }
 
 model Services {
-  id                Int       @id @default(autoincrement())
+  id                Int        @id @default(autoincrement())
   name              String
   sacCode           String?
   description       String?
@@ -129,11 +122,11 @@ model Services {
   serviceCost       Int?
   serviceCharge     Int?
   inventoryEntries  Inventory[]
-  InventoryTimeline InventoryTimeline[]
+  inventoryTimeline InventoryTimeline[] // Add the opposite relation
 }
 
 model Sales {
-  id              Int       @id @default(autoincrement())
+  id              Int        @id @default(autoincrement())
   customer        String
   date            DateTime
   notes           String
@@ -147,12 +140,12 @@ model Sales {
   totalQty        Int
   status          String
   type            String?
-  Items           Item[]
-  financeEntries  FinanceTimeline[]
+  items           Item[]
+  financeTimeline FinanceTimeline[]
 }
 
 model Purchases {
-  id                   Int       @id @default(autoincrement())
+  id                   Int        @id @default(autoincrement())
   distributor          String
   date                 DateTime
   dueDate              DateTime
@@ -168,12 +161,12 @@ model Purchases {
   totalQty             Int
   status               String
   type                 String?
-  Items                Item[]
-  financeEntries       FinanceTimeline[]
+  items                Item[]
+  financeTimeline      FinanceTimeline[]
 }
 
 model Expenses {
-  id              Int       @id @default(autoincrement())
+  id              Int        @id @default(autoincrement())
   party           String
   date            DateTime
   invoiceNo       String?
@@ -188,12 +181,12 @@ model Expenses {
   notes           String
   status          String
   type            String?
-  Items           Item[]
-  financeEntries  FinanceTimeline[]
+  items           Item[]
+  financeTimeline FinanceTimeline[]
 }
 
 model Transactions {
-  id            Int       @id @default(autoincrement())
+  id            Int        @id @default(autoincrement())
   partyName     String?
   subject       String?
   invoiceLink   String?
@@ -206,7 +199,7 @@ model Transactions {
 }
 
 model Item {
-  id             Int       @id @default(autoincrement())
+  id             Int        @id @default(autoincrement())
   taxPercent     Int
   taxAmount      Int
   totalAmount    Int
@@ -214,77 +207,40 @@ model Item {
   category       String?
   quantity       Int?
   name           String?
-  productId      Int?      // Foreign key to Products
-  products       Products? @relation(fields: [productId], references: [id])
-  salesId        Int?      // Foreign key to Sales
-  sale           Sales?    @relation(fields: [salesId], references: [id])
-  purchasesId    Int?      // Foreign key to Purchases
+  productId      Int?
+  products       Products?  @relation(fields: [productId], references: [id])
+  salesId        Int?
+  sale           Sales?     @relation(fields: [salesId], references: [id])
+  purchasesId    Int?
   purchases      Purchases? @relation(fields: [purchasesId], references: [id])
-  expensesId     Int?      // Foreign key to Expenses
-  expenses       Expenses? @relation(fields: [expensesId], references: [id])
-  productBatchId Int?      // Foreign key to ProductBatch
+  expensesId     Int?
+  expenses       Expenses?  @relation(fields: [expensesId], references: [id])
+  productBatchId Int?
   productBatch   ProductBatch? @relation(fields: [productBatchId], references: [id])
 }
 
-model Client {
-  id         Int       @id @default(autoincrement())
-  clientName String?
-  email      String?
-  contact    String?
-  address    String?
-  city       String?
-  pinCode    String?
-}
-
-model Patient {
-  id          Int       @id @default(autoincrement())
-  patientName String?
-  clientId    Int?      // Foreign key to Client
-  species     String?
-  breed       String?
-  dateOfBirth DateTime?
-  age         String?
-  gender      String?
-  isInpatient Boolean?
-}
-
-model Distributor {
-  id              Int       @id @default(autoincrement())
-  distributorName String?
-  email           String?
-  contact         String?
-  gstinNo         String?
-  panNo           String?
-  address         String?
-  city            String?
-  pinCode         String?
-}
-
 model InventoryTimeline {
-  id             Int       @id @default(autoincrement())
-  objectId       Int?      // Foreign key to ProductBatch or Services
+  id             Int        @id @default(autoincrement())
+  objectId       Int?
   inventoryType  Inventory? @default(None)
   stockChange    Stock?     @default(StockIN)
   invoiceType    String?
   quantityChange Int?
   receiptNo      Int?
-  createdAt      DateTime @default(now())
-  productBatch   ProductBatch? @relation(fields: [objectId], references: [id], map: "inventoryTimeline_productBatch_fkey")
-  allServices    Services? @relation(fields: [objectId], references: [id], map: "inventoryTimeline_allServices_fkey")
-
-  @@map("inventoryTimeline")
+  party          String?
+  createdAt      DateTime?  @default(now())
+  productBatch   ProductBatch? @relation(fields: [objectId], references: [id], map: "InventoryTimeline_productBatch")
+  service        Services? @relation(fields: [objectId], references: [id], map: "InventoryTimeline_service")
 }
 
 model FinanceTimeline {
-  id          Int       @id @default(autoincrement())
-  salesId     Int?      // Foreign key to Sales
-  sale        Sales?    @relation(fields: [salesId], references: [id])
+  id          Int        @id @default(autoincrement())
+  salesId     Int?
+  sale        Sales?     @relation(fields: [salesId], references: [id])
   type        String?
-  createdAt   DateTime  @default(now())
-  purchasesId Int?      // Foreign key to Purchases
+  createdAt   DateTime
+  purchasesId Int?
   purchases   Purchases? @relation(fields: [purchasesId], references: [id])
-  expensesId  Int?      // Foreign key to Expenses
-  expenses    Expenses? @relation(fields: [expensesId], references: [id])
-
-  @@map("finance")
+  expensesId  Int?
+  expenses    Expenses?  @relation(fields: [expensesId], references: [id])
 }

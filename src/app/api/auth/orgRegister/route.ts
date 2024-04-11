@@ -18,7 +18,8 @@ export const POST = async (req: Request) => {
     let duplicateOrg = await prisma.organization.findUnique({
       where: {
         orgName: orgDetails.orgName
-      }
+      },
+      include: { adminUsers: true },
     });
 
     if (duplicateOrg != null) {
@@ -37,7 +38,8 @@ export const POST = async (req: Request) => {
         hashedPassword: {
           not: hashedPassword
         }
-      }
+      },
+      include: { adminOrganizations: true },
     });
 
     if (duplicateAdminUser != null) {
@@ -60,23 +62,29 @@ export const POST = async (req: Request) => {
       data: adminUserDetails
     });
 
+    console.log(newOrg,newUser);
+
     await prisma.organization.update({
       where: {
         orgName: newOrg.orgName
       },
       data: {
-        adminUserIds: [...newOrg.adminUserIds,newUser.id]
+        adminUsers: {
+          connect: {
+            id: newUser.id
+          }
+        }
       }
     });
 
-    await prisma.user.update({
+    let dop = await prisma.organization.findUnique({
       where: {
-        email: newUser.email
+        orgName: orgDetails.orgName
       },
-      data: {
-        organizationIds: [...newUser.organizationIds,newOrg.id]
-      }
+      include: { adminUsers: true },
     });
+
+    console.log(dop?.adminUsers.length);
 
     return new Response(JSON.stringify({ "message" : "Organization & Admin user successfully created."}), {
       status: 201,
@@ -85,9 +93,15 @@ export const POST = async (req: Request) => {
       },
     });
 
-  } catch (error) {
+  } catch (error : any) {
     console.log(error);
-    return new Response(JSON.stringify(error));
+    console.log(typeof(error))
+    return new Response(JSON.stringify({"message" : error.message}), {
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   } finally {
     await prisma.$disconnect();
   }
