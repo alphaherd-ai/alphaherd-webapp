@@ -17,6 +17,7 @@
     "@mui/styled-engine-sc": "^6.0.0-alpha.18",
     "@nextui-org/react": "^2.2.10",
     "@prisma/client": "^5.11.0",
+    "@react-native-async-storage/async-storage": "^1.23.1",
     "@reduxjs/toolkit": "^2.2.2",
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
@@ -48,6 +49,7 @@
     "react-redux": "^9.1.0",
     "react-select": "^5.8.0",
     "react-toastify": "^10.0.5",
+    "redux-persist": "^6.0.0",
     "styled-components": "^6.1.8",
     "ts-node": "^10.9.2"
   },

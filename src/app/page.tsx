@@ -4,7 +4,7 @@ import {getServerSession} from 'next-auth'
 import { useAppDispatch, useAppSelector, useAppStore } from '@/lib/hooks';
 import { useRef } from 'react';
 
-export default async function Home() {
+export default function Home() {
 
   const store = useAppStore();
   const user= useAppSelector((state) => state.user);
