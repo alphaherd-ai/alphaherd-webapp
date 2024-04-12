@@ -51,7 +51,13 @@ export async function login(req: Request) {
     const session = await encrypt({ user, expires });
 
     // Save the session in a cookie
-    cookies().set("session", session, { expires, httpOnly: true });
+    cookies().set("session", session, {
+      httpOnly: true, // Cookie is accessible only through HTTP(S) requests
+      secure: process.env.NODE_ENV === 'production', // Cookie is sent only over HTTPS in production
+      sameSite: 'strict', // Cookie is not sent in cross-site requests
+      maxAge: 60 * 60 * 24 * 7, // Cookie expires in 7 days
+      path: '/', // Cookie is accessible from all paths in the domain
+    });
 
     return new Response(JSON.stringify({ user }), {
       status: 200,
@@ -93,7 +99,7 @@ export async function getSession() {
 export async function updateSession(request: NextRequest) {
   console.log("here")
   const session = request.cookies.get("session")?.value;
-  console.log("session: ",session)
+  console.log("session: ", session)
   if (!session) return;
 
   // Refresh the session so it doesn't expire

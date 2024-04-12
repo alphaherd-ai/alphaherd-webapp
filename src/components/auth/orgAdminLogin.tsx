@@ -74,11 +74,6 @@ const OrgAdminLogin = () => {
               transition: Bounce,
             });
             console.log(data)
-            // signIn("credentials",{
-            //     email: data.email,
-            //     password: data.password,
-            //     redirect: false
-            //   })
             console.log(json.user)
             dispatch(updateUser(json.user as UserState))
             router.push(`/`)

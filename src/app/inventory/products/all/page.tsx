@@ -7,14 +7,14 @@ import InventoryProductTimelineTable from '@/components/inventory/product/produc
 const InventoryAllProductsTable = () => {
   return (
     <>
-    <div className='w-full bg-gray-200 p-8 px-10'>
-  <InventoryNavbar/>
+      <div className='w-full bg-gray-200 p-8 px-10'>
+        <InventoryNavbar />
 
-  <InventoryProductStockTable/>
+        <InventoryProductStockTable />
 
-<InventoryProductTimelineTable/>
-     
-    </div>
+        <InventoryProductTimelineTable />
+
+      </div>
     </>
   )
 }
