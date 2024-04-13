@@ -115,11 +115,11 @@ const OrgSetup = () => {
   const [activeTab, setActiveTab] = useState(0)
 
   const formElements = [
-    <OrgNameSetup data={data} handleChange={handleChange} />,
-    <OrgDetailsSetup data={data} handleChange={handleChange} />,
-    <OrgAdminSetup data={data} handleChange={handleChange} />
-  ]
-
+    <OrgNameSetup key="orgName" data={data} handleChange={handleChange} />,
+    <OrgDetailsSetup key="orgDetails" data={data} handleChange={handleChange} />,
+    <OrgAdminSetup key="orgAdmin" data={data} handleChange={handleChange} />
+  ];
+  
   return (
     <>
       <ToastContainer />
