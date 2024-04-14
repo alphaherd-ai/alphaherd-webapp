@@ -3,14 +3,14 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link';
 
 interface Clients {
-    id: string;
+    id: number;
     clientName: string;
 }
 
 interface Patients {
-    id: string;
+    id: number;
     patientName: string;
-    clientId: string;
+    clientid: number;
     species: string;
     breed: string;
     age: number;

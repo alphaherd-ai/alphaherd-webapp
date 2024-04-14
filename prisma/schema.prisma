@@ -32,71 +32,109 @@ enum Role {
 }
 
 model Organization {
-  id             Int        @id @default(autoincrement())
-  orgName        String     @unique
-  orgEmail       String
-  gstNo          String
-  address        String
-  state          String
-  pincode        String
-  description    String
-  phoneNo        String
-  adminUsers     User[]
-  orgBranches    OrgBranch[]
+  id          Int         @id @default(autoincrement())
+  orgName     String      @unique
+  orgEmail    String
+  gstNo       String
+  address     String
+  state       String
+  pincode     String
+  description String
+  phoneNo     String
+  adminUsers  User[]
+  orgBranches OrgBranch[]
 }
 
 model OrgBranch {
-  id                Int        @id @default(autoincrement())
-  branchName        String
-  org               Organization @relation(fields: [orgId], references: [id])
-  orgId             Int
+  id                 Int                 @id @default(autoincrement())
+  branchName         String
+  org                Organization        @relation(fields: [orgId], references: [id])
+  orgId              Int
   orgBranchUserRoles OrgBranchUserRole[]
 }
 
 model OrgBranchUserRole {
-  id          Int        @id @default(autoincrement())
-  orgBranch   OrgBranch  @relation(fields: [orgBranchId], references: [id])
+  id          Int       @id @default(autoincrement())
+  orgBranch   OrgBranch @relation(fields: [orgBranchId], references: [id])
   orgBranchId Int
-  user        User       @relation(fields: [userId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
   userId      Int
   role        Role
 }
 
 model User {
-  id                   Int        @id @default(autoincrement())
-  name                 String
-  email                String     @unique
-  phoneNo              String
-  altPhoneNo           String?
-  hashedPassword       String
-  adminOrganizations   Organization[]
-  userRoles            OrgBranchUserRole[]
+  id                 Int                 @id @default(autoincrement())
+  name               String
+  email              String              @unique
+  phoneNo            String
+  altPhoneNo         String?
+  hashedPassword     String
+  adminOrganizations Organization[]
+  userRoles          OrgBranchUserRole[]
+}
+
+model Clients {
+  id         Int        @id @default(autoincrement())
+  clientName String?
+  email      String?    @unique
+  contact    String?
+  address    String?
+  city       String?
+  pinCode    String?
+  patients   Patients[]
+
+  @@map("client")
+}
+
+model Patients {
+  id          Int       @id @default(autoincrement())
+  patientName String?
+  clientId    Int? // Foreign key to Client
+  species     String?
+  breed       String?
+  dateOfBirth DateTime?
+  age         String?
+  gender      String?
+  isInpatient Boolean?
+  clients     Clients?  @relation(fields: [clientId], references: [id])
+}
+
+model Distributors {
+  id              Int     @id @default(autoincrement())
+  distributorName String?
+  email           String? @unique
+  contact         String?
+  gstinNo         String?
+  panNo           String?
+  address         String?
+  city            String?
+  pinCode         String?
 }
 
 model Products {
-  id            Int        @id @default(autoincrement())
-  itemName      String?
-  defaultUnit   String?
-  hsnCode       String?
-  tax           String?
-  category      String?
-  description   String?
-  providers     String[]
-  totalQuantity Int?
-  minStock      Int?
-  maxStock      Int?
+  id             Int            @id @default(autoincrement())
+  itemName       String?
+  defaultUnit    String?
+  hsnCode        String?
+  tax            String?
+  category       String?
+  description    String?
+  providers      String[]
+  totalQuantity  Int?
+  minStock       Int?
+  maxStock       Int?
   productBatches ProductBatch[]
-  items         Item[]
+  items          Items[]
 }
 
 model ProductBatch {
-  id                Int        @id @default(autoincrement())
+  id                Int                 @id @default(autoincrement())
   distributors      String[]
   quantity          Int?
   productId         Int
   batchNumber       String?
   costPrice         Int?
-  location          Location   @default(NONE)
+  location          Location            @default(NONE)
   totalCost         Int?
   costPerItem       Int?
   profitMargin      String?
@@ -104,13 +142,13 @@ model ProductBatch {
   sellingPrice      Int?
   date              DateTime?
   balanceDue        Boolean?
-  items             Item[]
-  product           Products   @relation(fields: [productId], references: [id])
+  items             Items[]
+  product           Products            @relation(fields: [productId], references: [id])
   inventoryTimeline InventoryTimeline[] // Add the opposite relation
 }
 
 model Services {
-  id                Int        @id @default(autoincrement())
+  id                Int                 @id @default(autoincrement())
   name              String
   sacCode           String?
   description       String?
@@ -126,7 +164,7 @@ model Services {
 }
 
 model Sales {
-  id              Int        @id @default(autoincrement())
+  id              Int               @id @default(autoincrement())
   customer        String
   date            DateTime
   notes           String
@@ -140,12 +178,12 @@ model Sales {
   totalQty        Int
   status          String
   type            String?
-  items           Item[]
+  items           Items[]
   financeTimeline FinanceTimeline[]
 }
 
 model Purchases {
-  id                   Int        @id @default(autoincrement())
+  id                   Int               @id @default(autoincrement())
   distributor          String
   date                 DateTime
   dueDate              DateTime
@@ -161,12 +199,12 @@ model Purchases {
   totalQty             Int
   status               String
   type                 String?
-  items                Item[]
+  items                Items[]
   financeTimeline      FinanceTimeline[]
 }
 
 model Expenses {
-  id              Int        @id @default(autoincrement())
+  id              Int               @id @default(autoincrement())
   party           String
   date            DateTime
   invoiceNo       String?
@@ -181,12 +219,12 @@ model Expenses {
   notes           String
   status          String
   type            String?
-  items           Item[]
+  items           Items[]
   financeTimeline FinanceTimeline[]
 }
 
 model Transactions {
-  id            Int        @id @default(autoincrement())
+  id            Int       @id @default(autoincrement())
   partyName     String?
   subject       String?
   invoiceLink   String?
@@ -198,8 +236,8 @@ model Transactions {
   invoiceSource String?
 }
 
-model Item {
-  id             Int        @id @default(autoincrement())
+model Items {
+  id             Int           @id @default(autoincrement())
   taxPercent     Int
   taxAmount      Int
   totalAmount    Int
@@ -208,29 +246,29 @@ model Item {
   quantity       Int?
   name           String?
   productId      Int?
-  products       Products?  @relation(fields: [productId], references: [id])
+  products       Products?     @relation(fields: [productId], references: [id])
   salesId        Int?
-  sale           Sales?     @relation(fields: [salesId], references: [id])
+  sale           Sales?        @relation(fields: [salesId], references: [id])
   purchasesId    Int?
-  purchases      Purchases? @relation(fields: [purchasesId], references: [id])
+  purchases      Purchases?    @relation(fields: [purchasesId], references: [id])
   expensesId     Int?
-  expenses       Expenses?  @relation(fields: [expensesId], references: [id])
+  expenses       Expenses?     @relation(fields: [expensesId], references: [id])
   productBatchId Int?
   productBatch   ProductBatch? @relation(fields: [productBatchId], references: [id])
 }
 
 model InventoryTimeline {
-  id             Int        @id @default(autoincrement())
+  id             Int           @id @default(autoincrement())
   objectId       Int?
-  inventoryType  Inventory? @default(None)
-  stockChange    Stock?     @default(StockIN)
+  inventoryType  Inventory?    @default(None)
+  stockChange    Stock?        @default(StockIN)
   invoiceType    String?
   quantityChange Int?
   receiptNo      Int?
   party          String?
-  createdAt      DateTime?  @default(now())
+  createdAt      DateTime?     @default(now())
   productBatch   ProductBatch? @relation(fields: [objectId], references: [id], map: "InventoryTimeline_productBatch")
-  service        Services? @relation(fields: [objectId], references: [id], map: "InventoryTimeline_service")
+  service        Services?     @relation(fields: [objectId], references: [id], map: "InventoryTimeline_service")
 }
 
 model FinanceTimeline {

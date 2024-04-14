@@ -20,7 +20,7 @@ import NewsalesTotalAmout from './totalamount';
 import axios from 'axios';
 
 interface AllProducts {
-    id: string;
+    id: number;
     date: string;
     time: string;
     quantity: number;

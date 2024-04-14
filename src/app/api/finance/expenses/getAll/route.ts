@@ -11,9 +11,9 @@ export const GET = async (req: Request) => {
     await connectToDB();
     const expenses = await prisma.expenses.findMany({
       include: {
-        item: {
+        items: {
           include: {
-            allProducts: true, 
+            productBatch: true, 
           },
         },
       },

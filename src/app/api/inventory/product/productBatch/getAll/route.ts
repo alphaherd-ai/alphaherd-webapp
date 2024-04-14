@@ -7,12 +7,12 @@ export  const GET=async (req: Request )=> {
 }
     try {
         await connectToDB();
-        const products = await prisma.productBatch.findMany({
+        const productBatches = await prisma.productBatch.findMany({
             include:{
                 product:true
             }
         });
-        return new Response(JSON.stringify(products), {
+        return new Response(JSON.stringify(productBatches), {
           status: 201,
           headers: {
               'Content-Type': 'application/json',

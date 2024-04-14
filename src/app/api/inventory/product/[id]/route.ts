@@ -3,20 +3,18 @@ import prisma from '../../../../../../prisma/index';
 import { Stock } from '@prisma/client';
 
 export const GET=async (req: Request,
-    { params }: { params: {id: string; } } )=> {
-
+    { params }: { params: {id: number; } } )=> {
         if (req.method !== 'GET') {
             return new Response('Method not allowed',{status:405});
         } 
         try {
             await connectToDB();
            const product= await prisma.products.findUnique({
-                where: { id: params.id },
+                where: { id: Number(Number(params.id)) },
                 include:{
-                    productBatch:true
+                    productBatches:true
                 }
             });
-                        
             return new Response(JSON.stringify(product), {
                 status: 201,
                 headers: {
@@ -24,6 +22,7 @@ export const GET=async (req: Request,
                 },
             });
         } catch (error) {
+            console.error(error)
             return new Response( "Internal server error",{status:500});
         } finally {
             await prisma.$disconnect();
@@ -31,7 +30,7 @@ export const GET=async (req: Request,
 }
 
 export const PUT=async (req: Request,
-    { params }: { params: {id: string; } } )=> {
+    { params }: { params: {id: number; } } )=> {
 
         if (req.method !== 'PUT') {
             return new Response('Method not allowed',{status:405});
@@ -40,7 +39,7 @@ export const PUT=async (req: Request,
             await connectToDB();
             const { stockStatus,invoiceType,...body}=await req.json();
            const product= await prisma.productBatch.update({
-                where: { id: params.id },
+                where: { id: Number(params.id) },
                 data:body
             });  
             
@@ -62,19 +61,19 @@ export const PUT=async (req: Request,
 }
 
 export const DELETE=async (req: Request,
-    { params }: { params: {id: string; } } )=> {
+    { params }: { params: {id: number; } } )=> {
     if (req.method !== 'DELETE') {
                 return new Response('Method not allowed',{status:405});
             } 
             try {
                 await connectToDB();
                 await prisma.products.delete({
-                    where: {id: params.id },
+                    where: {id: Number(params.id) },
                 });
                 await  prisma.inventoryTimeline.deleteMany({
-                    where:{objectId:params.id}
+                    where:{objectId:Number(params.id)}
                 });
-            return new Response(`Product with id: ${params.id} Deleted Successfully`,{status:201})
+            return new Response(`Product with id: ${Number(params.id)} Deleted Successfully`,{status:201})
             } catch (error) {
                 return new Response( "Internal server error",{status:500});
             } finally {

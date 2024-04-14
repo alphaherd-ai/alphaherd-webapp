@@ -3,7 +3,7 @@ import prisma from '../../../../../prisma/index';
 
 
 export const GET=async (req: Request,
-    { params }: { params: {id: string; } } )=> {
+    { params }: { params: {id: number; } } )=> {
 
         if (req.method !== 'GET') {
             return new Response('Method not allowed',{status:405});
@@ -11,10 +11,10 @@ export const GET=async (req: Request,
         try {
             await connectToDB();
             const inventory= await prisma.inventoryTimeline.findUnique({
-                where: { id: params.id },
+                where: { id: Number(params.id) },
                 include:{
                     productBatch:true,
-                    allServices:true
+                    service:true
                 }
             });                       
             return new Response(JSON.stringify(inventory), {
@@ -30,7 +30,7 @@ export const GET=async (req: Request,
         }
 }
 
-export const PUT = async (req: Request, { params }: { params: { id: string } }) => {
+export const PUT = async (req: Request, { params }: { params: { id: number } }) => {
     if (req.method !== 'PUT') {
         return new Response('Method not allowed', { status: 405 });
     }
@@ -38,7 +38,7 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
         await connectToDB();
         const { stockStatus, body } = await req.json();
         const item = await prisma.inventoryTimeline.findUnique({
-            where: { id: params.id },
+            where: { id: Number(params.id) },
         });
         const product = await prisma.productBatch.findUnique({
             where: { id: item?.objectId !== null ? item?.objectId : undefined },
@@ -72,17 +72,17 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
 
 
 export const DELETE=async (req: Request,
-    { params }: { params: {id: string; } } )=> {
+    { params }: { params: {id: number; } } )=> {
     if (req.method !== 'DELETE') {
                 return new Response('Method not allowed',{status:405});
             } 
             try {
                 await connectToDB();
                 await prisma.inventoryTimeline.deleteMany({
-                    where: { id: params.id },
+                    where: { id: Number(params.id) },
                 });
 
-            return new Response(`Inventory with id: ${params.id} Deleted Successfully`,{status:201})
+            return new Response(`Inventory with id: ${Number(params.id)} Deleted Successfully`,{status:201})
             } catch (error) {
                 return new Response( "Internal server error",{status:500});
             } finally {

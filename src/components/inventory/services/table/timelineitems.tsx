@@ -5,7 +5,7 @@ import Link from 'next/link';
 import formatDateAndTime from '@/utils/formateDateTime';
 import { Inventory } from '@prisma/client';
 interface AllServices {
-    id: string;
+    id: number;
     name: string;
     providers: string[];
     category: string;
@@ -14,7 +14,7 @@ interface AllServices {
 }
 
 interface InventoryTimeline {
-    id: string;
+    id: number;
     stockChange: string;
     invoiceType: string;
     quantityChange: number;

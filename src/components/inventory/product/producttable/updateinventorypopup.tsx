@@ -26,7 +26,7 @@ interface Products{
     hsnCode:string
 }
 interface ProductBatch {
-    id: string;
+    id: number;
     date: string;
     time: string;
     quantity: number;
@@ -43,8 +43,8 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
     const [selectedOption, setSelectedOption] = useState<string>(Stock.StockIN);
     const [selectedProductDetails,setSelectedProduct]= useState<Products>()
     const [isChecked, setChecked] = useState(false);
-    const [products, setProducts] = useState<{ value: string; label: string }[]>([]);
-    const [batches,setBatches] = useState<{value:string;label:string}[]>([])
+    const [products, setProducts] = useState<{ value: number; label: string }[]>([]);
+    const [batches,setBatches] = useState<{value:number;label:string}[]>([])
     const [inventory, setInventory] = useState<any[]>([]);
 
     useEffect(() => {
@@ -130,6 +130,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
     }, [inventory]);
 
     const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
+        console.log(selectedProduct)
         if (selectedProduct.value) {
             try {
                 const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${selectedProduct.value}`);

@@ -1,7 +1,7 @@
 import { connectToDB } from '../../../../../utils/index';
 import prisma from '../../../../../../prisma/index';
 
-export const GET = async (req: Request, { params }: { params: { id: string } }) => {
+export const GET = async (req: Request, { params }: { params: { id: number } }) => {
   if (req.method !== 'GET') {
     return new Response('Method not allowed', { status: 405 });
   }
@@ -9,7 +9,7 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
   try {
     await connectToDB();
     const transactions = await prisma.transactions.findUnique({
-      where: { id: params.id },
+      where: { id: Number(params.id) },
     });
 
     return new Response(JSON.stringify(transactions), {
@@ -25,7 +25,7 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
   }
 };
 
-export const PUT = async (req: Request, { params }: { params: { id: string } }) => {
+export const PUT = async (req: Request, { params }: { params: { id: number } }) => {
     if (req.method !== 'PUT') {
       return new Response('Method not allowed', { status: 405 });
     }
@@ -34,7 +34,7 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
       await connectToDB();
       const body = await req.json();
       const transactions = await prisma.transactions.update({
-        where: { id: params.id },
+        where: { id: Number(params.id) },
         data: body,
       });
   
@@ -53,14 +53,14 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
   };
 
 
-export const DELETE = async (req: Request, { params }: { params: { id: string } }) => {
+export const DELETE = async (req: Request, { params }: { params: { id: number } }) => {
   if (req.method !== 'DELETE') {
     return new Response('Method not allowed', { status: 405 });
   }
 
   try {
     await connectToDB();
-    const transactionsId = params.id;
+    const transactionsId = Number(params.id);
 
      await prisma.transactions.delete({
       where: { id: transactionsId },

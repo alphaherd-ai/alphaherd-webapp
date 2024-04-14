@@ -23,7 +23,7 @@ import { response } from "express"
 
 
 interface AllProducts {
-    id: string;
+    id: number;
     date: string;
     time: string;
     quantity: number;

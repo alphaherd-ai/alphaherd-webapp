@@ -16,7 +16,7 @@ export const GET=async(req: Request)=> {
                         product:true
                     }
                 },
-                allServices:true
+                service:true
             }
         });
         

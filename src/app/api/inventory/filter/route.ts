@@ -1,7 +1,7 @@
 // src/api/inventory/filter.ts
 import { connectToDB } from '../../../../utils/index';
 import prisma from '../../../../../prisma/index';
-import { Inventory } from '@prisma/client';
+import { Inventory, InventoryTimeline, Stock } from '@prisma/client';
 
 export const POST = async (req: Request) => {
   if (req.method !== 'POST') {
@@ -20,7 +20,7 @@ export const POST = async (req: Request) => {
     const filterOptions: {
       party?: string | { in: string[] };
       invoiceType?: string | { in: string[] };
-      stockChange?: string | { in: string[] };
+      stockChange?: Stock| { in: string[] };
       createdAt?: { gte?: Date; lte?: Date };
     } = {};
 
@@ -43,10 +43,10 @@ export const POST = async (req: Request) => {
       };
     }
 
-    const filteredInventory: Inventory[] = await prisma.inventory.findMany({
-      where: filterOptions,
-    });
-
+    // const filteredInventory: InventoryTimeline[] = await prisma.inventoryTimeline.findMany({
+    //   where: filterOptions,
+    // });
+    const filteredInventory="dalkjsf"
     return new Response(JSON.stringify(filteredInventory), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },

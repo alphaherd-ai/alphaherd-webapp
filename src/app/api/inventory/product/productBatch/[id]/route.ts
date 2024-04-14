@@ -3,7 +3,7 @@ import prisma from '../../../../../../../prisma/index';
 import { Inventory, Stock } from '@prisma/client';
 
 export const GET=async (req: Request,
-    { params }: { params: {id: string; } } )=> {
+    { params }: { params: {id: number; } } )=> {
 
         if (req.method !== 'GET') {
             return new Response('Method not allowed',{status:405});
@@ -11,7 +11,7 @@ export const GET=async (req: Request,
         try {
             await connectToDB();
            const productBatch= await prisma.productBatch.findUnique({
-                where: { id: params.id },
+                where: { id: Number(params.id) },
             });
                         
             return new Response(JSON.stringify(productBatch), {
@@ -28,7 +28,7 @@ export const GET=async (req: Request,
 }
 
 export const PUT=async (req: Request,
-    { params }: { params: {id: string; } } )=> {
+    { params }: { params: {id: number; } } )=> {
 
         if (req.method !== 'PUT') {
             return new Response('Method not allowed',{status:405});
@@ -37,7 +37,7 @@ export const PUT=async (req: Request,
             await connectToDB();
             const { productId,stockStatus,invoiceType,...body}=await req.json();
            const productBatch= await prisma.productBatch.findUnique({
-                where: { id: params.id },
+                where: { id: Number(params.id) },
             });  
             const product = await prisma.products.update({
                 where:{id:productId},
@@ -48,7 +48,7 @@ export const PUT=async (req: Request,
                 }
             })
             const updateItem = await prisma.productBatch.update({
-                where: { id: params.id },
+                where: { id: Number(params.id) },
                 data: {
                     ...body,
                     quantity:Math.abs((productBatch?.quantity || 0) - (body.quantity || 0))
@@ -57,7 +57,7 @@ export const PUT=async (req: Request,
         
             const inventory = await prisma.inventoryTimeline.create({
                 data: {
-                    objectId:params.id,
+                    objectId:Number(params.id),
                     stockChange:stockStatus,
                     invoiceType:invoiceType,
                     quantityChange:body.quantity,
@@ -80,17 +80,17 @@ export const PUT=async (req: Request,
 }
 
 export const DELETE=async (req: Request,
-    { params }: { params: {id: string; } } )=> {
+    { params }: { params: {id: number; } } )=> {
     if (req.method !== 'DELETE') {
                 return new Response('Method not allowed',{status:405});
             } 
             try {
                 await connectToDB();
                 await prisma.productBatch.delete({
-                    where: {id: params.id },
+                    where: {id: Number(params.id) },
                 });
                
-            return new Response(`Product with id: ${params.id} Deleted Successfully`,{status:201})
+            return new Response(`Product with id: ${Number(params.id)} Deleted Successfully`,{status:201})
             } catch (error) {
                 return new Response( "Internal server error",{status:500});
             } finally {

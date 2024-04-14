@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import formatDateAndTime from '@/utils/formateDateTime';
 interface Clients {
-    id: string;
+    id: number;
     clientName: string;
     email: string;
     contact: string;

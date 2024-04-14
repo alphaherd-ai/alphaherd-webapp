@@ -2,7 +2,7 @@ import { connectToDB } from '../../../../../utils/index';
 import prisma from '../../../../../../prisma/index';
 
 export const GET=async (req: Request,
-    { params }: { params: {id: string; } } )=> {
+    { params }: { params: {id: number; } } )=> {
 
         if (req.method !== 'GET') {
             return new Response('Method not allowed',{status:405});
@@ -10,7 +10,7 @@ export const GET=async (req: Request,
         try {
             await connectToDB();
            const client= await prisma.clients.findUnique({
-                where: { id: params.id },
+                where: { id: Number(params.id) },
                 include:{
                     patients:true
                 }
@@ -30,7 +30,7 @@ export const GET=async (req: Request,
 }
 
 export const PUT=async (req: Request,
-    { params }: { params: {id: string; } } )=> {
+    { params }: { params: {id: number; } } )=> {
 
         if (req.method !== 'PUT') {
             return new Response('Method not allowed',{status:405});
@@ -39,7 +39,7 @@ export const PUT=async (req: Request,
             await connectToDB();
             const body=await req.json();
            const client= await prisma.clients.update({
-                where: { id: params.id },
+                where: { id: Number(params.id) },
                 data:body,
             });     
             return new Response(JSON.stringify(client), {
@@ -56,18 +56,18 @@ export const PUT=async (req: Request,
 }
 
 export const DELETE=async (req: Request,
-    { params }: { params: {id: string; } } )=> {
+    { params }: { params: {id: number; } } )=> {
     if (req.method !== 'DELETE') {
                 return new Response('Method not allowed',{status:405});
             } 
             try {
                 await connectToDB();
                 await prisma.clients.deleteMany({
-                    where: { id: params.id },
+                    where: { id: Number(params.id) },
                 });
               
                             
-            return new Response(`Client with id: ${params.id} Deleted Successfully`,{status:201})
+            return new Response(`Client with id: ${Number(params.id)} Deleted Successfully`,{status:201})
             } catch (error) {
                 return new Response( "Internal server error",{status:500});
             } finally {
