@@ -42,7 +42,7 @@ export const POST=async(req: Request )=> {
               }
           }
       });
-        return new Response(JSON.stringify(productBatch), {
+        return new Response(JSON.stringify({productBatch,inventory}), {
           status: 201,
           headers: {
               'Content-Type': 'application/json',

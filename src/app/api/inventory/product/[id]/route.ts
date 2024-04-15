@@ -71,7 +71,7 @@ export const DELETE=async (req: Request,
                     where: {id: Number(params.id) },
                 });
                 await  prisma.inventoryTimeline.deleteMany({
-                    where:{objectId:Number(params.id)}
+                    where:{productId:Number(params.id)}
                 });
             return new Response(`Product with id: ${Number(params.id)} Deleted Successfully`,{status:201})
             } catch (error) {

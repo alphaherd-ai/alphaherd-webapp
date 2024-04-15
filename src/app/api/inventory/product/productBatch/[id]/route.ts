@@ -57,11 +57,11 @@ export const PUT=async (req: Request,
         
             const inventory = await prisma.inventoryTimeline.create({
                 data: {
-                    objectId:Number(params.id),
+                    productId:Number(params.id),
                     stockChange:stockStatus,
                     invoiceType:invoiceType,
                     quantityChange:body.quantity,
-                    inventoryType:Inventory.Product
+                    inventoryType:Inventory.Product,
                 }
             });
             return new Response(JSON.stringify({ inventory }), {

@@ -17,7 +17,7 @@ export const POST=async(req: Request)=> {
           data:{
             quantityChange:body.quantity,
             invoiceType:source,
-            objectId:service.id,
+            serviceId:service.id,
             inventoryType:Inventory.Service
           }
         })

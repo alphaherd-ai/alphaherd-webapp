@@ -35,7 +35,7 @@ export const POST = async (req: Request) => {
       
       const inventory= await prisma.inventoryTimeline.create({
         data:{
-          objectId:allProducts.id,
+          productId:allProducts.id,
           stockChange:stockStatus,
           invoiceType:invoiceType,
           quantityChange:createData.quantity
@@ -57,7 +57,7 @@ export const POST = async (req: Request) => {
       
       const inventory = await prisma.inventoryTimeline.create({
         data: {
-          objectId:allServices.id,
+          serviceId:allServices.id,
           stockChange:stockStatus,
           invoiceType:invoiceType,
           

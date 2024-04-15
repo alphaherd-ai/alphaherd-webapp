@@ -41,7 +41,7 @@ export const PUT = async (req: Request, { params }: { params: { id: number } }) 
             where: { id: Number(params.id) },
         });
         const product = await prisma.productBatch.findUnique({
-            where: { id: item?.objectId !== null ? item?.objectId : undefined },
+            where: { id: item?.productId !== null ? item?.productId : undefined },
         });
         if (!product || product.quantity === null || product.quantity === undefined) {
             throw new Error("Product quantity is null or undefined.");
@@ -53,7 +53,7 @@ export const PUT = async (req: Request, { params }: { params: { id: number } }) 
             }
         });
         const updateItem = await prisma.inventoryTimeline.update({
-            where: { id: item?.objectId !== null ? item?.objectId : undefined },
+            where: { id: item?.productId !== null ? item?.productId : undefined },
             data: body
         });
         return new Response(JSON.stringify({ updateItem, inventory }), {
