@@ -1,5 +1,6 @@
 import { connectToDB } from '../../../../../utils/index';
 import prisma from '../../../../../../prisma/index';
+import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 
 
 export const GET = async (req: Request) => {
@@ -8,7 +9,9 @@ export const GET = async (req: Request) => {
   }
   try {
       await connectToDB();
+      const inventoryId = await fetchInventoryId();
       const products = await prisma.products.findMany({
+          where:{id:inventoryId},
           orderBy: [
               { itemName: 'asc' }
           ]

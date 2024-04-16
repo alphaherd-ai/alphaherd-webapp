@@ -1,19 +1,28 @@
 import { connectToDB } from '../../../../../utils/index';
 import prisma from '../../../../../../prisma/index';
-import type { Products } from "@prisma/client";
+import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 
 export const POST=async(req: Request)=> {
   if (req.method !== 'POST') {
     return new Response('Method not allowed',{status:405});
 } 
     try {
-      const body: Products = await req.json();
-      console.log(body)
+      const inventoryId = await fetchInventoryId();
+      const body = await req.json();
         await connectToDB();
         body.totalQuantity=0;
         const product = await prisma.products.create({
-            data: body
+            data: {
+              ...body,
+            InventorySection:{
+              connect:{
+                id:inventoryId
+              }
+            }
+            },
+            
         });
+        
         return new Response(JSON.stringify(product), {
           status: 201,
           headers: {

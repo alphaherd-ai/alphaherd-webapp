@@ -1,5 +1,6 @@
 import { connectToDB } from '../../../../../../../utils/index';
 import prisma from '../../../../../../../../prisma/index';
+import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 
 export  const GET=async (req: Request,
   { params }: { params: {id: number; } } )=> {
@@ -8,8 +9,9 @@ export  const GET=async (req: Request,
 }
     try {
         await connectToDB();
+        const inventoryId= await fetchInventoryId();
         const products = await prisma.productBatch.findMany({
-          where:{productId:Number(params.id)},
+          where:{productId:Number(params.id),inventorySectionId:inventoryId},
           include:{
             product:true
           }

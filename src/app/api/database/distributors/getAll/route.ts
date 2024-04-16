@@ -1,5 +1,6 @@
 import { connectToDB } from '../../../../../utils/index';
 import prisma from '../../../../../../prisma/index';
+import { fetchDatabaseId } from '@/utils/fetchBranchDetails';
 
 
 export  const GET=async (req: Request)=> {
@@ -7,8 +8,13 @@ export  const GET=async (req: Request)=> {
     return new Response('Method not allowed',{status:405});
 }
     try {
+        const databaseId = await fetchDatabaseId();
         await connectToDB();
-        const distributors = await prisma.distributors.findMany();
+        const distributors = await prisma.distributors.findMany({
+          where:{
+            databaseSectionId:databaseId
+          }
+        });
         return new Response(JSON.stringify(distributors), {
           status: 201,
           headers: {

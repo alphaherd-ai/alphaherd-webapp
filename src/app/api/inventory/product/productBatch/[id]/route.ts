@@ -1,6 +1,7 @@
 import { connectToDB } from '../../../../../../utils/index';
 import prisma from '../../../../../../../prisma/index';
 import { Inventory, Stock } from '@prisma/client';
+import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 
 export const GET=async (req: Request,
     { params }: { params: {id: number; } } )=> {
@@ -9,9 +10,10 @@ export const GET=async (req: Request,
             return new Response('Method not allowed',{status:405});
         } 
         try {
+            const inventoryId=await fetchInventoryId();
             await connectToDB();
            const productBatch= await prisma.productBatch.findUnique({
-                where: { id: Number(params.id) },
+                where: { id: Number(params.id),inventorySectionId:inventoryId },
             });
                         
             return new Response(JSON.stringify(productBatch), {
@@ -35,12 +37,13 @@ export const PUT=async (req: Request,
         } 
         try {
             await connectToDB();
+            const inventoryId=await fetchInventoryId();
             const { productId,stockStatus,invoiceType,...body}=await req.json();
            const productBatch= await prisma.productBatch.findUnique({
                 where: { id: Number(params.id) },
             });  
             const product = await prisma.products.update({
-                where:{id:productId},
+                where:{id:productId,inventorySectionId:inventoryId},
                 data:{
                     totalQuantity:{
                         decrement:body.quantity
@@ -48,7 +51,7 @@ export const PUT=async (req: Request,
                 }
             })
             const updateItem = await prisma.productBatch.update({
-                where: { id: Number(params.id) },
+                where: { id: Number(params.id),inventorySectionId:inventoryId },
                 data: {
                     ...body,
                     quantity:Math.abs((productBatch?.quantity || 0) - (body.quantity || 0))
@@ -57,11 +60,21 @@ export const PUT=async (req: Request,
         
             const inventory = await prisma.inventoryTimeline.create({
                 data: {
-                    productId:Number(params.id),
+                    
                     stockChange:stockStatus,
                     invoiceType:invoiceType,
                     quantityChange:body.quantity,
                     inventoryType:Inventory.Product,
+                    productBatch:{
+                     connect:{
+                        id:Number(params.id)
+                     }
+                    },
+                    InventorySection:{
+                     connect:{
+                        id:inventoryId
+                     }
+                    }
                 }
             });
             return new Response(JSON.stringify({ inventory }), {
@@ -86,8 +99,9 @@ export const DELETE=async (req: Request,
             } 
             try {
                 await connectToDB();
+                const inventoryId=await fetchInventoryId();
                 await prisma.productBatch.delete({
-                    where: {id: Number(params.id) },
+                    where: {id: Number(params.id),inventorySectionId:inventoryId },
                 });
                
             return new Response(`Product with id: ${Number(params.id)} Deleted Successfully`,{status:201})

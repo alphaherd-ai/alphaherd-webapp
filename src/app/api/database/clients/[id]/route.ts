@@ -1,4 +1,5 @@
 import { connectToDB } from '../../../../../utils/index';
+import { fetchDatabaseId } from '@/utils/fetchBranchDetails';
 import prisma from '../../../../../../prisma/index';
 
 export const GET=async (req: Request,
@@ -8,9 +9,10 @@ export const GET=async (req: Request,
             return new Response('Method not allowed',{status:405});
         } 
         try {
+            const databaseId= await fetchDatabaseId();
             await connectToDB();
            const client= await prisma.clients.findUnique({
-                where: { id: Number(params.id) },
+                where: { id: Number(params.id),databaseSectionId:databaseId },
                 include:{
                     patients:true
                 }
@@ -36,10 +38,11 @@ export const PUT=async (req: Request,
             return new Response('Method not allowed',{status:405});
         } 
         try {
+            const databaseId = await fetchDatabaseId();
             await connectToDB();
             const body=await req.json();
            const client= await prisma.clients.update({
-                where: { id: Number(params.id) },
+                where: { id: Number(params.id),databaseSectionId:databaseId },
                 data:body,
             });     
             return new Response(JSON.stringify(client), {
@@ -61,9 +64,10 @@ export const DELETE=async (req: Request,
                 return new Response('Method not allowed',{status:405});
             } 
             try {
+                const databaseId = await fetchDatabaseId();
                 await connectToDB();
                 await prisma.clients.deleteMany({
-                    where: { id: Number(params.id) },
+                    where: { id: Number(params.id),databaseSectionId:databaseId },
                 });
               
                             

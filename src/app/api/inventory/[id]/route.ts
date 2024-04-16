@@ -1,6 +1,6 @@
 import { connectToDB } from '../../../../utils/index';
 import prisma from '../../../../../prisma/index';
-
+import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 
 export const GET=async (req: Request,
     { params }: { params: {id: number; } } )=> {
@@ -9,9 +9,10 @@ export const GET=async (req: Request,
             return new Response('Method not allowed',{status:405});
         } 
         try {
+            const inventoryId = await fetchInventoryId();
             await connectToDB();
             const inventory= await prisma.inventoryTimeline.findUnique({
-                where: { id: Number(params.id) },
+                where: { id: Number(params.id),inventorySectionId:inventoryId},
                 include:{
                     productBatch:true,
                     service:true
@@ -35,13 +36,14 @@ export const PUT = async (req: Request, { params }: { params: { id: number } }) 
         return new Response('Method not allowed', { status: 405 });
     }
     try {
+        const inventoryId = await fetchInventoryId();
         await connectToDB();
         const { stockStatus, body } = await req.json();
         const item = await prisma.inventoryTimeline.findUnique({
-            where: { id: Number(params.id) },
+            where: { id: Number(params.id),inventorySectionId:inventoryId },
         });
         const product = await prisma.productBatch.findUnique({
-            where: { id: item?.productId !== null ? item?.productId : undefined },
+            where: { id: item?.productId !== null ? item?.productId : undefined,inventorySectionId:inventoryId },
         });
         if (!product || product.quantity === null || product.quantity === undefined) {
             throw new Error("Product quantity is null or undefined.");
@@ -49,11 +51,16 @@ export const PUT = async (req: Request, { params }: { params: { id: number } }) 
         const inventory = await prisma.inventoryTimeline.create({
             data: {
                 stockChange: stockStatus,
-                quantityChange: Math.abs(product.quantity - body.quantity)
+                quantityChange: Math.abs(product.quantity - body.quantity),
+                InventorySection:{
+                    connect:{
+                        id:inventoryId
+                    }
+                }
             }
         });
         const updateItem = await prisma.inventoryTimeline.update({
-            where: { id: item?.productId !== null ? item?.productId : undefined },
+            where: { id: item?.productId !== null ? item?.productId : undefined,inventorySectionId:inventoryId },
             data: body
         });
         return new Response(JSON.stringify({ updateItem, inventory }), {
@@ -77,9 +84,10 @@ export const DELETE=async (req: Request,
                 return new Response('Method not allowed',{status:405});
             } 
             try {
+                const inventoryId = await fetchInventoryId();
                 await connectToDB();
                 await prisma.inventoryTimeline.deleteMany({
-                    where: { id: Number(params.id) },
+                    where: { id: Number(params.id), inventorySectionId:inventoryId },
                 });
 
             return new Response(`Inventory with id: ${Number(params.id)} Deleted Successfully`,{status:201})

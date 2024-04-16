@@ -50,6 +50,7 @@ model OrgBranch {
   branchName         String
   org                Organization        @relation(fields: [orgId], references: [id])
   orgId              Int
+  assignedUsers      User[]
   orgBranchUserRoles OrgBranchUserRole[]
   inventories        InventorySection[]
   finances           FinanceSection[]
@@ -73,6 +74,8 @@ model User {
   altPhoneNo         String?
   hashedPassword     String
   adminOrganizations Organization[]
+  orgBranchId        Int?
+  lastUsedBranch     OrgBranch?          @relation(fields: [orgBranchId], references: [id])
   userRoles          OrgBranchUserRole[]
 }
 
@@ -81,7 +84,7 @@ model InventorySection {
   name         String
   quantity     Int
   branch       OrgBranch           @relation(fields: [branchId], references: [id])
-  branchId     Int
+  branchId     Int                 @unique
   products     Products[]
   productBatch ProductBatch[]
   service      Services[]
@@ -93,7 +96,7 @@ model FinanceSection {
   name         String
   amount       Float
   branch       OrgBranch         @relation(fields: [branchId], references: [id])
-  branchId     Int
+  branchId     Int               @unique
   expenses     Expenses[]
   transactions Transactions[]
   sales        Sales[]
@@ -107,7 +110,7 @@ model DatabaseSection {
   name         String
   type         String
   branch       OrgBranch      @relation(fields: [branchId], references: [id])
-  branchId     Int
+  branchId     Int            @unique
   clients      Clients[]
   patients     Patients[]
   distributors Distributors[]

@@ -1,5 +1,6 @@
 import { connectToDB } from '../../../../../utils/index';
 import prisma from '../../../../../../prisma/index';
+import { fetchDatabaseId } from '@/utils/fetchBranchDetails';
 import type { Distributors } from "@prisma/client";
 
 export const POST=async(req: Request)=> {
@@ -7,11 +8,19 @@ export const POST=async(req: Request)=> {
     return new Response('Method not allowed',{status:405});
 } 
     try {
-      const body: Distributors = await req.json();
+      const databaseId = await fetchDatabaseId();
+      const body = await req.json();
       console.log(body)
         await connectToDB();
         const distributor = await prisma.distributors.create({
-            data: body
+            data: {
+              ...body,
+            DatabaseSection:{
+              connect:{
+                id:databaseId
+              }
+            }
+            }
         });
         return new Response(JSON.stringify(distributor), {
           status: 201,

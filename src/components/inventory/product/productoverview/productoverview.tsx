@@ -45,13 +45,13 @@ interface AllProducts {
   
   }
   interface Inventory{
-    id:string;
-    allProductsId:string;
+    id:number;
+    productId:number;
     stockChange:string;
     invoiceType:string;
     quantityChange:number;
     party:string;
-    allProducts:AllProducts;
+    productBatch:AllProducts;
     createdAt:string;
   
   }
@@ -88,7 +88,7 @@ interface AllProducts {
           .then(response => response.json())
           .then(data => {
             const filteredInventory = data.filter((item: Inventory) =>
-              products.some((p: AllProducts) => item.allProductsId === p.id)   
+              products.some((p: AllProducts) => item.productId === p.id)   
             )
             .reverse()
             .slice(0,5);
@@ -327,7 +327,7 @@ interface AllProducts {
                                     </div>
                                 </div>
                                 <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    {item.allProducts.batchNumber}
+                                    {item.productBatch.batchNumber}
                                 </div>
                                 <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
                                     {item.party}

@@ -1,6 +1,7 @@
 // src/api/inventory/getAll.ts
 import { connectToDB } from '../../../../utils/index';
 import prisma from '../../../../../prisma/index';
+import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 import type { ProductBatch } from "@prisma/client";
 
 export const GET=async(req: Request)=> {
@@ -8,8 +9,10 @@ export const GET=async(req: Request)=> {
         return new Response('Method not allowed',{status:405});
     }
     try {
+        const inventoryId= await fetchInventoryId();
         await connectToDB();
         const inventory = await prisma.inventoryTimeline.findMany({
+            where:{inventorySectionId:inventoryId},
             include: {
                 productBatch: {
                     include:{

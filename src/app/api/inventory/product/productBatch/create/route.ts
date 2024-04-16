@@ -1,6 +1,8 @@
 import { connectToDB } from '../../../../../../utils/index';
 import prisma from '../../../../../../../prisma/index';
 import { Inventory, type ProductBatch } from "@prisma/client";
+import { fetchInventoryId } from '@/utils/fetchBranchDetails';
+
 
 export const POST=async(req: Request )=> {
   if (req.method !== 'POST') {
@@ -8,13 +10,13 @@ export const POST=async(req: Request )=> {
 } 
     try {
       const {stockStatus,productId,invoiceType,...body} = await req.json();
-      console.log(body)
+      const inventoryId=await fetchInventoryId();
         await connectToDB();
         if(body.quantity==null){
           body.quantity=0;
         }
         const product= await prisma.products.update({
-            where:{id:productId},
+            where:{id:productId,inventorySectionId:inventoryId},
             data:{
                 totalQuantity:{
                   increment:body.quantity
@@ -26,6 +28,9 @@ export const POST=async(req: Request )=> {
               ...body,
               product:{
                 connect:{id: productId }
+              },
+              inventorySection:{
+                connect:{id:inventoryId}
               }
             }
         });
@@ -39,6 +44,11 @@ export const POST=async(req: Request )=> {
                 connect:{
                   id:productBatch.id
                 }
+              },
+              InventorySection:{
+              connect:{
+                id:inventoryId
+              }
               }
           }
       });

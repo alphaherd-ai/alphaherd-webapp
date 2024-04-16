@@ -1,5 +1,7 @@
 import { connectToDB } from '../../../../../utils/index';
 import prisma from '../../../../../../prisma/index';
+import { fetchDatabaseId } from '@/utils/fetchBranchDetails';
+
 
 export const GET=async (req: Request,
     { params }: { params: {id: number; } } )=> {
@@ -8,9 +10,10 @@ export const GET=async (req: Request,
             return new Response('Method not allowed',{status:405});
         } 
         try {
+            const databaseId = await fetchDatabaseId();
             await connectToDB();
            const distributor= await prisma.distributors.findUnique({
-                where: { id: Number(params.id) },
+                where: { id: Number(params.id), databaseSectionId:databaseId },
             });
                         
             return new Response(JSON.stringify(distributor), {
@@ -33,10 +36,11 @@ export const PUT=async (req: Request,
             return new Response('Method not allowed',{status:405});
         } 
         try {
+            const databaseId = await fetchDatabaseId();
             await connectToDB();
             const body=await req.json();
            const distributor= await prisma.distributors.update({
-                where: { id: Number(params.id) },
+                where: { id: Number(params.id), databaseSectionId:databaseId },
                 data:body,
             });     
             return new Response(JSON.stringify(distributor), {
@@ -58,9 +62,10 @@ export const DELETE=async (req: Request,
                 return new Response('Method not allowed',{status:405});
             } 
             try {
+                const databaseId = await fetchDatabaseId();
                 await connectToDB();
                 await prisma.distributors.deleteMany({
-                    where: { id: Number(params.id) },
+                    where: { id: Number(params.id),databaseSectionId:databaseId },
                 });
               
                             

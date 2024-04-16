@@ -1,5 +1,6 @@
 import { connectToDB } from '../../../../../utils/index';
 import prisma from '../../../../../../prisma/index';
+import { fetchDatabaseId } from '@/utils/fetchBranchDetails';
 import type { Patients } from "@prisma/client";
 
 export const POST = async (req: Request) => {
@@ -7,14 +8,20 @@ export const POST = async (req: Request) => {
     return new Response('Method not allowed', { status: 405 });
   }
   try {
-    const body: any = await req.json();
+    const databaseId = await fetchDatabaseId();
+    const body = await req.json();
     await connectToDB();
 
     const patient = await prisma.patients.create({
-      data: body
+      data:{ 
+        ...body,
+      DatabaseSection:{
+        connect:{
+          id:databaseId
+        }
+      }
+      }
     });
-
-   
 
     return new Response(JSON.stringify( patient ), {
       status: 201,

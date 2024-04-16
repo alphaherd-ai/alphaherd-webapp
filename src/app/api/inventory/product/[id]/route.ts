@@ -1,5 +1,6 @@
 import { connectToDB } from '../../../../../utils/index';
 import prisma from '../../../../../../prisma/index';
+import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 import { Stock } from '@prisma/client';
 
 export const GET=async (req: Request,
@@ -8,9 +9,10 @@ export const GET=async (req: Request,
             return new Response('Method not allowed',{status:405});
         } 
         try {
+            const inventoryId = await fetchInventoryId();
             await connectToDB();
            const product= await prisma.products.findUnique({
-                where: { id: Number(Number(params.id)) },
+                where: { id: Number(Number(params.id)),inventorySectionId:inventoryId},
                 include:{
                     productBatches:true
                 }
@@ -36,10 +38,11 @@ export const PUT=async (req: Request,
             return new Response('Method not allowed',{status:405});
         } 
         try {
+            const inventoryId = await fetchInventoryId();
             await connectToDB();
             const { stockStatus,invoiceType,...body}=await req.json();
            const product= await prisma.productBatch.update({
-                where: { id: Number(params.id) },
+                where: { id: Number(params.id),inventorySectionId:inventoryId},
                 data:body
             });  
             
@@ -66,12 +69,13 @@ export const DELETE=async (req: Request,
                 return new Response('Method not allowed',{status:405});
             } 
             try {
+                const inventoryId = await fetchInventoryId();
                 await connectToDB();
                 await prisma.products.delete({
                     where: {id: Number(params.id) },
                 });
                 await  prisma.inventoryTimeline.deleteMany({
-                    where:{productId:Number(params.id)}
+                    where:{productId:Number(params.id),inventorySectionId:inventoryId}
                 });
             return new Response(`Product with id: ${Number(params.id)} Deleted Successfully`,{status:201})
             } catch (error) {

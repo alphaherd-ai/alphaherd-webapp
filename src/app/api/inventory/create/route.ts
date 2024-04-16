@@ -2,6 +2,8 @@
 import { connectToDB } from '../../../../utils/index';
 import prisma from '../../../../../prisma/index';
 import { Inventory, type ProductBatch } from "@prisma/client";
+import { fetchInventoryId } from '@/utils/fetchBranchDetails';
+
 
 export const POST = async (req: Request) => {
   if (req.method !== 'POST') {
@@ -9,6 +11,7 @@ export const POST = async (req: Request) => {
   }
 
   try {
+    const inventoryId = await fetchInventoryId();
     await connectToDB();
     const {objectId,inventoryType, stockStatus,invoiceType,...restOfBody } = await req.json();
     console.log(restOfBody);
@@ -34,11 +37,20 @@ export const POST = async (req: Request) => {
       });
       
       const inventory= await prisma.inventoryTimeline.create({
-        data:{
-          productId:allProducts.id,
+        data:{ 
           stockChange:stockStatus,
           invoiceType:invoiceType,
-          quantityChange:createData.quantity
+          quantityChange:createData.quantity,
+          productBatch:{
+            connect:{
+              id:allProducts.id
+            }
+          },
+          InventorySection:{
+            connect:{
+              id:inventoryId
+            }
+          }
         }
       });
   
@@ -57,10 +69,19 @@ export const POST = async (req: Request) => {
       
       const inventory = await prisma.inventoryTimeline.create({
         data: {
-          serviceId:allServices.id,
+          
           stockChange:stockStatus,
           invoiceType:invoiceType,
-          
+          service:{
+            connect:{
+              id:allServices.id
+            }
+          },
+          InventorySection:{
+            connect:{
+              id:inventoryId
+            }
+          }
         }
       });
   
