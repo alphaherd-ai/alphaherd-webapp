@@ -11,7 +11,7 @@ import React, { useState, useEffect } from 'react';
 const OrgAdminSetup = (props : any) => {
     return (
         <>
-           <div className="w-[1016px] h-[85%] pl-[36px] pt-[40px] pb-[56px] pr-[40px]">
+           <div className="w-[1016px] h-[86vh] pl-[36px] pt-[40px] pb-[56px] pr-[40px]">
                     <div className="text-gray-500 text-xl font-medium font-['Satoshi']">
                         Admin Account Setup
                     </div>

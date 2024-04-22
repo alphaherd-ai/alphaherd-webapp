@@ -123,16 +123,15 @@ const OrgSetup = () => {
   return (
     <>
       <ToastContainer />
-      <div className='flex h-screen flex-col'>
+      <div className='flex flex-col'>
 
-        <div className='w-full h-full flex-1 bg-gray-200 p-4 px-10'>
-          <div className="w-full h-full flex-1 flex justify-center items-center flex  rounded-[20px]">
-            <div className="w-[1016px] h-[620px] bg-white bg-opacity-50 rounded-[30px] border border-solid border-stone-300">
+        <div className='w-full bg-gray-200 p-4 px-10 justify-center items-center flex'>
+            <div className="w-[1016px] bg-white bg-opacity-50 rounded-[30px] border border-solid border-stone-300">
               {
                 formElements[activeTab]
               }
-              <div className="w-full h-8 pl-8 pr-8 pt-4">
-                <div className="flex justify-between mt-4">
+
+                <div className="flex justify-between px-[5rem] pb-[2rem]">
                   <button
                     className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0" disabled={activeTab === 0 ? true : false}
                     onClick={() => setActiveTab(prev => prev - 1)}>
@@ -173,8 +172,7 @@ const OrgSetup = () => {
               </div>
             </div>
           </div>
-        </div>
-      </div>
+
     </>
   )
 }
