@@ -1,13 +1,15 @@
 "use client"
 import Image from "next/image"
 import { useAppDispatch, useAppSelector, useAppStore } from '@/lib/hooks';
-import hosimage from "../../assets/icons/loginsignup/hos.png";
+// import hosimage from "../../assets/icons/loginsignup/hos.png";
 import { useState } from "react";
 import { Bounce, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from "next/navigation";
 import {signIn} from "next-auth/react"
 import { updateUser, UserState } from "@/lib/features/userSlice";
+import placeicon from "../../assets/icons/loginsignup/Placeholder logo.png"
+
 
 
 const OrgAdminLogin = () => {
@@ -107,16 +109,16 @@ const OrgAdminLogin = () => {
         <ToastContainer />
         <div className="w-full h-full flex justify-center items-center flex bg-white rounded-[20px]">
             <div className="flex items-center w-[1016px] h-full relative bg-white bg-opacity-50 rounded-[30px] border border-stone-300 backdrop-blur-[190.90px]">
-                <div className="bg-amber-400 h-full">
-                    <Image src={hosimage} alt="img" className="h-[90%]" />
-                </div>
+               
+                    <Image src={placeicon} alt="img" className="w-full h-full" />
+                
                 <div className="h-full pr-[84px] pl-[63px] bg-white bg-opacity-50 rounded-[30px] items-start flex flex-col">
                     <div className="w-[328px] mt-[146px] text-neutral-500 text-[28px] font-bold font-['Satoshi']">
-                        Welcome to the herd, Rani!
+                    Sign in to continue
                     </div>
-                    <div className="w-[361px] text-neutral-400 text-base font-medium font-['Satoshi']">
-                        Sign in to continue
-                    </div>
+                    {/* <div className="w-[361px] text-neutral-400 text-base font-medium font-['Satoshi']">
+                        
+                    </div> */}
                     <div className="flex flex-col items-start mt-[52px]">
                         <div className="w-[120px] text-gray-500 text-base font-medium font-['Satoshi']">Email*</div>
                         <input className="w-[353px] h-11 bg-white rounded-[5px] border border-neutral-400" type="text" name="email" onChange={handleChange}></input>
