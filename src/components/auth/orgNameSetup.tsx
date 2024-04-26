@@ -9,8 +9,8 @@ import React, { useState, useEffect } from 'react';
 
 const OrgNameSetup = (props : any) => {
     return (
-        <div className="flex justify-center items-center h-[85%]">
-        <div className="flex w-6/12 h-full">
+        <div className="flex justify-center items-center h-full">
+        <div className="flex w-[32.55rem] h-full">
                         <Image src={placeicon} alt="placeholder" className="w-full h-full" />
                     </div>
                     <div className="flex flex-col justify-center items-start w-6/12 h-full">
@@ -27,7 +27,7 @@ const OrgNameSetup = (props : any) => {
                             What is the name of your organisation?
                         </div>
                         <div className="w-[353px] h-11 bg-white rounded-[5px] border border-neutral-400">
-                            <input className="w-full h-full" type="text" name="orgName" value={props.data.orgName} onChange={props.handleChange}/>
+                            <input className="w-full h-full px-2" type="text" name="orgName" value={props.data.orgName} onChange={props.handleChange}/>
                         </div>
                     </div>
             {/* <div className="w-full h-full flex-1 flex justify-center items-center flex  rounded-[20px]">

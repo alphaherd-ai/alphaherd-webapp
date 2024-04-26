@@ -12,5 +12,5 @@ export default async function HomePage(){
 
   console.log(user)
 
-    return <><h1>fsadds</h1></>
+    return <><h1>fsadd</h1></>
 }
