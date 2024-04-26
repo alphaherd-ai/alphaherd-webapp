@@ -31,6 +31,13 @@ enum Role {
   Veterinarian
 }
 
+enum PermissionOptions {
+  Allow
+  Never_Allow
+  Allow_with_Admin
+  Allow_with_Manager
+}
+
 model Organization {
   id          Int         @id @default(autoincrement())
   orgName     String      @unique
@@ -77,6 +84,13 @@ model User {
   orgBranchId        Int?
   lastUsedBranch     OrgBranch?          @relation(fields: [orgBranchId], references: [id])
   userRoles          OrgBranchUserRole[]
+}
+
+model Permissions {
+  id             Int                @id @default(autoincrement())
+  permissionName String?
+  role           Role?              @unique
+  options        PermissionOptions?
 }
 
 model InventorySection {
