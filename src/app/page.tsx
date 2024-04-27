@@ -16,9 +16,9 @@ export default async function Home() {
   console.log("user", user)
 
   return (
-    <>
+    <div className='w-full bg-gray-200 p-4 px-6 min-h-screen'>
     <Header />
     <Table />
-    </>
+    </div>
   )
 }

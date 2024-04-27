@@ -125,7 +125,7 @@ const OrgAdminLogin = () => {
                     </div>
                     <div className="flex flex-col items-start mt-[16px]">
                         <div className="w-[120px] text-gray-500 text-base font-medium font-['Satoshi']">Password*</div>
-                        <input className="w-[353px] h-11 bg-white rounded-[5px] border border-neutral-400" type="text" name="password" onChange={handleChange}></input>
+                        <input className="w-[353px] h-11 bg-white rounded-[5px] border border-neutral-400" type="password" name="password" onChange={handleChange}></input>
                     </div>
                     <div className="flex items-center mt-[16px] gap-2">
                         <input type="checkbox"/>

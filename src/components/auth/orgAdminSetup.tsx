@@ -49,11 +49,11 @@ const OrgAdminSetup = (props : any) => {
                     <div className="flex items-center justify-between mt-[8px]">
                         <div className="flex items-center justify-between gap-[18px]">
                             <div className="w-[137px] text-gray-500 text-base font-medium font-['Satoshi']">Create password*</div>
-                            <input className="w-[304px] h-11 bg-white rounded-[5px] border border-neutral-400" type="text" minLength={8} name="adminPassword" value={props.data.adminPassword} onChange={props.handleChange}></input>
+                            <input className="w-[304px] h-11 bg-white rounded-[5px] border border-neutral-400" type="password" minLength={8} name="adminPassword" value={props.data.adminPassword} onChange={props.handleChange}></input>
                         </div>
                         <div className="flex items-center justify-between gap-[18px]">
                             <div className="text-gray-500 text-base font-medium font-['Satoshi']">Re-enter password*</div>
-                            <input className="w-[304px] h-11 bg-white rounded-[5px] border border-neutral-400" minLength={8} type="text" name="reAdminPassword" value={props.data.reAdminPassword} onChange={props.handleChange}></input>
+                            <input className="w-[304px] h-11 bg-white rounded-[5px] border border-neutral-400" minLength={8} type="password" name="reAdminPassword" value={props.data.reAdminPassword} onChange={props.handleChange}></input>
                         </div>
                     </div>
                 </div>
