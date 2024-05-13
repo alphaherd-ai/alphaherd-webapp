@@ -12,7 +12,7 @@ export async function encrypt(payload: any) {
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("100 sec")
+    .setExpirationTime("10000 sec")
     .sign(key);
 }
 
@@ -51,6 +51,12 @@ export async function login(req: Request) {
 
     // Save the session in a cookie
     cookies().set("session", session, { expires, httpOnly: true });
+    await prisma.user.update({
+      where:{email:user.email},
+      data:{
+        token:session
+      }
+    })
 
     return new Response(JSON.stringify({ user }), {
       status: 200,
@@ -97,7 +103,7 @@ export async function updateSession(request: NextRequest) {
 
   // Refresh the session so it doesn't expire
   const parsed = await decrypt(session);
-  parsed.expires = new Date(Date.now() + 10 * 1000);
+  parsed.expires = new Date(Date.now() + 10000 * 1000);
   const res = NextResponse.next();
   res.cookies.set({
     name: "session",

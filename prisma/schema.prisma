@@ -77,6 +77,7 @@ model User {
   id                 Int                 @id @default(autoincrement())
   name               String
   email              String              @unique
+  token              String?             @unique
   phoneNo            String
   altPhoneNo         String?
   hashedPassword     String
@@ -234,18 +235,18 @@ model Services {
 
 model Sales {
   id               Int               @id @default(autoincrement())
-  customer         String
-  date             DateTime
-  notes            String
-  subTotal         Int
-  invoiceNo        Int
-  dueDate          DateTime
-  shipping         Int
-  adjustment       Int
-  totalCost        Int
-  overallDiscount  Int
-  totalQty         Int
-  status           String
+  customer         String?
+  date             DateTime?         @default(now())
+  notes            String?
+  subTotal         Int?
+  invoiceNo        Int?
+  dueDate          DateTime?
+  shipping         Int?
+  adjustment       Int?
+  totalCost        Int?
+  overallDiscount  Int?
+  totalQty         Int?
+  status           String?
   type             String?
   items            Items[]
   financeTimeline  FinanceTimeline[]
@@ -256,7 +257,7 @@ model Sales {
 model Purchases {
   id                   Int               @id @default(autoincrement())
   distributor          String
-  date                 DateTime
+  date                 DateTime?         @default(now())
   dueDate              DateTime
   returnLastDate       DateTime?
   invoiceNo            String

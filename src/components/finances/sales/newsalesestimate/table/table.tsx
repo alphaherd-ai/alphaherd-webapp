@@ -1,7 +1,6 @@
 "use client"
 
 
-import SelectDropdown from 'react-native-select-dropdown'
 import DownArrow from '../../../../../assets/icons/finance/downArrow.svg';
 import subicon from "../../../../../assets/icons/finance/1. Icons-26.svg"
 import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
@@ -88,7 +87,7 @@ const NewsaleEstimateTable = () => {
         );
     };
 
-    const handleQuantityDecClick = (itemId) => {
+    const handleQuantityDecClick = (itemId:any) => {
         setItems((prevItems) =>
             prevItems.map((item) => {
                 if (item.id === itemId && item.quantity > 1) {
@@ -99,7 +98,7 @@ const NewsaleEstimateTable = () => {
         );
     };
 
-    const handleQuantityIncClick = (itemId) => {
+    const handleQuantityIncClick = (itemId:any) => {
         setItems((prevItems) =>
             prevItems.map((item) => {
                 if (item.id === itemId) {
@@ -109,7 +108,7 @@ const NewsaleEstimateTable = () => {
             })
         );
     };
-    const handleQuantityDecClick1 = (itemId) => {
+    const handleQuantityDecClick1 = (itemId:any) => {
         setItems((prevItems) =>
             prevItems.map((item) => {
                 if (item.id === itemId && item.quantity2 > 1) {
@@ -120,7 +119,7 @@ const NewsaleEstimateTable = () => {
         );
     };
 
-    const handleQuantityIncClick1 = (itemId) => {
+    const handleQuantityIncClick1 = (itemId:any) => {
         setItems((prevItems) =>
             prevItems.map((item) => {
                 if (item.id === itemId) {
