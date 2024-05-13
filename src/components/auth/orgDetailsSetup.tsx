@@ -2,9 +2,22 @@ import Image from "next/image";
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import updatelogo from "../../assets/icons/loginsignup/update_logo.png";
 import React from 'react';
-import { errorToJSON } from "next/dist/server/render";
+import * as Yup from 'yup';
+
 
 const OrgDetailsSetup = (props: any) => {
+
+    const validationSchema = Yup.object().shape({
+        orgName: Yup.string().required('Required'),
+        gstNo: Yup.string().required('GSTIN No. is required'),
+        phoneNo: Yup.string().required('Phone No. is required'),
+        orgEmail: Yup.string().email('Invalid email address').required('Email is required'),
+        address: Yup.string().required('Address is required'),
+        state: Yup.string().required('State is required'),
+        pincode: Yup.string().required('PIN Code is required'),
+        description: Yup.string().required('Description is required')
+    });
+    
     return (
         <div>
             <Formik
@@ -18,21 +31,7 @@ const OrgDetailsSetup = (props: any) => {
                     pincode: '',
                     description: ''
                 }}
-                validate={values => {
-                    const errors: Partial<typeof values> = {};
-                    if (!values.orgName) errors.orgName = 'Required';
-                    if (!values.gstNo) errors.gstNo = 'GSTIN No. is required';
-                    if (!values.phoneNo) errors.phoneNo = 'Phone No. is required';
-                    if (!values.orgEmail) {errors.orgEmail = 'Email is required';}
-                        else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.orgEmail)) {
-                        errors.orgEmail = 'Invalid email address';
-                      }
-                    if (!values.address) errors.address = 'Address is required';
-                    if (!values.state) errors.state = 'State is required';
-                    if (!values.pincode) errors.pincode = 'PIN Code is required';
-                    if (!values.description) errors.description = 'Description is required';
-                    return errors;
-                }}
+                validationSchema={validationSchema}
                 onSubmit={(values, { setSubmitting }) => {
                     setTimeout(() => {
                         alert(JSON.stringify(values, null, 2));
@@ -50,14 +49,14 @@ const OrgDetailsSetup = (props: any) => {
                             <div className="w-1/2 flex justify-center items-center gap-10 ">
                                 <label htmlFor="orgName" className="text-gray-500 text-base font-medium font-['Satoshi']">Name</label>
                                 <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-4 flex">
-                                    <Field className="mt-[4px] px-[0.5rem] border-0 h-10 w-[20rem] bg-white" type="text" id="orgName" name="orgName" disabled={true} value={props.data.orgName}/>
+                                    <Field className="mt-[4px] px-[0.5rem] border-0 h-10 w-[20rem] bg-white ml-[0.7rem]" type="text" id="orgName" name="orgName" disabled={true} value={props.data.orgName}/>
                                 </div>
                                 <div className="text-right text-gray-500 text-base font-medium font-['Satoshi']"> </div>
                             </div>
                             <div className="flex flex-col">
                                 <div className="flex justify-center items-center gap-8">
                                     <label htmlFor="gstNo" className="text-gray-500 text-base font-medium font-['Satoshi']">GSTIN No.</label>
-                                        <Field className="border-0 h-10 w-[18.2rem] px-2" type="number" id="gstNo" name="gstNo" value={props.data.gstNo} onChange={props.handleChange}/>
+                                        <Field className="border-0 h-10 w-[18.2rem] px-2 ml-[1rem]" type="number" id="gstNo" name="gstNo"  value={props.data.gstNo}  onChange={props.handleChange}/>
 
                                 </div>
                                 <div className="ml-[7rem] mt-1 text-[#fb2f2f]">
@@ -68,7 +67,7 @@ const OrgDetailsSetup = (props: any) => {
 
                         <div className="flex items-center gap-[100px] w-full">
                             <div className="flex justify-center items-center">
-                                <label htmlFor="phoneNo" className="text-gray-500 text-base font-medium font-['Satoshi'] mr-[0.6rem]">Phone No.</label>
+                                <label htmlFor="phoneNo" className="text-gray-500 text-base font-medium font-['Satoshi'] mr-[1.5rem]">Phone No.</label>
                                 <div className="py-[13px] px-2 border-solid h-full border-0 border-r border-neutral-400 bg-white">+91</div>
                                     <div className="grow shrink basis-0 h-10 justify-start items-center gap-2 flex">
                                         <Field className="border-0 focus:border-0 select:border-0 h-11 w-[17.4rem] px-2" type="number" id="phoneNo" name="phoneNo" minLength={10} maxLength={10} value={props.data.phoneNo} onChange={props.handleChange}/>
@@ -87,9 +86,9 @@ const OrgDetailsSetup = (props: any) => {
                         </div>
 
                         <div className="flex items-center gap-[15px] w-full">
-                                <label htmlFor="address" className="text-gray-500 text-base font-medium font-['Satoshi'] w-[3.7rem]">Business Address</label>
+                                <label htmlFor="address" className="text-gray-500 text-base font-medium font-['Satoshi'] w-[3.8rem]">Business Address</label>
                                 <div className="flex flex-col justify-center items-center">
-                                        <Field className="border-0 focus:border-0 h-10 w-[51.6rem] text-base px-2" type="text" id="address" name="address" value={props.data.address} onChange={props.handleChange}/>
+                                        <Field className="border-0 focus:border-0 h-10 w-[51.6rem] text-base px-2 ml-[1rem]" type="text" id="address" name="address" value={props.data.address} onChange={props.handleChange}/>
                                 <div className="mr-[42rem] mt-1 text-[#fb2f2f]">
                                     <ErrorMessage name="address" />
                                 </div>
@@ -101,7 +100,7 @@ const OrgDetailsSetup = (props: any) => {
                             <div className="flex justify-center items-center gap-8">
                                 <label htmlFor="state" className="text-gray-500 text-base font-medium font-['Satoshi'] ">State</label>
                                 <div>
-                                <Field className="border-0 w-[20rem] ml-[0.6rem] focus:border-0 h-10 text-base px-2" type="text" id="state" name="state" value={props.data.state} onChange={props.handleChange}/>
+                                <Field className="border-0 w-[20rem] ml-[1.7rem] focus:border-0 h-10 text-base px-2" type="text" id="state" name="state" value={props.data.state} onChange={props.handleChange}/>
                                 <div className="ml-[1rem] mt-1 text-[#fb2f2f]">
                                     <ErrorMessage name="state" />
                                 </div>
@@ -111,7 +110,7 @@ const OrgDetailsSetup = (props: any) => {
                             <div className="flex justify-center items-center gap-8">
                                 <label htmlFor="pincode" className="text-gray-500 text-base font-medium font-['Satoshi']  mr-[1rem]">Pincode</label>
                                 <div className="flex flex-col">
-                                        <Field className="border-0 h-10 w-[19rem] px-2" type="text" id="pincode" name="pincode" value={props.data.pincode} onChange={props.handleChange}/>
+                                        <Field className="border-0 h-10 w-[19.2rem] px-2" type="text" id="pincode" name="pincode" value={props.data.pincode} onChange={props.handleChange}/>
                                         <div className=" ml-[1rem] mt-2 text-[#fb2f2f]">
                                             <ErrorMessage name="pincode" />
                                         </div>
@@ -123,7 +122,7 @@ const OrgDetailsSetup = (props: any) => {
                             <div className="flex items-center justify-center">
                                 <label htmlFor="description" className="text-gray-500 text-base font-medium font-['Satoshi']">Description</label>
                                 <div>
-                                    <Field className="border-0 focus:border-0 h-[60px] w-[50.6rem] ml-[1rem] px-2" type="text" id="description" name="description" value={props.data.description} onChange={props.handleChange}/>
+                                    <Field className="border-0 focus:border-0 h-[60px] w-[51.5rem] ml-[1rem] px-2" type="text" id="description" name="description" value={props.data.description} onChange={props.handleChange}/>
                                     <div className=" ml-[1rem] mt-2 text-[#fb2f2f]">
                                         <ErrorMessage name="description" />
                                     </div>

@@ -35,7 +35,6 @@ const OrgSetup = () => {
   const handleChange = (event: any) => {
 
     console.log(data, event.target.value);
-
     const { name, value } = event.target;
     setData({
       ...data,
