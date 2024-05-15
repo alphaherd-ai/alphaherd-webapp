@@ -9,10 +9,10 @@ export const GET=async(req: Request)=> {
         return new Response('Method not allowed',{status:405});
     }
     try {
-        const inventoryId= await fetchInventoryId();
+        
         await connectToDB();
         const inventory = await prisma.inventoryTimeline.findMany({
-            where:{inventorySectionId:inventoryId},
+          
             include: {
                 productBatch: {
                     include:{

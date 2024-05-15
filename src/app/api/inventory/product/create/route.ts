@@ -1,14 +1,23 @@
 import { connectToDB } from '../../../../../utils/index';
 import prisma from '../../../../../../prisma/index';
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
+import {productSchema} from '@/schemas/inventory/productValidation'
 
-export const POST=async(req: Request)=> {
+export const POST=async(req: Request,res:Response)=> {
   if (req.method !== 'POST') {
     return new Response('Method not allowed',{status:405});
 } 
     try {
+     
       const inventoryId = await fetchInventoryId();
       const body = await req.json();
+      const validatedData = productSchema.safeParse(body);
+
+      if (!validatedData.success) {
+        return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
+          status: 422,
+        });
+      }
         await connectToDB();
         body.totalQuantity=0;
         const product = await prisma.products.create({

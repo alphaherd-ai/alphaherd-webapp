@@ -1,5 +1,6 @@
 import { connectToDB } from '../../../../../utils/index';
 import prisma from '../../../../../../prisma/index';
+import { ServiceSchema } from '@/schemas/inventory/serviceValidation';
 
 export const GET=async (req: Request,
     { params }: { params: {id: number; } } )=> {
@@ -35,6 +36,13 @@ export const PUT=async (req: Request,
         try {
             await connectToDB();
             const body=await req.json();
+            const validatedData = ServiceSchema.safeParse(body);
+
+            if (!validatedData.success) {
+              return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
+                status: 422,
+              });
+            }
            const service= await prisma.services.update({
                 where: { id: Number(params.id) },
                 data:body,

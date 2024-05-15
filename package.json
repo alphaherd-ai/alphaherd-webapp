@@ -27,6 +27,7 @@
     "dotenv": "^16.4.5",
     "dotenv-webpack": "^8.0.1",
     "eslint-config-prettier": "^9.1.0",
+    "express-validator": "^7.0.1",
     "formik": "^2.4.5",
     "framer-motion": "^11.0.15",
     "jsonwebtoken": "^9.0.2",
@@ -52,7 +53,8 @@
     "react-toastify": "^10.0.5",
     "styled-components": "^6.1.8",
     "ts-node": "^10.9.2",
-    "yup": "^1.4.0"
+    "yup": "^1.4.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",

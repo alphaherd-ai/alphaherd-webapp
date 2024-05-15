@@ -2,6 +2,7 @@ import { connectToDB } from '../../../../../../utils/index';
 import prisma from '../../../../../../../prisma/index';
 import { Inventory, Stock } from '@prisma/client';
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
+import { ProductBatchSchema } from '@/schemas/inventory/ productBatchValidation';
 
 export const GET=async (req: Request,
     { params }: { params: {id: number; } } )=> {
@@ -39,6 +40,14 @@ export const PUT=async (req: Request,
             await connectToDB();
             const inventoryId=await fetchInventoryId();
             const { productId,stockStatus,invoiceType,...body}=await req.json();
+            const data={stockStatus,productId,invoiceType,body};
+            const validatedData = ProductBatchSchema.safeParse(data);
+      
+            if (!validatedData.success) {
+              return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
+                status: 422,
+              });
+            }
            const productBatch= await prisma.productBatch.findUnique({
                 where: { id: Number(params.id) },
             });  

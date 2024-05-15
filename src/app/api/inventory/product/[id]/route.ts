@@ -2,6 +2,7 @@ import { connectToDB } from '../../../../../utils/index';
 import prisma from '../../../../../../prisma/index';
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 import { Stock } from '@prisma/client';
+import { productSchema } from '@/schemas/inventory/productValidation';
 
 export const GET=async (req: Request,
     { params }: { params: {id: number; } } )=> {
@@ -41,6 +42,13 @@ export const PUT=async (req: Request,
             const inventoryId = await fetchInventoryId();
             await connectToDB();
             const { stockStatus,invoiceType,...body}=await req.json();
+            const validatedData = productSchema.safeParse(body);
+
+            if (!validatedData.success) {
+              return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
+                status: 422,
+              });
+            }
            const product= await prisma.productBatch.update({
                 where: { id: Number(params.id),inventorySectionId:inventoryId},
                 data:body

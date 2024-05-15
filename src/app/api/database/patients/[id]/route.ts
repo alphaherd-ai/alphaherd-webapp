@@ -1,6 +1,7 @@
 import { connectToDB } from '../../../../../utils/index';
 import { fetchDatabaseId } from '@/utils/fetchBranchDetails';
 import prisma from '../../../../../../prisma/index';
+import { PatientSchema } from '@/schemas/database/patientValidation';
 
 export const GET=async (req: Request,
     { params }: { params: {id: number; } } )=> {
@@ -38,6 +39,13 @@ export const PUT=async (req: Request,
             const databaseId = await fetchDatabaseId();
             await connectToDB();
             const body=await req.json();
+            const validatedData = PatientSchema.safeParse(body);
+
+            if (!validatedData.success) {
+            return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
+                status: 422,
+            });
+            }
            const patient= await prisma.patients.update({
                 where: { id: Number(params.id), databaseSectionId:databaseId },
                 data:body,
