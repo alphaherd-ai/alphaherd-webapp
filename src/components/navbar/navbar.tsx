@@ -6,7 +6,7 @@ import alphaherd from '../../assets/icons/navbar/alphaherdLogo.svg';
 import PatientlistIcon from './icons/patientlistIcon';
 import InventoryIcon from './icons/inventoryIcon';
 import HomeIcon from './icons/homeIcon';
-
+import ProfileIcon from "../../assets/icons/settings/pfpcion.jpeg"
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -32,7 +32,7 @@ const handleClick = () => {
 
   return (
 
-    <div className='h-16 shadow-md  w-full box-border flex items-center justify-between text-textGrey1 bg-navBar  '>
+    <div className='h-16 shadow-md  w-full box-border flex items-center justify-between text-textGrey1 bg-navBar z-100 '>
       <div className='flex flex-row '>
         <Link className='no-underline py-5 px-10 border-0 border-r-2 border-solid border-gray-800   ' href='/'>
           <div className={currentRoute === "/"
@@ -80,13 +80,13 @@ const handleClick = () => {
       <div className='flex flex-row h-full'>
         <div className="h-full flex items-center pr-8 border-0 border-r-2 border-solid border-gray-800">
           <Link className='no-underline flex ' href='#'>
-            <div className=' flex items-center justify-center'>
+            <div className=' flex items-center justify-center'  onClick={handleClick}>
               <Image src={notification} alt='notification' />
             </div>
           </Link>
-          <Link className='no-underline flex pl-6' href='#'>
-            <div className='text-sm flex items-center justify-center rounded-full overflow-hidden border border-solid border-gray-300' onClick={handleClick}>
-              <Image src={notification} alt='patient' />
+          <Link className='no-underline flex pl-6' href='/profile'>
+            <div className='text-sm flex items-center justify-center rounded-full overflow-hidden border border-solid border-gray-300'>
+              <Image className='w-7 h-7 relative rounded-full border border-neutral-400' src={ProfileIcon} alt='patient' />
             </div>
           </Link>
         </div>
@@ -97,7 +97,7 @@ const handleClick = () => {
           </div>
         </Link>
         {isCardOpen && (
-        <div className="absolute top-[4rem] flex flex-col right-[5rem] w-[443px] max-h-[50rem] pt-6 pb-5 bg-zinc-800 shadow justify-center items-start gap-[5px] rounded-[20px]">
+        <div className="absolute top-[4rem] flex flex-col right-[5rem] w-[443px] max-h-[50rem] pt-6 pb-5 bg-zinc-800 shadow justify-center items-start gap-[5px] rounded-[20px]  z-[100]">
           <div className="text-gray-100 text-xl font-medium font-['Roboto'] px-6">
             Notifications
           </div>

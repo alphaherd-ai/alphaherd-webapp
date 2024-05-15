@@ -87,8 +87,8 @@ const UsersSetting = () => {
                                     <div className="">Rani Kumari</div>
                                 </div>
                                 <div className='w-3/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-2'>
-                                    <div className="text-indigo-600 text-sm font-medium font-['Satoshi'] px-2 py-1.5 bg-violet-100 rounded-[5px] justify-center items-center gap-2 flex">Manager</div>
-                                    <div className="text-teal-400 text-sm font-medium font-['Satoshi'] px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">Admin</div>
+                                    <div className="text-indigo-600 text-sm font-medium  px-2 py-1.5 bg-violet-100 rounded-[5px] justify-center items-center gap-2 flex">Manager</div>
+                                    <div className="text-teal-400 text-sm font-medium  px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">Admin</div>
                                 </div>
                                 <div className='w-2/12 px-6 flex items-center text-neutral-400 text-base font-medium'>+91 99999 99999</div>
                                 <div className='w-4/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-3'>
@@ -96,11 +96,11 @@ const UsersSetting = () => {
                                     <div className="flex gap-2">
                                         <div className="px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
                                             <Image className="w-4 h-4 relative" src={adminicon} alt="admin" />
-                                            <div className="text-neutral-400 text-sm font-medium font-['Roboto']">Make Admin</div>
+                                            <div className="text-neutral-400 text-sm font-medium ">Make Admin</div>
                                         </div>
                                         <div className="px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
                                             <Image className="w-4 h-4 relative" src={removeusericon} alt="admin" />
-                                            <div className="text-neutral-400 text-sm font-medium font-['Roboto']">Remove User</div>
+                                            <div className="text-neutral-400 text-sm font-medium ">Remove User</div>
                                         </div>
                                     </div>
                                 </div>
@@ -111,8 +111,8 @@ const UsersSetting = () => {
                                     <div className="">Rani Kumari</div>
                                 </div>
                                 <div className='w-3/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-2'>
-                                    <div className="text-indigo-600 text-sm font-medium font-['Satoshi'] px-2 py-1.5 bg-violet-100 rounded-[5px] justify-center items-center gap-2 flex">Manager</div>
-                                    <div className="text-teal-400 text-sm font-medium font-['Satoshi'] px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">Admin</div>
+                                    <div className="text-indigo-600 text-sm font-medium  px-2 py-1.5 bg-violet-100 rounded-[5px] justify-center items-center gap-2 flex">Manager</div>
+                                    <div className="text-teal-400 text-sm font-medium  px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">Admin</div>
                                 </div>
                                 <div className='w-2/12 px-6 flex items-center text-neutral-400 text-base font-medium'>+91 99999 99999</div>
                                 <div className='w-4/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-3'>
@@ -120,11 +120,11 @@ const UsersSetting = () => {
                                     <div className="flex gap-2">
                                         <div className="px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
                                             <Image className="w-4 h-4 relative" src={adminicon} alt="admin" />
-                                            <div className="text-neutral-400 text-sm font-medium font-['Roboto']">Make Admin</div>
+                                            <div className="text-neutral-400 text-sm font-medium ">Make Admin</div>
                                         </div>
                                         <div className="px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
                                             <Image className="w-4 h-4 relative" src={removeusericon} alt="admin" />
-                                            <div className="text-neutral-400 text-sm font-medium font-['Roboto']">Remove User</div>
+                                            <div className="text-neutral-400 text-sm font-medium ">Remove User</div>
                                         </div>
                                     </div>
                                 </div>
@@ -135,8 +135,8 @@ const UsersSetting = () => {
                                     <div className="">Rani Kumari</div>
                                 </div>
                                 <div className='w-3/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-2'>
-                                    <div className="text-indigo-600 text-sm font-medium font-['Satoshi'] px-2 py-1.5 bg-violet-100 rounded-[5px] justify-center items-center gap-2 flex">Manager</div>
-                                    <div className="text-teal-400 text-sm font-medium font-['Satoshi'] px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">Admin</div>
+                                    <div className="text-indigo-600 text-sm font-medium  px-2 py-1.5 bg-violet-100 rounded-[5px] justify-center items-center gap-2 flex">Manager</div>
+                                    <div className="text-teal-400 text-sm font-medium  px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">Admin</div>
                                 </div>
                                 <div className='w-2/12 px-6 flex items-center text-neutral-400 text-base font-medium'>+91 99999 99999</div>
                                 <div className='w-4/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-3'>
@@ -144,11 +144,11 @@ const UsersSetting = () => {
                                     <div className="flex gap-2">
                                         <div className="px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
                                             <Image className="w-4 h-4 relative" src={adminicon} alt="admin" />
-                                            <div className="text-neutral-400 text-sm font-medium font-['Roboto']">Make Admin</div>
+                                            <div className="text-neutral-400 text-sm font-medium ">Make Admin</div>
                                         </div>
                                         <div className="px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
                                             <Image className="w-4 h-4 relative" src={removeusericon} alt="admin" />
-                                            <div className="text-neutral-400 text-sm font-medium font-['Roboto']">Remove User</div>
+                                            <div className="text-neutral-400 text-sm font-medium ">Remove User</div>
                                         </div>
                                     </div>
                                 </div>
@@ -157,26 +157,26 @@ const UsersSetting = () => {
                     </div>
                     <div className="w-full p-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                         <div className="w-full">
-                            <div className="text-gray-500 text-base font-bold font-['Roboto']">Roles and Permissions</div>
-                            <div className="text-neutral-400 text-sm font-medium font-['Roboto']">Note: These permissions do not apply to the admin account. Admins have access to all features of Alphaherd.</div>
+                            <div className="text-gray-500 text-base font-bold ">Roles and Permissions</div>
+                            <div className="text-neutral-400 text-sm font-medium ">Note: These permissions do not apply to the admin account. Admins have access to all features of Alphaherd.</div>
                             <div className="flex mt-3">
                                 {togglemanager && (<button onClick={toggleManagerHandler}><div className="px-2 py-1 bg-zinc-900 rounded-tl-[5px] rounded-bl-[5px] border border-zinc-900 justify-start items-center gap-2 flex ">
-                                    <div className="text-white text-sm font-bold font-['Roboto']">Manager</div>
+                                    <div className="text-white text-sm font-bold ">Manager</div>
                                     <Image className="w-3.5 h-3.5 relative" src={opticon} alt="option" />
                                 </div></button>)}
-                                {!togglemanager && (<button onClick={toggleManagerHandler}><div className="px-2 py-1 bg-gray-100 border border-neutral-400 justify-start items-center gap-1 flex text-neutral-400 text-sm font-bold font-['Roboto']">
+                                {!togglemanager && (<button onClick={toggleManagerHandler}><div className="px-2 py-1 bg-gray-100 border border-neutral-400 justify-start items-center gap-1 flex text-neutral-400 text-sm font-bold ">
                                     Manager
                                 </div></button>)}
-                                {togglev && (<button onClick={toggleVHandler}><div className="px-2 py-1 bg-zinc-900 rounded-tl-[5px] rounded-bl-[5px] border border-zinc-900 justify-start items-center gap-2 flex text-white text-sm font-bold font-['Roboto']">
+                                {togglev && (<button onClick={toggleVHandler}><div className="px-2 py-1 bg-zinc-900 rounded-tl-[5px] rounded-bl-[5px] border border-zinc-900 justify-start items-center gap-2 flex text-white text-sm font-bold ">
                                     Veterinarian
                                 </div></button>)}
-                                {!togglev && (<button onClick={toggleVHandler}><div className="px-2 py-1 bg-gray-100 border border-neutral-400 justify-start items-center gap-1 flex text-neutral-400 text-sm font-bold font-['Roboto']">
+                                {!togglev && (<button onClick={toggleVHandler}><div className="px-2 py-1 bg-gray-100 border border-neutral-400 justify-start items-center gap-1 flex text-neutral-400 text-sm font-bold ">
                                     Veterinarian
                                 </div></button>)}
-                                {togglestaff && (<button onClick={toggleStaffHandler}><div className="px-2 py-1 bg-zinc-900 rounded-tl-[5px] rounded-bl-[5px] border border-zinc-900 justify-start items-center gap-2 flex text-white text-sm font-bold font-['Roboto']">
+                                {togglestaff && (<button onClick={toggleStaffHandler}><div className="px-2 py-1 bg-zinc-900 rounded-tl-[5px] rounded-bl-[5px] border border-zinc-900 justify-start items-center gap-2 flex text-white text-sm font-bold ">
                                     Staff
                                 </div></button>)}
-                                {!togglestaff && (<button onClick={toggleStaffHandler}><div className="px-2 py-1 bg-gray-100 border border-neutral-400 justify-start items-center gap-1 flex text-neutral-400 text-sm font-bold font-['Roboto']">
+                                {!togglestaff && (<button onClick={toggleStaffHandler}><div className="px-2 py-1 bg-gray-100 border border-neutral-400 justify-start items-center gap-1 flex text-neutral-400 text-sm font-bold ">
                                     Staff
                                 </div></button>)}
                                 <div className="ml-2 px-[5px] py-1 bg-gray-100 rounded-[5px] border border-neutral-400 justify-start items-center gap-1 flex">
@@ -187,8 +187,8 @@ const UsersSetting = () => {
                                 <div className="flex gap-4 items-start">
                                     <input className="mt-1" type="checkbox" />
                                     <div>
-                                        <div className="text-gray-500 text-base font-bold font-['Roboto']">Allow user to add and view branches</div>
-                                        <div className="text-teal-400 text-base font-medium font-['Roboto'] flex">
+                                        <div className="text-gray-500 text-base font-bold ">Allow user to add and view branches</div>
+                                        <div className="text-teal-400 text-base font-medium  flex">
                                             <div>
                                                 <Select
                                                     className="text-neutral-400 text-base font-medium w-[138px] h-6"
@@ -204,8 +204,8 @@ const UsersSetting = () => {
                                 <div className="flex gap-4 items-start">
                                     <input className="mt-1" type="checkbox" />
                                     <div>
-                                        <div className="text-gray-500 text-base font-bold font-['Roboto']">Allow user to add new users</div>
-                                        <div className="text-neutral-400 text-base font-medium font-['Roboto']">
+                                        <div className="text-gray-500 text-base font-bold ">Allow user to add new users</div>
+                                        <div className="text-neutral-400 text-base font-medium ">
                                             <div>
                                                 <Select
                                                     className="text-neutral-400 text-base font-medium w-[138px] h-6"
@@ -221,8 +221,8 @@ const UsersSetting = () => {
                                 <div className="flex gap-4 items-start">
                                     <input className="mt-1" type="checkbox" />
                                     <div>
-                                        <div className="text-gray-500 text-base font-bold font-['Roboto']">Allow user to edit permissions</div>
-                                        <div className="text-teal-400 text-base font-medium font-['Roboto'] flex">
+                                        <div className="text-gray-500 text-base font-bold ">Allow user to edit permissions</div>
+                                        <div className="text-teal-400 text-base font-medium  flex">
                                             <div>
                                                 <Select
                                                     className="text-neutral-400 text-base font-medium w-[138px] h-6"
@@ -238,8 +238,8 @@ const UsersSetting = () => {
                                 <div className="flex gap-4 items-start">
                                     <input className="mt-1" type="checkbox" />
                                     <div>
-                                        <div className="text-gray-500 text-base font-bold font-['Roboto']">Allow user to edit organization</div>
-                                        <div className="text-teal-400 text-base font-medium font-['Roboto'] flex">
+                                        <div className="text-gray-500 text-base font-bold ">Allow user to edit organization</div>
+                                        <div className="text-teal-400 text-base font-medium  flex">
                                             <div>
                                                 <Select
                                                     className="text-neutral-400 text-base font-medium w-[138px] h-6"
@@ -255,8 +255,8 @@ const UsersSetting = () => {
                                 <div className="flex gap-4 items-start">
                                     <input className="mt-1" type="checkbox" />
                                     <div>
-                                        <div className="text-gray-500 text-base font-bold font-['Roboto']">Allow user to create roles</div>
-                                        <div className="text-teal-400 text-base font-medium font-['Roboto'] flex">
+                                        <div className="text-gray-500 text-base font-bold ">Allow user to create roles</div>
+                                        <div className="text-teal-400 text-base font-medium  flex">
                                             <div>
                                                 <Select
                                                     className="text-neutral-400 text-base font-medium w-[138px] h-6"
@@ -272,8 +272,8 @@ const UsersSetting = () => {
                                 <div className="flex gap-4 items-start">
                                     <input className="mt-1" type="checkbox" />
                                     <div>
-                                        <div className="text-gray-500 text-base font-bold font-['Roboto']">Allow user to view metrics and analytics </div>
-                                        <div className="text-teal-400 text-base font-medium font-['Roboto'] flex">
+                                        <div className="text-gray-500 text-base font-bold ">Allow user to view metrics and analytics </div>
+                                        <div className="text-teal-400 text-base font-medium  flex">
                                             <div>
                                                 <Select
                                                     className="text-neutral-400 text-base font-medium w-[138px] h-6"
@@ -289,8 +289,8 @@ const UsersSetting = () => {
                                 <div className="flex gap-4 items-start">
                                     <input className="mt-1" type="checkbox" />
                                     <div>
-                                        <div className="text-gray-500 text-base font-bold font-['Roboto']">Allow user to download reports</div>
-                                        <div className="text-teal-400 text-base font-medium font-['Roboto'] flex">
+                                        <div className="text-gray-500 text-base font-bold ">Allow user to download reports</div>
+                                        <div className="text-teal-400 text-base font-medium  flex">
                                             <div>
                                                 <Select
                                                     className="text-neutral-400 text-base font-medium w-[138px] h-6"
@@ -306,8 +306,8 @@ const UsersSetting = () => {
                                 <div className="flex gap-4 items-start">
                                     <input className="mt-1" type="checkbox" />
                                     <div>
-                                        <div className="text-gray-500 text-base font-bold font-['Roboto']">Allow user to update inventory </div>
-                                        <div className="text-teal-400 text-base font-medium font-['Roboto'] flex">
+                                        <div className="text-gray-500 text-base font-bold ">Allow user to update inventory </div>
+                                        <div className="text-teal-400 text-base font-medium  flex">
                                             <div>
                                                 <Select
                                                     className="text-neutral-400 text-base font-medium w-[138px] h-6"

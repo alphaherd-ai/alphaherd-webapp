@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      backgroundImage: {
+        'background-img': "url('/assets/icons/loginsignup/First.png')",
+      },
       height: {
         '7p': '7%',
       },

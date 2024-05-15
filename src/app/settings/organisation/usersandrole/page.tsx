@@ -9,7 +9,7 @@ import UsersSetting from '@/components/settings/organisation/usersandrole/usersa
 const UsersSettingsPage = () => {
   return (
     <>
-    <Navbar/>
+    {/* <Navbar/> */}
     <div className='w-full bg-gray-200 p-8 px-10'>
   <SettingsNavbar/>
   <UsersSetting/>
