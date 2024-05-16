@@ -11,14 +11,15 @@ export const POST=async(req: Request )=> {
 } 
     try {
       const {stockStatus,productId,invoiceType,...body} = await req.json();
-      const data={stockStatus,productId,invoiceType,body};
+      const data={stockStatus,productId,invoiceType,...body};
       const validatedData = ProductBatchSchema.safeParse(data);
-
+      console.log(validatedData.error)
       if (!validatedData.success) {
         return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
           status: 422,
         });
       }
+
       const inventoryId=await fetchInventoryId();
         await connectToDB();
         if(body.quantity==null){
@@ -38,7 +39,7 @@ export const POST=async(req: Request )=> {
               product:{
                 connect:{id: productId }
               },
-              inventorySection:{
+              InventorySection:{
                 connect:{id:inventoryId}
               }
             }
@@ -61,6 +62,7 @@ export const POST=async(req: Request )=> {
               }
           }
       });
+      console.log(inventory)
         return new Response(JSON.stringify({productBatch,inventory}), {
           status: 201,
           headers: {

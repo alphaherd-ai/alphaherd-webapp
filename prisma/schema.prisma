@@ -98,7 +98,7 @@ model Permissions {
 model InventorySection {
   id           Int                 @id @default(autoincrement())
   name         String
-  quantity     Int
+  quantity     Int?
   branch       OrgBranch           @relation(fields: [branchId], references: [id])
   branchId     Int                 @unique
   products     Products[]

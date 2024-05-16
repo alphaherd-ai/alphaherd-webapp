@@ -6,19 +6,25 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 export const GET = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'GET') {
-    return res.status(405).json({ message: 'Method not allowed' });
+    return new Response('Method not allowed',{status:405});
   }
 
   try {
     const inventoryId = await fetchInventoryId();
     await connectToDB();
     const products = await prisma.products.findMany({
-      where: { id: inventoryId }
+      where: { inventorySectionId: inventoryId }
     });
-    return res.status(200).json(products);
+    return new Response(JSON.stringify(products), {
+      status: 201,
+      headers: {
+          'Content-Type': 'application/json',
+      },
+  });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'Internal server error' });
+    return new Response(JSON.stringify(error));
+
   } finally {
     await prisma.$disconnect();
   }
