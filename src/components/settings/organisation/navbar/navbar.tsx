@@ -8,7 +8,6 @@ import React, { useState, useEffect } from 'react';
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
 import { usePathname } from 'next/navigation';
 import Popup from "@/components/auth/addUsersPopup"
-import Login5 from "@/components/auth/login5"
 
 const OrganisationNavbar = () => {
     const currentRoute = usePathname();
