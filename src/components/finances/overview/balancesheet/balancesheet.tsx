@@ -22,7 +22,7 @@ Chart.register(ArcElement);
 const FinancesOverviewSheet = () => {
     const [clickedIndex, setClickedIndex] = useState(0);
 
-    const handleClick = (index) => {
+    const handleClick = (index:any) => {
         setClickedIndex(index);
     };
 
@@ -35,7 +35,7 @@ const FinancesOverviewSheet = () => {
         { label: 'All Time', clicked: clickedIndex === 5 }
     ];
 
-    const handleTabClick = (index) => {
+    const handleTabClick = (index:any) => {
         setClickedIndex(index);
     };
 
@@ -57,14 +57,14 @@ const FinancesOverviewSheet = () => {
                     <div className="flex w-full h-14 p-4 bg-white border border-solid border-neutral-300 justify-between items-center">
                         <div className="h-6 justify-start items-center gap-4 inline-flex">
                             <div className="flex">
-                                <Image className="w-6 h-6 relative" src={lefticon} alt="left_icon" />
-                                <Image className="w-6 h-6 relative" src={righticon} alt="right_icon" />
+                                <Image className="w-6 h-6 " src={lefticon} alt="left_icon" />
+                                <Image className="w-6 h-6 " src={righticon} alt="right_icon" />
                             </div>
                             <div className="text-gray-500 text-sm font-medium font-['Satoshi']">
                                 July 17th - 23rd, 2023
                             </div>
                         </div>
-                        <div className="flex h-[19px] justify-start items-start gap-6 inline-flex">
+                        <div className="flex h-[19px] justify-start items-start gap-6">
                             {tabs.map((tab, index) => (
                                 <button className="border-none bg-transparent" onClick={() => handleTabClick(index)} key={index}>
                                     <div className={`${tab.clicked ? "text-center text-teal-400 font-bold" : "text-neutral-400"} text-neutral-400 text-sm font-medium font-['Satoshi']`}>
@@ -83,7 +83,7 @@ const FinancesOverviewSheet = () => {
                                 <div className="text-gray-500 text-[28px] font-bold font-['Satoshi']">₹ 92,499</div>
                                 <div className="text-gray-500 text-base font-medium font-['Satoshi']">Revenue</div>
                                 <div className="w-[142px] h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex ">
-                                    <Image className="w-4 h-4 relative" src={icn_icon} alt="inc"></Image>
+                                    <Image className="w-4 h-4 " src={icn_icon} alt="inc"></Image>
                                     <div className="text-green-600 text-sm font-medium font-['Satoshi']">12.4%</div>
                                     <div className="text-green-600 text-sm font-medium font-['Satoshi']">this week</div>
                                 </div>
@@ -92,7 +92,7 @@ const FinancesOverviewSheet = () => {
                                 <div className="text-gray-500 text-[28px] font-bold font-['Satoshi']">₹ 32,499</div>
                                 <div className="text-gray-500 text-base font-medium font-['Satoshi']">Expenses</div>
                                 <div className="w-[142px] h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex ">
-                                    <Image className="w-4 h-4 relative" src={icn_icon} alt="inc"></Image>
+                                    <Image className="w-4 h-4 " src={icn_icon} alt="inc"></Image>
                                     <div className="text-green-600 text-sm font-medium font-['Satoshi']">12.4%</div>
                                     <div className="text-green-600 text-sm font-medium font-['Satoshi']">this week</div>
                                 </div>
@@ -103,7 +103,7 @@ const FinancesOverviewSheet = () => {
                                 <div className="text-gray-500 text-[28px] font-bold font-['Satoshi']">700</div>
                                 <div className="text-gray-500 text-base font-medium font-['Satoshi']">Sales Invoices</div>
                                 <div className="w-[142px] h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex ">
-                                    <Image className="w-4 h-4 relative" src={icn_icon} alt="inc"></Image>
+                                    <Image className="w-4 h-4 " src={icn_icon} alt="inc"></Image>
                                     <div className="text-green-600 text-sm font-medium font-['Satoshi']">12.4%</div>
                                     <div className="text-green-600 text-sm font-medium font-['Satoshi']">this week</div>
                                 </div>
@@ -119,7 +119,7 @@ const FinancesOverviewSheet = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="flex w-full h-[304px] justify-between pt-6 pb-6 pl-7 pr-11 relative bg-white border border-solid border-stone-300 flex">
+                    <div className="flex w-full h-[304px] justify-between pt-6 pb-6 pl-7 pr-11  bg-white border border-solid border-stone-300 ">
                         <div className="flex flex-col justify-between h-full">
                             <div>
                                 <div>
@@ -157,7 +157,7 @@ const FinancesOverviewSheet = () => {
                                 <Doughnut data={chartData} />
                             </div>
                             <div className="w-7 h-7 px-1.5 py-2 justify-self-end bg-white rounded-[5px] border border-solid border-neutral-400 justify-start items-center gap-2 flex">
-                                <Image className="w-4 h-4 relative" src={downloadicon} alt="download"></Image>
+                                <Image className="w-4 h-4 " src={downloadicon} alt="download"></Image>
                             </div>
                         </div>
                     </div>

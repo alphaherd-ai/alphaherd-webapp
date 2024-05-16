@@ -76,7 +76,7 @@ const FinancesNavbar = () => {
                     </Link>
                 </div>
                 <div className='flex h-full items-center  w-3/12'>
-                    <div className="relative h-full w-10/12 items-center">
+                    <div className="relative h-full w-10/12 items-center z-[1]">
                         <input
                             name="Search"
                             type="text"

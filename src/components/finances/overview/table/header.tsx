@@ -57,7 +57,6 @@ const FinacesOverviewTableHeader = () => {
                             <DropdownTrigger>
                                 <Button
                                     //   variant="bordered" 
-                                    color="gray-400"
                                     variant="solid"
                                     className="capitalize border-none  bg-transparent rounded-lg"
                                 >
@@ -121,7 +120,7 @@ const FinacesOverviewTableHeader = () => {
                       
                         <Popover placement="bottom-end" showArrow offset={10}>
                             <PopoverTrigger>
-                                <Button color="gray-400"
+                                <Button 
                                     variant="solid"
                                     className="capitalize flex border-none bg-black text-white rounded-lg ">  Add
                                     <div className='flex pl-2'><Image src={DownArrow} alt='DownArrow' className='w-4 h-4 ' /></div></Button>

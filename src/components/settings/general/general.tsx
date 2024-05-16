@@ -105,27 +105,27 @@ const GeneralSettings = () => {
     <>
         <div className="w-full h-full mt-4">
             <div className="w-full flex-col justify-start items-start gap-[20px] flex">
-                <div className="w-full p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border border-neutral-400 flex-col justify-center items-start gap-6 flex text-gray-500 text-xl font-medium font-['Roboto']">
+                <div className="w-full p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border border-neutral-400 flex-col justify-center items-start gap-6 flex text-gray-500 text-xl font-medium ">
                     General Settings
                 </div>
                 <div className="w-full px-4 py-5 bg-gray-100 border border-neutral-400 flex-col justify-start items-start gap-4 flex">
                     <div className="w-full px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                         <div className="w-full flex justify-between items-start">
                             <div>
-                                <div className="text-gray-500 text-base font-bold font-['Roboto']">Invoice Preferences</div>
-                                <div className="text-neutral-400 text-base font-medium font-['Roboto']">Edit settings related to invoices</div>
+                                <div className="text-gray-500 text-base font-bold ">Invoice Preferences</div>
+                                <div className="text-neutral-400 text-base font-medium ">Edit settings related to invoices</div>
                             </div>
                             <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
                                 <Image className="w-6 h-6 relative rounded-[5px]" src={previewicon} alt="preview" />
-                                <div className="text-white text-base font-bold font-['Roboto']">Preview Invoice</div>
+                                <div className="text-white text-base font-bold ">Preview Invoice</div>
                             </div>
                         </div>
                         <div className="mt-4 grid grid-cols-2 gap-x-8 gap-y-6 w-full">
                             <div className="flex gap-4 items-start">
                                 <input className="mt-1 accent-teal-500" type="checkbox" defaultChecked />
                                 <div>
-                                    <div className="text-gray-500 text-base font-bold font-['Roboto']">Show tax splitup</div>
-                                    <div className="text-neutral-400 text-base font-medium font-['Roboto'] flex">
+                                    <div className="text-gray-500 text-base font-bold ">Show tax splitup</div>
+                                    <div className="text-neutral-400 text-base font-medium  flex">
                                         <div>Split-up of taxes value will be shown on printed invoice</div>
                                     </div>
                                 </div>
@@ -133,8 +133,8 @@ const GeneralSettings = () => {
                             <div className="flex gap-4 items-start">
                                 <input className="mt-1 accent-teal-500" type="checkbox" defaultChecked />
                                 <div>
-                                    <div className="text-gray-500 text-base font-bold font-['Roboto']">Show Balance Due</div>
-                                    <div className="text-neutral-400 text-base font-medium font-['Roboto']">
+                                    <div className="text-gray-500 text-base font-bold ">Show Balance Due</div>
+                                    <div className="text-neutral-400 text-base font-medium ">
                                         <div>Balance due amount will be shown on printed invoice </div>
                                     </div>
                                 </div>
@@ -142,8 +142,8 @@ const GeneralSettings = () => {
                             <div className="flex gap-4 items-start">
                                 <input className="mt-1 accent-teal-500" type="checkbox" defaultChecked />
                                 <div>
-                                    <div className="text-gray-500 text-base font-bold font-['Roboto']">Show Payment Due date</div>
-                                    <div className="text-neutral-400 text-base font-medium font-['Roboto'] flex">
+                                    <div className="text-gray-500 text-base font-bold ">Show Payment Due date</div>
+                                    <div className="text-neutral-400 text-base font-medium  flex">
                                         <div>Payment due date will be shown on all invoice documents</div>
                                     </div>
                                 </div>
@@ -151,15 +151,15 @@ const GeneralSettings = () => {
                             <div className="flex gap-4 items-start">
                                 <input className="mt-1 accent-teal-500" type="checkbox" defaultChecked />
                                 <div>
-                                    <div className="text-gray-500 text-base font-bold font-['Roboto'] flex gap-2">
+                                    <div className="text-gray-500 text-base font-bold  flex gap-2">
                                         <div>Show last date of return</div>
-                                        <div className="text-neutral-400 text-base font-bold font-['Roboto']">Default date of return:</div>
+                                        <div className="text-neutral-400 text-base font-bold ">Default date of return:</div>
                                         <div className="flex">
-                                            <div className="text-teal-500 text-base font-medium font-['Roboto']">7 days after sale</div>
+                                            <div className="text-teal-500 text-base font-medium ">7 days after sale</div>
                                             <Image src={downicon} alt="dwn" />
                                         </div>
                                     </div>
-                                    <div className="text-neutral-400 text-base font-medium font-['Roboto'] flex">
+                                    <div className="text-neutral-400 text-base font-medium  flex">
                                         <div>Last date of return will be shown on all invoice documents</div>
                                     </div>
                                 </div>
@@ -167,8 +167,8 @@ const GeneralSettings = () => {
                             <div className="flex gap-4 items-start">
                                 <input className="mt-1 accent-teal-500" type="checkbox" defaultChecked />
                                 <div>
-                                    <div className="text-gray-500 text-base font-bold font-['Roboto']">Notes</div>
-                                    <div className="text-neutral-400 text-base font-medium font-['Roboto'] flex">
+                                    <div className="text-gray-500 text-base font-bold ">Notes</div>
+                                    <div className="text-neutral-400 text-base font-medium  flex">
                                         <div>Notes section will be shown on all invoice documents</div>
                                     </div>
                                 </div>
@@ -176,8 +176,8 @@ const GeneralSettings = () => {
                             <div className="flex gap-4 items-start">
                                 <input className="mt-1 accent-teal-500" type="checkbox" defaultChecked />
                                 <div>
-                                    <div className="text-gray-500 text-base font-bold font-['Roboto']">Auto generate invoice numbers</div>
-                                    <div className="text-neutral-400 text-base font-medium font-['Roboto'] flex">
+                                    <div className="text-gray-500 text-base font-bold ">Auto generate invoice numbers</div>
+                                    <div className="text-neutral-400 text-base font-medium  flex">
                                         <div>Invoice numbers for all invoices will be auto generated</div>
                                     </div>
                                 </div>
@@ -185,8 +185,8 @@ const GeneralSettings = () => {
                             <div className="flex gap-4 items-start">
                                 <input className="mt-1 accent-teal-500" type="checkbox" defaultChecked />
                                 <div>
-                                    <div className="text-gray-500 text-base font-bold font-['Roboto']">Footer:</div>
-                                    <div className="text-neutral-400 text-base font-medium font-['Roboto'] flex">
+                                    <div className="text-gray-500 text-base font-bold ">Footer:</div>
+                                    <div className="text-neutral-400 text-base font-medium  flex">
                                         <input className="w-[1296px] h-[54px] p-4 rounded-[5px] border border-neutral-400 flex-col justify-start items-start gap-2 inline-flex" type="text" defaultValue={"This is a computer generated statement and requires no signature"} />
                                   
                                     </div>
@@ -194,52 +194,52 @@ const GeneralSettings = () => {
                             </div>
                         </div>
                         <div>
-                            <div className="text-gray-500 text-base font-medium font-['Satoshi']">Automatically send invoices and receipts to customer via:</div>
+                            <div className="text-gray-500 text-base font-medium ">Automatically send invoices and receipts to customer via:</div>
                             <div className="flex gap-2">
                                 {smsToggle && (<button onClick={smsToggleHandler}><div className="w-[73px] h-7 p-2 bg-teal-400 rounded-[5px] border border-white justify-start items-center gap-2 flex">
                                     <Image className="w-4 h-4 relative" src={smsicon} alt="sms" />
-                                    <div className="text-white text-sm font-bold font-['Roboto']">SMS</div>
+                                    <div className="text-white text-sm font-bold ">SMS</div>
                                 </div></button>)}
                                 {!smsToggle && (<button onClick={smsToggleHandler}><div className="w-[67px] h-7 p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
                                     <Image className="w-4 h-4 relative" src={smsicon} alt="sms" />
-                                    <div className="text-neutral-400 text-sm font-bold font-['Roboto']">SMS</div>
+                                    <div className="text-neutral-400 text-sm font-bold ">SMS</div>
                                 </div></button>)}
                                 {mailToggle && (<button onClick={mailToggleHandler}><div className="w-[73px] h-7 p-2 bg-teal-400 rounded-[5px] border border-white justify-start items-center gap-2 flex">
                                     <Image className="w-4 h-4 relative" src={mailicon} alt="sms" />
-                                    <div className="text-white text-sm font-bold font-['Roboto']">Mail</div>
+                                    <div className="text-white text-sm font-bold ">Mail</div>
                                 </div></button>)}
                                 {!mailToggle && (<button onClick={mailToggleHandler}><div className="w-[73px] h-7 p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
                                     <Image className="w-4 h-4 relative" src={mailicon} alt="sms" />
-                                    <div className="text-neutral-400 text-sm font-bold font-['Roboto']">Mail</div>
+                                    <div className="text-neutral-400 text-sm font-bold ">Mail</div>
                                 </div></button>)}
                                 {whatsappToggle && (<button onClick={whatsappToggleHandler}><div className="w-[111px] h-7 p-2 bg-teal-400 rounded-[5px] border border-white justify-start items-center gap-2 flex">
                                     <Image className="w-4 h-4 relative" src={whatshapicon} alt="sms" />
-                                    <div className="text-white text-sm font-bold font-['Roboto']">WhatsApp</div>
+                                    <div className="text-white text-sm font-bold ">WhatsApp</div>
                                 </div></button>)}
                                 {!whatsappToggle && (<button onClick={whatsappToggleHandler}><div className="w-[111px] h-7 p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
                                     <Image className="w-4 h-4 relative" src={whatshapicon} alt="sms" />
-                                    <div className="text-neutral-400 text-sm font-bold font-['Roboto']">WhatsApp</div>
+                                    <div className="text-neutral-400 text-sm font-bold ">WhatsApp</div>
                                 </div></button>)}
                             </div>
                         </div>
                         <div>
-                            <div className="text-gray-500 text-base font-medium font-['Satoshi']">Select your default taxation format:</div>
+                            <div className="text-gray-500 text-base font-medium ">Select your default taxation format:</div>
                             <div className="flex gap-2">
                                 {taxIncToggle && (<button onClick={taxIncToggleHandler}><div className="h-7 p-2 bg-teal-400 rounded-[5px] border border-white justify-start items-center gap-2 flex">
                                     <Image className="w-4 h-4 relative" src={tickicon} alt="sms" />
-                                    <div className="text-white text-sm font-bold font-['Roboto']">Tax Inclusive</div>
+                                    <div className="text-white text-sm font-bold ">Tax Inclusive</div>
                                 </div></button>)}
                                 {!taxIncToggle && (<button onClick={taxIncToggleHandler}><div className="h-7 p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
                                     <Image className="w-4 h-4 relative" src={tickicon} alt="sms" />
-                                    <div className="text-neutral-400 text-sm font-bold font-['Roboto']">Tax Inclusive</div>
+                                    <div className="text-neutral-400 text-sm font-bold ">Tax Inclusive</div>
                                 </div></button>)}
                                 {taxExcToggle && (<button onClick={taxExcToggleHandler}><div className="h-7 p-2 bg-teal-400 rounded-[5px] border border-white justify-start items-center gap-2 flex">
                                     <Image className="w-4 h-4 relative" src={crossicon} alt="sms" />
-                                    <div className="text-white text-sm font-bold font-['Roboto']">Tax exclusive</div>
+                                    <div className="text-white text-sm font-bold ">Tax exclusive</div>
                                 </div></button>)}
                                 {!taxExcToggle && (<button onClick={taxExcToggleHandler}><div className="h-7 p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
                                     <Image className="w-4 h-4 relative" src={crossicon} alt="sms" />
-                                    <div className="text-neutral-400 text-sm font-bold font-['Roboto']">Tax exclusive</div>
+                                    <div className="text-neutral-400 text-sm font-bold ">Tax exclusive</div>
                                 </div></button>)}
                             </div>
                         </div>
@@ -247,12 +247,12 @@ const GeneralSettings = () => {
                     <div className="w-full px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                         <div className="w-full flex justify-between items-start">
                             <div>
-                                <div className="text-gray-500 text-base font-bold font-['Roboto']">Payment methods</div>
-                                <div className="text-neutral-400 text-base font-medium font-['Roboto']">Add and configure your payment methods</div>
+                                <div className="text-gray-500 text-base font-bold ">Payment methods</div>
+                                <div className="text-neutral-400 text-base font-medium ">Add and configure your payment methods</div>
                             </div>
                             <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
                                 <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                <div className="text-white text-base font-bold font-['Roboto']">Add Payment Method</div>
+                                <div className="text-white text-base font-bold ">Add Payment Method</div>
                             </div>
                         </div>
                         <div className="w-full h-full">
@@ -265,7 +265,7 @@ const GeneralSettings = () => {
                                 <div className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
                                     <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
                                         <Image className="w-[22px] h-[22px] relative" src={cashicon} alt="cash" />
-                                        <div className="text-gray-500 text-base font-medium font-['Roboto']">Cash</div>
+                                        <div className="text-gray-500 text-base font-medium ">Cash</div>
                                     </div>
                                     <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
                                         <input type="checkbox" className="accent-teal-500" defaultChecked />
@@ -278,7 +278,7 @@ const GeneralSettings = () => {
                                 <div className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
                                     <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
                                         <Image className="w-[22px] h-[22px] relative" src={cardicon} alt="cash" />
-                                        <div className="text-gray-500 text-base font-medium font-['Roboto']">Card</div>
+                                        <div className="text-gray-500 text-base font-medium ">Card</div>
                                     </div>
                                     <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
                                         <input type="checkbox" className="accent-teal-500" defaultChecked />
@@ -291,7 +291,7 @@ const GeneralSettings = () => {
                                 <div className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
                                     <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
                                         <Image className="w-[22px] h-[22px] relative" src={netbankingicon} alt="cash" />
-                                        <div className="text-gray-500 text-base font-medium font-['Roboto']">Net Banking</div>
+                                        <div className="text-gray-500 text-base font-medium ">Net Banking</div>
                                     </div>
                                     <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
                                         <input type="checkbox" className="accent-teal-500" defaultChecked />
@@ -304,7 +304,7 @@ const GeneralSettings = () => {
                                 <div className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
                                     <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
                                         <Image className="w-[22px] h-[22px] relative" src={upiicon} alt="cash" />
-                                        <div className="text-gray-500 text-base font-medium font-['Roboto']">UPI</div>
+                                        <div className="text-gray-500 text-base font-medium ">UPI</div>
                                     </div>
                                     <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
                                         <input type="checkbox" className="accent-teal-500" defaultChecked />
@@ -320,16 +320,16 @@ const GeneralSettings = () => {
                     <div className="w-full px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                         <div className="w-full flex justify-between items-start">
                             <div>
-                                <div className="text-gray-500 text-base font-bold font-['Roboto']">Notifications</div>
-                                <div className="text-neutral-400 text-base font-medium font-['Roboto']">Choose what notifications you want to receive</div>
+                                <div className="text-gray-500 text-base font-bold ">Notifications</div>
+                                <div className="text-neutral-400 text-base font-medium ">Choose what notifications you want to receive</div>
                             </div>
                         </div>
                         <div className="mt-4 grid grid-cols-2 gap-x-8 gap-y-6 w-full">
                             <div className="flex gap-4 items-start">
                                 <input className="mt-1 accent-teal-500" type="checkbox" defaultChecked />
                                 <div>
-                                    <div className="text-gray-500 text-base font-bold font-['Roboto']">Low stock items alert</div>
-                                    <div className="text-neutral-400 text-base font-medium font-['Roboto'] flex">
+                                    <div className="text-gray-500 text-base font-bold ">Low stock items alert</div>
+                                    <div className="text-neutral-400 text-base font-medium  flex">
                                         <Select
                                             className="text-neutral-400 text-base font-medium w-[138px] h-6"
                                             placeholder="Select"
@@ -344,8 +344,8 @@ const GeneralSettings = () => {
                             <div className="flex gap-4 items-start">
                                 <input className="mt-1 accent-teal-500" type="checkbox" defaultChecked />
                                 <div>
-                                    <div className="text-gray-500 text-base font-bold font-['Roboto']">Expiring items alert</div>
-                                    <div className="text-neutral-400 text-base font-medium font-['Roboto']">
+                                    <div className="text-gray-500 text-base font-bold ">Expiring items alert</div>
+                                    <div className="text-neutral-400 text-base font-medium ">
                                         <Select
                                             className="text-neutral-400 text-base font-medium w-[138px] h-6"
                                             placeholder="Select"
@@ -360,8 +360,8 @@ const GeneralSettings = () => {
                             <div className="flex gap-4 items-start">
                                 <input className="mt-1 accent-teal-500" type="checkbox" defaultChecked />
                                 <div>
-                                    <div className="text-gray-500 text-base font-bold font-['Roboto']">Expired items alert</div>
-                                    <div className="text-neutral-400 text-base font-medium font-['Roboto'] flex">
+                                    <div className="text-gray-500 text-base font-bold ">Expired items alert</div>
+                                    <div className="text-neutral-400 text-base font-medium  flex">
                                         <Select
                                             className="text-neutral-400 text-base font-medium w-[138px] h-6"
                                             placeholder="Select"
@@ -376,8 +376,8 @@ const GeneralSettings = () => {
                             <div className="flex gap-4 items-start">
                                 <input className="mt-1 accent-teal-500" type="checkbox" defaultChecked />
                                 <div>
-                                    <div className="text-gray-500 text-base font-bold font-['Roboto']">Excess items alert</div>
-                                    <div className="text-neutral-400 text-base font-medium font-['Roboto'] flex">
+                                    <div className="text-gray-500 text-base font-bold ">Excess items alert</div>
+                                    <div className="text-neutral-400 text-base font-medium  flex">
                                         <Select
                                             className="text-neutral-400 text-base font-medium w-[138px] h-6"
                                             placeholder="Select"
@@ -392,26 +392,26 @@ const GeneralSettings = () => {
                             <div className="flex gap-4 items-start">
                                 <input className="mt-1 accent-teal-500" type="checkbox" defaultChecked />
                                 <div>
-                                    <div className="text-gray-500 text-base font-bold font-['Roboto']">Invoice due alert</div>
-                                    <div className="text-neutral-400 text-base font-medium font-['Roboto'] flex">
+                                    <div className="text-gray-500 text-base font-bold ">Invoice due alert</div>
+                                    <div className="text-neutral-400 text-base font-medium  flex">
                                         <div className="flex gap-2">
                                             {samedayToggle && (<button onClick={sameDayToggleHandler}><div className="h-7 p-2 bg-teal-400 rounded-[5px] border border-white justify-start items-center gap-2 flex">
-                                                <div className="text-white text-sm font-bold font-['Roboto']">Same day</div>
+                                                <div className="text-white text-sm font-bold ">Same day</div>
                                             </div></button>)}
                                             {!samedayToggle && (<button onClick={sameDayToggleHandler}><div className="h-7 p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
-                                                <div className="text-neutral-400 text-sm font-bold font-['Roboto']">Same day</div>
+                                                <div className="text-neutral-400 text-sm font-bold ">Same day</div>
                                             </div></button>)}
                                             {threedayToggle && (<button onClick={threeDayToggleHandler}><div className="h-7 p-2 bg-teal-400 rounded-[5px] border border-white justify-start items-center gap-2 flex">
-                                                <div className="text-white text-sm font-bold font-['Roboto']">3 days to go</div>
+                                                <div className="text-white text-sm font-bold ">3 days to go</div>
                                             </div></button>)}
                                             {!threedayToggle && (<button onClick={threeDayToggleHandler}><div className="h-7 p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
-                                                <div className="text-neutral-400 text-sm font-bold font-['Roboto']">3 days to go</div>
+                                                <div className="text-neutral-400 text-sm font-bold ">3 days to go</div>
                                             </div></button>)}
                                             {oneWeekToggle && (<button onClick={weekToggleHandler}><div className="h-7 p-2 bg-teal-400 rounded-[5px] border border-white justify-start items-center gap-2 flex">
-                                                <div className="text-white text-sm font-bold font-['Roboto']">1 week to go</div>
+                                                <div className="text-white text-sm font-bold ">1 week to go</div>
                                             </div></button>)}
                                             {!oneWeekToggle && (<button onClick={weekToggleHandler}><div className="h-7 p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
-                                                <div className="text-neutral-400 text-sm font-bold font-['Roboto']">1 week to go</div>
+                                                <div className="text-neutral-400 text-sm font-bold ">1 week to go</div>
                                             </div></button>)}
                                         </div>
                                     </div>
