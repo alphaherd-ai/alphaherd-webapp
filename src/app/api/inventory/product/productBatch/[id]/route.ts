@@ -15,8 +15,7 @@ export const GET=async (req: Request,
             await connectToDB();
            const productBatch= await prisma.productBatch.findUnique({
                 where: { id: Number(params.id),inventorySectionId:inventoryId },
-            });
-                        
+            });    
             return new Response(JSON.stringify(productBatch), {
                 status: 201,
                 headers: {
@@ -40,7 +39,7 @@ export const PUT=async (req: Request,
             await connectToDB();
             const inventoryId=await fetchInventoryId();
             const { productId,stockStatus,invoiceType,...body}=await req.json();
-            const data={stockStatus,productId,invoiceType,body};
+            const data={stockStatus,productId,invoiceType,...body};
             const validatedData = ProductBatchSchema.safeParse(data);
       
             if (!validatedData.success) {

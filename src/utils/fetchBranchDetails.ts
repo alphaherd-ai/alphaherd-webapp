@@ -4,7 +4,7 @@ import prisma from '../../prisma/index';
 
 export const lastUsedBranch = async () => {
     const session = await getSession();
-    return session?.user.orgBranchId;
+    return 1;
 }
 
 export const fetchInventoryId = async () => {
@@ -13,12 +13,27 @@ export const fetchInventoryId = async () => {
     if (!branchId) {
         throw new Error("Branch ID not found in session");
     }
-
+    const orgBranch=await prisma.orgBranch.findUnique({
+        where:{
+            id:branchId
+        }
+    })
     const inventorySection = await prisma.inventorySection.findUnique({
         where: {
             branchId: branchId, 
         }
     });
+    if(!inventorySection&&orgBranch){
+        await prisma.inventorySection.create({
+            data:{
+               name:"Inventory-"+orgBranch.branchName,
+               quantity:1,
+               branch: {
+                connect: { id: branchId }
+            }
+            }
+        })
+    }
 
     return inventorySection?.id;
 }
