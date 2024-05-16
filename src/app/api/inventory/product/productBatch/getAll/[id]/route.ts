@@ -1,15 +1,17 @@
 import { connectToDB } from '../../../../../../../utils/index';
-import prisma from '../../../../../../../../prisma/index';
+import prisma from '../../../../../../../../prisma';
+import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 
 export  const GET=async (req: Request,
-  { params }: { params: {id: string; } } )=> {
+  { params }: { params: {id: number; } } )=> {
   if (req.method !== 'GET') {
     return new Response('Method not allowed',{status:405});
 }
     try {
         await connectToDB();
+        const inventoryId= await fetchInventoryId();
         const products = await prisma.productBatch.findMany({
-          where:{productId:params.id},
+          where:{productId:Number(params.id),inventorySectionId:inventoryId},
           include:{
             product:true
           }

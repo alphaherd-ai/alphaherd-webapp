@@ -1,5 +1,6 @@
 import { connectToDB } from '../../../../../../utils/index';
-import prisma from '../../../../../../../prisma/index';
+import prisma from '../../../../../../../prisma';
+import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 
 export  const GET=async (req: Request )=> {
   if (req.method !== 'GET') {
@@ -7,12 +8,14 @@ export  const GET=async (req: Request )=> {
 }
     try {
         await connectToDB();
-        const products = await prisma.productBatch.findMany({
+        const inventoryId=await fetchInventoryId();
+        const productBatches = await prisma.productBatch.findMany({
+            where:{inventorySectionId:inventoryId},
             include:{
                 product:true
             }
         });
-        return new Response(JSON.stringify(products), {
+        return new Response(JSON.stringify(productBatches), {
           status: 201,
           headers: {
               'Content-Type': 'application/json',

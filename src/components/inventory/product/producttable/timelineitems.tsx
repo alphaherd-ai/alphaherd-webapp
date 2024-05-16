@@ -5,7 +5,7 @@ import { Tooltip, Button } from "@nextui-org/react";
 import InventoryProductTableBottombar from './bottombar'; 
 
 interface Products {
-  id: string;
+  id: number;
   totalQuantity: number;
   itemName: string;
   category: string;

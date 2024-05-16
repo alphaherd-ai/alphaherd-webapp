@@ -1,6 +1,6 @@
 // src/api/sales/get.ts
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma/index';
+import prisma from '../../../../../../prisma';
 
 export const GET = async (req: Request) => {
   if (req.method !== 'GET') {
@@ -11,9 +11,9 @@ export const GET = async (req: Request) => {
     await connectToDB();
     const sales = await prisma.sales.findMany({
       include: {
-        item: {
+        items: {
           include: {
-            allProducts: true, 
+            productBatch: true, 
           },
         },
       },

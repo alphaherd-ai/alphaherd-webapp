@@ -1,17 +1,33 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma/index';
+import prisma from '../../../../../../prisma';
+import { fetchDatabaseId } from '@/utils/fetchBranchDetails';
 import type { Clients } from "@prisma/client";
+import { ClientSchema } from '@/schemas/database/clientValidation';
 
 export const POST=async(req: Request)=> {
   if (req.method !== 'POST') {
     return new Response('Method not allowed',{status:405});
 } 
     try {
-      const body: Clients = await req.json();
+      const databaseId = await fetchDatabaseId();
+      const body = await req.json();
+      const validatedData = ClientSchema.safeParse(body);
+
+      if (!validatedData.success) {
+        return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
+          status: 422,
+        });
+      }
       console.log(body)
-        await connectToDB();
         const client = await prisma.clients.create({
-            data: body
+            data:{ 
+              ...body,
+              DataBaseSection:{
+                connect:{
+                  id:databaseId
+                }
+              }
+            }
         });
         return new Response(JSON.stringify(client), {
           status: 201,

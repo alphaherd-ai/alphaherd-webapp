@@ -1,6 +1,6 @@
 // src/api/Services/filter.ts
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma/index';
+import prisma from '../../../../../../prisma';
 import {  Services } from '@prisma/client';
 
 export const POST = async (req: Request) => {
@@ -31,17 +31,17 @@ export const POST = async (req: Request) => {
       filterOptions.distributors = { in: distributors.map(String) };
     }
 
-    const filteredServices: Services[] = await prisma.services.findMany({
-      where: {
-        ...filterOptions,
-      },
-      include: {
-        service: {
-          where: filterOptions.service,
-        },
-      },
-    });
-
+    // const filteredServices: Services[] = await prisma.services.findMany({
+    //   where: {
+    //     ...filterOptions,
+    //   },
+    //   include: {
+    //     service: {
+    //       where: filterOptions.service,
+    //     },
+    //   },
+    // });
+   const filteredServices="jlksjd"
     return new Response(JSON.stringify(filteredServices), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },

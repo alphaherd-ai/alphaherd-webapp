@@ -1,5 +1,6 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma/index';
+import prisma from '../../../../../../prisma';
+import { fetchDatabaseId } from '@/utils/fetchBranchDetails';
 
 
 export  const GET=async (req: Request)=> {
@@ -7,8 +8,12 @@ export  const GET=async (req: Request)=> {
     return new Response('Method not allowed',{status:405});
 }
     try {
+      const databaseId = await fetchDatabaseId();
         await connectToDB();
         const clients = await prisma.clients.findMany({
+          where:{
+            databaseSectionId:databaseId
+          },
           include:{
             patients:true
           }

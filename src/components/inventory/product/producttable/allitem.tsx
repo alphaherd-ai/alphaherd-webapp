@@ -14,7 +14,7 @@ interface Products{
   hsnCode:string;
 }
 interface ProductBatch {
-  id: string;
+  id: number;
   date: string;
   time: string;
   quantity: number;

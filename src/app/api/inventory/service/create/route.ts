@@ -1,6 +1,7 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma/index';
+import prisma from '../../../../../../prisma';
 import { Inventory, type Services } from "@prisma/client";
+import { ServiceSchema } from '@/schemas/inventory/serviceValidation';
 
 export const POST=async(req: Request)=> {
   if (req.method !== 'POST') {
@@ -8,6 +9,13 @@ export const POST=async(req: Request)=> {
 } 
     try {
       const {source,...body}  = await req.json();
+      const validatedData = ServiceSchema.safeParse(body);
+
+      if (!validatedData.success) {
+        return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
+          status: 422,
+        });
+      }
         await connectToDB();
         const service = await prisma.services.create({
             data: body
@@ -17,7 +25,7 @@ export const POST=async(req: Request)=> {
           data:{
             quantityChange:body.quantity,
             invoiceType:source,
-            objectId:service.id,
+            serviceId:service.id,
             inventoryType:Inventory.Service
           }
         })

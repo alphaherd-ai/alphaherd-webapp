@@ -1,24 +1,25 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma/index';
+import prisma from '../../../../../../prisma';
+import { fetchInventoryId } from '@/utils/fetchBranchDetails';
+import { NextApiRequest, NextApiResponse } from 'next';
 
 
-export  const GET=async (req: Request)=> {
+export const GET = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'GET') {
-    return new Response('Method not allowed',{status:405});
-}
-    try {
-        await connectToDB();
-        const products = await prisma.products.findMany();
-        return new Response(JSON.stringify(products), {
-          status: 201,
-          headers: {
-              'Content-Type': 'application/json',
-          },
-      });
-    } catch (error) {
-      return new Response("Internal server error",{status:500});
-    } finally {
-        await prisma.$disconnect();
-    }
+    return res.status(405).json({ message: 'Method not allowed' });
   }
-  
+
+  try {
+    const inventoryId = await fetchInventoryId();
+    await connectToDB();
+    const products = await prisma.products.findMany({
+      where: { id: inventoryId }
+    });
+    return res.status(200).json(products);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal server error' });
+  } finally {
+    await prisma.$disconnect();
+  }
+};

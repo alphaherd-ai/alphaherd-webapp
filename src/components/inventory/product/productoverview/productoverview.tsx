@@ -23,7 +23,7 @@ import { response } from "express"
 
 
 interface AllProducts {
-    id: string;
+    id: number;
     date: string;
     time: string;
     quantity: number;
@@ -45,13 +45,13 @@ interface AllProducts {
   
   }
   interface Inventory{
-    id:string;
-    allProductsId:string;
+    id:number;
+    productId:number;
     stockChange:string;
     invoiceType:string;
     quantityChange:number;
     party:string;
-    allProducts:AllProducts;
+    productBatch:AllProducts;
     createdAt:string;
   
   }
@@ -88,7 +88,7 @@ interface AllProducts {
           .then(response => response.json())
           .then(data => {
             const filteredInventory = data.filter((item: Inventory) =>
-              products.some((p: AllProducts) => item.allProductsId === p.id)   
+              products.some((p: AllProducts) => item.productId === p.id)   
             )
             .reverse()
             .slice(0,5);
@@ -309,7 +309,7 @@ interface AllProducts {
                         </div>
                     </div>
     {inventory.map(item=>(
-                    <div className="w-full border-b border-solid border-0 border-stone-300 flex items-start justify-between">
+                    <div key={item.id} className="w-full border-b border-solid border-0 border-stone-300 flex items-start justify-between">
                         <div className="w-full flex p-6">
                             <div className="w-full flex items-center justify-between">
                                 <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
@@ -327,7 +327,7 @@ interface AllProducts {
                                     </div>
                                 </div>
                                 <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    {item.allProducts.batchNumber}
+                                    {item.productBatch.batchNumber}
                                 </div>
                                 <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
                                     {item.party}
@@ -367,7 +367,7 @@ interface AllProducts {
                         </div>
                     
                         {products.map(item=>(
-                        <div className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                        <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
                             <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{item.quantity} Strips</div>
                             <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>providers</div>
                             <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{item.batchNumber}</div>

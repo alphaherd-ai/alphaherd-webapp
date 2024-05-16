@@ -1,7 +1,7 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma/index';
+import prisma from '../../../../../../prisma';
 
-export const GET = async (req: Request, { params }: { params: { id: string } }) => {
+export const GET = async (req: Request, { params }: { params: { id: number } }) => {
   if (req.method !== 'GET') {
     return new Response('Method not allowed', { status: 405 });
   }
@@ -9,9 +9,9 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
   try {
     await connectToDB();
     const expenses = await prisma.expenses.findUnique({
-      where: { id: params.id },
+      where: { id: Number(params.id) },
       include: {
-        item:true   
+        items:true   
       },
     });
 
@@ -28,7 +28,7 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
   }
 };
 
-export const PUT = async (req: Request, { params }: { params: { id: string } }) => {
+export const PUT = async (req: Request, { params }: { params: { id: number } }) => {
     if (req.method !== 'PUT') {
       return new Response('Method not allowed', { status: 405 });
     }
@@ -37,12 +37,12 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
       await connectToDB();
       const body = await req.json();
       const expenses = await prisma.expenses.update({
-        where: { id: params.id },
+        where: { id: Number(params.id) },
         data: body,
         include: {
-          item: {
+          items: {
             include: {
-              allProducts: true,
+              productBatch: true,
             },
           },
         },
@@ -63,16 +63,16 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
   };
 
 
-export const DELETE = async (req: Request, { params }: { params: { id: string } }) => {
+export const DELETE = async (req: Request, { params }: { params: { id: number } }) => {
   if (req.method !== 'DELETE') {
     return new Response('Method not allowed', { status: 405 });
   }
 
   try {
     await connectToDB();
-    const expensesId = params.id;
+    const expensesId = Number(params.id);
 
-    await prisma.finance.deleteMany({
+    await prisma.financeTimeline.deleteMany({
       where: { expensesId },
     });
 

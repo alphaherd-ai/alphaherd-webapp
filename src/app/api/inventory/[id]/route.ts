@@ -1,20 +1,21 @@
 import { connectToDB } from '../../../../utils/index';
-import prisma from '../../../../../prisma/index';
-
+import prisma from '../../../../../prisma';
+import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 
 export const GET=async (req: Request,
-    { params }: { params: {id: string; } } )=> {
+    { params }: { params: {id: number; } } )=> {
 
         if (req.method !== 'GET') {
             return new Response('Method not allowed',{status:405});
         } 
         try {
+            const inventoryId = await fetchInventoryId();
             await connectToDB();
             const inventory= await prisma.inventoryTimeline.findUnique({
-                where: { id: params.id },
+                where: { id: Number(params.id),inventorySectionId:inventoryId},
                 include:{
                     productBatch:true,
-                    allServices:true
+                    service:true
                 }
             });                       
             return new Response(JSON.stringify(inventory), {
@@ -30,18 +31,19 @@ export const GET=async (req: Request,
         }
 }
 
-export const PUT = async (req: Request, { params }: { params: { id: string } }) => {
+export const PUT = async (req: Request, { params }: { params: { id: number } }) => {
     if (req.method !== 'PUT') {
         return new Response('Method not allowed', { status: 405 });
     }
     try {
+        const inventoryId = await fetchInventoryId();
         await connectToDB();
         const { stockStatus, body } = await req.json();
         const item = await prisma.inventoryTimeline.findUnique({
-            where: { id: params.id },
+            where: { id: Number(params.id),inventorySectionId:inventoryId },
         });
         const product = await prisma.productBatch.findUnique({
-            where: { id: item?.objectId !== null ? item?.objectId : undefined },
+            where: { id: item?.productId !== null ? item?.productId : undefined,inventorySectionId:inventoryId },
         });
         if (!product || product.quantity === null || product.quantity === undefined) {
             throw new Error("Product quantity is null or undefined.");
@@ -49,11 +51,16 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
         const inventory = await prisma.inventoryTimeline.create({
             data: {
                 stockChange: stockStatus,
-                quantityChange: Math.abs(product.quantity - body.quantity)
+                quantityChange: Math.abs(product.quantity - body.quantity),
+                InventorySection:{
+                    connect:{
+                        id:inventoryId
+                    }
+                }
             }
         });
         const updateItem = await prisma.inventoryTimeline.update({
-            where: { id: item?.objectId !== null ? item?.objectId : undefined },
+            where: { id: item?.productId !== null ? item?.productId : undefined,inventorySectionId:inventoryId },
             data: body
         });
         return new Response(JSON.stringify({ updateItem, inventory }), {
@@ -72,17 +79,18 @@ export const PUT = async (req: Request, { params }: { params: { id: string } }) 
 
 
 export const DELETE=async (req: Request,
-    { params }: { params: {id: string; } } )=> {
+    { params }: { params: {id: number; } } )=> {
     if (req.method !== 'DELETE') {
                 return new Response('Method not allowed',{status:405});
             } 
             try {
+                const inventoryId = await fetchInventoryId();
                 await connectToDB();
                 await prisma.inventoryTimeline.deleteMany({
-                    where: { id: params.id },
+                    where: { id: Number(params.id), inventorySectionId:inventoryId },
                 });
 
-            return new Response(`Inventory with id: ${params.id} Deleted Successfully`,{status:201})
+            return new Response(`Inventory with id: ${Number(params.id)} Deleted Successfully`,{status:201})
             } catch (error) {
                 return new Response( "Internal server error",{status:500});
             } finally {

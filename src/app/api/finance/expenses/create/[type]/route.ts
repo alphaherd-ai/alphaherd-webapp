@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../../../utils/index';
-import prisma from '../../../../../../../prisma/index';
+import prisma from '../../../../../../../prisma';
 
 export const POST = async (req: Request, { params }: { params: { type: string } }) => {
   if (req.method !== 'POST') {
@@ -22,11 +22,11 @@ export const POST = async (req: Request, { params }: { params: { type: string } 
       data: body.item.create,
     });
 
-    const finance = await prisma.finance.create({
+    const finance = await prisma.financeTimeline.create({
       data: {
         type: params.type,
         sale: { connect: { id: expenses.id } },
-        time: new Date(),
+        createdAt: new Date(),
       },
     });
 

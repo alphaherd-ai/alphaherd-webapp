@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Tooltip, Button } from "@nextui-org/react";
 
 interface Products{
-  id: string;
+  id: number;
   itemName:string;
   category: string;
   minStock:number;
@@ -10,7 +10,7 @@ interface Products{
 }
 
 interface ProductBatch {
-  id: string;
+  id: number;
   date: string;
   quantity: number;
   batchNumber: string;

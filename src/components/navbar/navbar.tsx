@@ -12,10 +12,18 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { getSession } from 'next-auth/react';
 import { useAppSelector, useAppStore } from '@/lib/hooks';
+import NotificationList from '../home/NotificationCard/NotificationList';
 
 
 
 const Navbar = () => {
+
+  const [isCardOpen, setIsCardOpen] = useState<boolean>(false);
+
+const handleClick = () => {
+  setIsCardOpen(!isCardOpen);
+};
+
 
   // const store = useAppStore();
   const user = useAppSelector((state) => state.user);
@@ -77,17 +85,28 @@ const Navbar = () => {
             </div>
           </Link>
           <Link className='no-underline flex pl-6' href='#'>
-            <div className='text-sm flex items-center justify-center rounded-full overflow-hidden border border-solid border-gray-300'>
+            <div className='text-sm flex items-center justify-center rounded-full overflow-hidden border border-solid border-gray-300' onClick={handleClick}>
               <Image src={notification} alt='patient' />
             </div>
           </Link>
         </div>
-        <Link className='no-underline p-4 flex items-center justify-center h-full' href='/'>
+        <Link className='no-underline p-4 flex items-center justify-center h-full' href='/settings'>
 
           <div className='text-sm flex items-center  justify-center rounded-full '>
             <Image src={alphaherd} alt='alphaherd' className='w-7 h-7 ' />
           </div>
         </Link>
+        {isCardOpen && (
+        <div className="absolute top-[4rem] flex flex-col right-[5rem] w-[443px] max-h-[50rem] pt-6 pb-5 bg-zinc-800 shadow justify-center items-start gap-[5px] rounded-[20px]">
+          <div className="text-gray-100 text-xl font-medium font-['Roboto'] px-6">
+            Notifications
+          </div>
+          <NotificationList />
+          <NotificationList />
+          <NotificationList />
+          <NotificationList />
+        </div>
+      )}
       </div>
 
     </div>

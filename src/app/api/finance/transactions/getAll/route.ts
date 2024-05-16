@@ -1,6 +1,6 @@
 // src/api/transactions/get.ts
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma/index';
+import prisma from '../../../../../../prisma';
 
 export const GET = async (req: Request) => {
   if (req.method !== 'GET') {

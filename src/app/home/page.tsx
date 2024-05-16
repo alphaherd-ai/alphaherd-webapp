@@ -1,7 +1,7 @@
-import { auth } from "../../../auth";
+import  {getSession}  from "../../../auth";
 
 export default async function HomePage(){
-    const session = await auth();
+    const session = await getSession();
 
   // if (!session?.user) {
   //   return redirect("/api/auth/signin");
@@ -12,5 +12,5 @@ export default async function HomePage(){
 
   console.log(user)
 
-    return <><h1>fsadds</h1></>
+    return <><h1>fsadd</h1></>
 }

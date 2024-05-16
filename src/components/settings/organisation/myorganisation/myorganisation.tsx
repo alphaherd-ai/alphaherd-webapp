@@ -6,10 +6,9 @@ import downicon from "../../../../assets/icons/settings/downicon.svg"
 import pfpimg from "../../../../assets/icons/settings/pfpimg.png"
 import branchlogo from "../../../../assets/icons/settings/branchlogo.png"
 import React, { useState, useEffect } from 'react';
-import OrganisationNavbar from "../navbar/navbar";
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
 
-const MyOrganisation = () => {
+export const MyOrganisationSettings = () => {
 
     return (
 
@@ -17,7 +16,6 @@ const MyOrganisation = () => {
              <div className="w-full h-full">
       
             <div className="w-full h-full mt-[26px]">
-              <OrganisationNavbar/>
               <div className="w-full h-full px-4 py-5 bg-gray-100 border border-neutral-400 flex-col justify-start items-start gap-4 flex">
                     <div className="w-full flex gap-4">
                         <div className="w-3/12 px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-4 flex">
@@ -98,7 +96,7 @@ const MyOrganisation = () => {
 
 <Popover placement="bottom-end" showArrow offset={10}>
     <PopoverTrigger>
-        <Button color="gray-400"
+        <Button
             variant="solid"
             className="capitalize flex border-none bg-black text-white rounded-lg "> Add Organisation
             <div className='flex pl-2'><Image src={downicon} alt='DownArrow' className='w-4 h-4 ' /></div></Button>
@@ -152,5 +150,3 @@ const MyOrganisation = () => {
         </>
     )
 }
-
-export default MyOrganisation

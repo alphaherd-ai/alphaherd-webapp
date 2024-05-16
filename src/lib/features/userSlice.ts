@@ -1,6 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
+    // adminOrganizations Organization[]
+    // orgBranchId        Int?
+    // lastUsedBranch     OrgBranch?          @relation(fields: [orgBranchId], references: [id])
+    // userRoles          OrgBranchUserRole[]
+
 export interface UserState {
   id:           String,
   name:          String,
@@ -8,7 +13,10 @@ export interface UserState {
   phoneNo:       String,
   altPhoneNo:     String | null,
   hashedPassword: String,
-  organizationIds:   String[]
+  adminOrganizations: [],
+  orgBranchId: number | null,
+  lastUsedBranch: {},
+  userRoles: []
 }
 
 const initialState: UserState = {
@@ -18,7 +26,10 @@ const initialState: UserState = {
   phoneNo:       "",
   altPhoneNo:     null,
   hashedPassword: "",
-  organizationIds:   []
+  adminOrganizations: [],
+  orgBranchId: null,
+  lastUsedBranch: {},
+  userRoles: []
 };
 
 export const userSlice = createSlice({

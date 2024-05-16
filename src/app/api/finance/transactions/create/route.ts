@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma/index';
+import prisma from '../../../../../../prisma';
 import type { Transactions } from "@prisma/client";
 
 export const POST=async(req: Request)=> {

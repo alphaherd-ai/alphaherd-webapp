@@ -1,6 +1,7 @@
 // src/api/finance/create.ts
 import { connectToDB } from '../../../../../../utils/index';
-import prisma from '../../../../../../../prisma/index';
+import prisma from '../../../../../../../prisma';
+import { Stock } from '@prisma/client';
 
 export const POST = async (req: Request, { params }: { params: { type: string } }) => {
   if (req.method !== 'POST') {
@@ -21,18 +22,18 @@ export const POST = async (req: Request, { params }: { params: { type: string } 
       data: body.item.create,
     });
 
-    const finance = await prisma.finance.create({
+    const finance = await prisma.financeTimeline.create({
       data: {
         type: params.type,
         sale: { connect: { id: sales.id } },
-        time: new Date(),
+        createdAt: new Date(),
       },
     });
 
     if (params.type === 'invoice') {
       await Promise.all(
         body.item.create.map(async (item: any) => {
-          const updatedProduct = await prisma.allProducts.update({
+          const updatedProduct = await prisma.productBatch.update({
             where: { id: item.allProductsId },
             data: {
               quantity: {
@@ -41,9 +42,9 @@ export const POST = async (req: Request, { params }: { params: { type: string } 
             },
           });
 
-          await prisma.inventory.create({
+          await prisma.inventoryTimeline.create({
             data: {
-              stockChange:"Stock Out",
+              stockChange:Stock.StockOUT,
               quantityChange: -item.quantity,
             },
           });
@@ -52,7 +53,7 @@ export const POST = async (req: Request, { params }: { params: { type: string } 
     } else if (params.type === 'return') {
       await Promise.all(
         body.item.create.map(async (item: any) => {
-          const updatedProduct = await prisma.allProducts.update({
+          const updatedProduct = await prisma.productBatch.update({
             where: { id: item.allProductsId },
             data: {
               quantity: {
@@ -61,9 +62,9 @@ export const POST = async (req: Request, { params }: { params: { type: string } 
             },
           });
 
-          await prisma.inventory.create({
+          await prisma.inventoryTimeline.create({
             data: {
-              stockChange:"Stock In",
+              stockChange:Stock.StockIN,
               quantityChange: item.quantity,
             },
           });

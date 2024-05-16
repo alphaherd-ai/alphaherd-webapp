@@ -1,7 +1,7 @@
 // src/api/Finance/filter.ts
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma/index';
-import { Finance } from '@prisma/client';
+import prisma from '../../../../../../prisma';
+import { FinanceTimeline } from '@prisma/client';
 
 export const POST = async (req: Request) => {
   if (req.method !== 'POST') {
@@ -38,7 +38,7 @@ export const POST = async (req: Request) => {
       };
     }
 
-    const filteredInventory: Finance[] = await prisma.finance.findMany({
+    const filteredInventory: FinanceTimeline[] = await prisma.financeTimeline.findMany({
       where: filterOptions,
     });
 

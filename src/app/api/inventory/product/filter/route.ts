@@ -1,7 +1,7 @@
 // src/api/products/filter.ts
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma/index';
-import { AllProducts} from '@prisma/client';
+import prisma from '../../../../../../prisma';
+import { ProductBatch} from '@prisma/client';
 
 export const POST = async (req: Request) => {
   if (req.method !== 'POST') {
@@ -31,12 +31,12 @@ export const POST = async (req: Request) => {
       filterOptions.distributors = { in: distributors.map(String) };
     }
 
-    const filteredProducts: AllProducts[] = await prisma.allProducts.findMany({
-      where: {
-        ...filterOptions,
-      },
-    });
-
+    // const filteredProducts: ProductBatch[] = await prisma.productBatch.findMany({
+    //   where: {
+    //     ...filterOptions,
+    //   },
+    // });
+    const filteredProducts="dsdf"
     return new Response(JSON.stringify(filteredProducts), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
