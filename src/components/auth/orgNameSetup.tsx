@@ -15,19 +15,19 @@ const OrgNameSetup = (props : any) => {
                     </div>
                     <div className="flex flex-col justify-center items-start w-6/12 h-full">
                         <div className="flex items-center gap-[11.35px]">
-                            <div className="w-[34.05px] h-[34.06px] relative">
+                            <div className="w-[35.05px] h-[35.06px] relative">
                                 <Image src={placelogo} alt="logo" />
                             </div>
-                            <div className="text-center text-zinc-800 text-[39.73px] font-medium font-['Satoshi']">Alphaherd</div>
+                            <div className="text-center text-zinc-800 text-[32.73px] font-medium ">Alphaherd</div>
                         </div>
-                        <div className="w-[356px] text-neutral-500 text-xl font-medium font-['Satoshi']">
+                        <div className="w-[356px] text-neutral-500 text-xl font-medium ">
                             Supercharge your veterinary practice and lead the pack!
                         </div>
-                        <div className="text-gray-500 text-base font-medium font-['Satoshi'] mt-16">
+                        <div className="text-gray-500 text-base font-medium  mt-16">
                             What is the name of your organisation?
                         </div>
-                        <div className="w-[353px] h-11 bg-white rounded-[5px] border border-neutral-400">
-                            <input className="w-full h-full px-2" type="text" name="orgName" value={props.data.orgName} onChange={props.handleChange}/>
+                        <div className="w-[353px] h-11 ">
+                            <input className="w-full h-full px-2 focus:outline-none border-1 border-solid border-[#A2A3A3]  rounded-[5px]  focus:border-1 focus:border-emerald-200" type="text" name="orgName" value={props.data.orgName} onChange={props.handleChange}/>
                         </div>
                     </div>
             {/* <div className="w-full h-full flex-1 flex justify-center items-center flex  rounded-[20px]">
@@ -40,12 +40,12 @@ const OrgNameSetup = (props : any) => {
                             <div className="w-[34.05px] h-[34.06px] relative">
                                 <Image src={placelogo} alt="logo" />
                             </div>
-                            <div className="text-center text-zinc-800 text-[39.73px] font-medium font-['Satoshi']">Alphaherd</div>
+                            <div className="text-center text-zinc-800 text-[39.73px] font-medium ">Alphaherd</div>
                         </div>
-                        <div className="w-[356px] text-neutral-500 text-xl font-medium font-['Satoshi']">
+                        <div className="w-[356px] text-neutral-500 text-xl font-medium ">
                             Supercharge your veterinary practice and lead the pack!
                         </div>
-                        <div className="text-gray-500 text-base font-medium font-['Satoshi'] mt-16">
+                        <div className="text-gray-500 text-base font-medium  mt-16">
                             What is the name of your organisation?
                         </div>
                         <div className="w-[353px] h-11 bg-white rounded-[5px] border border-neutral-400">

@@ -3,10 +3,10 @@ import React from "react";
 const NotificationList = () => {
   return (
     <div>
-      <div className="w-[443px] h-[116px] px-5 py-4 bg-neutral-700 border border-neutral-700 rounded-[10px] justify-start items-start gap-4 inline-flex">
+      <div className="w-[443px] h-[116px] px-5 py-4 bg-neutral-700 border border-neutral-700 rounded-[10px] justify-start items-start gap-4 inline-flex relative z-100">
         <div className="p-[4.50px] bg-amber-400 rounded-[5px] justify-center items-center gap-[11.25px] flex">
-          <div className="w-[27px] h-[27px] relative">
-            <div className="w-[27px] h-[27px] left-0 top-0 absolute bg-white rounded-full" />
+          <div className="w-[27px] h-[27px] ">
+            <div className="w-[27px] h-[27px] left-0 top-0  bg-white rounded-full" />
           </div>
         </div>
         <div className="grow shrink basis-0 flex-col justify-start items-start gap-2 inline-flex">

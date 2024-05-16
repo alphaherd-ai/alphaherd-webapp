@@ -117,7 +117,7 @@ const TableList: React.FC = () => {
                     /> */}
                   </div>
                 </div>
-                <div className="grow shrink basis-0 text-gray-500 text-xl font-bold font-['Satoshi']">
+                <div className="grow shrink basis-0 text-gray-500 text-xl font-bold ">
                   Consultation Details
                 </div>
                 <div className="h-9 px-6 py-4 rounded-[5px] border border-gray-500 flex-col justify-center items-start gap-4 inline-flex">
@@ -126,7 +126,7 @@ const TableList: React.FC = () => {
                       <Image src={Icons6} alt="" />
                     </div>
                     <div className="justify-start items-center gap-4 flex">
-                      <div className="text-gray-500 text-base font-bold font-['Satoshi']">
+                      <div className="text-gray-500 text-base font-bold ">
                         Attach Image/Report
                       </div>
                     </div>
@@ -148,7 +148,7 @@ const TableList: React.FC = () => {
                     View Previous
                   </div>
                 </div>
-                <div className="grow shrink basis-0 text-center text-gray-500 text-base font-medium font-['Satoshi']">
+                <div className="grow shrink basis-0 text-center text-gray-500 text-base font-medium ">
                   26th June, 2024
                 </div>
                 <div className="px-2 py-1 bg-zinc-900 rounded-[5px] justify-start items-center gap-1 flex">
@@ -165,7 +165,7 @@ const TableList: React.FC = () => {
                   <div className="w-6 h-6 relative">
                     <Image src={Icons3} alt="" />
                   </div>
-                  <div className="grow shrink basis-0 text-white text-base font-bold font-['Satoshi']">
+                  <div className="grow shrink basis-0 text-white text-base font-bold ">
                     Spike_Ultrasound.pdf
                   </div>
                 </div>
@@ -173,7 +173,7 @@ const TableList: React.FC = () => {
                   <div className="w-6 h-6 relative">
                     <Image src={Icons3} alt="" />
                   </div>
-                  <div className="grow shrink basis-0 text-white text-base font-bold font-['Satoshi']">
+                  <div className="grow shrink basis-0 text-white text-base font-bold ">
                     Spike_Ultrasound.pdf
                   </div>
                 </div>
@@ -182,26 +182,26 @@ const TableList: React.FC = () => {
                 <div className="grow shrink basis-0 px-6 py-4 bg-white rounded-[10px] flex-col justify-start items-start gap-4 inline-flex">
                   <div className="self-stretch justify-start items-start gap-6 inline-flex">
                     <div className="grow shrink basis-0">
-                      <span className="text-neutral-400 text-base font-medium font-['Satoshi']">
+                      <span className="text-neutral-400 text-base font-medium ">
                         Client Name:
                       </span>
-                      <span className="text-gray-500 text-base font-medium font-['Satoshi']">
+                      <span className="text-gray-500 text-base font-medium ">
                         {" "}
                       </span>
-                      <span className="text-gray-500 text-base font-bold font-['Satoshi']">
+                      <span className="text-gray-500 text-base font-bold ">
                         {columns[clickedRowIndex] &&
                           columns[clickedRowIndex].name}
                       </span>
                     </div>
                     <div className="grow shrink basis-0 h-6 justify-start items-start gap-2 flex">
                       <div>
-                        <span className="text-neutral-400 text-base font-medium font-['Satoshi']">
+                        <span className="text-neutral-400 text-base font-medium ">
                           Ph:
                         </span>
-                        <span className="text-gray-500 text-base font-medium font-['Satoshi']">
+                        <span className="text-gray-500 text-base font-medium ">
                           {" "}
                         </span>
-                        <span className="text-gray-500 text-base font-bold font-['Satoshi']">
+                        <span className="text-gray-500 text-base font-bold ">
                           8618284339
                         </span>
                       </div>
@@ -219,60 +219,60 @@ const TableList: React.FC = () => {
                   <div className="self-stretch justify-start items-start gap-6 inline-flex">
                     <div className="grow shrink basis-0 flex-col justify-start items-start gap-4 inline-flex">
                       <div>
-                        <span className="text-neutral-400 text-base font-medium font-['Satoshi']">
+                        <span className="text-neutral-400 text-base font-medium ">
                           Patient Name:
                         </span>
-                        <span className="text-gray-500 text-base font-medium font-['Satoshi']">
+                        <span className="text-gray-500 text-base font-medium ">
                           {" "}
                         </span>
-                        <span className="text-gray-500 text-base font-bold font-['Satoshi']">
+                        <span className="text-gray-500 text-base font-bold ">
                           {columns[clickedRowIndex] &&
                             columns[clickedRowIndex].patient}
                         </span>
                       </div>
                       <div>
-                        <span className="text-neutral-400 text-base font-medium font-['Satoshi']">
+                        <span className="text-neutral-400 text-base font-medium ">
                           Species:
                         </span>
-                        <span className="text-gray-500 text-base font-medium font-['Satoshi']">
+                        <span className="text-gray-500 text-base font-medium ">
                           {" "}
                         </span>
-                        <span className="text-gray-500 text-base font-bold font-['Satoshi']">
+                        <span className="text-gray-500 text-base font-bold ">
                           Monkey
                         </span>
                       </div>
                       <div>
-                        <span className="text-neutral-400 text-base font-medium font-['Satoshi']">
+                        <span className="text-neutral-400 text-base font-medium ">
                           Breed:
                         </span>
-                        <span className="text-gray-500 text-base font-medium font-['Satoshi']">
+                        <span className="text-gray-500 text-base font-medium ">
                           {" "}
                         </span>
-                        <span className="text-gray-500 text-base font-bold font-['Satoshi']">
+                        <span className="text-gray-500 text-base font-bold ">
                           Capuchin
                         </span>
                       </div>
                     </div>
                     <div className="grow shrink basis-0 flex-col justify-start items-start gap-4 inline-flex">
                       <div>
-                        <span className="text-neutral-400 text-base font-medium font-['Satoshi']">
+                        <span className="text-neutral-400 text-base font-medium ">
                           Age:
                         </span>
-                        <span className="text-gray-500 text-base font-medium font-['Satoshi']">
+                        <span className="text-gray-500 text-base font-medium ">
                           {" "}
                         </span>
-                        <span className="text-gray-500 text-base font-bold font-['Satoshi']">
+                        <span className="text-gray-500 text-base font-bold ">
                           1 yr 2m
                         </span>
                       </div>
                       <div>
-                        <span className="text-neutral-400 text-base font-medium font-['Satoshi']">
+                        <span className="text-neutral-400 text-base font-medium ">
                           Gender:
                         </span>
-                        <span className="text-gray-500 text-base font-medium font-['Satoshi']">
+                        <span className="text-gray-500 text-base font-medium ">
                           {" "}
                         </span>
-                        <span className="text-gray-500 text-base font-bold font-['Satoshi']">
+                        <span className="text-gray-500 text-base font-bold ">
                           Male
                         </span>
                       </div>
@@ -283,14 +283,14 @@ const TableList: React.FC = () => {
               <div className="self-stretch h-[92px] px-6 py-4 bg-white rounded-[10px] flex-col justify-start items-start gap-4 flex">
                 <div className="self-stretch justify-start items-center gap-4 inline-flex">
                   <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-4 flex">
-                    <div className="grow shrink basis-0 text-neutral-400 text-base font-medium font-['Satoshi']">
+                    <div className="grow shrink basis-0 text-neutral-400 text-base font-medium ">
                       Reason for Visit
                     </div>
                   </div>
                 </div>
                 <div className="self-stretch justify-start items-center gap-4 inline-flex">
                   <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-4 flex">
-                    <div className="text-gray-500 text-base font-medium font-['Satoshi']">
+                    <div className="text-gray-500 text-base font-medium ">
                       {columns[clickedRowIndex] &&
                         columns[clickedRowIndex].reason}
                     </div>
@@ -302,7 +302,7 @@ const TableList: React.FC = () => {
               <Diagnosis />
               <div className="self-stretch justify-start items-start gap-4 inline-flex">
                 <div className="grow shrink basis-0 h-11 px-4 py-[13px] bg-white rounded-[5px] justify-start items-center gap-3.5 flex">
-                  <div className="grow shrink basis-0 text-neutral-400 text-base font-medium font-['Satoshi']">
+                  <div className="grow shrink basis-0 text-neutral-400 text-base font-medium ">
                     Search for a service, product or treatment template
                   </div>
                   <div className="w-[23.19px] h-[23.19px] relative">
@@ -316,7 +316,7 @@ const TableList: React.FC = () => {
               <Products />
               <div className="self-stretch justify-start items-start gap-4 inline-flex">
                 <div className="grow shrink basis-0 h-11 px-4 py-[13px] bg-white rounded-[5px] justify-start items-center gap-3.5 flex">
-                  <div className="grow shrink basis-0 text-neutral-400 text-base font-medium font-['Satoshi']">
+                  <div className="grow shrink basis-0 text-neutral-400 text-base font-medium ">
                     Search for medication
                   </div>
                   <div className="w-[23.19px] h-[23.19px] relative">
@@ -333,7 +333,7 @@ const TableList: React.FC = () => {
                 <div className="self-stretch justify-start items-center gap-4 inline-flex">
                   <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-4 flex">
                     <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-2 flex">
-                      <div className="grow shrink basis-0 text-gray-500 text-base font-bold font-['Satoshi']">
+                      <div className="grow shrink basis-0 text-gray-500 text-base font-bold ">
                         Dyspnea - Follow-up
                       </div>
                     </div>
@@ -345,10 +345,10 @@ const TableList: React.FC = () => {
                 </div>
                 <div className="self-stretch justify-start items-center gap-4 inline-flex">
                   <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-4 flex">
-                    <div className="text-gray-500 text-base font-medium font-['Satoshi']">
+                    <div className="text-gray-500 text-base font-medium ">
                       Sep 18, 2023
                     </div>
-                    <div className="grow shrink basis-0 text-right text-gray-500 text-base font-medium font-['Satoshi']">
+                    <div className="grow shrink basis-0 text-right text-gray-500 text-base font-medium ">
                       9:00am - 1:00pm
                     </div>
                   </div>
@@ -357,7 +357,7 @@ const TableList: React.FC = () => {
               <div className="self-stretch justify-end items-start gap-4 inline-flex">
                 <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
                   <div className="w-6 h-6 relative" />
-                  <div className="text-white text-base font-bold font-['Satoshi']">
+                  <div className="text-white text-base font-bold ">
                     Print Prescription
                   </div>
                 </div>
@@ -365,7 +365,7 @@ const TableList: React.FC = () => {
                   <div className="w-5 h-5 relative">
                     <div className="w-5 h-5 left-0 top-0 absolute bg-zinc-300" />
                   </div>
-                  <div className="text-white text-base font-bold font-['Satoshi']">
+                  <div className="text-white text-base font-bold ">
                     Create Invoice
                   </div>
                 </div>
@@ -403,22 +403,22 @@ const TableList: React.FC = () => {
                 )}
               </div>
               <div className="w-[16.6%] ">
-                <span className="text-neutral-400 font-base font-['Satoshi']">
+                <span className="text-neutral-400 font-base ">
                   {col.name}
                 </span>
               </div>
               <div className="w-[14.6%]">
-                <span className="text-neutral-400 font-base font-['Satoshi']">
+                <span className="text-neutral-400 font-base ">
                   {col.patient}
                 </span>
               </div>
               <div className="w-[20.6%]">
-                <span className="text-neutral-400 font-base font-['Satoshi']">
+                <span className="text-neutral-400 font-base ">
                   {col.reason}
                 </span>
               </div>
               <div className="w-[14.6%]">
-                <span className="text-neutral-400 font-base font-['Satoshi']">
+                <span className="text-neutral-400 font-base ">
                   {col.time}
                 </span>
               </div>
@@ -438,7 +438,7 @@ const TableList: React.FC = () => {
                       } rounded-tl rounded-bl cursor-pointer`}
                       onClick={() => handleClick(index, "Checked in")}
                     >
-                      <div className="text-sm font-bold font-['Satoshi']">
+                      <div className="text-sm font-bold ">
                         Checked in
                       </div>
                     </div>
@@ -450,7 +450,7 @@ const TableList: React.FC = () => {
                       } rounded-tr-[5px] rounded-br-[5px] cursor-pointer`}
                       onClick={() => handleClick(index, "In Progress")}
                     >
-                      <div className="text-sm font-bold font-['Satoshi']">
+                      <div className="text-sm font-bold ">
                         In Progress
                       </div>
                     </div>

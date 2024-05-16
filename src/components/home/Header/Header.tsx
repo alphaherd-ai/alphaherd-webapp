@@ -37,7 +37,7 @@ const Header = () => {
           onMouseLeave={handleMouseLeave}
         >
           <div className="flex items-center justify-center">
-            <span className="text-white text-sm font-['Satoshi'] font-light ">
+            <span className="text-white text-sm  font-light ">
               Create
             </span>
             <div className="ml-[3px] mt-[2px]">
@@ -58,7 +58,7 @@ const Header = () => {
           <div className="ml-[3px] mt-[2px]">
             <Image src={cashStethoscope} alt="" />
           </div>
-          <span className="text-white text-sm font-['Satoshi'] font-light">
+          <span className="text-white text-sm  font-light">
             Add Appointment
           </span>
         </div>
