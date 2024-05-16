@@ -19,7 +19,6 @@ export const POST=async(req: Request)=> {
         });
       }
       console.log(body)
-        await connectToDB();
         const client = await prisma.clients.create({
             data:{ 
               ...body,

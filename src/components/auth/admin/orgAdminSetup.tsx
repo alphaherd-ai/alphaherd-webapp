@@ -1,7 +1,7 @@
 "use client"
 import Image from "next/image"
 
-import upload from "../../assets/icons/loginsignup/upload.svg";
+import upload from "../../../assets/icons/loginsignup/upload.svg";
 
 import continuebutton from "../../assets/icons/loginsignup/1. Icons-24.svg"
 

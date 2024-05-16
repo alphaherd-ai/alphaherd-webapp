@@ -1,6 +1,6 @@
 // src/api/inventory/create.ts
-import { connectToDB } from '../../../../utils/index';
-import prisma from '../../../../../prisma/index';
+import { connectToDB } from '../../../../../utils/index';
+import prisma from '../../../../../../prisma';
 import bcrypt from 'bcrypt';
 import type { User } from "@prisma/client";
 
@@ -12,7 +12,7 @@ export const POST = async (req: Request) => {
   try {
     await connectToDB();
     const url = new URL(req.url);
-    const { orgDetails, adminUserDetails } = await req.json();
+    const { orgDetails, adminUserDetails, branchName } = await req.json();
     const hashedPassword = await bcrypt.hash(adminUserDetails.password, 10);
     console.log("here here");
     let duplicateOrg = await prisma.organization.findUnique({
@@ -58,11 +58,34 @@ export const POST = async (req: Request) => {
       data: orgDetails
     });
 
+    let orgNewBranch = await prisma.orgBranch.create({
+      data : {
+        branchName,
+        orgId: newOrg.id
+      }
+    })
+
+    console.log(orgNewBranch)
+
+    adminUserDetails.orgBranchId = orgNewBranch.id;
+
     let newUser = await prisma.user.create({
       data: adminUserDetails
     });
 
     console.log(newOrg,newUser);
+
+    const orgBranchUserRole = await prisma.orgBranchUserRole.create({
+      data: {
+          orgBranchId : orgNewBranch.id,
+          role : "Admin",
+          userId : newUser.id
+      }
+  });
+
+  console.log(orgBranchUserRole)
+
+  console.log(orgBranchUserRole);
 
     await prisma.organization.update({
       where: {

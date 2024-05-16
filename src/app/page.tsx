@@ -7,7 +7,7 @@ import { useRef } from 'react';
 import Header from '@/components/home/Header/Header';
 import Table from '@/components/home/Table/Table';
 
-export default async function Home() {
+export default function Home() {
 
   const store = useAppStore();
   const user= useAppSelector((state) => state.user);

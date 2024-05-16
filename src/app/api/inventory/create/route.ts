@@ -1,6 +1,6 @@
 // src/api/inventory/create.ts
 import { connectToDB } from '../../../../utils/index';
-import prisma from '../../../../../prisma/index';
+import prisma from '../../../../../prisma';
 import { Inventory, type ProductBatch } from "@prisma/client";
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 import { check, validationResult } from 'express-validator';

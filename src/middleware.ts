@@ -5,13 +5,11 @@ import { isAuthorized } from './middleware/isAuthorized';
 
 export async function middleware(request: NextRequest, event: NextFetchEvent) {
   const url = request.nextUrl;
+  console.log(url)
   if (!url.pathname.startsWith('/api')) {
     return nonApiMiddleware(request, event);
   }
-  
-  else
-  await isAuthorized(request,event);
-  return apiMiddleware(request, event);
+  return isAuthorized(request,event);
 }
 
 

@@ -1,6 +1,6 @@
 // src/api/Services/filter.ts
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma/index';
+import prisma from '../../../../../../prisma';
 import {  Services } from '@prisma/client';
 
 export const POST = async (req: Request) => {

@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../../../utils/index';
-import prisma from '../../../../../../../prisma/index';
+import prisma from '../../../../../../../prisma';
 
 export const POST = async (req: Request, { params }: { params: { type: string } }) => {
   if (req.method !== 'POST') {

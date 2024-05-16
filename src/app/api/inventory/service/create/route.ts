@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma/index';
+import prisma from '../../../../../../prisma';
 import { Inventory, type Services } from "@prisma/client";
 import { ServiceSchema } from '@/schemas/inventory/serviceValidation';
 

@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma/index';
+import prisma from '../../../../../../prisma';
 
 export const GET = async (req: Request, { params }: { params: { id: number } }) => {
   if (req.method !== 'GET') {

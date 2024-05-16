@@ -1,8 +1,8 @@
 "use client"
 import Image from "next/image"
 
-import placeicon from "../../assets/icons/loginsignup/Placeholder logo.png"
-import placelogo from "../../assets/icons/loginsignup/Group 2749.svg"
+import placeicon from "../../../assets/icons/loginsignup/Placeholder logo.png"
+import placelogo from "../../../assets/icons/loginsignup/Group 2749.svg"
 
 
 import React, { useState, useEffect } from 'react';

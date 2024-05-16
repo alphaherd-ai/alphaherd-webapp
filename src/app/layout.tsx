@@ -2,8 +2,9 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import StoreProvider from './StoreProvider';
-import { getSession, login, logout } from "../../auth";
+import { getSession, logout } from "../../auth";
 import Navbar from '@/components/navbar/navbar';
+import { PersistGate } from 'redux-persist/integration/react'
 
 const inter = Inter({ subsets: ['latin'] })
 

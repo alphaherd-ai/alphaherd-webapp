@@ -1,4 +1,4 @@
-import prisma from "../../prisma/index";
+import prisma from "../../prisma";
 import { connectToDB } from '../utils/index';
 import cron from 'node-cron';
 

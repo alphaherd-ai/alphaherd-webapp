@@ -7,7 +7,7 @@ import linkicon from "../../assets/icons/loginsignup/link.svg"
 import deleteicon from "../../assets/icons/loginsignup/delete.svg"
 
 
-const Login5 = () => {
+const OrgBranchRoleManage = () => {
     const [staffaccess, setStaffaccess] = useState(true);
     const [manageraccess, setManageraccess] = useState(false);
     const [veterinarianaccess, setVeterinarianaccess] = useState(false);
@@ -150,4 +150,4 @@ const Login5 = () => {
     )
 }
 
-export default Login5;
+export default OrgBranchRoleManage;

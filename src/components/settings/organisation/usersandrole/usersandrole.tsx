@@ -12,7 +12,7 @@ import opticon from "../../../../assets/icons/settings/opticon.svg"
 import React, { useState, useEffect } from 'react';
 import OrganisationNavbar from "../navbar/navbar";
 
-const UsersSetting = () => {
+export default function UsersAndRolesSettings() {
 
  
  
@@ -329,5 +329,3 @@ const UsersSetting = () => {
         </>
     )
 }
-
-export default UsersSetting

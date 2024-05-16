@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../utils/index';
-import prisma from '../../../../../prisma/index';
+import prisma from '../../../../../prisma';
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 

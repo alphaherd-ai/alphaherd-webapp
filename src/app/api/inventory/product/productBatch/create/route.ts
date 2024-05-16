@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../../../utils/index';
-import prisma from '../../../../../../../prisma/index';
+import prisma from '../../../../../../../prisma';
 import { Inventory, type ProductBatch } from "@prisma/client";
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 import { ProductBatchSchema } from '@/schemas/inventory/ productBatchValidation';

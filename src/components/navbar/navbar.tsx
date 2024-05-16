@@ -90,7 +90,7 @@ const handleClick = () => {
             </div>
           </Link>
         </div>
-        <Link className='no-underline p-4 flex items-center justify-center h-full' href='/'>
+        <Link className='no-underline p-4 flex items-center justify-center h-full' href='/settings'>
 
           <div className='text-sm flex items-center  justify-center rounded-full '>
             <Image src={alphaherd} alt='alphaherd' className='w-7 h-7 ' />
