@@ -40,7 +40,7 @@ const togglePopup = () => {
                     </Link>
 
                 </div>
-                <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '>
+                {/* <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '> */}
 
                     {/* <Popover placement="bottom-end" showArrow offset={10}> */}
                         {/* <PopoverTrigger> */}
@@ -74,7 +74,7 @@ const togglePopup = () => {
 
 
                 </div>
-            </div >
+            {/* </div > */}
 
 
 

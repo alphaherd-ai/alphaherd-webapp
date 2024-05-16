@@ -60,14 +60,14 @@ const FinancesOverviewSheet = () => {
                                 <Image className="w-6 h-6 " src={lefticon} alt="left_icon" />
                                 <Image className="w-6 h-6 " src={righticon} alt="right_icon" />
                             </div>
-                            <div className="text-gray-500 text-sm font-medium font-['Satoshi']">
+                            <div className="text-gray-500 text-sm font-medium ">
                                 July 17th - 23rd, 2023
                             </div>
                         </div>
                         <div className="flex h-[19px] justify-start items-start gap-6">
                             {tabs.map((tab, index) => (
                                 <button className="border-none bg-transparent" onClick={() => handleTabClick(index)} key={index}>
-                                    <div className={`${tab.clicked ? "text-center text-teal-400 font-bold" : "text-neutral-400"} text-neutral-400 text-sm font-medium font-['Satoshi']`}>
+                                    <div className={`${tab.clicked ? "text-center text-teal-400 font-bold" : "text-neutral-400"} text-neutral-400 text-sm font-medium `}>
                                         {tab.label}
                                     </div>
                                     {tab.clicked && <Image src={selecttab} alt="icon" />}
@@ -80,41 +80,41 @@ const FinancesOverviewSheet = () => {
                     <div className="flex flex-col">
                         <div className="flex">
                             <div className="w-[438.50px] h-[152px] p-6 bg-white  border border-solid border-stone-300 flex-col justify-center items-start gap-4 flex">
-                                <div className="text-gray-500 text-[28px] font-bold font-['Satoshi']">₹ 92,499</div>
-                                <div className="text-gray-500 text-base font-medium font-['Satoshi']">Revenue</div>
+                                <div className="text-gray-500 text-[28px] font-bold ">₹ 92,499</div>
+                                <div className="text-gray-500 text-base font-medium ">Revenue</div>
                                 <div className="w-[142px] h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex ">
                                     <Image className="w-4 h-4 " src={icn_icon} alt="inc"></Image>
-                                    <div className="text-green-600 text-sm font-medium font-['Satoshi']">12.4%</div>
-                                    <div className="text-green-600 text-sm font-medium font-['Satoshi']">this week</div>
+                                    <div className="text-green-600 text-sm font-medium ">12.4%</div>
+                                    <div className="text-green-600 text-sm font-medium ">this week</div>
                                 </div>
                             </div>
                             <div className="w-[438.50px] h-[152px] p-6 bg-white border border-solid border-stone-300 flex-col justify-center items-start gap-4 flex">
-                                <div className="text-gray-500 text-[28px] font-bold font-['Satoshi']">₹ 32,499</div>
-                                <div className="text-gray-500 text-base font-medium font-['Satoshi']">Expenses</div>
+                                <div className="text-gray-500 text-[28px] font-bold ">₹ 32,499</div>
+                                <div className="text-gray-500 text-base font-medium ">Expenses</div>
                                 <div className="w-[142px] h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex ">
                                     <Image className="w-4 h-4 " src={icn_icon} alt="inc"></Image>
-                                    <div className="text-green-600 text-sm font-medium font-['Satoshi']">12.4%</div>
-                                    <div className="text-green-600 text-sm font-medium font-['Satoshi']">this week</div>
+                                    <div className="text-green-600 text-sm font-medium ">12.4%</div>
+                                    <div className="text-green-600 text-sm font-medium ">this week</div>
                                 </div>
                             </div>
                         </div>
                         <div className="flex">
                             <div className="w-[438.50px] h-[152px] p-6 bg-white border border-solid border-stone-300 flex-col justify-center items-start gap-4 flex">
-                                <div className="text-gray-500 text-[28px] font-bold font-['Satoshi']">700</div>
-                                <div className="text-gray-500 text-base font-medium font-['Satoshi']">Sales Invoices</div>
+                                <div className="text-gray-500 text-[28px] font-bold ">700</div>
+                                <div className="text-gray-500 text-base font-medium ">Sales Invoices</div>
                                 <div className="w-[142px] h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex ">
                                     <Image className="w-4 h-4 " src={icn_icon} alt="inc"></Image>
-                                    <div className="text-green-600 text-sm font-medium font-['Satoshi']">12.4%</div>
-                                    <div className="text-green-600 text-sm font-medium font-['Satoshi']">this week</div>
+                                    <div className="text-green-600 text-sm font-medium ">12.4%</div>
+                                    <div className="text-green-600 text-sm font-medium ">this week</div>
                                 </div>
                             </div>
                             <div className="w-[438.50px] h-[152px] p-6 bg-white border border-solid border-stone-300 flex-col justify-center items-start gap-4 flex">
-                                <div className="text-gray-500 text-[28px] font-bold font-['Satoshi']">₹ 12,499</div>
-                                <div className="text-gray-500 text-base font-medium font-['Satoshi']">Total balances due</div>
+                                <div className="text-gray-500 text-[28px] font-bold ">₹ 12,499</div>
+                                <div className="text-gray-500 text-base font-medium ">Total balances due</div>
                                 <div className="w-[69px] h-7 px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center items-center inline-flex ">
                                    
-                                    <div className="text-orange-500 text-sm font-medium font-['Satoshi']">You owe</div>
-                                    <div className="text-orange-500 text-sm font-medium font-['Satoshi']"></div>
+                                    <div className="text-orange-500 text-sm font-medium ">You owe</div>
+                                    <div className="text-orange-500 text-sm font-medium "></div>
                                 </div>
                             </div>
                         </div>
