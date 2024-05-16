@@ -8,7 +8,6 @@ import GeneralSettings from '@/components/settings/general/general';
 const GeneralSettingsPage = () => {
   return <>
     <div className='w-full bg-gray-200 p-8 px-10'>
-   <Setting/>
    <GeneralSettings/>
     </div>
   </>

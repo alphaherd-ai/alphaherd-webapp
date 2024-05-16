@@ -1,6 +1,6 @@
 // src/api/Finance/filter.ts
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma';
+import prisma from '../../../../../../prisma/index';
 import { FinanceTimeline } from '@prisma/client';
 
 export const POST = async (req: Request) => {

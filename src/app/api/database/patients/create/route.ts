@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma';
+import prisma from '../../../../../../prisma/index';
 import { fetchDatabaseId } from '@/utils/fetchBranchDetails';
 import type { Patients } from "@prisma/client";
 import { PatientSchema } from '@/schemas/database/patientValidation';

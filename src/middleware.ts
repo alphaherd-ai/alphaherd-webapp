@@ -9,9 +9,6 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
   if (!url.pathname.startsWith('/api')) {
     return nonApiMiddleware(request, event);
   }
-
-  
-
   return isAuthorized(request,event);
 }
 

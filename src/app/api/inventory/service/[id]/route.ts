@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma';
+import prisma from '../../../../../../prisma/index';
 import { ServiceSchema } from '@/schemas/inventory/serviceValidation';
 
 export const GET=async (req: Request,

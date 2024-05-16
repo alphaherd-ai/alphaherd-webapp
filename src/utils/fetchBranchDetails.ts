@@ -1,6 +1,6 @@
 import { getSession } from "../../auth"
 import { connectToDB } from './index';
-import prisma from '../../prisma';
+import prisma from '../../prisma/index';
 
 export const lastUsedBranch = async () => {
     const session = await getSession();

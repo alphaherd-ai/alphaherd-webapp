@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma';
+import prisma from '../../../../../../prisma/index';
 import { fetchDatabaseId } from '@/utils/fetchBranchDetails';
 import type { Distributors } from "@prisma/client";
 import { DistributorSchema } from '@/schemas/database/distributorValidation';

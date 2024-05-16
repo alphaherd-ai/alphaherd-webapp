@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma';
+import prisma from '../../../../../../prisma/index';
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 
 

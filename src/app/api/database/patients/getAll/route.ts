@@ -1,6 +1,6 @@
 import { connectToDB } from '../../../../../utils/index';
 import { fetchDatabaseId } from '@/utils/fetchBranchDetails';
-import prisma from '../../../../../../prisma';
+import prisma from '../../../../../../prisma/index';
 
 
 export  const GET=async (req: Request)=> {
