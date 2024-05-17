@@ -1,11 +1,369 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
+  engineType = "library"
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+enum Stock {
+  StockIN
+  StockOUT
+}
+
+enum Inventory {
+  None
+  Product
+  Service
+}
+
+enum Location {
+  NONE
+  Location1
+  Location2
+}
+
+enum Role {
+  Staff
+  Manager
+  Veterinarian
+}
+
+enum PermissionOptions {
+  Allow
+  Never_Allow
+  Allow_with_Admin
+  Allow_with_Manager
+}
+
+model Organization {
+  id          Int         @id @default(autoincrement())
+  orgName     String      @unique
+  orgEmail    String
+  gstNo       String
+  address     String
+  state       String
+  pincode     String
+  description String
+  phoneNo     String
+  adminUsers  User[]
+  orgBranches OrgBranch[]
+}
+
+model OrgBranch {
+  id                 Int                 @id @default(autoincrement())
+  branchName         String
+  org                Organization        @relation(fields: [orgId], references: [id])
+  orgId              Int
+  assignedUsers      User[]
+  orgBranchUserRoles OrgBranchUserRole[]
+  inventories        InventorySection[]
+  finances           FinanceSection[]
+  databases          DatabaseSection[]
+}
+
+model OrgBranchUserRole {
+  id          Int       @id @default(autoincrement())
+  orgBranch   OrgBranch @relation(fields: [orgBranchId], references: [id])
+  orgBranchId Int
+  user        User      @relation(fields: [userId], references: [id])
+  userId      Int
+  role        Role
+}
+
+model User {
+  id                 Int                 @id @default(autoincrement())
+  name               String
+  email              String              @unique
+  token              String?             @unique
+  phoneNo            String
+  altPhoneNo         String?
+  hashedPassword     String
+  adminOrganizations Organization[]
+  orgBranchId        Int?
+  lastUsedBranch     OrgBranch?          @relation(fields: [orgBranchId], references: [id])
+  userRoles          OrgBranchUserRole[]
+}
+
+model Permissions {
+  id             Int                @id @default(autoincrement())
+  permissionName String?
+  role           Role?              @unique
+  options        PermissionOptions?
+}
+
+model InventorySection {
+  id           Int                 @id @default(autoincrement())
+  name         String
+  quantity     Int?
+  branch       OrgBranch           @relation(fields: [branchId], references: [id])
+  branchId     Int                 @unique
+  products     Products[]
+  productBatch ProductBatch[]
+  service      Services[]
+  timeline     InventoryTimeline[]
+}
+
+model FinanceSection {
+  id           Int               @id @default(autoincrement())
+  name         String
+  amount       Float
+  branch       OrgBranch         @relation(fields: [branchId], references: [id])
+  branchId     Int               @unique
+  expenses     Expenses[]
+  transactions Transactions[]
+  sales        Sales[]
+  purchase     Purchases[]
+  items        Items[]
+  timeline     FinanceTimeline[]
+}
+
+model DatabaseSection {
+  id           Int            @id @default(autoincrement())
+  name         String
+  type         String
+  branch       OrgBranch      @relation(fields: [branchId], references: [id])
+  branchId     Int            @unique
+  clients      Clients[]
+  patients     Patients[]
+  distributors Distributors[]
+}
+
+model Clients {
+  id                Int              @id @default(autoincrement())
+  clientName        String?
+  email             String?          @unique
+  contact           String?
+  address           String?
+  city              String?
+  pinCode           String?
+  patients          Patients[]
+  DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
+  databaseSectionId Int?
+
+  @@map("client")
+}
+
+model Patients {
+  id                Int              @id @default(autoincrement())
+  patientName       String?
+  clientId          Int? // Foreign key to Client
+  species           String?
+  breed             String?
+  dateOfBirth       DateTime?
+  age               String?
+  gender            String?
+  isInpatient       Boolean?
+  clients           Clients?         @relation(fields: [clientId], references: [id])
+  DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
+  databaseSectionId Int?
+}
+
+model Distributors {
+  id                Int              @id @default(autoincrement())
+  distributorName   String?
+  email             String?          @unique
+  contact           String?
+  gstinNo           String?
+  panNo             String?
+  address           String?
+  city              String?
+  pinCode           String?
+  DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
+  databaseSectionId Int?
+}
+
+model Products {
+  id                 Int               @id @default(autoincrement())
+  itemName           String?
+  defaultUnit        String?
+  hsnCode            String?
+  tax                String?
+  category           String?
+  description        String?
+  providers          String[]
+  totalQuantity      Int?
+  minStock           Int?
+  maxStock           Int?
+  productBatches     ProductBatch[]
+  items              Items[]
+  InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
+  inventorySectionId Int?
+}
+
+model ProductBatch {
+  id                 Int                 @id @default(autoincrement())
+  distributors       String[]
+  quantity           Int?
+  productId          Int
+  batchNumber        String?
+  costPrice          Int?
+  location           Location            @default(NONE)
+  totalCost          Int?
+  costPerItem        Int?
+  profitMargin       String?
+  expiry             DateTime?
+  sellingPrice       Int?
+  date               DateTime?
+  balanceDue         Boolean?
+  items              Items[]
+  product            Products            @relation(fields: [productId], references: [id])
+  inventoryTimeline  InventoryTimeline[] // Add the opposite relation
+  InventorySection   InventorySection?   @relation(fields: [inventorySectionId], references: [id])
+  inventorySectionId Int?
+}
+
+model Services {
+  id                 Int                 @id @default(autoincrement())
+  name               String
+  sacCode            String?
+  description        String?
+  sellingPrice       String?
+  tax                String?
+  category           String?
+  providers          String[]
+  linkProducts       String[]
+  serviceCost        Int?
+  serviceCharge      Int?
+  inventoryEntries   Inventory[]
+  inventoryTimeline  InventoryTimeline[] // Add the opposite relation
+  InventorySection   InventorySection?   @relation(fields: [inventorySectionId], references: [id])
+  inventorySectionId Int?
+}
+
+model Sales {
+  id               Int               @id @default(autoincrement())
+  customer         String?
+  date             DateTime?         @default(now())
+  notes            String?
+  subTotal         Int?
+  invoiceNo        Int?
+  dueDate          DateTime?
+  shipping         Int?
+  adjustment       Int?
+  totalCost        Int?
+  overallDiscount  Int?
+  totalQty         Int?
+  status           String?
+  type             String?
+  items            Items[]
+  financeTimeline  FinanceTimeline[]
+  FinanceSection   FinanceSection?   @relation(fields: [financeSectionId], references: [id])
+  financeSectionId Int?
+}
+
+model Purchases {
+  id                   Int               @id @default(autoincrement())
+  distributor          String
+  date                 DateTime?         @default(now())
+  dueDate              DateTime
+  returnLastDate       DateTime?
+  invoiceNo            String
+  purchaseOrderNumber  String?
+  distributorInvoiceNo String?
+  grnNo                String
+  notes                String
+  shipping             Int
+  adjustment           Int
+  totalCost            Int
+  totalQty             Int
+  status               String
+  type                 String?
+  items                Items[]
+  financeTimeline      FinanceTimeline[]
+  FinanceSection       FinanceSection?   @relation(fields: [financeSectionId], references: [id])
+  financeSectionId     Int?
+}
+
+model Expenses {
+  id               Int               @id @default(autoincrement())
+  party            String
+  date             DateTime
+  invoiceNo        String?
+  subTotal         Int
+  overallDiscount  Int
+  totalCost        Int?
+  totalQty         Int?
+  startedOn        DateTime?
+  recurringType    String?
+  recurringEnd     String?
+  dueDate          String
+  notes            String
+  status           String
+  type             String?
+  items            Items[]
+  financeTimeline  FinanceTimeline[]
+  FinanceSection   FinanceSection?   @relation(fields: [financeSectionId], references: [id])
+  financeSectionId Int?
+}
+
+model Transactions {
+  id               Int             @id @default(autoincrement())
+  partyName        String?
+  subject          String?
+  invoiceLink      String?
+  receiptNo        String?
+  date             DateTime?
+  amountPaid       Int
+  mode             String?
+  moneyChange      String?
+  invoiceSource    String?
+  FinanceSection   FinanceSection? @relation(fields: [financeSectionId], references: [id])
+  financeSectionId Int?
+}
+
+model Items {
+  id               Int             @id @default(autoincrement())
+  taxPercent       Int
+  taxAmount        Int
+  totalAmount      Int
+  reasons          String?
+  category         String?
+  quantity         Int?
+  name             String?
+  productId        Int?
+  products         Products?       @relation(fields: [productId], references: [id])
+  salesId          Int?
+  sale             Sales?          @relation(fields: [salesId], references: [id])
+  purchasesId      Int?
+  purchases        Purchases?      @relation(fields: [purchasesId], references: [id])
+  expensesId       Int?
+  expenses         Expenses?       @relation(fields: [expensesId], references: [id])
+  productBatchId   Int?
+  productBatch     ProductBatch?   @relation(fields: [productBatchId], references: [id])
+  FinanceSection   FinanceSection? @relation(fields: [financeSectionId], references: [id])
+  financeSectionId Int?
+}
+
+model InventoryTimeline {
+  id                 Int               @id @default(autoincrement())
+  productId          Int?
+  serviceId          Int?
+  inventoryType      Inventory?        @default(None)
+  stockChange        Stock?            @default(StockIN)
+  invoiceType        String?
+  quantityChange     Int?
+  receiptNo          Int?
+  party              String?
+  createdAt          DateTime?         @default(now())
+  productBatch       ProductBatch?     @relation(fields: [productId], references: [id])
+  service            Services?         @relation(fields: [serviceId], references: [id])
+  InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
+  inventorySectionId Int?
+}
+
+model FinanceTimeline {
+  id               Int             @id @default(autoincrement())
+  salesId          Int?
+  sale             Sales?          @relation(fields: [salesId], references: [id])
+  type             String?
+  createdAt        DateTime
+  purchasesId      Int?
+  purchases        Purchases?      @relation(fields: [purchasesId], references: [id])
+  expensesId       Int?
+  expenses         Expenses?       @relation(fields: [expensesId], references: [id])
+  FinanceSection   FinanceSection? @relation(fields: [financeSectionId], references: [id])
+  financeSectionId Int?
 }
