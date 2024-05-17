@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../utils/index';
-import prisma from '../../../../../prisma/index';
+import prismaClient from '../../../../../prisma';
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 
 export const GET=async (req: Request,
@@ -11,7 +11,7 @@ export const GET=async (req: Request,
         try {
             const inventoryId = await fetchInventoryId();
             await connectToDB();
-            const inventory= await prisma.inventoryTimeline.findUnique({
+            const inventory= await prismaClient.inventoryTimeline.findUnique({
                 where: { id: Number(params.id),inventorySectionId:inventoryId},
                 include:{
                     productBatch:true,
@@ -27,7 +27,7 @@ export const GET=async (req: Request,
         } catch (error) {
             return new Response( "Internal server error",{status:500});
         } finally {
-            await prisma.$disconnect();
+            await prismaClient.$disconnect();
         }
 }
 
@@ -39,16 +39,16 @@ export const PUT = async (req: Request, { params }: { params: { id: number } }) 
         const inventoryId = await fetchInventoryId();
         await connectToDB();
         const { stockStatus, body } = await req.json();
-        const item = await prisma.inventoryTimeline.findUnique({
+        const item = await prismaClient.inventoryTimeline.findUnique({
             where: { id: Number(params.id),inventorySectionId:inventoryId },
         });
-        const product = await prisma.productBatch.findUnique({
+        const product = await prismaClient.productBatch.findUnique({
             where: { id: item?.productId !== null ? item?.productId : undefined,inventorySectionId:inventoryId },
         });
         if (!product || product.quantity === null || product.quantity === undefined) {
             throw new Error("Product quantity is null or undefined.");
         }
-        const inventory = await prisma.inventoryTimeline.create({
+        const inventory = await prismaClient.inventoryTimeline.create({
             data: {
                 stockChange: stockStatus,
                 quantityChange: Math.abs(product.quantity - body.quantity),
@@ -59,7 +59,7 @@ export const PUT = async (req: Request, { params }: { params: { id: number } }) 
                 }
             }
         });
-        const updateItem = await prisma.inventoryTimeline.update({
+        const updateItem = await prismaClient.inventoryTimeline.update({
             where: { id: item?.productId !== null ? item?.productId : undefined,inventorySectionId:inventoryId },
             data: body
         });
@@ -73,7 +73,7 @@ export const PUT = async (req: Request, { params }: { params: { id: number } }) 
         console.error(error);
         return new Response("Internal server error", { status: 500 });
     } finally {
-        await prisma.$disconnect();
+        await prismaClient.$disconnect();
     }
 }
 
@@ -86,7 +86,7 @@ export const DELETE=async (req: Request,
             try {
                 const inventoryId = await fetchInventoryId();
                 await connectToDB();
-                await prisma.inventoryTimeline.deleteMany({
+                await prismaClient.inventoryTimeline.deleteMany({
                     where: { id: Number(params.id), inventorySectionId:inventoryId },
                 });
 
@@ -94,6 +94,6 @@ export const DELETE=async (req: Request,
             } catch (error) {
                 return new Response( "Internal server error",{status:500});
             } finally {
-                await prisma.$disconnect();
+                await prismaClient.$disconnect();
             }
   }

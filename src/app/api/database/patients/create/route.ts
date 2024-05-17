@@ -1,7 +1,6 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma/index';
+import prismaClient from '../../../../../../prisma';
 import { fetchDatabaseId } from '@/utils/fetchBranchDetails';
-import type { Patients } from "@prisma/client";
 import { PatientSchema } from '@/schemas/database/patientValidation';
 
 export const POST = async (req: Request) => {
@@ -20,7 +19,7 @@ export const POST = async (req: Request) => {
     }
     await connectToDB();
 
-    const patient = await prisma.patients.create({
+    const patient = await prismaClient.patients.create({
       data:{ 
         ...body,
       DatabaseSection:{
@@ -41,6 +40,6 @@ export const POST = async (req: Request) => {
     console.error(error)
     return new Response(JSON.stringify(error));
   } finally {
-    await prisma.$disconnect();
+    await prismaClient.$disconnect();
   }
 }

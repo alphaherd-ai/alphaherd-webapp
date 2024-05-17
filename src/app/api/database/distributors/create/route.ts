@@ -1,7 +1,6 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma/index';
+import prismaClient from '../../../../../../prisma';
 import { fetchDatabaseId } from '@/utils/fetchBranchDetails';
-import type { Distributors } from "@prisma/client";
 import { DistributorSchema } from '@/schemas/database/distributorValidation';
 
 export const POST=async(req: Request)=> {
@@ -20,7 +19,7 @@ export const POST=async(req: Request)=> {
       }
       console.log(body)
         await connectToDB();
-        const distributor = await prisma.distributors.create({
+        const distributor = await prismaClient.distributors.create({
             data: {
               ...body,
             DatabaseSection:{
@@ -40,6 +39,6 @@ export const POST=async(req: Request)=> {
       console.error(error)
       return new Response(JSON.stringify(error));
     } finally {
-        await prisma.$disconnect();
+        await prismaClient.$disconnect();
     }
   }

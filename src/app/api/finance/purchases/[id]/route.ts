@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma';
+import prismaClient from '../../../../../../prisma';
 
 export const GET = async (req: Request, { params }: { params: { id: number } }) => {
   if (req.method !== 'GET') {
@@ -8,7 +8,7 @@ export const GET = async (req: Request, { params }: { params: { id: number } }) 
 
   try {
     await connectToDB();
-    const purchases = await prisma.purchases.findUnique({
+    const purchases = await prismaClient.purchases.findUnique({
       where: { id: Number(params.id) },
       include: {
         items: {
@@ -28,7 +28,7 @@ export const GET = async (req: Request, { params }: { params: { id: number } }) 
   } catch (error) {
     return new Response('Internal server error', { status: 500 });
   } finally {
-    await prisma.$disconnect();
+    await prismaClient.$disconnect();
   }
 };
 
@@ -40,7 +40,7 @@ export const PUT = async (req: Request, { params }: { params: { id: number } }) 
     try {
       await connectToDB();
       const body = await req.json();
-      const purchases = await prisma.purchases.update({
+      const purchases = await prismaClient.purchases.update({
         where: { id: Number(params.id) },
         data: body,
         include: {
@@ -62,7 +62,7 @@ export const PUT = async (req: Request, { params }: { params: { id: number } }) 
         console.error(error)
       return new Response('Internal server error', { status: 500 });
     } finally {
-      await prisma.$disconnect();
+      await prismaClient.$disconnect();
     }
   };
 
@@ -76,15 +76,15 @@ export const DELETE = async (req: Request, { params }: { params: { id: number } 
     await connectToDB();
     const purchasesId = Number(params.id);
 
-    await prisma.financeTimeline.deleteMany({
+    await prismaClient.financeTimeline.deleteMany({
       where: { purchasesId },
     });
 
-    await prisma.items.deleteMany({
+    await prismaClient.items.deleteMany({
       where: { purchasesId },
     });
 
-    await prisma.purchases.delete({
+    await prismaClient.purchases.delete({
       where: { id: purchasesId },
     });
 
@@ -92,6 +92,6 @@ export const DELETE = async (req: Request, { params }: { params: { id: number } 
   } catch (error) {
     return new Response('Internal server error', { status: 500 });
   } finally {
-    await prisma.$disconnect();
+    await prismaClient.$disconnect();
   }
 };

@@ -2,7 +2,7 @@ import { connectToDB } from "@/utils";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-import prisma from './prisma';
+import prismaClient from './prisma';
 import bcrypt from 'bcrypt';
 
 const secretKey = "secret";

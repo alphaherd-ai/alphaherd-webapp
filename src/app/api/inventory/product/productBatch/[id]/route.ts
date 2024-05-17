@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../../../utils/index';
-import prisma from '../../../../../../../prisma';
+import prismaClient from '../../../../../../../prisma';
 import { Inventory, Stock } from '@prisma/client';
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 import { ProductBatchSchema } from '@/schemas/inventory/ productBatchValidation';
@@ -13,7 +13,7 @@ export const GET=async (req: Request,
         try {
             const inventoryId=await fetchInventoryId();
             await connectToDB();
-           const productBatch= await prisma.productBatch.findUnique({
+           const productBatch= await prismaClient.productBatch.findUnique({
                 where: { id: Number(params.id),inventorySectionId:inventoryId },
             });    
             return new Response(JSON.stringify(productBatch), {
@@ -25,7 +25,7 @@ export const GET=async (req: Request,
         } catch (error) {
             return new Response( "Internal server error",{status:500});
         } finally {
-            await prisma.$disconnect();
+            await prismaClient.$disconnect();
         }
 }
 
@@ -47,10 +47,10 @@ export const PUT=async (req: Request,
                 status: 422,
               });
             }
-           const productBatch= await prisma.productBatch.findUnique({
+           const productBatch= await prismaClient.productBatch.findUnique({
                 where: { id: Number(params.id) },
             });  
-            const product = await prisma.products.update({
+            const product = await prismaClient.products.update({
                 where:{id:productId,inventorySectionId:inventoryId},
                 data:{
                     totalQuantity:{
@@ -58,7 +58,7 @@ export const PUT=async (req: Request,
                     }
                 }
             })
-            const updateItem = await prisma.productBatch.update({
+            const updateItem = await prismaClient.productBatch.update({
                 where: { id: Number(params.id),inventorySectionId:inventoryId },
                 data: {
                     ...body,
@@ -66,7 +66,7 @@ export const PUT=async (req: Request,
                 }
             });
         
-            const inventory = await prisma.inventoryTimeline.create({
+            const inventory = await prismaClient.inventoryTimeline.create({
                 data: {
                     
                     stockChange:stockStatus,
@@ -96,7 +96,7 @@ export const PUT=async (req: Request,
             console.error(error)
             return new Response( "Internal server error",{status:500});
         } finally {
-            await prisma.$disconnect();
+            await prismaClient.$disconnect();
         }
 }
 
@@ -108,7 +108,7 @@ export const DELETE=async (req: Request,
             try {
                 await connectToDB();
                 const inventoryId=await fetchInventoryId();
-                await prisma.productBatch.delete({
+                await prismaClient.productBatch.delete({
                     where: {id: Number(params.id),inventorySectionId:inventoryId },
                 });
                
@@ -116,6 +116,6 @@ export const DELETE=async (req: Request,
             } catch (error) {
                 return new Response( "Internal server error",{status:500});
             } finally {
-                await prisma.$disconnect();
+                await prismaClient.$disconnect();
             }
   }

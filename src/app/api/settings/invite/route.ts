@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { decrypt } from "../../../../../auth";
-import prisma from '../../../../../prisma';
+import prismaClient from '../../../../../prisma';
 import { NextApiRequest, NextApiResponse } from "next";
 import { redirect } from 'next/navigation'
 import { create } from "domain";
@@ -25,7 +25,7 @@ export const GET = async (req: NextApiRequest, res: NextApiResponse) => {
 
         const { branchId, role, email, orgId } = await decrypt(userInviteString);
 
-        const user = await prisma.user.findUnique({
+        const user = await prismaClient.user.findUnique({
             where: {
                 email
             }
@@ -39,7 +39,7 @@ export const GET = async (req: NextApiRequest, res: NextApiResponse) => {
         }
         else{
             redirectURL+=`/auth/login?userInviteString=${userInviteString}`
-            await prisma.orgBranchUserRole.create({
+            await prismaClient.orgBranchUserRole.create({
                 data: {
                     orgBranchId: orgId,
                     userId: user!.id,

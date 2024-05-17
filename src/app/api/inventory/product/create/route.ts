@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma/index';
+import prismaClient from '../../../../../../prisma';
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 import {productSchema} from '@/schemas/inventory/productValidation'
 
@@ -20,7 +20,7 @@ export const POST=async(req: Request,res:Response)=> {
       }
         await connectToDB();
         body.totalQuantity=0;
-        const product = await prisma.products.create({
+        const product = await prismaClient.products.create({
             data: {
               ...body,
             InventorySection:{
@@ -42,6 +42,6 @@ export const POST=async(req: Request,res:Response)=> {
       console.error(error)
       return new Response(JSON.stringify(error));
     } finally {
-        await prisma.$disconnect();
+        await prismaClient.$disconnect();
     }
   }

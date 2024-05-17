@@ -1,6 +1,6 @@
 // src/api/transactions/get.ts
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma';
+import prismaClient from '../../../../../../prisma';
 
 export const GET = async (req: Request) => {
   if (req.method !== 'GET') {
@@ -9,7 +9,7 @@ export const GET = async (req: Request) => {
 
   try {
     await connectToDB();
-    const transactions = await prisma.transactions.findMany();
+    const transactions = await prismaClient.transactions.findMany();
 
     return new Response(JSON.stringify(transactions), {
       status: 201,
@@ -20,6 +20,6 @@ export const GET = async (req: Request) => {
   } catch (error) {
     return new Response('Internal server error', { status: 500 });
   } finally {
-    await prisma.$disconnect();
+    await prismaClient.$disconnect();
   }
 };

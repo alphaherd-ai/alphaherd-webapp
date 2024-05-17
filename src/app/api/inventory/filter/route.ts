@@ -1,6 +1,6 @@
 // src/api/inventory/filter.ts
 import { connectToDB } from '../../../../utils/index';
-import prisma from '../../../../../prisma/index';
+import prismaClient from '../../../../../prisma';
 import { Inventory, InventoryTimeline, Stock } from '@prisma/client';
 
 export const POST = async (req: Request) => {
@@ -43,7 +43,7 @@ export const POST = async (req: Request) => {
       };
     }
 
-    // const filteredInventory: InventoryTimeline[] = await prisma.inventoryTimeline.findMany({
+    // const filteredInventory: InventoryTimeline[] = await prismaClient.inventoryTimeline.findMany({
     //   where: filterOptions,
     // });
     const filteredInventory="dalkjsf"
@@ -55,6 +55,6 @@ export const POST = async (req: Request) => {
     console.error('Error filtering inventory:', error);
     return new Response('Internal server error', { status: 500 });
   } finally {
-    await prisma.$disconnect();
+    await prismaClient.$disconnect();
   }
 };

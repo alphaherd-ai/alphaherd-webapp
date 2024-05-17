@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../utils/index';
-import prisma from '../../../../../prisma';
+import prismaClient from '../../../../../prisma';
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 
@@ -49,6 +49,6 @@ export const GET = async (req: Request, res: Response) => {
     console.error(error);
     return new Response(JSON.stringify(error), { status: 500 });
   } finally {
-    await prisma.$disconnect();
+    await prismaClient.$disconnect();
   }
 };

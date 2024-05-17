@@ -1,6 +1,6 @@
 // src/api/products/filter.ts
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma/index';
+import prismaClient from '../../../../../../prisma';
 import { ProductBatch} from '@prisma/client';
 
 export const POST = async (req: Request) => {
@@ -31,7 +31,7 @@ export const POST = async (req: Request) => {
       filterOptions.distributors = { in: distributors.map(String) };
     }
 
-    // const filteredProducts: ProductBatch[] = await prisma.productBatch.findMany({
+    // const filteredProducts: ProductBatch[] = await prismaClient.productBatch.findMany({
     //   where: {
     //     ...filterOptions,
     //   },
@@ -45,6 +45,6 @@ export const POST = async (req: Request) => {
     console.error('Error filtering products:', error);
     return new Response('Internal server error', { status: 500 });
   } finally {
-    await prisma.$disconnect();
+    await prismaClient.$disconnect();
   }
 };

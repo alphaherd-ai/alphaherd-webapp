@@ -1,6 +1,6 @@
 // src/api/inventory/create.ts
 import { connectToDB } from '../../../../utils/index';
-import prisma from '../../../../../prisma';
+import prismaClient from '../../../../../prisma';
 import { Inventory, type ProductBatch } from "@prisma/client";
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 import { check, validationResult } from 'express-validator';
@@ -45,7 +45,7 @@ export const POST = async (req: Request,res:Response) => {
     if (inventoryType===Inventory.Product) {
 
       createData.product = { connect: { id: objectId } };
-      const allProducts = await prisma.productBatch.create({
+      const allProducts = await prismaClient.productBatch.create({
         data: createData,
       });
 
@@ -56,7 +56,7 @@ export const POST = async (req: Request,res:Response) => {
         quantityChange:createData.quantity
       });
       
-      const inventory= await prisma.inventoryTimeline.create({
+      const inventory= await prismaClient.inventoryTimeline.create({
         data:{ 
           stockChange:stockStatus,
           invoiceType:invoiceType,
@@ -83,11 +83,11 @@ export const POST = async (req: Request,res:Response) => {
       
 
     } else if (objectId===Inventory.Service) {
-      const allServices = await prisma.services.create({
+      const allServices = await prismaClient.services.create({
         data: createData,
       });
       
-      const inventory = await prisma.inventoryTimeline.create({
+      const inventory = await prismaClient.inventoryTimeline.create({
         data: {
           
           stockChange:stockStatus,
@@ -118,6 +118,6 @@ export const POST = async (req: Request,res:Response) => {
     console.error(error);
     return new Response(JSON.stringify(error));
   } finally {
-    await prisma.$disconnect();
+    await prismaClient.$disconnect();
   }
 };

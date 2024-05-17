@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma';
+import prismaClient from '../../../../../../prisma';
 
 export const GET = async (req: Request, { params }: { params: { id: number } }) => {
   if (req.method !== 'GET') {
@@ -8,7 +8,7 @@ export const GET = async (req: Request, { params }: { params: { id: number } }) 
 
   try {
     await connectToDB();
-    const transactions = await prisma.transactions.findUnique({
+    const transactions = await prismaClient.transactions.findUnique({
       where: { id: Number(params.id) },
     });
 
@@ -21,7 +21,7 @@ export const GET = async (req: Request, { params }: { params: { id: number } }) 
   } catch (error) {
     return new Response('Internal server error', { status: 500 });
   } finally {
-    await prisma.$disconnect();
+    await prismaClient.$disconnect();
   }
 };
 
@@ -33,7 +33,7 @@ export const PUT = async (req: Request, { params }: { params: { id: number } }) 
     try {
       await connectToDB();
       const body = await req.json();
-      const transactions = await prisma.transactions.update({
+      const transactions = await prismaClient.transactions.update({
         where: { id: Number(params.id) },
         data: body,
       });
@@ -48,7 +48,7 @@ export const PUT = async (req: Request, { params }: { params: { id: number } }) 
         console.error(error)
       return new Response('Internal server error', { status: 500 });
     } finally {
-      await prisma.$disconnect();
+      await prismaClient.$disconnect();
     }
   };
 
@@ -62,7 +62,7 @@ export const DELETE = async (req: Request, { params }: { params: { id: number } 
     await connectToDB();
     const transactionsId = Number(params.id);
 
-     await prisma.transactions.delete({
+     await prismaClient.transactions.delete({
       where: { id: transactionsId },
     });
 
@@ -70,6 +70,6 @@ export const DELETE = async (req: Request, { params }: { params: { id: number } 
   } catch (error) {
     return new Response('Internal server error', { status: 500 });
   } finally {
-    await prisma.$disconnect();
+    await prismaClient.$disconnect();
   }
 };

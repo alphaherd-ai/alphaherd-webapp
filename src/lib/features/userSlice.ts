@@ -3,7 +3,6 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 
     // adminOrganizations Organization[]
     // orgBranchId        Int?
-    // lastUsedBranch     OrgBranch?          @relation(fields: [orgBranchId], references: [id])
     // userRoles          OrgBranchUserRole[]
 
 export interface UserState {
@@ -15,7 +14,6 @@ export interface UserState {
   hashedPassword: String,
   adminOrganizations: [],
   orgBranchId: number | null,
-  lastUsedBranch: {},
   userRoles: []
 }
 
@@ -28,7 +26,6 @@ const initialState: UserState = {
   hashedPassword: "",
   adminOrganizations: [],
   orgBranchId: null,
-  lastUsedBranch: {},
   userRoles: []
 };
 

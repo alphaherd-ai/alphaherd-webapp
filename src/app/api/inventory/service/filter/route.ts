@@ -1,6 +1,6 @@
 // src/api/Services/filter.ts
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma';
+import prismaClient from '../../../../../../prisma';
 import {  Services } from '@prisma/client';
 
 export const POST = async (req: Request) => {
@@ -31,7 +31,7 @@ export const POST = async (req: Request) => {
       filterOptions.distributors = { in: distributors.map(String) };
     }
 
-    // const filteredServices: Services[] = await prisma.services.findMany({
+    // const filteredServices: Services[] = await prismaClient.services.findMany({
     //   where: {
     //     ...filterOptions,
     //   },
@@ -50,6 +50,6 @@ export const POST = async (req: Request) => {
     console.error('Error filtering Services:', error);
     return new Response('Internal server error', { status: 500 });
   } finally {
-    await prisma.$disconnect();
+    await prismaClient.$disconnect();
   }
 };

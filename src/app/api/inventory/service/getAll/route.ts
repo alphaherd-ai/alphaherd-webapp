@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma';
+import prismaClient from '../../../../../../prisma';
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 
 
@@ -10,7 +10,7 @@ export  const GET=async (req: Request)=> {
     try {
         const inventoryId=await fetchInventoryId();
         await connectToDB();
-        const services = await prisma.services.findMany({
+        const services = await prismaClient.services.findMany({
           where:{
             inventorySectionId:inventoryId
           }
@@ -24,7 +24,7 @@ export  const GET=async (req: Request)=> {
     } catch (error) {
       return new Response("Internal server error",{status:500});
     } finally {
-        await prisma.$disconnect();
+        await prismaClient.$disconnect();
     }
   }
   
