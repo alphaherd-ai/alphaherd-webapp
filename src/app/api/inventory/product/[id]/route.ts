@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma/index';
+import prismaClient from '../../../../../../prisma';
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 import { Stock } from '@prisma/client';
 import { productSchema } from '@/schemas/inventory/productValidation';
@@ -12,7 +12,7 @@ export const GET=async (req: Request,
         try {
             const inventoryId = await fetchInventoryId();
             await connectToDB();
-           const product= await prisma.products.findUnique({
+           const product= await prismaClient.products.findUnique({
                 where: { id: Number(Number(params.id)),inventorySectionId:inventoryId},
                 include:{
                     productBatches:true
@@ -28,7 +28,7 @@ export const GET=async (req: Request,
             console.error(error)
             return new Response( "Internal server error",{status:500});
         } finally {
-            await prisma.$disconnect();
+            await prismaClient.$disconnect();
         }
 }
 
@@ -49,7 +49,7 @@ export const PUT=async (req: Request,
                 status: 422,
               });
             }
-           const product= await prisma.productBatch.update({
+           const product= await prismaClient.productBatch.update({
                 where: { id: Number(params.id),inventorySectionId:inventoryId},
                 data:body
             });  
@@ -67,7 +67,7 @@ export const PUT=async (req: Request,
             console.error(error)
             return new Response( "Internal server error",{status:500});
         } finally {
-            await prisma.$disconnect();
+            await prismaClient.$disconnect();
         }
 }
 
@@ -79,16 +79,16 @@ export const DELETE=async (req: Request,
             try {
                 const inventoryId = await fetchInventoryId();
                 await connectToDB();
-                await prisma.products.delete({
+                await prismaClient.products.delete({
                     where: {id: Number(params.id) },
                 });
-                await  prisma.inventoryTimeline.deleteMany({
+                await  prismaClient.inventoryTimeline.deleteMany({
                     where:{productId:Number(params.id),inventorySectionId:inventoryId}
                 });
             return new Response(`Product with id: ${Number(params.id)} Deleted Successfully`,{status:201})
             } catch (error) {
                 return new Response( "Internal server error",{status:500});
             } finally {
-                await prisma.$disconnect();
+                await prismaClient.$disconnect();
             }
   }

@@ -1,4 +1,4 @@
-import prisma from '../../../../../../prisma';
+import prismaClient from '../../../../../../prisma';
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from 'bcrypt';
 import { redirect } from 'next/navigation'
@@ -33,13 +33,13 @@ export const POST = async (req : NextRequest) => {
 
         data.hashedPassword=hashedPassword
 
-        let user = await prisma.user.create({
+        let user = await prismaClient.user.create({
             data: data
         });
 
         console.log(user);
 
-        const orgBranchUserRole = await prisma.orgBranchUserRole.create({
+        const orgBranchUserRole = await prismaClient.orgBranchUserRole.create({
             data: {
                 orgBranchId : branchId,
                 role : role,
@@ -47,7 +47,7 @@ export const POST = async (req : NextRequest) => {
             }
         });
 
-        await prisma.user.update({
+        await prismaClient.user.update({
             where: {
                 id : user.id
             },

@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server'
 import { decrypt, encrypt } from '../../../../../../auth';
-import prisma from '../../../../../../prisma';
+import prismaClient from '../../../../../../prisma';
 import { connectToDB } from '@/utils';
 import { UserState } from '@/lib/features/userSlice';
 import nodemailer from 'nodemailer';
@@ -67,20 +67,19 @@ export const POST = async (req: NextRequest) => {
 
     console.log("inside API")
 
-    const { branchId, role, email, orgId} = await req.json();
+    const { branchId, role, email} = await req.json();
 
     const requestHeaders = new Headers(req.headers)
 
     let userId = Number(requestHeaders.get("userid"));
 
-    let orgBranch = await prisma.orgBranch.findUnique({
+    let orgBranch = await prismaClient.orgBranch.findUnique({
         where: {
-            orgId: orgId,
             id: branchId
         }
     });
 
-    let adminUser = await prisma.user.findUnique({
+    let adminUser = await prismaClient.user.findUnique({
         where: {
             id: userId
         },
@@ -93,20 +92,20 @@ export const POST = async (req: NextRequest) => {
         return new Response(JSON.stringify({"message" : "Invalid Request"}), { status: 400 });
     }
 
-    let isAdmin = (adminUser.adminOrganizations.length === 0 ? false : (adminUser.adminOrganizations.find(e => e.id === orgId)))
+    let isAdmin = (adminUser.adminOrganizations.length === 0 ? false : (adminUser.adminOrganizations.find(e => e.id === orgBranch?.orgId)))
 
     if (!isAdmin || !orgBranch) {
         return new Response(JSON.stringify({"message" : "Invalid Request"}), { status: 400 });
     }
 
-    let invitedUser = await prisma.user.findUnique({
+    let invitedUser = await prismaClient.user.findUnique({
         where: {
             email : email
         }
     });
 
     if(invitedUser){
-        const orgBranchUserRole = await prisma.orgBranchUserRole.findFirst({
+        const orgBranchUserRole = await prismaClient.orgBranchUserRole.findFirst({
             where: {
                 userId: invitedUser?.id,
                 orgBranchId: branchId
@@ -126,19 +125,19 @@ export const POST = async (req: NextRequest) => {
 
     }
 
-    let userInviteString = await encrypt({ branchId, role, email, orgId }, "7 day");
+    let userInviteString = await encrypt({ branchId, role, email }, "7 day");
 
     const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-            user: "kunalpal215@gmail.com",
-            pass: "",
+            user: process.env.AUTOMATED_GMAIL,
+            pass: process.env.AUTOMATED_GMAIL_APP_PASSWORD,
         },
     });
 
     const message = "Hi there, you were emailed me through nodemailer"
     const options = {
-        from: "kunalpal215@gmail.com", // sender address
+        from: process.env.AUTOMATED_GMAIL, // sender address
         to: email, // receiver email
         subject: "Invitation to join Organization: Alphaherd", // Subject line
         text: message,

@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../utils/index';
-import prisma from '../../../../../prisma/index';
+import prismaClient from '../../../../../prisma';
 import { Inventory,Role, type ProductBatch } from "@prisma/client";
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 
@@ -10,13 +10,13 @@ export const POST=async(req: Request )=> {
 } 
     try {
       const {userRole,...body} = await req.json();
-      const permission= await prisma.permissions.findUnique({
+      const permission= await prismaClient.permissions.findUnique({
         where:{
           role:userRole
         }
       })
       if(permission){
-        await prisma.permissions.update({
+        await prismaClient.permissions.update({
           where:{
             role:userRole
           },
@@ -25,7 +25,7 @@ export const POST=async(req: Request )=> {
           }
         })
       }else{
-        const newPermissions= await prisma.permissions.create({
+        const newPermissions= await prismaClient.permissions.create({
           data:{
             ...body,
             role:userRole
@@ -42,6 +42,6 @@ export const POST=async(req: Request )=> {
       console.error(error)
       return new Response(JSON.stringify(error));
     } finally {
-        await prisma.$disconnect();
+        await prismaClient.$disconnect();
     }
   }

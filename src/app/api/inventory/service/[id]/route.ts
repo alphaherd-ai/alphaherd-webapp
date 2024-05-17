@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma/index';
+import prismaClient from '../../../../../../prisma';
 import { ServiceSchema } from '@/schemas/inventory/serviceValidation';
 
 export const GET=async (req: Request,
@@ -10,7 +10,7 @@ export const GET=async (req: Request,
         } 
         try {
             await connectToDB();
-           const service= await prisma.services.findUnique({
+           const service= await prismaClient.services.findUnique({
                 where: { id: Number(params.id) },
             });
                         
@@ -23,7 +23,7 @@ export const GET=async (req: Request,
         } catch (error) {
             return new Response( "Internal server error",{status:500});
         } finally {
-            await prisma.$disconnect();
+            await prismaClient.$disconnect();
         }
 }
 
@@ -43,7 +43,7 @@ export const PUT=async (req: Request,
                 status: 422,
               });
             }
-           const service= await prisma.services.update({
+           const service= await prismaClient.services.update({
                 where: { id: Number(params.id) },
                 data:body,
             });     
@@ -56,7 +56,7 @@ export const PUT=async (req: Request,
         } catch (error) {
             return new Response( "Internal server error",{status:500});
         } finally {
-            await prisma.$disconnect();
+            await prismaClient.$disconnect();
         }
 }
 
@@ -67,7 +67,7 @@ export const DELETE=async (req: Request,
             } 
             try {
                 await connectToDB();
-                await prisma.services.deleteMany({
+                await prismaClient.services.deleteMany({
                     where: { id: Number(params.id) },
                 });
               
@@ -76,6 +76,6 @@ export const DELETE=async (req: Request,
             } catch (error) {
                 return new Response( "Internal server error",{status:500});
             } finally {
-                await prisma.$disconnect();
+                await prismaClient.$disconnect();
             }
   }

@@ -1,6 +1,6 @@
 import { connectToDB } from '../../../../../utils/index';
 import { fetchDatabaseId } from '@/utils/fetchBranchDetails';
-import prisma from '../../../../../../prisma/index';
+import prismaClient from '../../../../../../prisma';
 import { ClientSchema } from '@/schemas/database/clientValidation';
 
 export const GET=async (req: Request,
@@ -12,7 +12,7 @@ export const GET=async (req: Request,
         try {
             const databaseId= await fetchDatabaseId();
             await connectToDB();
-           const client= await prisma.clients.findUnique({
+           const client= await prismaClient.clients.findUnique({
                 where: { id: Number(params.id),databaseSectionId:databaseId },
                 include:{
                     patients:true
@@ -28,7 +28,7 @@ export const GET=async (req: Request,
         } catch (error) {
             return new Response( "Internal server error",{status:500});
         } finally {
-            await prisma.$disconnect();
+            await prismaClient.$disconnect();
         }
 }
 
@@ -49,7 +49,7 @@ export const PUT=async (req: Request,
                 status: 422,
                 });
             }
-           const client= await prisma.clients.update({
+           const client= await prismaClient.clients.update({
                 where: { id: Number(params.id),databaseSectionId:databaseId },
                 data:body,
             });     
@@ -62,7 +62,7 @@ export const PUT=async (req: Request,
         } catch (error) {
             return new Response( "Internal server error",{status:500});
         } finally {
-            await prisma.$disconnect();
+            await prismaClient.$disconnect();
         }
 }
 
@@ -74,7 +74,7 @@ export const DELETE=async (req: Request,
             try {
                 const databaseId = await fetchDatabaseId();
                 await connectToDB();
-                await prisma.clients.deleteMany({
+                await prismaClient.clients.deleteMany({
                     where: { id: Number(params.id),databaseSectionId:databaseId },
                 });
               
@@ -83,6 +83,6 @@ export const DELETE=async (req: Request,
             } catch (error) {
                 return new Response( "Internal server error",{status:500});
             } finally {
-                await prisma.$disconnect();
+                await prismaClient.$disconnect();
             }
   }

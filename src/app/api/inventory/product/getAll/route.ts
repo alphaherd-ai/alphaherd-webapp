@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma/index';
+import prismaClient from '../../../../../../prisma';
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 import { NextApiRequest, NextApiResponse } from 'next';
 
@@ -12,7 +12,7 @@ export const GET = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const inventoryId = await fetchInventoryId();
     await connectToDB();
-    const products = await prisma.products.findMany({
+    const products = await prismaClient.products.findMany({
       where: { inventorySectionId: inventoryId }
     });
     return new Response(JSON.stringify(products), {
@@ -26,6 +26,6 @@ export const GET = async (req: NextApiRequest, res: NextApiResponse) => {
     return new Response(JSON.stringify(error));
 
   } finally {
-    await prisma.$disconnect();
+    await prismaClient.$disconnect();
   }
 };

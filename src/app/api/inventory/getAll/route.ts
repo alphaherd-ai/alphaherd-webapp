@@ -1,6 +1,6 @@
 // src/api/inventory/getAll.ts
 import { connectToDB } from '../../../../utils/index';
-import prisma from '../../../../../prisma/index';
+import prismaClient from '../../../../../prisma/index';
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 import type { ProductBatch } from "@prisma/client";
 
@@ -11,7 +11,7 @@ export const GET=async(req: Request)=> {
     try {
         
         await connectToDB();
-        const inventory = await prisma.inventoryTimeline.findMany({
+        const inventory = await prismaClient.inventoryTimeline.findMany({
           
             include: {
                 productBatch: {
@@ -33,7 +33,7 @@ export const GET=async(req: Request)=> {
         console.error(error)
       return new Response("Internal server error",{status:500});
     } finally {
-        await prisma.$disconnect();
+        await prismaClient.$disconnect();
     }
   }
   

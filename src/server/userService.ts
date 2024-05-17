@@ -1,4 +1,4 @@
-import prisma from '../../prisma';
+import prismaClient from '../../prisma';
 import bcrypt from 'bcrypt';
 
 export const userService = {
@@ -6,7 +6,7 @@ export const userService = {
   };
   
   async function authenticate(email: string, password: string) {
-    const user = await prisma.user.findUnique({
+    const user = await prismaClient.user.findUnique({
         where: { email },
       });
   

@@ -1,7 +1,7 @@
-import prisma from '../../prisma';
+import prismaClient from '../../prisma';
 
 export async function validateToken(token: string) {
-    const user =await prisma.user.findUnique({
+    const user =await prismaClient.user.findUnique({
          where:{
                 token:token   
             }

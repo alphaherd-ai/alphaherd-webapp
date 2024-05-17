@@ -1,7 +1,6 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma/index';
+import prismaClient from '../../../../../../prisma';
 import { fetchDatabaseId } from '@/utils/fetchBranchDetails';
-import type { Clients } from "@prisma/client";
 import { ClientSchema } from '@/schemas/database/clientValidation';
 
 export const POST=async(req: Request)=> {
@@ -19,7 +18,7 @@ export const POST=async(req: Request)=> {
         });
       }
       console.log(body)
-        const client = await prisma.clients.create({
+        const client = await prismaClient.clients.create({
             data:{ 
               ...body,
               DataBaseSection:{
@@ -39,6 +38,6 @@ export const POST=async(req: Request)=> {
       console.error(error)
       return new Response(JSON.stringify(error));
     } finally {
-        await prisma.$disconnect();
+        await prismaClient.$disconnect();
     }
   }

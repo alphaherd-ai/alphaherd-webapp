@@ -9,7 +9,7 @@ import Select from 'react-select';
 import calicon from "../../../assets/icons/finance/calendar_today.svg"
 import Attachment from "../../../assets/icons/finance/attachment.svg"
 import { response } from "express";
-import { Clients } from "@prisma/client";
+import { Clients } from "@/client";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 

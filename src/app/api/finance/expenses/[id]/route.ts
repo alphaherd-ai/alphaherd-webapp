@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma';
+import prismaClient from '../../../../../../prisma';
 
 export const GET = async (req: Request, { params }: { params: { id: number } }) => {
   if (req.method !== 'GET') {
@@ -8,7 +8,7 @@ export const GET = async (req: Request, { params }: { params: { id: number } }) 
 
   try {
     await connectToDB();
-    const expenses = await prisma.expenses.findUnique({
+    const expenses = await prismaClient.expenses.findUnique({
       where: { id: Number(params.id) },
       include: {
         items:true   
@@ -24,7 +24,7 @@ export const GET = async (req: Request, { params }: { params: { id: number } }) 
   } catch (error) {
     return new Response('Internal server error', { status: 500 });
   } finally {
-    await prisma.$disconnect();
+    await prismaClient.$disconnect();
   }
 };
 
@@ -36,7 +36,7 @@ export const PUT = async (req: Request, { params }: { params: { id: number } }) 
     try {
       await connectToDB();
       const body = await req.json();
-      const expenses = await prisma.expenses.update({
+      const expenses = await prismaClient.expenses.update({
         where: { id: Number(params.id) },
         data: body,
         include: {
@@ -58,7 +58,7 @@ export const PUT = async (req: Request, { params }: { params: { id: number } }) 
         console.error(error)
       return new Response('Internal server error', { status: 500 });
     } finally {
-      await prisma.$disconnect();
+      await prismaClient.$disconnect();
     }
   };
 
@@ -72,15 +72,15 @@ export const DELETE = async (req: Request, { params }: { params: { id: number } 
     await connectToDB();
     const expensesId = Number(params.id);
 
-    await prisma.financeTimeline.deleteMany({
+    await prismaClient.financeTimeline.deleteMany({
       where: { expensesId },
     });
 
-    await prisma.items.deleteMany({
+    await prismaClient.items.deleteMany({
       where: { expensesId },
     });
 
-    await prisma.expenses.delete({
+    await prismaClient.expenses.delete({
       where: { id: expensesId },
     });
 
@@ -88,6 +88,6 @@ export const DELETE = async (req: Request, { params }: { params: { id: number } 
   } catch (error) {
     return new Response('Internal server error', { status: 500 });
   } finally {
-    await prisma.$disconnect();
+    await prismaClient.$disconnect();
   }
 };

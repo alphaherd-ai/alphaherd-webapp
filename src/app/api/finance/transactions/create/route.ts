@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma';
+import prismaClient from '../../../../../../prisma';
 import type { Transactions } from "@prisma/client";
 
 export const POST=async(req: Request)=> {
@@ -9,7 +9,7 @@ export const POST=async(req: Request)=> {
     try {
       const body: Transactions = await req.json();
         await connectToDB();
-        const transactions = await prisma.transactions.create({
+        const transactions = await prismaClient.transactions.create({
             data: body
         });
         return new Response(JSON.stringify(transactions), {
@@ -21,6 +21,6 @@ export const POST=async(req: Request)=> {
     } catch (error) {
       return new Response(JSON.stringify(error));
     } finally {
-        await prisma.$disconnect();
+        await prismaClient.$disconnect();
     }
   }

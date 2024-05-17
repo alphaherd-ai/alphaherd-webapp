@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../../../utils/index';
-import prisma from '../../../../../../../prisma';
+import prismaClient from '../../../../../../../prisma';
 
 export const POST = async (req: Request, { params }: { params: { type: string } }) => {
   if (req.method !== 'POST') {
@@ -10,7 +10,7 @@ export const POST = async (req: Request, { params }: { params: { type: string } 
     const body: any = await req.json();
     await connectToDB();
  
-     const expenses = await prisma.expenses.create({
+     const expenses = await prismaClient.expenses.create({
         data: {
           ...body,
           type: params.type,
@@ -18,11 +18,11 @@ export const POST = async (req: Request, { params }: { params: { type: string } 
       });
     
 
-    const items = await prisma.items.createMany({
+    const items = await prismaClient.items.createMany({
       data: body.item.create,
     });
 
-    const finance = await prisma.financeTimeline.create({
+    const finance = await prismaClient.financeTimeline.create({
       data: {
         type: params.type,
         sale: { connect: { id: expenses.id } },
@@ -40,6 +40,6 @@ export const POST = async (req: Request, { params }: { params: { type: string } 
     console.error(error);
     return new Response(JSON.stringify(error), { status: 500 });
   } finally {
-    await prisma.$disconnect();
+    await prismaClient.$disconnect();
   }
 };

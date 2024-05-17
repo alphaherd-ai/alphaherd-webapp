@@ -1,6 +1,6 @@
 // src/api/finance/create.ts
 import { connectToDB } from '../../../../../../utils/index';
-import prisma from '../../../../../../../prisma/index';
+import prismaClient from '../../../../../../../prisma/index';
 import { Inventory, Stock } from '@prisma/client';
 
 export const POST = async (req: Request, { params }: { params: { type: string } }) => {
@@ -11,18 +11,18 @@ export const POST = async (req: Request, { params }: { params: { type: string } 
   try {
     const body: any = await req.json();
     await connectToDB();
-    const purchases = await prisma.purchases.create({
+    const purchases = await prismaClient.purchases.create({
       data: {
         ...body,
         type: params.type,
       },
     });
 
-    const items = await prisma.items.createMany({
+    const items = await prismaClient.items.createMany({
       data: body.item.create,
     });
 
-    const finance = await prisma.financeTimeline.create({
+    const finance = await prismaClient.financeTimeline.create({
       data: {
         type: params.type,
         sale: { connect: { id: purchases.id } },
@@ -33,7 +33,7 @@ export const POST = async (req: Request, { params }: { params: { type: string } 
     if (params.type === 'invoice') {
       await Promise.all(
         body.item.create.map(async (item: any) => {
-          const updatedProduct = await prisma.productBatch.update({
+          const updatedProduct = await prismaClient.productBatch.update({
             where: { id: item.allProductsId },
             data: {
               quantity: {
@@ -42,7 +42,7 @@ export const POST = async (req: Request, { params }: { params: { type: string } 
             },
           });
 
-          await prisma.inventoryTimeline.create({
+          await prismaClient.inventoryTimeline.create({
             data: {
               stockChange:Stock.StockOUT,
               quantityChange: -item.quantity,
@@ -53,7 +53,7 @@ export const POST = async (req: Request, { params }: { params: { type: string } 
     } else if (params.type === 'return') {
       await Promise.all(
         body.item.create.map(async (item: any) => {
-          const updatedProduct = await prisma.productBatch.update({
+          const updatedProduct = await prismaClient.productBatch.update({
             where: { id: item.allProductsId },
             data: {
               quantity: {
@@ -62,7 +62,7 @@ export const POST = async (req: Request, { params }: { params: { type: string } 
             },
           });
 
-          await prisma.inventoryTimeline.create({
+          await prismaClient.inventoryTimeline.create({
             data: {
               stockChange:Stock.StockIN,
               quantityChange: item.quantity,
@@ -82,6 +82,6 @@ export const POST = async (req: Request, { params }: { params: { type: string } 
     console.error(error);
     return new Response(JSON.stringify(error), { status: 500 });
   } finally {
-    await prisma.$disconnect();
+    await prismaClient.$disconnect();
   }
 };

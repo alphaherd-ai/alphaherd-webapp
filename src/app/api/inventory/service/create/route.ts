@@ -1,5 +1,5 @@
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma';
+import prismaClient from '../../../../../../prisma';
 import { Inventory, type Services } from "@prisma/client";
 import { ServiceSchema } from '@/schemas/inventory/serviceValidation';
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
@@ -22,14 +22,14 @@ export const POST=async(req: Request)=> {
       const inventoryId=await fetchInventoryId();
 
         await connectToDB();
-        const service = await prisma.services.create({
+        const service = await prismaClient.services.create({
             data: {...body,
               InventorySection:{
                 connect:{id:inventoryId}
               }},
       
         });
-        const inventory= await prisma.inventoryTimeline.create({
+        const inventory= await prismaClient.inventoryTimeline.create({
           data:{
             quantityChange:body.quantity,
             invoiceType:source,
@@ -57,6 +57,6 @@ export const POST=async(req: Request)=> {
       console.error(error)
       return new Response(JSON.stringify(error));
     } finally {
-        await prisma.$disconnect();
+        await prismaClient.$disconnect();
     }
   }

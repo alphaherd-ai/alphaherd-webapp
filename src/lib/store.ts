@@ -1,5 +1,6 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import userSlice from './features/userSlice';
+import appSlice from './features/appSlice';
 import { persistStore, persistReducer, PERSIST, FLUSH, REHYDRATE, PAUSE, PURGE, REGISTER } from 'redux-persist'
 
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
@@ -21,13 +22,14 @@ const createNoopStorage = () => {
 const storage = typeof window !== "undefined" ? createWebStorage("local") : createNoopStorage();
 
 const reducers = combineReducers({
-  user: userSlice
+  user: userSlice,
+  app : appSlice
 });
 
 const persistConfig = {
   key: "root",
   storage: storage,
-  whitelist: ["user"],
+  whitelist: ["user","app"],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);

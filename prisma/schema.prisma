@@ -27,7 +27,6 @@ enum Location {
 
 enum Role {
   Staff
-  Admin
   Manager
   Veterinarian
 }

@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import { encrypt } from '../../../../../auth';
 import { cookies } from 'next/headers';
-import prisma from '../../../../../prisma';
+import prismaClient from '../../../../../prisma';
 import { redirect } from 'next/navigation';
 
 export const POST = async (req: Request) => {
@@ -20,10 +20,9 @@ export const POST = async (req: Request) => {
 
     // adminOrganizations Organization[]
     // orgBranchId        Int?
-    // lastUsedBranch     OrgBranch?          @relation(fields: [orgBranchId], references: [id])
     // userRoles          OrgBranchUserRole[]
 
-    const user = await prisma.user.findUnique({
+    const user = await prismaClient.user.findUnique({
       where: { email },
       include: {
         adminOrganizations: {
@@ -32,12 +31,11 @@ export const POST = async (req: Request) => {
             orgName : true
           }
         },
-        lastUsedBranch: {},
         userRoles: {}
       }
     });
 
-    const organization = await prisma.organization.findUnique({
+    const organization = await prismaClient.organization.findUnique({
       where: {id : 1},
       include: {
         orgBranches: {},

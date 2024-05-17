@@ -1,6 +1,6 @@
 // src/api/Finance/filter.ts
 import { connectToDB } from '../../../../../utils/index';
-import prisma from '../../../../../../prisma/index';
+import prismaClient from '../../../../../../prisma';
 import { FinanceTimeline } from '@prisma/client';
 
 export const POST = async (req: Request) => {
@@ -38,7 +38,7 @@ export const POST = async (req: Request) => {
       };
     }
 
-    const filteredInventory: FinanceTimeline[] = await prisma.financeTimeline.findMany({
+    const filteredInventory: FinanceTimeline[] = await prismaClient.financeTimeline.findMany({
       where: filterOptions,
     });
 
@@ -50,6 +50,6 @@ export const POST = async (req: Request) => {
     console.error('Error filtering Finance:', error);
     return new Response('Internal server error', { status: 500 });
   } finally {
-    await prisma.$disconnect();
+    await prismaClient.$disconnect();
   }
 };
