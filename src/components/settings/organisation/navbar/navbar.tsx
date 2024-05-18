@@ -46,7 +46,7 @@ const togglePopup = () => {
                         {/* <PopoverTrigger> */}
                             <Button 
                                 variant="solid"
-                                className="capitalize border-none bg-black text-white rounded-lg flex gap-2 justify-center items-center hover:cursor-pointer" onClick={togglePopup}>
+                                className="capitalize border-none bg-black py-2.5 text-white rounded-lg flex gap-2 justify-center items-center hover:cursor-pointer" onClick={togglePopup}>
                                 <div className='flex'><Image src={addUserIcon} alt='addUserIcon' className='w-6 h-6 ' /></div>
                                  <span>Add User</span>
                             </Button>

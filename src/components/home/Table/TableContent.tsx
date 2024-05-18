@@ -4,24 +4,24 @@ import TableList from "./TableList";
 const TableContent = () => {
   return (
     <>
-      <div className="w-[1480px] h-[55px] px-6 bg-neutral-200 border-b border-neutral-400 justify-start items-center gap-4 inline-flex ">
-        <div className="w-[14.6%] ml-[2.5rem] ">
-          <span>Client</span>
+      <div className="w-[1480px] h-[55px] border-[1px] border-solid border-r-[#A2A3A3] border-t-0 border-l-[#A2A3A3] border-b-[#A2A3A3] px-6 bg-[#F4F5F7] justify-start items-center gap-4 inline-flex ">
+        <div className="w-[15%] ml-[2.7rem] ">
+          <span className="text-gray-500 text-base">Client</span>
         </div>
         <div className="w-[12.6%] ">
-          <span>Patient</span>
+          <span className="text-gray-500 text-base">Patient</span>
         </div>
         <div className="w-[18.6%] ">
-          <span className="px-2">Reason for Visit</span>
+          <span className="px-2 text-gray-500 text-base">Reason for Visit</span>
         </div>
-        <div className="w-[13%] ">
-          <span>Time</span>
+        <div className="w-[12.8%] ">
+          <span className="text-gray-500 text-base">Time</span>
         </div>
-        <div className="w-[14.8%] ">
-          <span>Service</span>
+        <div className="w-[15%] ">
+          <span className="text-gray-500 text-base">Service</span>
         </div>
         <div className="w-[14.6%] ">
-          <span>Status</span>
+          <span className="text-gray-500 text-base">Status</span>
         </div>
       </div>
       <TableList />
