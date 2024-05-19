@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Tooltip, Button } from "@nextui-org/react";
 import Link from 'next/link';
 import formatDateAndTime from '@/utils/formateDateTime';
-import { Inventory } from '@/client';
+import { Inventory } from '@prisma/client';
 interface AllServices {
     id: number;
     name: string;

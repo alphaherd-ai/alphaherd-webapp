@@ -24,6 +24,7 @@
     "bcrypt": "^5.1.1",
     "chart.js": "^4.4.2",
     "context-api": "^0.0.2",
+    "cookies-next": "^4.1.1",
     "daisyui": "^4.7.3",
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",

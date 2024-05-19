@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import { Stock } from '@/client';
+import { Stock } from '@prisma/client';
 
 const StockOption = z.enum([Stock.StockIN, Stock.StockOUT]);
 

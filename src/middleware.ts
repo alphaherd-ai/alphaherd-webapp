@@ -2,13 +2,20 @@ import type { NextFetchEvent, NextRequest, NextResponse } from 'next/server';
 import { nonApiMiddleware } from './middleware/authMiddleware';
 import { apiMiddleware } from './middleware/blockAPI';
 import { isAuthorized } from './middleware/isAuthorized';
+import { lastUsedBranch } from './utils/fetchBranchDetails';
+import { getVerifyOrgandBranch } from './middleware/orgVerify';
+
 
 export async function middleware(request: NextRequest, event: NextFetchEvent) {
   const url = request.nextUrl;
-  console.log(url)
+  const userId=request.headers.get('userid');
+  console.log("this is the frontend url",url.href)
+  const { searchParams } = new URL(url);
+  const branchId = searchParams.get("orgBranchID")!;  
   if (!url.pathname.startsWith('/api')) {
     return nonApiMiddleware(request, event);
   }
+  await getVerifyOrgandBranch(Number(userId),Number(branchId));
   return isAuthorized(request,event);
 }
 
