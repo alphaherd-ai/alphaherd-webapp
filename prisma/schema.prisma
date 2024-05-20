@@ -26,6 +26,7 @@ enum Location {
 }
 
 enum Role {
+  Admin
   Staff
   Manager
   Veterinarian
@@ -82,7 +83,7 @@ model User {
   altPhoneNo         String?
   hashedPassword     String
   adminOrganizations Organization[]
-  orgBranchId        Int?
+  orgBranchId        Int? @unique
   lastUsedBranch     OrgBranch?          @relation(fields: [orgBranchId], references: [id])
   userRoles          OrgBranchUserRole[]
 }

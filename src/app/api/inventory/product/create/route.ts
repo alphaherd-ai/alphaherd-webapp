@@ -2,6 +2,7 @@ import { connectToDB } from '../../../../../utils/index';
 import prismaClient from '../../../../../../prisma';
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 import {productSchema} from '@/schemas/inventory/productValidation'
+import { NextApiRequest } from 'next';
 
 export const POST=async(req: Request,res:Response)=> {
   if (req.method !== 'POST') {

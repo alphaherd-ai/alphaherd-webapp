@@ -13,7 +13,7 @@ import subicon from "../../../../assets/icons/inventory/1. Icons-24 (6) (2).svg"
 import checkicon from "../../../../assets/icons/inventory/check (1).svg";
 import Select from 'react-select';
 import formatDateAndTime from "@/utils/formateDateTime";
-import { Stock } from "@/client";
+import { Stock } from "@prisma/client";
 import { select } from "@nextui-org/react";
 
 type PopupProps = {
