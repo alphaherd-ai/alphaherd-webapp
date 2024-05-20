@@ -14,7 +14,7 @@ const TableHeader = () => {
   };
 
   return (
-    <div className="w-[1480px] h-[55px] mt-[2rem] px-6 bg-white border-b border-neutral-400 justify-start items-center gap-4 inline-flex rounded-md">
+    <div className="w-[1480px] h-[55px] mt-[2rem] px-6 bg-white border-[1px] border-solid border-[#A2A3A3] justify-start items-center gap-4 inline-flex rounded-tr-2xl rounded-tl-2xl">
       <div className="justify-start items-start gap-2 flex">
         <div className="w-6 h-6 ">
           <Image src={forward} alt="" />

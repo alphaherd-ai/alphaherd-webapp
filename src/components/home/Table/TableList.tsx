@@ -83,10 +83,10 @@ const TableList: React.FC = () => {
     <div className="flex">
       {/* Render Modal */}
       {isModalOpen && (
-        <div className="fixed top-0 right-0 h-full w-[740px] bg-gray-200 z-50 overflow-y-scroll mt-[5px] rounded-xl">
+        <div className="fixed top-0 right-0 h-full min-w-[740px] bg-gray-100 z-50 overflow-y-scroll mt-[5px] rounded-xl">
           {/* Modal Content */}
-          <div className="flex flex-col h-full">
-            <div className="w-[720px] h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border border-neutral-400 flex-col justify-center items-start gap-6 inline-flex">
+          <div className="flex flex-col min-h-[720px]">
+            <div className="w-[720px] min-h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border border-neutral-400 flex-col justify-center items-start gap-6 inline-flex">
               <div className="self-stretch justify-start items-center gap-4 inline-flex">
                 <div className="justify-start items-center flex">
                   <div className="w-6 h-6 relative">
@@ -383,7 +383,7 @@ const TableList: React.FC = () => {
           return (
             <div
               key={index}
-              className="flex w-[1480px] h-[55px] px-6 bg-white border-b border-neutral-400 justify-start items-center gap-4 cursor-pointer"
+              className="flex w-[1480px] h-[55px] px-6 bg-white border-[1px] border-solid border-r-[#A2A3A3] border-t-0 border-l-[#A2A3A3] border-b-[#A2A3A3] justify-start items-center gap-4 cursor-pointer"
               onClick={() => handleClick(index, "Checked in")}
             >
               <div
@@ -403,27 +403,27 @@ const TableList: React.FC = () => {
                 )}
               </div>
               <div className="w-[16.6%] ">
-                <span className="text-neutral-400 font-base ">
+                <span className="text-neutral-400 text-base ">
                   {col.name}
                 </span>
               </div>
               <div className="w-[14.6%]">
-                <span className="text-neutral-400 font-base ">
+                <span className="text-neutral-400 text-base ">
                   {col.patient}
                 </span>
               </div>
               <div className="w-[20.6%]">
-                <span className="text-neutral-400 font-base ">
+                <span className="text-neutral-400 text-base ">
                   {col.reason}
                 </span>
               </div>
               <div className="w-[14.6%]">
-                <span className="text-neutral-400 font-base ">
+                <span className="text-neutral-400 text-base ">
                   {col.time}
                 </span>
               </div>
               <div className="w-[16.6%]">
-                <span className="text-neutral-400 font-base">
+                <span className="text-neutral-400 text-base">
                   {col.service}
                 </span>
               </div>
