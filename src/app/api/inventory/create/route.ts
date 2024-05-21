@@ -17,7 +17,7 @@ const validateBody = initMiddleware(
   ], validationResult)
 );
 
-export const POST = async (req: Request,res:Response) => {
+export const POST = async (req: NextRequest,res:Response) => {
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
   }
@@ -31,8 +31,8 @@ export const POST = async (req: Request,res:Response) => {
         status: 422,
       });  
     }
-    const inventoryId = await fetchInventoryId();
-    await connectToDB();
+    const inventoryId = await fetchInventoryId(req);
+    
     const {objectId,inventoryType, stockStatus,invoiceType,...restOfBody } = await req.json();
     console.log(restOfBody);
 

@@ -1,15 +1,14 @@
 // src/api/inventory/create.ts
+import { NextRequest } from 'next/server';
 import prismaClient from '../../../../../../prisma';
-import { connectToDB } from '../../../../../utils/index';
 import bcrypt from 'bcrypt';
 
-export const POST = async (req: Request) => {
+export const POST = async (req: NextRequest) => {
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
   }
 
   try {
-    await connectToDB();
     const url = new URL(req.url);
     const { orgDetails, adminUserDetails, branchName } = await req.json();
     const hashedPassword = await bcrypt.hash(adminUserDetails.password, 10);

@@ -1,7 +1,6 @@
-import { connectToDB } from "@/utils";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import prismaClient from './prisma';
 import bcrypt from 'bcrypt';
 
@@ -34,21 +33,21 @@ export async function getSession() {
   return await decrypt(session);
 }
 
-export async function updateSession(request: NextRequest) {
-  console.log("here")
-  const session = request.cookies.get("session")?.value;
-  console.log("session: ", session)
-  if (!session) return;
+// export async function updateSession(request: NextRequest) {
+//   console.log("here")
+//   const session = request.cookies.get("session")?.value;
+//   console.log("session: ", session)
+//   if (!session) return;
 
-  // Refresh the session so it doesn't expire
-  const parsed = await decrypt(session);
-  parsed.expires = new Date(Date.now() + 10000 * 1000);
-  const res = NextResponse.next();
-  res.cookies.set({
-    name: "session",
-    value: await encrypt(parsed,"10h"),
-    httpOnly: true,
-    expires: parsed.expires,
-  });
-  return res;
-}
+//   // Refresh the session so it doesn't expire
+//   const parsed = await decrypt(session);
+//   parsed.expires = new Date(Date.now() + 10000 * 1000);
+//   const res = NextResponse.next();
+//   res.cookies.set({
+//     name: "session",
+//     value: await encrypt(parsed,"10h"),
+//     httpOnly: true,
+//     expires: parsed.expires,
+//   });
+//   return res;
+// }

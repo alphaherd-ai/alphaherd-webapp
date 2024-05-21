@@ -3,13 +3,13 @@ import prismaClient from '../../../../../../prisma';
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 
 
-export const GET = async (req: Request) => {
+export const GET = async (req: NextRequest) => {
   if (req.method !== 'GET') {
       return new Response('Method not allowed', { status: 405 });
   }
   try {
-      await connectToDB();
-      const inventoryId = await fetchInventoryId();
+      
+      const inventoryId = await fetchInventoryId(req);
       const products = await prismaClient.products.findMany({
           where:{id:inventoryId},
           orderBy: [

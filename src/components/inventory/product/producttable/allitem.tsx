@@ -7,6 +7,7 @@ import { Inventory } from '@prisma/client';
 import { reverse } from 'dns';
 import formatDateAndTime from '@/utils/formateDateTime';
 import InventoryProductTableBottombar from './bottombar'; 
+import { useAppSelector } from '@/lib/hooks';
 
 interface Products{
   id:string;
@@ -43,8 +44,9 @@ const ProductAllItem = () => {
   const [products, setProducts] = useState<InventoryTimeline[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(10); 
+  const appState = useAppSelector((state) => state.app);
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/getAll`)
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/getAll?branchId=${appState.currentBranchId}`)
       .then(response => response.json())
       .then(data => {
         const filteredData = data.filter((inventory: { inventoryType: any; }) => inventory.inventoryType===Inventory.Product).reverse();

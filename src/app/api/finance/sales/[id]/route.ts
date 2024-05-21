@@ -1,13 +1,13 @@
 import { connectToDB } from '../../../../../utils/index';
 import prismaClient from '../../../../../../prisma';
 
-export const GET = async (req: Request, { params }: { params: { id: number } }) => {
+export const GET = async (req: NextRequest, { params }: { params: { id: number } }) => {
   if (req.method !== 'GET') {
     return new Response('Method not allowed', { status: 405 });
   }
 
   try {
-    await connectToDB();
+    
     const sales = await prismaClient.sales.findUnique({
       where: { id: Number(params.id) },
       include: {
@@ -32,13 +32,13 @@ export const GET = async (req: Request, { params }: { params: { id: number } }) 
   }
 };
 
-export const PUT = async (req: Request, { params }: { params: { id: number } }) => {
+export const PUT = async (req: NextRequest, { params }: { params: { id: number } }) => {
     if (req.method !== 'PUT') {
       return new Response('Method not allowed', { status: 405 });
     }
   
     try {
-      await connectToDB();
+      
       const body = await req.json();
       const sales = await prismaClient.sales.update({
         where: { id: Number(params.id) },
@@ -67,13 +67,13 @@ export const PUT = async (req: Request, { params }: { params: { id: number } }) 
   };
 
 
-export const DELETE = async (req: Request, { params }: { params: { id: number } }) => {
+export const DELETE = async (req: NextRequest, { params }: { params: { id: number } }) => {
   if (req.method !== 'DELETE') {
     return new Response('Method not allowed', { status: 405 });
   }
 
   try {
-    await connectToDB();
+    
     const salesId = Number(params.id);
 
     await prismaClient.financeTimeline.deleteMany({

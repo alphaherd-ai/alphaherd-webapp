@@ -1,16 +1,17 @@
 import { connectToDB } from '../../../../utils/index';
 import prismaClient from '../../../../../prisma';
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
+import { NextRequest } from 'next/server';
 
-export const GET=async (req: Request,
+export const GET=async (req: NextRequest,
     { params }: { params: {id: number; } } )=> {
 
         if (req.method !== 'GET') {
             return new Response('Method not allowed',{status:405});
         } 
         try {
-            const inventoryId = await fetchInventoryId();
-            await connectToDB();
+            const inventoryId = await fetchInventoryId(req);
+            
             const inventory= await prismaClient.inventoryTimeline.findUnique({
                 where: { id: Number(params.id),inventorySectionId:inventoryId},
                 include:{
@@ -31,13 +32,13 @@ export const GET=async (req: Request,
         }
 }
 
-export const PUT = async (req: Request, { params }: { params: { id: number } }) => {
+export const PUT = async (req: NextRequest, { params }: { params: { id: number } }) => {
     if (req.method !== 'PUT') {
         return new Response('Method not allowed', { status: 405 });
     }
     try {
-        const inventoryId = await fetchInventoryId();
-        await connectToDB();
+        const inventoryId = await fetchInventoryId(req);
+        
         const { stockStatus, body } = await req.json();
         const item = await prismaClient.inventoryTimeline.findUnique({
             where: { id: Number(params.id),inventorySectionId:inventoryId },
@@ -78,14 +79,14 @@ export const PUT = async (req: Request, { params }: { params: { id: number } }) 
 }
 
 
-export const DELETE=async (req: Request,
+export const DELETE=async (req: NextRequest,
     { params }: { params: {id: number; } } )=> {
     if (req.method !== 'DELETE') {
                 return new Response('Method not allowed',{status:405});
             } 
             try {
-                const inventoryId = await fetchInventoryId();
-                await connectToDB();
+                const inventoryId = await fetchInventoryId(req);
+                
                 await prismaClient.inventoryTimeline.deleteMany({
                     where: { id: Number(params.id), inventorySectionId:inventoryId },
                 });

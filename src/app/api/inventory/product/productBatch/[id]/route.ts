@@ -4,15 +4,15 @@ import { Inventory, Stock } from '@prisma/client';
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 import { ProductBatchSchema } from '@/schemas/inventory/ productBatchValidation';
 
-export const GET=async (req: Request,
+export const GET=async (req: NextRequest,
     { params }: { params: {id: number; } } )=> {
 
         if (req.method !== 'GET') {
             return new Response('Method not allowed',{status:405});
         } 
         try {
-            const inventoryId=await fetchInventoryId();
-            await connectToDB();
+            const inventoryId=await fetchInventoryId(req);
+            
            const productBatch= await prismaClient.productBatch.findUnique({
                 where: { id: Number(params.id),inventorySectionId:inventoryId },
             });    
@@ -29,15 +29,15 @@ export const GET=async (req: Request,
         }
 }
 
-export const PUT=async (req: Request,
+export const PUT=async (req: NextRequest,
     { params }: { params: {id: number; } } )=> {
 
         if (req.method !== 'PUT') {
             return new Response('Method not allowed',{status:405});
         } 
         try {
-            await connectToDB();
-            const inventoryId=await fetchInventoryId();
+            
+            const inventoryId=await fetchInventoryId(req);
             const { productId,stockStatus,invoiceType,...body}=await req.json();
             const data={stockStatus,productId,invoiceType,...body};
             const validatedData = ProductBatchSchema.safeParse(data);
@@ -100,14 +100,14 @@ export const PUT=async (req: Request,
         }
 }
 
-export const DELETE=async (req: Request,
+export const DELETE=async (req: NextRequest,
     { params }: { params: {id: number; } } )=> {
     if (req.method !== 'DELETE') {
                 return new Response('Method not allowed',{status:405});
             } 
             try {
-                await connectToDB();
-                const inventoryId=await fetchInventoryId();
+                
+                const inventoryId=await fetchInventoryId(req);
                 await prismaClient.productBatch.delete({
                     where: {id: Number(params.id),inventorySectionId:inventoryId },
                 });

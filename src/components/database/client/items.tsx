@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import formatDateAndTime from '@/utils/formateDateTime';
+import { useAppSelector } from '@/lib/hooks';
 interface Clients {
     id: number;
     clientName: string;
@@ -21,9 +22,10 @@ interface Patients{
 
 const DatabaseClientTableItem = () => {
     const [clients, setClients] = useState<Clients[]>([]);
+    const appState = useAppSelector((state) => state.app)
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll`)
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`)
             .then(response => response.json())
             .then(data => setClients(data))
             .catch(error => console.error('Error fetching clients:', error));

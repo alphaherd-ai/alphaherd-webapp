@@ -3,14 +3,14 @@ import { connectToDB } from '../../../../../../utils/index';
 import prismaClient from '../../../../../../../prisma/index';
 import { Inventory, Stock } from '@prisma/client';
 
-export const POST = async (req: Request, { params }: { params: { type: string } }) => {
+export const POST = async (req: NextRequest, { params }: { params: { type: string } }) => {
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
   }
 
   try {
     const body: any = await req.json();
-    await connectToDB();
+    
     const purchases = await prismaClient.purchases.create({
       data: {
         ...body,

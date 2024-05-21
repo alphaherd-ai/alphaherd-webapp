@@ -15,6 +15,7 @@ import Select from 'react-select';
 import formatDateAndTime from "@/utils/formateDateTime";
 import { Stock } from "@prisma/client";
 import { select } from "@nextui-org/react";
+import { useAppSelector } from "@/lib/hooks";
 
 type PopupProps = {
     onClose: () => void;
@@ -46,6 +47,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
     const [products, setProducts] = useState<{ value: number; label: string }[]>([]);
     const [batches,setBatches] = useState<{value:number;label:string}[]>([])
     const [inventory, setInventory] = useState<any[]>([]);
+    const appState = useAppSelector((state) => state.app)
 
     useEffect(() => {
         fetchProducts();
@@ -53,7 +55,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
 
     const fetchProducts = async () => {
         try {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll`);
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${appState.currentBranchId}`);
             const formattedProducts = response.data.map((product: Products) => ({
                 value: product.id,
                 label: product.itemName,
@@ -66,7 +68,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
   const fetchProductBatch= async (selectedProduct:any) =>{
     try{
         console.log(selectedProduct)
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll/${selectedProduct.value}`);
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll/${selectedProduct.value}?branchId=${appState.currentBranchId}`);
         const formattedProductBatches=response.data.map((product:ProductBatch)=>({
             value:product.id,
             label:product.batchNumber
@@ -133,7 +135,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
         console.log(selectedProduct)
         if (selectedProduct.value) {
             try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${selectedProduct.value}`);
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${selectedProduct.value}?branchId=${appState.currentBranchId}`);
                 const data = response.data;
                 setSelectedProduct(data);
                 fetchProductBatch(selectedProduct);   
@@ -152,7 +154,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
     const handleBatchSelect = useCallback(async (selectedProduct: any, index: number) => {
         if (selectedProduct.value) {
             try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${selectedProduct.value}`);
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${selectedProduct.value}?branchId=${appState.currentBranchId}`);
                 const data = response.data;
                 const updatedInventory = [...inventory];
                 updatedInventory[index] = {

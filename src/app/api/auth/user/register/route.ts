@@ -1,5 +1,5 @@
 import prismaClient from '../../../../../../prisma';
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import bcrypt from 'bcrypt';
 import { redirect } from 'next/navigation'
 import { decrypt } from '../../../../../../auth';
@@ -57,6 +57,14 @@ export const POST = async (req : NextRequest) => {
         });
 
         console.log(orgBranchUserRole);
+        if(!userInviteString){
+            return new Response(JSON.stringify({ user }), {
+              status: 200,
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+        }
     }
     catch(error){
         console.error('Error:', error);
@@ -65,9 +73,7 @@ export const POST = async (req : NextRequest) => {
     }
     finally{
         if(userInviteString){
-            redirect(process.env.NEXT_PUBLIC_API_BASE_PATH + "/api/auth/login"); // successfull redirect to login page
+            return redirect(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/auth/login?userInviteString=${userInviteString}`); // successfull redirect to login page
         }
     }
-
-
 }

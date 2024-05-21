@@ -3,13 +3,13 @@ import { connectToDB } from '../../../../utils/index';
 import prismaClient from '../../../../../prisma';
 import { Inventory, InventoryTimeline, Stock } from '@prisma/client';
 
-export const POST = async (req: Request) => {
+export const POST = async (req: NextRequest) => {
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
   }
 
   try {
-    await connectToDB();
+    
     const url = new URL(req.url);
     const party = url.searchParams.getAll('party');
     const invoiceType = url.searchParams.getAll('invoiceType');

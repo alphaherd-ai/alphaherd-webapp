@@ -1,18 +1,17 @@
-import { connectToDB } from '../../../../../utils/index';
 import prismaClient from '../../../../../../prisma';
 import { fetchDatabaseId } from '@/utils/fetchBranchDetails';
 import { DistributorSchema } from '@/schemas/database/distributorValidation';
+import { NextRequest } from 'next/server';
 
 
-export const GET=async (req: Request,
+export const GET=async (req: NextRequest,
     { params }: { params: {id: number; } } )=> {
 
         if (req.method !== 'GET') {
             return new Response('Method not allowed',{status:405});
         } 
         try {
-            const databaseId = await fetchDatabaseId();
-            await connectToDB();
+            const databaseId = await fetchDatabaseId(req.url);
            const distributor= await prismaClient.distributors.findUnique({
                 where: { id: Number(params.id), databaseSectionId:databaseId },
             });
@@ -30,15 +29,14 @@ export const GET=async (req: Request,
         }
 }
 
-export const PUT=async (req: Request,
+export const PUT=async (req: NextRequest,
     { params }: { params: {id: number; } } )=> {
 
         if (req.method !== 'PUT') {
             return new Response('Method not allowed',{status:405});
         } 
         try {
-            const databaseId = await fetchDatabaseId();
-            await connectToDB();
+            const databaseId = await fetchDatabaseId(req.url);
             const body=await req.json();
             const validatedData = DistributorSchema.safeParse(body);
 
@@ -64,14 +62,14 @@ export const PUT=async (req: Request,
         }
 }
 
-export const DELETE=async (req: Request,
+export const DELETE=async (req: NextRequest,
     { params }: { params: {id: number; } } )=> {
     if (req.method !== 'DELETE') {
                 return new Response('Method not allowed',{status:405});
             } 
             try {
-                const databaseId = await fetchDatabaseId();
-                await connectToDB();
+                const databaseId = await fetchDatabaseId(req.url);
+                
                 await prismaClient.distributors.deleteMany({
                     where: { id: Number(params.id),databaseSectionId:databaseId },
                 });

@@ -3,12 +3,12 @@ import prismaClient from '../../../../../../prisma';
 import { fetchDatabaseId } from '@/utils/fetchBranchDetails';
 import { PatientSchema } from '@/schemas/database/patientValidation';
 
-export const POST = async (req: Request) => {
+export const POST = async (req: NextRequest) => {
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
   }
   try {
-    const databaseId = await fetchDatabaseId();
+    const databaseId = await fetchDatabaseId(req.url);
     const body = await req.json();
     const validatedData = PatientSchema.safeParse(body);
 
@@ -17,7 +17,7 @@ export const POST = async (req: Request) => {
         status: 422,
       });
     }
-    await connectToDB();
+    
 
     const patient = await prismaClient.patients.create({
       data:{ 

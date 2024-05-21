@@ -18,6 +18,7 @@ import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/rea
 import NewsalesBottomBar from './bottombar';
 import NewsalesTotalAmout from './totalamount';
 import axios from 'axios';
+import { useAppSelector } from '@/lib/hooks';
 
 interface AllProducts {
     id: number;
@@ -69,11 +70,12 @@ const NewsalesTable = () => {
     const [inventory, setInventory] = useState<any[]>([]);
     const [items, setItems] = useState(initialItems);
     const [products, setProducts] = useState<{ value: string; label: string }[]>([]);
+    const appState = useAppSelector((state) => state.app)
 
     const handleProductSelect = (selectedProduct: any, index: number) => {
         console.log('Selected product:', selectedProduct);
         if (selectedProduct.value) {
-            fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${selectedProduct.value}`)
+            fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${selectedProduct.value}?branchId=${appState.currentBranchId}`)
                 .then((response) => response.json())
                 .then((data) => {
                     const expiry = data.expiry;
@@ -225,7 +227,7 @@ const NewsalesTable = () => {
                     <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '>
                         <Popover placement="bottom-end" showArrow offset={10}>
                             <PopoverTrigger>
-                                <Button color="gray-400"
+                                <Button
                                     variant="solid"
                                     className="capitalize flex border-none bg-black text-white rounded-lg ">
                                     <div className='flex pr-2'><Image src={DownArrow} alt='DownArrow' className='w-4 h-4 ' /></div>Add Customer </Button>

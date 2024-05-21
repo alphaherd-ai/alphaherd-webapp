@@ -3,13 +3,13 @@ import prismaClient from '../../../../../../prisma';
 import { fetchDatabaseId } from '@/utils/fetchBranchDetails';
 
 
-export  const GET=async (req: Request)=> {
+export  const GET=async (req: NextRequest)=> {
   if (req.method !== 'GET') {
     return new Response('Method not allowed',{status:405});
 }
     try {
-        const databaseId = await fetchDatabaseId();
-        await connectToDB();
+        const databaseId = await fetchDatabaseId(req.url);
+        
         const distributors = await prismaClient.distributors.findMany({
           where:{
             databaseSectionId:databaseId

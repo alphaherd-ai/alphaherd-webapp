@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link';
+import { useAppSelector } from '@/lib/hooks';
 
 interface Clients {
     id: number;
@@ -20,14 +21,15 @@ interface Patients {
 const DatabasePatientTableItem = () => {
     const [patients, setPatients] = useState<Patients[]>([]);
     const [clients, setClients] = useState<{ [key: string]: string }>({});
+    const appState = useAppSelector((state) => state.app)
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/patients/getAll`)
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/patients/getAll?branchId=${appState.currentBranchId}`)
             .then(response => response.json())
             .then(data => setPatients(data))
             .catch(error => console.error('Error fetching patients from API:', error));
 
-        fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll`)
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`)
             .then(response => response.json())
             .then(data => {
                 const clientNames = data.reduce((acc: { [key: string]: string }, client: Clients) => {
@@ -49,7 +51,7 @@ const DatabasePatientTableItem = () => {
                         </Link>
                     </div>
                     <div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>
-                        {clients[patient.clientId] || "Loading..."}
+                        {clients[patient.clientid] || "Loading..."}
                     </div>
                     <div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>
                         {patient.species} & {patient.breed}

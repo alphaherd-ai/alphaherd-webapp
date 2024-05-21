@@ -3,15 +3,15 @@ import { fetchDatabaseId } from '@/utils/fetchBranchDetails';
 import prismaClient from '../../../../../../prisma';
 import { PatientSchema } from '@/schemas/database/patientValidation';
 
-export const GET=async (req: Request,
+export const GET=async (req: NextRequest,
     { params }: { params: {id: number; } } )=> {
 
         if (req.method !== 'GET') {
             return new Response('Method not allowed',{status:405});
         } 
         try {
-            const databaseId = await fetchDatabaseId();
-            await connectToDB();
+            const databaseId = await fetchDatabaseId(req.url);
+            
            const patient= await prismaClient.patients.findUnique({
                 where: { id: Number(params.id), databaseSectionId:databaseId },
             });
@@ -29,15 +29,15 @@ export const GET=async (req: Request,
         }
 }
 
-export const PUT=async (req: Request,
+export const PUT=async (req: NextRequest,
     { params }: { params: {id: number; } } )=> {
 
         if (req.method !== 'PUT') {
             return new Response('Method not allowed',{status:405});
         } 
         try {
-            const databaseId = await fetchDatabaseId();
-            await connectToDB();
+            const databaseId = await fetchDatabaseId(req.url);
+            
             const body=await req.json();
             const validatedData = PatientSchema.safeParse(body);
 
@@ -63,14 +63,14 @@ export const PUT=async (req: Request,
         }
 }
 
-export const DELETE=async (req: Request,
+export const DELETE=async (req: NextRequest,
     { params }: { params: {id: number; } } )=> {
     if (req.method !== 'DELETE') {
                 return new Response('Method not allowed',{status:405});
             } 
             try {
-                const databaseId = await fetchDatabaseId();
-                await connectToDB();
+                const databaseId = await fetchDatabaseId(req.url);
+                
                 await prismaClient.patients.deleteMany({
                     where: { id: Number(params.id),databaseSectionId:databaseId },
                 });

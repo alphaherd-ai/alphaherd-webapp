@@ -1,76 +1,90 @@
 "use client";
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { updateApp } from '@/lib/features/appSlice';
+import { UserState } from '@/lib/features/userSlice';
+import { useAppDispatch, useAppSelector } from '@/lib/hooks';
+import { isAdminOfOrg, isManagerOfBranch } from '@/utils/stateChecks';
+import React, { useEffect, useState } from 'react';
 
-const DropdownMenu = ({ apiUrl, parentId = null, onSelect }) => {
-  const [items, setItems] = useState([]);
-  const [activeSubmenu, setActiveSubmenu] = useState(null);
-  const menuRef = useRef(null);
+const DropdownMenu = () => {
 
-  const fetchData = useCallback(async () => {
-    try {
-      const response = await fetch(parentId ? `${apiUrl}/${parentId}` : apiUrl);
-      const data = await response.json();
-      setItems(data);
-      if (!parentId && data.length > 0) {
-        // If it's the root menu and items are fetched, select the first item by default
-        onSelect(data[0], null);
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
+  const [selectedOrg,setSelectedOrg] = useState(null);
+
+  const [orgAndBranchMapping, setOrgAndBranchMapping] = useState([]);
+
+  const [secondLevelItems, setSecondLevelItems] = useState([]);
+
+  const appState = useAppSelector((state) => state.app);
+
+  const user = useAppSelector((state) => state.user);
+
+  const dispatch = useAppDispatch();
+
+  async function fetchOrgAndBranchMapping() {
+    let resp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/navbar/dropdown?branchId=${appState.currentBranchId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include'
+    });
+    if (resp.ok) {
+      let body = await resp.json();
+      console.log(body)
+      setOrgAndBranchMapping(body);
     }
-  }, [apiUrl, parentId, onSelect]);
+  }
+
+  function handleOrgBranchSelect(orgBranch : any){
+
+    const isCurrentOrgAdmin = isAdminOfOrg((selectedOrg as any).id,user as UserState);
+    const isCurrentBranchManager = isManagerOfBranch(orgBranch.id,user as UserState);
+
+    dispatch(updateApp({
+      currentBranch : orgBranch,
+      currentBranchId : orgBranch.id,
+      currentOrg : selectedOrg,
+      currentOrgId : (selectedOrg as any).id,
+      isCurrentBranchManager : isCurrentBranchManager,
+      isCurrentOrgAdmin : isCurrentOrgAdmin
+    }));
+
+    window.location.reload();
+
+  }
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setActiveSubmenu(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    fetchOrgAndBranchMapping()
   }, []);
 
-  const handleItemClick = (index, item) => {
-    setActiveSubmenu(activeSubmenu === index ? null : index);
-    if (parentId) {
-      // If it's a branch, select it and close all dropdowns
-      onSelect(null, item);
-      setActiveSubmenu(null);
-    } else {
-      // If it's an organization, select it and reset the branch
-      onSelect(item, null);
-    }
-  };
 
   return (
-    <div ref={menuRef} className={`absolute ${parentId ? 'left-full top-0 ml-2' : 'top-full left-0 mt-2'} w-36 bg-white shadow-lg z-50`}>
-      {items.map((item, index) => (
-        <div key={item.id} className="relative">
-          <div
-            className="py-2 px-4 hover:bg-gray-200 cursor-pointer"
-            onClick={() => handleItemClick(index, item)}
-          >
-            {parentId ? item.branchName : item.orgName}
-            {!parentId && <span className="float-right">▶</span>}
-          </div>
-          {activeSubmenu === index && !parentId && (
-            <DropdownMenu
-              apiUrl={`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/organization/orgBranch`}
-              parentId={item.id}
-              onSelect={onSelect}
-            />
-          )}
-        </div>
-      ))}
+    <div className="relative">
+      <div className="absolute mt-2 w-48 bg-white rounded-lg shadow-lg">
+        {
+          orgAndBranchMapping.map((mapping: any, index) => {
+            return <button key={index} onClick={() => {
+              setSecondLevelItems(mapping.allowedBranches);
+              let org = mapping;
+              delete org.allowedBranches;
+              setSelectedOrg(org);
+            }} className="block px-4 py-2 text-gray-800 hover:bg-gray-200 focus:outline-none">
+              {mapping.orgName}
+            </button>
+          })
+        }
+        {
+          secondLevelItems.map((orgBranch: any, index) => {
+            return <div className="mt-2 w-48 bg-white rounded-lg shadow-lg">
+              <button key={index} className="block px-4 py-2 text-gray-800 hover:bg-gray-200 focus:outline-none" onClick={() => handleOrgBranchSelect(orgBranch)}>
+                {orgBranch.branchName}
+              </button>
+            </div>
+          })
+        }
+      </div>
     </div>
   );
 };
+
 
 export default DropdownMenu;

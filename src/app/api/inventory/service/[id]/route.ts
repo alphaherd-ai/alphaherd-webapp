@@ -2,14 +2,14 @@ import { connectToDB } from '../../../../../utils/index';
 import prismaClient from '../../../../../../prisma';
 import { ServiceSchema } from '@/schemas/inventory/serviceValidation';
 
-export const GET=async (req: Request,
+export const GET=async (req: NextRequest,
     { params }: { params: {id: number; } } )=> {
 
         if (req.method !== 'GET') {
             return new Response('Method not allowed',{status:405});
         } 
         try {
-            await connectToDB();
+            
            const service= await prismaClient.services.findUnique({
                 where: { id: Number(params.id) },
             });
@@ -27,14 +27,14 @@ export const GET=async (req: Request,
         }
 }
 
-export const PUT=async (req: Request,
+export const PUT=async (req: NextRequest,
     { params }: { params: {id: number; } } )=> {
 
         if (req.method !== 'PUT') {
             return new Response('Method not allowed',{status:405});
         } 
         try {
-            await connectToDB();
+            
             const body=await req.json();
             const validatedData = ServiceSchema.safeParse(body);
 
@@ -60,13 +60,13 @@ export const PUT=async (req: Request,
         }
 }
 
-export const DELETE=async (req: Request,
+export const DELETE=async (req: NextRequest,
     { params }: { params: {id: number; } } )=> {
     if (req.method !== 'DELETE') {
                 return new Response('Method not allowed',{status:405});
             } 
             try {
-                await connectToDB();
+                
                 await prismaClient.services.deleteMany({
                     where: { id: Number(params.id) },
                 });
