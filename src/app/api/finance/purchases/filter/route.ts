@@ -2,6 +2,7 @@
 import { connectToDB } from '../../../../../utils/index';
 import prismaClient from '../../../../../../prisma/index';
 import { FinanceTimeline } from '@prisma/client';
+import { NextRequest } from 'next/server';
 
 export const POST = async (req: NextRequest) => {
   if (req.method !== 'POST') {

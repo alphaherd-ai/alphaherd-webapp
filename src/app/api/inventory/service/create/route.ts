@@ -3,6 +3,7 @@ import prismaClient from '../../../../../../prisma';
 import { Inventory, type Services } from "@prisma/client";
 import { ServiceSchema } from '@/schemas/inventory/serviceValidation';
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
+import { NextRequest } from 'next/server';
 
 
 export const POST=async(req: NextRequest)=> {

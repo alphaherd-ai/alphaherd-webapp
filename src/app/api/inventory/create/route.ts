@@ -6,6 +6,7 @@ import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 import { check, validationResult } from 'express-validator';
 import initMiddleware from '@/lib/init-middleware';
 import validateMiddleware from '@/lib/validate-middleware';
+import { NextRequest } from 'next/server';
 
 const validateBody = initMiddleware(
   validateMiddleware([

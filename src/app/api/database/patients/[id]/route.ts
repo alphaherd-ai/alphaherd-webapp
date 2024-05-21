@@ -2,6 +2,7 @@ import { connectToDB } from '../../../../../utils/index';
 import { fetchDatabaseId } from '@/utils/fetchBranchDetails';
 import prismaClient from '../../../../../../prisma';
 import { PatientSchema } from '@/schemas/database/patientValidation';
+import { NextRequest } from 'next/server';
 
 export const GET=async (req: NextRequest,
     { params }: { params: {id: number; } } )=> {

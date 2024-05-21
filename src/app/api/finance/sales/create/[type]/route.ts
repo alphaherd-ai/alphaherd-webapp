@@ -2,6 +2,7 @@
 import { connectToDB } from '../../../../../../utils/index';
 import prismaClient from '../../../../../../../prisma';
 import { Stock } from '@prisma/client';
+import { NextRequest } from 'next/server';
 
 export const POST = async (req: NextRequest, { params }: { params: { type: string } }) => {
   if (req.method !== 'POST') {

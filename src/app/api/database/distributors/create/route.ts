@@ -2,6 +2,7 @@ import { connectToDB } from '../../../../../utils/index';
 import prismaClient from '../../../../../../prisma';
 import { fetchDatabaseId } from '@/utils/fetchBranchDetails';
 import { DistributorSchema } from '@/schemas/database/distributorValidation';
+import { NextRequest } from 'next/server';
 
 export const POST=async(req: NextRequest)=> {
   if (req.method !== 'POST') {

@@ -1,6 +1,7 @@
 import { connectToDB } from '../../../../../utils/index';
 import prismaClient from '../../../../../../prisma';
 import { fetchDatabaseId } from '@/utils/fetchBranchDetails';
+import { NextRequest } from 'next/server';
 
 
 export  const GET=async (req: NextRequest)=> {

@@ -1,6 +1,7 @@
 import { connectToDB } from '../../../../../utils/index';
 import prismaClient from '../../../../../../prisma';
 import { ServiceSchema } from '@/schemas/inventory/serviceValidation';
+import { NextRequest } from 'next/server';
 
 export const GET=async (req: NextRequest,
     { params }: { params: {id: number; } } )=> {

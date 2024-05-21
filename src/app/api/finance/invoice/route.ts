@@ -2,6 +2,7 @@ import { connectToDB } from '../../../../utils/index';
 import prismaClient from '../../../../../prisma';
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
+import { NextRequest } from 'next/server';
 
 export const GET = async (req: NextRequest, res: Response) => {
 

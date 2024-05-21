@@ -1,6 +1,7 @@
 // src/api/sales/get.ts
 import { connectToDB } from '../../../../../utils/index';
 import prismaClient from '../../../../../../prisma';
+import { NextRequest } from 'next/server';
 
 export const GET = async (req: NextRequest) => {
   if (req.method !== 'GET') {

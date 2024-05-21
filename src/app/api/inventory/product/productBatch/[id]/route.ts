@@ -3,6 +3,7 @@ import prismaClient from '../../../../../../../prisma';
 import { Inventory, Stock } from '@prisma/client';
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 import { ProductBatchSchema } from '@/schemas/inventory/ productBatchValidation';
+import { NextRequest } from 'next/server';
 
 export const GET=async (req: NextRequest,
     { params }: { params: {id: number; } } )=> {
