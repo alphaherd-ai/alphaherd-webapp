@@ -16,6 +16,8 @@ import Icons3 from "../../../assets/icons/home/1. Icons-24 (8).png"
 import Icons4 from "../../../assets/icons/home/1. Icons-24 (7).png"
 import Icons5 from "../../../assets/icons/home/1. Icons-24 (6).png"
 import Icons6 from "../../../assets/icons/home/1. Icons-24 (5).png"
+import printButton from "../../../assets/icons/home/1. Icons-24 (9).svg"
+import reciept from "../../../assets/icons/home/receipt_long.svg"
 
 
 interface Column {
@@ -27,10 +29,17 @@ interface Column {
 }
 
 const TableList: React.FC = () => {
-  const [isHovered, setIsHovered] = useState<boolean>(false);
   const [selectedOptions, setSelectedOptions] = useState<{ [key: number]: string }>({});
   const [clickedRowIndex, setClickedRowIndex] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  const phoneNumber = "8618284339";
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(phoneNumber).then(() => {
+      console.log("Tex Copied")
+    });
+  };
 
   const handleClick = (index: number, option: string) => {
     setSelectedOptions((prevSelectedOptions) => ({
@@ -39,6 +48,14 @@ const TableList: React.FC = () => {
     }));
     setClickedRowIndex(index);
     setIsModalOpen(true);
+  };
+
+  const handleClickForTabs = (index: number, option: string) => {
+    setSelectedOptions((prevSelectedOptions) => ({
+      ...prevSelectedOptions,
+      [index]: option,
+    }));
+    setClickedRowIndex(index);
   };
 
   const columns = [
@@ -77,13 +94,55 @@ const TableList: React.FC = () => {
       time: "9:30 - 5:30",
       service: "service",
     },
+    {
+      name: "star3",
+      patient: "Patient",
+      reason: "Lorem ipsum dolor sit amet consectetur.",
+      time: "9:30 - 5:30",
+      service: "service",
+    },
+    {
+      name: "star3",
+      patient: "Patient",
+      reason: "Lorem ipsum dolor sit amet consectetur.",
+      time: "9:30 - 5:30",
+      service: "service",
+    },
+    {
+      name: "star3",
+      patient: "Patient",
+      reason: "Lorem ipsum dolor sit amet consectetur.",
+      time: "9:30 - 5:30",
+      service: "service",
+    },
+    {
+      name: "star3",
+      patient: "Patient",
+      reason: "Lorem ipsum dolor sit amet consectetur.",
+      time: "9:30 - 5:30",
+      service: "service",
+    },
+    {
+      name: "star3",
+      patient: "Patient",
+      reason: "Lorem ipsum dolor sit amet consectetur.",
+      time: "9:30 - 5:30",
+      service: "service",
+    },
+    {
+      name: "star3",
+      patient: "Patient",
+      reason: "Lorem ipsum dolor sit amet consectetur.",
+      time: "9:30 - 5:30",
+      service: "service",
+    },
   ];
 
   return (
     <div className="flex">
       {/* Render Modal */}
       {isModalOpen && (
-        <div className="fixed top-0 right-0 h-full min-w-[740px] bg-gray-100 z-50 overflow-y-scroll mt-[5px] rounded-xl">
+        <div className="fixed top-0 right-0 h-full min-w-[745px] bg-gray-100 z-50 overflow-y-scroll mt-[5px] rounded-xl shadow-md">
           {/* Modal Content */}
           <div className="flex flex-col min-h-[720px]">
             <div className="w-[720px] min-h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border border-neutral-400 flex-col justify-center items-start gap-6 inline-flex">
@@ -121,12 +180,12 @@ const TableList: React.FC = () => {
                   Consultation Details
                 </div>
                 <div className="h-9 px-6 py-4 rounded-[5px] border border-gray-500 flex-col justify-center items-start gap-4 inline-flex">
-                  <div className="justify-start items-center gap-4 inline-flex">
+                  <div className="justify-start items-center gap-4 inline-flex border-1 border-gray-200 border-dashed px-2 py-1">
                     <div className="w-6 h-6 relative">
                       <Image src={Icons6} alt="" />
                     </div>
                     <div className="justify-start items-center gap-4 flex">
-                      <div className="text-gray-500 text-base font-bold ">
+                      <div className="text-gray-500 text-base">
                         Attach Image/Report
                       </div>
                     </div>
@@ -144,7 +203,7 @@ const TableList: React.FC = () => {
                   <div className="w-5 h-5 relative">
                     <Image src={Icons5} alt="" />
                   </div>
-                  <div className="text-white text-sm font-bold font-['Roboto']">
+                  <div className="text-white text-sm ">
                     View Previous
                   </div>
                 </div>
@@ -152,7 +211,7 @@ const TableList: React.FC = () => {
                   26th June, 2024
                 </div>
                 <div className="px-2 py-1 bg-zinc-900 rounded-[5px] justify-start items-center gap-1 flex">
-                  <div className="text-white text-sm font-bold font-['Roboto']">
+                  <div className="text-white text-sm ">
                     View Next
                   </div>
                   <div className="w-5 h-5 relative">
@@ -165,7 +224,7 @@ const TableList: React.FC = () => {
                   <div className="w-6 h-6 relative">
                     <Image src={Icons3} alt="" />
                   </div>
-                  <div className="grow shrink basis-0 text-white text-base font-bold ">
+                  <div className="grow shrink basis-0 text-white text-base">
                     Spike_Ultrasound.pdf
                   </div>
                 </div>
@@ -173,7 +232,7 @@ const TableList: React.FC = () => {
                   <div className="w-6 h-6 relative">
                     <Image src={Icons3} alt="" />
                   </div>
-                  <div className="grow shrink basis-0 text-white text-base font-bold ">
+                  <div className="grow shrink basis-0 text-white text-base">
                     Spike_Ultrasound.pdf
                   </div>
                 </div>
@@ -202,128 +261,76 @@ const TableList: React.FC = () => {
                           {" "}
                         </span>
                         <span className="text-gray-500 text-base font-bold ">
-                          8618284339
+                          {phoneNumber}
                         </span>
                       </div>
-                      <div className="grow shrink basis-0 h-6 justify-start items-start gap-2 flex">
-                        <div className="w-6 h-6 relative">
-                          <Image src={Icons16} alt="" />
+                      <div className="grow shrink basis-0 h-6 justify-start items-start gap-2 flex cursor-pointer" onClick={copyToClipboard}>
+                        <div className="w-4 mt-[3px]">
+                          <Image className="w-4 h-4" src={Icons16} alt="" />
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="self-stretch justify-start items-start gap-4 inline-flex">
-                <div className="grow shrink basis-0 px-6 py-4 bg-white rounded-[10px] flex-col justify-start items-start gap-4 inline-flex">
-                  <div className="self-stretch justify-start items-start gap-6 inline-flex">
-                    <div className="grow shrink basis-0 flex-col justify-start items-start gap-4 inline-flex">
-                      <div>
-                        <span className="text-neutral-400 text-base font-medium ">
-                          Patient Name:
-                        </span>
-                        <span className="text-gray-500 text-base font-medium ">
-                          {" "}
-                        </span>
-                        <span className="text-gray-500 text-base font-bold ">
-                          {columns[clickedRowIndex] &&
-                            columns[clickedRowIndex].patient}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-neutral-400 text-base font-medium ">
-                          Species:
-                        </span>
-                        <span className="text-gray-500 text-base font-medium ">
-                          {" "}
-                        </span>
-                        <span className="text-gray-500 text-base font-bold ">
-                          Monkey
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-neutral-400 text-base font-medium ">
-                          Breed:
-                        </span>
-                        <span className="text-gray-500 text-base font-medium ">
-                          {" "}
-                        </span>
-                        <span className="text-gray-500 text-base font-bold ">
-                          Capuchin
-                        </span>
-                      </div>
-                    </div>
-                    <div className="grow shrink basis-0 flex-col justify-start items-start gap-4 inline-flex">
-                      <div>
-                        <span className="text-neutral-400 text-base font-medium ">
-                          Age:
-                        </span>
-                        <span className="text-gray-500 text-base font-medium ">
-                          {" "}
-                        </span>
-                        <span className="text-gray-500 text-base font-bold ">
-                          1 yr 2m
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-neutral-400 text-base font-medium ">
-                          Gender:
-                        </span>
-                        <span className="text-gray-500 text-base font-medium ">
-                          {" "}
-                        </span>
-                        <span className="text-gray-500 text-base font-bold ">
-                          Male
-                        </span>
-                      </div>
-                    </div>
+              <div className="w-[100%] bg-white px-6 py-4 rounded-lg flex flex-col gap-4">
+                <div className="w-[100%] flex justify-start gap-[12.5rem]">
+                  <div>
+                    <span className="text-neutral-400 text-base font-medium">Patient Name: </span>
+                    <span className="text-gray-500 text-base font-bold">{columns[clickedRowIndex] &&
+                          columns[clickedRowIndex].patient}</span>
                   </div>
+                  <div>
+                  <span className="text-neutral-400 text-base font-medium">Age: </span>
+                  <span className="text-gray-500 text-base font-bold">1 yr 2m</span>
+                  </div>
+                </div>
+                <div className="w-[100%] flex justify-start gap-[13rem]">
+                  <div>
+                    <span className="text-neutral-400 text-base font-medium">Species: </span>
+                    <span className="text-gray-500 text-base font-bold">Monkey</span>
+                  </div>
+                  <div>
+                  <span className="text-neutral-400 text-base font-medium">Gender: </span>
+                  <span className="text-gray-500 text-base font-bold">Male</span>
+                  </div>
+                </div>
+                <div className="w-[100%] flex justify-start gap-[12.5rem]">
+                  <div>
+                    <span className="text-neutral-400 text-base font-medium">Breed: </span>
+                    <span className="text-gray-500 text-base font-bold">Capuchin</span>
+                  </div>
+                  
                 </div>
               </div>
-              <div className="self-stretch h-[92px] px-6 py-4 bg-white rounded-[10px] flex-col justify-start items-start gap-4 flex">
-                <div className="self-stretch justify-start items-center gap-4 inline-flex">
-                  <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-4 flex">
-                    <div className="grow shrink basis-0 text-neutral-400 text-base font-medium ">
-                      Reason for Visit
-                    </div>
-                  </div>
-                </div>
-                <div className="self-stretch justify-start items-center gap-4 inline-flex">
-                  <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-4 flex">
-                    <div className="text-gray-500 text-base font-medium ">
-                      {columns[clickedRowIndex] &&
-                        columns[clickedRowIndex].reason}
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <div className="w-[688px] bg-white px-5 py-4 rounded-xl flex flex-col gap-3">
+      <div className="flex items-center gap-4">
+        <div>
+          <span className="text-neutral-400 text-base font-medium">Reason For Visit</span>
+        </div>
+      </div>
+      <div>
+        <span className="text-neutral-500 text-base font-medium">{columns[clickedRowIndex] &&
+                        columns[clickedRowIndex].reason}</span>
+      </div>
+
+    </div>
+                      
               <Symptoms />
               <Vitals />
               <Diagnosis />
-              <div className="self-stretch justify-start items-start gap-4 inline-flex">
-                <div className="grow shrink basis-0 h-11 px-4 py-[13px] bg-white rounded-[5px] justify-start items-center gap-3.5 flex">
-                  <div className="grow shrink basis-0 text-neutral-400 text-base font-medium ">
-                    Search for a service, product or treatment template
-                  </div>
-                  <div className="w-[23.19px] h-[23.19px] relative">
-                    <div className="w-[23.19px] h-[23.19px] left-0 top-0 absolute ">
-                      <Image src={search} alt="" />
-                    </div>
-                  </div>
+              <div className="w-[688px] bg-white h-15 rounded-md flex justify-center items-center p-2 px-2 gap-2">
+                <input className="border-0 outline-none h-[100%] text-neutral-400 text-base font-medium  w-[90%]" type="text" placeholder="Search for a service, product or treatment template" />
+                <div className="w-4">
+                  <Image src={search} alt="search" />
                 </div>
               </div>
               <Services />
               <Products />
-              <div className="self-stretch justify-start items-start gap-4 inline-flex">
-                <div className="grow shrink basis-0 h-11 px-4 py-[13px] bg-white rounded-[5px] justify-start items-center gap-3.5 flex">
-                  <div className="grow shrink basis-0 text-neutral-400 text-base font-medium ">
-                    Search for medication
-                  </div>
-                  <div className="w-[23.19px] h-[23.19px] relative">
-                    <div className="w-[23.19px] h-[23.19px] left-0 top-0 absolute ">
-                    <Image src={search} alt="" />
-                    </div>
-                  </div>
+              <div className="w-[688px] bg-white h-11 rounded-md flex justify-center items-center p-2 px-2 gap-2">
+                <input className="border-0 outline-none h-[100%] text-neutral-400 text-base font-medium  w-[90%]" type="text" placeholder="Search for medication" />
+                <div className="w-4">
+                  <Image src={search} alt="search" />
                 </div>
               </div>
               <Medication />
@@ -354,18 +361,20 @@ const TableList: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="self-stretch justify-end items-start gap-4 inline-flex">
-                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
-                  <div className="w-6 h-6 relative" />
-                  <div className="text-white text-base font-bold ">
+              <div className="w-full flex justify-end gap-2">
+                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex hover:cursor-pointer">
+                  <div className="w-6 h-6">
+                    <Image src={printButton} alt="printButton" />
+                  </div>
+                  <div className="text-white text-base">
                     Print Prescription
                   </div>
                 </div>
-                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
-                  <div className="w-5 h-5 relative">
-                    <div className="w-5 h-5 left-0 top-0 absolute bg-zinc-300" />
+                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex hover:cursor-pointer">
+                  <div className="w-5 h-5 ">
+                    <Image src={reciept} alt="reciept" />
                   </div>
-                  <div className="text-white text-base font-bold ">
+                  <div className="text-white text-base ">
                     Create Invoice
                   </div>
                 </div>
@@ -376,31 +385,23 @@ const TableList: React.FC = () => {
       )}
 
       {/* Render Table */}
-      <div>
+      <div className="w-full">
         {columns.map((col, index) => {
           const selectedOption = selectedOptions[index] || "In Progress";
 
           return (
             <div
               key={index}
-              className="flex w-[1480px] h-[55px] px-6 bg-white border-[1px] border-solid border-r-[#A2A3A3] border-t-0 border-l-[#A2A3A3] border-b-[#A2A3A3] justify-start items-center gap-4 cursor-pointer"
+              className="flex w-full h-16 px-4 bg-white border-[1px] border-solid border-r-[#A2A3A3] border-t-0 border-l-[#A2A3A3] border-b-[#A2A3A3] justify-start items-center gap-4 cursor-pointer "
               onClick={() => handleClick(index, "Checked in")}
             >
-              <div
-                className=""
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-              >
+              <div className="mr-[5px]">
                 <div className="w-8 h-8 flex justify-center items-center gap-2">
                   <div className="w-6 h-6 ">
                     <Image src={Icons2} alt="" />
                   </div>
                 </div>
-                {isHovered && (
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 bg-black bg-opacity-75 text-white px-2 py-1 rounded-md dialogue-box">
-                    Mark as complete
-                  </div>
-                )}
+                
               </div>
               <div className="w-[16.6%] ">
                 <span className="text-neutral-400 text-base ">
@@ -436,7 +437,7 @@ const TableList: React.FC = () => {
                           ? "bg-blue-600 text-white"
                           : "bg-gray-100 text-neutral-400"
                       } rounded-tl rounded-bl cursor-pointer`}
-                      onClick={() => handleClick(index, "Checked in")}
+                      onClick={() => handleClickForTabs(index, "Checked in")}
                     >
                       <div className="text-sm font-bold ">
                         Checked in
@@ -448,7 +449,7 @@ const TableList: React.FC = () => {
                           ? "bg-green-600 text-white"
                           : "bg-gray-100 text-neutral-400"
                       } rounded-tr-[5px] rounded-br-[5px] cursor-pointer`}
-                      onClick={() => handleClick(index, "In Progress")}
+                      onClick={() => handleClickForTabs(index, "In Progress")}
                     >
                       <div className="text-sm font-bold ">
                         In Progress
