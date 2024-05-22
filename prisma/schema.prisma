@@ -12,6 +12,11 @@ enum Stock {
   StockIN
   StockOUT
 }
+enum FinanceSalesType {
+  Estimate
+  Invoice
+  Return
+}
 
 enum Inventory {
   None
@@ -245,10 +250,10 @@ model Sales {
   shipping         Int?
   adjustment       Int?
   totalCost        Int?
-  overallDiscount  Int?
+  overallDiscount  String?
   totalQty         Int?
   status           String?
-  type             String?
+  type             FinanceSalesType?
   items            Items[]
   financeTimeline  FinanceTimeline[]
   FinanceSection   FinanceSection?   @relation(fields: [financeSectionId], references: [id])
@@ -317,9 +322,9 @@ model Transactions {
 
 model Items {
   id               Int             @id @default(autoincrement())
-  taxPercent       Int
-  taxAmount        Int
-  totalAmount      Int
+  taxPercent       Int?
+  taxAmount        Int?
+  totalAmount      Int?
   reasons          String?
   category         String?
   quantity         Int?
@@ -359,7 +364,7 @@ model FinanceTimeline {
   id               Int             @id @default(autoincrement())
   salesId          Int?
   sale             Sales?          @relation(fields: [salesId], references: [id])
-  type             String?
+  type             FinanceSalesType?
   createdAt        DateTime
   purchasesId      Int?
   purchases        Purchases?      @relation(fields: [purchasesId], references: [id])

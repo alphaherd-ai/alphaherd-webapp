@@ -6,6 +6,7 @@ import Link from 'next/link';
 import closeicon from "../../../../assets/icons/inventory/closeIcon.svg";
 import arrowicon from "../../../../assets/icons/inventory/arrow.svg";
 import Select from 'react-select';
+import { useAppSelector } from "@/lib/hooks";
 
 type PopupProps = {
     onClose: () => void;
@@ -16,6 +17,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
     const [lastStep, setLastStep] = useState(false);
     const [formData, setFormData] = useState<any>({});
     const [buttonDisabled, setButtonDisabled] = useState(false);
+    const appState = useAppSelector((state) => state.app)
+
 
     const handleContinueClick = () => {
         setLastStep(true);
@@ -26,7 +29,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
             setButtonDisabled(true);
             const selectedProviders = formData.providers.map((provider:any) => provider.value);
     
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/create`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

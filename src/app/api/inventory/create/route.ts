@@ -4,19 +4,8 @@ import prismaClient from '../../../../../prisma';
 import { Inventory, type ProductBatch } from "@prisma/client";
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 import { check, validationResult } from 'express-validator';
-import initMiddleware from '@/lib/init-middleware';
-import validateMiddleware from '@/lib/validate-middleware';
 import { NextRequest } from 'next/server';
 
-const validateBody = initMiddleware(
-  validateMiddleware([
-    check('first_name').isLength({ min: 1, max: 40 }),
-    check('day').isInt({ min: 1, max: 31 }),
-    check('gender').isIn(['male', 'female']),
-    check('mobile_phone').isMobilePhone(['th-TH']),
-    check('boolean').isBoolean(),
-  ], validationResult)
-);
 
 export const POST = async (req: NextRequest,res:Response) => {
   if (req.method !== 'POST') {
@@ -24,16 +13,10 @@ export const POST = async (req: NextRequest,res:Response) => {
   }
 
   try {
-    await validateBody(req, res);
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return new Response(JSON.stringify({errors:errors.array()}), {
-        status: 422,
-      });  
-    }
-    const inventoryId = await fetchInventoryId(req);
     
+    
+    const inventoryId = await fetchInventoryId(req);
+    await connectToDB();
     const {objectId,inventoryType, stockStatus,invoiceType,...restOfBody } = await req.json();
     console.log(restOfBody);
 
