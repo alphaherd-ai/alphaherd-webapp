@@ -18,54 +18,15 @@ import DropdownIcon from './icons/dropdownIcon';
 import { updateApp } from '@/lib/features/appSlice';
 import { RootState } from '@/lib/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCookie } from 'cookies-next';
+import { isAdminOfOrg, isManagerOfBranch } from '@/utils/stateChecks';
 
 const Navbar = () => {
   const router = useRouter() as any;
   const [isCardOpen, setIsCardOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedOrg, setSelectedOrg] = useState(null);
-  const [selectedBranch, setSelectedBranch] = useState(null);
   const dispatch=useDispatch();
-  const { currentOrg, currentBranch } = useSelector((state: RootState) => state.app);
-  useEffect(() => {
-    const storedOrg = JSON.parse(localStorage.getItem('selectedOrg')!);
-    const storedBranch = JSON.parse(localStorage.getItem('selectedBranch')!);
-    
-    if (storedOrg) setSelectedOrg(storedOrg);
-    if (storedBranch) setSelectedBranch(storedBranch);
-    
-    if (!currentOrg || !currentBranch) {
-      const fetchInitialData = async () => {
-        try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/organization/getAll`);
-          const data = await response.json();
-          if (data.length > 0) {
-            const firstOrg = data[0];
-            setSelectedOrg(firstOrg);
-            if (firstOrg.branches && firstOrg.branches.length > 0) {
-              const firstBranch = firstOrg.branches[0];
-              setSelectedBranch(firstBranch);
-              localStorage.setItem('selectedOrg', JSON.stringify(firstOrg));
-              localStorage.setItem('selectedBranch', JSON.stringify(firstBranch));
-              dispatch(updateApp({
-                currentOrg: firstOrg, currentBranch: firstBranch,
-                currentOrgId: null,
-                currentBranchId: null,
-                isCurrentOrgAdmin: undefined,
-                isCurrentBranchManager: undefined,
-                currentUrl: null
-              }));
-            }
-          }
-        } catch (error) {
-          console.error("Error fetching initial data:", error);
-        }
-      };
-
-      fetchInitialData();
-    }
-  }, [currentOrg, currentBranch, dispatch]);
+  const user = useAppSelector((state) => state.user);
+  const appState = useAppSelector((state) => state.app);
 
   const handleClick = () => {
     setIsCardOpen(!isCardOpen);
@@ -74,30 +35,6 @@ const Navbar = () => {
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
-
-  const handleSelect = useCallback((org: any, branch: any) => {
-    if (org) setSelectedOrg(org);
-    if (branch) setSelectedBranch(branch);
-    dispatch(updateApp({
-      currentOrg: org,
-      currentBranch: branch,
-      currentOrgId: null,
-      currentBranchId: null,
-      isCurrentOrgAdmin: undefined,
-      isCurrentBranchManager: undefined,
-      currentUrl: null
-    }));
-    setCookie('currentOrg', org, { path: '/' });
-    setCookie('currentBranch', branch, { path: '/' });
-    if (branch && org) {
-      // Store the selection in local storage
-      localStorage.setItem('selectedOrg', JSON.stringify(org));
-      localStorage.setItem('selectedBranch', JSON.stringify(branch));
-    }
-  }, [dispatch, setSelectedOrg, setSelectedBranch]);
-  
-
-  const user = useAppSelector((state) => state.user);
   const currentRoute = usePathname();
   if (user.name === "" || currentRoute.startsWith("/auth")) return null;
 
@@ -138,15 +75,11 @@ const Navbar = () => {
               className='py-2 px-4 bg-navBar border-none text-white rounded cursor-pointer transition-all flex items-center'
               onClick={toggleDropdown}
             >
-              {selectedOrg ? selectedOrg.orgName : "Organization"}
-              {selectedBranch ? `, ${selectedBranch.branchName}` : ""}
-              <DropdownIcon fill="#fff" className="ml-2" />
+              {appState.currentOrg.orgName}/{appState.currentBranch.branchName}
+              <DropdownIcon fill="#fff"/>
             </button>
             {isDropdownOpen && (
-              <DropdownMenu 
-                apiUrl={`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/organization/getAll`} 
-                onSelect={handleSelect} 
-              />
+              <DropdownMenu/>
             )}
           </div>
           <Link className='no-underline flex pl-6' href='#'>

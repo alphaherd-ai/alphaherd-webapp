@@ -19,6 +19,22 @@ import NewsalesBottomBar from './bottombar';
 import NewsalesTotalAmout from './totalamount';
 import axios from 'axios';
 import { DataContext } from './DataContext';
+import { useAppSelector } from '@/lib/hooks';
+
+interface AllProducts {
+    id: number;
+    date: string;
+    time: string;
+    quantity: number;
+    batchNumber: string;
+    expiry: string;
+    costPrice: number;
+    sellingPrice: number;
+    itemName: string;
+    hsnCode: string;
+    category: string;
+    providers: string[];
+}
 
 const NewsalesTable = () => {
     const { tableData, setTableData } = useContext(DataContext);
@@ -52,6 +68,82 @@ const NewsalesTable = () => {
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [isChecked, setChecked] = useState(false);
     const [items, setItems] = useState(initialItems);
+    const [products, setProducts] = useState<{ value: string; label: string }[]>([]);
+    const appState = useAppSelector((state) => state.app)
+
+    const handleProductSelect = (selectedProduct: any, index: number) => {
+        console.log('Selected product:', selectedProduct);
+        if (selectedProduct.value) {
+            fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${selectedProduct.value}?branchId=${appState.currentBranchId}`)
+                .then((response) => response.json())
+                .then((data) => {
+                    const expiry = data.expiry;
+                    const updatedInventory = [...inventory];
+                    updatedInventory[index] = {
+                        ...updatedInventory[index],
+                        id: data.id,
+                        date: data.date,
+                        time: data.time,
+                        quantity: data.quantity,
+                        batchNumber: data.batchNumber,
+                        expiry: expiry,
+                        costPrice: data.costPrice,
+                        sellingPrice: data.sellingPrice,
+                        itemName: data.itemName,
+                        hsnCode: data.hsnCode,
+                        category: data.category,
+                        providers: data.providers,
+                    };
+                    setInventory(updatedInventory);
+                })
+                .catch((error) =>
+                    console.error("Error fetching product details from API:", error)
+                );
+        }
+    };
+
+    const handleUpdateInventory = async () => {
+        try {
+            for (const item of inventory) {
+                const { id, date, time, quantity, batchNumber, expiry, costPrice, sellingPrice, itemName, hsnCode, category, providers } = item;
+                const invoiceType = "Manual";
+                const body = {
+                    invoiceType,
+                    date,
+                    quantity,
+                    batchNumber,
+                    expiry,
+                    costPrice,
+                    sellingPrice,
+                    itemName,
+                    hsnCode,
+                    category,
+                    providers,
+                };
+                const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${id}`, body);
+                console.log('Updated inventory item:', response.data);
+            }
+            alert('Inventory updated successfully');
+        } catch (error) {
+            console.error("Error updating inventory:", error);
+            alert('Error updating inventory. Please try again.');
+        }
+    };
+
+    useEffect(() => {
+        fetch("${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll")
+            .then((response) => response.json())
+            .then((data) => {
+                const formattedProducts = data.map((product: AllProducts) => ({
+                    value: product.id,
+                    label: product.itemName,
+                }));
+                setProducts(formattedProducts);
+            })
+            .catch((error) =>
+                console.error("Error fetching data from API:", error)
+            );
+    }, []);
 
     useEffect(() => {
         if (!disableButton && inputRef.current) {
@@ -135,7 +227,7 @@ const NewsalesTable = () => {
                     <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '>
                         <Popover placement="bottom-end" showArrow offset={10}>
                             <PopoverTrigger>
-                                <Button color="gray-400"
+                                <Button
                                     variant="solid"
                                     className="capitalize flex border-none bg-black text-white rounded-lg ">
                                     <div className='flex pr-2'><Image src={DownArrow} alt='DownArrow' className='w-4 h-4 ' /></div>Add Customer </Button>

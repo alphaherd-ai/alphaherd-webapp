@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Tooltip, Button } from "@nextui-org/react";
 import InventoryProductTableBottombar from './bottombar'; 
+import { useAppSelector } from '@/lib/hooks';
 
 interface Products {
   id: number;
@@ -15,14 +16,15 @@ interface Products {
 const ProductAllItem = () => {
   const [products, setProducts] = useState<Products[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [productsPerPage] = useState(10); 
+  const [productsPerPage] = useState(10);
+  const appState = useAppSelector((state) => state.app)
 
   useEffect(() => {
     fetchProducts();
   }, []);
 
   const fetchProducts = () => {
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll`)
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${appState.currentBranchId}`)
       .then(response => response.json())
       .then(data => setProducts(data.reverse()))
       .catch(error => console.error('Error fetching data:', error));

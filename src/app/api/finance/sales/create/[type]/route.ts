@@ -10,7 +10,7 @@ export const POST = async (req: Request, { params }: { params: { type: FinanceSa
 
   try {
     const body: any = await req.json();
-    await connectToDB();
+    
     const sales = await prismaClient.sales.create({
       data: {
         ...body,

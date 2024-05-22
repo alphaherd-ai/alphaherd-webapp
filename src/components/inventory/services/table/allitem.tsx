@@ -21,7 +21,7 @@ const ServicesAllItem = () => {
   const [services, setServices] = useState<Services[]>([]);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/getAll`)
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/getAll?branchId=${appState.currentBranchId}`)
     .then(response => response.json())
     .then(data => setServices(data))
     .catch(error => console.error('Error fetching data:', error));

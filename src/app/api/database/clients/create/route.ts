@@ -1,14 +1,14 @@
-import { connectToDB } from '../../../../../utils/index';
 import prismaClient from '../../../../../../prisma';
 import { fetchDatabaseId } from '@/utils/fetchBranchDetails';
 import { ClientSchema } from '@/schemas/database/clientValidation';
+import { NextRequest } from 'next/server';
 
-export const POST=async(req: Request)=> {
+export const POST=async(req: NextRequest)=> {
   if (req.method !== 'POST') {
     return new Response('Method not allowed',{status:405});
 } 
     try {
-      const databaseId = await fetchDatabaseId();
+      const databaseId = await fetchDatabaseId(req.url);
       const body = await req.json();
       const validatedData = ClientSchema.safeParse(body);
 

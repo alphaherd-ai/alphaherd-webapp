@@ -4,9 +4,10 @@ import prismaClient from '../../../../../prisma';
 import { Inventory, type ProductBatch } from "@prisma/client";
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 import { check, validationResult } from 'express-validator';
+import { NextRequest } from 'next/server';
 
 
-export const POST = async (req: Request,res:Response) => {
+export const POST = async (req: NextRequest,res:Response) => {
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
   }

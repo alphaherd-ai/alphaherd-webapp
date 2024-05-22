@@ -7,8 +7,13 @@ import pfpimg from "../../../../assets/icons/settings/pfpimg.png"
 import branchlogo from "../../../../assets/icons/settings/branchlogo.png"
 import React, { useState, useEffect } from 'react';
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
+import OrganisationNavbar from "../navbar/navbar"
+
+import { useAppSelector } from "@/lib/hooks";
 
 export const MyOrganisationSettings = () => {
+
+    const appState = useAppSelector((state) => state.app);
 
     return (
 
@@ -16,6 +21,7 @@ export const MyOrganisationSettings = () => {
              <div className="w-full h-full">
       
             <div className="w-full h-full mt-[26px]">
+            <OrganisationNavbar/>
               <div className="w-full h-full px-4 py-5 bg-gray-100 border border-neutral-400 flex-col justify-start items-start gap-4 flex">
                     <div className="w-full flex gap-4">
                         <div className="w-3/12 px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-4 flex">
@@ -34,57 +40,51 @@ export const MyOrganisationSettings = () => {
                         <div className="flex flex-col gap-4 w-9/12">
                             <div className="w-full h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                 <div className="text-gray-500 text-base font-bold ">Name:</div>
-                                <input className="w-10/12 h-8 border-0 p-1" type="text" name="" id="" defaultValue={"Pet’s First Hospital HRBR Layout"} />
+                                <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.orgName}</div>
                             </div>
                             <div className="w-full h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                 <div className="text-gray-500 text-base font-bold ">Address:</div>
-                                <input className="w-10/12 h-8 border-0 p-1" type="text" name="" id="" defaultValue={"47/38, 14th Cross, Addagalapura, Bangalore"} />
+                                <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.address}</div>
                             </div>
                             <div className="w-full h-14 rounded-[10px] justify-start items-center gap-2 flex">
-                                <div className="w-6/12 h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
+                                <div className="w-6/12 h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center  gap-4 flex">
                                     <div className="text-gray-500 text-base font-bold ">State:</div>
-                                    <input className="w-10/12 h-8 border-0 p-1" type="text" name="" id="" defaultValue={"Karnataka"} />
-                                </div>
-                                <div className="w-6/12 h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
+                                    <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.state}</div>                                </div>
+                                <div className="w-6/12 h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center  gap-4 flex">
                                     <div className="text-gray-500 text-base font-bold ">Pincode:</div>
-                                    <input className="w-10/12 h-8 border-0 p-1" type="text" name="" id="" defaultValue={"560070"} />
-                                </div>
+                                    <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.pincode}</div>                                </div>
                             </div>
-                            <div className="w-full h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
+                            <div className="w-full h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center  gap-4 flex">
                                 <div className="text-gray-500 text-base font-bold ">Email:</div>
-                                <input className="w-10/12 h-8 border-0 p-1" type="text" name="" id="" defaultValue={"abc@gmail.com"} />
-                            </div>
+                                <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.orgEmail}</div>                            </div>
                         </div>
                     </div>
                     <div className="flex flex-col gap-2 w-full">
                         <div className="w-full h-14 rounded-[10px] justify-start items-center gap-2 flex">
-                            <div className="w-6/12 h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
+                            <div className="w-6/12 h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center  gap-4 flex">
                                 <div className="text-gray-500 text-base font-bold ">Phone No.:</div>
-                                <input className="w-10/12 h-8 border-0 p-1" type="text" name="" id="" defaultValue={"+91 "} />
-                            </div>
+                                <div className="w-8/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.phoneNo}</div>                            </div>
                             <div className="w-6/12 h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                 <div className="text-gray-500 text-base font-bold ">Alternate Phone No.:</div>
-                                <input className="w-10/12 h-8 border-0 p-1" type="text" name="" id="" defaultValue={"+91"} />
+                                <input className="w-6/12 h-8 border-0 p-1 text-gray-500 text-base" type="text" name="" id="" defaultValue={"+91"} />
                             </div>
                         </div>
                         <div className="w-full h-14 rounded-[10px] justify-start items-center gap-2 flex">
                             <div className="w-6/12 h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                 <div className="text-gray-500 text-base font-bold ">GSTIN:</div>
-                                <input className="w-10/12 h-8 border-0 p-1" type="text" name="" id="" defaultValue={"+91"} />
-                            </div>
+                                <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.gstNo}</div>                            </div>
                             <div className="w-6/12 h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                 <div className="text-gray-500 text-base font-bold ">PAN Number:</div>
-                                <input className="w-10/12 h-8 border-0 p-1" type="text" name="" id="" defaultValue={"+91"} />
+                                <input className="w-8/12 h-8 border-0 p-1 text-gray-500 text-base" type="text" name="" id="" defaultValue={"+91"} />
                             </div>
                         </div>
                         <div className="w-full h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                             <div className="text-gray-500 text-base font-bold ">Website:</div>
-                            <input className="w-10/12 h-8 border-0 p-1" type="text" name="" id="" defaultValue={"petfirst.com"} />
+                            <input className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base" type="text" name="" id="" defaultValue={"petfirst.com"} />
                         </div>
                         <div className="w-full h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                             <div className="text-gray-500 text-base font-bold ">Description:</div>
-                            <input className="w-10/12 h-8 border-0 p-1" type="text" name="" id="" defaultValue={"24/7 Hospital"} />
-                        </div>
+                            <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.description}</div>                        </div>
                     </div>
                     <div className="w-full h-[228px] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                         <div className="flex items-center justify-between w-full gap-2">

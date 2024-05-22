@@ -8,8 +8,7 @@ export interface AppState {
   currentOrg: any,
   currentBranch: any,
   isCurrentOrgAdmin: Boolean,
-  isCurrentBranchManager: Boolean,
-  currentUrl: string | null // Add this line
+  isCurrentBranchManager: Boolean
 }
 
 const initialState: AppState = {
@@ -18,8 +17,7 @@ const initialState: AppState = {
   currentOrg: null,
   currentBranch: null,
   isCurrentOrgAdmin: false,
-  isCurrentBranchManager: false,
-  currentUrl: null // Add this line
+  isCurrentBranchManager: false
 };
 
 export const appSlice = createSlice({
@@ -32,9 +30,6 @@ export const appSlice = createSlice({
       const newState = { ...state, ...action.payload };
       return newState;
     },
-    updateCurrentUrl: (state, action: PayloadAction<string>) => { // Add this action
-      state.currentUrl = action.payload;
-    },
     deleteApp: (state, action: PayloadAction<AppState>) => {
       console.log("Inside Delete App");
       return initialState;
@@ -42,5 +37,5 @@ export const appSlice = createSlice({
   },
 });
 
-export const { updateApp, updateCurrentUrl } = appSlice.actions; // Export the new action
+export const { updateApp } = appSlice.actions; // Export the new action
 export default appSlice.reducer;

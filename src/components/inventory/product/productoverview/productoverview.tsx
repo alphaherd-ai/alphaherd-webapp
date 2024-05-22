@@ -20,6 +20,7 @@ import theme from './theme';
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from "next/navigation"
 import { response } from "express"
+import { useAppSelector } from "@/lib/hooks"
 
 
 interface AllProducts {
@@ -62,16 +63,17 @@ interface AllProducts {
     const [inventory, setInventory] = useState<Inventory[]>([]);
     const url = useSearchParams();
     const id = url.get('id');
+    const appState = useAppSelector((state) => state.app)
   
     useEffect(() => {
-      fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${id}`)
+      fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${id}?branchId=${appState.currentBranchId}`)
         .then(response => response.json())
         .then(data => setProduct(data))
         .catch(error => console.error('Error fetching product:', error));
     }, [id]);
   
     useEffect(() => {
-      fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll`)
+      fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${appState.currentBranchId}`)
         .then(response => response.json())
         .then(data => {
           const filteredProducts = data.filter((item: AllProducts) => item.itemName === product?.itemName)
@@ -84,7 +86,7 @@ interface AllProducts {
   
     useEffect(() => {
       if (product && products.length > 0) {
-        fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/getAll`)
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/getAll?branchId=${appState.currentBranchId}`)
           .then(response => response.json())
           .then(data => {
             const filteredInventory = data.filter((item: Inventory) =>
@@ -154,7 +156,7 @@ interface AllProducts {
 
                         <Popover placement="left" showArrow offset={10}>
                             <PopoverTrigger>
-                                <Button color="gray-400"
+                                <Button
                                     variant="solid"
                                     className="capitalize flex border-none  text-gray rounded-lg ">
                                     <div className='w-12 h-12 px-[11px] py-2.5 bg-white rounded-[5px] border border-solid border-stone-300 justify-center items-center gap-2 flex'>   <Image src={optionicon} alt="option"></Image></div></Button>
@@ -386,7 +388,7 @@ interface AllProducts {
 
                                     <Popover placement="left" showArrow offset={10}>
                                         <PopoverTrigger>
-                                            <Button color="gray-400"
+                                            <Button
                                                 variant="solid"
                                                 className="capitalize flex border-none  text-gray rounded-lg ">
                                                 <div className='w-4 h-4 px-[11px] py-2.5 bg-white rounded-[5px] border border-solid border-stone-300 justify-center items-center gap-2 flex'>   <Image src={optionicon} alt="option"></Image></div></Button>

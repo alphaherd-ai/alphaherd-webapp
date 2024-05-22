@@ -2,14 +2,15 @@
 import { connectToDB } from '../../../../../utils/index';
 import prismaClient from '../../../../../../prisma';
 import {  Services } from '@prisma/client';
+import { NextRequest } from 'next/server';
 
-export const POST = async (req: Request) => {
+export const POST = async (req: NextRequest) => {
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
   }
 
   try {
-    await connectToDB();
+    
     const url = new URL(req.url);
     const categories = url.searchParams.getAll('category');
     const distributors = url.searchParams.getAll('distributor');

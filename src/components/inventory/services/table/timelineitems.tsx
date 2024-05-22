@@ -4,6 +4,7 @@ import { Tooltip, Button } from "@nextui-org/react";
 import Link from 'next/link';
 import formatDateAndTime from '@/utils/formateDateTime';
 import { Inventory } from '@prisma/client';
+import { useAppSelector } from '@/lib/hooks';
 interface AllServices {
     id: number;
     name: string;
@@ -25,9 +26,10 @@ interface InventoryTimeline {
 
 const ServicesTimelineItem = () => {
     const [services, setServices] = useState<InventoryTimeline[]>([]);
+    const appState = useAppSelector((state) => state.app)
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/getAll`)
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/getAll?branchId=${appState.currentBranchId}`)
             .then(response => response.json())
             .then(data => setServices(data.filter((inventory: { inventoryType: any; }) => inventory.inventoryType===Inventory.Service)))
             .catch(error => console.error('Error fetching services:', error));

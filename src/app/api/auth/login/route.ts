@@ -1,10 +1,11 @@
 import bcrypt from 'bcrypt';
-import { encrypt } from '../../../../../auth';
+import { decrypt, encrypt } from '../../../../../auth';
 import { cookies } from 'next/headers';
 import prismaClient from '../../../../../prisma';
 import { redirect } from 'next/navigation';
+import { NextRequest, NextResponse } from 'next/server';
 
-export const POST = async (req: Request) => {
+export const POST = async (req: NextRequest) => {
 
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
@@ -22,13 +23,13 @@ export const POST = async (req: Request) => {
     // orgBranchId        Int?
     // userRoles          OrgBranchUserRole[]
 
-    const user = await prismaClient.user.findUnique({
+    let user = await prismaClient.user.findUnique({
       where: { email },
       include: {
         adminOrganizations: {
           select: {
             id: true,
-            orgName : true
+            orgName: true
           }
         },
         userRoles: {}
@@ -36,7 +37,7 @@ export const POST = async (req: Request) => {
     });
 
     const organization = await prismaClient.organization.findUnique({
-      where: {id : 1},
+      where: { id: 1 },
       include: {
         orgBranches: {},
         adminUsers: {}
@@ -54,7 +55,7 @@ export const POST = async (req: Request) => {
     if (!validPassword) {
       return new Response(JSON.stringify({ "message": 'Invalid password' }), { status: 401 });
     }
-    const session = await encrypt({ id : user.id },"10h");
+    const session = await encrypt({ id: user.id }, "10h");
 
     // Save the session in a cookie
     cookies().set("session", session, {
@@ -64,25 +65,71 @@ export const POST = async (req: Request) => {
       maxAge: 60 * 60 * 24 * 7, // Cookie expires in 7 days
       path: '/', // Cookie is accessible from all paths in the domain
     });
+    if (userInviteString) {
+      const { branchId, role, email } = await decrypt(userInviteString);
 
-    if(!userInviteString){
-      return new Response(JSON.stringify({ user }), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+
+      const orgBranchUserRole = await prismaClient.orgBranchUserRole.findFirst({
+        where: {
+          userId: user.id,
+          orgBranchId: branchId
+        }
+      });
+
+      console.log(orgBranchUserRole)
+
+      if (orgBranchUserRole) {
+        throw new Error("User already part of branch");
+      }
+
+      console.log(branchId, role, email);
+
+      const orgBranch = await prismaClient.orgBranch.findUnique({
+        where: {
+          id: branchId
+        }
+      });
+
+      console.log(user);
+
+      await prismaClient.orgBranchUserRole.create({
+        data: {
+          orgBranchId: Number(orgBranch?.orgId),
+          userId: user!.id,
+          role: role
+        }
+      });
+
+      user = await prismaClient.user.findUnique({
+        where: { email },
+        include: {
+          adminOrganizations: {
+            select: {
+              id: true,
+              orgName: true
+            }
+          },
+          userRoles: {}
+        }
       });
     }
 
-  } catch (error) {
+    return new Response(JSON.stringify({ user }), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+  } catch (error: any) {
     console.error('Error:', error);
-    return new Response(JSON.stringify({ "message": 'Internal server error' }), { status: 500 });
+    return new Response(JSON.stringify({ "message": error.message }), { status: 500 });
   }
-  finally{
-    console.log(userInviteString)
-    if(userInviteString){
-      console.log("here")
-      redirect(process.env.NEXT_PUBLIC_API_BASE_PATH + "/api/settings/invite?userInviteString=" + userInviteString);
-    }
-  }
+  // finally {
+  //   console.log(userInviteString)
+  //   if (userInviteString) {
+  //     console.log("here")
+  //     return NextResponse.redirect(process.env.NEXT_PUBLIC_API_BASE_PATH + "/api/settings/invite?userInviteString=" + userInviteString);
+  //   }
+  // }
 };

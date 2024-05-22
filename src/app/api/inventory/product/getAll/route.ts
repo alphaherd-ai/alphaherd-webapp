@@ -1,17 +1,17 @@
 import { connectToDB } from '../../../../../utils/index';
 import prismaClient from '../../../../../../prisma';
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 
 
-export const GET = async (req: NextApiRequest, res: NextApiResponse) => {
+export const GET = async (req: NextRequest, res: NextResponse) => {
   if (req.method !== 'GET') {
     return new Response('Method not allowed',{status:405});
   }
 
   try {
-    const inventoryId = await fetchInventoryId();
-    await connectToDB();
+    const inventoryId = await fetchInventoryId(req);
+    
     const products = await prismaClient.products.findMany({
       where: { inventorySectionId: inventoryId }
     });

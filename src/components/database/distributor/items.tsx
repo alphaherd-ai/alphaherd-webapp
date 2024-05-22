@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link';
 import Distributors from '@/app/database/distributor/page';
+import { useAppSelector } from '@/lib/hooks';
 interface Distributors{
     id:string,
     distributorName:string,
@@ -13,8 +14,9 @@ interface Distributors{
 
 const DatabaseDistributorTableItem = () => {
     const [distributors,setDistributor]=useState<Distributors[]>([]);
+    const appState = useAppSelector((state) => state.app)
     useEffect(()=>{
-     fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll`)
+     fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll?branchId=${appState.currentBranchId}`)
      .then(response=>response.json())
      .then(data=> setDistributor(data))
      .catch(error=>console.error("Error Fetching Distributors:",error));

@@ -7,18 +7,12 @@ import Image from "next/image";
 // import NotificationPopUp from "../NotificationCard/NotificationPopUp";
 import cashStethoscope from "../../../assets/icons/home/cash=Stethoscope, Color=Green.png"
 import chevron from "../../../assets/icons/home/chevron_left.png"
+import { Popover, PopoverTrigger, PopoverContent, Input, Button } from "@nextui-org/react";
 
 const Header = () => {
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isAppOpen, setIsAppOpen] = useState(false);
 
-  const handleMouseEnter = () => {
-    setIsCreateOpen(true);
-  };
 
-  const handleMouseLeave = () => {
-    setIsCreateOpen(false);
-  };
 
   // Function to toggle modal visibility
   const toggleModal = () => {
@@ -32,11 +26,28 @@ const Header = () => {
       {/* <NotificationPopUp></NotificationPopUp> */}
       <div className="flex gap-4 relative">
         <div
-          className="flex items-center justify-center rounded-md py-[0.4rem]  bg-[#17181A] w-[8rem] text-white relative z-0 hover:cursor-pointer"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
+          className="flex items-center justify-center z-0 "
         >
-          <div className="flex items-center justify-center">
+
+          <Popover placement="bottom-start" showArrow offset={10}>
+          
+          <PopoverTrigger>
+            <Button variant="solid" 
+            className="capitalize border-none py-[0.4rem]  bg-[#17181A]  rounded-lg flex items-center justify-center hover:cursor-pointer">
+            <span className="text-white text-sm ">
+              Create
+            </span>
+            <div className=" mt-[2px]">
+            <Image src={chevron} alt="" />
+            </div>
+          </Button>
+          </PopoverTrigger>
+          <PopoverContent>
+            <CreateButtonCard />
+          </PopoverContent>
+          </Popover>
+          </div>
+          {/* <div className="flex items-center justify-center">
             <span className="text-white text-sm  font-light ">
               Create
             </span>
@@ -48,11 +59,10 @@ const Header = () => {
             <div className="absolute top-full left-0 z-10 shadow-lg rounded-md cursor-pointer mt-[2px]">
               <CreateButtonCard />
             </div>
-          )}
-        </div>
+          )} */}
         {/* Add onClick event to toggle modal */}
         <div
-          className="flex items-center justify-center rounded-md  bg-[#17181A] w-[10rem] text-white relative z-0 cursor-pointer"
+          className="flex items-center justify-center rounded-md  bg-[#17181A]  text-white relative z-0 cursor-pointer gap-2 px-4"
           onClick={toggleModal}
         >
           <div className="ml-[3px] mt-[2px]">

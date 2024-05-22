@@ -29,7 +29,7 @@ const Popup = ({ onClose }) => {
     const handleSendInvite = async () => {
         try{
             if (emailInput.trim() !== '') {
-                let resp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/invite/create`, {
+                let resp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/invite/create?branchId=${appState.currentBranchId}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -41,10 +41,11 @@ const Popup = ({ onClose }) => {
                         "email": emailInput.trim()
                     })
                 });
-                if(!resp.ok){
-                    throw new Error("Something went wrong")
-                }
                 let json = await resp.json();
+                if(!resp.ok){
+                    console.log(json);
+                    throw new Error(json.message);
+                }
                 toast.success(json.message, {
                     position: "bottom-right",
                     autoClose: 5000,

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Tooltip, Button } from "@nextui-org/react";
+import { useAppSelector } from '@/lib/hooks';
 
 interface Products{
   id: number;
@@ -26,9 +27,10 @@ interface ProductBatch {
 
 const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
   const [products, setProducts] = useState<ProductBatch[]>([]);
+  const appState = useAppSelector((state) => state.app)
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll`)
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll?branchId=${appState.currentBranchId}`)
       .then(response => response.json())
       .then(data => setProducts(data))
       .catch(error => console.error('Error fetching products:', error));

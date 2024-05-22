@@ -2,24 +2,19 @@ import type { NextFetchEvent, NextRequest, NextResponse } from 'next/server';
 import { nonApiMiddleware } from './middleware/authMiddleware';
 import { apiMiddleware } from './middleware/blockAPI';
 import { isAuthorized } from './middleware/isAuthorized';
-import { lastUsedBranch } from './utils/fetchBranchDetails';
 import { getVerifyOrgandBranch } from './middleware/orgVerify';
 
 
 export async function middleware(request: NextRequest, event: NextFetchEvent) {
   const url = request.nextUrl;
-  const userId=request.headers.get('userid');
-  console.log("this is the frontend url",url.href)
-  const { searchParams } = new URL(url);
-  const branchId = searchParams.get("orgBranchID")!;  
+  console.log("INSIDE MIDDLEWARE");
+  console.log(request.url);
   if (!url.pathname.startsWith('/api')) {
     return nonApiMiddleware(request, event);
   }
-  await getVerifyOrgandBranch(Number(userId),Number(branchId));
+  console.log("Going to is authorized");
   return isAuthorized(request,event);
 }
-
-
 export const config = {
   matcher: ['/api/database/:path*',
   // '/api/finance/:path*',

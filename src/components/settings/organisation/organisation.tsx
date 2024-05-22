@@ -17,22 +17,6 @@ export default function OrganisationSettings() {
 
     const tabComponents = [<MyOrganisationSettings />, <UsersAndRolesSettings />]
 
-    async function inviteTestUser() {
-        console.log("here inviteTestUser")
-        await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/invite/create`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-            body: JSON.stringify({
-                "branchId": 1,
-                "role": "Staff",
-                "email": "kunalpal2115@gmail.com",
-                "orgId": 1
-            })
-        });
-    }
 
     return <>
         <div className="w-full p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border border-neutral-400 justify-between items-center gap-6 flex">
@@ -46,7 +30,7 @@ export default function OrganisationSettings() {
                     </div>)
                 }
             </div>
-            <Button variant="solid" className="capitalize flex border-none bg-black text-white rounded-lg " onClick={inviteTestUser}>Add User</Button>
+            <Button variant="solid" className="capitalize flex border-none bg-black text-white rounded-lg ">Add User</Button>
         </div >
 
         {

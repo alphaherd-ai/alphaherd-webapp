@@ -1,14 +1,15 @@
 import { connectToDB } from '../../../../../../utils/index';
 import prismaClient from '../../../../../../../prisma';
+import { NextRequest } from 'next/server';
 
-export const POST = async (req: Request, { params }: { params: { type: string } }) => {
+export const POST = async (req: NextRequest, { params }: { params: { type: string } }) => {
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
   }
 
   try {
     const body: any = await req.json();
-    await connectToDB();
+    
  
      const expenses = await prismaClient.expenses.create({
         data: {

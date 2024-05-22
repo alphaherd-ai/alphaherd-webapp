@@ -25,7 +25,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, client_name }) => {
     const [selectedGender, setSelectedGender] = useState('female');
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll`)
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`)
             .then((response) => response.json())
             .then((data) => {
                 const formattedClients = data.map((client: Clients) => ({

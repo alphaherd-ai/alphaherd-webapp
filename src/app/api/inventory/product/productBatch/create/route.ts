@@ -3,9 +3,10 @@ import prismaClient from '../../../../../../../prisma';
 import { Inventory, type ProductBatch } from "@prisma/client";
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 import { ProductBatchSchema } from '@/schemas/inventory/ productBatchValidation';
+import { NextRequest } from 'next/server';
 
 
-export const POST=async(req: Request )=> {
+export const POST=async(req: NextRequest )=> {
   if (req.method !== 'POST') {
     return new Response('Method not allowed',{status:405});
 } 
@@ -20,8 +21,8 @@ export const POST=async(req: Request )=> {
         });
       }
 
-      const inventoryId=await fetchInventoryId();
-        await connectToDB();
+      const inventoryId=await fetchInventoryId(req);
+        
         if(body.quantity==null){
           body.quantity=0;
         }

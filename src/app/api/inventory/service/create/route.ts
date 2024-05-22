@@ -3,9 +3,10 @@ import prismaClient from '../../../../../../prisma';
 import { Inventory, type Services } from "@prisma/client";
 import { ServiceSchema } from '@/schemas/inventory/serviceValidation';
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
+import { NextRequest } from 'next/server';
 
 
-export const POST=async(req: Request)=> {
+export const POST=async(req: NextRequest)=> {
   if (req.method !== 'POST') {
     return new Response('Method not allowed',{status:405});
 } 
@@ -19,9 +20,9 @@ export const POST=async(req: Request)=> {
           status: 422,
         });
       } 
-      const inventoryId=await fetchInventoryId();
+      const inventoryId=await fetchInventoryId(req);
 
-        await connectToDB();
+        
         const service = await prismaClient.services.create({
             data: {...body,
               InventorySection:{

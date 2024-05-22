@@ -1,19 +1,14 @@
+import { NextRequest } from 'next/server';
 import prismaClient from '../../prisma';
-export const lastUsedBranch = async (url:string) => {
-    const { searchParams } = new URL(url);
-    const branchId = searchParams.get("orgBranchID")!;  
-    console.log("here's the branch id",branchId)
-    return branchId;
-}
 
 export const fetchBranchDetailsById = async (branchId: Number) => {
     console.log("Here's the branch id",branchId)
-    const url = new URL(`${process.env.NEXT_PUBLIC_API_BASE_PATH} + "/api/details/branch"`);
+    const url = new URL(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/details/branch`);
     url.searchParams.append('branchId', String(branchId));
     console.log("Here's the url",url)
     const resp = await fetch(url, {
         method: 'GET',
-        credentials: 'include',
+        credentials: 'include'
     });
     if(resp.ok){
         return (await resp.json());
@@ -24,12 +19,15 @@ export const fetchBranchDetailsById = async (branchId: Number) => {
     }
 }
 
-export const fetchInventoryId = async (url:string) => {
-    const branchId = await lastUsedBranch(url!);
+export const fetchInventoryId = async (request:NextRequest) => {
+    const url = request.nextUrl;
+    const { searchParams } = new URL(url);
+    console.log(searchParams);
+    const branchId = searchParams.get("branchId")!;  
     
     console.log("here's the final branchID",branchId)
     if (!branchId) {
-        throw new Error("Branch ID not found in session");
+        throw new Error("Branch ID not found in request");
     }
     const orgBranch=await fetchBranchDetailsById(Number(branchId));
     console.log(orgBranch)
@@ -43,9 +41,7 @@ export const fetchInventoryId = async (url:string) => {
             data: {
                 name: "Inventory-" + orgBranch.branchName,
                 quantity: 1,
-                branch: {
-                    connect: { id: Number(branchId) }
-                }
+                branchId: Number(branchId)
             }
         })
     }
@@ -55,7 +51,8 @@ export const fetchInventoryId = async (url:string) => {
 
 
 export const fetchFinanceId = async (url:string) => {
-    const branchId = lastUsedBranch(url!)
+    const { searchParams } = new URL(url);
+    const branchId = searchParams.get("branchId")!;
     if (!branchId) {
         throw new Error("Branch ID not found in session");
     }
@@ -70,7 +67,8 @@ export const fetchFinanceId = async (url:string) => {
 }
 
 export const fetchDatabaseId = async (url:string) => {
-    const branchId = lastUsedBranch(url!);
+    const { searchParams } = new URL(url);
+    const branchId = searchParams.get("branchId")!;  
     if (!branchId) {
         throw new Error("Branch ID not found in session");
     }
