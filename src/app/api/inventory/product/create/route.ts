@@ -2,7 +2,7 @@ import { connectToDB } from '../../../../../utils/index';
 import prismaClient from '../../../../../../prisma';
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 import {productSchema} from '@/schemas/inventory/productValidation'
-import { NextRequest } from 'next';
+import { NextRequest } from 'next/server';
 
 export const POST=async(req: NextRequest,res:Response)=> {
   if (req.method !== 'POST') {

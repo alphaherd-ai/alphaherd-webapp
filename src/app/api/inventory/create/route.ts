@@ -15,7 +15,7 @@ export const POST = async (req: NextRequest,res:Response) => {
   try {
     
     
-    const inventoryId = await fetchInventoryId();
+    const inventoryId = await fetchInventoryId(req);
     await connectToDB();
     const {objectId,inventoryType, stockStatus,invoiceType,...restOfBody } = await req.json();
     console.log(restOfBody);

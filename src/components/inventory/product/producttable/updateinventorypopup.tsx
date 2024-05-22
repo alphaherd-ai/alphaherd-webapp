@@ -214,11 +214,11 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                     productId,
                 };
                 if(selectedOption===Stock.StockOUT){
-                    const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${id}`, body);
+                    const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${id}?branchId=${appState.currentBranchId}`, body);
                     console.log('Updated inventory item:', response.data);
                 }else if(selectedOption===Stock.StockIN){
                     console.log("saving new batch")
-                    const response =await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/create`,body);
+                    const response =await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/create?branchId=${appState.currentBranchId}`,body);
                     console.log('Created New Batch Item:', response.data);
                 }
                 

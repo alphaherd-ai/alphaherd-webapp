@@ -3,7 +3,7 @@ import { connectToDB } from '../../../../utils/index';
 import prismaClient from '../../../../../prisma/index';
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 import type { ProductBatch } from "@prisma/client";
-import { NextRequest } from 'next';
+import { NextRequest } from 'next/server';
 
 
 export const GET=async(req: NextRequest)=> {
