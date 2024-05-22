@@ -1,9 +1,9 @@
 // src/api/finance/create.ts
 import { connectToDB } from '../../../../../../utils/index';
 import prismaClient from '../../../../../../../prisma';
-import { Stock } from '@prisma/client';
+import { FinanceSalesType, Stock } from '@prisma/client';
 
-export const POST = async (req: Request, { params }: { params: { type: string } }) => {
+export const POST = async (req: Request, { params }: { params: { type: FinanceSalesType } }) => {
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
   }
@@ -19,18 +19,18 @@ export const POST = async (req: Request, { params }: { params: { type: string } 
     });
 
     const items = await prismaClient.items.createMany({
-      data: body.item.create,
+      data: body.items.create,
     });
 
     const finance = await prismaClient.financeTimeline.create({
       data: {
-        type: params.type,
+        type: FinanceSalesType.Estimate,
         sale: { connect: { id: sales.id } },
         createdAt: new Date(),
       },
     });
 
-    if (params.type === 'invoice') {
+    if (params.type === FinanceSalesType.Invoice) {
       await Promise.all(
         body.item.create.map(async (item: any) => {
           const updatedProduct = await prismaClient.productBatch.update({
@@ -50,7 +50,7 @@ export const POST = async (req: Request, { params }: { params: { type: string } 
           });
         })
       );
-    } else if (params.type === 'return') {
+    } else if (params.type === FinanceSalesType.Return) {
       await Promise.all(
         body.item.create.map(async (item: any) => {
           const updatedProduct = await prismaClient.productBatch.update({
@@ -72,7 +72,7 @@ export const POST = async (req: Request, { params }: { params: { type: string } 
       );
     }
 
-    return new Response(JSON.stringify({ sales, finance, items }), {
+    return new Response(JSON.stringify({ sales, finance }), {
       status: 201,
       headers: {
         'Content-Type': 'application/json',

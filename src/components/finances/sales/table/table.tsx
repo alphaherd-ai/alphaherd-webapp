@@ -28,7 +28,6 @@ const FinancesSalesTable = () => {
             </div>
 
 <FinancesSalesTableItem/>
-<FinancesSalesTableItem/>
 <FinancesSalesTableBottombar/>
      
         </div>

@@ -1,28 +1,25 @@
 "use client"
 
 
-import React, { useState, useEffect } from 'react';
-
-import SelectDropdown from 'react-native-select-dropdown'
+import React, { useState, useEffect, useContext } from 'react';
 import Link from "next/link"
 import Image from "next/image"
 import Select from 'react-select';
+import { DataContext } from './DataContext';
 
 
 const NewsaleEstimateTotalAmout = () => {
-  
-
+    const { totalAmountData, setTotalAmountData } = useContext(DataContext);
     const [grandAmt, setGrandAmt] = useState('₹2124');
-
-    const taxOptions = [
-        { value: 'Tax excl.', label: 'Tax excl.' },
-        { value: 'Tax incl.', label: 'Tax incl.' }
-    ];
 
     const gstOptions = [
         { value: 'GST@18%.', label: 'GST@18%.' },
         { value: 'GST@9%.', label: 'GST@9%.' }
     ];
+
+    const handleSelectChange = (selectedOption:any) => {
+        setTotalAmountData((prevData) => ({ ...prevData, gst: selectedOption }));
+    };
 
 
     return (
@@ -53,6 +50,7 @@ const NewsaleEstimateTotalAmout = () => {
                                                         border: state.isFocused ? 'none' : 'none',
                                                     }),
                                                 }}
+                                                onChange={handleSelectChange}
                                             />
                                         </div>
                                     </div>
