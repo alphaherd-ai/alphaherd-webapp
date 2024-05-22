@@ -9,8 +9,8 @@ import React, { useState, useEffect } from 'react';
 
 const OrgNameSetup = (props : any) => {
     return (
-                <div className="flex justify-center items-center h-full">
-                    <div className="flex w-[32.55rem] h-full">
+        <div className="flex justify-center items-center h-full">
+        <div className="flex w-[32.55rem] h-full">
                         <Image src={placeicon} alt="placeholder" className="w-full h-full" />
                     </div>
                     <div className="flex flex-col justify-center items-start w-6/12 h-full">
@@ -30,8 +30,6 @@ const OrgNameSetup = (props : any) => {
                             <input className="w-full h-full px-2 focus:outline-none border-1 border-solid border-[#A2A3A3]  rounded-[5px]  focus:border-1 focus:border-emerald-200" type="text" name="orgName" value={props.data.orgName} onChange={props.handleChange}/>
                         </div>
                     </div>
-                </div>
-    )
             {/* <div className="w-full h-full flex-1 flex justify-center items-center flex  rounded-[20px]">
                 <div className="flex justify-center items-center w-[1016px] h-[620px] bg-white bg-opacity-50 rounded-[30px] border border-solid border-stone-300">
                     <div className="flex w-6/12 h-full">
@@ -56,9 +54,10 @@ const OrgNameSetup = (props : any) => {
                     </div>
                 </div>
             </div> */}
+        </div>
 
 
-    
+    )
 }
 
 export default OrgNameSetup;

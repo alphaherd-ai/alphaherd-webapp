@@ -58,24 +58,23 @@ const DropdownMenu = () => {
 
 
   return (
-      <div className="w-48 h-[4rem] bg-white rounded-lg shadow-lg">
+    <div className="relative">
+      <div className="absolute mt-2 w-48 bg-white rounded-lg shadow-lg">
         {
           orgAndBranchMapping.map((mapping: any, index) => {
-            return (
-              <div key={index} onClick={() => {
-                setSecondLevelItems(mapping.allowedBranches);
-                let org = mapping;
-                delete org.allowedBranches;
-                setSelectedOrg(org);
-              }} className="px-4 py-2 text-neutral-500 font-bold text-lg hover:bg-gray-200 hover:rounded-lg hover:cursor-pointer focus:outline-none">
-                {mapping.orgName}
-              </div>
-            )
+            return <button key={index} onClick={() => {
+              setSecondLevelItems(mapping.allowedBranches);
+              let org = mapping;
+              delete org.allowedBranches;
+              setSelectedOrg(org);
+            }} className="block px-4 py-2 text-gray-800 hover:bg-gray-200 focus:outline-none">
+              {mapping.orgName}
+            </button>
           })
         }
         {
           secondLevelItems.map((orgBranch: any, index) => {
-            return <div key={index} className="mt-2 w-48 bg-white rounded-lg shadow-lg">
+            return <div className="mt-2 w-48 bg-white rounded-lg shadow-lg">
               <button key={index} className="block px-4 py-2 text-gray-800 hover:bg-gray-200 focus:outline-none" onClick={() => handleOrgBranchSelect(orgBranch)}>
                 {orgBranch.branchName}
               </button>
@@ -83,10 +82,9 @@ const DropdownMenu = () => {
           })
         }
       </div>
+    </div>
   );
 };
 
 
 export default DropdownMenu;
-
-

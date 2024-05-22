@@ -82,7 +82,7 @@ const FinancesOverviewSheet = () => {
                             <div className="w-[438.50px] h-[152px] p-6 bg-white  border border-solid border-stone-300 flex-col justify-center items-start gap-4 flex">
                                 <div className="text-gray-500 text-[28px] font-bold ">₹ 92,499</div>
                                 <div className="text-gray-500 text-base font-medium ">Revenue</div>
-                                <div className="w-[150px] h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex ">
+                                <div className="w-[142px] h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex ">
                                     <Image className="w-4 h-4 " src={icn_icon} alt="inc"></Image>
                                     <div className="text-green-600 text-sm font-medium ">12.4%</div>
                                     <div className="text-green-600 text-sm font-medium ">this week</div>
@@ -91,7 +91,7 @@ const FinancesOverviewSheet = () => {
                             <div className="w-[438.50px] h-[152px] p-6 bg-white border border-solid border-stone-300 flex-col justify-center items-start gap-4 flex">
                                 <div className="text-gray-500 text-[28px] font-bold ">₹ 32,499</div>
                                 <div className="text-gray-500 text-base font-medium ">Expenses</div>
-                                <div className="w-[150px] h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex ">
+                                <div className="w-[142px] h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex ">
                                     <Image className="w-4 h-4 " src={icn_icon} alt="inc"></Image>
                                     <div className="text-green-600 text-sm font-medium ">12.4%</div>
                                     <div className="text-green-600 text-sm font-medium ">this week</div>
@@ -102,7 +102,7 @@ const FinancesOverviewSheet = () => {
                             <div className="w-[438.50px] h-[152px] p-6 bg-white border border-solid border-stone-300 flex-col justify-center items-start gap-4 flex">
                                 <div className="text-gray-500 text-[28px] font-bold ">700</div>
                                 <div className="text-gray-500 text-base font-medium ">Sales Invoices</div>
-                                <div className="w-[150px] h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex ">
+                                <div className="w-[142px] h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex ">
                                     <Image className="w-4 h-4 " src={icn_icon} alt="inc"></Image>
                                     <div className="text-green-600 text-sm font-medium ">12.4%</div>
                                     <div className="text-green-600 text-sm font-medium ">this week</div>
@@ -111,7 +111,7 @@ const FinancesOverviewSheet = () => {
                             <div className="w-[438.50px] h-[152px] p-6 bg-white border border-solid border-stone-300 flex-col justify-center items-start gap-4 flex">
                                 <div className="text-gray-500 text-[28px] font-bold ">₹ 12,499</div>
                                 <div className="text-gray-500 text-base font-medium ">Total balances due</div>
-                                <div className="w-[80px] h-7 px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center items-center inline-flex ">
+                                <div className="w-[69px] h-7 px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center items-center inline-flex ">
                                    
                                     <div className="text-orange-500 text-sm font-medium ">You owe</div>
                                     <div className="text-orange-500 text-sm font-medium "></div>

@@ -82,9 +82,9 @@ export const MyOrganisationSettings = () => {
                             <div className="text-gray-500 text-base font-bold ">Website:</div>
                             <input className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base" type="text" name="" id="" defaultValue={"petfirst.com"} />
                         </div>
-                        <div className="w-full min-h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
+                        <div className="w-full h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                             <div className="text-gray-500 text-base font-bold ">Description:</div>
-                            <div className="w-10/12 min-h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.description}</div>                        </div>
+                            <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.description}</div>                        </div>
                     </div>
                     <div className="w-full h-[228px] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                         <div className="flex items-center justify-between w-full gap-2">

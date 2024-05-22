@@ -1,142 +1,100 @@
+import React from "react";
 
-import React, { useState } from "react";
-import dropIcon from "../../../assets/icons/home/chevron_left.png"
-import Image from "next/image";
 const Services = () => {
-
-  const [selectedOption, setSelectedOption] = useState('');
-  const [selectedOption1, setSelectedOption1] = useState('');
-  const [expanded, setExpanded] = useState(false);
-
-  const toggleExpanded = () => {
-    setExpanded(!expanded);
-  };
-
-  const handleSelectChange = (event:any) => {
-    setSelectedOption(event.target.value);
-  };
-  const handleSelectChange1 = (event:any) => {
-    setSelectedOption1(event.target.value);
-  };
-
-  const getBackgroundColor = () => {
-    switch (selectedOption) {
-      case '#FFEAEA':
-        return '#FFEAEA';
-      case '#FFF0E9':
-        return '#FFF0E9';
-      case '#FFF9E8':
-        return '#FFF9E8';
-      default:
-        return '#F4F5F7';
-    }
-  };
-
-  const getTextColor = () => {
-    
-    switch (selectedOption) {
-      case '#FF3030':
-        return '#FF3030';
-      case '#FC6E20':
-        return '#FC6E20';
-      case '#FC6E20':
-        return '#FC6E20';
-      default:
-        return '#6B7E7D';
-    }
-  }
-
-  const getBackgroundColor1 = () => {
-    switch (selectedOption1) {
-      case '#FFEAEA':
-        return '#FFEAEA';
-      case '#FFF0E9':
-        return '#FFF0E9';
-      case '#FFF9E8':
-        return '#FFF9E8';
-      default:
-        return '#F4F5F7';
-    }
-  };
-
   return (
-    <div className={`w-[688px] bg-white px-6 py-4 flex flex-col gap-4 ${expanded ? "": "" }`}>
-      <div className="w-full">
-        <span className="text-gray-500 text-base font-bold">
-          Services
-        </span>
+    <div className="self-stretch h-56 bg-white rounded-[10px] flex-col justify-start items-start flex">
+      <div className="self-stretch h-56 flex-col justify-start items-start flex">
+        <div className="self-stretch px-6 py-4 bg-white justify-start items-center gap-4 inline-flex">
+          <div className="grow shrink basis-0 h-6 justify-start items-center gap-6 flex">
+            <div className="grow shrink basis-0 text-gray-500 text-base font-bold font-['Satoshi']">
+              Services
+            </div>
+          </div>
+        </div>
+        <div className="self-stretch justify-start items-start inline-flex">
+          <div className="pl-6 flex-col justify-start items-start inline-flex">
+            <div className="self-stretch h-14 bg-white flex-col justify-center items-start flex">
+              <div className="w-24 h-7 px-2 py-1.5 bg-rose-100 rounded-[5px] justify-start items-center gap-2 inline-flex">
+                <div className="grow shrink basis-0 text-red-500 text-sm font-medium font-['Satoshi']">
+                  STAT
+                </div>
+                <div className="w-6 h-6 relative" />
+              </div>
+            </div>
+            <div className="w-[88px] h-14 bg-white flex-col justify-center items-start flex">
+              <div className="w-24 h-7 px-2 py-1.5 bg-rose-100 rounded-[5px] justify-start items-center gap-2 inline-flex">
+                <div className="grow shrink basis-0 text-red-500 text-sm font-medium font-['Satoshi']">
+                  STAT
+                </div>
+                <div className="w-6 h-6 relative" />
+              </div>
+            </div>
+            <div className="self-stretch h-14 bg-white flex-col justify-center items-start flex">
+              <div className="w-24 h-7 px-2 py-1.5 bg-gray-100 rounded-[5px] justify-start items-center gap-2 inline-flex">
+                <div className="grow shrink basis-0 text-gray-500 text-sm font-medium font-['Satoshi']">
+                  PRN
+                </div>
+                <div className="w-6 h-6 relative" />
+              </div>
+            </div>
+          </div>
+          <div className="grow shrink basis-0 pr-1 flex-col justify-start items-start inline-flex">
+            <div className="self-stretch h-14 p-4 bg-white justify-start items-center gap-4 inline-flex">
+              <div className="grow shrink basis-0 text-gray-500 text-base font-medium font-['Satoshi']">
+                Buprenorphine Injection
+              </div>
+            </div>
+            <div className="self-stretch h-14 p-4 bg-white justify-start items-center gap-4 inline-flex">
+              <div className="grow shrink basis-0 text-gray-500 text-base font-medium font-['Satoshi']">
+                Ultrasound
+              </div>
+            </div>
+            <div className="self-stretch h-14 p-4 bg-white justify-start items-center gap-4 inline-flex">
+              <div className="grow shrink basis-0 text-gray-500 text-base font-medium font-['Satoshi']">
+                Laparotomy
+              </div>
+            </div>
+          </div>
+          <div className="px-2 flex-col justify-start items-start inline-flex">
+            <div className="w-[100px] h-14 p-4 bg-white flex-col justify-center items-start flex">
+              <div className="self-stretch justify-start items-start gap-2 inline-flex">
+                <div className="w-[42px] px-1 bg-gray-100 rounded-[5px] justify-start items-center gap-2 flex">
+                  <div className="text-neutral-400 text-sm font-medium font-['Satoshi']">
+                    ₹899
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="w-[100px] h-14 p-4 bg-white flex-col justify-center items-start flex">
+              <div className="self-stretch text-neutral-400 text-sm font-medium font-['Satoshi']">
+                ₹2,300
+              </div>
+            </div>
+            <div className="w-[100px] h-14 p-4 bg-white flex-col justify-center items-start flex">
+              <div className="self-stretch text-neutral-400 text-sm font-medium font-['Satoshi']">
+                ₹4,532
+              </div>
+            </div>
+          </div>
+          <div className="flex-col justify-start items-start inline-flex">
+            <div className="self-stretch h-14 pl-4 pr-6 py-4 bg-white justify-start items-center gap-2 inline-flex">
+              <div className="w-[148px] px-2 py-1.5 bg-white rounded-[5px] justify-center items-center gap-1 flex">
+                <div className="text-teal-400 text-base font-medium font-['Satoshi']">
+                  View products
+                </div>
+                <div className="w-6 h-6 relative">
+                  <img src="/1. Icons-24 (10).png" alt="" />
+                </div>{" "}
+              </div>
+              <div className="w-6 h-6 relative bg-gray-100 rounded-[5px]" />
+            </div>
+            <div className="self-stretch h-14 p-4 bg-white" />
+            <div className="self-stretch h-14 p-4 bg-white" />
+          </div>
+        </div>
       </div>
-
-      <div className="w-full flex items-center gap-2">
-        <div>
-          <select 
-        className="outline-none border-0 px-2 py-2 rounded-lg"
-        value={selectedOption} 
-        onChange={handleSelectChange} 
-        style={{ backgroundColor: getBackgroundColor(), color: getTextColor() }}
-      >
-        <option className="text-[#6B7E7D]" value="#F4F5F7">PRN</option>
-        <option className="text-[#FF3030]" value="#FFEAEA">STAT</option>
-        <option className="text-[#FC6E20]" value="#FFF0E9">ASAP</option>
-        <option className="text-[#FFBF1A]" value="#FFF9E8">Routine</option>
-          </select>
-        </div>
-        <div className="w-[50%]">
-          <span className="text-gray-500 text-base font-medium">Buprenorphine Injection</span>
-        </div>
-        <div className="w-[20%]">
-          <div className="w-[42px] h-6 px-1 bg-gray-100 rounded-[5px] justify-start items-center gap-2 inline-flex">
-            <span className="text-neutral-400 text-sm font-medium">
-              ₹899
-            </span>
-          </div>
-        </div>
-        <div onClick={toggleExpanded}>
-        <div className="w-[148px] h-6 px-2 py-1.5 bg-white rounded-[5px] justify-center items-center gap-1 flex hover:cursor-pointer">
-          <span className="text-teal-400 text-base font-medium">View Services</span>
-          <div className="w-6 h-6">
-            <Image src={dropIcon} alt="dropIcon" />
-          </div>
-        </div>
-        </div>
-      </div>
-
-        <div className={`${expanded ? "flex" : "hidden"}`}>
-
-        <div className="w-full flex items-center gap-2">
-        <div>
-          <select 
-        className="outline-none border-0 px-2 py-2 rounded-lg"
-        value={selectedOption1} 
-        onChange={handleSelectChange1} 
-        style={{ backgroundColor: getBackgroundColor1() }}
-      >
-        <option className="text-[#6B7E7D]" value="#F4F5F7">PRN</option>
-        <option className="text-[#FF3030]" value="#FFEAEA">STAT</option>
-        <option className="text-[#FC6E20]" value="#FFF0E9">ASAP</option>
-        <option className="text-[#FFBF1A]" value="#FFF9E8">Routine</option>
-          </select>
-        </div>
-        <div className="w-[43%]">
-          <span className="text-gray-500 text-base font-medium">Buprenorphine Injection</span>
-        </div>
-        <div className="w-[20%]">
-          <div className="w-[42px] h-6 px-1 bg-gray-100 rounded-[5px] justify-start items-center gap-2 inline-flex">
-            <span className="text-neutral-400 text-sm font-medium">
-              ₹899
-            </span>
-          </div>
-        </div>
-          </div>
-      
-        </div>
-
-
-      
-
     </div>
   );
 };
 
 export default Services;
-
