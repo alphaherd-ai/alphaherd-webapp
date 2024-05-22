@@ -1,24 +1,56 @@
-import React from 'react'
+"use client";
+import React, { useEffect, useState } from 'react'
 import {Tooltip,Button} from "@nextui-org/react";
 import Menu from '@/assets/icons/finance/Menu.svg';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
+import { productSchema } from '@/schemas/inventory/productValidation';
+import { FinanceSalesType } from '@prisma/client';
+import formatDateAndTime from '@/utils/formateDateTime';
+interface Sales {
+  id:number;
+  date:string;
+  type:FinanceSalesType;
+  customer:string;
+  invoiceNo:number;
+  totalCost:number;
+  totalQty:number;
+  dueDate:string;
+  status:string;
+}
 const FinancesSalesTableItem = () => {
+  const [sales,setSales]=useState<Sales[]>([]);
+  
+  useEffect(()=>{
+    fetchSales();
+  },[]);
+
+  const fetchSales =()=>{
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll`)
+    .then(response=>response.json())
+    .then(data=>setSales(data))
+    .catch(error=>console.error("Error fetching data:",error));
+  };
+
+
   return (
-   
-    <div className='flex  w-full  box-border h-16 py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  hover:bg-gray-200 hover:text-gray-500 transition'>
-    <div className='w-1/12 flex items-center  px-6  text-neutral-400 text-base font-medium'>12/12/12</div>
-    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>11.00 pm</div>
-    <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>Purschase order</div>
-    <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>wecare</div>
-    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>DE9F9EF9</div>
-    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>$ 2</div>
-    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>10 items</div>
-    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>32</div>
+     <div>
+      {sales.map(sale=>(
+        
+
+    <div key={sale.id} className='flex  w-full  box-border h-16 py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  hover:bg-gray-200 hover:text-gray-500 transition'>
+    <div className='w-1/12 flex items-center  px-6  text-neutral-400 text-base font-medium'>{formatDateAndTime(sale.date).formattedDate}</div>
+    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{formatDateAndTime(sale.date).formattedTime}</div>
+    <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{sale.type}</div>
+    <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{sale.customer}</div>
+    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{sale.invoiceNo}</div>
+    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>$ {sale.totalCost}</div>
+    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{sale.totalQty}</div>
+    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{formatDateAndTime(sale.dueDate).formattedDate}</div>
     <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium text-green-500'><span className='bg-green-100 px-1'> <Tooltip content="message" className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
 
- <Button className='bg-transparent border-none'>gdrdtghrd</Button>
+ <Button className='bg-transparent border-none'>{sale.status}</Button>
 </Tooltip></span>
 
  </div>
@@ -61,8 +93,10 @@ const FinancesSalesTableItem = () => {
 
   </div>
 </div>
+))}
+
    
-  )
+</div> )
 }
 
 export default FinancesSalesTableItem

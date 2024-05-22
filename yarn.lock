@@ -1534,7 +1534,7 @@
 
 "@prisma/client@^5.14.0":
   version "5.14.0"
-  resolved "https://registry.yarnpkg.com/@prisma/client/-/client-5.14.0.tgz#dadca5bb1137ddcebb454bbdaf89423823d3363f"
+  resolved "https://registry.npmjs.org/@prisma/client/-/client-5.14.0.tgz"
   integrity sha512-akMSuyvLKeoU4LeyBAUdThP/uhVP3GuLygFE3MlYzaCb3/J8SfsYBE5PkaFuLuVpLyA6sFoW+16z/aPhNAESqg==
 
 "@prisma/debug@5.14.0":
@@ -1559,7 +1559,7 @@
 
 "@prisma/extension-accelerate@^1.0.0":
   version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@prisma/extension-accelerate/-/extension-accelerate-1.0.0.tgz#749cca2d4bbbb00ed7ca060d6c85426a35583112"
+  resolved "https://registry.npmjs.org/@prisma/extension-accelerate/-/extension-accelerate-1.0.0.tgz"
   integrity sha512-5oSpPtKCMfTl/sSXaS/7vBsPqfm+eEVB6/5KPBJITFatDoFcmjx/PIC/T93mHLiHI98xKwosPN59NGXjDDhcFA==
 
 "@prisma/fetch-engine@5.14.0":

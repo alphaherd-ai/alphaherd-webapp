@@ -29,7 +29,11 @@ export const fetchInventoryId = async (request:NextRequest) => {
     if (!branchId) {
         throw new Error("Branch ID not found in request");
     }
-    const orgBranch=await fetchBranchDetailsById(Number(branchId));
+    const orgBranch=await prismaClient.orgBranch.findUnique({
+        where: {
+            id : Number(branchId)
+        }
+    });
     console.log(orgBranch)
     const inventorySection = await prismaClient.inventorySection.findUnique({
         where: {

@@ -4,6 +4,8 @@ import Link from 'next/link';
 import Doctor from '../../../../assets/icons/inventory/doctor.svg';
 import Image from 'next/image';
 import { Tooltip, Button } from "@nextui-org/react";
+import { useAppSelector } from '@/lib/hooks';
+
 
 
 interface Services{
@@ -19,6 +21,8 @@ interface Services{
 
 const ServicesAllItem = () => {
   const [services, setServices] = useState<Services[]>([]);
+  const appState = useAppSelector((state) => state.app)
+
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/getAll?branchId=${appState.currentBranchId}`)

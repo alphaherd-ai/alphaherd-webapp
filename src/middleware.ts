@@ -13,10 +13,10 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
     return nonApiMiddleware(request, event);
   }
   console.log("Going to is authorized");
-  return isAuthorized(request,event);
+  return isAuthorized(request);
 }
 export const config = {
   matcher: [
-  '/api/:path*',
+    '/api/:path*',
   '/((?!api|_next/static|_next/image|favicon.ico).*)','/'],
 };
