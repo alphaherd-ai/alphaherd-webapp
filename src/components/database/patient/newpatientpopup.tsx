@@ -12,6 +12,7 @@ import { response } from "express";
 import { Clients } from "@/client";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useAppSelector } from "@/lib/hooks";
 
 type PopupProps = {
     onClose: () => void;
@@ -23,6 +24,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, client_name }) => {
     const [clients, setClients] = useState<{ value: string; label: string }[]>([]);
     const [startDate, setStartDate] = useState(new Date());
     const [selectedGender, setSelectedGender] = useState('female');
+    const appState = useAppSelector((state) => state.user)
 
     useEffect(() => {
         fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`)

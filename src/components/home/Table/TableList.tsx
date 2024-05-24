@@ -1,5 +1,5 @@
 import Image from "next/image"
-import React, { useState } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import Symptoms from "../PatientModal/Symptoms";
 import Vitals from "../PatientModal/Vitals";
 import Diagnosis from "../PatientModal/Diagnosis";
@@ -18,6 +18,7 @@ import Icons5 from "../../../assets/icons/home/1. Icons-24 (6).png"
 import Icons6 from "../../../assets/icons/home/1. Icons-24 (5).png"
 import printButton from "../../../assets/icons/home/1. Icons-24 (9).svg"
 import reciept from "../../../assets/icons/home/receipt_long.svg"
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Tooltip } from "@nextui-org/react";
 
 
 interface Column {
@@ -28,10 +29,19 @@ interface Column {
   service: string;
 }
 
+
+
 const TableList: React.FC = () => {
   const [selectedOptions, setSelectedOptions] = useState<{ [key: number]: string }>({});
   const [clickedRowIndex, setClickedRowIndex] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedKeys, setSelectedKeys] = useState(new Set(["text"]));
+
+
+  const selectedValue = useMemo(
+    () => Array.from(selectedKeys).join(", ").replaceAll("_", " "),
+    [selectedKeys]
+  );
 
   const phoneNumber = "8618284339";
 
@@ -40,6 +50,10 @@ const TableList: React.FC = () => {
       console.log("Tex Copied")
     });
   };
+
+  const handleClose = () => {
+    setIsModalOpen(false)
+  }
 
   const handleClick = (index: number, option: string) => {
     setSelectedOptions((prevSelectedOptions) => ({
@@ -68,112 +82,43 @@ const TableList: React.FC = () => {
     },
     {
       name: "star",
-      patient: "Patient",
-      reason: "Lorem ipsum dolor sit amet consectetur.",
-      time: "9:30 - 5:30",
-      service: "service",
-    },
-    {
-      name: "star1",
-      patient: "Patient",
+      patient: "Patient1",
       reason: "Lorem ipsum dolor sit amet consectetur.",
       time: "9:30 - 5:30",
       service: "service",
     },
     {
       name: "star2",
-      patient: "Patient",
+      patient: "Patient2",
       reason: "Lorem ipsum dolor sit amet consectetur.",
       time: "9:30 - 5:30",
       service: "service",
     },
     {
       name: "star3",
-      patient: "Patient",
+      patient: "Patient3",
       reason: "Lorem ipsum dolor sit amet consectetur.",
       time: "9:30 - 5:30",
       service: "service",
     },
-    {
-      name: "star3",
-      patient: "Patient",
-      reason: "Lorem ipsum dolor sit amet consectetur.",
-      time: "9:30 - 5:30",
-      service: "service",
-    },
-    {
-      name: "star3",
-      patient: "Patient",
-      reason: "Lorem ipsum dolor sit amet consectetur.",
-      time: "9:30 - 5:30",
-      service: "service",
-    },
-    {
-      name: "star3",
-      patient: "Patient",
-      reason: "Lorem ipsum dolor sit amet consectetur.",
-      time: "9:30 - 5:30",
-      service: "service",
-    },
-    {
-      name: "star3",
-      patient: "Patient",
-      reason: "Lorem ipsum dolor sit amet consectetur.",
-      time: "9:30 - 5:30",
-      service: "service",
-    },
-    {
-      name: "star3",
-      patient: "Patient",
-      reason: "Lorem ipsum dolor sit amet consectetur.",
-      time: "9:30 - 5:30",
-      service: "service",
-    },
-    {
-      name: "star3",
-      patient: "Patient",
-      reason: "Lorem ipsum dolor sit amet consectetur.",
-      time: "9:30 - 5:30",
-      service: "service",
-    },
+    
+    
   ];
 
   return (
-    <div className="flex">
+    <div className="flex bg-black bg-opacity-50">
       {/* Render Modal */}
-      {isModalOpen && (
-        <div className="fixed top-0 right-0 h-full min-w-[745px] bg-gray-100 z-50 overflow-y-scroll mt-[5px] rounded-xl shadow-md">
+      {isModalOpen  && (
+        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50">
+        <div className="absolute top-0 left-0 w-full h-full bg-black opacity-50"></div>
+        <div className="fixed top-0 right-0 h-full min-w-[745px] bg-gray-100 z-50 overflow-y-scroll mt-[5px] rounded-xl shadow-md backdrop-filter backdrop-blur-[20px]">
           {/* Modal Content */}
           <div className="flex flex-col min-h-[720px]">
-            <div className="w-[720px] min-h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border border-neutral-400 flex-col justify-center items-start gap-6 inline-flex">
-              <div className="self-stretch justify-start items-center gap-4 inline-flex">
+            <div className="w-[720px] min-h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border border-neutral-400 flex-col justify-center items-start gap-6 flex ">
+              <div className="self-stretch justify-start items-center gap-4 flex">
                 <div className="justify-start items-center flex">
                   <div className="w-6 h-6 relative">
-                    {/* <Image
-                      className="w-6 h-6 left-0 top-0 absolute rounded-full border border-neutral-400"
-                      src="https://via.placeholder.com/24x24"
-                      alt=""
-                    />
-                    <Image
-                      className="w-6 h-6 left-0 top-0 absolute rounded-full border border-neutral-400"
-                      src="https://via.placeholder.com/24x24"
-                      alt=""
-                    />
-                    <Image
-                      className="w-6 h-6 left-0 top-0 absolute rounded-full border border-neutral-400"
-                      src="https://via.placeholder.com/24x24"
-                      alt=""
-                    />
-                    <Image
-                      className="w-6 h-6 left-0 top-0 absolute rounded-full border border-neutral-400"
-                      src="https://via.placeholder.com/24x24"
-                      alt=""
-                    />
-                    <Image
-                      className="w-6 h-6 left-0 top-0 absolute rounded-full border border-neutral-400"
-                      src="https://via.placeholder.com/24x24"
-                      alt=""
-                    /> */}
+                    
                   </div>
                 </div>
                 <div className="grow shrink basis-0 text-gray-500 text-xl font-bold ">
@@ -366,7 +311,7 @@ const TableList: React.FC = () => {
                   <div className="w-6 h-6">
                     <Image src={printButton} alt="printButton" />
                   </div>
-                  <div className="text-white text-base">
+                  <div className="text-white text-base" onClick={handleClose}>
                     Print Prescription
                   </div>
                 </div>
@@ -382,55 +327,58 @@ const TableList: React.FC = () => {
             </div>
           </div>
         </div>
+        </div>
       )}
 
       {/* Render Table */}
       <div className="w-full">
         {columns.map((col, index) => {
-          const selectedOption = selectedOptions[index] || "In Progress";
+          const selectedOption = selectedOptions[index] || "";
 
           return (
             <div
               key={index}
-              className="flex w-full h-16 px-4 bg-white border-[1px] border-solid border-r-[#A2A3A3] border-t-0 border-l-[#A2A3A3] border-b-[#A2A3A3] justify-start items-center gap-4 cursor-pointer "
-              onClick={() => handleClick(index, "Checked in")}
+              className={`flex w-full h-16 px-4 bg-white border-[1px] border-solid border-r-[#A2A3A3] border-t-0 border-l-[#A2A3A3] border-b-[#A2A3A3]  justify-start items-center gap-4 cursor-pointer ${selectedOption === "Checked in" ? "bg-[#ebedff] text-indigo-600" : "text-neutral-400" && selectedOption === "In Progress" ? "bg-[#e7f5ee] text-[#0F9D58]" : "text-neutral-400"}  `}
             >
               <div className="mr-[5px]">
                 <div className="w-8 h-8 flex justify-center items-center gap-2">
+              <Tooltip className="bg-black text-xs rounded-md text-white" showArrow={true} content="Mark as complete">
                   <div className="w-6 h-6 ">
                     <Image src={Icons2} alt="" />
                   </div>
+                </Tooltip>
                 </div>
-                
               </div>
-              <div className="w-[16.6%] ">
-                <span className="text-neutral-400 text-base ">
+              <div key={index} className="w-[16.6%] " onClick={() => handleClick(index, selectedOption)}>
+                <span className=" text-base ">
                   {col.name}
                 </span>
               </div>
               <div className="w-[14.6%]">
-                <span className="text-neutral-400 text-base ">
+                <span className=" text-base ">
                   {col.patient}
                 </span>
               </div>
               <div className="w-[20.6%]">
-                <span className="text-neutral-400 text-base ">
+              <Tooltip className="bg-black text-xs rounded-md text-white" showArrow={true} content={col.reason}>
+                <span className=" text-base ">
                   {col.reason}
                 </span>
+                </Tooltip>
               </div>
               <div className="w-[14.6%]">
-                <span className="text-neutral-400 text-base ">
+                <span className=" text-base ">
                   {col.time}
                 </span>
               </div>
               <div className="w-[16.6%]">
-                <span className="text-neutral-400 text-base">
+                <span className=" text-base">
                   {col.service}
                 </span>
               </div>
-              <div className="w-[16.6%] hover:cursor-pointer">
-                <div className="py-2 border-stone-300 justify-start items-center gap-2 flex">
-                  <div className="justify-end items-start flex">
+              <div className="w-[16.6%] hover:cursor-pointer ">
+                <div className="py-2 border-stone-300 justify-start items-center gap-2 flex rounded-lg">
+                  <div className="justify-end items-start flex border border-solid border-[#A2A3A3] rounded-md">
                     <div
                       className={`px-2 py-1 border border-neutral-400 justify-start items-center gap-1 flex ${
                         selectedOption === "Checked in"
@@ -458,15 +406,34 @@ const TableList: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="w-6 h-6 flex justify-center items-center gap-2 ">
+              <Dropdown key={index} placement="bottom-end">
+              <DropdownTrigger>
+              <Button className="w-6 h-6 flex justify-center items-center gap-2 ">
                 <div className="w-6 h-6">
-                  <Image
+                  {/* <Image
                     className="w-6 h-6 left-0 top-0 rounded-full border border-neutral-400"
                     src={Icons}
                     alt=""
-                  />
+                  /> */}
+                  {selectedValue}
                 </div>
-              </div>
+              </Button>
+              </DropdownTrigger>
+              <DropdownMenu 
+              variant="shadow"
+              disallowEmptySelection
+              selectionMode="single"
+              selectedKeys={selectedKeys}
+              onSelectionChange={setSelectedKeys}
+              >
+                <DropdownItem key="text">Text</DropdownItem>
+                <DropdownItem key="number">Number</DropdownItem>
+                <DropdownItem key="date">Date</DropdownItem>
+                <DropdownItem key="single_date">Single Date</DropdownItem>
+                <DropdownItem key="iteration">Iteration</DropdownItem>
+
+              </DropdownMenu>
+              </Dropdown>
             </div>
           );
         })}
@@ -476,3 +443,6 @@ const TableList: React.FC = () => {
 };
 
 export default TableList;
+
+
+

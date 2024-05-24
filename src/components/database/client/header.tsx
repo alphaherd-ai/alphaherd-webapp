@@ -128,23 +128,15 @@ const DatabaseClientHeader = () => {
         </Dropdown>
     </div>
 
-    <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '>
+    <div className='flex items-center  justify-between rounded-lg '>
       
-        <Popover placement="bottom-end" showArrow offset={10}>
-            <PopoverTrigger>
+        
                 <Button color="gray-400"
                     variant="solid"
-                    className="capitalize flex border-none bg-black text-white rounded-lg " onClick={togglePopup}>  New Clients
-                    <div className='flex pl-2'><Image src={DownArrow} alt='DownArrow' className='w-4 h-4 ' /></div></Button>
-            </PopoverTrigger>
-            <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
-      
-         
-
-            </PopoverContent>
-        </Popover>
-
-
+                    className="capitalize flex border-none bg-black h-9 cursor-pointer text-white rounded-lg gap-3" onClick={togglePopup}><div className='flex'><Image src={Add} alt='Add' className='w-4 h-4 ' /></div>Add Clients
+                </Button>
+            
+        
 
     </div>
 </div>

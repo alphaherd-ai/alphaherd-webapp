@@ -20,7 +20,9 @@ const InventoryProductAllTable = () => {
             </div>
 
 <ProductAllItem/>
-<InventoryProductTableBottombar/>
+{/* <InventoryProductTableBottombar productsPerPage={0} totalProducts={0} paginate={function (pageNumber: number): void {
+        throw new Error('Function not implemented.')
+      } }/> */}
      
         </div>
   )
