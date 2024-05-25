@@ -7,7 +7,7 @@ import { DataContext } from './DataContext';
 import editicon from "../../../../../assets/icons/finance/1. Icons-25.svg";
 import calicon from "../../../../../assets/icons/finance/calendar_today.svg";
 
-const NewsaleEstimateHeader = () => {
+const NewsalesHeader = () => {
     const { headerData, setHeaderData } = useContext(DataContext);
     const [startDate, setStartDate] = useState(new Date());
     const [isClearable, setIsClearable] = useState(true);
@@ -125,4 +125,4 @@ const NewsaleEstimateHeader = () => {
     );
 };
 
-export default NewsaleEstimateHeader;
+export default NewsalesHeader;

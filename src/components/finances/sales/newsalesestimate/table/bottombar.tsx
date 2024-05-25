@@ -11,26 +11,32 @@ import Image from "next/image"
 import { DataContext } from './DataContext'
 import { FinanceSalesType } from '@prisma/client'
 import axios from "axios"
+import { useAppSelector } from '@/lib/hooks';
+
 
 
 const NewsaleEstimateBottomBar = () => {
   
     const { headerData, tableData, totalAmountData } = useContext(DataContext);
+    const appState = useAppSelector((state) => state.app);
 
     const handleSubmit = async () => {
         const allData = {headerData, tableData, totalAmountData};
+        console.log(allData)
 
         const items = tableData.map(data => ({
-                productId: data.id, 
-                quantity: data.quantity,   
-        }));
-        console.log(allData)
+            productId: data.productId,
+            productBatchId:data.id, 
+            quantity: data.quantity,  
+            sellingPrice:data.sellingPrice,
+            taxAmount:data.gst 
+    }));
         const data={
             customer: allData.headerData.customer.value,
             notes: allData.headerData.notes,
             subTotal: 0,
             invoiceNo: 234234,
-            dueDate: "2024-06-20T14:26:00.000Z",
+            dueDate: allData.headerData.dueDate,
             shipping: 0,
             adjustment: 0,
             totalCost: 0,
@@ -45,7 +51,7 @@ const NewsaleEstimateBottomBar = () => {
         }
         console.log(JSON.stringify(data))
         try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceSalesType.Estimate}`,data)
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceSalesType.Estimate}?branchId=${appState.currentBranchId}`,data)
 
             if (!response.data) {
                 throw new Error('Network response was not ok');

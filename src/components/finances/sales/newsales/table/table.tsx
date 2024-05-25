@@ -5,10 +5,10 @@ import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
 import addicon from "../../../../../assets/icons/finance/add.svg"
 import add1icon from "../../../../../assets/icons/finance/add1.svg"
 import sellicon from "../../../../../assets/icons/finance/sell.svg"
-
+import { Tax } from '@prisma/client';
 import Invoice from '../../../../../assets/icons/finance/invoice.svg';
-
-import React, { useState, useEffect, useContext } from 'react';
+import formatDateAndTime from '@/utils/formateDateTime';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import Select from 'react-select';
 import { useRef } from "react"
 import Image from "next/image"
@@ -19,31 +19,36 @@ import NewsalesBottomBar from './bottombar';
 import NewsalesTotalAmout from './totalamount';
 import axios from 'axios';
 import { DataContext } from './DataContext';
-import { useAppSelector } from '@/lib/hooks';
+import { useAppSelector } from "@/lib/hooks";
 
-interface AllProducts {
+
+interface Products{
+    id :string,
+    itemName:string,
+    productBatch:ProductBatch[]
+    hsnCode:string
+}
+interface ProductBatch {
     id: number;
     date: string;
     time: string;
     quantity: number;
-    batchNumber: string;
-    expiry: string;
-    costPrice: number;
-    sellingPrice: number;
-    itemName: string;
-    hsnCode: string;
-    category: string;
-    providers: string[];
+    batchNumber:string;
+    expiry:string;
+    costPrice:number;
+    sellingPrice :number;
+    hsnCode:string;
+    category :string;
+    distributors:string[];
 }
 
 const NewsalesTable = () => {
     const { tableData, setTableData } = useContext(DataContext);
-
-    const batchOptions = [
-        { value: 'one', label: 'one' },
-        { value: 'two', label: 'two' },
-        { value: 'three', label: 'three' }
-    ];
+    const [selectedProductDetails,setSelectedProduct]= useState<Products>()
+    const [products, setProducts] = useState<{ value: number; label: string }[]>([]);
+    const [batches,setBatches] = useState<{value:number;label:string}[]>([])
+    const [inventory, setInventory] = useState<any[]>([]);
+    const appState = useAppSelector((state) => state.app)
 
     const taxOptions = [
         { value: 'Tax excl.', label: 'Tax excl.' },
@@ -51,173 +56,187 @@ const NewsalesTable = () => {
     ];
 
     const gstOptions = [
-        { value: 'GST@18%.', label: 'GST@18%.' },
-        { value: 'GST@9%.', label: 'GST@9%.' }
+        { value: 0.18, label: Tax.GST_18 },
+        { value: 0.09, label: Tax.GST_9 }
     ];
 
-    const initialItems:any = [];
-
+    useEffect(() => {
+        fetchProducts();
+        console.log(products)
+    }, []);
     const Checkbox = ({ children, ...props }: JSX.IntrinsicElements['input']) => (
         <label style={{ marginRight: '1em' }}>
             <input type="checkbox" {...props} />
             {children}
         </label>
     );
-
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [isChecked, setChecked] = useState(false);
-    const [items, setItems] = useState(initialItems);
-    const [products, setProducts] = useState<{ value: string; label: string }[]>([]);
-    const appState = useAppSelector((state) => state.app)
-
-    const handleProductSelect = (selectedProduct: any, index: number) => {
-        console.log('Selected product:', selectedProduct);
-        if (selectedProduct.value) {
-            fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${selectedProduct.value}?branchId=${appState.currentBranchId}`)
-                .then((response) => response.json())
-                .then((data) => {
-                    const expiry = data.expiry;
-                    const updatedInventory = [...inventory];
-                    updatedInventory[index] = {
-                        ...updatedInventory[index],
-                        id: data.id,
-                        date: data.date,
-                        time: data.time,
-                        quantity: data.quantity,
-                        batchNumber: data.batchNumber,
-                        expiry: expiry,
-                        costPrice: data.costPrice,
-                        sellingPrice: data.sellingPrice,
-                        itemName: data.itemName,
-                        hsnCode: data.hsnCode,
-                        category: data.category,
-                        providers: data.providers,
-                    };
-                    setInventory(updatedInventory);
-                })
-                .catch((error) =>
-                    console.error("Error fetching product details from API:", error)
-                );
-        }
-    };
-
-    const handleUpdateInventory = async () => {
-        try {
-            for (const item of inventory) {
-                const { id, date, time, quantity, batchNumber, expiry, costPrice, sellingPrice, itemName, hsnCode, category, providers } = item;
-                const invoiceType = "Manual";
-                const body = {
-                    invoiceType,
-                    date,
-                    quantity,
-                    batchNumber,
-                    expiry,
-                    costPrice,
-                    sellingPrice,
-                    itemName,
-                    hsnCode,
-                    category,
-                    providers,
-                };
-                const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${id}`, body);
-                console.log('Updated inventory item:', response.data);
-            }
-            alert('Inventory updated successfully');
-        } catch (error) {
-            console.error("Error updating inventory:", error);
-            alert('Error updating inventory. Please try again.');
-        }
-    };
-
-    useEffect(() => {
-        fetch("${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll")
-            .then((response) => response.json())
-            .then((data) => {
-                const formattedProducts = data.map((product: AllProducts) => ({
-                    value: product.id,
-                    label: product.itemName,
-                }));
-                setProducts(formattedProducts);
-            })
-            .catch((error) =>
-                console.error("Error fetching data from API:", error)
-            );
-    }, []);
-
+    const { tableData: items, setTableData: setItems } = useContext(DataContext);
+    
     useEffect(() => {
         if (!disableButton && inputRef.current) {
             inputRef.current.focus();
         }
     }, [disableButton]);
-
-    const handleEditButtonClick = () => {
-        setDisableButton(!disableButton);
+    const fetchProducts = async () => {
+        try {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${appState.currentBranchId}`);
+            const formattedProducts = response.data.map((product: Products) => ({
+                value: product.id,
+                label: product.itemName,
+            }));
+            setProducts(formattedProducts);
+        } catch (error) {
+            console.error("Error fetching products:", error);
+        }
     };
+  const fetchProductBatch= async (selectedProduct:any) =>{
+    try{
+        console.log(selectedProduct)
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll/${selectedProduct.value}?branchId=${appState.currentBranchId}`);
+        const formattedProductBatches=response.data.map((product:ProductBatch)=>({
+            value:product.id,
+            label:product.batchNumber
+        }));
+        console.log(formattedProductBatches)
+        setBatches(formattedProductBatches)
+    }catch(error){
+        console.error("Error fetching Batches:",error);
+    }
+  }
+  const handleDeleteRow = useCallback((index: number) => {
+    const updatedItems = [...items];
+    updatedItems.splice(index, 1);
+    setItems(updatedItems);
+}, [items]);
 
-    const handleCheckBoxChange = () => {
-        setChecked(!isChecked);
-        setTableData((prevItems) =>
-            prevItems.map((item) => ({
-                ...item,
-                quantity: isChecked ? item.quantity * 2 : item.quantity,
-            }))
-        );
+const handleGstSelect = (selectedGst: any, index: number) => {
+    const updatedItems = [...tableData];
+    console.log(selectedGst)
+    updatedItems[index] = {
+        ...updatedItems[index],
+        gst: selectedGst.value
     };
+    setTableData(updatedItems);
+};
 
-    const handleQuantityDecClick = (itemId: any) => {
-        setTableData((prevItems) =>
-            prevItems.map((item) => {
-                if (item.id === itemId && item.quantity > 1) {
-                    return { ...item, quantity: item.quantity - 1 };
-                }
-                return item;
-            })
-        );
-    };
+const handleEditButtonClick = () => {
+    setDisableButton(!disableButton);
+};
 
-    const handleQuantityIncClick = (itemId: any) => {
-        setTableData((prevItems) =>
-            prevItems.map((item) => {
-                if (item.id === itemId) {
-                    return { ...item, quantity: item.quantity + 1 };
-                }
-                return item;
-            })
-        );
-    };
+const handleCheckBoxChange = () => {
+    setChecked(!isChecked);
+    setItems((prevItems) =>
+        prevItems.map((item) => ({
+            ...item,
+            quantity: isChecked ? item.quantity * 2 : item.quantity,
+        }))
+    );
+};
 
-    const handleQuantityDecClick1 = (itemId: any) => {
-        setTableData((prevItems) =>
-            prevItems.map((item) => {
-                if (item.id === itemId && item.quantity2 > 1) {
-                    return { ...item, quantity2: item.quantity2 - 1 };
-                }
-                return item;
-            })
-        );
-    };
+const handleQuantityDecClick = (itemId: any) => {
+    setItems((prevItems) =>
+        prevItems.map((item) => {
+            if (item.id === itemId && item.quantity > 1) {
+                return { ...item, quantity: item.quantity - 1 };
+            }
+            return item;
+        })
+    );
+};
 
-    const handleQuantityIncClick1 = (itemId: any) => {
-        setTableData((prevItems) =>
-            prevItems.map((item) => {
-                if (item.id === itemId) {
-                    return { ...item, quantity2: item.quantity2 + 1 };
-                }
-                return item;
-            })
-        );
-    };
+const handleQuantityIncClick = (itemId: any) => {
+    setItems((prevItems) =>
+        prevItems.map((item) => {
+            if (item.id === itemId) {
+                return { ...item, quantity: item.quantity + 1 };
+            }
+            return item;
+        })
+    );
+};
 
-    const handleAddItem = () => {
-        const newItem = { id: items.length + 1, quantity: 1, quantity2: 1 };
-        setItems((prevItems:any) => [...prevItems, newItem]);
-        setTableData((prevTableData) => [...prevTableData, newItem]);
-    };
+const handleQuantityDecClick1 = (itemId: any) => {
+    setItems((prevItems) =>
+        prevItems.map((item) => {
+            if (item.id === itemId && item.quantity2 > 1) {
+                return { ...item, quantity2: item.quantity2 - 1 };
+            }
+            return item;
+        })
+    );
+};
 
-    useEffect(() => {
-        setItems(tableData);
-    }, [tableData]);
+const handleQuantityIncClick1 = (itemId: any) => {
+    setItems((prevItems) =>
+        prevItems.map((item) => {
+            if (item.id === itemId) {
+                return { ...item, quantity2: item.quantity2 + 1 };
+            }
+            return item;
+        })
+    );
+};
+
+const handleAddItem= useCallback(() => {
+    setItems([...items, {}]);
+}, [items]);
+
+const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
+    console.log(selectedProduct)
+    if (selectedProduct.value) {
+        try {
+            setBatches([]);
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${selectedProduct.value}?branchId=${appState.currentBranchId}`);
+            const data = response.data;
+            setSelectedProduct(data);
+            await fetchProductBatch(selectedProduct);   
+            const updatedItems = [...items];
+            updatedItems[index] = {
+                ...updatedItems[index],
+                quantity: data.quantity,
+                productId:selectedProduct.value
+            };
+            setItems(updatedItems);   
+        } catch (error) {
+            console.error("Error fetching product details from API:", error);
+        }
+    }
+}, [items, products,setBatches]);
+const handleBatchSelect = useCallback(async (selectedProduct: any, index: number) => {
+    if (selectedProduct.value) {
+        try {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${selectedProduct.value}?branchId=${appState.currentBranchId}`);
+            const data = response.data;
+            const updatedItems = [...items];
+            updatedItems[index] = {
+                ...updatedItems[index],
+                id: data.id,
+                quantity: data.quantity ,
+                batchNumber: data.batchNumber,
+                expiry:  data.expiry,
+                sellingPrice:  data.sellingPrice,
+                productId:selectedProductDetails?.id
+            };
+            setItems(updatedItems);
+            setTableData(updatedItems);
+                // const updatedProducts = products.filter((product) => product.value !== selectedProduct.value);
+                // setProducts(updatedProducts);
+    
+        } catch (error) {
+            console.error("Error fetching product details from API:", error);
+        }
+    }
+}, [items, products]);
+
+
+
+useEffect(() => {
+    setItems(items);
+    setTableData(items)
+}, [items]);
 
     return (
         <>
@@ -293,29 +312,35 @@ const NewsalesTable = () => {
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'>Total</div>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'></div>
                             </div>
-                            {items.map((item:any) => (
+                            {items.map((item:any,index:number) => (
                                 <div key={item.id} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400'>
-                                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{item.id}</div>
-                                                                  <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{`Item ${item.id}`}</div>
+                                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{index+1}</div>
+                                                                  <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'><Select
+                                        className="text-gray-500 text-base font-medium font-['Satoshi'] w-full border-0 boxShadow-0"
+                                        classNamePrefix="select"
+                                        value={products.find((prod) => prod.value === item.productId)}
+                                        isClearable={false}
+                                        isSearchable={true}
+                                        name="itemName"
+                                        options={products}
+                                        onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
+                                    />
+                                    </div>
                                     <div className='w-2/12 px-6 flex-col items-center text-neutral-400 text-base font-medium'>
-                                        <Select
-                                            defaultValue={batchOptions[0]}
-                                            isClearable={false}
-                                            isSearchable={true}
-                                            options={batchOptions}
-                                            styles={{
-                                                control: (provided, state) => ({
-                                                    ...provided,
-                                                    border: state.isFocused ? 'none' : 'none',
-                                                    padding: '0',
-                                                    height: '2rem'
-                                                }),
-                                            }}
-                                        />
-                                        <div className="text-neutral-400 text-[10px] font-medium font-['Satoshi'] px-2">Exp. 09/04/24</div>
+                                    <Select
+                                      className="text-gray-500 text-base font-medium font-['Satoshi'] w-full border-0 boxShadow-0"
+                                      classNamePrefix="select"
+                                      value={batches.find((prod) => prod.value === item.id)}
+                                      isClearable={false}
+                                      isSearchable={true}
+                                      name={`batchNumber=${index}`}
+                                      options={batches}
+                                      onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
+                                  />  
+                                        <div className="text-neutral-400 text-[10px] font-medium font-['Satoshi'] px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
                                     </div>
                                     <div className='w-2/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-5'>
-                                        <div className="w-1/12 flex items-center text-neutral-400 text-base font-medium">₹400</div>
+                                        <div className="w-1/12 flex items-center text-neutral-400 text-base font-medium">{item.sellingPrice}</div>
                                         <Select
                                             className="text-neutral-400 text-sm font-medium font-['Satoshi']"
                                             defaultValue={taxOptions[0]}
@@ -328,6 +353,7 @@ const NewsalesTable = () => {
                                                     border: state.isFocused ? 'none' : 'none',
                                                 }),
                                             }}
+                                            
                                         />
                                     </div>
                                     {!isChecked && (
@@ -355,7 +381,7 @@ const NewsalesTable = () => {
                                     <div className='w-2/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
                                         <Select
                                             className="text-neutral-400 text-base font-medium"
-                                            defaultValue={gstOptions[0]}
+                                            defaultValue={[]}
                                             isClearable={false}
                                             isSearchable={true}
                                             options={gstOptions}
@@ -366,15 +392,17 @@ const NewsalesTable = () => {
                                                     padding: '0',
                                                 }),
                                             }}
+                                            onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
                                         />
                                     </div>
-                                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{`₹${item.quantity * 400}`}</div>
-                                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{`₹${item.quantity * 400 * 1.18}`}</div>
+                                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{`₹${(item.quantity * item.gst).toFixed(2)}`}</div>
+                                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{`₹${(item.quantity * item.sellingPrice +item.quantity*item.gst).toFixed(2)}`}</div>
                                     <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
                                         <button className="border-0">
                                             <Image src={sellicon} alt="sell" ></Image>
                                         </button>
-                                        <button className="border-0">
+                    
+                                        <button className="border-0" onClick={() => handleDeleteRow(index)}>
                                             <Image src={delicon} alt="delete" ></Image>
                                         </button>
                                     </div>
@@ -404,8 +432,8 @@ const NewsalesTable = () => {
                                         }}
                                     />
                                 </div>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'>{`₹${items.reduce((acc:any, item:any) => acc + item.quantity * 400 * 0.18, 0)}`}</div>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'>{`₹${items.reduce((acc:any, item:any) => acc + item.quantity * 400 * 1.18, 0)}`}</div>
+                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'>{`₹${items.reduce((acc:any, item:any) => acc + item.quantity * item.gst , 0).toFixed(2)}`}</div>
+                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/12' >{`₹${items.reduce((acc:any, item:any) => acc + item.quantity * item.sellingPrice +item.quantity*item.gst, 0).toFixed(2)}`}</div>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'></div>
                             </div>
                         </div>

@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 import { productSchema } from '@/schemas/inventory/productValidation';
 import { FinanceSalesType } from '@prisma/client';
+import { useAppSelector } from '@/lib/hooks';
 import formatDateAndTime from '@/utils/formateDateTime';
 interface Sales {
   id:number;
@@ -20,14 +21,15 @@ interface Sales {
   status:string;
 }
 const FinancesSalesTableItem = () => {
-  const [sales,setSales]=useState<Sales[]>([]);
+    const appState = useAppSelector((state) => state.app);
+    const [sales,setSales]=useState<Sales[]>([]);
   
   useEffect(()=>{
     fetchSales();
   },[]);
 
   const fetchSales =()=>{
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll`)
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`)
     .then(response=>response.json())
     .then(data=>setSales(data))
     .catch(error=>console.error("Error fetching data:",error));

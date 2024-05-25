@@ -1,6 +1,7 @@
 import { connectToDB } from '../../../../../utils/index';
 import prismaClient from '../../../../../../prisma';
 import { NextRequest } from 'next/server';
+import { fetchFinanceId } from '@/utils/fetchBranchDetails';
 
 export const GET = async (req: NextRequest, { params }: { params: { id: number } }) => {
   if (req.method !== 'GET') {
@@ -8,9 +9,9 @@ export const GET = async (req: NextRequest, { params }: { params: { id: number }
   }
 
   try {
-    
+    const financeId=await fetchFinanceId(req);
     const sales = await prismaClient.sales.findUnique({
-      where: { id: Number(params.id) },
+      where: { id: Number(params.id),financeSectionId:financeId },
       include: {
         items: {
           include: {
@@ -39,10 +40,10 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: number }
     }
   
     try {
-      
+      const financeId=await fetchFinanceId(req);
       const body = await req.json();
       const sales = await prismaClient.sales.update({
-        where: { id: Number(params.id) },
+        where: { id: Number(params.id),financeSectionId:financeId},
         data: body,
         include: {
           items: {
@@ -76,17 +77,17 @@ export const DELETE = async (req: NextRequest, { params }: { params: { id: numbe
   try {
     
     const salesId = Number(params.id);
-
+    const financeId=await fetchFinanceId(req);
     await prismaClient.financeTimeline.deleteMany({
-      where: { salesId },
+      where: { salesId,financeSectionId:financeId},
     });
 
     await prismaClient.items.deleteMany({
-      where: { salesId },
+      where: { salesId,financeSectionId:financeId},
     });
 
     await prismaClient.sales.delete({
-      where: { id: salesId },
+      where: { id: salesId,financeSectionId:financeId},
     });
 
     return new Response(`Sales with id: ${salesId} deleted successfully`, { status: 201 });

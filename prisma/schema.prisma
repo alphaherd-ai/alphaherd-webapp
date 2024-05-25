@@ -7,6 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
+enum Tax {
+ GST_18
+ GST_9 
+}
+
+
+enum Source {
+  Sales_Invoice
+  Sales_Return
+}
 
 enum Stock {
   StockIN
@@ -203,7 +213,7 @@ model ProductBatch {
   id                 Int                 @id @default(autoincrement())
   distributors       String[]
   quantity           Int?
-  productId          Int
+  productId          Int  @unique
   batchNumber        String?
   costPrice          Int?
   location           Location            @default(NONE)
@@ -322,14 +332,14 @@ model Transactions {
 
 model Items {
   id               Int             @id @default(autoincrement())
-  taxPercent       Int?
+  taxPercent       Tax?
   taxAmount        Int?
   totalAmount      Int?
   reasons          String?
   category         String?
   quantity         Int?
   name             String?
-  productId        Int?
+  productId        Int?            @unique
   products         Products?       @relation(fields: [productId], references: [id])
   salesId          Int?
   sale             Sales?          @relation(fields: [salesId], references: [id])

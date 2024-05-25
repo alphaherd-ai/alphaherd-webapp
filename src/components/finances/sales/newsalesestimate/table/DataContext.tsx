@@ -1,16 +1,16 @@
+// DataContext.tsx
 import React, { createContext, useState, Dispatch, SetStateAction, ReactNode } from 'react';
 
-// Define the shape of your context value
 interface DataContextType {
   headerData: { [key: string]: any };
   setHeaderData: Dispatch<SetStateAction<{ [key: string]: any }>>;
-  tableData: any[];
-  setTableData: Dispatch<SetStateAction<any[]>>;
+  tableData: { [key: string]: any }[];
+  setTableData: Dispatch<SetStateAction<{ [key: string]: any }[]>>;
   totalAmountData: { [key: string]: any };
   setTotalAmountData: Dispatch<SetStateAction<{ [key: string]: any }>>;
 }
 
-// Define the default value of the context
+
 const defaultValue: DataContextType = {
   headerData: {},
   setHeaderData: () => {},
@@ -24,7 +24,7 @@ export const DataContext = createContext<DataContextType>(defaultValue);
 
 export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [headerData, setHeaderData] = useState<{ [key: string]: any }>({});
-  const [tableData, setTableData] = useState<any[]>([]);
+  const [tableData, setTableData] = useState<{ [key: string]: any }[]>([]);
   const [totalAmountData, setTotalAmountData] = useState<{ [key: string]: any }>({});
 
   return (
