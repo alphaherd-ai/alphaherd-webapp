@@ -15,8 +15,6 @@ import eyeicon1 from "../../../assets/icons/loginsignup/1. Icons-24 (5).svg"
 import { AppState, updateApp } from "@/lib/features/appSlice";
 import { fetchBranchDetailsById, isAdminOfOrg, isManagerOfBranch } from "@/utils/stateChecks";
 
-
-
 const Login = () => {
   const dispatch = useAppDispatch();
 
