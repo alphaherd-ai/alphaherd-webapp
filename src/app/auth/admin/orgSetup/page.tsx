@@ -9,56 +9,33 @@ import OrgAdminSetup from '@/components/auth/admin/orgAdminSetup';
 import { useRouter } from 'next/navigation';
 
 import { Bounce, ToastContainer, toast } from 'react-toastify';
-import { object, string } from 'zod';
-import bgg from "../../../assets/icons/loginsignup/First.png"
+import { z } from 'zod';
+import { setValidationErrorsForForm } from '@/utils/setValidationErrorForForm';
 
 
 
-const schemas = [
-  object({
-    orgName: string(),
-  }),
-  object({
-    orgEmail: string().email(),
-    gstNo: string(),
-    phoneNo: string(),
-    address: string(),
-    state: string(),
-    pincode: string(),
-    description: string(),
-  }),
-  object({
-    adminName: string(),
-    adminEmail: string().email(),
-    adminPhoneNo: string(),
-    adminAltPhoneNo: string(),
-    adminPassword: string(),
-    reAdminPassword: string(),
-  }),
-];
-interface FormData {
-  orgName: string;
-  orgEmail: string;
-  gstNo: string;
-  branchName: string;
-  phoneNo: string;
-  adminName: string;
-  adminEmail: string;
-  adminPhoneNo: string;
-  adminAltPhoneNo: string;
-  address: string;
-  state: string;
-  pincode: string;
-  description: string;
-  adminPassword: string;
-  reAdminPassword: string;
-}
+const formSchema = z.object({
+  orgName: z.string().min(4, 'Org Name must be at least 4 characters'),
+  orgEmail: z.string().email('Invalid Email Address'),
+  gstNo: z.string().length(15, 'Invalid GST No.'),
+  phoneNo: z.string().length(10, 'Invalid Phone No.'),
+  address: z.string(),
+  state: z.string(),
+  pincode: z.string(),
+  description: z.string(),
+  adminName: z.string(),
+  adminEmail: z.string().email('Invalid Email Address'),
+  adminPhoneNo: z.string().length(10, 'Invalid Phone No.'),
+  adminAltPhoneNo: z.string().length(10, 'Invalid Phone No.'),
+  adminPassword: z.string().min(4, 'Admin Password must be at least 4 characters'),
+  reAdminPassword: z.string().min(4, 'Admin Password must be at least 4 characters')
+});
 
 const OrgSetup = () => {
 
   let router = useRouter();
 
-  const [data, setData] = useState<FormData>({
+  const [data, setData] = useState({
     orgName: '',
     orgEmail: '',
     gstNo: '',
@@ -75,54 +52,31 @@ const OrgSetup = () => {
     adminPassword: '',
     reAdminPassword: '',
   });
+
+  const [validationErrors, setValidationErrors] = useState(data);
+
+  console.log(validationErrors);
+
   const [activeTab, setActiveTab] = useState(0);
 
-  const handleChange = (event: any) => {
-
-    console.log(data, event.target.value);
-    const { name, value } = event.target;
-    setData({
-      ...data,
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setData((prevData) => ({
+      ...prevData,
       [name]: value,
-    });
+    }));
   };
 
+  const formSubmit = async (e: React.FormEvent) => {
 
-  const validateFormData = (): boolean => {
-    try {
-      const validationResult = schemas[activeTab].parse(data);
-      console.log("Validation Passed:", validationResult);
-      return true;
-    } catch (error) {
-      console.error("Validation Error:", error);
-      return false;
-    }
-  };
-
-  const handleContinue = () => {
-    if (validateFormData() && activeTab !== formElements.length - 1) {
-      setActiveTab((prev) => prev + 1);
-
-    } else {
-      toast.error('Please fill all fields correctly before continuing', {
-        position: 'bottom-right',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'colored',
-        transition: Bounce,
-      });
-    }
-  };
-
-  const formSubmit = async () => {
+    e.preventDefault();
 
     console.log("form button")
 
     try {
+
+      formSchema.parse(data);
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/admin/orgRegister`,
         {
           method: 'POST',
@@ -146,7 +100,7 @@ const OrgSetup = () => {
               "password": data.adminPassword,
               "phoneNo": data.adminPhoneNo
             },
-            "branchName" : data.branchName
+            "branchName": data.branchName
           })
         }
       )
@@ -166,88 +120,92 @@ const OrgSetup = () => {
         });
         router.push(`/auth/login`)
       }
-      else{
+      else {
         throw new Error(json.message);
       }
     }
-    catch (err: any) {
-      toast.error(err.message, {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-        transition: Bounce,
-      });
+    catch (err : any) {
+      console.log(err.message);
+      console.log(typeof(err))
+      if (err instanceof z.ZodError) {
+        console.log(err.flatten());
+        setValidationErrorsForForm(err,setValidationErrors);
+      } else {
+        console.error('Error:', err);
+        toast.error(err.message, {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+        });
+      }
     }
-    finally{
+    finally {
       setActiveTab(0)
     }
   }
 
 
   const formElements = [
-    <OrgNameSetup key="orgName" data={data} handleChange={handleChange} />,
-    <OrgDetailsSetup key="orgDetails" data={data} handleChange={handleChange} />,
-    <OrgAdminSetup key="orgAdmin" data={data} handleChange={handleChange} />
+    <OrgNameSetup key="orgName" data={data} handleChange={handleChange} validationErrors={validationErrors} />,
+    <OrgDetailsSetup key="orgDetails" data={data} handleChange={handleChange} validationErrors={validationErrors} />,
+    <OrgAdminSetup key="orgAdmin" data={data} handleChange={handleChange} validationErrors={validationErrors} />
   ];
-  
+
   return (
     <>
       <ToastContainer />
       <div className='flex flex-col'>
-
-        <div className='w-full bg-gray-200 p-4 px-10 justify-center items-center flex'>
+          <div className='w-full bg-gray-200 p-4 px-10 justify-center items-center flex'>
             <div className="w-[1016px] bg-white bg-opacity-50 rounded-[30px] border border-solid border-stone-300">
               {
                 formElements[activeTab]
               }
-
-                <div className="flex justify-between px-[5rem] pb-[2rem]">
-                  <button
-                    className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0" disabled={activeTab === 0 ? true : false}
-                    onClick={() => setActiveTab(prev => prev - 1)}>
+              <div className="flex justify-between px-[5rem] pb-[2rem]">
+                <button
+                  className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0" disabled={activeTab === 0 ? true : false}
+                  onClick={() => setActiveTab(prev => prev - 1)}>
+                  <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
+                    <div className="text-white text-sm font-bold font-['Satoshi']">
+                      Prev
+                    </div>
+                    <div className="w-6 h-6 relative">
+                      <Image src={continuebutton} alt="button" />
+                    </div>
+                  </div>
+                </button>
+                {
+                  activeTab !== formElements.length - 1 ? <button className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0"
+                    disabled={activeTab === formElements.length - 1 ? true : false}
+                    onClick={() => setActiveTab(prev => prev + 1)} >
                     <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
                       <div className="text-white text-sm font-bold font-['Satoshi']">
-                        Prev
+                        Continue
                       </div>
                       <div className="w-6 h-6 relative">
                         <Image src={continuebutton} alt="button" />
                       </div>
                     </div>
-                  </button>
-                  {
-                    activeTab !== formElements.length - 1 ? <button className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0"
-                      disabled={activeTab === formElements.length - 1 ? true : false}
-                      onClick={handleContinue} >
-                      <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
-                        <div className="text-white text-sm font-bold font-['Satoshi']">
-                          Continue
-                        </div>
-                        <div className="w-6 h-6 relative">
-                          <Image src={continuebutton} alt="button" />
-                        </div>
+                  </button> : null
+                }
+                {
+                  activeTab === formElements.length - 1 ? <button className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0" onClick={formSubmit}>
+                    <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
+                      <div className="text-white text-sm font-bold font-['Satoshi']">
+                        Submit Details
                       </div>
-                    </button> : null
-                  }
-                  {
-                    activeTab === formElements.length - 1 ? <button className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0"
-                      onClick={() => formSubmit()}>
-                      <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
-                        <div className="text-white text-sm font-bold font-['Satoshi']">
-                          Submit Details
-                        </div>
-                      </div>
-                    </button> : null
-                  }
-                </div>
+                    </div>
+                  </button> : null
+                }
               </div>
             </div>
           </div>
-
+      </div>
     </>
   )
 }

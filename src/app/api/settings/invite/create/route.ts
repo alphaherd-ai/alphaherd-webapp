@@ -81,6 +81,8 @@ export const POST = async (req: NextRequest) => {
         }
     });
 
+    console.log(orgBranch);
+
     let adminUser = await prismaClient.user.findUnique({
         where: {
             id: userId
@@ -91,13 +93,13 @@ export const POST = async (req: NextRequest) => {
     });
 
     if (!adminUser) {
-        return new Response(JSON.stringify({"message" : "Invalid NextRequest"}), { status: 400 });
+        return new Response(JSON.stringify({"message" : "Not Admin"}), { status: 400 });
     }
 
     let isAdmin = (adminUser.adminOrganizations.length === 0 ? false : (adminUser.adminOrganizations.find(e => e.id === orgBranch?.orgId)))
 
-    if (!isAdmin || !orgBranch) {
-        return new Response(JSON.stringify({"message" : "Invalid NextRequest"}), { status: 400 });
+    if (!isAdmin && !orgBranch) {
+        return new Response(JSON.stringify({"message" : "Not admin of org"}), { status: 400 });
     }
 
     let invitedUser = await prismaClient.user.findUnique({
