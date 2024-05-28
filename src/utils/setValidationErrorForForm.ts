@@ -1,6 +1,7 @@
+import { SetStateAction } from "react";
 import { ZodError } from "zod";
 
-export function setValidationErrorsForForm(err: ZodError, setValidationErrors: ) {
+export function setValidationErrorsForForm(err: ZodError, setValidationErrors : any) {
     let fieldErrors = err.flatten().fieldErrors;
     let fields: string[] = Object.keys(fieldErrors);
     let errors = {}

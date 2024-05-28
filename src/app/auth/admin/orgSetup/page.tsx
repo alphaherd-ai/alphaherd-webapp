@@ -6,13 +6,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import OrgNameSetup from '@/components/auth/admin/orgNameSetup';
 import OrgDetailsSetup from '@/components/auth/admin/orgDetailsSetup';
 import OrgAdminSetup from '@/components/auth/admin/orgAdminSetup';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import { Bounce, ToastContainer, toast } from 'react-toastify';
 import { z } from 'zod';
 import { setValidationErrorsForForm } from '@/utils/setValidationErrorForForm';
-
-
+import { useAppSelector } from '@/lib/hooks';
 
 const formSchema = z.object({
   orgName: z.string().min(4, 'Org Name must be at least 4 characters'),
@@ -35,7 +34,7 @@ const OrgSetup = () => {
 
   let router = useRouter();
 
-  const [data, setData] = useState({
+  var initialData = {
     orgName: '',
     orgEmail: '',
     gstNo: '',
@@ -51,7 +50,9 @@ const OrgSetup = () => {
     description: '',
     adminPassword: '',
     reAdminPassword: '',
-  });
+  }
+
+  const [data, setData] = useState(initialData);
 
   const [validationErrors, setValidationErrors] = useState(data);
 

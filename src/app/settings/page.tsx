@@ -3,19 +3,21 @@
 import GeneralSettings from '@/components/settings/general/general';
 import { MyOrganisationSettings } from '@/components/settings/organisation/myorganisation/myorganisation';
 import OrganisationSettings from '@/components/settings/organisation/organisation';
+import { useAppSelector } from '@/lib/hooks';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 export default function SettingsPage() {
-
-    const currentRoute = usePathname();
 
     const tabs = ["Organisation","General"]
 
     const [selectedTab, setSelectedTab] = useState(0)
 
     const tabComponents = [<OrganisationSettings/>,<GeneralSettings/>]
+
+    const appState = useAppSelector((state) => state.app);
 
     return <>
         <div className='flex h-12  w-full box-border justify-between rounded-tl-lg rounded-tr-lg'>
@@ -32,6 +34,11 @@ export default function SettingsPage() {
         </div >
         {
             tabComponents[selectedTab]
+        }
+        {
+            selectedTab === 0 && appState.isCurrentOrgAdmin ? <Link href={`/auth/admin/orgEdit`}><button className="fixed bottom-4 right-4 bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+              Edit
+            </button></Link> : null
         }
     </>
 }

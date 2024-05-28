@@ -2,10 +2,16 @@ import { NextMiddleware, NextRequest, NextResponse } from 'next/server';
 import { decrypt } from '../../auth';
 import { getVerifyOrgandBranch } from './orgVerify';
 import { redirect } from 'next/navigation';
+import { checkIfOrgAdmin } from '@/utils/checkIfOrgAdmin';
 
 
 export const isAuthorized = async (request: NextRequest) => {
   try {
+
+    if (request.nextUrl.pathname.startsWith("/api/auth/admin/orgEdit")) {
+      return checkIfOrgAdmin(request);
+    }
+
     if (request.nextUrl.pathname.startsWith("/api/auth") || (request.nextUrl.pathname.startsWith("/api/settings/invite") && request.method=="GET")) {
       console.log("INSIDE NOT CHECK FOR TOKEN");
       return NextResponse.next();
