@@ -20,7 +20,7 @@ const Header = () => {
   };
 
   return (
-    <div className="flex items-center justify-between mt-[1rem] mx-[4rem] ">
+    <div className="flex items-center justify-between mt-[1rem]  ">
       {/* <SnackBar name="Error in recording transaction Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit optio nesciunt velit assumenda nisi repellat, repudiandae aut iure maiores quaerat. Porro quaerat ducimus, incidunt dolorum ea qui corporis repellat quis." /> */}
       {/* <DeletePopUp /> */}
       {/* <NotificationPopUp></NotificationPopUp> */}
@@ -73,7 +73,7 @@ const Header = () => {
           </span>
         </div>
       </div>
-      <div>
+      <div className="mr-[1rem]">
         <span className="text-gray-500 text-[28px] font-bold">Schedule</span>
       </div>
       {/* Conditionally render the modal */}

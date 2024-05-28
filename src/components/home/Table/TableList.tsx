@@ -338,7 +338,7 @@ const TableList: React.FC = () => {
           return (
             <div
               key={index}
-              className={`flex w-full h-16 px-4 bg-white border-[1px] border-solid border-r-[#A2A3A3] border-t-0 border-l-[#A2A3A3] border-b-[#A2A3A3]  justify-start items-center gap-4 cursor-pointer ${selectedOption === "Checked in" ? "bg-[#ebedff] text-indigo-600" : "text-neutral-400" && selectedOption === "In Progress" ? "bg-[#e7f5ee] text-[#0F9D58]" : "text-neutral-400"}  `}
+              className={`flex w-full h-16 px-4 bg-white border-[1px] border-solid border-r-[#A2A3A3] border-t-0 border-l-[#A2A3A3] border-b-[#A2A3A3]  justify-start items-center gap-4 cursor-pointer ${selectedOption === "Checked in" ? "bg-[#ebedff] text-[#3C50FF]" : "text-neutral-400" && selectedOption === "In Progress" ? "bg-[#e6f4ed] text-[#0F9D58]" : "text-neutral-400"}  `}
             >
               <div className="mr-[5px]">
                 <div className="w-8 h-8 flex justify-center items-center gap-2">

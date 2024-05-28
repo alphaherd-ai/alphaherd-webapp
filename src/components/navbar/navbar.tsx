@@ -42,7 +42,7 @@ const Navbar = () => {
 
 
   return (
-    <div className='h-16 shadow-md w-full box-border flex items-center justify-between text-textGrey1 bg-navBar z-100'>
+    <div className='h-16 shadow-md min-w-screen box-border flex items-center justify-between text-textGrey1 bg-navBar z-100'>
       <div className='flex flex-row'>
         <Link className='no-underline py-5 px-10 border-0 border-r-2 border-solid border-gray-800' href={`/`}>
           <div className={currentRoute === "/" ? " text-white text-base font-medium leading-6 flex items-center justify-center" : " text-gray-400 text-base font-medium leading-6 flex items-center justify-center"}>
