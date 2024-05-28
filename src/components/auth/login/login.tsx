@@ -50,12 +50,12 @@ const Login = () => {
         body: JSON.stringify(data)
       }
     )
-    if (!res.ok) {
-      throw new Error("Something went wrong.");
-    }
     console.log(res);
     let json = await res.json();
     console.log(json)
+    if (!res.ok) {
+      throw new Error(json.message);
+    }
     dispatch(updateUser(json.user as UserState));
     return json.user;
   }
