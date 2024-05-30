@@ -15,7 +15,7 @@ export const GET = async (req: NextRequest, { params }: { params: { id: number }
       include: {
         items: {
           include: {
-            productBatch: true, 
+            productBatch: true,
           },
         },
       },
@@ -28,6 +28,7 @@ export const GET = async (req: NextRequest, { params }: { params: { id: number }
       },
     });
   } catch (error) {
+    console.error(error)
     return new Response('Internal server error', { status: 500 });
   } finally {
     await prismaClient.$disconnect();

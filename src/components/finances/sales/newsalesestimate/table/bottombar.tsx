@@ -23,13 +23,14 @@ const NewsaleEstimateBottomBar = () => {
     const handleSubmit = async () => {
         const allData = {headerData, tableData, totalAmountData};
         console.log(allData)
-
+       
         const items = tableData.map(data => ({
             productId: data.productId,
             productBatchId:data.id, 
             quantity: data.quantity,  
             sellingPrice:data.sellingPrice,
-            taxAmount:data.gst 
+            taxAmount:data.gst,
+            name:data.itemName
     }));
         const data={
             customer: allData.headerData.customer.value,

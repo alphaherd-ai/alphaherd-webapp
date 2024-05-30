@@ -213,7 +213,7 @@ model ProductBatch {
   id                 Int                 @id @default(autoincrement())
   distributors       String[]
   quantity           Int?
-  productId          Int  @unique
+  productId          Int 
   batchNumber        String?
   costPrice          Int?
   location           Location            @default(NONE)
@@ -260,7 +260,7 @@ model Sales {
   shipping         Int?
   adjustment       Int?
   totalCost        Int?
-  overallDiscount  String?
+  overallDiscount  Float?
   totalQty         Int?
   status           String?
   type             FinanceSalesType?
@@ -333,13 +333,14 @@ model Transactions {
 model Items {
   id               Int             @id @default(autoincrement())
   taxPercent       Tax?
-  taxAmount        Int?
-  totalAmount      Int?
+  taxAmount        Float?
+  totalAmount      Float?
   reasons          String?
   category         String?
+  sellingPrice     Int?
   quantity         Int?
   name             String?
-  productId        Int?            @unique
+  productId        Int?            
   products         Products?       @relation(fields: [productId], references: [id])
   salesId          Int?
   sale             Sales?          @relation(fields: [salesId], references: [id])

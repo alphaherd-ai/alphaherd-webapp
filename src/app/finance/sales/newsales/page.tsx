@@ -4,14 +4,18 @@ import NewsalesTable from "@/components/finances/sales/newsales/table/table"
 import NewsalesNavbar from "@/components/finances/sales/newsales/navbar/navbar"
 import { DataProvider } from '@/components/finances/sales/newsales/table/DataContext'
 
+
 const Newsales = () => {
   return (
     <>
     <div className='w-full bg-gray-200 p-8 px-10'>
-      <DataProvider>
+
+        <DataProvider>
       <NewsalesNavbar/>
      <NewsalesTable/>
       </DataProvider>
+  
+      
     
     </div>
     </>

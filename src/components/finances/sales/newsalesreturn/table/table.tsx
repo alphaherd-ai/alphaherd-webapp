@@ -5,9 +5,7 @@ import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
 import addicon from "../../../../../assets/icons/finance/add.svg"
 import add1icon from "../../../../../assets/icons/finance/add1.svg"
 import sellicon from "../../../../../assets/icons/finance/sell.svg"
-
 import Invoice from '../../../../../assets/icons/finance/invoice.svg';
-
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import Select from 'react-select';
 import { useRef } from "react"
@@ -22,7 +20,9 @@ import { DataContext } from './DataContext';
 import { useAppSelector } from "@/lib/hooks";
 import { Tax } from '@prisma/client';
 import formatDateAndTime from '@/utils/formateDateTime';
-
+import useSWR from 'swr';
+import { useSearchParams } from 'next/navigation';
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 interface Products{
     id :string,
@@ -48,9 +48,36 @@ const NewsalesReturnTable = () => {
     const [selectedProductDetails,setSelectedProduct]= useState<Products>()
     const [products, setProducts] = useState<{ value: number; label: string }[]>([]);
     const [batches,setBatches] = useState<{value:number;label:string}[]>([])
-    const [inventory, setInventory] = useState<any[]>([]);
+    const [otherData, setOtherData] = useState({});
     const appState = useAppSelector((state) => state.app)
-
+    const url= useSearchParams();
+    const id=url.get('id');
+    const { tableData: items, setTableData: setItems } = useContext(DataContext);   
+    if(id){
+        const {data,error,isLoading} =useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/${id}/?branchId=${appState.currentBranchId}`,fetcher)
+        const salesData=data;
+        useEffect(() => {
+            if (!isLoading && data && !error) {
+                const {items,...otherData}=data;
+                setOtherData(otherData)
+                console.log(items)
+              const shallowDataCopy = [...items]; 
+              const itemData = shallowDataCopy.map((item: any) => ({
+                productId: item.productBatch.productId,
+                itemName:item.name,
+                quantity:item.quantity,
+                sellingPrice:item.sellingPrice,
+                expiry:item.productBatch.expiry,
+                batchNumber:item.productBatch.batchNumber,
+                gst:item.taxAmount,
+                id:item.productBatch.id
+              }));
+              setItems(itemData);
+            }
+          }, [data]); 
+          
+        console.log(items)
+    }
     const taxOptions = [
         { value: 'Tax excl.', label: 'Tax excl.' },
         { value: 'Tax incl.', label: 'Tax incl.' }
@@ -74,7 +101,7 @@ const NewsalesReturnTable = () => {
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [isChecked, setChecked] = useState(false);
-    const { tableData: items, setTableData: setItems } = useContext(DataContext);
+    
     
     useEffect(() => {
         if (!disableButton && inputRef.current) {
@@ -198,7 +225,8 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
             updatedItems[index] = {
                 ...updatedItems[index],
                 quantity: data.quantity,
-                productId:selectedProduct.value
+                productId:selectedProduct.value,
+                itemName:data.itemName
             };
             setItems(updatedItems);   
         } catch (error) {
@@ -274,7 +302,7 @@ useEffect(() => {
                     </div>
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px]">
-                    <NewsalesReturnHeader />
+                    <NewsalesReturnHeader existingHeaderData={otherData}/>
                     <div className="w-full">
                         <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border border-neutral-400 justify-between items-center gap-6 flex">
                             <div className="text-gray-500 text-xl font-medium font-['Satoshi']">Items</div>
@@ -316,7 +344,9 @@ useEffect(() => {
                             {items.map((item:any,index:number) => (
                                 <div key={item.id} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400'>
                                     <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{index+1}</div>
-                                                                  <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'><Select
+                                                                  <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+                                    {id === null ? (
+                                    <Select
                                         className="text-gray-500 text-base font-medium font-['Satoshi'] w-full border-0 boxShadow-0"
                                         classNamePrefix="select"
                                         value={products.find((prod) => prod.value === item.productId)}
@@ -325,19 +355,25 @@ useEffect(() => {
                                         name="itemName"
                                         options={products}
                                         onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
-                                    />
+                                    />):(
+                                          item.itemName
+                                    )}
                                     </div>
                                     <div className='w-2/12 px-6 flex-col items-center text-neutral-400 text-base font-medium'>
-                                    <Select
-                                      className="text-gray-500 text-base font-medium font-['Satoshi'] w-full border-0 boxShadow-0"
-                                      classNamePrefix="select"
-                                      value={batches.find((prod) => prod.value === item.id)}
-                                      isClearable={false}
-                                      isSearchable={true}
-                                      name={`batchNumber=${index}`}
-                                      options={batches}
-                                      onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
-                                  />  
+                                    {id === null ? ( 
+                                        <Select
+                                        className="text-gray-500 text-base font-medium font-['Satoshi'] w-full border-0 boxShadow-0"
+                                        classNamePrefix="select"
+                                        value={batches.find((prod) => prod.value === item.id)}
+                                        isClearable={false}
+                                        isSearchable={true}
+                                        name={`batchNumber=${index}`}
+                                        options={batches}
+                                        onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
+                                        />
+                                    ) : (
+                                        item.batchNumber
+                                            )}
                                         <div className="text-neutral-400 text-[10px] font-medium font-['Satoshi'] px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
                                     </div>
                                     <div className='w-2/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-5'>
@@ -380,6 +416,7 @@ useEffect(() => {
                                         </div>
                                     )}
                                     <div className='w-2/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+                                        { id==null?(
                                         <Select
                                             className="text-neutral-400 text-base font-medium"
                                             defaultValue={[]}
@@ -394,7 +431,9 @@ useEffect(() => {
                                                 }),
                                             }}
                                             onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
-                                        />
+                                        />):(
+                                            item.gst
+                                        )}
                                     </div>
                                     <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{`₹${(item.quantity * item.gst).toFixed(2)}`}</div>
                                     <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{`₹${(item.quantity * item.sellingPrice +item.quantity*item.gst).toFixed(2)}`}</div>

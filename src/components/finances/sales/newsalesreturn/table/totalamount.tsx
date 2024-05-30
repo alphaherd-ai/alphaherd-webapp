@@ -9,6 +9,7 @@ import Image from "next/image"
 import Select from 'react-select';
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
 import { DataContext } from './DataContext';
+import { Tax } from '@prisma/client';
 
 
 const NewsalesReturnTotalAmout = () => {
@@ -22,9 +23,10 @@ const NewsalesReturnTotalAmout = () => {
     const [grandAmt, setGrandAmt] = useState(totalAmount);
 
     const gstOptions = [
-        { value: 'GST@18%.', label: 'GST@18%.' },
-        { value: 'GST@9%.', label: 'GST@9%.' }
+        { value: 0.18, label: Tax.GST_18 },
+        { value: 0.09, label: Tax.GST_9 }
     ];
+
 
     const handleSelectChange = (selectedOption:any) => {
         setTotalAmountData((prevData) => ({ ...prevData, gst: selectedOption }));

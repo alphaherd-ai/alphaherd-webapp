@@ -51,7 +51,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
           console.log(item)
           const batch=await prismaClient.productBatch.findUnique({
             where:{
-              productId:Number(item.productId),
+              id:Number(item.productBatchId),
               inventorySectionId:inventoryId
             }
           })
@@ -101,7 +101,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
         body.items.create.map(async (item: any) => {
           const batch=await prismaClient.productBatch.findUnique({
             where:{
-              productId:Number(item.productId),
+              id:Number(item.productBatchId),
               inventorySectionId:inventoryId
             }
           })

@@ -12,41 +12,43 @@ import { DataContext } from './DataContext'
 import { FinanceSalesType } from '@prisma/client'
 import axios from "axios"
 import { useAppSelector } from '@/lib/hooks';
-
+import { useSearchParams } from "next/navigation"
 
 
 
 const NewsalesReturnBottomBar = () => {
     const { headerData, tableData, totalAmountData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
-
-
+    const url=useSearchParams();
+    const id=url.get('id');
     const handleSubmit = async () => {
         const allData = {headerData, tableData, totalAmountData};
-
+        console.log("this is all data",allData)
+       
         const items = tableData.map(data => ({
             productId: data.productId,
             productBatchId:data.id, 
             quantity: data.quantity,  
             sellingPrice:data.sellingPrice,
-            taxAmount:data.gst 
+            taxAmount:data.gst,
+            name:data.itemName
     }));
-        const data={
-            customer: allData.headerData.customer.value,
-            notes: allData.headerData.notes,
-            subTotal: 0,
-            invoiceNo: 234234,
-            dueDate: allData.headerData.dueDate,
-            shipping: 0,
-            adjustment: 0,
-            totalCost: 0,
-            overallDiscount: allData.totalAmountData.gst.value,
-            totalQty: 0,
-            status: "Pending",
-            type: FinanceSalesType.Estimate,
-            items:{
-                create:items
-            }
+    const data={
+        customer: (id===null)?allData.headerData.customer.value:allData.headerData.customer,
+        notes: allData.headerData.notes,
+        subTotal: 0,
+        invoiceNo: 234234,
+        dueDate: allData.headerData.dueDate,
+        shipping: 0,
+        adjustment: 0,
+        totalCost: 0,
+        overallDiscount: (id===null)?allData.totalAmountData.gst.value:allData.totalAmountData.gst,
+        totalQty: 0,
+        status: "Pending",
+        type: FinanceSalesType.Estimate,
+        items:{
+            create:items
+        }
             
         }
         console.log(JSON.stringify(data))

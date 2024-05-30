@@ -6,6 +6,7 @@ import Link from "next/link"
 import Image from "next/image"
 import Select from 'react-select';
 import { DataContext } from './DataContext';
+import { Tax } from '@prisma/client';
 
 
 const NewsaleEstimateTotalAmout = () => {
@@ -19,8 +20,8 @@ const NewsaleEstimateTotalAmout = () => {
     const [grandAmt, setGrandAmt] = useState(totalAmount);
 
     const gstOptions = [
-        { value: 'GST@18%.', label: 'GST@18%.' },
-        { value: 'GST@9%.', label: 'GST@9%.' }
+        { value: 0.18, label: Tax.GST_18 },
+        { value: 0.09, label: Tax.GST_9 }
     ];
 
     const handleSelectChange = (selectedOption:any) => {

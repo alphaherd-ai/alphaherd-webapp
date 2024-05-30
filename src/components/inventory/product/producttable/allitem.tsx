@@ -2,12 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-import { Tooltip, Button } from "@nextui-org/react";
+import { Tooltip, Button, Spinner } from "@nextui-org/react";
 import { Inventory } from '@prisma/client';
 import { reverse } from 'dns';
 import formatDateAndTime from '@/utils/formateDateTime';
 import InventoryProductTableBottombar from './bottombar'; 
+import useSWR from 'swr';
 import { useAppSelector } from '@/lib/hooks';
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 interface Products{
   id:string;
@@ -45,16 +47,16 @@ const ProductAllItem = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(10); 
   const appState = useAppSelector((state) => state.app);
-  useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/getAll?branchId=${appState.currentBranchId}`)
-      .then(response => response.json())
-      .then(data => {
-        const filteredData = data.filter((inventory: { inventoryType: any; }) => inventory.inventoryType===Inventory.Product).reverse();
-        setProducts(filteredData);
-        console.log('Products Data:', filteredData); 
-      })
-      .catch(error => console.error('Error fetching products:', error));
-  }, []);
+  const {data,error,isLoading}= useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/getAll?branchId=${appState.currentBranchId}`,fetcher)
+  useEffect(()=>{
+    if(!isLoading&&data&&!error){
+      const filteredData = data.filter((inventory: { inventoryType: any; }) => inventory.inventoryType===Inventory.Product).reverse();
+      setProducts(filteredData);
+      console.log('Products Data:', filteredData); 
+    }
+    
+  },[data])
+  
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
@@ -62,11 +64,11 @@ const ProductAllItem = () => {
   const paginate = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
- 
+ if(isLoading)return <Spinner/>
   return (
     <>
     <div>
-      {currentProducts.map(inventory => (
+      {currentProducts?.map(inventory => (
       
         <div key={inventory.id} className='flex w-full box-border h-16 py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 hover:bg-gray-200 hover:text-gray-500 transition'>
           <div className='w-1/12 flex items-center px-6 text-neutral-400 text-base font-medium'>{formatDateAndTime(inventory.createdAt).formattedDate}</div>

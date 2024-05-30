@@ -199,7 +199,8 @@ const handleGstSelect = (selectedGst: any, index: number) => {
                 updatedItems[index] = {
                     ...updatedItems[index],
                     quantity: data.quantity,
-                    productId:selectedProduct.value
+                    productId:selectedProduct.value,
+                    itemName:data.itemName
                 };
                 setItems(updatedItems);   
             } catch (error) {
