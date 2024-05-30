@@ -18,6 +18,10 @@ import NewsaleEstimateTotalAmout from './totalamount';
 import { FinanceSalesType } from '@prisma/client';
 import { DataContext } from './DataContext';
 import axios from 'axios';
+import { useAppSelector } from "@/lib/hooks";
+import formatDateAndTime from '@/utils/formateDateTime';
+import { Tax } from '@prisma/client';
+
 
 interface Products{
     id :string,
@@ -45,12 +49,7 @@ const NewsaleEstimateTable = () => {
     const [products, setProducts] = useState<{ value: number; label: string }[]>([]);
     const [batches,setBatches] = useState<{value:number;label:string}[]>([])
     const [inventory, setInventory] = useState<any[]>([]);
-    
-    const batchOptions = [
-        { value: 'one', label: 'one' },
-        { value: 'two', label: 'two' },
-        { value: 'three', label: 'three' }
-    ];
+    const appState = useAppSelector((state) => state.app);
 
     const taxOptions = [
         { value: 'Tax excl.', label: 'Tax excl.' },
@@ -58,18 +57,14 @@ const NewsaleEstimateTable = () => {
     ];
 
     const gstOptions = [
-        { value: 'GST@18%.', label: 'GST@18%.' },
-        { value: 'GST@9%.', label: 'GST@9%.' }
-    ];
-
-    const colourOptions = [
-        { value: 'chocolate', label: 'Chocolate' },
-        { value: 'strawberry', label: 'Strawberry' },
-        { value: 'vanilla', label: 'Vanilla' }
+        { value: 0.18, label: Tax.GST_18 },
+        { value: 0.09, label: Tax.GST_9 }
     ];
     
-    const initialItems:any = [];
-    
+    useEffect(() => {
+        fetchProducts();
+        console.log(products)
+    }, []);
     const Checkbox = ({ children, ...props }: JSX.IntrinsicElements['input']) => (
         <label style={{ marginRight: '1em' }}>
             <input type="checkbox" {...props} />
@@ -80,7 +75,7 @@ const NewsaleEstimateTable = () => {
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [isChecked, setChecked] = useState(false);
-    const [items, setItems] = useState(initialItems);
+    const { tableData: items, setTableData: setItems } = useContext(DataContext);
 
     useEffect(() => {
         if (!disableButton && inputRef.current) {
@@ -89,7 +84,7 @@ const NewsaleEstimateTable = () => {
     }, [disableButton]);
     const fetchProducts = async () => {
         try {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll`);
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${appState.currentBranchId}`);
             const formattedProducts = response.data.map((product: Products) => ({
                 value: product.id,
                 label: product.itemName,
@@ -102,7 +97,7 @@ const NewsaleEstimateTable = () => {
   const fetchProductBatch= async (selectedProduct:any) =>{
     try{
         console.log(selectedProduct)
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll/${selectedProduct.value}`);
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll/${selectedProduct.value}?branchId=${appState.currentBranchId}`);
         const formattedProductBatches=response.data.map((product:ProductBatch)=>({
             value:product.id,
             label:product.batchNumber
@@ -113,17 +108,29 @@ const NewsaleEstimateTable = () => {
         console.error("Error fetching Batches:",error);
     }
   }
-  const handleDeleteRow = useCallback((itemId:any) => {
-    const updatedItems = items.filter((item:any)=> item.id !== itemId);
+  const handleDeleteRow = useCallback((index: number) => {
+    const updatedItems = [...items];
+    updatedItems.splice(index, 1);
     setItems(updatedItems);
 }, [items]);
+
+const handleGstSelect = (selectedGst: any, index: number) => {
+    const updatedItems = [...tableData];
+    console.log(selectedGst)
+    updatedItems[index] = {
+        ...updatedItems[index],
+        gst: selectedGst.value
+    };
+    setTableData(updatedItems);
+};
+
     const handleEditButtonClick = () => {
         setDisableButton(!disableButton);
     };
 
     const handleCheckBoxChange = () => {
         setChecked(!isChecked);
-        setTableData((prevItems) =>
+        setItems((prevItems) =>
             prevItems.map((item) => ({
                 ...item,
                 quantity: isChecked ? item.quantity * 2 : item.quantity,
@@ -132,7 +139,7 @@ const NewsaleEstimateTable = () => {
     };
 
     const handleQuantityDecClick = (itemId: any) => {
-        setTableData((prevItems) =>
+        setItems((prevItems) =>
             prevItems.map((item) => {
                 if (item.id === itemId && item.quantity > 1) {
                     return { ...item, quantity: item.quantity - 1 };
@@ -143,7 +150,7 @@ const NewsaleEstimateTable = () => {
     };
 
     const handleQuantityIncClick = (itemId: any) => {
-        setTableData((prevItems) =>
+        setItems((prevItems) =>
             prevItems.map((item) => {
                 if (item.id === itemId) {
                     return { ...item, quantity: item.quantity + 1 };
@@ -154,7 +161,7 @@ const NewsaleEstimateTable = () => {
     };
 
     const handleQuantityDecClick1 = (itemId: any) => {
-        setTableData((prevItems) =>
+        setItems((prevItems) =>
             prevItems.map((item) => {
                 if (item.id === itemId && item.quantity2 > 1) {
                     return { ...item, quantity2: item.quantity2 - 1 };
@@ -165,7 +172,7 @@ const NewsaleEstimateTable = () => {
     };
 
     const handleQuantityIncClick1 = (itemId: any) => {
-        setTableData((prevItems) =>
+        setItems((prevItems) =>
             prevItems.map((item) => {
                 if (item.id === itemId) {
                     return { ...item, quantity2: item.quantity2 + 1 };
@@ -175,15 +182,65 @@ const NewsaleEstimateTable = () => {
         );
     };
 
-    const handleAddItem = () => {
-        const newItem = { id: items.length + 1, quantity: 1, quantity2: 1 };
-        setItems((prevItems:any) => [...prevItems, newItem]);
-        setTableData((prevTableData) => [...prevTableData, newItem]);
-    };
+    const handleAddItem= useCallback(() => {
+        setItems([...items, {}]);
+    }, [items]);
+
+    const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
+        console.log(selectedProduct)
+        if (selectedProduct.value) {
+            try {
+                setBatches([]); 
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${selectedProduct.value}?branchId=${appState.currentBranchId}`);
+                const data = response.data;
+                setSelectedProduct(data);
+                fetchProductBatch(selectedProduct);   
+                const updatedItems = [...items];
+                updatedItems[index] = {
+                    ...updatedItems[index],
+                    quantity: data.quantity,
+                    productId:selectedProduct.value,
+                    itemName:data.itemName
+                };
+                setItems(updatedItems);   
+            } catch (error) {
+                console.error("Error fetching product details from API:", error);
+            }
+        }
+    }, [items, products]);
+    const handleBatchSelect = useCallback(async (selectedProduct: any, index: number) => {
+        if (selectedProduct.value) {
+            try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${selectedProduct.value}?branchId=${appState.currentBranchId}`);
+                const data = response.data;
+                const updatedItems = [...items];
+                updatedItems[index] = {
+                    ...updatedItems[index],
+                    id: data.id,
+                    quantity: data.quantity ,
+                    batchNumber: data.batchNumber,
+                    expiry:  data.expiry,
+                    sellingPrice:  data.sellingPrice,
+                    productId:selectedProductDetails?.id
+                };
+                setItems(updatedItems);
+                setTableData(updatedItems);
+
+                    // const updatedProducts = products.filter((product) => product.value !== selectedProduct.value);
+                    // setProducts(updatedProducts);
+        
+            } catch (error) {
+                console.error("Error fetching product details from API:", error);
+            }
+        }
+    }, [items, products]);
+
+
 
     useEffect(() => {
-        setItems(tableData);
-    }, [tableData]);
+        setItems(items);
+        setTableData(items)
+    }, [items]);
     return (
         <>
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg">
@@ -229,29 +286,35 @@ const NewsaleEstimateTable = () => {
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'>Total</div>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'></div>
                             </div>
-                            {items.map((item:any) => (
+                            {items.map((item:any,index:number) => (
                                 <div key={item.id} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400'>
-                                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{item.id}</div>
-                                                                  <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{`Item ${item.id}`}</div>
+                                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{index+1}</div>
+                                                                  <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'><Select
+                                        className="text-gray-500 text-base font-medium font-['Satoshi'] w-full border-0 boxShadow-0"
+                                        classNamePrefix="select"
+                                        value={products.find((prod) => prod.value === item.productId)}
+                                        isClearable={false}
+                                        isSearchable={true}
+                                        name="itemName"
+                                        options={products}
+                                        onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
+                                    />
+                                    </div>
                                     <div className='w-2/12 px-6 flex-col items-center text-neutral-400 text-base font-medium'>
-                                        <Select
-                                            defaultValue={batchOptions[0]}
-                                            isClearable={false}
-                                            isSearchable={true}
-                                            options={batchOptions}
-                                            styles={{
-                                                control: (provided, state) => ({
-                                                    ...provided,
-                                                    border: state.isFocused ? 'none' : 'none',
-                                                    padding: '0',
-                                                    height: '2rem'
-                                                }),
-                                            }}
-                                        />
-                                        <div className="text-neutral-400 text-[10px] font-medium font-['Satoshi'] px-2">Exp. 09/04/24</div>
+                                    <Select
+                                      className="text-gray-500 text-base font-medium font-['Satoshi'] w-full border-0 boxShadow-0"
+                                      classNamePrefix="select"
+                                      value={batches.find((prod) => prod.value === item.id)}
+                                      isClearable={false}
+                                      isSearchable={true}
+                                      name={`batchNumber=${index}`}
+                                      options={batches}
+                                      onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
+                                  />  
+                                        <div className="text-neutral-400 text-[10px] font-medium font-['Satoshi'] px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
                                     </div>
                                     <div className='w-2/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-5'>
-                                        <div className="w-1/12 flex items-center text-neutral-400 text-base font-medium">₹400</div>
+                                        <div className="w-1/12 flex items-center text-neutral-400 text-base font-medium">{item.sellingPrice}</div>
                                         <Select
                                             className="text-neutral-400 text-sm font-medium font-['Satoshi']"
                                             defaultValue={taxOptions[0]}
@@ -264,6 +327,7 @@ const NewsaleEstimateTable = () => {
                                                     border: state.isFocused ? 'none' : 'none',
                                                 }),
                                             }}
+                                            
                                         />
                                     </div>
                                     {!isChecked && (
@@ -291,7 +355,7 @@ const NewsaleEstimateTable = () => {
                                     <div className='w-2/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
                                         <Select
                                             className="text-neutral-400 text-base font-medium"
-                                            defaultValue={gstOptions[0]}
+                                            defaultValue={[]}
                                             isClearable={false}
                                             isSearchable={true}
                                             options={gstOptions}
@@ -302,16 +366,17 @@ const NewsaleEstimateTable = () => {
                                                     padding: '0',
                                                 }),
                                             }}
+                                            onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
                                         />
                                     </div>
-                                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{`₹${item.quantity * 400}`}</div>
-                                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{`₹${item.quantity * 400 * 1.18}`}</div>
+                                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{`₹${(item.quantity * item.gst).toFixed(2)}`}</div>
+                                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{`₹${(item.quantity * item.sellingPrice +item.quantity*item.gst).toFixed(2)}`}</div>
                                     <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
                                         <button className="border-0">
                                             <Image src={sellicon} alt="sell" ></Image>
                                         </button>
                     
-                                        <button className="border-0" onClick={() => handleDeleteRow(item.id)}>
+                                        <button className="border-0" onClick={() => handleDeleteRow(index)}>
                                             <Image src={delicon} alt="delete" ></Image>
                                         </button>
                                     </div>
@@ -341,8 +406,8 @@ const NewsaleEstimateTable = () => {
                                         }}
                                     />
                                 </div>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'>{`₹${items.reduce((acc:any, item:any) => acc + item.quantity * 400 * 0.18, 0)}`}</div>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'>{`₹${items.reduce((acc:any, item:any) => acc + item.quantity * 400 * 1.18, 0)}`}</div>
+                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'>{`₹${items.reduce((acc:any, item:any) => acc + item.quantity * item.gst , 0).toFixed(2)}`}</div>
+                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/12' >{`₹${items.reduce((acc:any, item:any) => acc + item.quantity * item.sellingPrice +item.quantity*item.gst, 0).toFixed(2)}`}</div>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'></div>
                             </div>
                         </div>
