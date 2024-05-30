@@ -1,6 +1,6 @@
 "use client"
 
-import SelectDropdown from 'react-native-select-dropdown'
+
 import printicon from "../../../../../assets/icons/finance/print.svg"
 import shareicon from "../../../../../assets/icons/finance/share.svg"
 import drafticon from "../../../../../assets/icons/finance/draft.svg"

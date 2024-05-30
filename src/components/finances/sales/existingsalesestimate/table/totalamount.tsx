@@ -3,26 +3,17 @@
 
 import React, { useState, useEffect } from 'react';
 
-import SelectDropdown from 'react-native-select-dropdown'
 import Link from "next/link"
 import Image from "next/image"
 import Select from 'react-select';
 
 
-const ExistingsaleEstimateTotalAmout = () => {
+const ExistingsaleEstimateTotalAmout = ({otherData}) => {
   
 
     const [grandAmt, setGrandAmt] = useState('₹2124');
 
-    const taxOptions = [
-        { value: 'Tax excl.', label: 'Tax excl.' },
-        { value: 'Tax incl.', label: 'Tax incl.' }
-    ];
-
-    const gstOptions = [
-        { value: 'GST@18%.', label: 'GST@18%.' },
-        { value: 'GST@9%.', label: 'GST@9%.' }
-    ];
+ 
 
 
     return (
