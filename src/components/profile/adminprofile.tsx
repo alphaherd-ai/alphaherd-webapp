@@ -33,11 +33,11 @@ const AdminProfile = () => {
     return (
 
         <>
-            <div className="w-full min-h-screen relative bg-gray-200 rounded-[20px]  z-1">
+            <div className="min-h-screen border-solid bg-gray-200 rounded-[20px]  z-1">
                 <div className="flex h-11 items-center justify-between ">
                     <div className="flex justify-center items-center">
                         <div className="w-11 h-11 bg-gray-100 rounded-[5px] border border-neutral-400 flex justify-center items-center mr-16">
-                            <Image className="w-6 h-6 relative rounded-[5px]" src={lefticon} alt="Back"></Image>
+                            <Image className="w-6 h-6  rounded-[5px]" src={lefticon} alt="Back"></Image>
                         </div>
                         <div className="text-gray-500 text-[28px] font-bold ">
                             User Profile

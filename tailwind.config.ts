@@ -21,6 +21,7 @@ const config: Config = {
       },
       colors: {
         textGrey1: '#A2A3A3',
+        borderText: '#A2A3A3',
         verticalBar: '#393939',
         navBar: '#17181A',
         iconChangeColor: '#38F8E6',

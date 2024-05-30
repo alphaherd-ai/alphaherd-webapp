@@ -1,54 +1,66 @@
-import React from "react";
+import React, { useState } from "react";
+import dropIcon from "../../../assets/icons/home/chevron_left.png"
+import Image from "next/image";
 
 const Products = () => {
+
+  const [expanded, setExpanded] = useState(false);
+
+  const toggleExpanded = () => {
+    setExpanded(!expanded);
+  };
+
   return (
-    <div className="self-stretch h-28 bg-white rounded-[10px] flex-col justify-start items-start flex">
-      <div className="self-stretch h-28 flex-col justify-start items-start flex">
-        <div className="self-stretch px-6 py-4 bg-white justify-start items-center gap-4 inline-flex">
-          <div className="grow shrink basis-0 h-6 justify-start items-center gap-6 flex">
-            <div className="grow shrink basis-0 text-gray-500 text-base font-bold font-['Satoshi']">
-              Products
-            </div>
+    <div className={`w-[688px] bg-white px-6 py-4 flex flex-col gap-4 ${expanded ? "": "" }`}>
+      <div className="w-full">
+        <span className="text-gray-500 text-base font-bold">
+        Products
+        </span>
+      </div>
+
+      <div className="w-full flex items-center gap-2">
+        
+        <div className="w-[62%]">
+          <span className="text-gray-500 text-base font-medium">Syringe</span>
+        </div>
+        <div className="w-[20%]">
+          <div className="w-[42px] h-6 px-1 bg-gray-100 rounded-[5px] justify-start items-center gap-2 inline-flex">
+            <span className="text-neutral-400 text-sm font-medium">
+              ₹899
+            </span>
           </div>
         </div>
-        <div className="self-stretch justify-start items-start inline-flex">
-          <div className="w-[356px] h-14 p-2 flex-col justify-center items-start inline-flex">
-            <div className="self-stretch h-6 p-4 bg-white justify-start items-center gap-4 inline-flex">
-              <div className="grow shrink basis-0 text-gray-500 text-base font-medium font-['Satoshi']">
-                Syringe
-              </div>
-            </div>
+        <div onClick={toggleExpanded}>
+        <div className="w-[148px] h-6 px-2 py-1.5 bg-white rounded-[5px] justify-center items-center gap-1 flex hover:cursor-pointer">
+          <span className="text-teal-400 text-base font-medium">View Products</span>
+          <div className="w-6 h-6">
+            <Image src={dropIcon} alt="dropIcon" />
           </div>
-          <div className="px-2 flex-col justify-start items-start inline-flex">
-            <div className="w-[100px] h-14 p-4 bg-white flex-col justify-center items-start flex">
-              <div className="h-6 px-1 bg-white rounded-[5px] justify-start items-center gap-2 inline-flex">
-                <div className="text-neutral-400 text-sm font-medium font-['Satoshi']">
-                  ₹899
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="pl-2 pr-1 flex-col justify-start items-start inline-flex">
-            <div className="self-stretch h-14 p-4 bg-white justify-start items-center gap-4 inline-flex">
-              <div className="bg-gray-100 rounded-[5px] justify-start items-start gap-2 flex">
-                <div className="w-6 h-6 relative bg-white rounded-[5px] border-2 border-gray-100">
-                  <div className="w-6 h-6 left-0 top-0 absolute bg-zinc-300" />
-                </div>
-                <div className="h-6 px-1 bg-gray-100 rounded-[5px] flex-col justify-start items-start gap-2 inline-flex">
-                  <div className="w-7 text-center text-neutral-400 text-base font-medium font-['Satoshi']">
-                    1
-                  </div>
-                </div>
-                <div className="w-6 h-6 bg-white rounded-[5px] border-2 border-gray-100 justify-center items-center flex">
-                  <div className="w-6 h-6 relative">
-                    <div className="w-6 h-6 left-0 top-0 absolute bg-cyan-400" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        </div>
         </div>
       </div>
+
+        <div className={`${expanded ? "flex" : "hidden"}`}>
+
+        <div className="w-full flex items-center gap-2">
+        
+        <div className="w-[56%]">
+          <span className="text-gray-500 text-base font-medium">Syringe</span>
+        </div>
+        <div className="w-[20%]">
+          <div className="w-[42px] h-6 px-1 bg-gray-100 rounded-[5px] justify-start items-center gap-2 inline-flex">
+            <span className="text-neutral-400 text-sm font-medium">
+              ₹899
+            </span>
+          </div>
+        </div>
+          </div>
+      
+        </div>
+
+
+      
+
     </div>
   );
 };

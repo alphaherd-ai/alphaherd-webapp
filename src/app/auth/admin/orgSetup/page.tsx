@@ -162,7 +162,8 @@ const OrgSetup = () => {
     <>
       <ToastContainer />
       <div className='flex flex-col'>
-          <div className='w-full bg-gray-200 p-4 px-10 justify-center items-center flex'>
+
+        <div className='w-full min-h-screen bg-gray-200 p-4 px-10 justify-center items-center flex'>
             <div className="w-[1016px] bg-white bg-opacity-50 rounded-[30px] border border-solid border-stone-300">
               {
                 formElements[activeTab]

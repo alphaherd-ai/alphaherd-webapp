@@ -64,29 +64,36 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
     };
 
     const gstOptions = [
+        { value: 'IGST@18%.', label: 'IGST@18%.' },
         { value: 'GST@18%.', label: 'GST@18%.' },
-        { value: 'GST@9%.', label: 'GST@9%.' }
+        { value: 'GST@12%.', label: 'GST@12%.' },
+        { value: 'GST@10%.', label: 'GST@10%.' }
     ];
+
+    const category = [
+        {value: "Injections", label: "Injections"},
+        {value: "Supplements", label: "Supplements"},
+        {value: "Medicines", label: "Medicines"},
+        {value: "Equipments", label: "Equipments"}
+    ]
 
     return <>
 
-        {!lastStep && <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0 fixed inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
+        {!lastStep && <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
             <div className="w-[640px] h-[715px]  px-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
-                <div className="self-end items-start gap-6 flex">
-                    <button onClick={onClose}>
+                <div className="self-end items-start gap-6 flex mt-[0.6rem]" onClick={onClose}>
                         <Image src={closeicon} alt="close"></Image>
-                    </button>
                 </div>
-                <div className="text-gray-500 text-xl font-medium font-['Satoshi']">New Product</div>
-                <div className="text-neutral-400 text-base font-medium font-['Satoshi']">Add a new product to your inventory</div>
-                <div className="flex items-center gap-[88px]">
-                    <div className="text-gray-500 text-base font-medium font-['Satoshi']">Name*</div>
+                <div className="text-gray-500 text-xl font-medium ">New Product</div>
+                <div className="text-neutral-400 text-base font-medium ">Add a new product to your inventory</div>
+                <div className="flex items-center gap-[87px]">
+                    <div className="text-gray-500 text-base font-medium ">Name*</div>
                     <div>
-                        <input className="w-[440px] h-8" type="text" name="name" onChange={(e) => handleChange("name", e.target.value)} />
+                        <input className="w-[440px] h-9 rounded-md text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300" type="text" name="name" onChange={(e) => handleChange("name", e.target.value)} />
                     </div>
                 </div>
                 <div className="flex items-center gap-[70px] w-full">
-                    <div className="text-gray-500 text-base font-medium font-['Satoshi']">Providers</div>
+                    <div className="text-gray-500 text-base font-medium ">Providers</div>
                     <div className="w-4/5">
                         <Select
                             className="text-neutral-400 text-base font-medium w-full"
@@ -100,17 +107,17 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                         />
                     </div>
                 </div>
-                <div className="flex items-center gap-[63px]">
-                    <div className="text-gray-500 text-base font-medium font-['Satoshi']">HSN Code</div>
+                <div className="flex items-center gap-[55px]">
+                    <div className="text-gray-500 text-base font-medium w-[5rem]">HSN Code</div>
                     <div>
-                        <input className="w-[440px] h-8" type="text" name="hsnCode" onChange={(e) => handleChange("hsnCode", e.target.value)} />
+                        <input className="w-[440px] h-9 rounded-md text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300" type="text" name="hsnCode" onChange={(e) => handleChange("hsnCode", e.target.value)} />
                     </div>
                 </div>
-                <div className="flex items-center gap-[70px] w-full">
-                    <div className="text-gray-500 text-base font-medium font-['Satoshi']">Tax</div>
+                <div className="flex items-center gap-[110px] w-full">
+                    <div className="text-gray-500 text-base font-medium ">Tax</div>
                     <div className="w-4/5">
                         <Select
-                            className="text-neutral-400 text-base font-medium w-full"
+                            className="rounded-md text-gray-400 text-base font-medium  outline-none  w-full"
                             placeholder="Select Category"
                             isClearable={false}
                             isSearchable={true}
@@ -122,14 +129,14 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                     </div>
                 </div>
                 <div className="flex items-center gap-[70px] w-full">
-                    <div className="text-gray-500 text-base font-medium font-['Satoshi']">Category</div>
+                    <div className="text-gray-500 text-base font-medium ">Category</div>
                     <div className="w-4/5">
                         <Select
-                            className="text-neutral-400 text-base font-medium w-full"
+                            className="text-neutral-400 text-base font-medium w-full "
                             placeholder="Select Category"
                             isClearable={false}
                             isSearchable={true}
-                            options={gstOptions}
+                            options={category}
                             isMulti={true}
                             name="category"
                             onChange={(value) => handleChange("category", value)}
@@ -137,12 +144,13 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                     </div>
                 </div>
                 <div className="flex-col">
-                    <div className="text-gray-500 text-base font-medium font-['Satoshi']">Description</div>
-                    <input className="w-[576px] h-[88px] mt-[8px]" placeholder="Provide details of the service" type="text" name="description" onChange={(e) => handleChange("description", e.target.value)} />
+                    <div className="text-gray-500 text-base font-medium ">Description</div>
+                    {/* <input className="w-[576px] h-[88px] mt-[8px]" placeholder="Provide details of the service" type="text" name="description" onChange={(e) => handleChange("description", e.target.value)} /> */}
+                    <textarea className="text-gray-400 text-base font-medium mt-[8px] px-2 py-2 outline-none border border-solid border-gray-300 rounded-md" placeholder="Provide details of the service" rows={5} cols={68} onChange={(e) => handleChange("description", e.target.value)}></textarea>
                 </div>
                 <div className="self-end items-start gap-6 flex">
-                    <button onClick={handleContinueClick} className="px-4 py-2.5 bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex">
-                        <div className="text-neutral-400 text-base font-bold font-['Satoshi']">Continue</div>
+                    <button onClick={handleContinueClick} className="px-4 py-2.5 bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none">
+                        <div className="text-neutral-400 text-base font-bold ">Continue</div>
                         <Image src={arrowicon} alt="arrow"></Image>
                     </button>
                 </div>
@@ -150,57 +158,54 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
         </div>
         }
         {lastStep &&
-            <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0 fixed inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
+            <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0  inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
                 <div className="w-[640px] h-[425px]  p-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
-                    <div className="self-end items-start gap-6 flex ">
-                        <button onClick={onClose}>
+                    <div className="self-end items-start gap-6 flex " onClick={onClose}>
                             <Image src={closeicon} alt="close"></Image>
-                        </button>
                     </div>
                     <div className="flex-col justify-start items-start gap-2 flex">
-                        <div className="text-gray-500 text-xl font-medium font-['Satoshi']">New Product</div>
-                        <div className="text-neutral-400 text-base font-medium font-['Satoshi']">Add a new product to your inventory</div>
+                        <div className="text-gray-500 text-xl font-medium ">New Product</div>
+                        <div className="text-neutral-400 text-base font-medium ">Add a new product to your inventory</div>
                     </div>
                     <div className="flex items-center gap-[34px]">
                         <div className="pr-[51px] justify-start items-center flex">
-                            <div className="text-gray-500 text-base font-medium font-['Satoshi']">Min Stock</div>
+                            <div className="text-gray-500 text-base font-medium ">Min Stock</div>
                         </div>
-                        <div className="w-[263px] h-11 px-4 py-[13px] bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-4 flex">
+                        <div className="justify-start items-center gap-4 flex">
                             <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-2 flex">
-                                <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    <input className="border-0 focus:border-0 h-8" type="number" name="minStock" onChange={(e) => handleChange("minStock", e.target.value)} />
-                                </div>
+                                
+                                    <input className="p-2 rounded-md border-0 focus:border-0 focus:outline-none w-[263px] h-11 text-neutral-400 text-base font-medium" type="number" name="minStock" onChange={(e) => handleChange("minStock", e.target.value)} />
                             </div>
-                            <div className="text-right text-gray-500 text-base font-medium font-['Satoshi']"> </div>
+                            <div className="text-right text-gray-500 text-base font-medium "> </div>
                         </div>
                         <div className="grow shrink basis-0 h-11 px-4 py-[13px] bg-white rounded-[5px] justify-start items-center flex">
                             <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-2 flex">
-                                <div className="text-neutral-400 text-base font-medium font-['Satoshi']">Strips</div>
+                                <div className="text-neutral-400 text-base font-medium ">Strips</div>
                             </div>
                         </div>
                     </div>
-                    <div className="flex items-center gap-[34px]">
+                    <div className="flex items-center gap-[28px]">
                         <div className="pr-[51px] justify-start items-center flex">
-                            <div className="text-gray-500 text-base font-medium font-['Satoshi']">Max Stock</div>
+                            <div className="text-gray-500 text-base font-medium ">Max Stock</div>
                         </div>
-                        <div className="w-[263px] h-11 px-4 py-[13px] bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-4 flex">
+                        <div className="justify-start items-center gap-4 flex">
                             <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-2 flex">
-                                <div className="text-neutral-400 text-base font-medium font-['Satoshi'] w-full">
-                                    <input className="border-0 h-8" type="number" name="maxStock" onChange={(e) => handleChange("maxStock", e.target.value)} />
-                                </div>
+                                
+                                    <input className="p-2 rounded-md border-0 focus:border-0 focus:outline-none w-[263px] h-11 text-neutral-400 text-base font-medium" type="number" name="maxStock" onChange={(e) => handleChange("maxStock", e.target.value)} />
+                                
                             </div>
-                            <div className="text-right text-gray-500 text-base font-medium font-['Satoshi']"> </div>
+                            
                         </div>
-                        <div className="grow shrink basis-0 h-11 px-4 py-[13px] bg-white rounded-[5px] justify-start items-center flex">
+                        <div className="grow shrink basis-0 h-11 px-4 py-[13px] bg-white rounded-[5px] justify-start items-center flex ml-[1.4rem]">
                             <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-2 flex">
-                                <div className="text-neutral-400 text-base font-medium font-['Satoshi']">Strips</div>
+                                <div className="text-neutral-400 text-base font-medium ">Strips</div>
                             </div>
                         </div>
                     </div>
                    
-                    <div className="self-end items-start gap-6 flex">
-                        <button onClick={handleSaveClick} disabled={buttonDisabled} className="px-4 py-2.5 bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex">
-                            <div className="text-neutral-400 text-base font-bold font-['Satoshi']">Save</div>
+                    <div className="w-[545px] flex justify-end mt-[5px]">
+                        <button onClick={handleSaveClick} disabled={buttonDisabled} className="px-5 py-2.5 bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none">
+                            <div className="text-neutral-400 text-base font-bold ">Save</div>
                         </button>
                     </div>
                 </div>

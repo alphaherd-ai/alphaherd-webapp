@@ -19,6 +19,7 @@ import { updateApp } from '@/lib/features/appSlice';
 import { RootState } from '@/lib/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { isAdminOfOrg, isManagerOfBranch } from '@/utils/stateChecks';
+import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
 
 const Navbar = () => {
   const router = useRouter() as any;
@@ -41,7 +42,7 @@ const Navbar = () => {
 
 
   return (
-    <div className='h-16 shadow-md w-full box-border flex items-center justify-between text-textGrey1 bg-navBar z-100'>
+    <div className='h-16 shadow-md min-w-screen box-border flex items-center justify-between text-textGrey1 bg-navBar z-100'>
       <div className='flex flex-row'>
         <Link className='no-underline py-5 px-10 border-0 border-r-2 border-solid border-gray-800' href={`/`}>
           <div className={currentRoute === "/" ? " text-white text-base font-medium leading-6 flex items-center justify-center" : " text-gray-400 text-base font-medium leading-6 flex items-center justify-center"}>
@@ -68,20 +69,25 @@ const Navbar = () => {
           </div>
         </Link>
       </div>
-      <div className='relative flex flex-row h-full'>
+      <div className='flex flex-row h-full'>
         <div className="h-full flex items-center pr-8 border-0 border-r-2 border-solid border-gray-800">
-          <div className='relative'>
-            <button
-              className='py-2 px-4 bg-navBar border-none text-white rounded cursor-pointer transition-all flex items-center'
+            <Popover placement="bottom-end" showArrow offset={0}>
+              <PopoverTrigger>
+            <div
+              className='py-2 px-4 bg- border-none text-white rounded cursor-pointer transition-all flex items-center'
               onClick={toggleDropdown}
             >
               {appState.currentOrg.orgName}/{appState.currentBranch.branchName}
               <DropdownIcon fill="#fff"/>
-            </button>
-            {isDropdownOpen && (
-              <DropdownMenu/>
-            )}
-          </div>
+            </div>
+            </PopoverTrigger>
+            <PopoverContent>
+            <DropdownMenu/>
+
+            </PopoverContent>
+            </Popover>
+            {/* {isDropdownOpen && (
+            )} */}
           <Link className='no-underline flex pl-6' href='#'>
             <div className='flex items-center justify-center' onClick={handleClick}>
               <Image src={notification} alt='notification' />
