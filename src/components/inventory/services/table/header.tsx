@@ -140,36 +140,30 @@ const InventoryServicesTableHeader = () => {
                         </Dropdown>
                     </div>
 
-                    <div className='flex items-center k justify-between rounded-lg '>
+                    <div className='flex items-center  justify-between rounded-lg '>
 
-                        <Popover placement="bottom-end" showArrow offset={10}>
-                            <PopoverTrigger>
+                        <Dropdown>
+                            <DropdownTrigger>
                                 <Button
                                     color="gray-400"
                                     variant="solid"
-                                    className="capitalize flex border-none bg-black text-white rounded-lg ">  New Service
+                                    className="capitalize flex border-none bg-black text-white rounded-lg py-2 cursor-pointer">  New Service
                                     <div className='flex pl-2'><Image src={DownArrow} alt='DownArrow' className='w-4 h-4 ' /></div></Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
-                                <div className="flex flex-col ">
-
-                                    <div className='flex flex-col'>
-
-                    
-                                     
-                                        <div className='text-base p-4  text-white flex '>
-                                            <div className='flex pr-2'><Image src={Add} alt='Add' className='w-5 h-5 ' /></div>
-                                            <button className='bg-transparent border-0 text-white text-base' onClick={togglePopup}>New Service</button>
+                            </DropdownTrigger>
+                            <DropdownMenu className="bg-black text-white flex flex-row items-start rounded-lg border-2 ">
+                                
+                                     <DropdownItem>
+                                        <div className='text-base p-4  text-white flex ' onClick={togglePopup}>
+                                            <div className='flex pr-2 cursor-pointer'><Image src={Add} alt='Add' className='w-5 h-5 ' /></div>
+                                            <button className='bg-transparent border-0 text-white text-base cursor-pointer' >New Service</button>
                                         </div>
-                                   
+                                    </DropdownItem>
 
 
-                                    </div>
-                                </div>
 
 
-                            </PopoverContent>
-                        </Popover>
+                            </DropdownMenu>
+                        </Dropdown>
 
 
 

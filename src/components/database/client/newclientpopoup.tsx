@@ -63,17 +63,21 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }) => {
         }
     };
 
-    const country = [
+    const countryCode = [
         { value: 'IN', label: '+91' },
         { value: 'US', label: '+1' },
     ];
+
+    const City = [
+        {}
+    ]
 
     return <>
 
        <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0  inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
             <div className="w-[640px] h-[575px]  px-8 py-4 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
                 <div className="self-end items-start gap-6 flex">
-                    <button className="border-0 outline-none" onClick={onClose}>
+                    <button className="border-0 outline-none cursor-pointer" onClick={onClose}>
                         <Image src={closeicon} alt="close"></Image>
                     </button>
                 </div>
@@ -82,14 +86,14 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }) => {
                 <div className="flex items-center">
                     <div className="text-gray-500 text-base font-medium  w-[8rem]">Client Name*</div>
                     <div>
-                        <input className="w-[447px] h-9 text-textGrey1 text-base font-medium px-2 rounded outline-none border border-solid border-borderText" type="text" name="name" onChange={(e) => handleChange("name", e.target.value)} />
+                        <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="name" onChange={(e) => handleChange("name", e.target.value)} />
                     </div>
                 </div>
               
                 <div className="flex items-center gap-[88px]">
                     <div className="text-gray-500 text-base font-medium ">Email</div>
                     <div>
-                        <input className="w-[448px] h-9 text-textGrey1 text-base font-medium px-2 rounded outline-none border border-solid border-borderText" type="text" name="email" onChange={(e) => handleChange("email", e.target.value)} />
+                        <input className="w-[448px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="email" onChange={(e) => handleChange("email", e.target.value)} />
                     </div>
                 </div>
                 <div className="flex items-center gap-[38px] w-full">
@@ -102,13 +106,13 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }) => {
                             placeholder="+91"
                             isClearable={false}
                             isSearchable={true}
-                            options={country}
+                            options={countryCode}
                             name="contact-initials"
                             onChange={(value) => handleChange("contact-initials", value)}
                         />
                     
                     <div className="w-full h-full">
-                        <input className="h-full w-full text-textGrey1 text-base font-medium px-2 rounded outline-none border-[1px] border-solid border-borderText" type="text" name="contact" onChange={(e) => handleChange("contact", e.target.value)} />
+                        <input className="h-full w-full text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="contact" onChange={(e) => handleChange("contact", e.target.value)} />
                     </div>
                     </div>
                     <div className=" ml-1  w-9 h-9 ">
@@ -123,7 +127,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }) => {
                     <div className="flex w-10/12">
                   
                     <div className="flex-1 ml-1">
-                        <input className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded outline-none border border-solid border-borderText" type="text" name="address" onChange={(e) => handleChange("address", e.target.value)} />
+                        <input className="w-full h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="address" onChange={(e) => handleChange("address", e.target.value)} />
                     </div>
                     <div className=" ml-1  w-9 h-9 ">
                     <button  className="w-full h-full rounded-[5px] justify-center text-2xl items-center gap-2 flex border-borderText border border-solid bg-white outline-none">
@@ -144,7 +148,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }) => {
                             placeholder=""
                             isClearable={false}
                             isSearchable={true}
-                            options={country}
+                            options={City}
                             isMulti={true}
                             name="city"
                             onChange={(value) => handleChange("city", value)}
@@ -160,7 +164,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }) => {
                     <div className="flex  h-9">
            
                    
-                        <input className=" w-[8rem] ml-[25px] h-9 text-textGrey1 text-base font-medium px-2 rounded outline-none border border-solid border-borderText" type="text" name="pinCode" onChange={(e) => handleChange("pinCode", e.target.value)} />
+                        <input className=" w-[8rem] ml-[25px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="pinCode" onChange={(e) => handleChange("pinCode", e.target.value)} />
             
                    
                     </div>

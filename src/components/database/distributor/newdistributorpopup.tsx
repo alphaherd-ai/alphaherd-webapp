@@ -64,8 +64,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
     };
 
     const gstOptions = [
-        { value: 'GST@18%.', label: 'GST@18%.' },
-        { value: 'GST@9%.', label: 'GST@9%.' }
+        {}
     ];
 
     return <>
@@ -73,7 +72,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
        <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0  inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
             <div className="w-[640px] h-[705px]  px-8 py-4 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
                 <div className="self-end items-start gap-6 flex">
-                    <button className="border-0 outline-none" onClick={onClose}>
+                    <button className="border-0 outline-none cursor-pointer" onClick={onClose}>
                         <Image src={closeicon} alt="close"></Image>
                     </button>
                 </div>
@@ -82,14 +81,14 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                 <div className="flex items-center gap-[88px]">
                     <div className="text-gray-500 text-base font-medium ">Name*</div>
                     <div>
-                    <input className="w-[447px] h-9 text-textGrey1 text-base font-medium px-2 rounded outline-none border border-solid border-borderText" type="text" name="name" onChange={(e) => handleChange("name", e.target.value)} />
+                    <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="name" onChange={(e) => handleChange("name", e.target.value)} />
                     </div>
                 </div>
               
                 <div className="flex items-center gap-[96px]">
                     <div className="text-gray-500 text-base font-medium ">Email</div>
                     <div>
-                    <input className="w-[447px] h-9 text-textGrey1 text-base font-medium px-2 rounded outline-none border border-solid border-borderText" type="text" name="email" onChange={(e) => handleChange("email", e.target.value)} />
+                    <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="email" onChange={(e) => handleChange("email", e.target.value)} />
                     </div>
                 </div>
                 <div className="flex items-center gap-[45px]  w-[581px]">
@@ -108,7 +107,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                         />
                     
                     <div className="w-full h-full">
-                        <input className="h-full w-full text-textGrey1 text-base font-medium px-2 rounded outline-none border-[1px] border-solid border-borderText" type="text" name="contact" onChange={(e) => handleChange("contact", e.target.value)} />
+                        <input className="h-full w-full text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="contact" onChange={(e) => handleChange("contact", e.target.value)} />
                     </div>
                     </div>
                     <div className=" ml-1  w-10 h-9 ">
@@ -121,7 +120,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                 <div className="flex items-center gap-[85px]">
                     <div className="text-gray-500 text-base font-medium ">GSTIN </div>
       
-                    <input className="w-[447px] h-9 text-textGrey1 text-base font-medium px-2 rounded outline-none border border-solid border-borderText" type="text" name="gstinNo" onChange={(e) => handleChange("gstinNo", e.target.value)} />
+                    <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="gstinNo" onChange={(e) => handleChange("gstinNo", e.target.value)} />
                   
                     <div className="h-6 px-2 py-1.5 bg-teal-400 rounded-[5px] justify-center items-center gap-2 inline-flex absolute right-12">
 <div className="text-white text-sm font-medium ">Fetch Details</div>
@@ -130,7 +129,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                 <div className="flex items-center gap-[77px]">
                     <div className="text-gray-500 text-base font-medium ">PAN Number</div>
                     <div>
-                    <input className="w-[447px] h-9 text-textGrey1 text-base font-medium px-2 rounded outline-none border border-solid border-borderText" type="text" name="panNo" onChange={(e) => handleChange("panNo", e.target.value)} />
+                    <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="panNo" onChange={(e) => handleChange("panNo", e.target.value)} />
                     </div>
                 </div>
                 <div className="flex items-center gap-[45px] w-[581px]">
@@ -138,7 +137,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                     <div className="flex w-10/12">
                   
                     <div className="flex-1 ml-1">
-                        <input className="w-[25.5rem] h-9 text-textGrey1 text-base font-medium px-2 rounded outline-none border border-solid border-borderText" type="text" name="address" onChange={(e) => handleChange("address", e.target.value)} />
+                        <input className="w-[25.5rem] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="address" onChange={(e) => handleChange("address", e.target.value)} />
                     </div>
                     <div className=" ml-1  w-9 h-9 ">
                     <button  className="w-full h-full rounded-[5px] justify-center text-2xl items-center gap-2 flex border-borderText border border-solid bg-white outline-none">
@@ -175,7 +174,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                     <div className="flex  h-9">
            
                    
-                        <input className=" w-[7.5rem] ml-[25px] h-9 text-textGrey1 text-base font-medium px-2 rounded outline-none border border-solid border-borderText" type="text" name="pinCode" onChange={(e) => handleChange("pinCode", e.target.value)} />
+                        <input className=" w-[7.5rem] ml-[25px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="pinCode" onChange={(e) => handleChange("pinCode", e.target.value)} />
             
                    
                     </div>

@@ -25,13 +25,13 @@ const OrgDetailsSetup = (props: any) => {
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium ">Name*</div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-start gap-2 inline-flex">
-                                <input type="text" className="text-neutral-400 text-base font-medium  h-full w-full px-2 border-1 border-solid border-[#A2A3A3]  rounded-[5px]" id="orgName" name="orgName" disabled={true} value={props.data.orgName} />
+                                <input type="text" className="text-neutral-400 text-base font-medium  h-full w-full px-2 border border-solid border-[#A2A3A3]  rounded-[5px]" id="orgName" name="orgName" disabled={true} value={props.data.orgName} />
                             </div>
                         </div>
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium ">Branch Name</div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-start gap-2 inline-flex">
-                                <input type="text" className="text-neutral-400 text-base font-medium  h-full w-full px-2 border-1 border-solid border-[#A2A3A3]  rounded-[5px]" id="branch" name="branch" value={props.data.branch} onChange={props.handleChange} />
+                                <input type="text" className="h-full w-full text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" id="branch" name="branch" value={props.data.branch} onChange={props.handleChange} />
                                 {props.validationErrors.branch && (
                                     <div className="error">{props.validationErrors.branch}</div>
                                 )}
@@ -44,7 +44,7 @@ const OrgDetailsSetup = (props: any) => {
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
                                 <input
                                     type="number"
-                                    className="text-neutral-400 text-base font-medium h-full w-full px-2 focus:outline-none border-1 border-solid border-[#A2A3A3] rounded-[5px] focus:border-1 focus:border-emerald-200"
+                                    className="text-neutral-400 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]"
                                     id="gstNo"
                                     name="gstNo"
                                     onChange={props.handleChange}
@@ -62,7 +62,7 @@ const OrgDetailsSetup = (props: any) => {
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
                                 <input
                                     type="number"
-                                    className="text-neutral-400 text-base font-medium h-full w-full px-2 focus:outline-none border-1 border-solid border-[#A2A3A3] rounded-[5px] focus:border-1 focus:border-emerald-200"
+                                    className="text-neutral-400 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]"
                                     id="phoneNo"
                                     name="phoneNo"
                                     onChange={props.handleChange}
@@ -80,7 +80,7 @@ const OrgDetailsSetup = (props: any) => {
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
                                 <input
                                     type="email"
-                                    className="text-neutral-400 text-base font-medium h-full w-full px-2 focus:outline-none border-1 border-solid border-[#A2A3A3] rounded-[5px] focus:border-1 focus:border-emerald-200"
+                                    className="text-neutral-400 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]"
                                     id="orgEmail"
                                     name="orgEmail"
                                     onChange={props.handleChange}
@@ -98,7 +98,7 @@ const OrgDetailsSetup = (props: any) => {
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
                                 <input
                                     type="text"
-                                    className="text-neutral-400 text-base font-medium h-full w-full px-2 focus:outline-none border-1 border-solid border-[#A2A3A3] rounded-[5px] focus:border-1 focus:border-emerald-200"
+                                    className="text-neutral-400 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]"
                                     id="address"
                                     name="address"
                                     onChange={props.handleChange}
@@ -116,7 +116,7 @@ const OrgDetailsSetup = (props: any) => {
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
                                 <input
                                     type="text"
-                                    className="text-neutral-400 text-base font-medium h-full w-full px-2 focus:outline-none border-1 border-solid border-[#A2A3A3] rounded-[5px] focus:border-1 focus:border-emerald-200"
+                                    className="text-neutral-400 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]"
                                     id="state"
                                     name="state"
                                     onChange={props.handleChange}
@@ -132,7 +132,7 @@ const OrgDetailsSetup = (props: any) => {
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
                                 <input
                                     type="number"
-                                    className="text-neutral-400 text-base font-medium h-full w-full px-2 focus:outline-none border-1 border-solid border-[#A2A3A3] rounded-[5px] focus:border-1 focus:border-emerald-200"
+                                    className="text-neutral-400 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]"
                                     id="pincode"
                                     name="pincode"
                                     onChange={props.handleChange}
@@ -147,7 +147,7 @@ const OrgDetailsSetup = (props: any) => {
                     <div className="self-stretch h-[92px] justify-start items-start gap-10 inline-flex">
                         <div className="grow shrink basis-0 h-[92px] self-stretch justify-start items-start gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium ">Description</div>
-                            <textarea className="px-2 py-2 w-full h-full ml-6 text-neutral-400 text-base focus:outline-none border-2 border-solid border-[#A2A3A3]  rounded-[5px]  focus:border-1 focus:border-emerald-200" id="description" name="description" value={props.data.description} onChange={props.handleChange} />
+                            <textarea className="px-2 py-2 w-full h-full ml-6 text-neutral-400 text-base focus:outline-none border border-solid border-[#A2A3A3]  rounded-[5px]  focus:border focus:border-[#35BEB1]" id="description" name="description" value={props.data.description} onChange={props.handleChange} />
                         </div>
                     </div>
                 </div>
