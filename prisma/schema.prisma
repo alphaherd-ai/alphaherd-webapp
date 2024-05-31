@@ -12,6 +12,10 @@ enum Tax {
  GST_9 
 }
 
+enum Sales_Status {
+  Pending
+  Closed
+}
 
 enum Source {
   Sales_Invoice
@@ -165,7 +169,7 @@ model Clients {
 model Patients {
   id                Int              @id @default(autoincrement())
   patientName       String?
-  clientId          Int? // Foreign key to Client
+  clientId          Int? // Foreign key to Client 
   species           String?
   breed             String?
   dateOfBirth       DateTime?
@@ -254,12 +258,12 @@ model Sales {
   customer         String?
   date             DateTime?         @default(now())
   notes            String?
-  subTotal         Int?
+  subTotal         Float?
   invoiceNo        Int?
   dueDate          DateTime?
-  shipping         Int?
-  adjustment       Int?
-  totalCost        Int?
+  shipping         Float?
+  adjustment       Float?
+  totalCost        Float?
   overallDiscount  Float?
   totalQty         Int?
   status           String?

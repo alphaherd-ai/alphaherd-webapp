@@ -10,6 +10,8 @@ import { FinanceSalesType } from '@prisma/client';
 import { useAppSelector } from '@/lib/hooks';
 import formatDateAndTime from '@/utils/formateDateTime';
 import useSWR from 'swr';
+import { usePathname, useSearchParams } from 'next/navigation';
+
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 interface Sales {
   id:number;
@@ -25,11 +27,20 @@ interface Sales {
 const FinancesSalesTableItem = () => {
     const appState = useAppSelector((state) => state.app);
     const [sales,setSales]=useState<Sales[]>([]);
-  
+    const currentUrl=useSearchParams();
+    
   const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`,fetcher)
   useEffect(()=>{
-    setSales(data);
-  },[data])
+    const filteredData=data?.filter((sale:any)=>{
+      if(currentUrl.get('type')==='all'){
+        return true;
+      }else {
+        return sale.type===currentUrl.get('type');
+      }
+    })
+    
+    setSales(filteredData);
+  },[data,setSales])
 if(isLoading&&!data)return <Spinner/>
   return (
      <div>

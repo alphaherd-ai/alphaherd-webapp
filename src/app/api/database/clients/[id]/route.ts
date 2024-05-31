@@ -10,7 +10,7 @@ export const GET=async (req: NextRequest,
             return new Response('Method not allowed',{status:405});
         } 
         try {
-            const databaseId= await fetchDatabaseId(req.url);
+            const databaseId= await fetchDatabaseId(req);
            const client= await prismaClient.clients.findUnique({
                 where: { id: Number(params.id),databaseSectionId:databaseId },
                 include:{
@@ -38,7 +38,7 @@ export const PUT=async (req: NextRequest,
             return new Response('Method not allowed',{status:405});
         } 
         try {
-            const databaseId = await fetchDatabaseId(req.url);
+            const databaseId = await fetchDatabaseId(req);
             const body=await req.json();
             const validatedData = ClientSchema.safeParse(body);
 
@@ -70,7 +70,7 @@ export const DELETE=async (req: NextRequest,
                 return new Response('Method not allowed',{status:405});
             } 
             try {
-                const databaseId = await fetchDatabaseId(req.url);
+                const databaseId = await fetchDatabaseId(req);
                 await prismaClient.clients.deleteMany({
                     where: { id: Number(params.id),databaseSectionId:databaseId },
                 });

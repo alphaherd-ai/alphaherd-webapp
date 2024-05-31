@@ -11,20 +11,7 @@ import Select from 'react-select';
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
 
 
-const ExistingsalesTotalAmout = () => {
-
-
-    const [grandAmt, setGrandAmt] = useState('₹2124');
-
-    const taxOptions = [
-        { value: 'Tax excl.', label: 'Tax excl.' },
-        { value: 'Tax incl.', label: 'Tax incl.' }
-    ];
-
-    const gstOptions = [
-        { value: 'GST@18%.', label: 'GST@18%.' },
-        { value: 'GST@9%.', label: 'GST@9%.' }
-    ];
+const ExistingsalesTotalAmout = ({otherData}) => {
 
 
     return (
@@ -83,45 +70,31 @@ const ExistingsalesTotalAmout = () => {
                     </div>
                 </div>
                 <div className="w-1/2  bg-white rounded-[10px]">
-                    <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300 ">
-                        <div className="text-gray-500 text-base font-bold font-['Satoshi'] ">Subtotal</div>
-                        <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">₹2,124</div>
-                    </div>
-                    <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300">
-                        <div className="text-gray-500 text-base font-bold font-['Satoshi']">Overall Discount</div>
-                        <div className="flex items-center">
-                            <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">0%</div>
-                            <div className=' flex text-gray-500 text-base font-medium pl-6'>
-                                <Select
-                                    className="text-neutral-400 text-base font-medium"
-                                    defaultValue={gstOptions[0]}
-                                    isClearable={false}
-                                    isSearchable={true}
-                                    options={gstOptions}
-                                    styles={{
-                                        control: (provided, state) => ({
-                                            ...provided,
-                                            border: state.isFocused ? 'none' : 'none',
-                                        }),
-                                    }}
-                                />
+                                <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300">
+                                    <div className="text-gray-500 text-base font-bold font-['Satoshi']">Subtotal</div>
+                                    <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">₹{otherData.subTotal}</div>
+                                </div>
+                                <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300">
+                                    <div className="text-gray-500 text-base font-bold font-['Satoshi']">Overall Discount</div>
+                                    <div className="flex items-center">
+                                        <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">{otherData.overallDiscount*100}%</div>
+                                     
+                                    </div>
+                                </div>
+                                <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300">
+                                    <div className="text-gray-500 text-base font-bold font-['Satoshi']">Shipping</div>
+                                    <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">₹{otherData.shipping}</div>
+                                </div>
+                                <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300">
+                                    <div className="text-gray-500 text-base font-bold font-['Satoshi']">Adjustment</div>
+                                    <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">₹{otherData.adjustment}</div>
+                                </div>
+                                <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300">
+                                    <div className="text-teal-400 text-base font-bold font-['Satoshi']">Grand total</div>
+                                    <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">₹{otherData.totalCost}</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300">
-                        <div className="text-gray-500 text-base font-bold font-['Satoshi']">Shipping</div>
-                        <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">₹0</div>
-                    </div>
-                    <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300">
-                        <div className="text-gray-500 text-base font-bold font-['Satoshi']">Adjustment</div>
-                        <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">₹0</div>
-                    </div>
-                    <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300">
-                        <div className="text-teal-400 text-base font-bold font-['Satoshi']">Grand total</div>
-                        <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">{grandAmt}</div>
-                    </div>
-                </div>
-            </div>
 
 
         </>
