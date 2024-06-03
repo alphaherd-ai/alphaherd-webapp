@@ -35,17 +35,17 @@ const NewsaleEstimateTotalAmout = () => {
         <>
 
 
-<div className="flex w-full box-border bg-gray-100 pt-[20px] pb-[20px]">
+<div className="flex  pt-[20px] pb-[20px]">
                             <div className="w-1/2"></div>
-                            <div className="w-1/2 bg-white rounded-[10px]">
-                                <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300">
-                                    <div className="text-gray-500 text-base font-bold font-['Satoshi']">Subtotal</div>
-                                    <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">{totalAmount.toFixed(2)}</div>
+                            <div className="w-1/2 bg-white rounded-md ">
+                                <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">
+                                    <div className="text-gray-500 text-base font-bold ">Subtotal</div>
+                                    <div className="text-right text-gray-500 text-base font-bold ">{totalAmount.toFixed(2)}</div>
                                 </div>
-                                <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300">
-                                    <div className="text-gray-500 text-base font-bold font-['Satoshi']">Overall Discount</div>
+                                <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
+                                    <div className="text-gray-500 text-base font-bold ">Overall Discount</div>
                                     <div className="flex items-center">
-                                        <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">0%</div>
+                                        <div className="text-right text-borderText text-base  ">0%</div>
                                         <div className=' flex text-gray-500 text-base font-medium pl-6'>
                                             <Select
                                                 className="text-neutral-400 text-base font-medium"
@@ -64,17 +64,17 @@ const NewsaleEstimateTotalAmout = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300">
-                                    <div className="text-gray-500 text-base font-bold font-['Satoshi']">Shipping</div>
-                                    <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">₹0</div>
+                                <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5   ">
+                                    <div className="text-gray-500 text-base font-bold ">Shipping</div>
+                                    <div className="text-right text-textGrey1 text-base  ">₹0</div>
                                 </div>
-                                <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300">
-                                    <div className="text-gray-500 text-base font-bold font-['Satoshi']">Adjustment</div>
-                                    <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">₹0</div>
+                                <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5  ">
+                                    <div className="text-gray-500 text-base font-bold ">Adjustment</div>
+                                    <div className="text-right text-textGrey1 text-base  ">₹0</div>
                                 </div>
-                                <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300">
-                                    <div className="text-teal-400 text-base font-bold font-['Satoshi']">Grand total</div>
-                                    <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">{grandAmt}</div>
+                                <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 rounded-b-md justify-between items-center gap-2.5    ">
+                                    <div className="text-textGreen text-base font-bold ">Grand total</div>
+                                    <div className="text-right text-textGreen text-base font-bold">{grandAmt}</div>
                                 </div>
                             </div>
                         </div>

@@ -20,8 +20,9 @@ const config: Config = {
         '8p': '8%'
       },
       colors: {
+        textGreen: "#35BEB1",
         textGrey1: '#A2A3A3',
-        borderText: '#A2A3A3',
+        borderGrey: '#C4C4C4',
         verticalBar: '#393939',
         navBar: '#17181A',
         iconChangeColor: '#38F8E6',

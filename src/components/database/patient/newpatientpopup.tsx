@@ -254,9 +254,9 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, client_name }) => {
                         {['male', 'female', 'unspecified'].map((gender) => (
                             <div
                                 key={gender}
-                                className={` h-11 px-4 py-2 rounded-[5px] border-solid border border-textGrey1 ${selectedGender === gender
+                                className={` h-11 px-4 py-2 rounded-[5px] border-solid border border-borderGrey ${selectedGender === gender
                                     ? 'bg-teal-400 text-white border-transparent'
-                                    : 'bg-white text-neutral-400 border-textGrey1'
+                                    : 'bg-white text-neutral-400 border-borderGrey'
                                     } cursor-pointer flex justify-center items-center`}
                                 onClick={() => handleGenderChange(gender)}
                             >

@@ -270,17 +270,20 @@ useEffect(() => {
 
     return (
         <>
-            <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100  rounded-lg">
+            <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
                 <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border border-neutral-400 justify-between items-center gap-6 flex">
-                    <div className='bg-green-200 rounded-md px-2' ><span className="text-green-600  text-sm font-medium font-['Satoshi']">You’re owed: ₹</span><span className="text-green-600 text-sm font-bold font-['Satoshi']">2,124</span></div>
-                    <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '>
-                        <Popover placement="bottom-end" showArrow offset={10}>
-                            <PopoverTrigger>
+                    <div className='bg-[#E7F5EE] rounded-md px-2 py-2' >
+                        <span className="text-[#0F9D58]  text-sm font-medium ">You’re owed: </span>
+                        <span className="text-[#0F9D58] text-sm font-bold "> ₹ 2,124</span>
+                    </div>
+                    {/* <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '> */}
+                        {/* <Popover placement="bottom-end" showArrow offset={10}>
+                            <PopoverTrigger> */}
                                 <Button
                                     variant="solid"
-                                    className="capitalize flex border-none bg-black text-white rounded-lg ">
-                                    <div className='flex pr-2'><Image src={DownArrow} alt='DownArrow' className='w-4 h-4 ' /></div>Add Customer </Button>
-                            </PopoverTrigger>
+                                    className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer">
+                                    <div className='flex pr-2'><Image src={addicon} alt='addicon' className='w-6 h-6 ' /></div>Add Customer </Button>
+                            {/* </PopoverTrigger>
                             <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
                                 <div className="flex flex-col ">
                                     <div className='flex flex-col'>
@@ -299,31 +302,33 @@ useEffect(() => {
                                     </div>
                                 </div>
                             </PopoverContent>
-                        </Popover>
-                    </div>
+                        </Popover> */}
+                    {/* </div> */}
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px]">
                     <NewsalesHeader existingHeaderData={otherData}/>
-                    <div className="w-full">
-                        <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border border-neutral-400 justify-between items-center gap-6 flex">
-                            <div className="text-gray-500 text-xl font-medium font-['Satoshi']">Items</div>
+                    <div className="w-full rounded-md border border-solid border-borderGrey">
+                    <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
+                            <div className="text-gray-500 text-xl font-medium ">Items</div>
                             <div className="flex items-center justify-center ">
-                                <div className="flex items-center justify-center mr-2">
+                                {/* <div className="flex items-center justify-center mr-2">
                                     <div className="pr-[4px]">
                                         <input value="test" type="checkbox" className="border-0" onChange={handleCheckBoxChange} />
                                     </div>
-                                    <div className="text-neutral-400 text-base font-bold font-['Satoshi']">Price Range</div>
-                                </div>
-                                <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '>
-                                    <Button color="gray-400" variant="solid" className="capitalize flex border-none bg-black text-white rounded-lg " onClick={handleAddItem}>
+                                    <div className="text-neutral-400 text-base font-bold ">Price Range</div>
+                                </div> */}
+                                <Button onClick={handleAddItem} className='cursor-pointer text-white flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-md border-0 outline-none'>
+                                    <div className='w-4 h-4 mb-3 mr-2'>
+                                        <Image src={addicon} alt='addicon' />
+                                    </div>
+                                   
                                         Add Item
-                                        <div className='flex pl-2'></div>
-                                    </Button>
-                                </div>
+                                    
+                                </Button>
                             </div>
                         </div>
                         <div>
-                            <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12 border-b border-neutral-400 text-gray-500'>
+                        <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12  text-gray-500 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey'>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'>No.</div>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'>Name</div>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'>Batch No.</div>
@@ -348,7 +353,7 @@ useEffect(() => {
                                                                   <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
                                     {id === null ? (
                                     <Select
-                                        className="text-gray-500 text-base font-medium font-['Satoshi'] w-full border-0 boxShadow-0"
+                                        className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
                                         classNamePrefix="select"
                                         value={products.find((prod) => prod.value === item.productId)}
                                         isClearable={false}
@@ -363,7 +368,7 @@ useEffect(() => {
                                     <div className='w-2/12 px-6 flex-col items-center text-neutral-400 text-base font-medium'>
                                     {id === null ? ( 
                                         <Select
-                                        className="text-gray-500 text-base font-medium font-['Satoshi'] w-full border-0 boxShadow-0"
+                                        className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
                                         classNamePrefix="select"
                                         value={batches.find((prod) => prod.value === item.id)}
                                         isClearable={false}
@@ -375,12 +380,12 @@ useEffect(() => {
                                     ) : (
                                         item.batchNumber
                                             )}
-                                        <div className="text-neutral-400 text-[10px] font-medium font-['Satoshi'] px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
+                                        <div className="text-neutral-400 text-[10px] font-medium  px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
                                     </div>
                                     <div className='w-2/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-5'>
                                         <div className="w-1/12 flex items-center text-neutral-400 text-base font-medium">{item.sellingPrice}</div>
                                         <Select
-                                            className="text-neutral-400 text-sm font-medium font-['Satoshi']"
+                                            className="text-neutral-400 text-sm font-medium "
                                             defaultValue={taxOptions[0]}
                                             isClearable={false}
                                             isSearchable={true}
@@ -449,7 +454,7 @@ useEffect(() => {
                                     </div>
                                 </div>
                             ))}
-                            <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12 border-b border-neutral-400 text-gray-500'>
+                            <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12 border-b border-neutral-400 text-gray-500 rounded-b-md'>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'>Total</div>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'></div>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'></div>
@@ -478,11 +483,11 @@ useEffect(() => {
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'></div>
                             </div>
                         </div>
-                        <NewsalesTotalAmout />
                     </div>
+                        <NewsalesTotalAmout />
                 </div>
-            </div>
             <NewsalesBottomBar />
+            </div>
         </>
     );
 };
