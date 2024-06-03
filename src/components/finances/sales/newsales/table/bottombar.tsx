@@ -25,7 +25,10 @@ const NewsalesBottomBar = () => {
     const handleSubmit = async () => {
         const allData = {headerData, tableData, totalAmountData};
         console.log("this is all data",allData)
-
+        let totalQty=0;
+        tableData.forEach(data => {
+            totalQty+=(data.quantity)||0;
+        });
         const items = tableData.map(data => ({
             productId: data.productId,
             productBatchId:data.id, 
@@ -37,14 +40,14 @@ const NewsalesBottomBar = () => {
         const data={
             customer: (id===null)?allData.headerData.customer.value:allData.headerData.customer,
             notes: allData.headerData.notes,
-            subTotal: 0,
+            subTotal: allData.totalAmountData.subTotal,
             invoiceNo: 234234,
             dueDate: allData.headerData.dueDate,
-            shipping: 0,
-            adjustment: 0,
-            totalCost: 0,
-            overallDiscount: (id===null)?allData.totalAmountData.gst.value:allData.totalAmountData.gst,
-            totalQty: 0,
+            shipping: allData.totalAmountData.shipping,
+            adjustment: allData.totalAmountData.adjustment,
+            totalCost: allData.totalAmountData.totalCost,
+            overallDiscount: allData.totalAmountData.gst.value,
+            totalQty:totalQty,
             status: "Pending",
             type: FinanceSalesType.Estimate,
             items:{

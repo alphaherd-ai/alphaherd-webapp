@@ -9,15 +9,15 @@ export const POST=async(req: NextRequest)=> {
     return new Response('Method not allowed',{status:405});
 } 
     try {
-      const databaseId = await fetchDatabaseId(req.url);
+      const databaseId = await fetchDatabaseId(req);
       const body = await req.json();
-      const validatedData = DistributorSchema.safeParse(body);
+      // const validatedData = DistributorSchema.safeParse(body);
 
-      if (!validatedData.success) {
-        return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
-          status: 422,
-        });
-      }
+      // if (!validatedData.success) {
+      //   return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
+      //     status: 422,
+      //   });
+      // }
       console.log(body)
         
         const distributor = await prismaClient.distributors.create({

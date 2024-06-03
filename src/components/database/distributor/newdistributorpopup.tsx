@@ -8,6 +8,7 @@ import arrowicon from "../../../assets/icons/inventory/arrow.svg";
 import Select from 'react-select';
 import Attachment from "../../../assets/icons/finance/attachment.svg"
 import Check from "../../../assets/icons/database/check.svg"
+import { useAppSelector } from "@/lib/hooks";
 
 
 type PopupProps = {
@@ -19,12 +20,13 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
     const [formData, setFormData] = useState<any>({});
     const [isSaveDisabled, setIsSaveDisabled] = useState(true)
     
+    const appState = useAppSelector((state) => state.app)
 
 
     const handleSaveClick = async () => {
         try {
             
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributor/create`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -36,13 +38,14 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                     gstinNo: formData.gstinNo,
                     panNo: formData.panNo,
                     address:formData.address,
-                    city:formData.city,
+                    city:formData.city.value,
                     pinCode:formData.pinCode,
                 }),
             });
             if (response.ok) {
                 console.log('Data saved successfully');
                 onClose();
+                window.dispatchEvent(new FocusEvent('focus'));
             } else {
                 console.error('Failed to save data:', response.statusText);
             }
@@ -190,17 +193,14 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                             </div>
                         </div>
                     </div>
-                    {!isSaveDisabled ? (<div className="h-11 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer"  onClick={handleSaveClick} >
+                    <div className="h-11 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer"  onClick={handleSaveClick} >
     <div className="w-6 h-6 relative">
         <div className="w-6 h-6 left-0 top-0 absolute" >
             <Image src={Check} alt="Check" />
         </div>
     </div>
     <div className="text-gray-100 text-base font-bold ">Save</div>
-</div>) : (<button className="px-4 py-2.5 bg-gray-200 rounded-[5px]  justify-start items-center gap-2 flex border-0 outline-none cursor-not-allowed">
-                        <div className="text-neutral-400 text-base font-bold ">Save</div>
-                        <Image src={arrowicon} alt="arrow"></Image>
-                    </button>)} 
+</div>
                   
                 </div>
             </div>

@@ -11,6 +11,8 @@ import Check from "../../../assets/icons/database/check.svg"
 import Select from 'react-select';
 import PatientPopup from '../patient/newpatientpopup'
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
+import { useAppSelector } from '@/lib/hooks';
+
 type PopupProps = {
     onClose: () => void;
 }
@@ -18,6 +20,7 @@ type PopupProps = {
 const ClientPopup: React.FC<PopupProps> = ({ onClose }) => {
     const [formData, setFormData] = useState<any>({});
     const [showPopup, setShowPopup] = React.useState(false);
+    const appState = useAppSelector((state) => state.app)
     const [isSaveDisabled, setIsSaveDisabled] = useState(true)
     const togglePopup = () => {
         setShowPopup(!showPopup);
@@ -25,7 +28,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }) => {
     
     const handleSaveClick = async () => {
         try {   
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/create`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -43,6 +46,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }) => {
             if (response.ok) {
                 console.log('Data saved successfully');
                 onClose();
+                window.dispatchEvent(new FocusEvent('focus'));
             } else {
                 console.error('Failed to save data:', response.statusText);
             }
@@ -199,7 +203,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }) => {
             </div>
         </div>
       
-        {showPopup && <PatientPopup onClose={togglePopup} client_name={formData.name} />}
+        {showPopup && <PatientPopup onClose={togglePopup} clientData={formData} />}
     </>;
 }
 

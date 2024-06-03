@@ -16,7 +16,7 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
   return isAuthorized(request);
 }
 export const config = {
-  matcher: ['/api/database/:path',
+  matcher: ['/api/database/:path*',
   '/api/finance/:path*',
   '/api/inventory/:path*',
   '/api/settings/:path*',

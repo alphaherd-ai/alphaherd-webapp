@@ -11,7 +11,7 @@ export const GET=async (req: NextRequest,
             return new Response('Method not allowed',{status:405});
         } 
         try {
-            const databaseId = await fetchDatabaseId(req.url);
+            const databaseId = await fetchDatabaseId(req);
             
            const patient= await prismaClient.patients.findUnique({
                 where: { id: Number(params.id), databaseSectionId:databaseId },
@@ -37,7 +37,7 @@ export const PUT=async (req: NextRequest,
             return new Response('Method not allowed',{status:405});
         } 
         try {
-            const databaseId = await fetchDatabaseId(req.url);
+            const databaseId = await fetchDatabaseId(req);
             
             const body=await req.json();
             const validatedData = PatientSchema.safeParse(body);
@@ -70,7 +70,7 @@ export const DELETE=async (req: NextRequest,
                 return new Response('Method not allowed',{status:405});
             } 
             try {
-                const databaseId = await fetchDatabaseId(req.url);
+                const databaseId = await fetchDatabaseId(req);
                 
                 await prismaClient.patients.deleteMany({
                     where: { id: Number(params.id),databaseSectionId:databaseId },

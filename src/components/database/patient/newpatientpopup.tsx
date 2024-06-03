@@ -15,20 +15,21 @@ import { Clients } from "@/client";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useAppSelector } from "@/lib/hooks";
+import { useRouter } from "next/navigation";
 
 type PopupProps = {
     onClose: () => void;
-    client_name: string | null; 
+    clientData: any; 
 }
 
-const PatientPopup: React.FC<PopupProps> = ({ onClose, client_name }) => {
+const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
+    const router=useRouter();
     const [formData, setFormData] = useState<any>({});
     const [clients, setClients] = useState<{ value: string; label: string }[]>([]);
     const [startDate, setStartDate] = useState(new Date());
     const [selectedGender, setSelectedGender] = useState('female');
-    const appState = useAppSelector((state) => state.user);
+    const appState = useAppSelector((state) => state.app)
     const [isSaveDisabled, setIsSaveDisabled] = useState(true);
-
     useEffect(() => {
         fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`)
             .then((response) => response.json())
@@ -46,25 +47,27 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, client_name }) => {
 
     const handleSaveClick = async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/patients/create`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/patients/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     patientName: formData.patientName,
-                    clientId: formData.clientName.value,
+                    clientId: clientData===undefined?formData.clientName.value:null,
                     species: formData.species,
                     breed: formData.breed ? formData.breed[0].value : undefined,
                     dateOfBirth: formData.dateOfBirth,
                     age: calculateAge(formData.years, formData.months, formData.days),
                     gender: selectedGender,
-                    inPatient: formData.inPatient
+                    inPatient: formData.inPatient,
+                    clientData:clientData?clientData:null
                 }),
             });
             if (response.ok) {
                 console.log('Data saved successfully');
                 onClose();
+                window.dispatchEvent(new FocusEvent('focus'));
             } else {
                 console.error('Failed to save data:', response.statusText);
             }
@@ -136,16 +139,20 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, client_name }) => {
                 <div className="flex items-center gap-[48px]">
                     <div className="  w-[8rem] text-gray-500 text-base font-medium ">Client Name</div>
                     <div>
-                        <Select
+                        {clientData===undefined?(
+                            <Select
                             className="text-textGrey1 text-base font-medium  w-[25rem] border-0 boxShadow-0 "
                             classNamePrefix="select"
-                            value={clients.find((client) => client.value === client_name)}
                             isClearable={false}
                             isSearchable={true}
                             name="clientName"
                             options={clients}
                             onChange={(selectedClient: any) => handleChange("clientName", selectedClient)}
-                        />
+                            />
+                        ):(
+                          clientData.name
+                        )}
+                       
                     </div>
                 </div>
                 <div className="flex items-center gap-[120px]">
