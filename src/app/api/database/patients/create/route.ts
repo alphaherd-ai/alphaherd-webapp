@@ -10,7 +10,7 @@ export const POST = async (req: NextRequest) => {
   }
   try {
     const databaseId = await fetchDatabaseId(req);
-    const {clientId,...body} = await req.json();
+    let {clientData,clientId,...body} = await req.json();
     // const validatedData = PatientSchema.safeParse(body);
 
     // if (!validatedData.success) {
@@ -19,6 +19,30 @@ export const POST = async (req: NextRequest) => {
     //   });
     // }
     
+    if(clientData!=null&&clientId===null){
+      try{
+        const client=await prismaClient.clients.create({
+          data:{
+            clientName: clientData.name,
+            email: clientData.email,
+            contact: clientData.contact,
+            address: clientData.address,
+            city: clientData.city?clientData.city[0].value:undefined,
+            pinCode: clientData.pinCode,
+            DatabaseSection:{
+              connect:{
+                id:databaseId
+              }
+            }
+          }
+        })
+        console.log(client)
+        clientId=client.id;
+      }
+      catch(error){
+        console.error(error)
+      }
+    }
 
     const patient = await prismaClient.patients.create({
       data:{ 

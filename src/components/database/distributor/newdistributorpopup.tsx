@@ -45,6 +45,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
             if (response.ok) {
                 console.log('Data saved successfully');
                 onClose();
+                window.dispatchEvent(new FocusEvent('focus'));
             } else {
                 console.error('Failed to save data:', response.statusText);
             }

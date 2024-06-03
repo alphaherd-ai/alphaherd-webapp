@@ -46,6 +46,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }) => {
             if (response.ok) {
                 console.log('Data saved successfully');
                 onClose();
+                window.dispatchEvent(new FocusEvent('focus'));
             } else {
                 console.error('Failed to save data:', response.statusText);
             }
@@ -198,7 +199,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }) => {
             </div>
         </div>
       
-        {showPopup && <PatientPopup onClose={togglePopup} client_name={formData.name} />}
+        {showPopup && <PatientPopup onClose={togglePopup} clientData={formData} />}
     </>;
 }
 
