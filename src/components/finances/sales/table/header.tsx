@@ -11,7 +11,7 @@ import Return from '../../../../assets/icons/finance/Return.svg';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-
+import { FinanceSalesType } from '@prisma/client';
 
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
@@ -42,27 +42,27 @@ const FinancesSalesTableHeader = () => {
 <div className='flex w-full bg-white h-20  p-4 px-6 mt-6 justify-between border border-solid border-gray-300 border-t-0.5 rounded-tl-lg rounded-tr-lg'>
 
 <div className='flex  text-gray-500 items-center w-5/12'>
-<Link className='no-underline flex item-center' href='/finance/sales/all'>
+<Link className='no-underline flex item-center' href={{pathname:'/finance/sales/all',query:{type:'all'}}}>
 
 <div className={currentRoute.startsWith("/finance/sales/all")
     ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white  rounded-tl-md rounded-bl-md"
     : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500  rounded-tl-md rounded-bl-md"}>All</div>
 </Link>
-<Link className='no-underline flex item-center' href='/finance/sales/order'>
+<Link className='no-underline flex item-center' href={{pathname:'/finance/sales/order',query:{type:FinanceSalesType.Estimate}}}>
 
-<div className={currentRoute.startsWith("/finance/sales/order")
+<div className={currentRoute.startsWith(`/finance/sales/order`)
     ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white"
-    : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}>Sales Order</div>
+    : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}>Sales Estimate</div>
 </Link>
-<Link className='no-underline flex item-center' href='/finance/sales/invoice'>
+<Link className='no-underline flex item-center' href={{pathname:'/finance/sales/invoice',query:{type:FinanceSalesType.Invoice}}}>
 
-<div className={currentRoute.startsWith("/finance/sales/invoice")
+<div className={currentRoute.startsWith(`/finance/sales/invoice`)
     ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white"
     : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}>Sales Invoices</div>
 </Link>
-<Link className='no-underline flex item-center' href='/finance/sales/return'>
+<Link className='no-underline flex item-center' href={{pathname:'/finance/sales/return',query:{type:FinanceSalesType.Return}}}>
 
-<div className={currentRoute.startsWith("/finance/sales/return")
+<div className={currentRoute.startsWith(`/finance/sales/return`)
     ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white  rounded-tr-md rounded-br-md"
     : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500  rounded-tr-md rounded-br-md"}>Sales Return</div>
 </Link>

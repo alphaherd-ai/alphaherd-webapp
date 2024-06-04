@@ -9,9 +9,8 @@ import Select from 'react-select';
 
 
 const ExistingsaleEstimateTotalAmout = ({otherData}) => {
-  
 
-    const [grandAmt, setGrandAmt] = useState('₹2124');
+    
 
  
 
@@ -25,26 +24,26 @@ const ExistingsaleEstimateTotalAmout = ({otherData}) => {
                             <div className="w-1/2  bg-white rounded-[10px]">
                                 <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300">
                                     <div className="text-gray-500 text-base font-bold font-['Satoshi']">Subtotal</div>
-                                    <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">₹2,124</div>
+                                    <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">₹{otherData.subTotal}</div>
                                 </div>
                                 <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300">
                                     <div className="text-gray-500 text-base font-bold font-['Satoshi']">Overall Discount</div>
                                     <div className="flex items-center">
-                                        <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">0%</div>
+                                        <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">{otherData.overallDiscount*100}%</div>
                                      
                                     </div>
                                 </div>
                                 <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300">
                                     <div className="text-gray-500 text-base font-bold font-['Satoshi']">Shipping</div>
-                                    <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">₹0</div>
+                                    <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">₹{otherData.shipping}</div>
                                 </div>
                                 <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300">
                                     <div className="text-gray-500 text-base font-bold font-['Satoshi']">Adjustment</div>
-                                    <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">₹0</div>
+                                    <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">₹{otherData.adjustment}</div>
                                 </div>
                                 <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300">
                                     <div className="text-teal-400 text-base font-bold font-['Satoshi']">Grand total</div>
-                                    <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">{grandAmt}</div>
+                                    <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">₹{otherData.totalCost}</div>
                                 </div>
                             </div>
                         </div>

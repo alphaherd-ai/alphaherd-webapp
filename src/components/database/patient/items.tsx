@@ -11,7 +11,7 @@ interface Clients {
 interface Patients {
     id: number;
     patientName: string;
-    clientid: number;
+    clientId: number;
     species: string;
     breed: string;
     age: number;
@@ -51,7 +51,7 @@ const DatabasePatientTableItem = () => {
                         </Link>
                     </div>
                     <div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>
-                        {clients[patient.clientid] || "Loading..."}
+                        {clients[patient.clientId] || "Loading..."}
                     </div>
                     <div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>
                         {patient.species} & {patient.breed}

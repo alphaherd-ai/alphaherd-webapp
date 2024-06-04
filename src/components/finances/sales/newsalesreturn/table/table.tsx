@@ -43,6 +43,14 @@ interface ProductBatch {
     category :string;
     distributors:string[];
 }
+function useProductfetch (id: number | null) {
+    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`,fetcher);
+   return {
+    fetchedProducts:data,
+    isLoading,
+    error
+   }
+}
 const NewsalesReturnTable = () => {
     const { tableData, setTableData } = useContext(DataContext);
     const [selectedProductDetails,setSelectedProduct]= useState<Products>()
@@ -88,10 +96,6 @@ const NewsalesReturnTable = () => {
         { value: 0.09, label: Tax.GST_9 }
     ];
 
-    useEffect(() => {
-        fetchProducts();
-        console.log(products)
-    }, []);
     const Checkbox = ({ children, ...props }: JSX.IntrinsicElements['input']) => (
         <label style={{ marginRight: '1em' }}>
             <input type="checkbox" {...props} />
@@ -108,18 +112,16 @@ const NewsalesReturnTable = () => {
             inputRef.current.focus();
         }
     }, [disableButton]);
-    const fetchProducts = async () => {
-        try {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${appState.currentBranchId}`);
-            const formattedProducts = response.data.map((product: Products) => ({
-                value: product.id,
-                label: product.itemName,
-            }));
-            setProducts(formattedProducts);
-        } catch (error) {
-            console.error("Error fetching products:", error);
-        }
-    };
+    const {fetchedProducts,isLoading,error}=useProductfetch(appState.currentBranchId);
+    useEffect(()=>{
+     if(!isLoading&&products&&!error){
+         const formattedProducts = fetchedProducts.map((product: Products) => ({
+             value: product.id,
+             label: product.itemName,
+         }));
+         setProducts(formattedProducts);
+     }
+    },[fetchedProducts])
   const fetchProductBatch= async (selectedProduct:any) =>{
     try{
         console.log(selectedProduct)

@@ -25,7 +25,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, client_name }) => {
     const [clients, setClients] = useState<{ value: string; label: string }[]>([]);
     const [startDate, setStartDate] = useState(new Date());
     const [selectedGender, setSelectedGender] = useState('female');
-    const appState = useAppSelector((state) => state.user);
+    const appState = useAppSelector((state) => state.app)
     const [isSaveDisabled, setIsSaveDisabled] = useState(true);
 
     useEffect(() => {
@@ -45,7 +45,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, client_name }) => {
 
     const handleSaveClick = async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/patients/create`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/patients/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

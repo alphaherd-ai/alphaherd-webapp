@@ -9,20 +9,25 @@ export const POST = async (req: NextRequest) => {
     return new Response('Method not allowed', { status: 405 });
   }
   try {
-    const databaseId = await fetchDatabaseId(req.url);
-    const body = await req.json();
-    const validatedData = PatientSchema.safeParse(body);
+    const databaseId = await fetchDatabaseId(req);
+    const {clientId,...body} = await req.json();
+    // const validatedData = PatientSchema.safeParse(body);
 
-    if (!validatedData.success) {
-      return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
-        status: 422,
-      });
-    }
+    // if (!validatedData.success) {
+    //   return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
+    //     status: 422,
+    //   });
+    // }
     
 
     const patient = await prismaClient.patients.create({
       data:{ 
         ...body,
+        clients:{
+          connect:{
+            id:clientId
+          }
+        },
       DatabaseSection:{
         connect:{
           id:databaseId
