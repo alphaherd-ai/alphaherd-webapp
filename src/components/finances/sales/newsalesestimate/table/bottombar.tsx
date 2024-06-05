@@ -70,7 +70,7 @@ const NewsaleEstimateBottomBar = () => {
         <>
 
 
-<div className="flex justify-between items-center w-full  box-border  bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5 py-4 rounded-b-lg">
+<div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
 <div className="flex justify-between items-center gap-4 pl-4">
                                 <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                                     <Image src={printicon} alt="print"></Image>

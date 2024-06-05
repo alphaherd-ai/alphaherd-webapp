@@ -117,36 +117,36 @@ const ExistingsaleEstimateTable = () => {
                             </div>
                             {items.map((item,index) => (
                                 <div key={item.id} className='flex justify-evenly items-center w-full  box-border  bg-white  border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-400   '>
-                                    <div className='w-[3rem] flex items-center text-[#6B7E7D] text-base font-medium '>{index+1}</div>
-                                    <div className='w-[15rem] flex items-center text-[#6B7E7D]  text-base font-medium'>{item.itemName}</div>
-                                    <div className='w-[10rem] flex-col items-center text-[#6B7E7D]  text-base font-medium '>
-                                    <div className="text-[#6B7E7D] text-base  font-medium  "> {item.batchNumber}</div>
+                                    <div className='w-[3rem] flex items-center text-textGrey2 text-base font-medium '>{index+1}</div>
+                                    <div className='w-[15rem] flex items-center text-textGrey2  text-base font-medium'>{item.itemName}</div>
+                                    <div className='w-[10rem] flex-col items-center text-textGrey2  text-base font-medium '>
+                                    <div className="text-textGrey2 text-base  font-medium  "> {item.batchNumber}</div>
 
                                         <div className="text-neutral-400 text-[10px] font-medium ">{formatDateAndTime(item.expiry).formattedDate}</div>
                                     </div>
-                                    <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-1 '>
-                                        <div className="flex items-center text-[#6B7E7D]  text-base font-medium">₹ {item.sellingPrice}</div>
+                                    <div className='w-[10rem] flex items-center  text-base font-medium gap-1 '>
+                                        <div className="flex items-center text-textGrey2  text-base font-medium">₹ {item.sellingPrice}</div>
                                         <div className="text-neutral-400 text-[12px]  font-medium  "> Tax inc</div>
 
                                     </div>
-                                    <div className='w-1/12  flex items-center text-[#6B7E7D] text-base font-medium gap-[12px] '>
+                                    <div className='w-1/12  flex items-center text-textGrey2 text-base font-medium gap-[12px] '>
                                       
                                         <div>{item.quantity} Strips</div>
                                       
                                     </div>
                                   
-                                        <div className='w-1/12 flex items-center text-[#6B7E7D] text-base font-medium gap-[12px] '>
+                                        <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[12px] '>
                                            
                                             <div>{item.quantity2} Strips</div>
                                             
                                         </div>
                                  
-                                    <div className='w-1/12 flex items-center text-[#6B7E7D] text-base font-medium '>
-                                    <div className="text-[#6B7E7D] text-base  font-medium  "> {item.tax*100}%</div>
+                                    <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium '>
+                                    <div className="text-textGrey2 text-base  font-medium  "> {item.tax*100}%</div>
 
                                     </div>
-                                    <div className='w-[10rem] flex items-center text-[#6B7E7D] text-base font-medium'>{`₹${(item.quantity*item.tax).toFixed(2)}`} </div>
-                                    <div className='w-1/12 flex items-center text-[#6B7E7D] text-base font-medium '>{`₹${(item.quantity * item.sellingPrice+item.quantity*item.tax).toFixed(2)}`}</div>
+                                    <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium'>{`₹${(item.quantity*item.tax).toFixed(2)}`} </div>
+                                    <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium '>{`₹${(item.quantity * item.sellingPrice+item.quantity*item.tax).toFixed(2)}`}</div>
                                    
                                 </div>
                             ))}

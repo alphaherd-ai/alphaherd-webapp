@@ -78,13 +78,13 @@ const NewsalesTotalAmout = () => {
 
                     <div className="w-full  p-6 bg-white rounded-tl-md rounded-tr-md border border-solid  border-borderGrey justify-between items-center gap-6 flex">
                         <div className="text-gray-500 text-xl font-medium ">Payments</div>
-                        <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '>
+                        {/* <div className='flex items-center h-9 py-2.5 bg-black justify-between rounded-lg '> */}
 
                             {/* <Popover placement="bottom-end" showArrow offset={10}>
                                 <PopoverTrigger> */}
                                     <Button 
                                         variant="solid"
-                                        className="capitalize flex border-none text-base bg-black text-white rounded-lg ">
+                                        className="capitalize flex h-9 py-2.5 border-none text-base bg-black text-white rounded-lg cursor-pointer">
                                         <div className='flex'><Image src={Rupee} alt='Rupee' className='w-6 h-6 ' /></div>
                                         Recorded Transaction
                                          </Button>
@@ -117,7 +117,7 @@ const NewsalesTotalAmout = () => {
 
 
 
-                        </div>
+                        {/* </div> */}
                     </div>
                     <div className="w-full  p-6 bg-white rounded-bl-md rounded-br-md  justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
                         <div className="text-gray-500 text-xl font-medium ">Balance Due</div>
@@ -181,7 +181,7 @@ const NewsalesTotalAmout = () => {
                                         />
                                     </div>
                                 <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 rounded-b-md justify-between items-center gap-2.5    ">
-                                    <div className="text-teal-400 text-base font-bold ">Grand total</div>
+                                    <div className="text-textGreen text-base font-bold ">Grand total</div>
                                     <div className="text-right text-textGreen text-base ">{(grandAmt).toFixed(2)}</div>
                                 </div>
                             </div>

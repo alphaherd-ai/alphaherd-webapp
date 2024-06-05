@@ -102,8 +102,8 @@ const ExistingsalesTable = () => {
 
     return (
         <>
-            <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100  rounded-lg">
-                <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border border-neutral-400 justify-between items-center gap-6 flex">
+            <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
+            <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-start items-center gap-6 flex">
                 <div className='bg-green-200 rounded-md px-2' ><span className="text-green-600  text-sm font-medium ">You’re owed: ₹</span><span className="text-green-600 text-sm font-bold ">2,124</span></div>
                 <div className='flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'><Image src={Download} alt='Download' className='w-4  h-4' /></div>
                 </div>
@@ -123,9 +123,7 @@ const ExistingsalesTable = () => {
                                 <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Name</div>
                                 <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Batch No.</div>
 
-                                <div className='flex text-gray-500 text-base font-medium  w-1/12'>
-                                     Quantity
-                                </div>
+                                <div className='flex text-gray-500 text-base font-medium  w-1/12'>Quantity</div>
                                 <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Selling Price</div>
 
 
@@ -143,7 +141,7 @@ const ExistingsalesTable = () => {
 
                                         <div className="text-neutral-400 text-[10px] font-medium ">{formatDateAndTime(item.expiry).formattedDate}</div>
                                     </div>
-                                    <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
+                                    <div className='w-1/12 flex items-center text-[#6B7E7D] text-base font-medium gap-[12px]'>
                                       
                                       <div>{item.quantity}</div>
                                     
@@ -160,8 +158,8 @@ const ExistingsalesTable = () => {
                                     <div className="text-[#6B7E7D] text-base  font-medium  "> {item.tax}</div>
 
                                     </div>
-                                    <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>{`₹${item.quantity * item.tax}`}</div>
-                                    <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium'>{`₹${item.quantity * item.sellingPrice +item.quantity* item.tax}`}</div>
+                                    <div className='w-[10rem] flex items-center text-[#6B7E7D] text-base font-medium'>{`₹${item.quantity * item.tax}`}</div>
+                                    <div className='w-1/12 flex items-center text-[#6B7E7D] text-base font-medium'>{`₹${item.quantity * item.sellingPrice +item.quantity* item.tax}`}</div>
                                    
                                 </div>
                                     <div>
@@ -172,7 +170,7 @@ const ExistingsalesTable = () => {
                                                 <div className="text-indigo-600 text-sm font-medium ">Item Discount</div>
                                             </div>
                                         </div>
-                                        <div className=' flex text-gray-500 text-base font-medium w-[10rem]'> fgernjjg</div>
+                                        <div className=' flex text-gray-500 text-base font-medium w-[10rem]'> 8%</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-1/12'>
 
                                         </div>
@@ -190,20 +188,20 @@ const ExistingsalesTable = () => {
                                 
                                
                             ))}
-                            <div className='flex  w-full justify-evenly items-center box-border bg-gray-100  h-12  border-b border-neutral-400 text-gray-500'>
-                                <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'>Total</div>
-                                <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'> </div>
-                                <div className=' flex text-gray-500 text-base font-medium px-6 w-2/12'></div>
-                                <div className=' flex text-gray-500 text-base font-medium px-6 w-2/12'>{items.reduce((acc, item) => acc + item.quantity, 0)} Items</div>
-                                <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'> </div>
+                            <div className='flex  w-full justify-evenly items-center box-border bg-gray-100  h-12  border-b border-neutral-400 text-gray-500 rounded-b-md'>
+                                <div className=' flex text-gray-500 text-base font-medium  w-[3rem]'></div>
+                                <div className=' flex text-gray-500 text-base font-medium  w-[15rem]'> Total</div>
+                                <div className=' flex text-gray-500 text-base font-medium  w-[10rem]'></div>
+                                <div className=' flex text-gray-500 text-base font-medium  w-1/12'>{items.reduce((acc, item) => acc + item.quantity, 0)} Items</div>
+                                <div className=' flex text-gray-500 text-base font-medium  w-[10rem]'> </div>
                               
                                 
                             
-                                <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'>
-                                <div className="text-neutral-400 text-base  font-medium   "> Tax inc</div>
+                                <div className=' flex text-gray-500 text-base font-medium  w-1/12'>
+                                <div className="text-neutral-400 text-base  font-medium   "></div>
                                 </div>
-                                <div className=' flex text-gray-500 text-base font-medium px-6 w-2/12'>{`₹${items.reduce((acc, item) => acc + item.quantity  * item.tax, 0).toFixed(2)}`}</div>
-                                <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'>{`₹${items.reduce((acc, item) => acc + item.quantity * item.sellingPrice+item.quantity* item.tax, 0).toFixed(2)}`}</div>
+                                <div className=' flex text-gray-500 text-base font-medium  w-[10rem]'>{`₹${items.reduce((acc, item) => acc + item.quantity  * item.tax, 0).toFixed(2)}`}</div>
+                                <div className=' flex text-gray-500 text-base font-medium  w-1/12'>{`₹${items.reduce((acc, item) => acc + item.quantity * item.sellingPrice+item.quantity* item.tax, 0).toFixed(2)}`}</div>
                             </div>
                         </div>
 
