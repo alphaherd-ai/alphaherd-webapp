@@ -44,7 +44,7 @@ const FinancesNavbar = () => {
                             <div className='flex mr-2'><SalesIcon fill={currentRoute.startsWith("/finance/sales")
                                 ? "#38F8E6"
                                 : "#A2A3A3"} /></div>
-                            Saless
+                            Sales
                         </div>
                     </Link>
                     <Link  className='no-underline ' href='/finance/purchases/all'>

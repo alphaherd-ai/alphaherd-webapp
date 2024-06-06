@@ -10,12 +10,10 @@ const Newsales = () => {
     <>
     <div className='w-full bg-gray-200 p-8 px-10'>
 
-        <DataProvider>
+      <DataProvider>
       <NewsalesNavbar/>
-     <NewsalesTable/>
-      </DataProvider>
-  
-      
+      <NewsalesTable/>
+      </DataProvider>    
     
     </div>
     </>

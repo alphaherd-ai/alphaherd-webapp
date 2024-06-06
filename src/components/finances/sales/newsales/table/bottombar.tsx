@@ -13,7 +13,7 @@ import { FinanceSalesType } from '@prisma/client'
 import axios from "axios"
 import { useAppSelector } from '@/lib/hooks';
 import { useSearchParams } from "next/navigation"
-
+import { send } from "process"
 
 
 const NewsalesBottomBar = () => {
@@ -65,8 +65,85 @@ const NewsalesBottomBar = () => {
             console.error('Error:', error);
         }
     };
+    
+    
+    // const sendSMS = async()=>{
+    //     const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/whatsapp`),{
+    //         headers:{
+    //             "content-type":"application/json",
+    //         },
+    //         body:JSON.stringify({
+    //             phone:'+917637834918',
+    //         })
+    //     }
+    // };
 
-    return (
+   
+    
+    // const sendSMS = async () => {
+    //     try {
+    //       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/sms`, {
+            
+    //       }, {
+    //         headers: {
+    //           'Content-Type': 'application/json',
+    //         },
+    //       });
+      
+    //       console.log('SMS sent successfully:', response.data);
+    //     } catch (error) {
+    //       console.error('Error sending SMS:', error);
+    //     }
+    //   }
+
+      const sendSMS = async () => {
+        try {   
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/sms`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    phone: "+917637834918",
+                   
+                }),
+            });
+            console.log('SMS sent successfully:', response);
+        } catch (error) {
+            console.error('Error while sending message', error);
+        } 
+    };
+
+    const sendWhatsapp = async () => {
+        try {   
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/whatsapp`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    phone: "+917637834918",
+                   
+                }),
+            });
+            console.log('Whatsapp Message sent successfully:', response);
+        } catch (error) {
+            console.error('Error while sending message', error);
+        } 
+    };
+    
+    const sendEmail = ()=>{
+        try {   
+            const response = fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/email`, {
+                method: 'POST'
+            });
+            console.log('Email sent successfully:', response);
+        } catch (error) {
+            console.error('Error while saving data:', error);
+        } 
+    }
+
+      return (
         <>
 
 
@@ -80,10 +157,18 @@ const NewsalesBottomBar = () => {
                                     <Image src={downloadicon} alt="download"></Image>
                                     <div>Download</div>
                                 </div>
-                                <div className="p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
+                                <button onClick={() => sendSMS()} className="p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
                                     <Image src={shareicon} alt="share"></Image>
-                                    <div>Share</div>
-                                </div>
+                                    <div>Share in sms</div>
+                                </button>
+                                <button onClick={() => sendWhatsapp()} className="p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
+                                    <Image src={shareicon} alt="share"></Image>
+                                    <div>Share in WA</div>
+                                </button>
+                                <button onClick={sendEmail} className="p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
+                                    <Image src={shareicon} alt="share"></Image>
+                                    <div>Share in Email</div>
+                                </button>
                             </div>
                             <div className="flex justify-between items-center gap-4 pr-4">
                                 <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">

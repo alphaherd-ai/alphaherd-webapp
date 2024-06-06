@@ -16,12 +16,20 @@ const ExistingsalesReturnBottomBar = () => {
   
 
  
+ 
 
-
-
+    const sendSMS = async()=>{
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/sms`,{
+                method:"POST",
+                headers:{
+                    "content-type":"application/json"
+                }
+            }
+        )
+    }
     return (
         <>
-
 
 <div className="flex justify-between items-center w-full  box-border  bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 py-4 rounded-b-lg">
                             <div className="flex justify-between items-center gap-4 pl-4">
@@ -33,10 +41,11 @@ const ExistingsalesReturnBottomBar = () => {
                                     <Image src={downloadicon} alt="download"></Image>
                                     <div>Download</div>
                                 </div>
-                                <div className="p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
+                                <button onClick={sendSMS} className="p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
                                     <Image src={shareicon} alt="share"></Image>
-                                    <div>Share</div>
-                                </div>
+                                    <div>Share sms</div>
+                                </button>
+                                
                             </div>
                           
                         </div>
