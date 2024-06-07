@@ -2578,7 +2578,7 @@
   resolved "https://registry.npmjs.org/@types/node/-/node-16.18.97.tgz"
   integrity sha512-4muilE1Lbfn57unR+/nT9AFjWk0MtWi5muwCEJqnOvfRQDbSfLCUdN7vCIg8TYuaANfhLOV85ve+FNpiUsbSRg==
 
-"@types/nodemailer@^6.4.14":
+"@types/nodemailer@^6.4.15":
   version "6.4.15"
   resolved "https://registry.npmjs.org/@types/nodemailer/-/nodemailer-6.4.15.tgz"
   integrity sha512-0EBJxawVNjPkng1zm2vopRctuWVCxk34JcIlRuXSf54habUWdz1FB7wHDqOqvDa8Mtpt0Q3LTXQkAs2LNyK5jQ==

@@ -37,6 +37,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                 body: JSON.stringify({
                     itemName: formData.name,
                     providers: selectedProviders,
+                    defaultUnit: formData.defaultUnit,
                     hsnCode: formData.hsnCode,
                     tax: formData.tax ? formData.tax[0].value : undefined,
                     category: formData.category ? formData.category[0].value : undefined,
@@ -74,33 +75,60 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
         {value: "Injections", label: "Injections"},
         {value: "Supplements", label: "Supplements"},
         {value: "Medicines", label: "Medicines"},
-        {value: "Equipments", label: "Equipments"}
+        {value: "Equipments", label: "Equipments"},
+        {value: "Pet Food", label:"Pet Food"}
     ]
+
+    const Units = [
+        {value: "Boxes", label: "Boxes"},
+        {value: "Pieces", label: "Pieces"},
+        {value: "Units", label: "Units"},
+        {value: "Vials", label: "Vials"},
+        {value: "Strips", label:"Strips"}
+    ]
+
 
     return <>
 
         {!lastStep && <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
-            <div className="w-[640px] h-[715px]  px-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
+            <div className="w-[640px] h-[787px]  px-8 py-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
                 <div className="self-end items-start gap-6 flex mt-[0.6rem]" onClick={onClose}>
                         <Image src={closeicon} alt="close"></Image>
                 </div>
-                <div className="text-gray-500 text-xl font-medium ">New Product</div>
-                <div className="text-neutral-400 text-base font-medium ">Add a new product to your inventory</div>
+                <div >
+                    <div className="text-gray-500 text-xl/[23.44px] font-medium ">New Product</div>
+                    <div className="text-neutral-400 text-base/[18.75px] font-medium ">Add a new product to your inventory</div>
+                </div>
                 <div className="flex items-center gap-[87px]">
-                    <div className="text-gray-500 text-base font-medium ">Name*</div>
+                    <div className="text-gray-500 text-base/[18.12px] font-medium ">Name*</div>
                     <div>
-                        <input className="w-[440px] h-9 rounded-md text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300" type="text" name="name" onChange={(e) => handleChange("name", e.target.value)} />
+                        <input className="w-[440px] h-[44px] rounded-[5px] text-gray-400 text-base/[18.12px] font-medium p-2  outline-none border border-solid border-gray-300" type="text" name="name" onChange={(e) => handleChange("name", e.target.value)} />
                     </div>
                 </div>
                 <div className="flex items-center gap-[70px] w-full">
-                    <div className="text-gray-500 text-base font-medium ">Providers</div>
+                    <div className="text-gray-500 text-base/[18.12px] font-medium ">Providers</div>
                     <div className="w-4/5">
                         <Select
-                            className="text-neutral-400 text-base font-medium w-full"
-                            placeholder="Select Category"
+                            className="w-[440px] h-[44px] rounded-[5px] text-#A2A3A3 text-base font-medium "
+                            placeholder="Select Provider"
                             isClearable={false}
                             isSearchable={true}
                             options={gstOptions}
+                            isMulti={true}
+                            name="defaultUnit"
+                            onChange={(value) => handleChange("defaultUnit", value)}
+                        />
+                    </div>
+                </div>
+                <div className="flex items-center gap-[70px] w-full">
+                    <div className="text-gray-500 text-base/[18.12px] font-medium ">Default Unit</div>
+                    <div className="w-4/5">
+                        <Select
+                            className="w-[440px] h-[44px] rounded-[5px] text-neutral-400 text-base font-medium "
+                            placeholder="Select Unit"
+                            isClearable={false}
+                            isSearchable={true}
+                            options={Units}
                             isMulti={true}
                             name="providers"
                             onChange={(value) => handleChange("providers", value)}
@@ -108,17 +136,17 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                     </div>
                 </div>
                 <div className="flex items-center gap-[55px]">
-                    <div className="text-gray-500 text-base font-medium w-[5rem]">HSN Code</div>
+                    <div className="text-gray-500 text-base/[18.12px] font-medium w-[5rem]">HSN Code</div>
                     <div>
-                        <input className="w-[440px] h-9 rounded-md text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300" type="text" name="hsnCode" onChange={(e) => handleChange("hsnCode", e.target.value)} />
+                        <input className="w-[440px] h-[44px] rounded-[5px] text-gray-400 text-base font-medium p-2 outline-none border border-solid border-gray-300" type="text" name="hsnCode" onChange={(e) => handleChange("hsnCode", e.target.value)} />
                     </div>
                 </div>
                 <div className="flex items-center gap-[110px] w-full">
-                    <div className="text-gray-500 text-base font-medium ">Tax</div>
+                    <div className="text-gray-500 text-base/[18.12px] font-medium ">Tax</div>
                     <div className="w-4/5">
                         <Select
-                            className="rounded-md text-gray-400 text-base font-medium  outline-none  w-full"
-                            placeholder="Select Category"
+                            className="w-[440px] h-[44px] rounded-[5px] text-gray-400 text-base/[18.12px] font-medium  outline-none"
+                            placeholder="Select Tax Rate"
                             isClearable={false}
                             isSearchable={true}
                             options={gstOptions}
@@ -129,10 +157,10 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                     </div>
                 </div>
                 <div className="flex items-center gap-[70px] w-full">
-                    <div className="text-gray-500 text-base font-medium ">Category</div>
+                    <div className="text-gray-500 text-base/[18.12px] font-medium ">Category</div>
                     <div className="w-4/5">
                         <Select
-                            className="text-neutral-400 text-base font-medium w-full "
+                            className="text-[#A2A3A3] text-base/[18.12px] font-medium w-[440px] h-[44px] rounded-[5px]"
                             placeholder="Select Category"
                             isClearable={false}
                             isSearchable={true}
@@ -144,13 +172,13 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                     </div>
                 </div>
                 <div className="flex-col">
-                    <div className="text-gray-500 text-base font-medium ">Description</div>
+                    <div className="text-gray-500 text-base/[18.12px] font-medium ">Description</div>
                     {/* <input className="w-[576px] h-[88px] mt-[8px]" placeholder="Provide details of the service" type="text" name="description" onChange={(e) => handleChange("description", e.target.value)} /> */}
-                    <textarea className="text-gray-400 text-base font-medium mt-[8px] px-2 py-2 outline-none border border-solid border-gray-300 rounded-md" placeholder="Provide details of the service" rows={5} cols={68} onChange={(e) => handleChange("description", e.target.value)}></textarea>
+                    <textarea className="text-gray-400 text-base/[18.12px] font-medium mt-[8px] px-2 py-2 outline-none border border-solid border-gray-300 rounded-md" placeholder="Provide details of the service" rows={5} cols={68} onChange={(e) => handleChange("description", e.target.value)}></textarea>
                 </div>
                 <div className="self-end items-start gap-6 flex">
                     <button onClick={handleContinueClick} className="px-4 py-2.5 bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none">
-                        <div className="text-neutral-400 text-base font-bold ">Continue</div>
+                        <div className="text-neutral-400 text-base/[18.12px] font-bold ">Continue</div>
                         <Image src={arrowicon} alt="arrow"></Image>
                     </button>
                 </div>
@@ -180,7 +208,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                         </div>
                         <div className="grow shrink basis-0 h-11 px-4 py-[13px] bg-white rounded-[5px] justify-start items-center flex">
                             <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-2 flex">
-                                <div className="text-neutral-400 text-base font-medium ">Strips</div>
+                            <div className="text-neutral-400 text-base font-medium ">Strips</div>
                             </div>
                         </div>
                     </div>

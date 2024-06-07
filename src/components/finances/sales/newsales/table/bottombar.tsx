@@ -66,36 +66,6 @@ const NewsalesBottomBar = () => {
         }
     };
     
-    
-    // const sendSMS = async()=>{
-    //     const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/whatsapp`),{
-    //         headers:{
-    //             "content-type":"application/json",
-    //         },
-    //         body:JSON.stringify({
-    //             phone:'+917637834918',
-    //         })
-    //     }
-    // };
-
-   
-    
-    // const sendSMS = async () => {
-    //     try {
-    //       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/sms`, {
-            
-    //       }, {
-    //         headers: {
-    //           'Content-Type': 'application/json',
-    //         },
-    //       });
-      
-    //       console.log('SMS sent successfully:', response.data);
-    //     } catch (error) {
-    //       console.error('Error sending SMS:', error);
-    //     }
-    //   }
-
       const sendSMS = async () => {
         try {   
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/sms`, {

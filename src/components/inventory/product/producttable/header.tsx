@@ -183,7 +183,7 @@ const InventoryProductTableHeader = () => {
                             <DropdownTrigger>
                             <Button color="gray-400"
                                     variant="solid"
-                                    className="capitalize flex border-none bg-black text-white rounded-lg cursor-pointer">  Actions
+                                    className="h-[44px] capitalize flex border-none bg-black text-white rounded-lg cursor-pointer ">  Actions
                                     <Image src={DownArrow} alt='DownArrow' className='w-4 h-4 ' />
                                     </Button>
                             </DropdownTrigger>

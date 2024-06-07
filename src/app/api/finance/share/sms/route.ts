@@ -1,32 +1,3 @@
-// import { body } from "express-validator";
-// import { NextResponse } from "next/server";
-// import twilio from "twilio";
-// import { NextRequest } from 'next/server';
-
-// export const POST=async(req: NextRequest)=>{
-//     const accountSid = process.env.TWILIO_ACCOUNT_SID;
-//     const authToken = process.env.TWILIO_AUTH_TOKEN;
-//     const twilioNumber = process.env.TWILIO_PHONE_NUMBER;
-//     const myNumber = process.env.MY_NUMBER;
-
-//     const client = require("twilio")(accountSid,authToken);
-
-
-//     const{phone} = await req.json();
-
-//     const result = await client.messages.create({
-//         body:"This is dummy sms",
-//         from: twilioNumber,
-//         to: phone
-//     });
-
-//     return NextResponse.json({message:"success"},{status:200});
-    
-    
-// }
-
-//api/finance/share/sms
-
 import { NextRequest, NextResponse } from "next/server";
 import twilio from "twilio";
 
