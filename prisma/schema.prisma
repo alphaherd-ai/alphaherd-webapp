@@ -1,15 +1,27 @@
 generator client {
-  provider   = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
+
 enum Tax {
- GST_18
- GST_9 
+  GST_18
+  GST_9
+}
+
+enum Notif_Source {
+  Inventory_Timeline_Added
+  Inventory_Timeline_Removed
+  Inventory_Product_Remain
+  Inventory_Product_Expiry
+  Inventory_Product_MaxStock
+  Inventory_ProductBatch
+  Sales_Invoice
+  Expense_Invoice
 }
 
 enum Sales_Status {
@@ -26,6 +38,7 @@ enum Stock {
   StockIN
   StockOUT
 }
+
 enum FinanceSalesType {
   Estimate
   Invoice
@@ -102,9 +115,20 @@ model User {
   altPhoneNo         String?
   hashedPassword     String
   adminOrganizations Organization[]
-  orgBranchId        Int? @unique
+  orgBranchId        Int?                @unique
   lastUsedBranch     OrgBranch?          @relation(fields: [orgBranchId], references: [id])
   userRoles          OrgBranchUserRole[]
+}
+
+model Notifications {
+  id        Int          @id @default(autoincrement())
+  userId    Int?
+  orgId     Int?         
+  url       String?
+  message   String?
+  source    Notif_Source
+  isRead    Boolean      @default(false)
+  createdAt DateTime?    @default(now())
 }
 
 model Permissions {
@@ -217,7 +241,7 @@ model ProductBatch {
   id                 Int                 @id @default(autoincrement())
   distributors       String[]
   quantity           Int?
-  productId          Int 
+  productId          Int
   batchNumber        String?
   costPrice          Int?
   location           Location            @default(NONE)
@@ -344,7 +368,7 @@ model Items {
   sellingPrice     Int?
   quantity         Int?
   name             String?
-  productId        Int?            
+  productId        Int?
   products         Products?       @relation(fields: [productId], references: [id])
   salesId          Int?
   sale             Sales?          @relation(fields: [salesId], references: [id])
@@ -376,15 +400,15 @@ model InventoryTimeline {
 }
 
 model FinanceTimeline {
-  id               Int             @id @default(autoincrement())
+  id               Int               @id @default(autoincrement())
   salesId          Int?
-  sale             Sales?          @relation(fields: [salesId], references: [id])
+  sale             Sales?            @relation(fields: [salesId], references: [id])
   type             FinanceSalesType?
   createdAt        DateTime
   purchasesId      Int?
-  purchases        Purchases?      @relation(fields: [purchasesId], references: [id])
+  purchases        Purchases?        @relation(fields: [purchasesId], references: [id])
   expensesId       Int?
-  expenses         Expenses?       @relation(fields: [expensesId], references: [id])
-  FinanceSection   FinanceSection? @relation(fields: [financeSectionId], references: [id])
+  expenses         Expenses?         @relation(fields: [expensesId], references: [id])
+  FinanceSection   FinanceSection?   @relation(fields: [financeSectionId], references: [id])
   financeSectionId Int?
 }

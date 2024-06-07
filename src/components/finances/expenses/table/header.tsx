@@ -148,38 +148,18 @@ const FinancesExpensesTableHeader = () => {
 
     <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '>
       
-        <Popover placement="bottom-end" showArrow offset={10}>
-            <PopoverTrigger>
-                <Button color="gray-400"
-                    variant="solid"
-                    className="capitalize flex border-none bg-black text-white rounded-lg ">  Create
-                    <div className='flex pl-2'><Image src={DownArrow} alt='DownArrow' className='w-4 h-4 ' /></div></Button>
-            </PopoverTrigger>
-            <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
-      
-                <div className="flex flex-col ">
+    <div className="flex flex-col ">
                    
-                    <div className='flex flex-col'>
-                    
-                    <Link className='no-underline flex item-center' href='/finance/overview'>
-                    <div className='text-base p-4   text-white flex '>
-                    <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div> Order</div>
-                    </Link>
-                    <Link className='no-underline flex item-center' href='/finance/overview'>
-                    <div className='text-base p-4  text-white flex '>
-                    <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div> Invoice</div>
-                    </Link>
-                    <Link className='no-underline flex item-center' href='/finance/overview'>
-                    <div className='text-base p-4  text-white flex '>
-                    <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>    Return</div>
-                    </Link>
-                  
-                    </div>
-                </div>
-              
-
-            </PopoverContent>
-        </Popover>
+                   <div className='flex flex-col'>
+                   
+                   <Link className='no-underline flex item-center' href='/finance/expenses/newexpenses'>
+                   <div className='text-base p-4   text-white flex '>
+                   <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div> New Expense</div>
+                   </Link>
+                   
+                 
+                   </div>
+               </div>
 
 
 

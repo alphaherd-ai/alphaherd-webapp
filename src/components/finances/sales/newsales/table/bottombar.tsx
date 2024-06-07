@@ -1,5 +1,4 @@
 "use client"
-
 import printicon from "../../../../../assets/icons/finance/print.svg"
 import shareicon from "../../../../../assets/icons/finance/share.svg"
 import drafticon from "../../../../../assets/icons/finance/draft.svg"
@@ -9,10 +8,11 @@ import downloadicon from "../../../../../assets/icons/finance/download.svg"
 import Link from "next/link"
 import Image from "next/image"
 import { DataContext } from './DataContext'
-import { FinanceSalesType } from '@prisma/client'
+import { FinanceSalesType, Notif_Source } from '@prisma/client'
 import axios from "axios"
 import { useAppSelector } from '@/lib/hooks';
 import { useSearchParams } from "next/navigation"
+import { getTime } from "date-fns"
 
 
 
@@ -54,10 +54,17 @@ const NewsalesBottomBar = () => {
             }
             
         }
+        const notifData={
+            source:Notif_Source.Sales_Invoice,
+            totalCost:data.totalCost,
+            createdAt:Date.now(),
+            orgId:appState.currentBranch.org.id
+        }
         console.log(JSON.stringify(data))
+        console.log("this is notif data",notifData)
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceSalesType.Invoice}?branchId=${appState.currentBranchId}`,data)
-
+            const notif= await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`,notifData)
             if (!response.data) {
                 throw new Error('Network response was not ok');
             }

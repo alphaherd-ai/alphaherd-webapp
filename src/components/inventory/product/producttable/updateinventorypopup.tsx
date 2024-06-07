@@ -15,6 +15,7 @@ import Select from 'react-select';
 import formatDateAndTime from "@/utils/formateDateTime";
 import { Stock } from "@prisma/client";
 import { select } from "@nextui-org/react";
+import { Notif_Source } from "@prisma/client";
 import { useAppSelector } from "@/lib/hooks";
 
 type PopupProps = {
@@ -55,6 +56,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
 
     const fetchProducts = async () => {
         try {
+
             const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${appState.currentBranchId}`);
             const formattedProducts = response.data.map((product: Products) => ({
                 value: product.id,
@@ -213,12 +215,27 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                     distributors,
                     productId,
                 };
+
                 if(selectedOption===Stock.StockOUT){
                     const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${id}?branchId=${appState.currentBranchId}`, body);
+                    const notifData={
+                        totalItems:body.quantity,
+                        source:Notif_Source.Inventory_Timeline_Removed,
+                        url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/timeline`,
+                        orgId:appState.currentBranch.org.id
+                    }
+                    const notif= await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`,notifData)
                     console.log('Updated inventory item:', response.data);
                 }else if(selectedOption===Stock.StockIN){
                     console.log("saving new batch")
                     const response =await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/create?branchId=${appState.currentBranchId}`,body);
+                    const notifData={
+                        totalItems:body.quantity,
+                        source:Notif_Source.Inventory_Timeline_Added,
+                        url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/timeline`,
+                        orgId:appState.currentBranch.org.id
+                    }
+                    const notif= await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`,notifData)
                     console.log('Created New Batch Item:', response.data);
                 }
                 
