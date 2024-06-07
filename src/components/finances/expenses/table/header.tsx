@@ -7,6 +7,7 @@ import Chart from '../../../../assets/icons/finance/chart.svg';
 import Download from '../../../../assets/icons/finance/download.svg';
 import DownArrow from '../../../../assets/icons/finance/downArrow.svg';
 import Invoice from '../../../../assets/icons/finance/invoice.svg';
+import Expense from "../../../../assets/icons/finance/request_quote.svg"
 import Return from '../../../../assets/icons/finance/Return.svg';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -86,7 +87,6 @@ const FinancesExpensesTableHeader = () => {
             <DropdownTrigger>
                 <Button
                     //   variant="bordered" 
-                    color="gray-400"
                     variant="solid"
                     className="capitalize border-none  bg-transparent rounded-lg"
                 >
@@ -95,13 +95,12 @@ const FinancesExpensesTableHeader = () => {
             </DropdownTrigger>
             <DropdownMenu
                 aria-label="Single selection example"
-                color="gray-500"
                 className=" text-base  text-gray-500 bg-gray-200 rounded-lg"
                 variant="solid"
                 disallowEmptySelection
                 selectionMode="single"
                 selectedKeys={selectedSort}
-                onSelectionChange={setselectedSort}
+                onChange={setselectedSort}
             >
                 <DropdownItem
                     className=" p-2 text-base" key="Category:text">Sort:Recently Used</DropdownItem>
@@ -119,7 +118,6 @@ const FinancesExpensesTableHeader = () => {
             <DropdownTrigger>
                 <Button
                     //   variant="bordered" 
-                    color="gray-400"
                     variant="solid"
                     className="capitalize border-none bg-transparent rounded-lg"
                 >
@@ -128,13 +126,12 @@ const FinancesExpensesTableHeader = () => {
             </DropdownTrigger>
             <DropdownMenu
                 aria-label="Single selection example"
-                color="gray-500"
                 className=" text-base bg-gray-200 rounded-lg"
                 variant="solid"
                 disallowEmptySelection
                 selectionMode="single"
                 selectedKeys={selectedCategory}
-                onSelectionChange={setSelectedCategory}
+                onChange={setSelectedCategory}
             >
                 <DropdownItem
                     className=" p-2" key="Category:text">Category: Text</DropdownItem>
@@ -146,15 +143,18 @@ const FinancesExpensesTableHeader = () => {
         </Dropdown>
     </div>
 
-    <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '>
+    {/* <div className='flex items-center h-9 py-2.5 bg-black justify-between rounded-lg '> */}
       
-        <Popover placement="bottom-end" showArrow offset={10}>
-            <PopoverTrigger>
-                <Button color="gray-400"
+        {/* <Popover placement="bottom-end" showArrow offset={10}>
+            <PopoverTrigger> */}
+            <Link className='no-underline flex item-center' href='/finance/expenses/newexpenses'>
+                <Button
                     variant="solid"
-                    className="capitalize flex border-none bg-black text-white rounded-lg ">  Create
-                    <div className='flex pl-2'><Image src={DownArrow} alt='DownArrow' className='w-4 h-4 ' /></div></Button>
-            </PopoverTrigger>
+                    className="capitalize flex h-9 py-2.5 cursor-pointer border-none bg-black text-white rounded-lg ">
+                    <div className='flex pl-2'><Image src={Expense} alt='Expense' className='w-5 h-5 ' /></div>New Expense
+                </Button>
+            </Link>
+            {/* </PopoverTrigger>
             <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
       
                 <div className="flex flex-col ">
@@ -179,11 +179,11 @@ const FinancesExpensesTableHeader = () => {
               
 
             </PopoverContent>
-        </Popover>
+        </Popover> */}
 
 
 
-    </div>
+    {/* </div> */}
 </div>
 </div >
 

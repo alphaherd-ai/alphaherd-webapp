@@ -1,6 +1,5 @@
 "use client"
 
-// import SelectDropdown from 'react-native-select-dropdown'
 
 import editicon from "../../../../../assets/icons/finance/1. Icons-25.svg"
 
@@ -13,11 +12,12 @@ import Link from "next/link"
 import Image from "next/image"
 import DatePicker from "react-datepicker"
 import 'react-datepicker/dist/react-datepicker.css';
-// import ReactDropdown from "react-dropdown"
+import { Button } from "@nextui-org/react";
 
-const NewExpensesHeader = () => {
-  
-    
+const NewRecurringHeader = () => {
+
+
+
     const colourOptions = [
         { value: 'chocolate', label: 'Chocolate' },
         { value: 'strawberry', label: 'Strawberry' },
@@ -58,15 +58,16 @@ const NewExpensesHeader = () => {
         setDisableButton(!disableButton);
     };
 
- 
 
 
 
-    return (
-        <>
 
 
-            <div className="flex justify-between w-full pb-[16px]">
+  return (
+    <>
+
+
+<div className="flex justify-between w-full pb-[16px]">
                 <div className="px-6  bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold ">Customer:</div>
@@ -222,12 +223,28 @@ const NewExpensesHeader = () => {
                         </div>
                 </div>
             </div>
+            <div className="flex justify-between w-full pb-[16px]">
+                <div className="px-6 py-4  bg-white rounded-[10px] justify-between items-center gap-4 flex flex-col w-full ">
+                    <div className="flex flex-col gap-[16px] w-full">
+                        <div className="text-gray-500 text-base font-bold ">Recurring Expense</div>
+                        <div className='w-full flex gap-8'>
+                            <input type="text" className="w-[20rem] py-3  text-textGrey2 text-base font-medium px-2 rounded border border-solid border-borderGrey" defaultValue="Every Month" disabled   />
+                            <input type="text" className="w-[20rem] py-3  text-textGrey2 text-base font-medium px-2 rounded border border-solid border-borderGrey" defaultValue="Started on 7/8/24"  disabled />
+                            <input type="text" className="w-[20rem] py-3  text-textGrey1 text-base font-medium px-2 rounded border border-solid border-borderGrey" defaultValue="Ends never"  disabled />
+                        </div>
+                    </div>
+                    <div className='w-full'>
+                        <Button className='bg-textGreen text-white text-base font-bold py-3 border-0 outline-none rounded-[5px] cursor-pointer'>
+                            Stop recurring expense
+                        </Button>
+                    </div>
 
-    
-          
+                </div>
+            </div>
+
+
         </>
-
-    )
+  )
 }
 
-export default NewExpensesHeader;
+export default NewRecurringHeader

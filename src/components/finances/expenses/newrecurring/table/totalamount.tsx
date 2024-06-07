@@ -1,36 +1,19 @@
-"use client"
-
-
-import React, { useState, useEffect } from 'react';
-import DownArrow from '../../../../../assets/icons/finance/downArrow.svg';
-import Invoice from '../../../../../assets/icons/finance/invoice.svg';
-// import SelectDropdown from 'react-native-select-dropdown'
+import React from 'react'
 import Rupee from "../../../../../assets/icons/finance/rupee.svg"
-
-import Link from "next/link"
 import Image from "next/image"
-import Select from 'react-select';
-import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
+
+const NewRecurringTotalAmount = () => {
 
 
-const NewExpensesTotalAmout = () => {
 
+  const gstOptions = [
+    { value: 'GST@18%.', label: 'GST@18%.' },
+    { value: 'GST@9%.', label: 'GST@9%.' }
+];
 
-    const [grandAmt, setGrandAmt] = useState('₹2124');
-
-    const taxOptions = [
-        { value: 'Tax excl.', label: 'Tax excl.' },
-        { value: 'Tax incl.', label: 'Tax incl.' }
-    ];
-
-    const gstOptions = [
-        { value: 'GST@18%.', label: 'GST@18%.' },
-        { value: 'GST@9%.', label: 'GST@9%.' }
-    ];
-
-
-    return (
-        <>
+  return (
+    <>
 
 
             <div className="flex w-full box-border bg-gray-100 pt-[20px] pb-[20px]">
@@ -85,8 +68,8 @@ const NewExpensesTotalAmout = () => {
 
         <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
             7,89,000
-            <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2">
-                You’re owed
+            <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2">
+                You owe
             </span>
         </div>
 
@@ -95,7 +78,7 @@ const NewExpensesTotalAmout = () => {
     </div>
 </div>
 </div>
-                <div className="w-1/2  bg-white rounded-[10px]">
+                <div className="w-1/2 h-full  bg-white rounded-[10px]">
                 <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">
                         <div className="text-gray-500 text-base font-bold  ">Subtotal</div>
                         <div className="text-right text-gray-500 text-base font-bold ">₹2,124</div>
@@ -104,42 +87,20 @@ const NewExpensesTotalAmout = () => {
                         <div className="text-gray-500 text-base font-bold ">Overall Discount</div>
                         <div className="flex items-center">
                             <div className="text-right text-textGrey1 text-base  ">0%</div>
-                            <div className=' flex text-gray-500 text-base font-medium pl-6'>
-                                <Select
-                                    className="text-neutral-400 text-base font-medium"
-                                    defaultValue={gstOptions[0]}
-                                    isClearable={false}
-                                    isSearchable={true}
-                                    options={gstOptions}
-                                    styles={{
-                                        control: (provided, state) => ({
-                                            ...provided,
-                                            border: state.isFocused ? 'none' : 'none',
-                                        }),
-                                    }}
-                                />
-                            </div>
+                            
                         </div>
                     </div>
-                    <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5   ">
-                        <div className="text-gray-500 text-base font-bold ">Shipping</div>
-                        <div className="text-right text-textGrey1 text-base  ">₹0</div>
-                    </div>
-                    <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5  ">
-                        <div className="text-gray-500 text-base font-bold ">Adjustment</div>
-                        <div className="text-right text-textGrey1 text-base  ">₹0</div>
-                    </div>
+                    
                     <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 rounded-b-md justify-between items-center gap-2.5    ">
                     <div className="text-textGreen text-base font-bold ">Grand total</div>
-                        <div className="text-right text-textGreen text-base font-bold ">{grandAmt}</div>
+                        <div className="text-right text-textGreen text-base font-bold ">7894</div>
                     </div>
                 </div>
             </div>
 
 
         </>
-
-    )
+  )
 }
 
-export default NewExpensesTotalAmout;
+export default NewRecurringTotalAmount

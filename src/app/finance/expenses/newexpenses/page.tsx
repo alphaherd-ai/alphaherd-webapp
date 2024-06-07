@@ -5,7 +5,7 @@ import NewExpensesNavbar from '@/components/finances/expenses/newexpenses/navbar
 const NewExpenses = () => {
   return (
     <>
-    <div className='w-full bg-gray-200 p-8 px-10' >
+    <div className='w-full min-h-screen bg-gray-200 p-8 px-10' >
      <NewExpensesNavbar/>
      <NewExpensesTable/>
     </div>

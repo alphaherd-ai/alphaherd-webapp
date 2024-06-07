@@ -1,36 +1,20 @@
-"use client"
-
-
-import React, { useState, useEffect } from 'react';
-import DownArrow from '../../../../../assets/icons/finance/downArrow.svg';
-import Invoice from '../../../../../assets/icons/finance/invoice.svg';
-// import SelectDropdown from 'react-native-select-dropdown'
+import React from 'react'
 import Rupee from "../../../../../assets/icons/finance/rupee.svg"
-
-import Link from "next/link"
 import Image from "next/image"
 import Select from 'react-select';
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
 
-
-const NewExpensesTotalAmout = () => {
-
-
-    const [grandAmt, setGrandAmt] = useState('₹2124');
-
-    const taxOptions = [
-        { value: 'Tax excl.', label: 'Tax excl.' },
-        { value: 'Tax incl.', label: 'Tax incl.' }
-    ];
-
-    const gstOptions = [
-        { value: 'GST@18%.', label: 'GST@18%.' },
-        { value: 'GST@9%.', label: 'GST@9%.' }
-    ];
+const ExsistingNonRecurringTotalAmount = () => {
 
 
-    return (
-        <>
+
+  const gstOptions = [
+    { value: 'GST@18%.', label: 'GST@18%.' },
+    { value: 'GST@9%.', label: 'GST@9%.' }
+];
+
+  return (
+    <>
 
 
             <div className="flex w-full box-border bg-gray-100 pt-[20px] pb-[20px]">
@@ -131,15 +115,14 @@ const NewExpensesTotalAmout = () => {
                     </div>
                     <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 rounded-b-md justify-between items-center gap-2.5    ">
                     <div className="text-textGreen text-base font-bold ">Grand total</div>
-                        <div className="text-right text-textGreen text-base font-bold ">{grandAmt}</div>
+                        <div className="text-right text-textGreen text-base font-bold ">7894</div>
                     </div>
                 </div>
             </div>
 
 
         </>
-
-    )
+  )
 }
 
-export default NewExpensesTotalAmout;
+export default ExsistingNonRecurringTotalAmount

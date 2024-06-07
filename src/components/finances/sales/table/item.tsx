@@ -63,7 +63,7 @@ if(isLoading&&!data)return <Spinner/>
     <div className='w-1/12 flex  items-center   text-neutral-400 text-base font-medium'>$ {sale.totalCost}</div>
     <div className='w-1/12 flex  items-center  text-neutral-400 text-base font-medium'>{sale.totalQty}</div>
     <div className='w-1/12 flex  items-center   text-neutral-400 text-base font-medium'>{formatDateAndTime(sale.dueDate).formattedDate}</div>
-    <div className='w-1/12 flex  items-center   text-neutral-400 text-base font-medium text-green-500'>
+    <div className='w-1/12 flex  items-center    text-base font-medium text-green-500'>
       <span className='bg-green-100 px-1'> 
     <Tooltip content={sale.status} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
 

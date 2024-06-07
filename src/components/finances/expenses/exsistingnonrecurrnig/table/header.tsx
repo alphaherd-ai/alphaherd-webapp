@@ -1,35 +1,9 @@
 "use client"
+import React from 'react'
 
-
-
-
-import React, { useState, useEffect } from 'react';
-import { useRef } from "react"
-import formatDateAndTime from "@/utils/formateDateTime";
-
-const ExistingsalesHeader = ({otherData}:any) => {
-
-
-
-    const [disableButton, setDisableButton] = useState(true);
-    const inputRef = useRef<HTMLInputElement | null>(null);
-
-
-
-
-
-    useEffect(() => {
-        if (!disableButton && inputRef.current) {
-            inputRef.current.focus();
-        }
-    }, [disableButton]);
-
-
-
-
-
-    return (
-        <>
+const ExsistingNonRecurringHeader = () => {
+  return (
+    <>
 
 
 <div className="flex justify-between w-full pb-[16px]">
@@ -38,7 +12,7 @@ const ExistingsalesHeader = ({otherData}:any) => {
                         <div className="text-gray-500 text-base font-bold ">Customer:</div>
                         <div
                                 className={`text-gray-500 text-base font-medium  border-0 bg-inherit`}
-                                > {otherData.customer} </div>
+                                > Ajitesh Sharma </div>
 
                     </div>
                 </div>
@@ -48,7 +22,7 @@ const ExistingsalesHeader = ({otherData}:any) => {
                         <div className="flex items-center justify-between w-9/12">
                             <div
                                 className={`text-gray-500 text-base font-medium  border-0 bg-inherit`}
-                                > {otherData.invoiceNo} </div>
+                                > 789456 </div>
                             
                         </div>
                     </div>
@@ -60,16 +34,15 @@ const ExistingsalesHeader = ({otherData}:any) => {
                         <div className="text-gray-500 text-base font-bold  w-1/8">Date:</div>
                         <div
                             className={"text-gray-500 text-base font-medium  w-full"}>
-                            {formatDateAndTime(otherData.date).formattedDate}
+                            7/8/24
                         </div>
                     </div>
                 </div>
                 <div className="px-6 py-4 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full ">
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold  w-2/12">Due Date:</div>
-                        <div
-                            className={"text-gray-500 text-base font-medium  w-full"}>
-                             {formatDateAndTime(otherData.dueDate).formattedDate}
+                        <div className={"text-gray-500 text-base font-medium  w-full"}>
+                             7/8/24                        
                         </div>
                     </div>
                 </div>
@@ -78,15 +51,14 @@ const ExistingsalesHeader = ({otherData}:any) => {
                 <div className="px-6 py-4  bg-white rounded-[10px] justify-between items-center gap-4 flex w-full ">
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold ">Notes:</div>
-                        <input type="text" className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0 outline-none" defaultValue={otherData.notes} disabled/>
+                        <input type="text" className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0 outline-none" defaultValue="...." disabled/>
                     </div>
                 </div>
             </div>
 
 
         </>
-
-    )
+  )
 }
 
-export default ExistingsalesHeader;
+export default ExsistingNonRecurringHeader

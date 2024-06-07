@@ -3,13 +3,10 @@
 
 import lefticon from "../../../../../assets/icons/finance/left_icon.svg"
 import Attachment from "../../../../../assets/icons/finance/attachment.svg"
-import Menu from '@/assets/icons/finance/Menu.svg';
-import Link from "next/link"
 import Image from "next/image"
-import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
 
 
-const NewExpensesNavbar = () => {
+const NewRecurringNavbar = () => {
 
     return (
         <>
@@ -20,7 +17,7 @@ const NewExpensesNavbar = () => {
                         <Image className="w-6 h-6 relative rounded-[5px]" src={lefticon} alt="Back"></Image>
                     </div>
                     <div className="text-gray-500 text-[28px] flex items-center font-bold ">
-                    New Expense
+                    Recurring Expense - Rent - EXP-000002
                     </div>
                     </div>
                     <div className=" h-11 px-6 py-2.5 rounded-[5px]  justify-center items-center inline-flex border border-gray-300 border-solid">
@@ -38,4 +35,4 @@ const NewExpensesNavbar = () => {
     )
 }
 
-export default NewExpensesNavbar;
+export default NewRecurringNavbar;
