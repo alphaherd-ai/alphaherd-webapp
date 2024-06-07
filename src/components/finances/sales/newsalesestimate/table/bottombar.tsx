@@ -12,6 +12,7 @@ import { DataContext } from './DataContext'
 import { FinanceSalesType } from '@prisma/client'
 import axios from "axios"
 import { useAppSelector } from '@/lib/hooks';
+import { Button } from "@nextui-org/react"
 
 
 
@@ -23,7 +24,10 @@ const NewsaleEstimateBottomBar = () => {
     const handleSubmit = async () => {
         const allData = {headerData, tableData, totalAmountData};
         console.log(allData)
-       
+        let totalQty=0;
+        tableData.forEach(data => {
+            totalQty+=(data.quantity)||0;
+        });
         const items = tableData.map(data => ({
             productId: data.productId,
             productBatchId:data.id, 
@@ -35,14 +39,14 @@ const NewsaleEstimateBottomBar = () => {
         const data={
             customer: allData.headerData.customer.value,
             notes: allData.headerData.notes,
-            subTotal: 0,
+            subTotal: allData.totalAmountData.subTotal,
             invoiceNo: 234234,
             dueDate: allData.headerData.dueDate,
-            shipping: 0,
-            adjustment: 0,
-            totalCost: 0,
+            shipping: allData.totalAmountData.shipping,
+            adjustment: allData.totalAmountData.adjustment,
+            totalCost: allData.totalAmountData.totalCost,
             overallDiscount: allData.totalAmountData.gst.value,
-            totalQty: 0,
+            totalQty: totalQty,
             status: "Pending",
             type: FinanceSalesType.Estimate,
             items:{
@@ -66,30 +70,30 @@ const NewsaleEstimateBottomBar = () => {
         <>
 
 
-<div className="flex justify-between items-center w-full  box-border  bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 py-4 rounded-b-lg">
-                            <div className="flex justify-between items-center gap-4 pl-4">
-                                <div className="p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
+<div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
+<div className="flex justify-between items-center gap-4 pl-4">
+                                <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                                     <Image src={printicon} alt="print"></Image>
                                     <div>Print</div>
                                 </div>
-                                <div className="p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
+                                <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                                     <Image src={downloadicon} alt="download"></Image>
                                     <div>Download</div>
                                 </div>
-                                <div className="p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
+                                <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                                     <Image src={shareicon} alt="share"></Image>
                                     <div>Share</div>
                                 </div>
                             </div>
                             <div className="flex justify-between items-center gap-4 pr-4">
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+                                <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
                                     <Image src={drafticon} alt="draft"></Image>
                                     <div>Save as Draft</div>
-                                </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex" onClick={handleSubmit}>
+                                </Button>
+                                <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer" onClick={handleSubmit}>
                                     <Image src={checkicon} alt="check"></Image>
                                     <div>Save</div>
-                                </div>
+                                </Button>
                             </div>
                         </div>
     

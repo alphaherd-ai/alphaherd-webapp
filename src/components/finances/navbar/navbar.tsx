@@ -39,12 +39,12 @@ const FinancesNavbar = () => {
                             Overview
                         </div>
                     </Link>
-                    <Link className='no-underline ' href='/finance/sales/all'>
+                    <Link className='no-underline ' href={{pathname:'/finance/sales/all',query:{type:'all'}}}>
                         <div  style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }} className={currentRoute.startsWith("/finance/sales") ? " flex items-center text-white  text-base bg-black px-4 py-2.5   border-r-0 " : " flex items-center text-gray-400 bg-white px-4 py-2.5 text-base   border-r-0"}>
                             <div className='flex mr-2'><SalesIcon fill={currentRoute.startsWith("/finance/sales")
                                 ? "#38F8E6"
                                 : "#A2A3A3"} /></div>
-                            Saless
+                            Sales
                         </div>
                     </Link>
                     <Link  className='no-underline ' href='/finance/purchases/all'>

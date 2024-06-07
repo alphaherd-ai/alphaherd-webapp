@@ -1,19 +1,20 @@
 "use client"
 
 
-import SelectDropdown from 'react-native-select-dropdown'
+// import SelectDropdown from 'react-native-select-dropdown'
 import DownArrow from '../../../../../assets/icons/finance/downArrow.svg';
 import subicon from "../../../../../assets/icons/finance/1. Icons-26.svg"
 import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
 import addicon from "../../../../../assets/icons/finance/add.svg"
 import add1icon from "../../../../../assets/icons/finance/add1.svg"
 import sellicon from "../../../../../assets/icons/finance/sell.svg"
-import Popup from '../../../../inventory/product/producttable/newproductpopup';
+import Popup from '../../../../finances/expenses/newexpenses/table/newPartyPopup';
+
 
 import Invoice from '../../../../../assets/icons/finance/invoice.svg';
 import Update from '../../../../../assets/icons/inventory/update.svg';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Select from 'react-select';
 import { useRef } from "react"
 import Image from "next/image"
@@ -33,37 +34,33 @@ const NewExpensesTable = () => {
     const taxOptions = [
         { value: 'Tax excl.', label: 'Tax excl.' },
         { value: 'Tax incl.', label: 'Tax incl.' }
-    ];
-
+    ]; 
+    
     const gstOptions = [
-        { value: 'GST@18%.', label: 'GST@18%.' },
-        { value: 'GST@9%.', label: 'GST@9%.' }
-    ];
-
-    const colourOptions = [
-        { value: 'chocolate', label: 'Chocolate' },
-        { value: 'strawberry', label: 'Strawberry' },
-        { value: 'vanilla', label: 'Vanilla' }
+        {value: "GST@5%", label: "GST@5%"},
+        {value: "GST@*%", label: "GST@8%"},
+        {value: "GST@18%", label: "GST@18%"},
+        {value: "GST@20%", label: "GST@20%"},
     ]
+
+    const category = [
+        {value: "Utilities", label: "Utilities"},
+        {value: "Rent", label: "Rent"},
+        {value: "Medical Supplies", label: "Medical Supplies"},
+        {value: "Repair and Maintainance", label: "Repair and Maintainance"},
+        {value: "Payroll", label: "Payroll"},
+        {value: "Inventory", label: "Inventory"},
+        {value: "Other", label: "Other"},
+    ]
+    
     const initialItems = [
         { id: 1, quantity: 4, quantity2: 5 },
         { id: 2, quantity: 3, quantity2: 6 },
         // Add more items as needed
     ];
 
-
-    const Checkbox = ({ children, ...props }: JSX.IntrinsicElements['input']) => (
-        <label style={{ marginRight: '1em' }}>
-            <input type="checkbox" {...props} />
-            {children}
-        </label>
-    );
-
-
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
-    const [isChecked, setChecked] = useState(false);
-
 
     const [items, setItems] = useState(initialItems);
 
@@ -74,63 +71,43 @@ const NewExpensesTable = () => {
         }
     }, [disableButton]);
 
-    const handleEditButtonClick = () => {
-        setDisableButton(!disableButton);
-    };
-
-    const handleCheckBoxChange = () => {
-        setChecked(!isChecked);
-        setItems((prevItems) =>
-            prevItems.map((item) => ({
-                ...item,
-                quantity: isChecked ? item.quantity * 2 : item.quantity,
-            }))
-        );
-    };
-
+    
     const [showPopup, setShowPopup] = React.useState(false);
 
 
     const togglePopup = () => {
         setShowPopup(!showPopup);
     }
-    const handleQuantityDecClick = (itemId) => {
-        setItems((prevItems) =>
-            prevItems.map((item) => {
-                if (item.id === itemId && item.quantity > 1) {
-                    return { ...item, quantity: item.quantity - 1 };
-                }
-                return item;
-            })
-        );
-    };
+    
 
-    const handleQuantityIncClick = (itemId) => {
-        setItems((prevItems) =>
-            prevItems.map((item) => {
-                if (item.id === itemId) {
-                    return { ...item, quantity: item.quantity + 1 };
-                }
-                return item;
-            })
-        );
-    };
+    const handleAddItem= useCallback(() => {
+        setItems([...items, {}]);
+    }, [items]);
 
+
+    const handleDeleteRow = useCallback((index: number) => {
+        const updatedItems = [...items];
+        updatedItems.splice(index, 1);
+        setItems(updatedItems);
+    }, [items]);
 
     return (
         <>
-            <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100  rounded-lg">
-                <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border border-neutral-400 justify-between items-center gap-6 flex">
-                    <div className='bg-orange-200 rounded-md px-2' ><span className="text-orange-600  text-sm font-medium font-['Satoshi']">You’re owed: ₹</span><span className="text-orange-600 text-sm font-bold font-['Satoshi']">2,124</span></div>
-                    <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '>
+            <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
+            <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-between items-center gap-6 flex">
+                    <div className='bg-orange-200 rounded-md px-2' ><span className="text-orange-600  text-sm font-medium ">You’re owed: ₹</span><span className="text-orange-600 text-sm font-bold ">2,124</span></div>
+                    {/* <div className='flex items-center h-9 py-2.5 bg-black justify-between rounded-lg '>
 
                         <Popover placement="bottom-end" showArrow offset={10}>
-                            <PopoverTrigger>
-                                <Button color="gray-400"
+                            <PopoverTrigger> */}
+                                <Button
+                                onClick={togglePopup}
                                     variant="solid"
-                                    className="capitalize flex border-none bg-black text-white rounded-lg ">
-                                    <div className='flex pr-2'><Image src={DownArrow} alt='DownArrow' className='w-4 h-4 ' /></div>Add Customer</Button>
-                            </PopoverTrigger>
+                                    className="capitalize flex h-9 py-2.5 border-none bg-black text-white rounded-lg ">
+                                    <div className='flex pr-2'><Image src={addicon} alt='addicon' className='w-6 h-6 ' /></div>
+                                        Add Party
+                                </Button>
+                            {/* </PopoverTrigger>
                             <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
 
                                 <div className="flex flex-col ">
@@ -159,23 +136,23 @@ const NewExpensesTable = () => {
 
 
 
-                    </div>
+                    </div> */}
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px]">
                     <NewExpensesHeader />
 
-                    <div className="w-full">
-                        <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border border-neutral-400 justify-between items-center gap-6 flex">
-                            <div className="text-gray-500 text-xl font-medium font-['Satoshi']">
+                    <div className="w-full rounded-md border border-solid border-borderGrey">
+                    <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
+                            <div className="text-textGrey2 text-xl font-medium ">
                                 Items
                             </div>
-                            <div className="flex items-center justify-center ">
+                            {/* <div className="flex items-center justify-center ">
 
                                 <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '>
 
                                     <Popover placement="bottom-end" showArrow offset={10}>
                                         <PopoverTrigger>
-                                            <Button color="gray-400"
+                                            <Button
                                                 variant="solid"
                                                 className="capitalize flex border-none bg-black text-white rounded-lg ">  Add Item
                                                 <div className='flex pl-2'><Image src={DownArrow} alt='DownArrow' className='w-4 h-4 ' /></div></Button>
@@ -203,30 +180,48 @@ const NewExpensesTable = () => {
 
 
                             </div>
-                        </div>
+                        </div> */}
+
+                            <div className="flex items-center justify-center ">
+                                {/* <div className="flex items-center justify-center mr-2">
+                                    <div className="pr-[4px]">
+                                        <input value="test" type="checkbox" className="border-0" onChange={handleCheckBoxChange} />
+                                    </div>
+                                    <div className="text-neutral-400 text-base font-bold ">Price Range</div>
+                                </div> */}
+                                <Button onClick={handleAddItem} className='cursor-pointer text-white flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-md border-0 outline-none'>
+                                    <div className='w-4 h-4 mb-3 mr-2'>
+                                        <Image src={addicon} alt='addicon' />
+                                    </div>
+                                   
+                                        Add Item
+                                    
+                                </Button>
+                            </div>
+
                     </div>
                     <div>
-                        <div className='flex  w-full justify-evenly items-center box-border bg-gray-100  h-12  border-b border-neutral-400 text-gray-500'>
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'>No.</div>
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'>Name</div>
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-2/12'>Price</div>
+                        <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12  text-textGrey2 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey'>
+                            <div className=' flex text-textGrey2 text-base font-medium w-[3rem]'>No.</div>
+                            <div className=' flex text-textGrey2 text-base font-medium w-[15rem]'>Name</div>
+                            <div className=' flex text-textGrey2 text-base font-medium w-[12rem]'>Price</div>
 
 
 
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-2/12'>Tax %</div>
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'>Tax Amt.</div>
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'>Total</div>
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'>Category</div>
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'></div>
+                            <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>Tax %</div>
+                            <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>Tax Amt.</div>
+                            <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>Total</div>
+                            <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>Category</div>
+                            <div className=' flex text-textGrey2 text-base font-medium w-1/12'></div>
                         </div>
-                        {items.map((item) => (
-                            <div key={item.id} className='flex justify-evenly items-center w-full  box-border  bg-white  bg-white border border-solid border-gray-200 text-gray-400  py-2 '>
-                                <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{item.id}</div>
-                                <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{`Item ${item.id}`}</div>
-                                <div className='w-2/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-5'>
+                        {items.map((item:any,index:number) => (
+                            <div key={item.id} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400 py-2'>
+                                <div className='w-[3rem] flex items-center text-neutral-400 text-base font-medium'>{item.id}</div>
+                                <div className='w-[15rem] flex items-center text-neutral-400 text-base font-medium'>{`Item ${item.id}`}</div>
+                                <div className='w-[12rem] flex items-center text-neutral-400 text-base font-medium gap-5'>
                                     <div className="w-1/12 flex items-center text-neutral-400 text-base font-medium">₹400</div>
                                     <Select
-                                        className="text-neutral-400 text-sm font-medium font-['Satoshi']"
+                                        className="text-neutral-400 text-sm font-medium "
                                         defaultValue={taxOptions[0]}
                                         isClearable={false}
                                         isSearchable={true}
@@ -240,12 +235,13 @@ const NewExpensesTable = () => {
                                         }}
                                     />
                                 </div>
-                                <div className='w-2/12 px-6 flex-col items-center text-neutral-400 text-base font-medium'>
+                                <div className='w-[10rem] flex-col items-center text-neutral-400 text-base font-medium'>
                                     <Select
-                                        defaultValue={batchOptions[0]}
+                                        className='w-[80%]'
+                                        defaultValue={gstOptions}
                                         isClearable={false}
                                         isSearchable={true}
-                                        options={batchOptions}
+                                        options={gstOptions}
                                         styles={{
                                             control: (provided, state) => ({
                                                 ...provided,
@@ -258,20 +254,20 @@ const NewExpensesTable = () => {
                                     />
                                 </div>
 
-                                <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
+                                <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
 
                                     <div>{item.quantity}</div>
 
                                 </div>
 
-                                <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{`₹${item.quantity * 400}`}</div>
+                                <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>{`₹${item.quantity * 400}`}</div>
 
-                                <div className='w-1/12 px-6 flex-col items-center text-neutral-400 text-base font-medium'>
+                                <div className='w-[10rem] flex-col items-center text-neutral-400 text-base font-medium'>
                                     <Select
-                                        defaultValue={batchOptions[0]}
+                                        defaultValue={category}
                                         isClearable={false}
                                         isSearchable={true}
-                                        options={batchOptions}
+                                        options={category}
                                         styles={{
                                             control: (provided, state) => ({
                                                 ...provided,
@@ -283,28 +279,28 @@ const NewExpensesTable = () => {
                                         }}
                                     />
                                 </div>
-                                <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
+                                <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
                                     <button className="border-0">
                                         <Image src={sellicon} alt="sell" ></Image>
                                     </button>
-                                    <button className="border-0">
+                                    <button className="border-0" onClick={() => handleDeleteRow(index)}>
                                         <Image src={delicon} alt="delete" ></Image>
                                     </button>
                                 </div>
                             </div>
                         ))}
-                        <div className='flex  w-full justify-evenly items-center box-border bg-gray-100 h-12 border border-solid border-gray-200 py-5  text-gray-500'>
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'>Total</div>
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'> </div>
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-2/12'> </div>
+                        <div className='flex  w-full justify-evenly items-center box-border bg-gray-100 h-12 border border-solid border-gray-200 py-5  text-textGrey2'>
+                            <div className=' flex text-textGrey2 text-base font-medium w-[3rem]'> </div>
+                            <div className=' flex text-textGrey2 text-base font-medium w-[15rem]'>Total</div>
+                            <div className=' flex text-textGrey2 text-base font-medium w-[12rem]'> </div>
 
 
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-2/12'>
+                            <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>
                                 <Select
-                                    defaultValue={batchOptions[0]}
+                                    defaultValue={gstOptions}
                                     isClearable={false}
                                     isSearchable={true}
-                                    options={batchOptions}
+                                    options={gstOptions}
                                     styles={{
                                         control: (provided, state) => ({
                                             ...provided,
@@ -317,15 +313,15 @@ const NewExpensesTable = () => {
                                 />
                             </div>
 
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'>{`₹${items.reduce((acc, item) => acc + item.quantity * 400 * 0.18, 0)}`}</div>
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'>{`₹${items.reduce((acc, item) => acc + item.quantity * 400 * 1.18, 0)}`}</div>
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'></div>
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'></div>
+                            <div className=' flex text-textGrey2 text-base font-bold w-[10rem]'>{`₹${items.reduce((acc, item) => acc + item.quantity * 400 * 0.18, 0)}`}</div>
+                            <div className=' flex text-textGreen text-base font-bold w-[10rem]'>{`₹${items.reduce((acc, item) => acc + item.quantity * 400 * 1.18, 0)}`}</div>
+                            <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'></div>
+                            <div className=' flex text-textGrey2 text-base font-medium w-1/12'></div>
                         </div>
                     </div>
-                    <NewExpensesTotalAmout />
 
                 </div>
+                    <NewExpensesTotalAmout />
             </div>
             <NewExpensesBottomBar />
         </div>

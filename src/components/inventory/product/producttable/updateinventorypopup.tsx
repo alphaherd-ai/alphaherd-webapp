@@ -233,14 +233,14 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
 
     return (
         <>
-            <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 fixed inset-0 backdrop-blur-sm bg-gray-100 bg-opacity-50 z-50">
-                <div className="w-[1392px] min-h-[481px] flex-col p-8 bg-gray-200 gap-6">
+            <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-100 bg-opacity-50 z-50">
+                <div className="w-[1392px] min-h-[481px] flex-col p-8 bg-gray-200 gap-6 rounded-md">
                     <div className="flex justify-end p-8 gap-4">
-                        <button><Image src={minicon} alt="minimize" /></button>
-                        <button onClick={onClose}><Image src={closeicon} alt="minimize" /></button>
+                        <button className="border-0 outline-0 cursor-pointer"><Image src={minicon} alt="minimize" /></button>
+                        <button className="border-0 outline-0 cursor-pointer" onClick={onClose}><Image src={closeicon} alt="minimize" /></button>
                     </div>
-                    <div className="text-gray-500 text-xl font-medium font-['Satoshi']">Update Inventory</div>
-                    <div className="text-neutral-400 text-base font-medium font-['Satoshi']">Add or subtract quantity from inventory</div>
+                    <div className="text-gray-500 text-xl font-medium ">Update Inventory</div>
+                    <div className="text-neutral-400 text-base font-medium ">Add or subtract quantity from inventory</div>
                     <div className="w-full h-[72px] px-6 py-4 bg-white border border-neutral-400 justify-between items-center gap-4 flex">
                         <div className="flex gap-4">
                             <RadioButton
@@ -259,7 +259,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                         <div className="relative">
                             <div className="w-[132px] h-11 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
                                 <Image src={addicon} alt="add" />
-                                <button className="text-white text-base font-bold font-['Satoshi'] bg-transparent border-0" onClick={handleAddItemClick}>
+                                <button className="text-white text-base font-bold  bg-transparent border-0" onClick={handleAddItemClick}>
                                     Add Item
                                 </button>
                             </div>
@@ -284,7 +284,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                                 <div className='w-1/36 px-6 flex items-center text-neutral-400 text-base font-medium'>{index + 1}</div>
                                 <div className='w-1/5 px-6 flex items-center text-neutral-400 text-base font-medium'>
                                     <Select
-                                        className="text-gray-500 text-base font-medium font-['Satoshi'] w-full border-0 boxShadow-0"
+                                        className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
                                         classNamePrefix="select"
                                         value={products.find((prod) => prod.value === item.id)}
                                         isClearable={false}
@@ -315,7 +315,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                                     ):
                                     (
                                       <Select
-                                      className="text-gray-500 text-base font-medium font-['Satoshi'] w-full border-0 boxShadow-0"
+                                      className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
                                       classNamePrefix="select"
                                       value={products.find((prod) => prod.value === item.id)}
                                       isClearable={false}
@@ -409,13 +409,13 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                                 <div className="pr-[4px]">
                                     <input type="checkbox" onChange={handleCheckBoxChange} />
                                 </div>
-                                <div className="text-teal-400 text-base font-medium font-['Satoshi']">
+                                <div className="text-teal-400 text-base font-medium ">
                                     Update total cost as Expense
                                 </div>
                             </div>
                             <div className="bg-black px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex">
                                 <Image src={checkicon} alt="add" />
-                                <button className="text-white text-base font-bold font-['Satoshi'] bg-transparent border-0" onClick={handleUpdateInventory}>
+                                <button className="text-white text-base font-bold  bg-transparent border-0" onClick={handleUpdateInventory}>
                                     Update Inventory
                                 </button>
                             </div>

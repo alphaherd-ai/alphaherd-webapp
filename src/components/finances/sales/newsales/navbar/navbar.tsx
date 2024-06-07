@@ -13,7 +13,7 @@ const NewsaleNavbar = () => {
                     <div className="w-11 h-11 bg-gray-100 rounded-[5px] border border-neutral-400 flex justify-center items-center mr-4">
                         <Image className="w-6 h-6 relative rounded-[5px]" src={lefticon} alt="Back"></Image>
                     </div>
-                    <div className="text-gray-500 text-[28px] font-bold font-['Satoshi']">
+                    <div className="text-gray-500 text-[28px] font-bold">
                     New Sales Invoice
                     </div>
                 </div>

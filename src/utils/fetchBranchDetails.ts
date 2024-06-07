@@ -85,18 +85,32 @@ export const fetchFinanceId = async (request:NextRequest) => {
     return financeSection?.id;
 }
 
-export const fetchDatabaseId = async (url:string) => {
+export const fetchDatabaseId = async (request:NextRequest) => {
+    const url = request.nextUrl;
     const { searchParams } = new URL(url);
+    console.log(searchParams);
     const branchId = searchParams.get("branchId")!;  
+    
+    console.log("here's the final branchID",branchId)
     if (!branchId) {
-        throw new Error("Branch ID not found in session");
+        throw new Error("Branch ID not found in request");
     }
-
+    const orgBranch=await fetchBranchDetailsById(Number(branchId));
+    console.log(orgBranch)
     const databaseSection = await prismaClient.databaseSection.findUnique({
         where: {
             branchId: Number(branchId)
         }
     });
+    if(!databaseSection&&orgBranch){
+        await prismaClient.databaseSection.create({
+            data: {
+                name: "Database-" + orgBranch.branchName,
+                branchId: Number(branchId),
+               type:"type1"
+            }
+        })
+    }
 
     return databaseSection?.id;
 }

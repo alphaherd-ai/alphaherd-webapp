@@ -183,21 +183,21 @@ const InventoryProductTableHeader = () => {
                             <DropdownTrigger>
                             <Button color="gray-400"
                                     variant="solid"
-                                    className="capitalize flex border-none bg-black text-white rounded-lg cursor-pointer">  Actions
+                                    className="capitalize flex border-none bg-black text-white rounded-lg cursor-pointer py-2">  Action
                                     <Image src={DownArrow} alt='DownArrow' className='w-4 h-4 ' />
                                     </Button>
                             </DropdownTrigger>
                             <DropdownMenu className='bg-black text-white rounded-lg mr-[10px]'>
                                 <DropdownItem>
-                                <div className='text-base p-4  text-white flex '>
-                                            <div className='flex pr-2'><Image src={Add} alt='Update' className='w-5 h-5 ' /></div>
-                                            <button className='bg-transparent border-0 text-white text-base' onClick={togglePopup}>New Product</button>
-                                        </div>
+                                <div className='text-base p-4  text-white flex cursor-pointer' onClick={togglePopup}>
+                                            <div className='flex pr-2 cursor-pointer'><Image src={Add} alt='Update' className='w-5 h-5 ' /></div>
+                                            <button className='bg-transparent border-0 text-white text-base cursor-pointer' >New Product</button>
+                                </div>
                                 </DropdownItem>
                                 <DropdownItem>
-                                <div className='text-base p-4  text-white flex '>
+                                <div className='text-base p-4  text-white flex cursor-pointer' onClick={togglePopup2}>
                                             <div className='flex pr-2'><Image src={Update} alt='Update' className='w-5 h-5 ' /></div>
-                                            <button className='bg-transparent border-0 text-white text-base' onClick={togglePopup2}>Update Inventory</button>
+                                            <button className='bg-transparent border-0 text-white text-base cursor-pointer' >Update Inventory</button>
                                         </div>
                                 </DropdownItem>
                             </DropdownMenu>

@@ -8,7 +8,7 @@ export  const GET=async (req: NextRequest)=> {
     return new Response('Method not allowed',{status:405});
 }
     try {
-      const databaseId = await fetchDatabaseId(req.url);
+      const databaseId = await fetchDatabaseId(req);
         const clients = await prismaClient.clients.findMany({
           where:{
             databaseSectionId:databaseId
