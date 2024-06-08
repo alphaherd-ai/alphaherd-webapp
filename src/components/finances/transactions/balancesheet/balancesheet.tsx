@@ -26,14 +26,14 @@ const FinancesTransactionSheet = () => {
                                 <Image className="w-6 h-6 relative" src={lefticon} alt="left_icon" />
                                 <Image className="w-6 h-6 relative" src={righticon} alt="right_icon" />
                             </div>
-                            <div className="text-gray-500 text-sm font-medium font-['Satoshi']">
+                            <div className="text-gray-500 text-sm font-medium ">
                                 July 17th - 23rd, 2023
                             </div>
                         </div>
                         <div className="flex h-[19px] justify-start items-start gap-6 inline-flex">
                             {['Day', 'Week', 'Month', 'Quarter', 'Year', 'All Time'].map((label, index) => (
                                 <button className="border-none bg-transparent" onClick={() => handleClick(index)} key={index}>
-                                    <div className={`${index === clickedIndex ? "text-center text-teal-400 font-bold" : "text-neutral-400"} text-neutral-400 text-sm font-medium font-['Satoshi']`}>
+                                    <div className={`${index === clickedIndex ? "text-center text-teal-400 font-bold" : "text-neutral-400"} text-neutral-400 text-sm font-medium `}>
                                         {label}
                                     </div>
                                     {index === clickedIndex && <Image src={selecttab} alt="icon" />}

@@ -127,7 +127,7 @@ const ConvertToRecurringPopup: React.FC<PopupProps> = ({ onClose }) => {
                         <Image src={check} alt='check' /> 
                         <span className='text-white text-base font-medium pr-2'>Save</span>
                     </Button>
-                </div>
+            </div>
             
                 
             
