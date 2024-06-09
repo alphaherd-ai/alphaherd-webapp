@@ -5,11 +5,11 @@ import TableList from "./TableList";
 
 const Table = () => {
   return (<>
-    <div className="flex flex-col items-center ">
-      <TableHeader />
-      <TableContent />
-    </div>
-      <TableList />
+            <div className="flex flex-col items-center">
+              <TableHeader />
+              <TableContent />
+            </div>
+              <TableList />
       </>
   );
 };

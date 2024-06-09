@@ -12,8 +12,10 @@ export const GET=async(req: NextRequest,res:Response)=> {
         const { searchParams } = new URL(url);
         const orgId = searchParams.get("orgId")!;  
         const allNotifs= await prismaClient.notifications.findMany({where:{
-          orgId:Number(orgId)
-        }})
+          orgId:Number(orgId),
+        },orderBy:[{
+          createdAt:'asc'
+        }]})
         const newNotifs = allNotifs.filter((notif)=>notif.isRead===false) 
         return new Response(JSON.stringify({newNotifs,allNotifs}), {
           status: 201,

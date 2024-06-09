@@ -2,6 +2,8 @@
 import DownArrow from '../../../../../assets/icons/finance/downArrow.svg';
 import subicon from "../../../../../assets/icons/finance/1. Icons-26.svg"
 import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
+import Subtract from "../../../../../assets/icons/finance/Subtract.svg"
+import Add from "../../../../../assets/icons/finance/add (2).svg"
 import addicon from "../../../../../assets/icons/finance/add.svg"
 import add1icon from "../../../../../assets/icons/finance/add1.svg"
 import sellicon from "../../../../../assets/icons/finance/sell.svg"
@@ -22,13 +24,15 @@ import { Tax } from '@prisma/client';
 import formatDateAndTime from '@/utils/formateDateTime';
 import useSWR from 'swr';
 import { useSearchParams } from 'next/navigation';
+//@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 interface Products{
     id :string,
     itemName:string,
-    productBatch:ProductBatch[]
-    hsnCode:string
+    productBatch:ProductBatch[],
+    hsnCode:string,
+    quantity:number
 }
 interface ProductBatch {
     id: number;
@@ -42,20 +46,30 @@ interface ProductBatch {
     hsnCode:string;
     category :string;
     distributors:string[];
+    productId:number;
 }
 function useProductfetch (id: number | null) {
-    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`,fetcher);
+    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`,fetcher,{revalidateOnFocus:true});
    return {
     fetchedProducts:data,
     isLoading,
     error
    }
 }
+function useProductBatchfetch(id:number|null){
+    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll/?branchId=${id}`,fetcher,{revalidateOnFocus:true});
+    return {
+        fetchedBathces:data,
+        isBatchLoading:isLoading,
+        batchError:error
+    }
+}
 const NewsalesReturnTable = () => {
     const { tableData, setTableData } = useContext(DataContext);
     const [selectedProductDetails,setSelectedProduct]= useState<Products>()
-    const [products, setProducts] = useState<{ value: number; label: string }[]>([]);
-    const [batches,setBatches] = useState<{value:number;label:string}[]>([])
+    const [products, setProducts] = useState<any[]>([]);
+    const [batches,setBatches] = useState<any[]>([]);
+    const [filteredBatches,setFilteredBatches]=useState<any[]>([]);
     const [otherData, setOtherData] = useState({});
     const appState = useAppSelector((state) => state.app)
     const url= useSearchParams();
@@ -63,7 +77,6 @@ const NewsalesReturnTable = () => {
     const { tableData: items, setTableData: setItems } = useContext(DataContext);   
     if(id){
         const {data,error,isLoading} =useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/${id}/?branchId=${appState.currentBranchId}`,fetcher)
-        const salesData=data;
         useEffect(() => {
             if (!isLoading && data && !error) {
                 const {items,...otherData}=data;
@@ -86,6 +99,7 @@ const NewsalesReturnTable = () => {
           
         console.log(items)
     }
+    
     const taxOptions = [
         { value: 'Tax excl.', label: 'Tax excl.' },
         { value: 'Tax incl.', label: 'Tax incl.' }
@@ -96,6 +110,7 @@ const NewsalesReturnTable = () => {
         { value: 0.09, label: Tax.GST_9 }
     ];
 
+    
     const Checkbox = ({ children, ...props }: JSX.IntrinsicElements['input']) => (
         <label style={{ marginRight: '1em' }}>
             <input type="checkbox" {...props} />
@@ -106,36 +121,42 @@ const NewsalesReturnTable = () => {
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [isChecked, setChecked] = useState(false);
     
-    
     useEffect(() => {
         if (!disableButton && inputRef.current) {
             inputRef.current.focus();
         }
     }, [disableButton]);
     const {fetchedProducts,isLoading,error}=useProductfetch(appState.currentBranchId);
+    const {fetchedBathces,isBatchLoading,batchError}=useProductBatchfetch(appState.currentBranchId);
     useEffect(()=>{
      if(!isLoading&&products&&!error){
          const formattedProducts = fetchedProducts.map((product: Products) => ({
-             value: product.id,
+             value:{
+                id: product.id,
+                quantity:product.quantity,
+                itemName:product.itemName
+            },
              label: product.itemName,
          }));
+         console.log(formattedProducts)
          setProducts(formattedProducts);
      }
-    },[fetchedProducts])
-  const fetchProductBatch= async (selectedProduct:any) =>{
-    try{
-        console.log(selectedProduct)
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll/${selectedProduct.value}?branchId=${appState.currentBranchId}`);
-        const formattedProductBatches=response.data.map((product:ProductBatch)=>({
-            value:product.id,
+     if(!batchError&&!isBatchLoading&&fetchedBathces){
+        const formattedProductBatches=fetchedBathces.map((product:ProductBatch)=>({
+            value:{
+                id:product.id,
+                productId:product.productId,
+                quantity: product.quantity ,
+                batchNumber: product.batchNumber,
+                expiry:  product.expiry,
+                sellingPrice:  product.sellingPrice,
+            },
             label:product.batchNumber
         }));
         console.log(formattedProductBatches)
         setBatches(formattedProductBatches)
-    }catch(error){
-        console.error("Error fetching Batches:",error);
     }
-  }
+    },[fetchedProducts,fetchedBathces])
   const handleDeleteRow = useCallback((index: number) => {
     const updatedItems = [...items];
     updatedItems.splice(index, 1);
@@ -218,19 +239,18 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
     console.log(selectedProduct)
     if (selectedProduct.value) {
         try {
-            setBatches([]);
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${selectedProduct.value}?branchId=${appState.currentBranchId}`);
-            const data = response.data;
+            const data=products.find((product)=>product.value.id==selectedProduct.value.id)
             setSelectedProduct(data);
-            await fetchProductBatch(selectedProduct);   
             const updatedItems = [...items];
             updatedItems[index] = {
                 ...updatedItems[index],
-                quantity: data.quantity,
-                productId:selectedProduct.value,
-                itemName:data.itemName
+                quantity: data.value.quantity,
+                productId:selectedProduct.value.id,
+                itemName:data.value.itemName
             };
             setItems(updatedItems);   
+            const productBatches= batches?.filter((batch)=>batch.value.productId==selectedProduct.value.id)
+            setFilteredBatches(productBatches);
         } catch (error) {
             console.error("Error fetching product details from API:", error);
         }
@@ -239,23 +259,24 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
 const handleBatchSelect = useCallback(async (selectedProduct: any, index: number) => {
     if (selectedProduct.value) {
         try {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${selectedProduct.value}?branchId=${appState.currentBranchId}`);
-            const data = response.data;
+            
+            const data = filteredBatches.find((batch)=>batch.value.id==selectedProduct.value.id);
+            console.log(data)
             const updatedItems = [...items];
             updatedItems[index] = {
                 ...updatedItems[index],
-                id: data.id,
-                quantity: data.quantity ,
-                batchNumber: data.batchNumber,
-                expiry:  data.expiry,
-                sellingPrice:  data.sellingPrice,
-                productId:selectedProductDetails?.id
+                id: data.value.id,
+                quantity: data.value.quantity ,
+                batchNumber: data.value.batchNumber,
+                expiry:  data.value.expiry,
+                sellingPrice:  data.value.sellingPrice,
+                productId:data.value.productId
             };
+            console.log("these are updated",updatedItems)
             setItems(updatedItems);
             setTableData(updatedItems);
                 // const updatedProducts = products.filter((product) => product.value !== selectedProduct.value);
                 // setProducts(updatedProducts);
-    
         } catch (error) {
             console.error("Error fetching product details from API:", error);
         }
@@ -271,17 +292,20 @@ useEffect(() => {
 
     return (
         <>
-                <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100  rounded-lg">
-                <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border border-neutral-400 justify-between items-center gap-6 flex">
-                    <div className='bg-orange-200 rounded-md px-2' ><span className="text-orange-600  text-sm font-medium font-['Satoshi']">You’re owed: ₹</span><span className="text-orange-600 text-sm font-bold font-['Satoshi']">2,124</span></div>
-                    <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '>
-                        <Popover placement="bottom-end" showArrow offset={10}>
-                            <PopoverTrigger>
+            <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
+            <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-between items-center gap-6 flex">
+                    <div className='bg-orange-200 rounded-md px-2' >
+                        <span className="text-orange-600  text-sm font-medium ">You’re owed: ₹</span>
+                        <span className="text-orange-600 text-sm font-bold ">2,124</span>
+                    </div>
+                    {/* <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '> */}
+                        {/* <Popover placement="bottom-end" showArrow offset={10}>
+                            <PopoverTrigger> */}
                                 <Button
                                     variant="solid"
-                                    className="capitalize flex border-none bg-black text-white rounded-lg ">
-                                    <div className='flex pr-2'><Image src={DownArrow} alt='DownArrow' className='w-4 h-4 ' /></div>Add Customer </Button>
-                            </PopoverTrigger>
+                                    className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer">
+                                    <div className='flex pr-2'><Image src={addicon} alt='addicon' className='w-6 h-6 ' /></div>Add Customer </Button>
+                            {/* </PopoverTrigger>
                             <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
                                 <div className="flex flex-col ">
                                     <div className='flex flex-col'>
@@ -300,166 +324,164 @@ useEffect(() => {
                                     </div>
                                 </div>
                             </PopoverContent>
-                        </Popover>
-                    </div>
+                        </Popover> */}
+                    {/* </div> */}
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px]">
                     <NewsalesReturnHeader existingHeaderData={otherData}/>
-                    <div className="w-full">
-                        <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border border-neutral-400 justify-between items-center gap-6 flex">
-                            <div className="text-gray-500 text-xl font-medium font-['Satoshi']">Items</div>
+                    <div className="w-full rounded-md border border-solid border-borderGrey">
+                    <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
+                            <div className="text-gray-500 text-xl font-medium ">Items</div>
                             <div className="flex items-center justify-center ">
-                                <div className="flex items-center justify-center mr-2">
+                                {/* <div className="flex items-center justify-center mr-2">
                                     <div className="pr-[4px]">
                                         <input value="test" type="checkbox" className="border-0" onChange={handleCheckBoxChange} />
                                     </div>
-                                    <div className="text-neutral-400 text-base font-bold font-['Satoshi']">Price Range</div>
-                                </div>
-                                <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '>
-                                    <Button color="gray-400" variant="solid" className="capitalize flex border-none bg-black text-white rounded-lg " onClick={handleAddItem}>
+                                    <div className="text-neutral-400 text-base font-bold ">Price Range</div>
+                                </div> */}
+                                <Button onClick={handleAddItem} className='cursor-pointer text-white flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-md border-0 outline-none'>
+                                    <div className='w-4 h-4 mb-3 mr-2'>
+                                        <Image src={addicon} alt='addicon' />
+                                    </div>
+                                   
                                         Add Item
-                                        <div className='flex pl-2'></div>
-                                    </Button>
-                                </div>
+                                    
+                                </Button>
                             </div>
                         </div>
                         <div>
-                            <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12 border-b border-neutral-400 text-gray-500'>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'>No.</div>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'>Name</div>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'>Batch No.</div>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'>Selling Price</div>
-                                {!isChecked && (
-                                    <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'>Quantity</div>
-                                )}
-                                {isChecked && (
-                                    <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'>Low Quantity</div>
-                                )}
-                                {isChecked && (
-                                    <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'>High Quantity</div>
-                                )}
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'>Tax %</div>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'>Tax Amt.</div>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'>Total</div>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'></div>
+                        <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12  text-gray-500 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey'>
+                                <div className='flex text-gray-500 text-base font-medium w-[3rem]'>No.</div>
+                                <div className='flex text-gray-500 text-base font-medium w-[15rem]'>Name</div>
+                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>Batch No.</div>
+                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>Selling Price</div>
+                                
+                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>Quantity</div>
+                                
+                                
+                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>Tax %</div>
+                                <div className='flex text-gray-500 text-base font-medium  w-[10rem]'>Tax Amt.</div>
+                                <div className='flex text-gray-500 text-base font-medium w-1/12'>Total</div>
+                                <div className='flex text-gray-500 text-base font-medium w-1/12 '></div>
                             </div>
                             {items.map((item:any,index:number) => (
-                                <div key={item.id} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400'>
-                                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{index+1}</div>
-                                                                  <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
+                                <div key={item.id} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400 py-2'>
+                                    <div className='w-[3rem] flex items-center text-neutral-400 text-base font-medium '>{index+1}.</div>
+                                    <div className='w-[15rem] flex items-center text-neutral-400 text-base font-medium'>
                                     {id === null ? (
                                     <Select
-                                        className="text-gray-500 text-base font-medium font-['Satoshi'] w-full border-0 boxShadow-0"
+                                        className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
                                         classNamePrefix="select"
-                                        value={products.find((prod) => prod.value === item.productId)}
+                                        value={products.find((prod) => prod.value.id === item.productId)}
                                         isClearable={false}
                                         isSearchable={true}
                                         name="itemName"
                                         options={products}
                                         onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
+                                        styles={{
+                                            control: (provided, state) => ({
+                                                ...provided,
+                                                border: state.isFocused ? 'none' : 'none',
+                                            }),
+                                        }}
                                     />):(
                                           item.itemName
                                     )}
                                     </div>
-                                    <div className='w-2/12 px-6 flex-col items-center text-neutral-400 text-base font-medium'>
+                                    <div className='w-[10rem] flex-col items-center text-neutral-400 text-base font-medium'>
                                     {id === null ? ( 
                                         <Select
-                                        className="text-gray-500 text-base font-medium font-['Satoshi'] w-full border-0 boxShadow-0"
+                                        className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
                                         classNamePrefix="select"
-                                        value={batches.find((prod) => prod.value === item.id)}
+                                        value={batches.find((prod) => prod.value.id === item.id)}
                                         isClearable={false}
                                         isSearchable={true}
                                         name={`batchNumber=${index}`}
-                                        options={batches}
+                                        options={filteredBatches}
                                         onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
+                                        styles={{
+                                            control: (provided, state) => ({
+                                                ...provided,
+                                                border: state.isFocused ? 'none' : 'none',
+                                            }),
+                                        }}
                                         />
                                     ) : (
                                         item.batchNumber
                                             )}
-                                        <div className="text-neutral-400 text-[10px] font-medium font-['Satoshi'] px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
-                                    </div>
-                                    <div className='w-2/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-5'>
-                                        <div className="w-1/12 flex items-center text-neutral-400 text-base font-medium">{item.sellingPrice}</div>
-                                        <Select
-                                            className="text-neutral-400 text-sm font-medium font-['Satoshi']"
-                                            defaultValue={taxOptions[0]}
-                                            isClearable={false}
-                                            isSearchable={true}
-                                            options={taxOptions}
-                                            styles={{
-                                                control: (provided, state) => ({
-                                                    ...provided,
-                                                    border: state.isFocused ? 'none' : 'none',
-                                                }),
-                                            }}
-                                            
-                                        />
-                                    </div>
-                                    {!isChecked && (
-                                        <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
-                                            <button className="border-0" onClick={() => handleQuantityDecClick(item.id)}>
-                                                <Image src={subicon} alt="-"></Image>
-                                            </button>
-                                            <div>{item.quantity}</div>
-                                            <button className="border-0" onClick={() => handleQuantityIncClick(item.id)}>
-                                                <Image className="bg-white rounded-[5px] border-2 border-gray-100" src={add1icon} alt="+"></Image>
-                                            </button>
-                                        </div>
-                                    )}
-                                    {isChecked && (
-                                        <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
-                                            <button className="border-0" onClick={() => handleQuantityDecClick1(item.id)}>
-                                                <Image src={subicon} alt="-" ></Image>
-                                            </button>
-                                            <div>{item.quantity2}</div>
-                                            <button className="border-0" onClick={() => handleQuantityIncClick1(item.id)}>
-                                                <Image className="bg-white rounded-[5px] border-2 border-gray-100" src={add1icon} alt="+"></Image>
-                                            </button>
-                                        </div>
-                                    )}
-                                    <div className='w-2/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
-                                        { id==null?(
-                                        <Select
-                                            className="text-neutral-400 text-base font-medium"
-                                            defaultValue={[]}
-                                            isClearable={false}
-                                            isSearchable={true}
-                                            options={gstOptions}
-                                            styles={{
-                                                control: (provided, state) => ({
-                                                    ...provided,
-                                                    border: state.isFocused ? 'none' : 'none',
-                                                    padding: '0',
-                                                }),
-                                            }}
-                                            onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
-                                        />):(
-                                            item.gst
-                                        )}
-                                    </div>
-                                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{`₹${(item.quantity * item.gst).toFixed(2)}`}</div>
-                                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{`₹${(item.quantity * item.sellingPrice +item.quantity*item.gst).toFixed(2)}`}</div>
-                                    <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
-                                        <button className="border-0">
-                                            <Image src={sellicon} alt="sell" ></Image>
-                                        </button>
-                    
-                                        <button className="border-0" onClick={() => handleDeleteRow(index)}>
-                                            <Image src={delicon} alt="delete" ></Image>
-                                        </button>
+                                    <div className="text-neutral-400 text-[10px] font-medium  px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
+                                </div>
+                                <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
+                                    {item.sellingPrice}
+                                    <Select
+                                        className="text-textGrey1 text-sm font-medium "
+                                        defaultValue={taxOptions[0]}
+                                        isClearable={false}
+                                        isSearchable={true}
+                                        options={taxOptions}
+                                        styles={{
+                                            control: (provided, state) => ({
+                                                ...provided,
+                                                border: state.isFocused ? 'none' : 'none',
+                                            }),
+                                        }}
+                                        
+                                    />
+                                </div>
+                                
+                                <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
+                                    <div className='flex items-center text-neutral-400 text-base font-medium gap-[20px] bg-white'>
+                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
+                                        <Image className='rounded-md' src={Subtract} alt="-"></Image>
+                                    </button>
+                                    <div>{item.quantity}</div>
+                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
+                                        <Image className="rounded-md" src={Add} alt="+"></Image>
+                                    </button>
                                     </div>
                                 </div>
+                                
+                                <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
+                                    { id==null?(
+                                    <Select
+                                        className="text-neutral-400 text-base font-medium"
+                                        defaultValue={[]}
+                                        isClearable={false}
+                                        isSearchable={true}
+                                        options={gstOptions}
+                                        styles={{
+                                            control: (provided, state) => ({
+                                                ...provided,
+                                                border: state.isFocused ? 'none' : 'none',
+                                                padding: '0',
+                                            }),
+                                        }}
+                                        onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
+                                    />):(
+                                        item.gst
+                                    )}
+                                </div>
+                                <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>{`₹${(item.sellingPrice*item.quantity * item.gst).toFixed(2)}`}</div>
+                                    <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium'>{`₹${(item.quantity * item.sellingPrice +item.sellingPrice*item.quantity*item.gst).toFixed(2)}`}</div>
+                                <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
+                                    <button className="border-0">
+                                        <Image src={sellicon} alt="sell" ></Image>
+                                    </button>
+                
+                                    <button className="border-0" onClick={() => handleDeleteRow(index)}>
+                                        <Image src={delicon} alt="delete" ></Image>
+                                    </button>
+                                </div>
+                            </div>
                             ))}
                             <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12 border-b border-neutral-400 text-gray-500'>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'>Total</div>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'></div>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'></div>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'></div>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'>{items.reduce((acc:any, item:any) => acc + item.quantity, 0)} Items</div>
-                                {isChecked && (
-                                    <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'>{items.reduce((acc:any, item:any) => acc + item.quantity2, 0)} Items</div>
-                                )}
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'>
+                            <div className='flex text-gray-500 text-base font-medium w-[3rem]'></div>
+                                <div className='flex text-gray-500 text-base font-medium w-[15rem]'>Total</div>
+                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'></div>
+                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'></div>
+                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>{items.reduce((acc:any, item:any) => acc + item.quantity, 0)} Items</div>
+                                
+                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>
                                     <Select
                                         className="text-neutral-400 text-base font-medium"
                                         defaultValue={gstOptions[0]}
@@ -474,14 +496,14 @@ useEffect(() => {
                                         }}
                                     />
                                 </div>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'>{`₹${items.reduce((acc:any, item:any) => acc + item.quantity * item.gst , 0).toFixed(2)}`}</div>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/12' >{`₹${items.reduce((acc:any, item:any) => acc + item.quantity * item.sellingPrice +item.quantity*item.gst, 0).toFixed(2)}`}</div>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'></div>
+                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>{`₹${items.reduce((acc:any, item:any) => acc + item.quantity * item.gst*item.sellingPrice , 0).toFixed(2)}`}</div>
+                                <div className='flex text-gray-500 text-base font-medium w-1/12' >{`₹${items.reduce((acc:any, item:any) => acc + item.quantity * item.sellingPrice +item.quantity*item.gst*item.sellingPrice, 0).toFixed(2)}`}</div>
+                                <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
                             </div>
                         </div>
-                        <NewsalesReturnTotalAmout />
 
                     </div>
+                        <NewsalesReturnTotalAmout />
                 </div>
                 <NewsalesReturnBottomBar />
             </div>

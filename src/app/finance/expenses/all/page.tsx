@@ -8,7 +8,7 @@ import FinancesExpensesTable from '@/components/finances/expenses/table/table';
 const Expenses = () => {
   return (
     <>
-    <div className='w-full bg-gray-200 p-8 px-10' >
+    <div className='w-full min-h-screen bg-gray-200 p-8 px-10' >
     <FinancesNavbar/>
     <FinancesExpensesTable/>
     </div>

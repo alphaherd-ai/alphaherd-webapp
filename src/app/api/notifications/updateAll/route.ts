@@ -2,6 +2,7 @@ import { connectToDB } from '../../../../utils/index';
 import prismaClient from '../../../../../prisma';
 import { NextRequest } from 'next/server';
 import { notifications } from '@/utils/notifications';
+import { decrypt } from '../../../../../auth';
 
 export const PUT=async(req: NextRequest,res:Response)=> {
   if (req.method !== 'PUT') {
@@ -9,6 +10,10 @@ export const PUT=async(req: NextRequest,res:Response)=> {
 } 
     try {
       const url= req.nextUrl
+      const token = req.cookies.get('session')?.value;
+      console.log("token", token)
+      let tokenPayload = await decrypt(token!);
+      const userId = tokenPayload.id;
       const { searchParams } = new URL(url);
       const orgId = searchParams.get("orgId")!;  
       const notifs= await prismaClient.notifications.updateMany({
@@ -18,7 +23,7 @@ export const PUT=async(req: NextRequest,res:Response)=> {
         },
         data:{
             isRead:true,
-            userId:Number(req.headers.get("userId"))
+            userId:Number(userId)
         }
       })
         

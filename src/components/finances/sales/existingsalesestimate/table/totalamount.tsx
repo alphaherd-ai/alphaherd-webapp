@@ -8,7 +8,7 @@ import Image from "next/image"
 import Select from 'react-select';
 
 
-const ExistingsaleEstimateTotalAmout = ({otherData}) => {
+const ExistingsaleEstimateTotalAmout = ({otherData}: any) => {
 
     
 
@@ -19,31 +19,31 @@ const ExistingsaleEstimateTotalAmout = ({otherData}) => {
         <>
 
 
-<div className="flex w-full box-border bg-gray-100 pt-[20px] pb-[20px]">
+<div className="flex  pt-[20px] pb-[20px]">
                             <div className="w-1/2"></div>
-                            <div className="w-1/2  bg-white rounded-[10px]">
-                                <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300">
-                                    <div className="text-gray-500 text-base font-bold font-['Satoshi']">Subtotal</div>
-                                    <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">₹{otherData.subTotal}</div>
+                            <div className="w-1/2 bg-white rounded-md ">
+                            <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">
+                                    <div className="text-gray-500 text-base font-bold ">Subtotal</div>
+                                    <div className="text-right text-gray-500 text-base font-bold ">₹{otherData.subTotal}</div>
                                 </div>
-                                <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300">
-                                    <div className="text-gray-500 text-base font-bold font-['Satoshi']">Overall Discount</div>
+                                <div className="w-full flex px-4 py-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
+                                    <div className="text-gray-500 text-base font-bold ">Overall Discount</div>
                                     <div className="flex items-center">
-                                        <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">{otherData.overallDiscount*100}%</div>
+                                        <div className="text-right text-textGrey1 text-base  ">{otherData.overallDiscount*100}%</div>
                                      
                                     </div>
                                 </div>
-                                <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300">
-                                    <div className="text-gray-500 text-base font-bold font-['Satoshi']">Shipping</div>
-                                    <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">₹{otherData.shipping}</div>
+                                <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5   ">
+                                    <div className="text-gray-500 text-base font-bold ">Shipping</div>
+                                    <div className="text-right text-textGrey1 text-base ">₹{otherData.shipping}</div>
                                 </div>
-                                <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300">
-                                    <div className="text-gray-500 text-base font-bold font-['Satoshi']">Adjustment</div>
-                                    <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">₹{otherData.adjustment}</div>
+                                <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5  ">
+                                    <div className="text-gray-500 text-base font-bold ">Adjustment</div>
+                                    <div className="text-right text-textGrey1 text-base ">₹{otherData.adjustment}</div>
                                 </div>
-                                <div className="w-full flex p-4 border-b border-stone-300 justify-between items-center gap-2.5 inline-flex border border-solid border-stone-300">
-                                    <div className="text-teal-400 text-base font-bold font-['Satoshi']">Grand total</div>
-                                    <div className="text-right text-gray-500 text-base font-bold font-['Satoshi']">₹{otherData.totalCost}</div>
+                                <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 rounded-b-md justify-between items-center gap-2.5    ">
+                                    <div className="text-textGreen text-base font-bold">Grand total</div>
+                                    <div className="text-right text-textGreen text-base font-bold ">₹{(otherData.totalCost)?.toFixed(2)}</div>
                                 </div>
                             </div>
                         </div>

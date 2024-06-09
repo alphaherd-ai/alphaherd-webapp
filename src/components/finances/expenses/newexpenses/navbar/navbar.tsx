@@ -19,7 +19,7 @@ const NewExpensesNavbar = () => {
                     <div className="w-11 h-11 bg-gray-100 rounded-[5px] border border-neutral-400 flex justify-center items-center mr-4">
                         <Image className="w-6 h-6 relative rounded-[5px]" src={lefticon} alt="Back"></Image>
                     </div>
-                    <div className="text-gray-500 text-[28px] flex items-center font-bold font-['Satoshi']">
+                    <div className="text-gray-500 text-[28px] flex items-center font-bold ">
                     New Expense
                     </div>
                     </div>
@@ -27,7 +27,7 @@ const NewExpensesNavbar = () => {
                         <div className="self-stretch justify-start items-center gap-2 inline-flex">
                             <div className="w-6 h-6 flex justify-center items-center"> <Image src={Attachment} alt='Attachment' className='w-3 h-3 ' /></div>
                             <div className="justify-start items-center gap-4 flex">
-                                <div className="text-gray-500 text-base font-bold font-['Satoshi']">Attach files</div>
+                                <div className="text-gray-500 text-base font-bold ">Attach files</div>
                             </div>
                         </div>
                     </div>

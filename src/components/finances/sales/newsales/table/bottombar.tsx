@@ -8,11 +8,13 @@ import downloadicon from "../../../../../assets/icons/finance/download.svg"
 import Link from "next/link"
 import Image from "next/image"
 import { DataContext } from './DataContext'
-import { FinanceSalesType, Notif_Source } from '@prisma/client'
+import { FinanceCreationType, Notif_Source } from '@prisma/client'
 import axios from "axios"
 import { useAppSelector } from '@/lib/hooks';
 import { useSearchParams } from "next/navigation"
 import { getTime } from "date-fns"
+import { Button } from "@nextui-org/react"
+import formatDateAndTime from "@/utils/formateDateTime"
 
 
 
@@ -40,7 +42,7 @@ const NewsalesBottomBar = () => {
             customer: (id===null)?allData.headerData.customer.value:allData.headerData.customer,
             notes: allData.headerData.notes,
             subTotal: allData.totalAmountData.subTotal,
-            invoiceNo: 234234,
+            invoiceNo: allData.headerData.invoiceNo,
             dueDate: allData.headerData.dueDate,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
@@ -48,22 +50,24 @@ const NewsalesBottomBar = () => {
             overallDiscount: allData.totalAmountData.gst.value,
             totalQty:totalQty,
             status: "Pending",
-            type: FinanceSalesType.Estimate,
+            type: FinanceCreationType.Sales_Invoice,
             items:{
                 create:items
             }
             
         }
+        console.log(appState.currentBranch)
         const notifData={
             source:Notif_Source.Sales_Invoice,
             totalCost:data.totalCost,
-            createdAt:Date.now(),
-            orgId:appState.currentBranch.org.id
+            dueDate:data.dueDate,
+            orgId:appState.currentBranch.org.id,
+            orgBranch:appState.currentBranch.org.orgName
         }
         console.log(JSON.stringify(data))
         console.log("this is notif data",notifData)
         try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceSalesType.Invoice}?branchId=${appState.currentBranchId}`,data)
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Invoice}?branchId=${appState.currentBranchId}`,data)
             const notif= await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`,notifData)
             if (!response.data) {
                 throw new Error('Network response was not ok');
@@ -77,30 +81,30 @@ const NewsalesBottomBar = () => {
         <>
 
 
-<div className="flex justify-between items-center w-full  box-border  bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 py-4 rounded-b-lg">
+<div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
                             <div className="flex justify-between items-center gap-4 pl-4">
-                                <div className="p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
+                                <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                                     <Image src={printicon} alt="print"></Image>
                                     <div>Print</div>
                                 </div>
-                                <div className="p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
+                                <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                                     <Image src={downloadicon} alt="download"></Image>
                                     <div>Download</div>
                                 </div>
-                                <div className="p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
+                                <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                                     <Image src={shareicon} alt="share"></Image>
                                     <div>Share</div>
                                 </div>
                             </div>
                             <div className="flex justify-between items-center gap-4 pr-4">
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+                                <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
                                     <Image src={drafticon} alt="draft"></Image>
                                     <div>Save as Draft</div>
-                                </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex" onClick={handleSubmit}>
+                                </Button>
+                                <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer" onClick={handleSubmit}>
                                     <Image src={checkicon} alt="check"></Image>
                                     <div>Save</div>
-                                </div>
+                                </Button>
                             </div>
                         </div>
     

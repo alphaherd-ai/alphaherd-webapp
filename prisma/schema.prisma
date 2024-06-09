@@ -39,10 +39,12 @@ enum Stock {
   StockOUT
 }
 
-enum FinanceSalesType {
-  Estimate
-  Invoice
-  Return
+enum FinanceCreationType {
+  Sales_Estimate
+  Sales_Invoice
+  Sales_Return
+  Expense_Recurring
+  Expense_NonRecurring
 }
 
 enum Inventory {
@@ -123,7 +125,7 @@ model User {
 model Notifications {
   id        Int          @id @default(autoincrement())
   userId    Int?
-  orgId     Int?         
+  orgId     Int?
   url       String?
   message   String?
   source    Notif_Source
@@ -278,12 +280,12 @@ model Services {
 }
 
 model Sales {
-  id               Int               @id @default(autoincrement())
+  id               Int                  @id @default(autoincrement())
   customer         String?
-  date             DateTime?         @default(now())
+  date             DateTime?            @default(now())
   notes            String?
   subTotal         Float?
-  invoiceNo        Int?
+  invoiceNo        String?
   dueDate          DateTime?
   shipping         Float?
   adjustment       Float?
@@ -291,10 +293,10 @@ model Sales {
   overallDiscount  Float?
   totalQty         Int?
   status           String?
-  type             FinanceSalesType?
+  type             FinanceCreationType?
   items            Items[]
   financeTimeline  FinanceTimeline[]
-  FinanceSection   FinanceSection?   @relation(fields: [financeSectionId], references: [id])
+  FinanceSection   FinanceSection?      @relation(fields: [financeSectionId], references: [id])
   financeSectionId Int?
 }
 
@@ -322,25 +324,27 @@ model Purchases {
 }
 
 model Expenses {
-  id               Int               @id @default(autoincrement())
-  party            String
-  date             DateTime
-  invoiceNo        String?
-  subTotal         Int
-  overallDiscount  Int
-  totalCost        Int?
-  totalQty         Int?
-  startedOn        DateTime?
-  recurringType    String?
-  recurringEnd     String?
-  dueDate          String
-  notes            String
-  status           String
-  type             String?
-  items            Items[]
-  financeTimeline  FinanceTimeline[]
-  FinanceSection   FinanceSection?   @relation(fields: [financeSectionId], references: [id])
-  financeSectionId Int?
+  id                  Int               @id @default(autoincrement())
+  party               String?
+  date                DateTime?         @default(now())
+  invoiceNo           String?
+  subTotal            Float?
+  overallDiscount     Float?
+  totalCost           Float?
+  totalQty            Int?
+  recurringStartedOn  DateTime?
+  recurringRepeatType String?
+  recurringEndson     DateTime?
+  dueDate             DateTime?
+  shipping            Float?
+  adjustment          Float?
+  notes               String?
+  status              String?
+  type                String?
+  items               Items[]
+  financeTimeline     FinanceTimeline[]
+  FinanceSection      FinanceSection?   @relation(fields: [financeSectionId], references: [id])
+  financeSectionId    Int?
 }
 
 model Transactions {
@@ -400,15 +404,15 @@ model InventoryTimeline {
 }
 
 model FinanceTimeline {
-  id               Int               @id @default(autoincrement())
+  id               Int                  @id @default(autoincrement())
   salesId          Int?
-  sale             Sales?            @relation(fields: [salesId], references: [id])
-  type             FinanceSalesType?
+  sale             Sales?               @relation(fields: [salesId], references: [id])
+  type             FinanceCreationType?
   createdAt        DateTime
   purchasesId      Int?
-  purchases        Purchases?        @relation(fields: [purchasesId], references: [id])
+  purchases        Purchases?           @relation(fields: [purchasesId], references: [id])
   expensesId       Int?
-  expenses         Expenses?         @relation(fields: [expensesId], references: [id])
-  FinanceSection   FinanceSection?   @relation(fields: [financeSectionId], references: [id])
+  expenses         Expenses?            @relation(fields: [expensesId], references: [id])
+  FinanceSection   FinanceSection?      @relation(fields: [financeSectionId], references: [id])
   financeSectionId Int?
 }

@@ -2,6 +2,7 @@
 import { connectToDB } from '../../../../utils/index';
 import prismaClient from '../../../../../prisma/index';
 import { NextRequest } from 'next/server';
+import { decrypt } from '../../../../../auth';
 
 export const GET=async(req: NextRequest)=> {
     if (req.method !== 'GET') {
@@ -11,11 +12,13 @@ export const GET=async(req: NextRequest)=> {
     // Fetches those orgs and branch mapping in which user is admin or has manager role in some branches
 
     try {
-        const requestHeaders = req.headers;
-        console.log(requestHeaders.get("userId"));
+    const token = req.cookies.get('session')?.value;
+    console.log("token", token)
+    let tokenPayload = await decrypt(token!);
+    const userId = tokenPayload.id;
         const user = await prismaClient.user.findUnique({
             where: {
-                id: Number(requestHeaders.get("userId"))
+                id: Number(userId)
             },
             include: {
                 adminOrganizations: true
@@ -24,7 +27,7 @@ export const GET=async(req: NextRequest)=> {
 
         const managerOrgBranchUserRoles = await prismaClient.orgBranchUserRole.findMany({
             where: {
-                userId : Number(requestHeaders.get("userId")),
+                userId : Number(userId),
                 role: "Manager"
             }
         });

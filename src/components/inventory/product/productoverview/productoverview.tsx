@@ -130,7 +130,7 @@ interface AllProducts {
                         </Link>
 
                     </div>
-                    <div className="text-gray-500 text-[28px] font-bold font-['Satoshi']">
+                    <div className="text-gray-500 text-[28px] font-bold ">
                         {product?.itemName}
                     </div>
                 </div>
@@ -148,7 +148,7 @@ interface AllProducts {
                         <div>
                             <Image src={addicon} alt="add"></Image>
                         </div>
-                        <div className="text-white text-base font-bold font-['Satoshi']">
+                        <div className="text-white text-base font-bold ">
                             Update Stock Level
                         </div>
                     </div>
@@ -196,7 +196,7 @@ interface AllProducts {
 
             <div className="w-full mt-[25px] pt-8 bg-white rounded-[10px] border border-solid border-neutral-400 flex-col justify-start items-start gap-8 flex">
                 <div className="w-full px-6 justify-start items-center gap-8 flex">
-                    <div className="w-40 text-gray-500 text-[28px] font-bold font-['Satoshi']">
+                    <div className="w-40 text-gray-500 text-[28px] font-bold ">
                         {product?.quantity} Strips
                     </div>
                     <div className="w-full rounded-[10px] flex items-center">
@@ -216,20 +216,20 @@ interface AllProducts {
                 </div>
                 <div className="w-full justify-start items-start flex rounded-[10px]">
                     <div className="w-3/12 p-6 bg-white border-t border-solid border-0  border-r border-stone-300 flex-col justify-center items-start rounded-b-xl gap-4 flex ">
-                        <div className="text-gray-500 text-[28px] font-bold font-['Satoshi']">₹124</div>
-                        <div className="text-gray-500 text-base font-medium font-['Satoshi']">Avg. Selling price</div>
+                        <div className="text-gray-500 text-[28px] font-bold ">₹124</div>
+                        <div className="text-gray-500 text-base font-medium ">Avg. Selling price</div>
                     </div>
                     <div className="w-3/12 p-6 bg-white border-t border-solid border-0 border-r border-stone-300 flex-col justify-center items-start gap-4 flex">
-                        <div className="text-gray-500 text-[28px] font-bold font-['Satoshi']">₹124</div>
-                        <div className="text-gray-500 text-base font-medium font-['Satoshi']">Avg. Selling price</div>
+                        <div className="text-gray-500 text-[28px] font-bold ">₹124</div>
+                        <div className="text-gray-500 text-base font-medium ">Avg. Selling price</div>
                     </div>
                     <div className="w-3/12 p-6 bg-white border-t border-solid border-0 border-r border-stone-300 flex-col justify-center items-start gap-4 flex">
-                        <div className="text-gray-500 text-[28px] font-bold font-['Satoshi']">₹124</div>
-                        <div className="text-gray-500 text-base font-medium font-['Satoshi']">Avg. Selling price</div>
+                        <div className="text-gray-500 text-[28px] font-bold ">₹124</div>
+                        <div className="text-gray-500 text-base font-medium ">Avg. Selling price</div>
                     </div>
                     <div className="w-3/12 p-6 bg-white border-t border-solid border-0 border-stone-300 flex-col justify-center items-start gap-4 flex rounded-b-xl">
-                        <div className="text-gray-500 text-[28px] font-bold font-['Satoshi']">₹124</div>
-                        <div className="text-gray-500 text-base font-medium font-['Satoshi']">Avg. Selling price</div>
+                        <div className="text-gray-500 text-[28px] font-bold ">₹124</div>
+                        <div className="text-gray-500 text-base font-medium ">Avg. Selling price</div>
                     </div>
                 </div>
             </div>
@@ -237,43 +237,43 @@ interface AllProducts {
                 <div className="w-6/12 bg-white mt-[25px] rounded-[10px] border  border-solid border-neutral-400 flex-col justify-center items-start flex">
                     <div className="w-full border-b border-solid border-0 border-stone-300">
                         <div className="w-full flex gap-2 items-center p-6 h-3/12">
-                            <div className="text-neutral-400 text-base font-medium font-['Satoshi']">Description:</div>
-                            <div className="text-gray-500 text-base font-medium font-['Satoshi']">{product?.description}</div>
+                            <div className="text-neutral-400 text-base font-medium ">Description:</div>
+                            <div className="text-gray-500 text-base font-medium ">{product?.description}</div>
                         </div>
                     </div>
                     <div className="w-full border-b border-solid border-0 border-stone-300 flex  gap-8">
                         <div className="w-6/12 p-6 border-r border-solid border-0 border-stone-300 flex-col items-center justify-between">
-                            <div className="text-neutral-400 text-base font-medium font-['Satoshi']">Category</div>
+                            <div className="text-neutral-400 text-base font-medium ">Category</div>
                             <div className="w-[114px] h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">
-                                <div className="text-green-600 text-sm font-medium font-['Satoshi']">{product?.category}</div>
+                                <div className="text-green-600 text-sm font-medium ">{product?.category}</div>
                             </div>
                         </div>
                         <div className="w-6/12 p-6 flex-col items-center justify-between">
-                            <div className="text-neutral-400 text-base font-medium font-['Satoshi']">Location</div>
+                            <div className="text-neutral-400 text-base font-medium ">Location</div>
                             <div className="w-[66px] h-7 px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center items-center gap-2 flex">
-                                <div className="text-orange-500 text-sm font-medium font-['Satoshi']">{product?.location}</div>
+                                <div className="text-orange-500 text-sm font-medium ">{product?.location}</div>
                             </div>
                         </div>
                     </div>
                     <div className="w-full border-b border-solid border-0 border-stone-300">
                         <div className="w-full flex gap-2 items-center p-6 h-3/12">
-                            <div className="text-neutral-400 text-base font-medium font-['Satoshi']">HSN Code:</div>
-                            <div className="text-gray-500 text-base font-medium font-['Satoshi']">{product?.hsnCode}</div>
+                            <div className="text-neutral-400 text-base font-medium ">HSN Code:</div>
+                            <div className="text-gray-500 text-base font-medium ">{product?.hsnCode}</div>
                         </div>
                     </div>
                     <div className="w-full border-b border-solid border-0 border-stone-300">
                         <div className="w-full flex gap-2 items-center p-6 h-3/12">
-                            <div className="text-neutral-400 text-base font-medium font-['Satoshi']">Tax Rate:</div>
+                            <div className="text-neutral-400 text-base font-medium ">Tax Rate:</div>
                             <div className="px-2 py-1.5 bg-gray-100 rounded-[5px] justify-center items-center gap-2 flex">
-                                <div className="text-gray-500 text-base font-medium font-['Satoshi']">{product?.tax}</div>
+                                <div className="text-gray-500 text-base font-medium ">{product?.tax}</div>
                             </div>
                         </div>
                     </div>
                     <div className="w-full border-b border-solid border-0 border-stone-300">
                         <div className="w-full flex gap-2 items-center p-6 h-3/12">
-                            <div className="text-neutral-400 text-base font-medium font-['Satoshi']">Vendors:</div>
+                            <div className="text-neutral-400 text-base font-medium ">Vendors:</div>
                             <div className="px-2 py-1.5 bg-gray-100 rounded-[5px] justify-center items-center gap-2 flex">
-                                <div className="text-gray-500 text-base font-medium font-['Satoshi']">{product?.providers}</div>
+                                <div className="text-gray-500 text-base font-medium ">{product?.providers}</div>
                             </div>
 
                         </div>
@@ -282,7 +282,7 @@ interface AllProducts {
                 <div className="w-6/12 bg-white mt-[25px] rounded-[10px] border border-solid border-0 border-neutral-400 flex-col justify-center flex">
                     <div className="w-full border-b border-solid border-0 border-stone-300 flex items-start justify-between">
                         <div className="p-6 flex items-start justify-between w-full">
-                            <div className="text-gray-500 text-xl font-medium font-['Satoshi']">
+                            <div className="text-gray-500 text-xl font-medium ">
                                 Stock History
                             </div>
                             <div className="flex gap-2">
@@ -297,13 +297,13 @@ interface AllProducts {
                                 </div>
                                 <div className=" h-7 p-2 bg-white rounded-[5px] border border-solid  border-neutral-400 justify-start items-center gap-2 flex">
                                     <Image src={tuneicon} alt="tuneicon" className="w-5 h-5" />
-                                    <div className="text-neutral-400 text-sm font-medium font-['Satoshi']">
+                                    <div className="text-neutral-400 text-sm font-medium ">
                                         Filter by
                                     </div>
                                 </div>
                                 <div className=" h-7 p-2 bg-white rounded-[5px] border border-solid border-neutral-400 justify-start items-center gap-2 flex">
                                     <Image src={downarrow} alt="downarrow" className="w-5 h-5" />
-                                    <div className="text-neutral-400 text-sm font-medium font-['Satoshi']">
+                                    <div className="text-neutral-400 text-sm font-medium ">
                                         Status: All
                                     </div>
                                 </div>
@@ -314,27 +314,27 @@ interface AllProducts {
                     <div key={item.id} className="w-full border-b border-solid border-0 border-stone-300 flex items-start justify-between">
                         <div className="w-full flex p-6">
                             <div className="w-full flex items-center justify-between">
-                                <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
+                                <div className="text-neutral-400 text-base font-medium ">
                                     {formatDateAndTime(item.createdAt).formattedDate}
                                 </div>
-                                <div className="w-[69px] text-neutral-400 text-base font-medium font-['Satoshi']">
+                                <div className="w-[69px] text-neutral-400 text-base font-medium ">
                                 {formatDateAndTime(item.createdAt).formattedTime}
                                 </div>
-                                <div className="text-gray-500 text-base font-medium font-['Satoshi']">
+                                <div className="text-gray-500 text-base font-medium ">
                                    {item.quantityChange} Strips
                                 </div>
                                 <div className="w-15 h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">
-                                    <div className="text-green-600 text-sm font-medium font-['Satoshi']">
+                                    <div className="text-green-600 text-sm font-medium ">
                                         {item.stockChange}
                                     </div>
                                 </div>
-                                <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
+                                <div className="text-neutral-400 text-base font-medium ">
                                     {item.productBatch.batchNumber}
                                 </div>
-                                <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
+                                <div className="text-neutral-400 text-base font-medium ">
                                     {item.party}
                                 </div>
-                                <div className="text-teal-400 text-base font-medium font-['Satoshi'] underline">
+                                <div className="text-teal-400 text-base font-medium  underline">
                                     {item.invoiceType}
                                 </div>
                             </div>
@@ -349,7 +349,7 @@ interface AllProducts {
             <div className="rounded-md">
                 <div className="w-full mt-[25px] rounded-md border-neutral-400 border border-solid  border-neutral-40  ">
                     <div className="w-full h-[72px] px-6 py-4 bg-white border-b border-solid border-0 border-neutral-400 justify-start items-center gap-4 flex">
-                        <div className="text-gray-500 text-xl font-medium font-['Satoshi']">
+                        <div className="text-gray-500 text-xl font-medium ">
                             Current Batches
                         </div>
                     </div>
@@ -380,8 +380,8 @@ interface AllProducts {
                             <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{item.sellingPrice}</div>
                             <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{(item.quantity/item.maxStock)*100}%</div>
                             <div className="w-2/12 px-6 flex items-center gap-2">
-                                <div className="w-[80px] flex items-center text-orange-500 text-sm font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center font-['Satoshi']">{item.location}</div>
-                                <div className="w-[80px] flex items-center text-orange-500 text-sm font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center font-['Satoshi']">Shelf A2</div>
+                                <div className="w-[80px] flex items-center text-orange-500 text-sm font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center ">{item.location}</div>
+                                <div className="w-[80px] flex items-center text-orange-500 text-sm font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center ">Shelf A2</div>
                             </div>
                             <div className="w-1/12 px-6 flex items-center gap-2">
                                 <div className='w-6 h-6 p-1 bg-gray-100 rounded-[5px] justify-start items-center flex '>

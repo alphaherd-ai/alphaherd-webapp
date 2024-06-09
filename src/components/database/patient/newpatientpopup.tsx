@@ -6,6 +6,7 @@ import Link from 'next/link';
 import closeicon from "../../../assets/icons/inventory/closeIcon.svg";
 import arrowicon from "../../../assets/icons/inventory/arrow.svg";
 import Select from 'react-select';
+import CretableSelect from "react-select/creatable"
 import calicon from "../../../assets/icons/finance/calendar_today.svg"
 import Paws from "../../../assets/icons/database/1. Icons-24 (12).svg"
 import Check from "../../../assets/icons/database/check.svg"
@@ -94,9 +95,24 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
         return `${ageYears} years, ${ageMonths} months, ${ageDays} days`;
     };
 
-    const gstOptions = [
-        { value: 'GST@18%.', label: 'GST@18%.' },
-        { value: 'GST@9%.', label: 'GST@9%.' }
+    const Breed = [
+        {
+            label: "Dog",
+            options: [
+              { value: "Labrador Retriever", label: "Labrador Retriever" },
+              { value: "German Shepherd", label: "German Shepherd" },
+              { value: "Golden Retriever", label: "Golden Retriever" },
+            ],
+          },
+          {
+            label: "Cat",
+            options: [
+              { value: "Bomaby", label: "Bomaby" },
+              { value: "Himalayan", label: "Himalayan" },
+              { value: "Persian", label: "Persian" },
+              { value: "Bengal", label: "Bengal" },
+            ],
+          },
     ];
 
     const handleGenderChange = (gender: any) => {
@@ -116,7 +132,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 <div className="flex items-center gap-[48px] ">
                     <div className="w-[8rem] text-gray-500 text-base font-medium ">Patient Name*</div>
                     <div>
-                        <input className="w-[25rem] h-9 text-textGrey1 text-base font-medium px-2 rounded outline-none border border-solid border-borderText" type="text" name="patientName" onChange={(e) => handleChange("patientName", e.target.value)} />
+                        <input className="w-[25rem] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="patientName" onChange={(e) => handleChange("patientName", e.target.value)} />
                     </div>
                 </div>
 
@@ -142,25 +158,26 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 <div className="flex items-center gap-[120px]">
                     <div className="text-gray-500 text-base font-medium ">Species</div>
                     <div>
-                        <input className="w-[25rem] h-9 text-textGrey1 text-base font-medium px-2 rounded outline-none border border-solid border-borderText" type="text" name="species" onChange={(e) => handleChange("species", e.target.value)} />
+                        <input className="w-[25rem] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="species" onChange={(e) => handleChange("species", e.target.value)} />
                     </div>
                 </div>
                 <div className="flex items-center gap-[95px] w-full">
                     <div className="text-gray-500 text-base font-medium  w-2/12">Breed</div>
                     <div className="flex w-10/12 h-11">
 
-                        <Select
+                        {/* <Select
                             className="text-neutral-400 text-base font-medium w-[25rem]"
                             placeholder=""
                             isClearable={false}
                             isSearchable={true}
-                            options={gstOptions}
+                            options={Breed}
                             isMulti={true}
                             name="breed"
                             onChange={(value) => handleChange("breed", value)}
-                        />
+                        /> */}
 
-
+                        <CretableSelect className="text-neutral-400 text-base font-medium w-[25rem]"
+  isMulti options={Breed} onChange={(value) => handleChange("breed", value)}/>
 
 
                     </div>
@@ -202,7 +219,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                         <div className="flex justify-start items-center gap-4">
                             <div className="w-8 h-9 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
                                 <input
-                                    className="w-full h-full text-textGrey1 text-base font-medium px-2 rounded outline-none border border-solid border-borderText"
+                                    className="w-full h-full text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]"
                                     type="text"
                                     min="0"
                                     name="years"
@@ -214,7 +231,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                         <div className="flex justify-start items-center gap-4">
                             <div className="w-8 h-9 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
                                 <input
-                                    className="w-full h-full text-textGrey1 text-base font-medium px-2 rounded outline-none border border-solid border-borderText"
+                                    className="w-full h-full text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]"
                                     type="text"
                                     min="0"
                                     name="months"
@@ -226,7 +243,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                         <div className="flex justify-start items-center gap-4">
                             <div className="w-8 h-9 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
                                 <input
-                                    className="w-full h-full text-textGrey1 text-base font-medium px-2 rounded outline-none border border-solid border-borderText"
+                                    className="w-full h-full text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]"
                                     type="text"
                                     min="0"
                                     name="days"
@@ -244,9 +261,9 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                         {['male', 'female', 'unspecified'].map((gender) => (
                             <div
                                 key={gender}
-                                className={` h-11 px-4 py-2 rounded-[5px] border-solid border border-textGrey1 ${selectedGender === gender
+                                className={` h-11 px-4 py-2 rounded-[5px] border-solid border border-borderGrey ${selectedGender === gender
                                     ? 'bg-teal-400 text-white border-transparent'
-                                    : 'bg-white text-neutral-400 border-textGrey1'
+                                    : 'bg-white text-neutral-400 border-borderGrey'
                                     } cursor-pointer flex justify-center items-center`}
                                 onClick={() => handleGenderChange(gender)}
                             >

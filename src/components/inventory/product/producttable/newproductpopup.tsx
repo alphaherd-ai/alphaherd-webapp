@@ -63,25 +63,34 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
         setFormData({ ...formData, [field]: value });
     };
 
+    const Providers =[
+        {}
+    ]
+
+
     const gstOptions = [
-        { value: 'IGST@18%.', label: 'IGST@18%.' },
-        { value: 'GST@18%.', label: 'GST@18%.' },
+        { value: 'GST@0%', label: 'GST@0%' },
+        { value: 'GST@5%', label: 'GST@5%' },
         { value: 'GST@12%.', label: 'GST@12%.' },
-        { value: 'GST@10%.', label: 'GST@10%.' }
+        { value: 'GST@18%.', label: 'GST@18%.' },
+        { value: 'GST@18%.', label: 'GST@18%.' },
+        { value: 'GST@28%.', label: 'GST@28%.' },
     ];
 
     const category = [
-        {value: "Injections", label: "Injections"},
-        {value: "Supplements", label: "Supplements"},
+        {value: "Pet food", label: "Pet food"},
         {value: "Medicines", label: "Medicines"},
-        {value: "Equipments", label: "Equipments"}
+        {value: "Supplements", label: "Supplements"},
+        {value: "Pet accessories", label: "Pet accessories"},
+        {value: "Equipments", label: "Equipments"},
     ]
 
     return <>
 
-        {!lastStep && <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
+        {!lastStep && 
+        <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
             <div className="w-[640px] h-[715px]  px-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
-                <div className="self-end items-start gap-6 flex mt-[0.6rem]" onClick={onClose}>
+                <div className="self-end items-start gap-6 flex mt-[0.6rem] cursor-pointer" onClick={onClose}>
                         <Image src={closeicon} alt="close"></Image>
                 </div>
                 <div className="text-gray-500 text-xl font-medium ">New Product</div>
@@ -100,7 +109,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                             placeholder="Select Category"
                             isClearable={false}
                             isSearchable={true}
-                            options={gstOptions}
+                            options={Providers}
                             isMulti={true}
                             name="providers"
                             onChange={(value) => handleChange("providers", value)}
@@ -149,7 +158,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                     <textarea className="text-gray-400 text-base font-medium mt-[8px] px-2 py-2 outline-none border border-solid border-gray-300 rounded-md" placeholder="Provide details of the service" rows={5} cols={68} onChange={(e) => handleChange("description", e.target.value)}></textarea>
                 </div>
                 <div className="self-end items-start gap-6 flex">
-                    <button onClick={handleContinueClick} className="px-4 py-2.5 bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none">
+                    <button onClick={handleContinueClick} className="px-4 py-2.5 bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer">
                         <div className="text-neutral-400 text-base font-bold ">Continue</div>
                         <Image src={arrowicon} alt="arrow"></Image>
                     </button>
@@ -160,7 +169,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
         {lastStep &&
             <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0  inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
                 <div className="w-[640px] h-[425px]  p-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
-                    <div className="self-end items-start gap-6 flex " onClick={onClose}>
+                    <div className="self-end items-start gap-6 flex cursor-pointer" onClick={onClose}>
                             <Image src={closeicon} alt="close"></Image>
                     </div>
                     <div className="flex-col justify-start items-start gap-2 flex">
@@ -203,7 +212,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                         </div>
                     </div>
                    
-                    <div className="w-[545px] flex justify-end mt-[5px]">
+                    <div className="w-[545px] flex justify-end mt-[5px] cursor-pointer">
                         <button onClick={handleSaveClick} disabled={buttonDisabled} className="px-5 py-2.5 bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none">
                             <div className="text-neutral-400 text-base font-bold ">Save</div>
                         </button>
