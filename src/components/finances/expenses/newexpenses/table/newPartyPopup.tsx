@@ -9,7 +9,7 @@ type PopupProps = {
     onClose: () => void;
 }
 
-const newPartyPopup: React.FC<PopupProps> = ({ onClose }) => {
+const NewPartyPopup: React.FC<PopupProps> = ({ onClose }) => {
 
     const [isSelected, setIsSelected] = useState(false)
     const [isSelected1, setIsSelected1] = useState(false)
@@ -87,4 +87,4 @@ const newPartyPopup: React.FC<PopupProps> = ({ onClose }) => {
   )
 }
 
-export default newPartyPopup
+export default NewPartyPopup

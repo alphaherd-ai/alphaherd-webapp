@@ -12,9 +12,11 @@ export const GET=async(req: NextRequest)=> {
     // Fetches those orgs and branch mapping in which user is admin or has manager role in some branches
 
     try {
-    const token = req.cookies.get('session')?.value;
+        const token = req.cookies.get('session')?.value;
     console.log("token", token)
+   
     let tokenPayload = await decrypt(token!);
+    console.log(tokenPayload);
     const userId = tokenPayload.id;
         const user = await prismaClient.user.findUnique({
             where: {
@@ -100,4 +102,3 @@ export const GET=async(req: NextRequest)=> {
         await prismaClient.$disconnect();
     }
   }
-  
