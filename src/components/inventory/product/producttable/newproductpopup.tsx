@@ -115,8 +115,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                             isSearchable={true}
                             options={gstOptions}
                             isMulti={true}
-                            name="defaultUnit"
-                            onChange={(value) => handleChange("defaultUnit", value)}
+                            name="providers"
+                            onChange={(value) => handleChange("providers", value)}
                         />
                     </div>
                 </div>
@@ -130,8 +130,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                             isSearchable={true}
                             options={Units}
                             isMulti={true}
-                            name="providers"
-                            onChange={(value) => handleChange("providers", value)}
+                            name="defaultUnit"
+                            onChange={(value) => handleChange("defaultUnit", value)}
                         />
                     </div>
                 </div>

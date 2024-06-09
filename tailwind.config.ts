@@ -34,6 +34,10 @@ const config: Config = {
       padding: {
         '2p': '2vw',
       },
+      fontFamily: {
+        
+        'roboto': ['Roboto', 'sans-serif'],
+      }
     }
   },
   corePlugins: {
