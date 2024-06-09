@@ -6,12 +6,13 @@ import Filter from '../../../../assets/icons/finance/filter.svg';
 import Chart from '../../../../assets/icons/finance/chart.svg';
 import Download from '../../../../assets/icons/finance/download.svg';
 import DownArrow from '../../../../assets/icons/finance/downArrow.svg';
+import rupee from "../../../../assets/icons/finance/rupee.svg"
 import Invoice from '../../../../assets/icons/finance/invoice.svg';
 import Return from '../../../../assets/icons/finance/Return.svg';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-
+import Popup from "../table/recordTransactionPopup"
 
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
@@ -20,6 +21,12 @@ import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/reac
 
 
 const FinancesTransactionsTableHeader = () => {
+
+    const [showPopup, setShowPopup] = React.useState(false);
+    
+    const togglePopup = () => {
+        setShowPopup(!showPopup);
+    }
    
     const currentRoute = usePathname();
     const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
@@ -63,8 +70,8 @@ const FinancesTransactionsTableHeader = () => {
 <Link className='no-underline flex item-center' href='/finance/transactions/card'>
 
 <div className={currentRoute.startsWith("/finance/transactions/card")
-    ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white  rounded-tr-md rounded-br-md"
-    : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500  rounded-tr-md rounded-br-md"}>Card</div>
+    ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white "
+    : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500 "}>Card</div>
 </Link>
 <Link className='no-underline flex item-center' href='/finance/transactions/netbanking'>
 
@@ -98,7 +105,6 @@ const FinancesTransactionsTableHeader = () => {
 </DropdownTrigger>
 <DropdownMenu
     aria-label="Single selection example"
-    color="gray-500"
     className=" text-base  text-gray-500 bg-gray-200 rounded-lg"
     variant="solid"
     disallowEmptySelection
@@ -122,7 +128,6 @@ const FinancesTransactionsTableHeader = () => {
 <DropdownTrigger>
     <Button
         //   variant="bordered" 
-        color="gray-400"
         variant="solid"
         className="capitalize border-none bg-transparent rounded-lg"
     >
@@ -131,7 +136,6 @@ const FinancesTransactionsTableHeader = () => {
 </DropdownTrigger>
 <DropdownMenu
     aria-label="Single selection example"
-    color="gray-500"
     className=" text-base bg-gray-200 rounded-lg"
     variant="solid"
     disallowEmptySelection
@@ -149,15 +153,17 @@ const FinancesTransactionsTableHeader = () => {
 </Dropdown>
 </div>
 
-<div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '>
+{/* <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '> */}
 
-<Popover placement="bottom-end" showArrow offset={10}>
-<PopoverTrigger>
-    <Button color="gray-400"
+{/* <Popover placement="bottom-end" showArrow offset={10}>
+<PopoverTrigger> */}
+    <Button
+    onClick={togglePopup}
         variant="solid"
-        className="capitalize flex border-none bg-black text-white rounded-lg ">  Create
-        <div className='flex pl-2'><Image src={DownArrow} alt='DownArrow' className='w-4 h-4 ' /></div></Button>
-</PopoverTrigger>
+        className="capitalize flex border-none py-2.5 bg-black text-white rounded-lg cursor-pointer">
+        <div className='flex'><Image src={rupee} alt='rupee' className='w-4 h-4 ' /></div>Record Transaction
+    </Button>
+{/* </PopoverTrigger>
 <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
 
     <div className="flex flex-col ">
@@ -182,11 +188,11 @@ const FinancesTransactionsTableHeader = () => {
   
 
 </PopoverContent>
-</Popover>
+</Popover> */}
+{showPopup && <Popup onClose={togglePopup} />}
 
 
-
-</div>
+{/* </div> */}
 </div>
 </div >
 
