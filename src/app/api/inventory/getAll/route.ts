@@ -25,6 +25,9 @@ export const GET=async(req: NextRequest)=> {
                     }
                 },
                 service:true
+            },
+            orderBy:{
+                createdAt:'desc'
             }
         });
         

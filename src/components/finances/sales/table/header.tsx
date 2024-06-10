@@ -11,7 +11,7 @@ import Return from '../../../../assets/icons/finance/Return.svg';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FinanceSalesType } from '@prisma/client';
+import { FinanceCreationType } from '@prisma/client';
 
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
@@ -19,7 +19,7 @@ import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/reac
 
 
 
-const FinancesSalesTableHeader = () => {
+const FinancesSalesTableHeader = ({invoiceCount,estimateCount,returnCount}:any) => {
    
     const currentRoute = usePathname();
     const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
@@ -48,19 +48,19 @@ const FinancesSalesTableHeader = () => {
     ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white  rounded-tl-md rounded-bl-md"
     : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500  rounded-tl-md rounded-bl-md"}>All</div>
 </Link>
-<Link className='no-underline flex item-center' href={{pathname:'/finance/sales/order',query:{type:FinanceSalesType.Estimate}}}>
+<Link className='no-underline flex item-center' href={{pathname:'/finance/sales/order',query:{type:FinanceCreationType.Sales_Estimate}}}>
 
 <div className={currentRoute.startsWith(`/finance/sales/order`)
     ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white"
     : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}>Sales Estimate</div>
 </Link>
-<Link className='no-underline flex item-center' href={{pathname:'/finance/sales/invoice',query:{type:FinanceSalesType.Invoice}}}>
+<Link className='no-underline flex item-center' href={{pathname:'/finance/sales/invoice',query:{type:FinanceCreationType.Sales_Invoice}}}>
 
 <div className={currentRoute.startsWith(`/finance/sales/invoice`)
     ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white"
     : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}>Sales Invoices</div>
 </Link>
-<Link className='no-underline flex item-center' href={{pathname:'/finance/sales/return',query:{type:FinanceSalesType.Return}}}>
+<Link className='no-underline flex item-center' href={{pathname:'/finance/sales/return',query:{type:FinanceCreationType.Sales_Return}}}>
 
 <div className={currentRoute.startsWith(`/finance/sales/return`)
     ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white  rounded-tr-md rounded-br-md"
@@ -159,15 +159,15 @@ const FinancesSalesTableHeader = () => {
        
         <div className='flex flex-col'>
         
-        <Link className='no-underline flex item-center' href='/finance/sales/newsalesestimate'>
+        <Link className='no-underline flex item-center' href={{pathname:"/finance/sales/newsalesestimate",query:{count:estimateCount}}}>
         <div className='text-base p-4   text-white flex '>
         <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Sales Estimate</div>
         </Link>
-        <Link className='no-underline flex item-center' href='/finance/sales/newsales'>
+        <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales',query:{count:invoiceCount}}}>
         <div className='text-base p-4  text-white flex '>
         <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Sales Invoice</div>
         </Link>
-        <Link className='no-underline flex item-center' href='/finance/sales/newsalesreturn'>
+        <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsalesreturn',query:{count:returnCount}}}>
         <div className='text-base p-4  text-white flex '>
         <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Sales Return</div>
         </Link>

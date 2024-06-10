@@ -1,11 +1,11 @@
 // src/api/finance/create.ts
 import { connectToDB } from '../../../../../../utils/index';
 import prismaClient from '../../../../../../../prisma';
-import { FinanceSalesType, Inventory, Stock } from '@prisma/client/edge';
+import { FinanceCreationType, Inventory, Stock } from '@prisma/client/edge';
 import { NextRequest } from 'next/server';
 import { fetchFinanceId, fetchInventoryId } from '@/utils/fetchBranchDetails';
 
-export const POST = async (req: NextRequest, { params }: { params: { type: FinanceSalesType } }) => {
+export const POST = async (req: NextRequest, { params }: { params: { type: FinanceCreationType } }) => {
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
   }
@@ -45,7 +45,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
       },
     });
 
-    if (params.type === FinanceSalesType.Invoice) {
+    if (params.type === FinanceCreationType.Sales_Invoice) {
       await Promise.all(
         body.items.create.map(async (item: any) => {
           console.log(item)
@@ -96,7 +96,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
         })
       );
       
-    } else if (params.type === FinanceSalesType.Return) {
+    } else if (params.type === FinanceCreationType.Sales_Return) {
       await Promise.all(
         body.items.create.map(async (item: any) => {
           const batch=await prismaClient.productBatch.findUnique({

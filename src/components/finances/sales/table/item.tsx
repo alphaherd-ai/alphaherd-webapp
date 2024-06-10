@@ -6,17 +6,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 import { productSchema } from '@/schemas/inventory/productValidation';
-import { FinanceSalesType } from '@prisma/client';
+import { FinanceCreationType } from '@prisma/client';
 import { useAppSelector } from '@/lib/hooks';
 import formatDateAndTime from '@/utils/formateDateTime';
 import useSWR from 'swr';
 import { usePathname, useSearchParams } from 'next/navigation';
-
+//@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 interface Sales {
   id:number;
   date:string;
-  type:FinanceSalesType;
+  type:FinanceCreationType;
   customer:string;
   invoiceNo:number;
   totalCost:number;
@@ -24,7 +24,7 @@ interface Sales {
   dueDate:string;
   status:string;
 }
-const FinancesSalesTableItem = () => {
+const FinancesSalesTableItem = ({onCountsChange}:any) => {
     const appState = useAppSelector((state) => state.app);
     const [sales,setSales]=useState<Sales[]>([]);
     const currentUrl=useSearchParams();
@@ -41,35 +41,64 @@ const FinancesSalesTableItem = () => {
     
     setSales(filteredData);
   },[data,setSales])
+
+  const [invoiceCount, setInvoiceCount] = useState(0);
+  const [estimateCount, setEstimateCount] = useState(0);
+  const [returnCount, setReturnCount] = useState(0);
+  useEffect(() => {
+    if (data) {
+      setInvoiceCount(data.filter((sale:any) => sale.type === FinanceCreationType.Sales_Invoice).length);
+      setEstimateCount(data.filter((sale:any) => sale.type === FinanceCreationType.Sales_Estimate).length);
+      setReturnCount(data.filter((sale:any) => sale.type === FinanceCreationType.Sales_Return).length);
+    }
+  }, [data]);
+ 
+
+  const handleCounts = () => {
+   
+    if (onCountsChange) {
+      onCountsChange({
+        invoiceCount,
+        estimateCount,
+        returnCount,
+      });
+    }
+  };
+  useEffect(() => {
+    handleCounts(); 
+  }, [sales]);
+ 
 if(isLoading&&!data)return <Spinner/>
   return (
      <div>
       {sales?.map(sale=>(
         
 
-    <div key={sale.id} className='flex  w-full  box-border h-16 py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  hover:bg-gray-200 hover:text-gray-500 transition'>
-    <div className='w-1/12 flex items-center  px-6  text-neutral-400 text-base font-medium'>{formatDateAndTime(sale.date).formattedDate}</div>
-    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{formatDateAndTime(sale.date).formattedTime}</div>
+    <div key={sale.id} className='flex justify-around items items-center  w-full  box-border h-16 py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  hover:bg-gray-200 hover:text-gray-500 transition'>
+    <div className='w-1/12 flex items-center     text-neutral-400 text-base font-medium'>{formatDateAndTime(sale.date).formattedDate}</div>
+    <div className='w-1/12 flex  items-center    text-neutral-400 text-base font-medium'>{formatDateAndTime(sale.date).formattedTime}</div>
     <Link
   href={{
-    pathname: sale.type === FinanceSalesType.Estimate ? 'existingsalesestimate' : 
-              sale.type === FinanceSalesType.Invoice ? 'existingsales' : 
-              sale.type===FinanceSalesType.Return?'existingsalesreturn':"",
+    pathname: sale.type === FinanceCreationType.Sales_Estimate ? 'existingsalesestimate' : 
+              sale.type === FinanceCreationType.Sales_Invoice ? 'existingsales' : 
+              sale.type===FinanceCreationType.Sales_Return?'existingsalesreturn':"",
     query: { id: sale.id}
   }}
-><div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{sale.type}</div></Link> 
-    <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{sale.customer}</div>
-    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{sale.invoiceNo}</div>
-    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>$ {sale.totalCost}</div>
-    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{sale.totalQty}</div>
-    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{formatDateAndTime(sale.dueDate).formattedDate}</div>
-    <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium text-green-500'><span className='bg-green-100 px-1'> <Tooltip content="message" className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
+><div className='flex w-[4rem]  items-center   text-neutral-400 text-base font-medium'>{sale.type==FinanceCreationType.Sales_Estimate?("Estimate"):(sale.type==FinanceCreationType.Sales_Invoice)?("Invoice"):("Return")}</div></Link> 
+    <div className='w-2/12 flex  items-center   text-neutral-400 px-4 text-base font-medium'>{sale.customer}</div>
+    <div className='w-1/12 flex  items-center   text-neutral-400 text-base font-medium'>{sale.invoiceNo}</div>
+    <div className='w-1/12 flex  items-center   text-neutral-400 text-base font-medium'>$ {(sale.totalCost).toFixed(2)}</div>
+    <div className='w-1/12 flex  items-center  text-neutral-400 text-base font-medium'>{sale.totalQty}</div>
+    <div className='w-1/12 flex  items-center   text-neutral-400 text-base font-medium'>{formatDateAndTime(sale.dueDate).formattedDate}</div>
+    <div className='w-1/12 flex  items-center    text-base font-medium text-green-500'>
+      <span className='bg-green-100 px-1'> 
+    <Tooltip content={sale.status} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
 
  <Button className='bg-transparent border-none'>{sale.status}</Button>
 </Tooltip></span>
 
  </div>
- <div className='absolute right-16 '>
+ <div className=' right-16'>
       
       <Popover placement="left" showArrow offset={10}>
           <PopoverTrigger>

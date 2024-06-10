@@ -332,112 +332,109 @@ const TableList: React.FC = () => {
 
       {/* Render Table */}
       <div className="w-full">
-        {columns.map((col, index) => {
-          const selectedOption = selectedOptions[index] || "";
+  {columns.map((col, index) => {
+    const selectedOption = selectedOptions[index] || "";
 
-          return (
-            <div
-              key={index}
-              className={`flex w-full h-16 px-4 bg-white border-[1px] border-solid border-r-[#A2A3A3] border-t-0 border-l-[#A2A3A3] border-b-[#A2A3A3]  justify-start items-center gap-4 cursor-pointer ${selectedOption === "Checked in" ? "bg-[#ebedff] text-[#3C50FF]" : "text-neutral-400" && selectedOption === "In Progress" ? "bg-[#e6f4ed] text-[#0F9D58]" : "text-neutral-400"}  `}
+    return (
+      <div
+        key={index}
+        className={`flex w-full h-16 px-4 bg-white border-[1px] border-solid border-r-[#A2A3A3] border-t-0 border-l-[#A2A3A3] border-b-[#A2A3A3] justify-start items-center gap-4 cursor-pointer ${
+          selectedOption === "Checked in"
+            ? "bg-[#e5e7ff] text-[#3C50FF]"
+            : selectedOption === "In Progress"
+            ? "bg-[#e2f5ec] text-[#0F9D58]"
+            : "text-neutral-400"
+        }`}
+      >
+        <div className="mr-[5px]">
+          <div className="w-8 h-8 flex justify-center items-center gap-2">
+            <Tooltip
+              className="bg-black text-xs rounded-md text-white"
+              showArrow={true}
+              content="Mark as complete"
             >
-              <div className="mr-[5px]">
-                <div className="w-8 h-8 flex justify-center items-center gap-2">
-              <Tooltip className="bg-black text-xs rounded-md text-white" showArrow={true} content="Mark as complete">
-                  <div className="w-6 h-6 ">
-                    <Image src={Icons2} alt="" />
-                  </div>
-                </Tooltip>
-                </div>
+              <div className="w-6 h-6 ">
+                <Image src={Icons2} alt="" />
               </div>
-              <div key={index} className="w-[16.6%] " onClick={() => handleClick(index, selectedOption)}>
-                <span className=" text-base ">
-                  {col.name}
-                </span>
-              </div>
-              <div className="w-[14.6%]">
-                <span className=" text-base ">
-                  {col.patient}
-                </span>
-              </div>
-              <div className="w-[20.6%]">
-              <Tooltip className="bg-black text-xs rounded-md text-white" showArrow={true} content={col.reason}>
-                <span className=" text-base ">
-                  {col.reason}
-                </span>
-                </Tooltip>
-              </div>
-              <div className="w-[14.6%]">
-                <span className=" text-base ">
-                  {col.time}
-                </span>
-              </div>
-              <div className="w-[16.6%]">
-                <span className=" text-base">
-                  {col.service}
-                </span>
-              </div>
-              <div className="w-[16.6%] hover:cursor-pointer ">
-                <div className="py-2 border-stone-300 justify-start items-center gap-2 flex rounded-lg">
-                  <div className="justify-end items-start flex border border-solid border-[#A2A3A3] rounded-md">
-                    <div
-                      className={`px-2 py-1 border border-neutral-400 justify-start items-center gap-1 flex ${
-                        selectedOption === "Checked in"
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-100 text-neutral-400"
-                      } rounded-tl rounded-bl cursor-pointer`}
-                      onClick={() => handleClickForTabs(index, "Checked in")}
-                    >
-                      <div className="text-sm font-bold ">
-                        Checked in
-                      </div>
-                    </div>
-                    <div
-                      className={`px-2 py-1 border border-neutral-400 justify-start items-center gap-1 flex ${
-                        selectedOption === "In Progress"
-                          ? "bg-green-600 text-white"
-                          : "bg-gray-100 text-neutral-400"
-                      } rounded-tr-[5px] rounded-br-[5px] cursor-pointer`}
-                      onClick={() => handleClickForTabs(index, "In Progress")}
-                    >
-                      <div className="text-sm font-bold ">
-                        In Progress
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <Dropdown key={index} placement="bottom-end">
-              <DropdownTrigger>
-              <Button className="w-6 h-6 flex justify-center items-center gap-2 ">
-                <div className="w-6 h-6">
-                  {/* <Image
-                    className="w-6 h-6 left-0 top-0 rounded-full border border-neutral-400"
-                    src={Icons}
-                    alt=""
-                  /> */}
-                  {selectedValue}
-                </div>
-              </Button>
-              </DropdownTrigger>
-              <DropdownMenu 
-              variant="shadow"
-              disallowEmptySelection
-              selectionMode="single"
-              selectedKeys={selectedKeys}
-              onSelectionChange={setSelectedKeys}
+            </Tooltip>
+          </div>
+        </div>
+        <div
+          key={index}
+          className="w-[16.6%]"
+          onClick={() => handleClick(index, selectedOption)}
+        >
+          <span className=" text-base ">{col.name}</span>
+        </div>
+        <div className="w-[14.6%]">
+          <span className=" text-base ">{col.patient}</span>
+        </div>
+        <div className="w-[20.6%]">
+          <Tooltip
+            className="bg-black text-xs rounded-md text-white"
+            showArrow={true}
+            content={col.reason}
+          >
+            <span className=" text-base ">{col.reason}</span>
+          </Tooltip>
+        </div>
+        <div className="w-[14.6%]">
+          <span className=" text-base ">{col.time}</span>
+        </div>
+        <div className="w-[16.6%]">
+          <span className=" text-base">{col.service}</span>
+        </div>
+        <div className="w-[16.6%] hover:cursor-pointer ">
+          <div className="py-2 border-stone-300 justify-start items-center gap-2 flex rounded-lg">
+            <div className="justify-end items-start flex border border-solid border-[#A2A3A3] rounded-md">
+              <div
+                className={`px-2 py-1 border border-neutral-400 justify-start items-center gap-1 flex ${
+                  selectedOption === "Checked in"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100 text-neutral-400"
+                } rounded-tl rounded-bl cursor-pointer`}
+                onClick={() => handleClickForTabs(index, "Checked in")}
               >
-                <DropdownItem key="text">Text</DropdownItem>
-                <DropdownItem key="number">Number</DropdownItem>
-                <DropdownItem key="date">Date</DropdownItem>
-                <DropdownItem key="single_date">Single Date</DropdownItem>
-                <DropdownItem key="iteration">Iteration</DropdownItem>
-
-              </DropdownMenu>
-              </Dropdown>
+                <div className="text-sm font-bold ">Checked in</div>
+              </div>
+              <div
+                className={`px-2 py-1 border border-neutral-400 justify-start items-center gap-1 flex ${
+                  selectedOption === "In Progress"
+                    ? "bg-green-600 text-white"
+                    : "bg-gray-100 text-neutral-400"
+                } rounded-tr-[5px] rounded-br-[5px] cursor-pointer`}
+                onClick={() => handleClickForTabs(index, "In Progress")}
+              >
+                <div className="text-sm font-bold ">In Progress</div>
+              </div>
             </div>
-          );
-        })}
+          </div>
+        </div>
+        <Dropdown key={index} placement="bottom-end">
+          <DropdownTrigger>
+            <Button className="w-6 h-6 flex justify-center items-center gap-2 ">
+              <div className="w-6 h-6">{selectedValue}</div>
+            </Button>
+          </DropdownTrigger>
+          <DropdownMenu
+            variant="shadow"
+            disallowEmptySelection
+            selectionMode="single"
+            selectedKeys={selectedKeys}
+            onSelectionChange={setSelectedKeys}
+          >
+            <DropdownItem key="text">Text</DropdownItem>
+            <DropdownItem key="number">Number</DropdownItem>
+            <DropdownItem key="date">Date</DropdownItem>
+            <DropdownItem key="single_date">Single Date</DropdownItem>
+            <DropdownItem key="iteration">Iteration</DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
       </div>
+    );
+  })}
+</div>
+
     </div>
   );
 };

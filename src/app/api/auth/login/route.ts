@@ -45,7 +45,7 @@ export const POST = async (req: NextRequest) => {
     })
 
     console.log(organization);
-
+    
     if (!user) {
       return new Response(JSON.stringify({ "message": 'User not found' }), { status: 404 });
     }

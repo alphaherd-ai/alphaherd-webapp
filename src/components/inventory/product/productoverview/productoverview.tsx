@@ -21,88 +21,61 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from "next/navigation"
 import { response } from "express"
 import { useAppSelector } from "@/lib/hooks"
+import useSWR from "swr"
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
+function useProductfetch (id: string | null,branchId:number|null) {
+    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${id}?branchId=${branchId}`,fetcher,{revalidateOnFocus:true});
+   return {
+    fetchedProduct:data,
+    isLoading,
+    error
+   }
+}
+function useProductBatchfetch(id:string|null,branchId:number|null){
+    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll/${id}?branchId=${branchId}`,fetcher,{revalidateOnFocus:true});
+    return {
+        fetchedBatches:data,
+        isBatchLoading:isLoading,
+        batchError:error
+    }
+}
 
-interface AllProducts {
-    id: number;
-    date: string;
-    time: string;
-    quantity: number;
-    batchNumber:string;
-    party:string;
-    expiry:string;
-    distributors:string;
-    costPrice:number;
-    sellingPrice :number;
-    itemName:string;
-    hsnCode:string;
-    category :string;
-    description:string;
-    tax:string;
-    providers:string[];
-    minStock:number;
-    maxStock:number;
-    location:string;
-  
-  }
-  interface Inventory{
-    id:number;
-    productId:number;
-    stockChange:string;
-    invoiceType:string;
-    quantityChange:number;
-    party:string;
-    productBatch:AllProducts;
-    createdAt:string;
-  
-  }
 
   const ProductDetails = () => {
-    const [product, setProduct] = useState<AllProducts | null>(null);
-    const [products, setProducts] = useState<AllProducts[]>([]);
-    const [inventory, setInventory] = useState<Inventory[]>([]);
+    const [product, setProduct] = useState<any | null>(null);
+    const [batches, setBatches] = useState<any[]>([]);
+    const [inventory, setInventory] = useState<any[]>([]);
     const url = useSearchParams();
     const id = url.get('id');
     const appState = useAppSelector((state) => state.app)
-  
+    const{fetchedProduct,isLoading,error}=useProductfetch(id,appState.currentBranchId);
+    
     useEffect(() => {
-      fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${id}?branchId=${appState.currentBranchId}`)
-        .then(response => response.json())
-        .then(data => setProduct(data))
-        .catch(error => console.error('Error fetching product:', error));
-    }, [id]);
-  
-    useEffect(() => {
-      fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${appState.currentBranchId}`)
-        .then(response => response.json())
-        .then(data => {
-          const filteredProducts = data.filter((item: AllProducts) => item.itemName === product?.itemName)
-          .reverse()
-          .slice(0,5);
-          setProducts(filteredProducts);
-        })
-        .catch(error => console.error('Error fetching products:', error));
-    }, [product]);
-  
-    useEffect(() => {
-      if (product && products.length > 0) {
-        fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/getAll?branchId=${appState.currentBranchId}`)
-          .then(response => response.json())
-          .then(data => {
-            const filteredInventory = data.filter((item: Inventory) =>
-              products.some((p: AllProducts) => item.productId === p.id)   
-            )
-            .reverse()
-            .slice(0,5);
-            setInventory(filteredInventory);
-          })
-          .catch(error => console.error('Error fetching inventory:', error));
+      if(!error&&!isLoading&&fetchedProduct){
+        setProduct(fetchedProduct);
       }
-    }, [product, products]);
-  
+    },[fetchedProduct]);
+    const {fetchedBatches,batchError,isBatchLoading}=useProductBatchfetch(id,appState.currentBranchId);
 
-
-
+    useEffect(() => {
+      if(!batchError&&!isBatchLoading&&fetchedBatches){
+        console.log(fetchedBatches)
+        setBatches(fetchedBatches);
+        let inventoryTimeline: any[] = [];
+        fetchedBatches.forEach((batch: any) => {
+        inventoryTimeline.push(...batch.inventoryTimeline.map((item: any) => ({
+            ...item,
+            batchNumber: batch.batchNumber
+        })));
+        });
+        setInventory(inventoryTimeline);
+      }
+    
+        },[fetchedBatches]);
+       
+  console.log(inventory)
 
     const [value, setValue] = useState(30);
 
@@ -119,7 +92,6 @@ interface AllProducts {
         return `${value}°C`;
     }
 
-
     return <>
         <div className="w-full h-full relative bg-gray-200 rounded-[20px] pr-[16px] pl-[16px] z-1">
             <div className="flex items-center justify-between">
@@ -130,7 +102,7 @@ interface AllProducts {
                         </Link>
 
                     </div>
-                    <div className="text-gray-500 text-[28px] font-bold font-['Satoshi']">
+                    <div className="text-gray-500 text-[28px] font-bold ">
                         {product?.itemName}
                     </div>
                 </div>
@@ -148,7 +120,7 @@ interface AllProducts {
                         <div>
                             <Image src={addicon} alt="add"></Image>
                         </div>
-                        <div className="text-white text-base font-bold font-['Satoshi']">
+                        <div className="text-white text-base font-bold ">
                             Update Stock Level
                         </div>
                     </div>
@@ -196,7 +168,7 @@ interface AllProducts {
 
             <div className="w-full mt-[25px] pt-8 bg-white rounded-[10px] border border-solid border-neutral-400 flex-col justify-start items-start gap-8 flex">
                 <div className="w-full px-6 justify-start items-center gap-8 flex">
-                    <div className="w-40 text-gray-500 text-[28px] font-bold font-['Satoshi']">
+                    <div className="w-40 text-gray-500 text-[28px] font-bold ">
                         {product?.quantity} Strips
                     </div>
                     <div className="w-full rounded-[10px] flex items-center">
@@ -216,20 +188,20 @@ interface AllProducts {
                 </div>
                 <div className="w-full justify-start items-start flex rounded-[10px]">
                     <div className="w-3/12 p-6 bg-white border-t border-solid border-0  border-r border-stone-300 flex-col justify-center items-start rounded-b-xl gap-4 flex ">
-                        <div className="text-gray-500 text-[28px] font-bold font-['Satoshi']">₹124</div>
-                        <div className="text-gray-500 text-base font-medium font-['Satoshi']">Avg. Selling price</div>
+                        <div className="text-gray-500 text-[28px] font-bold ">₹124</div>
+                        <div className="text-gray-500 text-base font-medium ">Avg. Selling price</div>
                     </div>
                     <div className="w-3/12 p-6 bg-white border-t border-solid border-0 border-r border-stone-300 flex-col justify-center items-start gap-4 flex">
-                        <div className="text-gray-500 text-[28px] font-bold font-['Satoshi']">₹124</div>
-                        <div className="text-gray-500 text-base font-medium font-['Satoshi']">Avg. Selling price</div>
+                        <div className="text-gray-500 text-[28px] font-bold ">₹124</div>
+                        <div className="text-gray-500 text-base font-medium ">Avg. Selling price</div>
                     </div>
                     <div className="w-3/12 p-6 bg-white border-t border-solid border-0 border-r border-stone-300 flex-col justify-center items-start gap-4 flex">
-                        <div className="text-gray-500 text-[28px] font-bold font-['Satoshi']">₹124</div>
-                        <div className="text-gray-500 text-base font-medium font-['Satoshi']">Avg. Selling price</div>
+                        <div className="text-gray-500 text-[28px] font-bold ">₹124</div>
+                        <div className="text-gray-500 text-base font-medium ">Avg. Selling price</div>
                     </div>
                     <div className="w-3/12 p-6 bg-white border-t border-solid border-0 border-stone-300 flex-col justify-center items-start gap-4 flex rounded-b-xl">
-                        <div className="text-gray-500 text-[28px] font-bold font-['Satoshi']">₹124</div>
-                        <div className="text-gray-500 text-base font-medium font-['Satoshi']">Avg. Selling price</div>
+                        <div className="text-gray-500 text-[28px] font-bold ">₹124</div>
+                        <div className="text-gray-500 text-base font-medium ">Avg. Selling price</div>
                     </div>
                 </div>
             </div>
@@ -237,43 +209,43 @@ interface AllProducts {
                 <div className="w-6/12 bg-white mt-[25px] rounded-[10px] border  border-solid border-neutral-400 flex-col justify-center items-start flex">
                     <div className="w-full border-b border-solid border-0 border-stone-300">
                         <div className="w-full flex gap-2 items-center p-6 h-3/12">
-                            <div className="text-neutral-400 text-base font-medium font-['Satoshi']">Description:</div>
-                            <div className="text-gray-500 text-base font-medium font-['Satoshi']">{product?.description}</div>
+                            <div className="text-neutral-400 text-base font-medium ">Description:</div>
+                            <div className="text-gray-500 text-base font-medium ">{product?.description}</div>
                         </div>
                     </div>
                     <div className="w-full border-b border-solid border-0 border-stone-300 flex  gap-8">
                         <div className="w-6/12 p-6 border-r border-solid border-0 border-stone-300 flex-col items-center justify-between">
-                            <div className="text-neutral-400 text-base font-medium font-['Satoshi']">Category</div>
+                            <div className="text-neutral-400 text-base font-medium ">Category</div>
                             <div className="w-[114px] h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">
-                                <div className="text-green-600 text-sm font-medium font-['Satoshi']">{product?.category}</div>
+                                <div className="text-green-600 text-sm font-medium ">{product?.category}</div>
                             </div>
                         </div>
                         <div className="w-6/12 p-6 flex-col items-center justify-between">
-                            <div className="text-neutral-400 text-base font-medium font-['Satoshi']">Location</div>
+                            <div className="text-neutral-400 text-base font-medium ">Location</div>
                             <div className="w-[66px] h-7 px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center items-center gap-2 flex">
-                                <div className="text-orange-500 text-sm font-medium font-['Satoshi']">{product?.location}</div>
+                                <div className="text-orange-500 text-sm font-medium ">{product?.location}</div>
                             </div>
                         </div>
                     </div>
                     <div className="w-full border-b border-solid border-0 border-stone-300">
                         <div className="w-full flex gap-2 items-center p-6 h-3/12">
-                            <div className="text-neutral-400 text-base font-medium font-['Satoshi']">HSN Code:</div>
-                            <div className="text-gray-500 text-base font-medium font-['Satoshi']">{product?.hsnCode}</div>
+                            <div className="text-neutral-400 text-base font-medium ">HSN Code:</div>
+                            <div className="text-gray-500 text-base font-medium ">{product?.hsnCode}</div>
                         </div>
                     </div>
                     <div className="w-full border-b border-solid border-0 border-stone-300">
                         <div className="w-full flex gap-2 items-center p-6 h-3/12">
-                            <div className="text-neutral-400 text-base font-medium font-['Satoshi']">Tax Rate:</div>
+                            <div className="text-neutral-400 text-base font-medium ">Tax Rate:</div>
                             <div className="px-2 py-1.5 bg-gray-100 rounded-[5px] justify-center items-center gap-2 flex">
-                                <div className="text-gray-500 text-base font-medium font-['Satoshi']">{product?.tax}</div>
+                                <div className="text-gray-500 text-base font-medium ">{product?.tax}</div>
                             </div>
                         </div>
                     </div>
                     <div className="w-full border-b border-solid border-0 border-stone-300">
                         <div className="w-full flex gap-2 items-center p-6 h-3/12">
-                            <div className="text-neutral-400 text-base font-medium font-['Satoshi']">Vendors:</div>
+                            <div className="text-neutral-400 text-base font-medium ">Vendors:</div>
                             <div className="px-2 py-1.5 bg-gray-100 rounded-[5px] justify-center items-center gap-2 flex">
-                                <div className="text-gray-500 text-base font-medium font-['Satoshi']">{product?.providers}</div>
+                                <div className="text-gray-500 text-base font-medium ">{product?.providers}</div>
                             </div>
 
                         </div>
@@ -282,7 +254,7 @@ interface AllProducts {
                 <div className="w-6/12 bg-white mt-[25px] rounded-[10px] border border-solid border-0 border-neutral-400 flex-col justify-center flex">
                     <div className="w-full border-b border-solid border-0 border-stone-300 flex items-start justify-between">
                         <div className="p-6 flex items-start justify-between w-full">
-                            <div className="text-gray-500 text-xl font-medium font-['Satoshi']">
+                            <div className="text-gray-500 text-xl font-medium ">
                                 Stock History
                             </div>
                             <div className="flex gap-2">
@@ -297,59 +269,58 @@ interface AllProducts {
                                 </div>
                                 <div className=" h-7 p-2 bg-white rounded-[5px] border border-solid  border-neutral-400 justify-start items-center gap-2 flex">
                                     <Image src={tuneicon} alt="tuneicon" className="w-5 h-5" />
-                                    <div className="text-neutral-400 text-sm font-medium font-['Satoshi']">
+                                    <div className="text-neutral-400 text-sm font-medium ">
                                         Filter by
                                     </div>
                                 </div>
                                 <div className=" h-7 p-2 bg-white rounded-[5px] border border-solid border-neutral-400 justify-start items-center gap-2 flex">
                                     <Image src={downarrow} alt="downarrow" className="w-5 h-5" />
-                                    <div className="text-neutral-400 text-sm font-medium font-['Satoshi']">
+                                    <div className="text-neutral-400 text-sm font-medium ">
                                         Status: All
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-    {inventory.map(item=>(
-                    <div key={item.id} className="w-full border-b border-solid border-0 border-stone-300 flex items-start justify-between">
-                        <div className="w-full flex p-6">
-                            <div className="w-full flex items-center justify-between">
-                                <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    {formatDateAndTime(item.createdAt).formattedDate}
-                                </div>
-                                <div className="w-[69px] text-neutral-400 text-base font-medium font-['Satoshi']">
-                                {formatDateAndTime(item.createdAt).formattedTime}
-                                </div>
-                                <div className="text-gray-500 text-base font-medium font-['Satoshi']">
-                                   {item.quantityChange} Strips
-                                </div>
-                                <div className="w-15 h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">
-                                    <div className="text-green-600 text-sm font-medium font-['Satoshi']">
-                                        {item.stockChange}
+                    <div className="w-full max-h-[400px] overflow-y-auto">
+                            {inventory?.map(item => (
+                                <div key={item.id} className="w-full border-b border-solid border-0 border-stone-300 flex items-start justify-between">
+                                    <div className="w-full flex p-6">
+                                        <div className="w-full flex items-center justify-between">
+                                            <div className="text-neutral-400 text-base font-medium ">
+                                                {formatDateAndTime(item.createdAt).formattedDate}
+                                            </div>
+                                            <div className="w-[69px] text-neutral-400 text-base font-medium ">
+                                                {formatDateAndTime(item.createdAt).formattedTime}
+                                            </div>
+                                            <div className="text-gray-500 text-base font-medium ">
+                                                {item.quantityChange} Strips
+                                            </div>
+                                            <div className="w-15 h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">
+                                                <div className="text-green-600 text-sm font-medium ">
+                                                    {item.stockChange}
+                                                </div>
+                                            </div>
+                                            <div className="text-neutral-400 text-base font-medium ">
+                                                {item.batchNumber}
+                                            </div>
+                                            <div className="text-neutral-400 text-base font-medium ">
+                                                {item.party}
+                                            </div>
+                                            <div className="text-teal-400 text-base font-medium  underline">
+                                                {item.invoiceType}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    {item.productBatch.batchNumber}
-                                </div>
-                                <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
-                                    {item.party}
-                                </div>
-                                <div className="text-teal-400 text-base font-medium font-['Satoshi'] underline">
-                                    {item.invoiceType}
-                                </div>
-                            </div>
+                            ))}
                         </div>
                     </div>
-                    ))}
-                   
-                    
-                    
-                </div>
             </div>
             <div className="rounded-md">
                 <div className="w-full mt-[25px] rounded-md border-neutral-400 border border-solid  border-neutral-40  ">
                     <div className="w-full h-[72px] px-6 py-4 bg-white border-b border-solid border-0 border-neutral-400 justify-start items-center gap-4 flex">
-                        <div className="text-gray-500 text-xl font-medium font-['Satoshi']">
+                        <div className="text-gray-500 text-xl font-medium ">
                             Current Batches
                         </div>
                     </div>
@@ -368,7 +339,7 @@ interface AllProducts {
                             <div className='flex text-gray-500 text-base font-medium px-6 w-1/12'></div>
                         </div>
                     
-                        {products.map(item=>(
+                        {batches.map(item=>(
                         <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
                             <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{item.quantity} Strips</div>
                             <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>providers</div>
@@ -380,8 +351,8 @@ interface AllProducts {
                             <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{item.sellingPrice}</div>
                             <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{(item.quantity/item.maxStock)*100}%</div>
                             <div className="w-2/12 px-6 flex items-center gap-2">
-                                <div className="w-[80px] flex items-center text-orange-500 text-sm font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center font-['Satoshi']">{item.location}</div>
-                                <div className="w-[80px] flex items-center text-orange-500 text-sm font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center font-['Satoshi']">Shelf A2</div>
+                                <div className="w-[80px] flex items-center text-orange-500 text-sm font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center ">{item.location}</div>
+                                <div className="w-[80px] flex items-center text-orange-500 text-sm font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center ">Shelf A2</div>
                             </div>
                             <div className="w-1/12 px-6 flex items-center gap-2">
                                 <div className='w-6 h-6 p-1 bg-gray-100 rounded-[5px] justify-start items-center flex '>

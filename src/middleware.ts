@@ -9,7 +9,7 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
   const url = request.nextUrl;
   console.log("INSIDE MIDDLEWARE");
   console.log(request.url);
-  if (url.pathname.startsWith('/api')) {
+  if (!url.pathname.startsWith('/api')) {
     return nonApiMiddleware(request, event);
   }
   console.log("Going to is authorized");

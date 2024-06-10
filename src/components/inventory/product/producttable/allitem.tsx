@@ -9,6 +9,7 @@ import formatDateAndTime from '@/utils/formateDateTime';
 import InventoryProductTableBottombar from './bottombar'; 
 import useSWR from 'swr';
 import { useAppSelector } from '@/lib/hooks';
+//@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 interface Products{
@@ -50,7 +51,7 @@ const ProductAllItem = () => {
   const {data,error,isLoading}= useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/getAll?branchId=${appState.currentBranchId}`,fetcher)
   useEffect(()=>{
     if(!isLoading&&data&&!error){
-      const filteredData = data.filter((inventory: { inventoryType: any; }) => inventory.inventoryType===Inventory.Product).reverse();
+      const filteredData = data.filter((inventory: { inventoryType: any; }) => inventory.inventoryType===Inventory.Product)
       setProducts(filteredData);
       console.log('Products Data:', filteredData); 
     }
@@ -103,7 +104,7 @@ const ProductAllItem = () => {
       />
       </div>
     </>
-  );
+  )
 }
 
 export default ProductAllItem;
