@@ -64,7 +64,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
     };
 
     const Providers =[
-        {}
+        { value: 'GST@0%', label: 'GST@0%' },
+        { value: 'GST@5%', label: 'GST@5%' },
     ]
 
 
