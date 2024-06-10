@@ -6,7 +6,9 @@ import Link from 'next/link';
 import closeicon from "../../../../assets/icons/inventory/closeIcon.svg";
 import arrowicon from "../../../../assets/icons/inventory/arrow.svg";
 import Select from 'react-select';
+//import Distributors from '@/app/database/distributor/page';
 import { useAppSelector } from "@/lib/hooks";
+import { Distributors } from "@prisma/client";
 
 type PopupProps = {
     onClose: () => void;
@@ -19,6 +21,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
     const [buttonDisabled, setButtonDisabled] = useState(false);
     const appState = useAppSelector((state) => state.app)
     const [selectedUnit, setSelectedUnit] = useState<string>("");
+    const [distributors,setDistributor]=useState<Distributors[]>([]);
     
     const handleContinueClick = () => {
         setLastStep(true);
@@ -88,6 +91,11 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
         {value: "Strips", label:"Strips"}
     ]
 
+    const distributersList = distributors.map((distributor)=>({
+        value: distributor.distributorName,
+        label:distributor.distributorName
+    }))
+
 
     return <>
 
@@ -114,7 +122,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                             placeholder="Select Provider"
                             isClearable={false}
                             isSearchable={true}
-                            options={gstOptions}
+                            options={distributersList}
                             isMulti={true}
                             name="providers"
                             onChange={(value) => handleChange("providers", value)}
