@@ -18,8 +18,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
     const [formData, setFormData] = useState<any>({});
     const [buttonDisabled, setButtonDisabled] = useState(false);
     const appState = useAppSelector((state) => state.app)
-
-
+    const [selectedUnit, setSelectedUnit] = useState<string>("");
+    
     const handleContinueClick = () => {
         setLastStep(true);
     }
@@ -62,6 +62,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
 
     const handleChange = (field: string, value: any) => {
         setFormData({ ...formData, [field]: value });
+        
     };
 
     const gstOptions = [

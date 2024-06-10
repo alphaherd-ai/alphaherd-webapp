@@ -14,10 +14,6 @@ import Image from "next/image"
 
 const ExistingsalesReturnBottomBar = () => {
   
-
- 
- 
-
     const sendSMS = async () => {
         try {   
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/sms`, {
@@ -77,15 +73,23 @@ const ExistingsalesReturnBottomBar = () => {
                             <div className="flex justify-between items-center gap-4 pl-4">
                                 <div className="p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
                                     <Image src={printicon} alt="print"></Image>
-                                    <button onClick={sendSMS}>Print</button>
+                                    <div>Print</div>
                                 </div>
                                 <div className="p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
                                     <Image src={downloadicon} alt="download"></Image>
                                     <div>Download</div>
                                 </div>
-                                <button onClick={sendSMS} className="p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
+                                <button onClick={() => sendSMS()} className="p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
                                     <Image src={shareicon} alt="share"></Image>
-                                    <div>Share sms</div>
+                                    <div>Share in sms</div>
+                                </button>
+                                <button onClick={() => sendWhatsapp()} className="p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
+                                    <Image src={shareicon} alt="share"></Image>
+                                    <div>Share in WA</div>
+                                </button>
+                                <button onClick={sendEmail} className="p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
+                                    <Image src={shareicon} alt="share"></Image>
+                                    <div>Share in Email</div>
                                 </button>
                                 
                             </div>

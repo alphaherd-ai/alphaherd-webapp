@@ -1,7 +1,5 @@
-//import { sendEmail } from "@/utils/mail"
 import { NextRequest, NextResponse } from "next/server"
 import nodemailer from 'nodemailer';
-import { encrypt } from "../../../../../../auth";
 
 export const POST = async (req: NextRequest)=>{
     if(req.method!=='POST'){
