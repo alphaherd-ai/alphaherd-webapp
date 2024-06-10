@@ -106,7 +106,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                     </div>
                 </div>
                 <div className="flex items-center gap-[70px] w-full">
-                    <div className="text-gray-500 text-base/[18.12px] font-medium ">Providers</div>
+                    <div className="text-gray-500 text-base/[18.12px] font-medium ">Distributers</div>
                     <div className="w-4/5">
                         <Select
                             className="w-[440px] h-[44px] rounded-[5px] text-#A2A3A3 text-base font-medium "
