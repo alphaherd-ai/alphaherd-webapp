@@ -34,7 +34,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
 
     const finance = await prismaClient.financeTimeline.create({
       data: {
-        type: FinanceSalesType.Estimate,
+        type: params.type,
         sale: { connect: { id: sales.id } },
         createdAt: new Date(),
         FinanceSection:{

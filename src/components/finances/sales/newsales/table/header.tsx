@@ -31,6 +31,7 @@ const NewsalesHeader = ({existingHeaderData}) => {
 
     const handleDateChange = (date:any) => {
         setStartDate(date);
+        console.log(date);
         setHeaderData((prevData) => ({ ...prevData, date }));
     };
     useEffect(()=>{

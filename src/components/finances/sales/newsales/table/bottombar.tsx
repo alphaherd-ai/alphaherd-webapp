@@ -13,6 +13,8 @@ import { FinanceSalesType } from '@prisma/client'
 import axios from "axios"
 import { useAppSelector } from '@/lib/hooks';
 import { useSearchParams } from "next/navigation"
+import jsPDF from "jspdf"
+import { generatePdfForInvoice } from "@/utils/salesPdf"
 
 
 
@@ -66,17 +68,51 @@ const NewsalesBottomBar = () => {
         }
     };
 
+    const downloadPdf = async () => {
+        const allData = {headerData, tableData, totalAmountData};
+        console.log("this is all data",allData)
+        let totalQty=0;
+        tableData.forEach(data => {
+            totalQty+=(data.quantity)||0;
+        });
+        const items = tableData.map(data => ({
+            productId: data.productId,
+            productBatchId:data.id, 
+            quantity: data.quantity,  
+            sellingPrice:data.sellingPrice,
+            taxAmount:data.gst,
+            name:data.itemName
+    }));
+        const data={
+            customer: (id===null)?allData.headerData.customer.value:allData.headerData.customer,
+            notes: allData.headerData.notes,
+            subTotal: allData.totalAmountData.subTotal,
+            invoiceNo: 234234,
+            dueDate: allData.headerData.date,
+            shipping: allData.totalAmountData.shipping,
+            adjustment: allData.totalAmountData.adjustment,
+            totalCost: allData.totalAmountData.totalCost,
+            overallDiscount: allData.totalAmountData.gst.value,
+            totalQty:totalQty,
+            status: "Pending",
+            type: FinanceSalesType.Estimate,
+            items:{
+                create:items
+            }
+        }
+        
+        generatePdfForInvoice(data, appState, items);
+
+    }
     return (
         <>
-
-
 <div className="flex justify-between items-center w-full  box-border  bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 py-4 rounded-b-lg">
                             <div className="flex justify-between items-center gap-4 pl-4">
                                 <div className="p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
                                     <Image src={printicon} alt="print"></Image>
                                     <div>Print</div>
                                 </div>
-                                <div className="p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
+                                <div className="p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex" onClick={downloadPdf}>
                                     <Image src={downloadicon} alt="download"></Image>
                                     <div>Download</div>
                                 </div>
