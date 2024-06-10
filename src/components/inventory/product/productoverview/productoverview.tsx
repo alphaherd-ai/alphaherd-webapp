@@ -309,43 +309,28 @@ interface AllProducts {
                                 </div>
                             </div>
                         </div>
+                        
                     </div>
-    {inventory.map(item=>(
-                    <div key={item.id} className="w-full border-b border-solid border-0 border-stone-300 flex items-start justify-between">
-                        <div className="w-full flex p-6">
-                            <div className="w-full flex items-center justify-between">
-                                <div className="text-neutral-400 text-base font-medium font-roboto">
-                                    {formatDateAndTime(item.createdAt).formattedDate}
-                                </div>
-                                <div className="w-[69px] text-neutral-400 text-base font-medium font-roboto">
-                                {formatDateAndTime(item.createdAt).formattedTime}
-                                </div>
-                                <div className="text-gray-500 text-base font-medium font-roboto">
-                                   {item.quantityChange} Strips
-                                </div>
-                                <div className="w-15 h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">
-                                    <div className="text-green-600 text-sm font-medium font-roboto">
-                                        {item.stockChange}
-                                    </div>
-                                </div>
-                                <div className="text-neutral-400 text-base font-medium font-roboto">
-                                    {item.productBatch.batchNumber}
-                                </div>
-                                <div className="text-neutral-400 text-base font-medium font-roboto">
-                                    {item.party}
-                                </div>
-                                <div className="text-teal-400 text-base font-medium font-roboto underline">
-                                    {item.invoiceType}
-                                </div>
+                    <div>
+                        {inventory.map(item=>(
+                        <div key={item.id} className="w-full border-b border-solid border-0 border-stone-300 flex items-start justify-between">
+                            <div className="w-full flex p-6">
+                                <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{formatDateAndTime(item.createdAt).formattedDate}</div>
+                                <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{formatDateAndTime(item.createdAt).formattedTime}</div>
+                                <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{item.quantityChange} Strips</div>
+                                <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{item.stockChange}</div>
+                                <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{item.productBatch.batchNumber}</div>
+                                <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{item.party}</div>
+                                <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{item.invoiceType}</div>
                             </div>
+                            
                         </div>
+                        ))}
+                        
                     </div>
-                    ))}
-                   
-                    
-                    
                 </div>
             </div>
+            
             <div className="rounded-md">
                 <div className="w-full mt-[25px] rounded-md border-neutral-400 border border-solid  border-neutral-40  ">
                     <div className="w-full h-[72px] px-6 py-4 bg-white border-b border-solid border-0 border-neutral-400 justify-start items-center gap-4 flex">

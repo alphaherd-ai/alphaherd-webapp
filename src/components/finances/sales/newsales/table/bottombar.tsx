@@ -105,7 +105,13 @@ const NewsalesBottomBar = () => {
     const sendEmail = ()=>{
         try {   
             const response = fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/email`, {
-                method: 'POST'
+                method: 'POST',
+                headers:{
+                    'Content-type':'application/json',
+                },
+                body: JSON.stringify({
+                    email:'hembramshristi07@gmail.com'
+                })
             });
             console.log('Email sent successfully:', response);
         } catch (error) {

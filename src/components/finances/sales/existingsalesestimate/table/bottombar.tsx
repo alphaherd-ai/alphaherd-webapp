@@ -13,6 +13,7 @@ import Image from "next/image"
 
 const ExistingsaleEstimateBottomBar = ({existingSalesData}) => {
   
+    
 
    
     return (

@@ -19,7 +19,7 @@ export const POST=async(req: NextRequest)=> {
     const result = await client.messages.create({
         body: "Your appointment is coming up on July 21 at 3PM",
         from: "whatsapp:+14155238886",
-        to: "whatsapp:+917637834918",
+        to: phone,
     });
 
     return NextResponse.json({ message: "success" }, { status: 200 });

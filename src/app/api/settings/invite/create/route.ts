@@ -139,7 +139,7 @@ export const POST = async (req: NextRequest) => {
         },
     });
 
-    const message = "Hi there, you were emailed me through nodemailer"
+    const message = "Hi there, you were emailed me through nodemailer";
     const options = {
         from: process.env.AUTOMATED_GMAIL, // sender address
         to: email, // receiver email
