@@ -23,6 +23,7 @@ import { useAppSelector } from "@/lib/hooks"
 import { Sales } from '@prisma/client';
 import useSWR from 'swr';
 import formatDateAndTime from '@/utils/formateDateTime';
+//@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 const ExistingsalesReturnTable = () => {
 
@@ -180,7 +181,7 @@ console.log(items)
                                     <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium '>{`₹${(item.quantity * item.sellingPrice +item.quantity* item.tax).toFixed(2)}`}</div>
                                    
                                 </div>
-                                    <div>
+                                    {/* <div>
                                     <div className='flex  w-full justify-evenly items-center box-border bg-white  h-12  border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-500'>
                                         <div className=' flex text-gray-500 text-base font-medium w-[3rem]'></div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>
@@ -200,7 +201,7 @@ console.log(items)
                                      
                                     </div>
 
-                                    </div>
+                                    </div> */}
                                 </div>
                                 
                                

@@ -9,17 +9,20 @@ import editicon from "../../../../../assets/icons/finance/1. Icons-25.svg";
 import calicon from "../../../../../assets/icons/finance/calendar_today.svg";
 import formatDateAndTime from '@/utils/formateDateTime';
 import { useSearchParams } from 'next/navigation';
+import { previousDay } from 'date-fns';
 
 
 const NewsalesHeader = ({existingHeaderData}: any) => {
     const url=useSearchParams();
     const id=url.get('id');
+    const count=url.get('count');
     const { headerData, setHeaderData } = useContext(DataContext);
     const [startDate, setStartDate] = useState(new Date());
     const [isClearable, setIsClearable] = useState(true);
     const [isSearchable, setIsSearchable] = useState(true);
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
+    const [dueDate, setDueDate] = useState(new Date());
     useEffect(() => {
         if (!disableButton && inputRef.current) {
             inputRef.current.focus();
@@ -34,7 +37,12 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
         setStartDate(date);
         setHeaderData((prevData) => ({ ...prevData, date }));
     };
+    const handleDueDateChange= (date:any)=>{
+        setDueDate(date);
+        setHeaderData((prevData)=>({...prevData,dueDate:date}))
+    }
     useEffect(()=>{
+        setHeaderData((prevData)=>({...prevData,invoiceNo:"SI-"+count}))
         if(id){
             setHeaderData(existingHeaderData)
         }
@@ -82,9 +90,10 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
                          <input
                                 ref={inputRef}
                                 className={`w-[25rem] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border-0 rounded-[5px] focus:border focus:border-solid focus:border-[#35BEB1] bg-inherit`}
-                                value={"153"}
+                                value={"SI-"+count!}
                                 disabled={disableButton}
                                 autoFocus={!disableButton}
+                                onChange={(e) => setHeaderData((prevData) => ({ ...prevData, invoiceNo: e.target.value }))}
                             />
                         ):(
                                 existingHeaderData.invoiceNo
@@ -142,42 +151,31 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
                 <div className="px-6 py-2 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full">
                     <div className="flex gap-[0.2rem] items-center w-full">
                         <div className="text-gray-500 text-base font-bold w-[6rem]">Due Date:</div>
-                        {id===null?(
-                        // <DatePicker
-                        //     className={"text-gray-500 text-base font-medium  w-full"}
-                        //     value={startDate}
-                        //     onChange={handleDateChange}
-                        //     clearIcon={() => null}
-                        //     calendarIcon={() => (
-                        //         <Image src={calicon} alt="Calendar Icon" width={20} height={20} />
-                        //     )}
-                        // />
-                        <div className='w-full relative'>
+                        {id === null ? (
                         <DatePicker
-                                        className="w-[34.5rem]"
-                                        selected={startDate}
-                                        onChange={handleDateChange}
-                                        calendarClassName="react-datepicker-custom"
-                                        customInput={
-                                            <div className='relative'>
-                                                <input
-                                                    className="w-[34.5rem] h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={startDate.toLocaleDateString()}
-                                                    readOnly
-                                                />
-                                                <Image
-                                                    src={calicon}
-                                                    alt="Calendar Icon"
-                                                    className="absolute right-2 top-2 cursor-pointer"
-                                                    width={50}
-                                                    height={20}
-                                                />
-                                            </div>
-                                        }
-                                    />
-                                    </div>
-                    ):(
-                            formatDateAndTime(existingHeaderData.date).formattedDate
+                            className="w-[34.5rem]"
+                            selected={dueDate} 
+                            onChange={handleDueDateChange} 
+                            calendarClassName="react-datepicker-custom"
+                            customInput={
+                            <div className='relative'>
+                                <input
+                                className="w-[34.5rem] h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                value={dueDate.toLocaleDateString()}
+                                readOnly
+                                />
+                                <Image
+                                src={calicon}
+                                alt="Calendar Icon"
+                                className="absolute right-2 top-2 cursor-pointer"
+                                width={50}
+                                height={20}
+                                />
+                            </div>
+                            }
+                        />
+                        ) : (
+                        formatDateAndTime(existingHeaderData.dueDate).formattedDate
                         )}
                     </div>
                 </div>

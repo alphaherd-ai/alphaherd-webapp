@@ -14,7 +14,7 @@ const NewsaleEstimateTotalAmout = () => {
     const [selectedDiscount, setDiscount] = useState(0);
     let totalAmount = 0;
     tableData.forEach(data => {
-        totalAmount += (data.quantity * data.sellingPrice + data.quantity * data.gst)||0;
+        totalAmount += (data.quantity * data.sellingPrice + data.quantity * data.gst*data.sellingPrice)||0;
     });
 
     const { totalAmountData, setTotalAmountData } = useContext(DataContext);

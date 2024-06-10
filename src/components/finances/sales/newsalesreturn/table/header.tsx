@@ -14,12 +14,14 @@ import { useSearchParams } from 'next/navigation';
 const NewsalesReturnHeader = ({existingHeaderData}:any) => {
     const url=useSearchParams();
     const id=url.get('id');
+    const count=url.get('count');
     const { headerData, setHeaderData } = useContext(DataContext);
     const [startDate, setStartDate] = useState(new Date());
     const [isClearable, setIsClearable] = useState(true);
     const [isSearchable, setIsSearchable] = useState(true);
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
+    const [dueDate, setDueDate] = useState(new Date());
     useEffect(() => {
         if (!disableButton && inputRef.current) {
             inputRef.current.focus();
@@ -34,7 +36,12 @@ const NewsalesReturnHeader = ({existingHeaderData}:any) => {
         setStartDate(date);
         setHeaderData((prevData) => ({ ...prevData, date }));
     };
+    const handleDueDateChange= (date:any)=>{
+        setDueDate(date);
+        setHeaderData((prevData)=>({...prevData,dueDate:date}))
+    }
     useEffect(()=>{
+        setHeaderData((prevData)=>({...prevData,invoiceNo:"SR-"+count}))
         if(id){
             setHeaderData(existingHeaderData)
         }
@@ -84,7 +91,7 @@ const NewsalesReturnHeader = ({existingHeaderData}:any) => {
                         {id===null?   (<input
                                 ref={inputRef}
                                 className={`w-[25rem] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border-0 rounded-[5px] focus:border focus:border-solid focus:border-[#35BEB1] bg-inherit`}
-                                value={"789"}
+                                value={"SR-"+count}
                                 disabled={disableButton}
                                 autoFocus={!disableButton}
                             />):(

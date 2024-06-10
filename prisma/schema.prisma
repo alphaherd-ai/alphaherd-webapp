@@ -1,15 +1,27 @@
 generator client {
-  provider   = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
+
 enum Tax {
- GST_18
- GST_9 
+  GST_18
+  GST_9
+}
+
+enum Notif_Source {
+  Inventory_Timeline_Added
+  Inventory_Timeline_Removed
+  Inventory_Product_Remain
+  Inventory_Product_Expiry
+  Inventory_Product_MaxStock
+  Inventory_ProductBatch
+  Sales_Invoice
+  Expense_Invoice
 }
 
 enum Sales_Status {
@@ -26,10 +38,13 @@ enum Stock {
   StockIN
   StockOUT
 }
-enum FinanceSalesType {
-  Estimate
-  Invoice
-  Return
+
+enum FinanceCreationType {
+  Sales_Estimate
+  Sales_Invoice
+  Sales_Return
+  Expense_Recurring
+  Expense_NonRecurring
 }
 
 enum Inventory {
@@ -102,9 +117,20 @@ model User {
   altPhoneNo         String?
   hashedPassword     String
   adminOrganizations Organization[]
-  orgBranchId        Int? @unique
+  orgBranchId        Int?                @unique
   lastUsedBranch     OrgBranch?          @relation(fields: [orgBranchId], references: [id])
   userRoles          OrgBranchUserRole[]
+}
+
+model Notifications {
+  id        Int          @id @default(autoincrement())
+  userId    Int?
+  orgId     Int?
+  url       String?
+  message   String?
+  source    Notif_Source
+  isRead    Boolean      @default(false)
+  createdAt DateTime?    @default(now())
 }
 
 model Permissions {
@@ -217,7 +243,7 @@ model ProductBatch {
   id                 Int                 @id @default(autoincrement())
   distributors       String[]
   quantity           Int?
-  productId          Int 
+  productId          Int
   batchNumber        String?
   costPrice          Int?
   location           Location            @default(NONE)
@@ -254,12 +280,12 @@ model Services {
 }
 
 model Sales {
-  id               Int               @id @default(autoincrement())
+  id               Int                  @id @default(autoincrement())
   customer         String?
-  date             DateTime?         @default(now())
+  date             DateTime?            @default(now())
   notes            String?
   subTotal         Float?
-  invoiceNo        Int?
+  invoiceNo        String?
   dueDate          DateTime?
   shipping         Float?
   adjustment       Float?
@@ -267,10 +293,10 @@ model Sales {
   overallDiscount  Float?
   totalQty         Int?
   status           String?
-  type             FinanceSalesType?
+  type             FinanceCreationType?
   items            Items[]
   financeTimeline  FinanceTimeline[]
-  FinanceSection   FinanceSection?   @relation(fields: [financeSectionId], references: [id])
+  FinanceSection   FinanceSection?      @relation(fields: [financeSectionId], references: [id])
   financeSectionId Int?
 }
 
@@ -298,25 +324,27 @@ model Purchases {
 }
 
 model Expenses {
-  id               Int               @id @default(autoincrement())
-  party            String
-  date             DateTime
-  invoiceNo        String?
-  subTotal         Int
-  overallDiscount  Int
-  totalCost        Int?
-  totalQty         Int?
-  startedOn        DateTime?
-  recurringType    String?
-  recurringEnd     String?
-  dueDate          String
-  notes            String
-  status           String
-  type             String?
-  items            Items[]
-  financeTimeline  FinanceTimeline[]
-  FinanceSection   FinanceSection?   @relation(fields: [financeSectionId], references: [id])
-  financeSectionId Int?
+  id                  Int               @id @default(autoincrement())
+  party               String?
+  date                DateTime?         @default(now())
+  invoiceNo           String?
+  subTotal            Float?
+  overallDiscount     Float?
+  totalCost           Float?
+  totalQty            Int?
+  recurringStartedOn  DateTime?
+  recurringRepeatType String?
+  recurringEndson     DateTime?
+  dueDate             DateTime?
+  shipping            Float?
+  adjustment          Float?
+  notes               String?
+  status              String?
+  type                String?
+  items               Items[]
+  financeTimeline     FinanceTimeline[]
+  FinanceSection      FinanceSection?   @relation(fields: [financeSectionId], references: [id])
+  financeSectionId    Int?
 }
 
 model Transactions {
@@ -344,7 +372,7 @@ model Items {
   sellingPrice     Int?
   quantity         Int?
   name             String?
-  productId        Int?            
+  productId        Int?
   products         Products?       @relation(fields: [productId], references: [id])
   salesId          Int?
   sale             Sales?          @relation(fields: [salesId], references: [id])
@@ -376,15 +404,15 @@ model InventoryTimeline {
 }
 
 model FinanceTimeline {
-  id               Int             @id @default(autoincrement())
+  id               Int                  @id @default(autoincrement())
   salesId          Int?
-  sale             Sales?          @relation(fields: [salesId], references: [id])
-  type             FinanceSalesType?
+  sale             Sales?               @relation(fields: [salesId], references: [id])
+  type             FinanceCreationType?
   createdAt        DateTime
   purchasesId      Int?
-  purchases        Purchases?      @relation(fields: [purchasesId], references: [id])
+  purchases        Purchases?           @relation(fields: [purchasesId], references: [id])
   expensesId       Int?
-  expenses         Expenses?       @relation(fields: [expensesId], references: [id])
-  FinanceSection   FinanceSection? @relation(fields: [financeSectionId], references: [id])
+  expenses         Expenses?            @relation(fields: [expensesId], references: [id])
+  FinanceSection   FinanceSection?      @relation(fields: [financeSectionId], references: [id])
   financeSectionId Int?
 }

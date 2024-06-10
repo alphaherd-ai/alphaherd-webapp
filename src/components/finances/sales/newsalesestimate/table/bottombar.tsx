@@ -9,7 +9,7 @@ import downloadicon from "../../../../../assets/icons/finance/download.svg"
 import Link from "next/link"
 import Image from "next/image"
 import { DataContext } from './DataContext'
-import { FinanceSalesType } from '@prisma/client'
+import { FinanceCreationType } from '@prisma/client'
 import axios from "axios"
 import { useAppSelector } from '@/lib/hooks';
 import { Button } from "@nextui-org/react"
@@ -40,7 +40,7 @@ const NewsaleEstimateBottomBar = () => {
             customer: allData.headerData.customer.value,
             notes: allData.headerData.notes,
             subTotal: allData.totalAmountData.subTotal,
-            invoiceNo: 234234,
+            invoiceNo: allData.headerData.invoiceNo,
             dueDate: allData.headerData.dueDate,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
@@ -48,7 +48,7 @@ const NewsaleEstimateBottomBar = () => {
             overallDiscount: allData.totalAmountData.gst.value,
             totalQty: totalQty,
             status: "Pending",
-            type: FinanceSalesType.Estimate,
+            type: FinanceCreationType.Sales_Estimate,
             items:{
                 create:items
             }
@@ -56,7 +56,7 @@ const NewsaleEstimateBottomBar = () => {
         }
         console.log(JSON.stringify(data))
         try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceSalesType.Estimate}?branchId=${appState.currentBranchId}`,data)
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Estimate}?branchId=${appState.currentBranchId}`,data)
 
             if (!response.data) {
                 throw new Error('Network response was not ok');

@@ -6,17 +6,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 import { productSchema } from '@/schemas/inventory/productValidation';
-import { FinanceSalesType } from '@prisma/client';
+import { FinanceCreationType } from '@prisma/client';
 import { useAppSelector } from '@/lib/hooks';
 import formatDateAndTime from '@/utils/formateDateTime';
 import useSWR from 'swr';
 import { usePathname, useSearchParams } from 'next/navigation';
-
+//@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 interface Sales {
   id:number;
   date:string;
-  type:FinanceSalesType;
+  type:FinanceCreationType;
   customer:string;
   invoiceNo:number;
   totalCost:number;
@@ -24,7 +24,7 @@ interface Sales {
   dueDate:string;
   status:string;
 }
-const FinancesSalesTableItem = () => {
+const FinancesSalesTableItem = ({onCountsChange}:any) => {
     const appState = useAppSelector((state) => state.app);
     const [sales,setSales]=useState<Sales[]>([]);
     const currentUrl=useSearchParams();
@@ -41,6 +41,33 @@ const FinancesSalesTableItem = () => {
     
     setSales(filteredData);
   },[data,setSales])
+
+  const [invoiceCount, setInvoiceCount] = useState(0);
+  const [estimateCount, setEstimateCount] = useState(0);
+  const [returnCount, setReturnCount] = useState(0);
+  useEffect(() => {
+    if (data) {
+      setInvoiceCount(data.filter((sale:any) => sale.type === FinanceCreationType.Sales_Invoice).length);
+      setEstimateCount(data.filter((sale:any) => sale.type === FinanceCreationType.Sales_Estimate).length);
+      setReturnCount(data.filter((sale:any) => sale.type === FinanceCreationType.Sales_Return).length);
+    }
+  }, [data]);
+ 
+
+  const handleCounts = () => {
+   
+    if (onCountsChange) {
+      onCountsChange({
+        invoiceCount,
+        estimateCount,
+        returnCount,
+      });
+    }
+  };
+  useEffect(() => {
+    handleCounts(); 
+  }, [sales]);
+ 
 if(isLoading&&!data)return <Spinner/>
   return (
      <div>
@@ -52,15 +79,15 @@ if(isLoading&&!data)return <Spinner/>
     <div className='w-1/12 flex  items-center    text-neutral-400 text-base font-medium'>{formatDateAndTime(sale.date).formattedTime}</div>
     <Link
   href={{
-    pathname: sale.type === FinanceSalesType.Estimate ? 'existingsalesestimate' : 
-              sale.type === FinanceSalesType.Invoice ? 'existingsales' : 
-              sale.type===FinanceSalesType.Return?'existingsalesreturn':"",
+    pathname: sale.type === FinanceCreationType.Sales_Estimate ? 'existingsalesestimate' : 
+              sale.type === FinanceCreationType.Sales_Invoice ? 'existingsales' : 
+              sale.type===FinanceCreationType.Sales_Return?'existingsalesreturn':"",
     query: { id: sale.id}
   }}
-><div className='flex w-[4rem]  items-center   text-neutral-400 text-base font-medium'>{sale.type}</div></Link> 
+><div className='flex w-[4rem]  items-center   text-neutral-400 text-base font-medium'>{sale.type==FinanceCreationType.Sales_Estimate?("Estimate"):(sale.type==FinanceCreationType.Sales_Invoice)?("Invoice"):("Return")}</div></Link> 
     <div className='w-2/12 flex  items-center   text-neutral-400 px-4 text-base font-medium'>{sale.customer}</div>
     <div className='w-1/12 flex  items-center   text-neutral-400 text-base font-medium'>{sale.invoiceNo}</div>
-    <div className='w-1/12 flex  items-center   text-neutral-400 text-base font-medium'>$ {sale.totalCost}</div>
+    <div className='w-1/12 flex  items-center   text-neutral-400 text-base font-medium'>$ {(sale.totalCost).toFixed(2)}</div>
     <div className='w-1/12 flex  items-center  text-neutral-400 text-base font-medium'>{sale.totalQty}</div>
     <div className='w-1/12 flex  items-center   text-neutral-400 text-base font-medium'>{formatDateAndTime(sale.dueDate).formattedDate}</div>
     <div className='w-1/12 flex  items-center    text-base font-medium text-green-500'>

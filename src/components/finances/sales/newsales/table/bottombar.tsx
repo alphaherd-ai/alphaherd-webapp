@@ -1,5 +1,4 @@
 "use client"
-
 import printicon from "../../../../../assets/icons/finance/print.svg"
 import shareicon from "../../../../../assets/icons/finance/share.svg"
 import drafticon from "../../../../../assets/icons/finance/draft.svg"
@@ -9,11 +8,13 @@ import downloadicon from "../../../../../assets/icons/finance/download.svg"
 import Link from "next/link"
 import Image from "next/image"
 import { DataContext } from './DataContext'
-import { FinanceSalesType } from '@prisma/client'
+import { FinanceCreationType, Notif_Source } from '@prisma/client'
 import axios from "axios"
 import { useAppSelector } from '@/lib/hooks';
 import { useSearchParams } from "next/navigation"
+import { getTime } from "date-fns"
 import { Button } from "@nextui-org/react"
+import formatDateAndTime from "@/utils/formateDateTime"
 
 
 
@@ -41,7 +42,7 @@ const NewsalesBottomBar = () => {
             customer: (id===null)?allData.headerData.customer.value:allData.headerData.customer,
             notes: allData.headerData.notes,
             subTotal: allData.totalAmountData.subTotal,
-            invoiceNo: 234234,
+            invoiceNo: allData.headerData.invoiceNo,
             dueDate: allData.headerData.dueDate,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
@@ -49,16 +50,25 @@ const NewsalesBottomBar = () => {
             overallDiscount: allData.totalAmountData.gst.value,
             totalQty:totalQty,
             status: "Pending",
-            type: FinanceSalesType.Estimate,
+            type: FinanceCreationType.Sales_Invoice,
             items:{
                 create:items
             }
             
         }
+        console.log(appState.currentBranch)
+        const notifData={
+            source:Notif_Source.Sales_Invoice,
+            totalCost:data.totalCost,
+            dueDate:data.dueDate,
+            orgId:appState.currentBranch.org.id,
+            orgBranch:appState.currentBranch.org.orgName
+        }
         console.log(JSON.stringify(data))
+        console.log("this is notif data",notifData)
         try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceSalesType.Invoice}?branchId=${appState.currentBranchId}`,data)
-
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Invoice}?branchId=${appState.currentBranchId}`,data)
+            const notif= await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`,notifData)
             if (!response.data) {
                 throw new Error('Network response was not ok');
             }

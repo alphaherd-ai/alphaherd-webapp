@@ -18,20 +18,22 @@ import NewsaleEstimateHeader from './header';
 import { Popover, PopoverTrigger, PopoverContent, Button, useCalendar } from '@nextui-org/react';
 import NewsaleEstimateBottomBar from './bottombar';
 import NewsaleEstimateTotalAmout from './totalamount';
-import { FinanceSalesType } from '@prisma/client';
+import { FinanceCreationType } from '@prisma/client';
 import { DataContext } from './DataContext';
 import axios from 'axios';
 import { useAppSelector } from "@/lib/hooks";
 import formatDateAndTime from '@/utils/formateDateTime';
 import { Tax } from '@prisma/client';
 import useSWR from 'swr';
-import { px } from 'framer-motion';
+//@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
+
 interface Products{
     id :string,
     itemName:string,
-    productBatch:ProductBatch[]
-    hsnCode:string
+    productBatch:ProductBatch[],
+    hsnCode:string,
+    quantity:number
 }
 interface ProductBatch {
     id: number;
@@ -45,23 +47,34 @@ interface ProductBatch {
     hsnCode:string;
     category :string;
     distributors:string[];
+    productId:number;
 }
 function useProductfetch (id: number | null) {
-    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`,fetcher);
+    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`,fetcher,{revalidateOnFocus:true});
    return {
     fetchedProducts:data,
     isLoading,
     error
    }
 }
+function useProductBatchfetch(id:number|null){
+    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll/?branchId=${id}`,fetcher,{revalidateOnFocus:true});
+    return {
+        fetchedBathces:data,
+        isBatchLoading:isLoading,
+        batchError:error
+    }
+}
 const NewsaleEstimateTable = () => {
     const { tableData, setTableData } = useContext(DataContext);
     const [selectedProductDetails,setSelectedProduct]= useState<Products>()
-    const [products, setProducts] = useState<{ value: number; label: string }[]>([]);
-    const [batches,setBatches] = useState<{value:number;label:string}[]>([])
-    const [inventory, setInventory] = useState<any[]>([]);
-    const appState = useAppSelector((state) => state.app);
-
+    const [products, setProducts] = useState<any[]>([]);
+    const [batches,setBatches] = useState<any[]>([]);
+    const [filteredBatches,setFilteredBatches]=useState<any[]>([]);
+    const [otherData, setOtherData] = useState({});
+    const appState = useAppSelector((state) => state.app)
+    const { tableData: items, setTableData: setItems } = useContext(DataContext);   
+    
     const taxOptions = [
         { value: 'Tax excl.', label: 'Tax excl.' },
         { value: 'Tax incl.', label: 'Tax incl.' }
@@ -71,7 +84,7 @@ const NewsaleEstimateTable = () => {
         { value: 0.18, label: Tax.GST_18 },
         { value: 0.09, label: Tax.GST_9 }
     ];
-    
+
     
     const Checkbox = ({ children, ...props }: JSX.IntrinsicElements['input']) => (
         <label style={{ marginRight: '1em' }}>
@@ -79,43 +92,46 @@ const NewsaleEstimateTable = () => {
             {children}
         </label>
     );
-    
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [isChecked, setChecked] = useState(false);
-    const { tableData: items, setTableData: setItems } = useContext(DataContext);
-
+    
     useEffect(() => {
         if (!disableButton && inputRef.current) {
             inputRef.current.focus();
         }
     }, [disableButton]);
- const {fetchedProducts,isLoading,error}=useProductfetch(appState.currentBranchId);
-   useEffect(()=>{
-    if(!isLoading&&products&&!error){
-        const formattedProducts = fetchedProducts.map((product: Products) => ({
-            value: product.id,
-            label: product.itemName,
-        }));
-        setProducts(formattedProducts);
-    }
-   },[fetchedProducts])
-            
-      
-  const fetchProductBatch= async (selectedProduct:any) =>{
-    try{
-        console.log(selectedProduct)
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll/${selectedProduct.value}?branchId=${appState.currentBranchId}`);
-        const formattedProductBatches=response.data.map((product:ProductBatch)=>({
-            value:product.id,
+    const {fetchedProducts,isLoading,error}=useProductfetch(appState.currentBranchId);
+    const {fetchedBathces,isBatchLoading,batchError}=useProductBatchfetch(appState.currentBranchId);
+    useEffect(()=>{
+     if(!isLoading&&products&&!error){
+         const formattedProducts = fetchedProducts.map((product: Products) => ({
+             value:{
+                id: product.id,
+                quantity:product.quantity,
+                itemName:product.itemName
+            },
+             label: product.itemName,
+         }));
+         console.log(formattedProducts)
+         setProducts(formattedProducts);
+     }
+     if(!batchError&&!isBatchLoading&&fetchedBathces){
+        const formattedProductBatches=fetchedBathces.map((product:ProductBatch)=>({
+            value:{
+                id:product.id,
+                productId:product.productId,
+                quantity: product.quantity ,
+                batchNumber: product.batchNumber,
+                expiry:  product.expiry,
+                sellingPrice:  product.sellingPrice,
+            },
             label:product.batchNumber
         }));
         console.log(formattedProductBatches)
         setBatches(formattedProductBatches)
-    }catch(error){
-        console.error("Error fetching Batches:",error);
     }
-  }
+    },[fetchedProducts,fetchedBathces])
   const handleDeleteRow = useCallback((index: number) => {
     const updatedItems = [...items];
     updatedItems.splice(index, 1);
@@ -132,123 +148,122 @@ const handleGstSelect = (selectedGst: any, index: number) => {
     setTableData(updatedItems);
 };
 
-    const handleEditButtonClick = () => {
-        setDisableButton(!disableButton);
-    };
+const handleEditButtonClick = () => {
+    setDisableButton(!disableButton);
+};
 
-    const handleCheckBoxChange = () => {
-        setChecked(!isChecked);
-        setItems((prevItems) =>
-            prevItems.map((item) => ({
-                ...item,
-                quantity: isChecked ? item.quantity * 2 : item.quantity,
-            }))
-        );
-    };
+const handleCheckBoxChange = () => {
+    setChecked(!isChecked);
+    setItems((prevItems) =>
+        prevItems.map((item) => ({
+            ...item,
+            quantity: isChecked ? item.quantity * 2 : item.quantity,
+        }))
+    );
+};
 
-    const handleQuantityDecClick = (itemId: any) => {
-        setItems((prevItems) =>
-            prevItems.map((item) => {
-                if (item.id === itemId && item.quantity > 1) {
-                    return { ...item, quantity: item.quantity - 1 };
-                }
-                return item;
-            })
-        );
-    };
-
-    const handleQuantityIncClick = (itemId: any) => {
-        setItems((prevItems) =>
-            prevItems.map((item) => {
-                if (item.id === itemId) {
-                    return { ...item, quantity: item.quantity + 1 };
-                }
-                return item;
-            })
-        );
-    };
-
-    const handleQuantityDecClick1 = (itemId: any) => {
-        setItems((prevItems) =>
-            prevItems.map((item) => {
-                if (item.id === itemId && item.quantity2 > 1) {
-                    return { ...item, quantity2: item.quantity2 - 1 };
-                }
-                return item;
-            })
-        );
-    };
-
-    const handleQuantityIncClick1 = (itemId: any) => {
-        setItems((prevItems) =>
-            prevItems.map((item) => {
-                if (item.id === itemId) {
-                    return { ...item, quantity2: item.quantity2 + 1 };
-                }
-                return item;
-            })
-        );
-    };
-
-    const handleAddItem= useCallback(() => {
-        setItems([...items, {}]);
-    }, [items]);
-
-    const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
-        console.log(selectedProduct)
-        if (selectedProduct.value) {
-            try {
-                setBatches([]); 
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${selectedProduct.value}?branchId=${appState.currentBranchId}`);
-                const data = response.data;
-                setSelectedProduct(data);
-                fetchProductBatch(selectedProduct);   
-                const updatedItems = [...items];
-                updatedItems[index] = {
-                    ...updatedItems[index],
-                    quantity: data.quantity,
-                    productId:selectedProduct.value,
-                    itemName:data.itemName
-                };
-                setItems(updatedItems);   
-            } catch (error) {
-                console.error("Error fetching product details from API:", error);
+const handleQuantityDecClick = (itemId: any) => {
+    setItems((prevItems) =>
+        prevItems.map((item) => {
+            if (item.id === itemId && item.quantity > 1) {
+                return { ...item, quantity: item.quantity - 1 };
             }
-        }
-    }, [items, products]);
-    const handleBatchSelect = useCallback(async (selectedProduct: any, index: number) => {
-        if (selectedProduct.value) {
-            try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${selectedProduct.value}?branchId=${appState.currentBranchId}`);
-                const data = response.data;
-                const updatedItems = [...items];
-                updatedItems[index] = {
-                    ...updatedItems[index],
-                    id: data.id,
-                    quantity: data.quantity ,
-                    batchNumber: data.batchNumber,
-                    expiry:  data.expiry,
-                    sellingPrice:  data.sellingPrice,
-                    productId:selectedProductDetails?.id
-                };
-                setItems(updatedItems);
-                setTableData(updatedItems);
+            return item;
+        })
+    );
+};
 
-                    // const updatedProducts = products.filter((product) => product.value !== selectedProduct.value);
-                    // setProducts(updatedProducts);
-        
-            } catch (error) {
-                console.error("Error fetching product details from API:", error);
+const handleQuantityIncClick = (itemId: any) => {
+    setItems((prevItems) =>
+        prevItems.map((item) => {
+            if (item.id === itemId) {
+                return { ...item, quantity: item.quantity + 1 };
             }
+            return item;
+        })
+    );
+};
+
+const handleQuantityDecClick1 = (itemId: any) => {
+    setItems((prevItems) =>
+        prevItems.map((item) => {
+            if (item.id === itemId && item.quantity2 > 1) {
+                return { ...item, quantity2: item.quantity2 - 1 };
+            }
+            return item;
+        })
+    );
+};
+
+const handleQuantityIncClick1 = (itemId: any) => {
+    setItems((prevItems) =>
+        prevItems.map((item) => {
+            if (item.id === itemId) {
+                return { ...item, quantity2: item.quantity2 + 1 };
+            }
+            return item;
+        })
+    );
+};
+
+const handleAddItem= useCallback(() => {
+    setItems([...items, {}]);
+}, [items]);
+
+const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
+    console.log(selectedProduct)
+    if (selectedProduct.value) {
+        try {
+            const data=products.find((product)=>product.value.id==selectedProduct.value.id)
+            setSelectedProduct(data);
+            const updatedItems = [...items];
+            updatedItems[index] = {
+                ...updatedItems[index],
+                quantity: data.value.quantity,
+                productId:selectedProduct.value.id,
+                itemName:data.value.itemName
+            };
+            setItems(updatedItems);   
+            const productBatches= batches?.filter((batch)=>batch.value.productId==selectedProduct.value.id)
+            setFilteredBatches(productBatches);
+        } catch (error) {
+            console.error("Error fetching product details from API:", error);
         }
-    }, [items, products]);
+    }
+}, [items, products,setBatches]);
+const handleBatchSelect = useCallback(async (selectedProduct: any, index: number) => {
+    if (selectedProduct.value) {
+        try {
+            
+            const data = filteredBatches.find((batch)=>batch.value.id==selectedProduct.value.id);
+            console.log(data)
+            const updatedItems = [...items];
+            updatedItems[index] = {
+                ...updatedItems[index],
+                id: data.value.id,
+                quantity: data.value.quantity ,
+                batchNumber: data.value.batchNumber,
+                expiry:  data.value.expiry,
+                sellingPrice:  data.value.sellingPrice,
+                productId:data.value.productId
+            };
+            console.log("these are updated",updatedItems)
+            setItems(updatedItems);
+            setTableData(updatedItems);
+                // const updatedProducts = products.filter((product) => product.value !== selectedProduct.value);
+                // setProducts(updatedProducts);
+        } catch (error) {
+            console.error("Error fetching product details from API:", error);
+        }
+    }
+}, [items, products]);
 
 
 
-    useEffect(() => {
-        setItems(items);
-        setTableData(items)
-    }, [items]);
+useEffect(() => {
+    setItems(items);
+    setTableData(items)
+}, [items]);
     return (
         <>
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
@@ -302,7 +317,7 @@ const handleGstSelect = (selectedGst: any, index: number) => {
                                 <div className={`${isChecked === true ? "px-4": ""} w-[15rem] flex items-center text-neutral-400 text-base font-medium`}><Select
                                         className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
                                         classNamePrefix="select"
-                                        value={products.find((prod) => prod.value === item.productId)}
+                                        value={products.find((prod) => prod.value.id === item.productId)}
                                         isClearable={false}
                                         isSearchable={true}
                                         name="itemName"
@@ -320,11 +335,11 @@ const handleGstSelect = (selectedGst: any, index: number) => {
                                     <Select
                                       className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
                                       classNamePrefix="select"
-                                      value={batches.find((prod) => prod.value === item.id)}
+                                      value={batches.find((prod) => prod.value.id === item.id)}
                                       isClearable={false}
                                       isSearchable={true}
                                       name={`batchNumber=${index}`}
-                                      options={batches}
+                                      options={filteredBatches}
                                       onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
                                       styles={{
                                         control: (provided, state) => ({
@@ -408,8 +423,8 @@ const handleGstSelect = (selectedGst: any, index: number) => {
                                             onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
                                         />
                                     </div>
-                                    <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>{`₹${(item.quantity * item.gst).toFixed(2)}`}</div>
-                                    <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium'>{`₹${(item.quantity * item.sellingPrice +item.quantity*item.gst).toFixed(2)}`}</div>
+                                    <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>{`₹${(item.sellingPrice*item.quantity * item.gst).toFixed(2)}`}</div>
+                                    <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium'>{`₹${(item.quantity * item.sellingPrice +item.sellingPrice*item.quantity*item.gst).toFixed(2)}`}</div>
                                     <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
                                         <button className="border-0">
                                             <Image src={sellicon} alt="sell" ></Image>
@@ -451,8 +466,8 @@ const handleGstSelect = (selectedGst: any, index: number) => {
                                         }}
                                     />
                                 </div>
-                                <div className='flex text-gray-500 text-base font-medium  w-[10rem]'>{`₹${items.reduce((acc:any, item:any) => acc + item.quantity * item.gst , 0).toFixed(2)}`}</div>
-                                <div className='flex text-gray-500 text-base font-medium  w-1/12' >{`₹${items.reduce((acc:any, item:any) => acc + item.quantity * item.sellingPrice +item.quantity*item.gst, 0).toFixed(2)}`}</div>
+                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>{`₹${items.reduce((acc:any, item:any) => acc + item.quantity * item.gst*item.sellingPrice , 0).toFixed(2)}`}</div>
+                                <div className='flex text-gray-500 text-base font-medium w-1/12' >{`₹${items.reduce((acc:any, item:any) => acc + item.quantity * item.sellingPrice +item.quantity*item.gst*item.sellingPrice, 0).toFixed(2)}`}</div>
                                 <div className='flex text-gray-500 text-base font-medium  w-1/12'></div>
                             </div>
                         </div>
