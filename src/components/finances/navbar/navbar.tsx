@@ -92,7 +92,7 @@ const FinancesNavbar = () => {
                     </div>
 
                   
-                    <Link className='no-underline h-full  ml-4' href='/settings/general'>
+                    <Link className='no-underline h-full  ml-4' href='/settings/organisation/myorg'>
                         <div className='flex items-center border border-solid border-gray-300 bg-white rounded-lg p-3  '><Image src={Settings} alt='Setting' className='w-5  h-5' /></div>
                     </Link>
                 </div>

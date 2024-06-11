@@ -114,7 +114,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                     </div>
                     </div>
                     <div className=" ml-1  w-10 h-9 ">
-                    <button  className="w-full h-full rounded-[5px] justify-center text-2xl items-center gap-2 flex border-[1px] border-borderText border-solid bg-white outline-none">
+                    <button  className="w-full h-full rounded-[5px] justify-center text-2xl items-center gap-2 flex border border-borderGrey border-solid bg-white outline-none">
                         <div className="text-textGrey1 text-lg">+</div>
                     </button>
                     </div>
@@ -143,7 +143,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                         <input className="w-[25.5rem] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="address" onChange={(e) => handleChange("address", e.target.value)} />
                     </div>
                     <div className=" ml-1  w-9 h-9 ">
-                    <button  className="w-full h-full rounded-[5px] justify-center text-2xl items-center gap-2 flex border-borderText border border-solid bg-white outline-none">
+                    <button  className="w-full h-full rounded-[5px] justify-center text-2xl items-center gap-2 flex border-borderGrey border border-solid bg-white outline-none">
                         <div className="text-neutral-400 text-lg">+</div>
                     </button>
                     </div>

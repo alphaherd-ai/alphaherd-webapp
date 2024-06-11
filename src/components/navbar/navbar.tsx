@@ -99,14 +99,14 @@ const Navbar = () => {
             </div>
           </Link>
         </div>
-        <Link className='no-underline p-4 flex items-center justify-center h-full' href='/settings'>
+        <Link className='no-underline p-4 flex items-center justify-center h-full' href='/settings/organisation/myorg'>
           <div className='text-sm flex items-center justify-center rounded-full'>
             <Image src={alphaherd} alt='alphaherd' className='w-7 h-7' />
           </div>
         </Link>
         {isCardOpen && (
           <div className="absolute top-[4rem] flex flex-col right-[5rem] w-[443px] max-h-[50rem] pt-6 pb-5 bg-zinc-800 shadow justify-center items-start gap-[5px] rounded-[20px] z-[100]">
-            <div className="text-gray-100 text-xl font-medium font-['Roboto'] px-6">
+            <div className="text-gray-100 text-xl font-medium  px-6">
               Notifications
             </div>
             <NotificationList />

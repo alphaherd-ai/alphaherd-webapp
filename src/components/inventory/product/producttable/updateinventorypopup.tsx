@@ -12,9 +12,11 @@ import RadioButton from './RadioButton';
 import subicon from "../../../../assets/icons/inventory/1. Icons-24 (6) (2).svg";
 import checkicon from "../../../../assets/icons/inventory/check (1).svg";
 import Select from 'react-select';
+import calicon from "../../../../assets/icons/finance/calendar_today.svg"
 import formatDateAndTime from "@/utils/formateDateTime";
 import { Stock } from "@prisma/client";
-import { select } from "@nextui-org/react";
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import { useAppSelector } from "@/lib/hooks";
 
 type PopupProps = {
@@ -48,6 +50,8 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
     const [batches,setBatches] = useState<{value:number;label:string}[]>([])
     const [inventory, setInventory] = useState<any[]>([]);
     const appState = useAppSelector((state) => state.app)
+    const [startDate, setStartDate] = useState(new Date());
+
 
     useEffect(() => {
         fetchProducts();
@@ -236,7 +240,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
             <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-100 bg-opacity-50 z-50">
                 <div className="w-[1392px] min-h-[481px] flex-col p-8 bg-gray-200 gap-6 rounded-md">
                     <div className="flex justify-end p-8 gap-4">
-                        <button className="border-0 outline-0 cursor-pointer"><Image src={minicon} alt="minimize" /></button>
+                        {/* <button className="border-0 outline-0 cursor-pointer"><Image src={minicon} alt="minimize" /></button> */}
                         <button className="border-0 outline-0 cursor-pointer" onClick={onClose}><Image src={closeicon} alt="minimize" /></button>
                     </div>
                     <div className="text-gray-500 text-xl font-medium ">Update Inventory</div>
@@ -257,34 +261,35 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                             />
                         </div>
                         <div className="relative">
-                            <div className="w-[132px] h-11 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+                            <button className="cursor-pointer h-11 px-4 py-2.5 bg-zinc-900 rounded-[5px] border-0 justify-start items-center gap-2 flex" onClick={handleAddItemClick}>
                                 <Image src={addicon} alt="add" />
-                                <button className="text-white text-base font-bold  bg-transparent border-0" onClick={handleAddItemClick}>
+                                <div className="text-white text-base font-bold  bg-transparent border-0" >
                                     Add Item
-                                </button>
-                            </div>
+                                </div>
+                            </button>
                         </div>
                     </div>
                     <div className="pb-6">
-                        <div className='flex  w-full justify-evenly items-center box-border bg-gray-100  h-12 py-4 border-b border-neutral-400 text-gray-500'>
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'>No.</div>
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-2/12'>Product</div>
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'>Quantity</div>
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'>Batch No.</div>
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'>Expiry</div>
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'>Code</div>
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'>Location</div>
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'>Distributor</div>
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'>Total Cost</div>
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'>MRP</div>
-                            <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12'>Selling Price</div>
+                        <div className='flex  w-full justify-evenly items-center box-border bg-gray-100  h-12  border-b border-neutral-400 text-gray-500'>
+                            <div className=' flex text-gray-500 text-base font-medium  w-[3rem]'>No.</div>
+                            <div className=' flex text-gray-500 text-base font-medium  w-[12rem]'>Product</div>
+                            <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>Quantity</div>
+                            <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>Batch No.</div>
+                            <div className=' flex text-gray-500 text-base font-medium  w-[8rem]'>Expiry</div>
+                            <div className=' flex text-gray-500 text-base font-medium  w-[5rem]'>Code</div>
+                            <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>Location</div>
+                            <div className=' flex text-gray-500 text-base font-medium  w-[8rem]'>Distributor</div>
+                            <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>Total Cost</div>
+                            <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>MRP</div>
+                            <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>Selling Price</div>
+                            <div className=' flex text-gray-500 text-base font-medium  w-[2rem]'></div>
                         </div>
                         {inventory.map((item, index) => (
-                            <div key={index} className='flex justify-evenly items-center w-full  box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                <div className='w-1/36 px-6 flex items-center text-neutral-400 text-base font-medium'>{index + 1}</div>
-                                <div className='w-1/5 px-6 flex items-center text-neutral-400 text-base font-medium'>
+                            <div key={index} className='flex justify-evenly items-center w-full  py-2 box-border bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                                <div className='w-[3rem] flex items-center text-neutral-400 text-base font-medium'>{index + 1}</div>
+                                <div className='w-[12rem] flex items-center text-neutral-400 text-base font-medium'>
                                     <Select
-                                        className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
+                                        className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
                                         classNamePrefix="select"
                                         value={products.find((prod) => prod.value === item.id)}
                                         isClearable={false}
@@ -294,22 +299,22 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                                         onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
                                     />
                                 </div>
-                                <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
-                                    <button className="bg-white rounded-[5px] border-2 border-gray-100" onClick={() => handleQuantityDecClick(index)}>
-                                        <Image src={subicon} alt="-" />
+                                <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
+                                    <button className="bg-white rounded-[5px] border-2 border-solid border-borderGrey" onClick={() => handleQuantityDecClick(index)}>
+                                        <Image className="w-4 h-2" src={subicon} alt="-" />
                                     </button>
                                     <div>{item.quantity}</div>
-                                    <button className="bg-white rounded-[5px] border-2 border-gray-100" onClick={() => handleQuantityIncClick(index)}>
-                                        <Image src={add1icon} alt="+" />
+                                    <button className="bg-white rounded-[5px] border-2 border-solid border-borderGrey" onClick={() => handleQuantityIncClick(index)}>
+                                        <Image className="w-4 h-2" src={add1icon} alt="+" />
                                     </button>
                                 </div>
-                                <div className='w-1/12 px-1 flex items-center text-neutral-400 text-base font-medium ml-10'>
+                                <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>
                                     { selectedOption===Stock.StockIN ?(
                                     <input
                                     type="text"
                                     value={item.batchNumber}
                                     onChange={(e) => handleInputChange(index,'batchNumber', e.target.value)}
-                                    className="w-full border border-gray-300 focus:border-gray-500 outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
+                                    className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
                                     name={`batchNumber-${index}`}
                                     />
                                     ):
@@ -327,79 +332,93 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                                     )}
            
         </div>
-        <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>
-    <input
-        type="datetime-local"
-        value={item.expiry}
-        onChange={(e) => handleInputChange(index,'expiry', e.target.value)}
-        className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
-        name={`expiry-${index}`}
-    />
+        <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium'>
+        <DatePicker
+            // showIcon
+            className="w-full rounded-[5px] border border-solid border-borderGrey outline-none  focus:border focus:border-textGreen px-1 py-2"
+            selected={startDate}
+            placeholderText="MM/DD/YYYY"
+            onChange={(date:any) => setStartDate(date)}
+            calendarClassName="react-datepicker-custom"
+            // value={startDate.toLocaleDateString()}
+            // customInput={
+            //     // <div className="relative">
+            //     //     <input
+            //     //         className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border border-solid border-borderText focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+            //     //         value={startDate.toLocaleDateString()}
+                        
+            //     //     />
+                    
+            //     // </div>
+            // }
+        />
     {item.expiry && selectedOption !== Stock.StockIN && (
         <div>{formatDateAndTime(item.expiry).formattedDate}</div>
     )}
 </div>
 
-        <div className='w-1/12 px-1 flex items-center text-neutral-400 text-base font-medium'>
+        <div className='w-[5rem] flex items-center text-neutral-400 text-base font-medium'>
             <input
                 type="text"
                 value={item.hsnCode}
                 onChange={(e) => handleInputChange(index, 'hsnCode' ,e.target.value)}
-                className="w-full border border-gray-300 focus:border-gray-500 outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded "
+                className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded "
             name={`hsnCode-${index}`}
             />
         </div>
-        <div className='w-1/12 px-4 flex items-center text-neutral-400 text-base font-medium'>
+        <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>
             <input
                 type="text"
                 value={item.category}
                 onChange={(e) => handleInputChange(index,'category' ,e.target.value)}
-                className="w-full border border-gray-300 focus:border-gray-500 outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
+                className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
             name={`category-${index}`}
             />
         </div>
-        <div className='w-1/12 px-1 flex items-center text-neutral-400 text-base font-medium '>
+        <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium '>
         <input
             type="text"
             value={item.providers}
             onChange={(e) => handleInputChange(index,'providers', e.target.value)}
-            className="w-full border border-gray-300 focus:border-gray-500 outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
+            className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
             name={`providers-${index}`}
         />
         </div>
-        <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹
+        <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>₹ 
             <input
                 type="number"
                 value={item.costPrice}
                 onChange={(e) => handleInputChange(index, 'costPrice',parseFloat(e.target.value))}
-                className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
+                className="w-full rounded-[5px] border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium"
                 name={`costPrice-${index}`}
             />
         </div>
-        <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹
+        <div className='w-[6rem] rounded-[5px] flex items-center text-neutral-400 text-base font-medium'>₹
             <input
                 type="number"
                 value={item.costPrice}
                 onChange={(e) =>  handleInputChange(index, 'costPrice',parseFloat(e.target.value))}
-                className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
+                className="w-full rounded-[5px] border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium"
                 name={`costPrice-${index}`}
             />
         </div>
 
-        <div className='w-1/12 px-6 flex items-center text-neutral-400 text-base font-medium'>₹
+        <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>₹
             <input
                 type="number"
                 value={item.sellingPrice}
                 onChange={(e) =>  handleInputChange(index, 'sellingPrice',parseFloat(e.target.value))}
-                className="w-full border-none outline-none bg-transparent text-neutral-400 text-base font-medium"
+                className="w-full rounded-[5px] border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium"
                 name={`sellingPrice-${index}`}
             />
         </div>
+        <div className="w-[2rem]">
         <button onClick={() => handleDeleteRow(index)} className=" border-0 flex-col justify-start items-end gap-2.5 flex">
                                 <div className="h-6 px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
                                     <Image className="w-4 h-4 relative" src={deleteicon} alt="delete" />
                                 </div>
-                            </button>
+        </button>
+        </div>
     </div>
 ))}
                     </div>

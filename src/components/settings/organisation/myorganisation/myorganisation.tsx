@@ -10,6 +10,7 @@ import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/rea
 import OrganisationNavbar from "../navbar/navbar"
 
 import { useAppSelector } from "@/lib/hooks";
+import Link from "next/link"
 
 export const MyOrganisationSettings = () => {
 
@@ -147,6 +148,14 @@ export const MyOrganisationSettings = () => {
                 </div>
             </div >
         </div >
+
+        {
+            appState.isCurrentOrgAdmin ? 
+            <Link href={`/auth/admin/orgEdit`}>
+            <button className="fixed bottom-4 right-4 bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+              Edit
+            </button></Link> : null
+        }
         </>
     )
 }
