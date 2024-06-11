@@ -16,7 +16,7 @@ import { useRef } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import NewsalesHeader from "./header"
-import { Popover, PopoverTrigger, PopoverContent, Button, Spinner } from "@nextui-org/react";
+import { Popover, PopoverTrigger, PopoverContent, Button, Spinner, select } from "@nextui-org/react";
 import NewsalesBottomBar from './bottombar';
 import NewsalesTotalAmout from './totalamount';
 import axios from 'axios';
@@ -24,13 +24,15 @@ import { DataContext } from './DataContext';
 import { useAppSelector } from "@/lib/hooks";
 import { useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
+//@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 interface Products{
     id :string,
     itemName:string,
-    productBatch:ProductBatch[]
-    hsnCode:string
+    productBatch:ProductBatch[],
+    hsnCode:string,
+    quantity:number
 }
 interface ProductBatch {
     id: number;
@@ -44,20 +46,30 @@ interface ProductBatch {
     hsnCode:string;
     category :string;
     distributors:string[];
+    productId:number;
 }
 function useProductfetch (id: number | null) {
-    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`,fetcher);
+    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`,fetcher,{revalidateOnFocus:true});
    return {
     fetchedProducts:data,
     isLoading,
     error
    }
 }
+function useProductBatchfetch(id:number|null){
+    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll/?branchId=${id}`,fetcher,{revalidateOnFocus:true});
+    return {
+        fetchedBathces:data,
+        isBatchLoading:isLoading,
+        batchError:error
+    }
+}
 const NewsalesTable = () => {
     const { tableData, setTableData } = useContext(DataContext);
     const [selectedProductDetails,setSelectedProduct]= useState<Products>()
-    const [products, setProducts] = useState<{ value: number; label: string }[]>([]);
-    const [batches,setBatches] = useState<{value:number;label:string}[]>([])
+    const [products, setProducts] = useState<any[]>([]);
+    const [batches,setBatches] = useState<any[]>([]);
+    const [filteredBatches,setFilteredBatches]=useState<any[]>([]);
     const [otherData, setOtherData] = useState({});
     const appState = useAppSelector((state) => state.app)
     const url= useSearchParams();
@@ -115,29 +127,36 @@ const NewsalesTable = () => {
         }
     }, [disableButton]);
     const {fetchedProducts,isLoading,error}=useProductfetch(appState.currentBranchId);
+    const {fetchedBathces,isBatchLoading,batchError}=useProductBatchfetch(appState.currentBranchId);
     useEffect(()=>{
      if(!isLoading&&products&&!error){
          const formattedProducts = fetchedProducts.map((product: Products) => ({
-             value: product.id,
+             value:{
+                id: product.id,
+                quantity:product.quantity,
+                itemName:product.itemName
+            },
              label: product.itemName,
          }));
+         console.log(formattedProducts)
          setProducts(formattedProducts);
      }
-    },[fetchedProducts])
-  const fetchProductBatch= async (selectedProduct:any) =>{
-    try{
-        console.log(selectedProduct)
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll/${selectedProduct.value}?branchId=${appState.currentBranchId}`);
-        const formattedProductBatches=response.data.map((product:ProductBatch)=>({
-            value:product.id,
+     if(!batchError&&!isBatchLoading&&fetchedBathces){
+        const formattedProductBatches=fetchedBathces.map((product:ProductBatch)=>({
+            value:{
+                id:product.id,
+                productId:product.productId,
+                quantity: product.quantity ,
+                batchNumber: product.batchNumber,
+                expiry:  product.expiry,
+                sellingPrice:  product.sellingPrice,
+            },
             label:product.batchNumber
         }));
         console.log(formattedProductBatches)
         setBatches(formattedProductBatches)
-    }catch(error){
-        console.error("Error fetching Batches:",error);
     }
-  }
+    },[fetchedProducts,fetchedBathces])
   const handleDeleteRow = useCallback((index: number) => {
     const updatedItems = [...items];
     updatedItems.splice(index, 1);
@@ -220,19 +239,18 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
     console.log(selectedProduct)
     if (selectedProduct.value) {
         try {
-            setBatches([]);
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${selectedProduct.value}?branchId=${appState.currentBranchId}`);
-            const data = response.data;
+            const data=products.find((product)=>product.value.id==selectedProduct.value.id)
             setSelectedProduct(data);
-            await fetchProductBatch(selectedProduct);   
             const updatedItems = [...items];
             updatedItems[index] = {
                 ...updatedItems[index],
-                quantity: data.quantity,
-                productId:selectedProduct.value,
-                itemName:data.itemName
+                quantity: data.value.quantity,
+                productId:selectedProduct.value.id,
+                itemName:data.value.itemName
             };
             setItems(updatedItems);   
+            const productBatches= batches?.filter((batch)=>batch.value.productId==selectedProduct.value.id)
+            setFilteredBatches(productBatches);
         } catch (error) {
             console.error("Error fetching product details from API:", error);
         }
@@ -241,23 +259,24 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
 const handleBatchSelect = useCallback(async (selectedProduct: any, index: number) => {
     if (selectedProduct.value) {
         try {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${selectedProduct.value}?branchId=${appState.currentBranchId}`);
-            const data = response.data;
+            
+            const data = filteredBatches.find((batch)=>batch.value.id==selectedProduct.value.id);
+            console.log(data)
             const updatedItems = [...items];
             updatedItems[index] = {
                 ...updatedItems[index],
-                id: data.id,
-                quantity: data.quantity ,
-                batchNumber: data.batchNumber,
-                expiry:  data.expiry,
-                sellingPrice:  data.sellingPrice,
-                productId:selectedProductDetails?.id
+                id: data.value.id,
+                quantity: data.value.quantity ,
+                batchNumber: data.value.batchNumber,
+                expiry:  data.value.expiry,
+                sellingPrice:  data.value.sellingPrice,
+                productId:data.value.productId
             };
+            console.log("these are updated",updatedItems)
             setItems(updatedItems);
             setTableData(updatedItems);
                 // const updatedProducts = products.filter((product) => product.value !== selectedProduct.value);
                 // setProducts(updatedProducts);
-    
         } catch (error) {
             console.error("Error fetching product details from API:", error);
         }
@@ -353,7 +372,7 @@ useEffect(() => {
                                     <Select
                                         className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
                                         classNamePrefix="select"
-                                        value={products.find((prod) => prod.value === item.productId)}
+                                        value={products.find((prod) => prod.value.id === item.productId)}
                                         isClearable={false}
                                         isSearchable={true}
                                         name="itemName"
@@ -374,11 +393,11 @@ useEffect(() => {
                                         <Select
                                         className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
                                         classNamePrefix="select"
-                                        value={batches.find((prod) => prod.value === item.id)}
+                                        value={batches.find((prod) => prod.value.id === item.id)}
                                         isClearable={false}
                                         isSearchable={true}
                                         name={`batchNumber=${index}`}
-                                        options={batches}
+                                        options={filteredBatches}
                                         onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
                                         styles={{
                                             control: (provided, state) => ({
@@ -442,8 +461,8 @@ useEffect(() => {
                                             item.gst
                                         )}
                                     </div>
-                                    <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>{`₹${(item.quantity * item.gst).toFixed(2)}`}</div>
-                                    <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium'>{`₹${(item.quantity * item.sellingPrice +item.quantity*item.gst).toFixed(2)}`}</div>
+                                    <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>{`₹${(item.sellingPrice*item.quantity * item.gst).toFixed(2)}`}</div>
+                                    <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium'>{`₹${(item.quantity * item.sellingPrice +item.sellingPrice*item.quantity*item.gst).toFixed(2)}`}</div>
                                     <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
                                         <button className="border-0">
                                             <Image src={sellicon} alt="sell" ></Image>
@@ -477,8 +496,8 @@ useEffect(() => {
                                         }}
                                     />
                                 </div>
-                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>{`₹${items.reduce((acc:any, item:any) => acc + item.quantity * item.gst , 0).toFixed(2)}`}</div>
-                                <div className='flex text-gray-500 text-base font-medium w-1/12' >{`₹${items.reduce((acc:any, item:any) => acc + item.quantity * item.sellingPrice +item.quantity*item.gst, 0).toFixed(2)}`}</div>
+                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>{`₹${items.reduce((acc:any, item:any) => acc + item.quantity * item.gst*item.sellingPrice , 0).toFixed(2)}`}</div>
+                                <div className='flex text-gray-500 text-base font-medium w-1/12' >{`₹${items.reduce((acc:any, item:any) => acc + item.quantity * item.sellingPrice +item.quantity*item.gst*item.sellingPrice, 0).toFixed(2)}`}</div>
                                 <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
                             </div>
                         </div>

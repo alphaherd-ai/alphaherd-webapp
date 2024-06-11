@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const FinanceSalesType = z.enum(['Return']); 
+const FinanceCreationType = z.enum(['Return']); 
 
 export const salesEstimateSchema = z.object({
   customer: z.string().optional(), 
@@ -17,7 +17,7 @@ export const salesEstimateSchema = z.object({
   overallDiscount: z.number().optional(),
   totalQty: z.number().int().min(0), 
   status: z.string(), 
-  type: FinanceSalesType, 
+  type: FinanceCreationType, 
   items: z.object({
     create: z.array(
       z.object({

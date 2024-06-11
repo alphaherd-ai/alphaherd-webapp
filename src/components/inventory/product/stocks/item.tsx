@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Tooltip, Button } from "@nextui-org/react";
+import { Tooltip, Button, Spinner } from "@nextui-org/react";
 import { useAppSelector } from '@/lib/hooks';
-
+import useSWR from 'swr';
+import formatDateAndTime from '@/utils/formateDateTime';
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 interface Products{
   id: number;
   itemName:string;
@@ -28,13 +31,12 @@ interface ProductBatch {
 const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
   const [products, setProducts] = useState<ProductBatch[]>([]);
   const appState = useAppSelector((state) => state.app)
-
+ const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true})
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll?branchId=${appState.currentBranchId}`)
-      .then(response => response.json())
-      .then(data => setProducts(data))
-      .catch(error => console.error('Error fetching products:', error));
-  }, []);
+   if(!isLoading&&!error&&data){
+    setProducts(data);
+   }
+  }, [data]);
   const filteredProducts = products.filter(product => {
     console.log(product)
     if (activeTabValue === "Low Stock") {
@@ -45,10 +47,15 @@ const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
       const currentDate = new Date();
       const expiryDate = new Date(product?.expiry);
       return expiryDate <= currentDate;
+    }else if(activeTabValue==="Expiring"){
+      const currentDate =new Date();
+      const expiryDate=new Date(product?.expiry);
+      return expiryDate>currentDate&&(expiryDate.getTime()-currentDate.getTime())<=Number(30 * 24 * 60 * 60 * 1000)
     }
  
     return true;
   });
+  if(isLoading)return <Spinner/>
   return (
     <>
       {filteredProducts.map(product => (
@@ -57,7 +64,9 @@ const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
           <div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{product.batchNumber}</div>
           <div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{product.party}</div>
           {activeTabValue==='Excess'?(<div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{product.product.maxStock}</div>)
-          :(<div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{product.product.minStock}</div>)}
+          :(activeTabValue==='Expiring'||activeTabValue==='Expired'?(<div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{formatDateAndTime(product.expiry).formattedDate}</div>):(
+            <div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{product.product.minStock}</div>
+          ))}
           
           <div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{product.quantity}</div>
         </div>

@@ -20,7 +20,10 @@ import { RootState } from '@/lib/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { isAdminOfOrg, isManagerOfBranch } from '@/utils/stateChecks';
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
-
+import zIndex from '@mui/material/styles/zIndex';
+import useSWR from "swr";
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 const Navbar = () => {
   const router = useRouter() as any;
   const [isCardOpen, setIsCardOpen] = useState(false);
@@ -38,8 +41,16 @@ const Navbar = () => {
   };
   const currentRoute = usePathname();
   if (user.name === "" || currentRoute.startsWith("/auth")) return null;
-
-
+  const [newNotificationIndicator, setNewNotificationIndicator] = useState(false);
+  const [notifs,setNotifs]=useState<any[]>([]);
+  const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/getAll?orgId=${appState.currentOrgId}`,fetcher,{refreshInterval:60000,revalidateOnFocus:true})
+  useEffect(() => {
+   if (!isLoading && !error && data) {
+     setNotifs(data.allNotifs);
+     const hasNewNotifications = data.newNotifs?.length > 0;
+     setNewNotificationIndicator(hasNewNotifications);
+   }
+ }, [data]); 
 
   return (
     <div className='h-16 shadow-md min-w-screen box-border flex items-center justify-between text-textGrey1 bg-navBar z-100'>
@@ -89,9 +100,17 @@ const Navbar = () => {
             {/* {isDropdownOpen && (
             )} */}
           <Link className='no-underline flex pl-6' href='#'>
-            <div className='flex items-center justify-center' onClick={handleClick}>
-              <Image src={notification} alt='notification' />
+          <div className="flex items-center justify-center" onClick={handleClick}>
+            <div className="relative rounded-full ">  {/* Container styles */}
+            {newNotificationIndicator && (  
+        <svg width="20" height="20" viewBox="0 0 10 8" className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+          <circle cx="7" cy="1" r="2" fill="red" />
+        </svg>
+      )}
+      <Image src={notification} alt="notification" className="w-full h-full object-cover" />
             </div>
+          </div>
+
           </Link>
           <Link className='no-underline flex pl-6' href='/profile'>
             <div className='text-sm flex items-center justify-center rounded-full overflow-hidden border border-solid border-gray-300'>
@@ -105,16 +124,17 @@ const Navbar = () => {
           </div>
         </Link>
         {isCardOpen && (
-          <div className="absolute top-[4rem] flex flex-col right-[5rem] w-[443px] max-h-[50rem] pt-6 pb-5 bg-zinc-800 shadow justify-center items-start gap-[5px] rounded-[20px] z-[100]">
-            <div className="text-gray-100 text-xl font-medium  px-6">
-              Notifications
-            </div>
-            <NotificationList />
-            <NotificationList />
-            <NotificationList />
-            <NotificationList />
-          </div>
-        )}
+  <div className="absolute top-[4rem] flex flex-col right-[5rem] w-[443px] max-h-[35rem] pt-6 pb-5 bg-zinc-800 shadow justify-center items-start gap-[5px] rounded-[20px] z-[100]">
+    <div className="text-gray-100 text-xl font-medium font-['Roboto'] px-6">
+      Notifications
+    </div>
+    <div className="notification-list-container overflow-auto h-[calc(50rem - 8.5rem)]"> {/* Adjust height as needed */}
+      <NotificationList  notifs={notifs} isLoading={isLoading}  />
+    </div>
+  </div>
+)}
+
+
       </div>
     </div>
   );

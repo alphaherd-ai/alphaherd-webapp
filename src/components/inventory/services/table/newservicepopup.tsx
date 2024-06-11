@@ -65,11 +65,15 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
     };
 
     const Providers =[
-        {}
+        { value: 'GST@0%.', label: 'GST@0%.' },
+        { value: 'GST@5%.', label: 'GST@5%.' },
+        { value: 'GST@12%.', label: 'GST@12%.' }, // this provider is employee of the clinic
     ]
     
     const LinkProducts =[
-        {}
+        { value: 'GST@0%.', label: 'GST@0%.' },
+        { value: 'GST@5%.', label: 'GST@5%.' },
+        { value: 'GST@12%.', label: 'GST@12%.' },
     ]
 
     const gstOptions = [

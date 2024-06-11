@@ -17,7 +17,8 @@ export  const GET=async (req: NextRequest,
             id:'asc'
           }],
           include:{
-            product:true
+            product:true,
+            inventoryTimeline:true
           }
         });
         return new Response(JSON.stringify(products), {

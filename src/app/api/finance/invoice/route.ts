@@ -6,145 +6,126 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const GET = async (req: NextRequest, res: NextResponse) => {
 
-  console.log("INSIDE API");
 
-  var doc = new jsPDF({ putOnlyUsedFonts: true, orientation: "landscape" });
-  doc.setFontSize(20)
-  doc.text("Pet First 24/7 Hospital", 65, 6);
-  doc.setFontSize(14)
-  doc.text("#16, 1st Cross, 515 Colony, HAL 3rd Stage, New Thippasandra, Bangalore-560075 ", 65, 14, { maxWidth: 100 });
-  doc.setLineWidth(0.3);
-  doc.line(0, 30, 420, 30);
+  var doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4'
+});
 
-  doc.setFontSize(20)
-  doc.text("Transaction details", 20, 40);
-  doc.setFontSize(16)
-  doc.text("Subject: Sale", 20, 50);
-  doc.text("Mode: Cash", 100, 50);
-  doc.text("Amount Received: 1000", 180, 50);
-  doc.text("Date: 21/12/2023", 20, 60);
-  doc.text("Receipt No.: RE00001", 100, 60);
-  doc.text("Balance due: 0", 180, 60);
-  doc.setLineWidth(0.3);
-  doc.line(0, 65, 420, 65);
+var pageHeight = doc.internal.pageSize.height;
+let y = 10;
+let lineHeight = 6;
 
-  doc.setFontSize(20)
-  doc.text("Sales Invoice details", 20, 75);
-  doc.setFontSize(16)
-  doc.text("Invoice No.: SI-00001", 20, 85);
-  doc.text("Date: 21/12/2023", 100, 85);
-  doc.text("Billed to: Quentin Tarantino", 20, 95);
-  doc.text("Phone No.: +91 99999 99999", 100, 95);
-  doc.text("Pay by: 23/12/2023", 20, 105);
-  doc.text("Last date of return: 28/12/2023", 100, 105);
-  doc.text("Notes: ", 20, 115);
+// http://localhost:3000/alphaherd/api/finance/invoice
 
-
-  doc.setFontSize(16)
-  doc.text("No.", 20, 135);
-  doc.text("Product/Service", 60, 135);
-  doc.text("Qty.", 150, 135, { maxWidth: 40 });
-  doc.text("Unit price", 190, 135);
-  doc.setLineWidth(0.3);
-  doc.line(15, 140, 260, 140);
-
-  var products = [{ product_name: "Paracetamol", quantitiy: "5 Strips", unit_price: "100", amount: "2700.00" },
-  { product_name: "Paracetamol", quantitiy: "5 Strips", unit_price: "100", amount: "2700.00" },
-  { product_name: "Paracetamol", quantitiy: "5 Strips", unit_price: "100", amount: "2700.00" },
-  { product_name: "Paracetamol", quantitiy: "5 Strips", unit_price: "100", amount: "2700.00" },
-  { product_name: "Paracetamol", quantitiy: "5 Strips", unit_price: "100", amount: "2700.00" },
-  { product_name: "Paracetamol", quantitiy: "5 Strips", unit_price: "100", amount: "2700.00" },
-  { product_name: "Paracetamol", quantitiy: "5 Strips", unit_price: "100", amount: "2700.00" },
-  { product_name: "Paracetamol", quantitiy: "5 Strips", unit_price: "100", amount: "2700.00" },
-  { product_name: "Paracetamol", quantitiy: "5 Strips", unit_price: "100", amount: "2700.00" },
-  { product_name: "Paracetamol", quantitiy: "5 Strips", unit_price: "100", amount: "2700.00" },
-  { product_name: "Paracetamol", quantitiy: "5 Strips", unit_price: "100", amount: "2700.00" },
-  { product_name: "Paracetamol", quantitiy: "5 Strips", unit_price: "100", amount: "2700.00" },
-  { product_name: "Paracetamol", quantitiy: "5 Strips", unit_price: "100", amount: "2700.00" },
-  { product_name: "Paracetamol", quantitiy: "5 Strips", unit_price: "100", amount: "2700.00" },
-  { product_name: "Paracetamol", quantitiy: "5 Strips", unit_price: "100", amount: "2700.00" },
-  { product_name: "Paracetamol", quantitiy: "5 Strips", unit_price: "100", amount: "2700.00" },
-  { product_name: "Paracetamol", quantitiy: "5 Strips", unit_price: "100", amount: "2700.00" },
-  { product_name: "Paracetamol", quantitiy: "5 Strips", unit_price: "100", amount: "2700.00" },
-  { product_name: "Paracetamol", quantitiy: "5 Strips", unit_price: "100", amount: "2700.00" },
-  ];
-
-  let y = 140;
-
-  for (let i = 0; i < products.length; i++) {
-    y += 15;
-    doc.text("No.", 20, y);
-    doc.text("Product/Service", 60, y);
-    doc.text("Qty.", 150, y, { maxWidth: 40 });
-    doc.text("Unit price", 190, y);
-    if (y > 210) {
-      y = 10;
-      doc.addPage();
+function addText(text, x, y, fontSize = 10, align = 'left', weight = "regular"){
+    y = checkPageBreak(doc, y, pageHeight);
+    if(weight!=="regular"){
+      doc.setFontSize(fontSize,weight);
     }
-  }
+    else doc.setFontSize(fontSize);
+    doc.text(text, x, y, { align: align });
+    return y;
+};
 
-  y += 10;
-  if (y > 210) {
-    y = 10;
-    doc.addPage();
-  }
+function checkPageBreak(doc, y, pageHeight, margin){
+    if (y > pageHeight - margin) {
+        doc.addPage();
+        return 10; // Reset y to the top margin
+    }
+    return y;
+};
 
-  doc.setLineWidth(0.3);
-  doc.line(140, y, 260, y);
+function addRow(data, y, columnPositions, rowHeight = 7){
+    y = checkPageBreak(doc, y, pageHeight);
+    data.forEach((text, index) => {
+        addText(text, columnPositions[index], y);
+    });
+    return y + rowHeight;
+};
 
-  y+=10;
-if(y>210){
-    y=10;
-    doc.addPage();
-}
-doc.text("Subtotal", 100, y,{maxWidth : 40});
-doc.text("Subtotal", 150, y,{maxWidth : 40});
-doc.text("2500", 190, y);
+function addLine(startX, startY, endX, endY){
+    startY = checkPageBreak(doc, startY, pageHeight);
+    endY = checkPageBreak(doc, endY, pageHeight);
+    doc.line(startX, startY, endX, endY);
+};
 
-y+=5;
-if(y>210){
-    y=10;
-    doc.addPage();
-}
-doc.setLineWidth(0.3);
-doc.line(90, y, 260, y);
+// Add header
+addText('Pet First 24/7 Hospital', 105, y, 20, 'center','bold');
+y += 8;
+addText('416, 1st Cross, 5th Colony, HAL 3rd Stage, New Tippasandra, Bangalore-560075', 105, y, 11, 'center');
+y += 5;
+addText('+91 9834324324 · caravet@gmail.com · petsfirsthospital.in', 105, y, 11, 'center');
 
-y+=15;
-if(y>210){
-    y=10;
-    doc.addPage();
-}
-doc.text("Subtotal", 100, y,{maxWidth : 40});
-doc.text("Subtotal", 150, y,{maxWidth : 40});
-doc.text("2500", 190, y);
+// Add logo
+// Assuming the logo path is correct
+// doc.addImage('/path/to/logo.png', 'PNG', 10, y - 20, 30, 30);
 
-y+=5;
-if(y>210){
-    y=10;
-    doc.addPage();
-}
+y += lineHeight;
 
-doc.setLineWidth(0.3);
-doc.line(90, y, 260, y);
+// Add line below header
+addLine(10, y, 200, y);
+y += lineHeight;
 
-y+=15;
-if(y>210){
-    y=10;
-    doc.addPage();
-}
+// Add transaction details
+addText('Transaction details', 10, y, 12);
+y += 5;
+y = addRow(['Subject: Sale', 'Mode: Cash'], y, [10, 110]);
+y = addRow(['Amount Received: 2,624', 'Balance due: 0'], y, [10, 110]);
+y = addRow(['Date: 21/12/2023', 'Receipt No.: RE00001'], y, [10, 110]);
 
-doc.text("Subtotal", 100, y,{maxWidth : 40});
-doc.text("Subtotal", 150, y,{maxWidth : 40});
-doc.text("2500", 190, y);
 
-y+=5;
-if(y>210){
-    y=10;
-    doc.addPage();
-}
+// Add line below transaction details
+addLine(10, y, 200, y);
+y += lineHeight;
 
-doc.setLineWidth(0.3);
-doc.line(90, y, 260, y);
+// Add sales invoice details
+addText('Sales Invoice details', 10, y, 12);
+y += 5;
+y = addRow(['Invoice No.: SI-00001', 'Date: 21/12/2023'], y, [10, 110]);
+y = addRow(['Billed to: Quentin Tarantino', 'Phone No.: +91 99999 99999'], y, [10, 110]);
+y = addRow(['Pay by: 23/12/2023', 'Last date of return: 28/12/2023'], y, [10, 110]);
+y = addRow(['Notes:'], y, [10]);
+
+
+// Add line below sales invoice details
+addLine(10, y, 200, y);
+y += lineHeight;
+
+// Add table headers
+addText('No.', 10, y, 10);
+addText('Product/Service', 30, y, 10);
+addText('Qty.', 110, y, 10);
+addText('Unit price', 130, y, 10);
+addText('Amount', 160, y, 10);
+y += 7;
+
+y = checkPageBreak(doc, y, pageHeight, 20);
+
+// Add table rows
+const rows = [
+    ['1', 'Metoclopramide', '5 strips', '400', '2,000'],
+    ['2', 'General Consultation', '1', '500', '500'],
+];
+rows.forEach(row => {
+    y = addRow(row, y, [10, 30, 110, 130, 160]);
+    y = checkPageBreak(doc, y, pageHeight, 20);
+});
+
+
+addLine(10, y, 200, y);
+y += lineHeight;
+
+// Add summary
+y = addRow(['Subtotal', '2,500'], y, [150, 180]);
+y = addRow(['Taxable Value', '2,000'], y, [150, 180]);
+y = addRow(['Tax Rate', '18% GST'], y, [150, 180]);
+y = addRow(['Tax Amount', '360'], y, [150, 180]);
+y = addRow(['Shipping', '0'], y, [150, 180]);
+y = addRow(['Total Discounts', '-236'], y, [150, 180]);
+addText('Grand Total', 150, y, 12);
+addText('2,624', 180, y, 12);
 
   if (req.method !== 'GET') {
     return new Response('Method not allowed', { status: 405 });
