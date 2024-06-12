@@ -12,6 +12,7 @@ import { useSearchParams } from 'next/navigation';
 import { useAppSelector } from '@/lib/hooks';
 import formatDateAndTime from '@/utils/formateDateTime';
 import useSWR from 'swr';
+import Loading from '@/app/loading';
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 const ExistingsaleEstimateTable = () => {
@@ -77,7 +78,7 @@ const ExistingsaleEstimateTable = () => {
 
 
 
-    if(isLoading) return <Spinner/>
+    if(isLoading) return (<Loading/>)
 
     return (
         <>  

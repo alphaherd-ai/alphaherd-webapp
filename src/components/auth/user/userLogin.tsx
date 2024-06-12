@@ -16,12 +16,12 @@ export const UserAccountSetup = (props : any) => {
 
     const [showPassword, setShowPassword] = useState(false);
     const [showPassword1, setShowPassword1] = useState(false);
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-  const togglePasswordVisibility1 = () => {
-    setShowPassword1(!showPassword1);
-  };
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
+    const togglePasswordVisibility1 = () => {
+        setShowPassword1(!showPassword1);
+    };
 
 
     return (

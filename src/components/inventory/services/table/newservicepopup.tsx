@@ -124,8 +124,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                         {/* <input className="w-[576px] h-[88px] mt-[8px]" placeholder="Provide details of the service" type="text" name="description" onChange={(e) => handleChange("description", e.target.value)} /> */}
                     </div>
                     <div className="self-end items-start gap-4 flex">
-                        <button onClick={handleContinueClick} className="px-4 py-2.5 bg-gray-200 rounded-[5px] justify-start items-center gap-1 flex border-0 outline-none cursor-pointer">
-                            <div className="text-neutral-400 text-base font-bold ">Continue</div>
+                        <button onClick={handleContinueClick} className="px-4 py-2.5 bg-bg-zinc-900 rounded-[5px] justify-start items-center gap-1 flex border-0 outline-none cursor-pointer">
+                            <div className="text-white text-base font-bold ">Continue</div>
                             <div className="w-6 h-6">
                                 <Image src={Arrow} alt="Arrow" />
                             </div>
@@ -215,8 +215,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                         </div>
                     </div>
                     <div className="self-end items-start gap-6 flex">
-                        <button onClick={handleSaveClick} disabled={buttonDisabled} className="px-4 py-2.5 bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0 outline-0 cursor-pointer hover:shadow transition">
-                            <div className="text-neutral-400 text-base font-bold ">Save</div>
+                        <button onClick={handleSaveClick} disabled={buttonDisabled} className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex border-0 outline-0 cursor-pointer hover:shadow transition">
+                            <div className="text-white text-base font-bold ">Save</div>
                         </button>
                     </div>
                 </div>

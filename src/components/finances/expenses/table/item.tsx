@@ -5,6 +5,7 @@ import useSWR from 'swr'
 import { Spinner } from '@nextui-org/react'
 import formatDateAndTime from '@/utils/formateDateTime'
 import { useAppSelector } from '@/lib/hooks';
+import Loading from '@/app/loading';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
@@ -18,7 +19,7 @@ const appState = useAppSelector((state) => state.app);
   setExpenses(data);
   }
   },[data]);
-  if(isLoading)return <Spinner />
+  if(isLoading)return (<Loading/>)
   return (
   <div>
     {expenses?.map(expense=>

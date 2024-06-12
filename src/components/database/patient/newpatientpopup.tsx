@@ -27,7 +27,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
     const [formData, setFormData] = useState<any>({});
     const [clients, setClients] = useState<{ value: string; label: string }[]>([]);
     const [startDate, setStartDate] = useState(new Date());
-    const [selectedGender, setSelectedGender] = useState('female');
+    const [selectedGender, setSelectedGender] = useState('');
     const appState = useAppSelector((state) => state.app)
     const [isSaveDisabled, setIsSaveDisabled] = useState(true);
     useEffect(() => {
@@ -130,9 +130,9 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 <div className="text-gray-500 text-xl font-medium ">Add Patient</div>
                 <div className="text-textGrey2 text-base font-medium ">Ready to welcome a new pet? Enter their details below.</div>
                 <div className="flex items-center gap-[48px] ">
-                    <div className="w-[8rem] text-gray-500 text-base font-medium ">Patient Name*</div>
+                    <div className="w-[8rem] text-gray-500 text-base font-medium ">Patient Name<span className="text-[red]">*</span></div>
                     <div>
-                        <input className="w-[25rem] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="patientName" onChange={(e) => handleChange("patientName", e.target.value)} />
+                        <input className="w-[25rem] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="patientName" onChange={(e) => handleChange("patientName", e.target.value)} />
                     </div>
                 </div>
 
@@ -158,7 +158,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 <div className="flex items-center gap-[120px]">
                     <div className="text-gray-500 text-base font-medium ">Species</div>
                     <div>
-                        <input className="w-[25rem] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="species" onChange={(e) => handleChange("species", e.target.value)} />
+                        <input className="w-[25rem] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="species" onChange={(e) => handleChange("species", e.target.value)} />
                     </div>
                 </div>
                 <div className="flex items-center gap-[95px] w-full">
@@ -190,6 +190,10 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                                 <div className="text-gray-500 text-base font-medium w-[10rem]">Date of Birth:</div>
                                 <div className="w-full relative">
                                     <DatePicker
+                                        peekNextMonth
+                                        showMonthDropdown
+                                        showYearDropdown
+                                        dropdownMode="select"
                                         className="w-[25rem]"
                                         selected={startDate}
                                         onChange={(date:any) => setStartDate(date as Date)}
@@ -197,7 +201,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                                         customInput={
                                             <div className="relative">
                                                 <input
-                                                    className="w-[25rem] h-9 text-textGrey2 text-base font-medium px-2 rounded border border-solid border-borderText focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                                    className="w-[25rem] h-9 text-textGrey2 text-base font-medium px-2 rounded border border-solid border-borderGrey focus:border focus:border-textGreen outline-none"
                                                     value={startDate.toLocaleDateString()}
                                                     readOnly
                                                 />
@@ -214,12 +218,12 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                                 </div>
                             </div>
                 <div className="flex items-center gap-[140px] w-full">
-                    <div className="text-gray-500 text-base font-medium ">Age*</div>
-                    <div className="flex gap-[4rem]">
-                        <div className="flex justify-start items-center gap-4">
-                            <div className="w-8 h-9 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
+                    <div className="text-gray-500 text-base font-medium ">Age<span className="text-[red]">*</span></div>
+                    <div className="flex gap-4">
+                        <div className="flex justify-start items-center gap-1">
+                            <div className="w-12 h-9 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
                                 <input
-                                    className="w-full h-full text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]"
+                                    className="w-full h-full text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
                                     type="text"
                                     min="0"
                                     name="years"
@@ -228,10 +232,10 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                             </div>
                             <div className="text-gray-500 text-base font-medium ">Years</div>
                         </div>
-                        <div className="flex justify-start items-center gap-4">
-                            <div className="w-8 h-9 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
+                        <div className="flex justify-start items-center gap-1">
+                            <div className="w-12 h-9 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
                                 <input
-                                    className="w-full h-full text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]"
+                                    className="w-full h-full text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
                                     type="text"
                                     min="0"
                                     name="months"
@@ -240,10 +244,10 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                             </div>
                             <div className="text-gray-500 text-base font-medium ">Months</div>
                         </div>
-                        <div className="flex justify-start items-center gap-4">
-                            <div className="w-8 h-9 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
+                        <div className="flex justify-start items-center gap-1">
+                            <div className="w-12 h-9 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
                                 <input
-                                    className="w-full h-full text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]"
+                                    className="w-full h-full text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
                                     type="text"
                                     min="0"
                                     name="days"
@@ -276,7 +280,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 </div>
                 <div className=" ml-[2rem] w-[576px] h-6 px-[136px] justify-start items-center gap-4 flex">
                     <div className="grow shrink basis-0 self-stretch justify-start items-center gap-2 flex">
-                         <input className="mt-1 accent-teal-500 text-4xl" type="checkbox" defaultChecked />
+                         <input className="mt-1 accent-teal-500 text-4xl" type="checkbox" />
                         <div className=" text-teal-400 text-base font-medium ">Mark as inpatient</div>
                     </div>
                 </div>
@@ -301,9 +305,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 </div>
             </div>
         </div >
-
-
-    </>;
+    </>
 }
 
 export default PatientPopup;

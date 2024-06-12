@@ -3,6 +3,7 @@ import Image from "next/image";
 import React, { useState } from 'react';
 import { Tooltip, Button } from "@nextui-org/react";
 import Link from 'next/link';
+import arrow from "../../../../assets/icons/inventory/cash=Right, Color=Green.svg"
 import closeicon from "../../../../assets/icons/inventory/closeIcon.svg";
 import arrowicon from "../../../../assets/icons/inventory/arrow.svg";
 import Select from 'react-select';
@@ -99,7 +100,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                 <div className="flex items-center gap-[87px]">
                     <div className="text-gray-500 text-base font-medium ">Name*</div>
                     <div>
-                        <input className="w-[440px] h-9 rounded-md text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300" type="text" name="name" onChange={(e) => handleChange("name", e.target.value)} />
+                        <input className="w-[440px] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="name" onChange={(e) => handleChange("name", e.target.value)} />
                     </div>
                 </div>
                 <div className="flex items-center gap-[70px] w-full">
@@ -120,7 +121,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                 <div className="flex items-center gap-[55px]">
                     <div className="text-gray-500 text-base font-medium w-[5rem]">HSN Code</div>
                     <div>
-                        <input className="w-[440px] h-9 rounded-md text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300" type="text" name="hsnCode" onChange={(e) => handleChange("hsnCode", e.target.value)} />
+                        <input className="w-[440px] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="hsnCode" onChange={(e) => handleChange("hsnCode", e.target.value)} />
                     </div>
                 </div>
                 <div className="flex items-center gap-[110px] w-full">
@@ -156,12 +157,12 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                 <div className="flex-col">
                     <div className="text-gray-500 text-base font-medium ">Description</div>
                     {/* <input className="w-[576px] h-[88px] mt-[8px]" placeholder="Provide details of the service" type="text" name="description" onChange={(e) => handleChange("description", e.target.value)} /> */}
-                    <textarea className="text-gray-400 text-base font-medium mt-[8px] px-2 py-2 outline-none border border-solid border-gray-300 rounded-md" placeholder="Provide details of the service" rows={5} cols={68} onChange={(e) => handleChange("description", e.target.value)}></textarea>
+                    <textarea className="m mt-[8px] py-2 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" placeholder="Provide details of the service" rows={5} cols={65} onChange={(e) => handleChange("description", e.target.value)}></textarea>
                 </div>
                 <div className="self-end items-start gap-6 flex">
-                    <button onClick={handleContinueClick} className="px-4 py-2.5 bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer">
-                        <div className="text-neutral-400 text-base font-bold ">Continue</div>
-                        <Image src={arrowicon} alt="arrow"></Image>
+                    <button onClick={handleContinueClick} className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer">
+                        <div className="text-white text-base font-bold ">Continue</div>
+                        <Image src={arrow} alt="arrow"></Image>
                     </button>
                 </div>
             </div>
@@ -214,8 +215,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                     </div>
                    
                     <div className="w-[545px] flex justify-end mt-[5px] cursor-pointer">
-                        <button onClick={handleSaveClick} disabled={buttonDisabled} className="px-5 py-2.5 bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none">
-                            <div className="text-neutral-400 text-base font-bold ">Save</div>
+                        <button onClick={handleSaveClick} disabled={buttonDisabled} className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none">
+                            <div className="text-white text-base font-bold ">Save</div>
                         </button>
                     </div>
                 </div>

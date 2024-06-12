@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useAppSelector } from '@/lib/hooks';
 import { Spinner} from '@nextui-org/react';
 import useSWR from 'swr';
+import Loading from '@/app/loading';
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 interface Clients {
     id: number;
@@ -65,7 +66,7 @@ const DatabasePatientTableItem = () => {
                 
             
     }, [fetchedClients,fetchedPatients]);
-if(isPatientLoading)return <Spinner/>
+if(isPatientLoading)return (<Loading/>)
     return (
         <>
             {patients?.map(patient => (
