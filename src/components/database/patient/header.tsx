@@ -128,21 +128,22 @@ const DatabasePatientHeader = () => {
         </Dropdown>
     </div>
 
-    <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '>
+    {/* <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '> */}
       
-        <Popover placement="bottom-end" showArrow offset={10}>
-            <PopoverTrigger>
-                <Button color="gray-400"
+        
+                    <Button
                     variant="solid"
-                    className="capitalize flex border-none bg-black text-white rounded-lg "  onClick={togglePopup}>  New Patients
-                    <div className='flex pl-2'><Image src={DownArrow} alt='DownArrow' className='w-4 h-4 ' /></div></Button>
-            </PopoverTrigger>
-  
-        </Popover>
+                    className="capitalize px-4 py-2.5 flex border-none bg-black text-white rounded-lg "  onClick={togglePopup}>
+                        <div className='flex'>
+                            <Image src={Add} alt='Add' className='w-3 h-3 ' />
+                        </div>
+                        New Patients
+                    </Button>
+            
 
 
 
-    </div>
+    {/* </div> */}
 </div>
 </div >
 
