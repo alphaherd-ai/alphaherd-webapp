@@ -128,17 +128,18 @@ const DatabaseClientHeader = () => {
         </Dropdown>
     </div>
 
-    <div className='flex items-center  justify-between rounded-lg '>
+    {/* <div className='flex items-center  justify-between rounded-lg '> */}
       
         
-                <Button color="gray-400"
+                <Button
                     variant="solid"
-                    className="capitalize flex border-none bg-black h-9 cursor-pointer text-white rounded-lg gap-3" onClick={togglePopup}><div className='flex'><Image src={Add} alt='Add' className='w-4 h-4 ' /></div>Add Clients
+                    className="capitalize px-4 py-2.5 flex border-none bg-black text-white rounded-lg "  onClick={togglePopup}>
+                        <div className='flex'><Image src={Add} alt='Add' className='w-3 h-3 ' /></div>Add Clients
                 </Button>
             
         
 
-    </div>
+    {/* </div> */}
 </div>
 </div >
 

@@ -236,26 +236,39 @@ const handleAddItem= useCallback(() => {
 }, [items]);
 
 const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
-    console.log(selectedProduct)
+    console.log(selectedProduct);
     if (selectedProduct.value) {
-        try {
-            const data=products.find((product)=>product.value.id==selectedProduct.value.id)
-            setSelectedProduct(data);
-            const updatedItems = [...items];
-            updatedItems[index] = {
-                ...updatedItems[index],
-                quantity: data.value.quantity,
-                productId:selectedProduct.value.id,
-                itemName:data.value.itemName
-            };
-            setItems(updatedItems);   
-            const productBatches= batches?.filter((batch)=>batch.value.productId==selectedProduct.value.id)
-            setFilteredBatches(productBatches);
-        } catch (error) {
-            console.error("Error fetching product details from API:", error);
-        }
+      try {
+        const data = products.find((product) => product.value.id === selectedProduct.value.id);
+        setSelectedProduct(data);
+        const updatedItems = [...items];
+        updatedItems[index] = {
+          ...updatedItems[index],
+          quantity: data.value.quantity,
+          productId: selectedProduct.value.id,
+          itemName: data.value.itemName,
+        };
+        setItems(updatedItems);
+
+        // Set first element of filteredBatches as default value for batches
+        const productBatches = batches?.filter((batch) => batch.value.productId === selectedProduct.value.id);
+        setFilteredBatches(productBatches);
+        const defaultBatch = productBatches?.[0];
+        setItems((prevItems) =>
+          prevItems.map((item, itemIndex) =>
+            itemIndex === index ? { ...item, id: defaultBatch?.value?.id,
+                quantity: defaultBatch?.value?.quantity ,
+                batchNumber: defaultBatch?.value?.batchNumber,
+                expiry:  defaultBatch?.value?.expiry,
+                sellingPrice:  defaultBatch?.value?.sellingPrice,
+                productId:defaultBatch?.value?.productId } : item
+          )
+        );
+      } catch (error) {
+        console.error("Error fetching product details from API:", error);
+      }
     }
-}, [items, products,setBatches]);
+  }, [items, products]);
 const handleBatchSelect = useCallback(async (selectedProduct: any, index: number) => {
     if (selectedProduct.value) {
         try {
@@ -365,7 +378,7 @@ useEffect(() => {
                                 <div className='flex text-gray-500 text-base font-medium w-1/12 '></div>
                             </div>
                             {items.map((item:any,index:number) => (
-                                <div key={item.id} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400 py-2'>
+                                <div key={index+1} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400 py-2'>
                                     <div className='w-[3rem] flex items-center text-neutral-400 text-base font-medium '>{index+1}.</div>
                                     <div className='w-[15rem] flex items-center text-neutral-400 text-base font-medium'>
                                     {id === null ? (
@@ -461,8 +474,8 @@ useEffect(() => {
                                             item.gst
                                         )}
                                     </div>
-                                    <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>{`₹${(item.sellingPrice*item.quantity * item.gst).toFixed(2)}`}</div>
-                                    <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium'>{`₹${(item.quantity * item.sellingPrice +item.sellingPrice*item.quantity*item.gst).toFixed(2)}`}</div>
+                                    <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>{`₹${((item?.sellingPrice*item?.quantity * item?.gst)||0).toFixed(2)}`}</div>
+                                    <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium'>{`₹${((item?.quantity * item?.sellingPrice +item?.sellingPrice*item.quantity*item.gst)||0).toFixed(2)}`}</div>
                                     <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
                                         <button className="border-0">
                                             <Image src={sellicon} alt="sell" ></Image>
@@ -479,7 +492,7 @@ useEffect(() => {
                                 <div className='flex text-gray-500 text-base font-medium w-[15rem]'>Total</div>
                                 <div className='flex text-gray-500 text-base font-medium w-[10rem]'></div>
                                 <div className='flex text-gray-500 text-base font-medium w-[10rem]'></div>
-                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>{items.reduce((acc:any, item:any) => acc + item.quantity, 0)} Items</div>
+                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>{(items.reduce((acc:any, item:any) => acc + item.quantity, 0))||0} Items</div>
                                 
                                 <div className='flex text-gray-500 text-base font-medium w-[10rem]'>
                                     <Select
@@ -496,8 +509,8 @@ useEffect(() => {
                                         }}
                                     />
                                 </div>
-                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>{`₹${items.reduce((acc:any, item:any) => acc + item.quantity * item.gst*item.sellingPrice , 0).toFixed(2)}`}</div>
-                                <div className='flex text-gray-500 text-base font-medium w-1/12' >{`₹${items.reduce((acc:any, item:any) => acc + item.quantity * item.sellingPrice +item.quantity*item.gst*item.sellingPrice, 0).toFixed(2)}`}</div>
+                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>{`₹${(items.reduce((acc:any, item:any) => acc + item.quantity * item.gst*item.sellingPrice , 0)||0).toFixed(2)}`}</div>
+                                <div className='flex text-gray-500 text-base font-medium w-1/12' >{`₹${(items.reduce((acc:any, item:any) => acc + item.quantity * item.sellingPrice +item.quantity*item.gst*item.sellingPrice, 0)||0).toFixed(2)}`}</div>
                                 <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
                             </div>
                         </div>

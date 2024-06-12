@@ -22,6 +22,7 @@ import { isAdminOfOrg, isManagerOfBranch } from '@/utils/stateChecks';
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
 import zIndex from '@mui/material/styles/zIndex';
 import useSWR from "swr";
+import { boolean } from 'zod';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 const Navbar = () => {
@@ -40,8 +41,7 @@ const Navbar = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
   const currentRoute = usePathname();
-  if (user.name === "" || currentRoute.startsWith("/auth")) return null;
-  const [newNotificationIndicator, setNewNotificationIndicator] = useState(false);
+  const [newNotificationIndicator, setNewNotificationIndicator] = useState<boolean>(false);
   const [notifs,setNotifs]=useState<any[]>([]);
   const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/getAll?orgId=${appState.currentOrgId}`,fetcher,{refreshInterval:60000,revalidateOnFocus:true})
   useEffect(() => {
@@ -51,6 +51,7 @@ const Navbar = () => {
      setNewNotificationIndicator(hasNewNotifications);
    }
  }, [data]); 
+ if (user.name === "" || currentRoute.startsWith("/auth"))return null;
 
   return (
     <div className='h-16 shadow-md min-w-screen box-border flex items-center justify-between text-textGrey1 bg-navBar z-100'>
@@ -118,7 +119,7 @@ const Navbar = () => {
             </div>
           </Link>
         </div>
-        <Link className='no-underline p-4 flex items-center justify-center h-full' href='/settings'>
+        <Link className='no-underline p-4 flex items-center justify-center h-full' href='/settings/organisation/myorg'>
           <div className='text-sm flex items-center justify-center rounded-full'>
             <Image src={alphaherd} alt='alphaherd' className='w-7 h-7' />
           </div>
