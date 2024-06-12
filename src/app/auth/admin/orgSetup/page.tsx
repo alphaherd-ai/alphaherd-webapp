@@ -25,7 +25,7 @@ const formSchema = z.object({
   adminName: z.string(),
   adminEmail: z.string().email('Invalid Email Address'),
   adminPhoneNo: z.string().length(10, 'Invalid Phone No.'),
-  adminAltPhoneNo: z.string().length(10, 'Invalid Phone No.'),
+  adminAltPhoneNo: z.string(),
   adminPassword: z.string().min(4, 'Admin Password must be at least 4 characters'),
   reAdminPassword: z.string().min(4, 'Admin Password must be at least 4 characters')
 });
@@ -52,6 +52,12 @@ const OrgSetup = () => {
     reAdminPassword: '',
   }
 
+  var stepFields = [
+    ["orgName"],
+    ["orgEmail","gstNo","phoneNo","branchName","address","state","pincode","description"],
+    ["adminName","adminEmail","adminPhoneNo","adminAltPhoneNo","adminPassword","reAdminPassword"]
+  ];
+
   const [data, setData] = useState(initialData);
 
   const [validationErrors, setValidationErrors] = useState(data);
@@ -62,10 +68,33 @@ const OrgSetup = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    try{
+      setData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+      formSchema.parse({...data,[name]: value,});
+      setValidationErrors((prevErrors) => {
+        let newErrors = prevErrors;
+        newErrors[name] = '';
+        return newErrors;
+      });
+    }
+    catch(err : any){
+      if (err instanceof z.ZodError) {
+        console.log(err.flatten());
+        let fieldErrors = err.flatten().fieldErrors;
+        console.log(fieldErrors);
+        let fields: string[] = Object.keys(fieldErrors);
+        if(fields.includes(name)){
+          setValidationErrors((prevErrors) => {
+            let newErrors = prevErrors;
+            newErrors[name] = fieldErrors[name].length > 0 ? fieldErrors[name][0] : '';
+            return newErrors;
+          });
+        }
+      }
+    }
   };
 
   const formSubmit = async (e: React.FormEvent) => {
@@ -130,7 +159,7 @@ const OrgSetup = () => {
       console.log(typeof(err))
       if (err instanceof z.ZodError) {
         console.log(err.flatten());
-        setValidationErrorsForForm(err,setValidationErrors);
+        setValidationErrorsForForm(err,setValidationErrors,activeTab,stepFields);
       } else {
         console.error('Error:', err);
         toast.error(err.message, {
@@ -146,11 +175,22 @@ const OrgSetup = () => {
         });
       }
     }
-    finally {
-      setActiveTab(0)
-    }
   }
 
+  function handleContinue(){
+    try{
+      formSchema.parse(data);
+      setActiveTab(prev => prev + 1);
+    }
+    catch(err : any){
+      if (err instanceof z.ZodError) {
+        console.log(err.flatten());
+        if(!setValidationErrorsForForm(err,setValidationErrors,activeTab,stepFields)){
+          setActiveTab(prev => prev + 1);
+        }
+      }
+    }
+  }
 
   const formElements = [
     <OrgNameSetup key="orgName" data={data} handleChange={handleChange} validationErrors={validationErrors} />,
@@ -169,7 +209,8 @@ const OrgSetup = () => {
                 formElements[activeTab]
               }
               <div className="flex justify-between px-[5rem] pb-[2rem]">
-                <button
+                {
+                  activeTab!==0 ? <button
                   className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0" disabled={activeTab === 0 ? true : false}
                   onClick={() => setActiveTab(prev => prev - 1)}>
                   <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
@@ -180,11 +221,12 @@ const OrgSetup = () => {
                       <Image src={continuebutton} alt="button" />
                     </div>
                   </div>
-                </button>
+                </button> : <div></div>
+                }
                 {
                   activeTab !== formElements.length - 1 ? <button className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0"
                     disabled={activeTab === formElements.length - 1 ? true : false}
-                    onClick={() => setActiveTab(prev => prev + 1)} >
+                    onClick={() => handleContinue()} >
                     <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
                       <div className="text-white text-sm font-bold font-['Satoshi']">
                         Continue
