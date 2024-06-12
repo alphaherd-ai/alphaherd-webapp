@@ -12,13 +12,22 @@ import { Tax } from '@prisma/client';
 const NewsaleEstimateTotalAmout = () => {
     const { tableData } = useContext(DataContext);
     const [selectedDiscount, setDiscount] = useState(0);
-    let totalAmount = 0;
+    let totalAmount = 0,totalAmountLow=0,totalAmountHigh=0,lowGrandTotal=0,highGrandTotal=0;
     tableData.forEach(data => {
-        totalAmount += (data.quantity * data.sellingPrice + data.quantity * data.gst*data.sellingPrice)||0;
+        if(data.lowQty==0&&data.highQty==0){
+            totalAmount += (data.quantity * data.sellingPrice + data.quantity * data.gst*data.sellingPrice)||0;
+        }
+        else {
+             totalAmountLow+=(data.lowQty*data.sellingPrice+data.lowQty*data.gst*data.sellingPrice)||0;
+             totalAmountHigh+=(data.highQty*data.sellingPrice+data.highQty*data.gst*data.sellingPrice)||0;
+        }
+        
     });
 
     const { totalAmountData, setTotalAmountData } = useContext(DataContext);
     const [grandAmt, setGrandAmt] = useState(totalAmount);
+    const [lowGrand,setLowGrand]=useState(totalAmountLow);
+    const [highGrand,setHighGrand]=useState(totalAmountHigh);
 
     const gstOptions = [
         { value: 0.18, label: Tax.GST_18 },
@@ -49,7 +58,13 @@ const NewsaleEstimateTotalAmout = () => {
 
     const updateGrandTotal = () => {
         const discountedAmount = (totalAmount - totalAmount * selectedDiscount)||0;
+        const lowDiscount=(totalAmountLow - totalAmountLow * selectedDiscount)||0;
+        const highDiscount=(totalAmountHigh - totalAmountHigh * selectedDiscount)||0;
         const newGrandTotal = discountedAmount + shipping + adjustment;
+         lowGrandTotal= lowDiscount+shipping+adjustment;
+         highGrandTotal= highDiscount+shipping+adjustment;
+         setLowGrand(lowGrandTotal);
+         setHighGrand(highGrandTotal);
         setGrandAmt(newGrandTotal);
         setTotalAmountData((prevData) => ({
             ...prevData,
@@ -73,7 +88,16 @@ const NewsaleEstimateTotalAmout = () => {
                             <div className="w-1/2 bg-white rounded-md ">
                                 <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">
                                     <div className="text-gray-500 text-base font-bold ">Subtotal</div>
-                                    <div className="text-right text-gray-500 text-base font-bold ">{totalAmount.toFixed(2)}</div>
+                                    <div className="text-right text-gray-500 text-base font-bold ">
+                                            {totalAmountLow === 0 && totalAmountHigh === 0 ? (
+                                                totalAmount.toFixed(2)
+                                            ) : (
+                                                <>
+                                                ₹{totalAmountLow.toFixed(2)} - ₹{totalAmountHigh.toFixed(2)}
+                                                </>
+                                            )}
+                                            </div>
+
                                 </div>
                                 <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
                                     <div className="text-gray-500 text-base font-bold ">Overall Discount</div>
@@ -117,7 +141,13 @@ const NewsaleEstimateTotalAmout = () => {
                                     </div>
                                 <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 rounded-b-md justify-between items-center gap-2.5    ">
                                     <div className="text-textGreen text-base font-bold ">Grand total</div>
-                                    <div className="text-right text-textGreen text-base font-bold">{(grandAmt).toFixed(2)}</div>
+                                    <div className="text-right text-textGreen text-base font-bold"> {totalAmountLow === 0 && totalAmountHigh === 0 ? (
+                                                grandAmt.toFixed(2)
+                                            ) : (
+                                                <>
+                                                ₹{lowGrand.toFixed(2)} - ₹{highGrand.toFixed(2)}
+                                                </>
+                                            )}</div>
                                 </div>
                             </div>
                         </div>

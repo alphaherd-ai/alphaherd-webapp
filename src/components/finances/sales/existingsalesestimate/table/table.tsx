@@ -12,6 +12,7 @@ import { useSearchParams } from 'next/navigation';
 import { useAppSelector } from '@/lib/hooks';
 import formatDateAndTime from '@/utils/formateDateTime';
 import useSWR from 'swr';
+//@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 const ExistingsaleEstimateTable = () => {
@@ -41,7 +42,9 @@ const ExistingsaleEstimateTable = () => {
                 sellingPrice:item.sellingPrice,
                 expiry:item.productBatch.expiry,
                 batchNumber:item.productBatch.batchNumber,
-                tax:item.taxAmount
+                tax:item.taxAmount,
+                lowQty:item.lowQty,
+                highQty:item.highQty
               }));
               setItems(itemData);
             }
@@ -130,14 +133,17 @@ const ExistingsaleEstimateTable = () => {
 
                                     </div>
                                     <div className='w-1/12  flex items-center text-textGrey2 text-base font-medium gap-[12px] '>
-                                      
-                                        <div>{item.quantity} Strips</div>
+                                      {item.lowQty==0&&item.highQty==0?
+                                      (<div>{item.quantity}</div>):
+                                      (<div>{item.lowQty} Strips</div>)
+                                    }
+                                        
                                       
                                     </div>
                                   
                                         <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[12px] '>
                                            
-                                            <div>{item.quantity2} Strips</div>
+                                            <div>{item.highQty} Strips</div>
                                             
                                         </div>
                                  
@@ -145,9 +151,39 @@ const ExistingsaleEstimateTable = () => {
                                     <div className="text-textGrey2 text-base  font-medium  "> {item.tax*100}%</div>
 
                                     </div>
-                                    <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium'>{`₹${(item.quantity*item.tax).toFixed(2)}`} </div>
-                                    <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium '>{`₹${(item.quantity * item.sellingPrice+item.quantity*item.tax).toFixed(2)}`}</div>
-                                   
+                                    <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>{item.lowQty!=0&&item.highQty!=0 ? (
+                                            '₹' +
+                                            ((item?.sellingPrice * item?.lowQty * item?.tax).toFixed(2) +
+                                                '-' +
+                                                (item?.sellingPrice * item?.highQty * item?.tax).toFixed(2) ||
+                                                0)
+                                            
+                                            ) : (
+                                            '₹' +
+                                            ((item?.sellingPrice * item?.quantity * item?.tax) || 0)
+                                            .toFixed(2)
+                                            )}</div>
+                                   <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium'>
+                                        {item.lowQty!=0&&item.highQty!=0 ? (
+                                            <>
+                                            {item?.lowQty && (
+                                                <>
+                                                ₹{(item?.sellingPrice * item?.lowQty * (1 + item?.tax)).toFixed(2) || 0}
+                                                     -{' '}
+                                                </>
+                                            )}
+                                            {item?.highQty && (
+                                                <>₹{(item?.sellingPrice * item?.highQty * (1 + item?.tax)).toFixed(2) || 0}
+                                                </>
+                                            )}
+                                            </>
+                                        ) : (
+                                            <>
+                                            ₹{(item?.quantity * item?.sellingPrice * (1 + item?.tax)).toFixed(2) || 0}
+                                               
+                                            </>
+                                        )}
+                                        </div>
                                 </div>
                             ))}
                             <div className='flex  w-full justify-evenly items-center box-border bg-gray-100  h-12  border-b border-neutral-400 text-gray-500 rounded-b-md'>
