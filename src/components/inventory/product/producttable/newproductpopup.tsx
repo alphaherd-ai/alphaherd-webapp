@@ -1,18 +1,25 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tooltip, Button } from "@nextui-org/react";
 import Link from 'next/link';
 import closeicon from "../../../../assets/icons/inventory/closeIcon.svg";
 import arrowicon from "../../../../assets/icons/inventory/arrow.svg";
 import Select from 'react-select';
-//import Distributors from '@/app/database/distributor/page';
 import { useAppSelector } from "@/lib/hooks";
-import { Distributors } from "@prisma/client";
+import axios from "axios";
+import Distributors from "@/app/database/distributor/page";
+
 
 type PopupProps = {
     onClose: () => void;
 }
+
+interface Distributors{
+    id:string,
+    distributorName:string
+}
+
 
 
 const Popup: React.FC<PopupProps> = ({ onClose }) => {
@@ -20,9 +27,9 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
     const [formData, setFormData] = useState<any>({});
     const [buttonDisabled, setButtonDisabled] = useState(false);
     const appState = useAppSelector((state) => state.app)
-    const [selectedUnit, setSelectedUnit] = useState<string>("");
-    const [distributors,setDistributor]=useState<Distributors[]>([]);
-    
+    const [selectedUnit, setSelectedUnit] = useState<string | undefined>('');
+    const [distributor, setDistributor] = useState<Distributors[]>([]); 
+
     const handleContinueClick = () => {
         setLastStep(true);
     }
@@ -30,7 +37,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
     const handleSaveClick = async () => {
         try {
             setButtonDisabled(true);
-            const selectedProviders = formData.providers.map((provider:any) => provider.value);
+            //const selectedProviders = formData.providers.map((provider:any) => provider.value);
     
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
@@ -39,7 +46,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                 },
                 body: JSON.stringify({
                     itemName: formData.name,
-                    providers: selectedProviders,
+                    
+                    providers: formData.providers,
                     defaultUnit: formData.defaultUnit,
                     hsnCode: formData.hsnCode,
                     tax: formData.tax ? formData.tax[0].value : undefined,
@@ -64,8 +72,9 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
     
 
     const handleChange = (field: string, value: any) => {
-        setFormData({ ...formData, [field]: value });
-        
+        setFormData({ ...formData, [field]: value });  
+        const selectedUnitValue = typeof value === 'string' ? value : value[0];
+        setSelectedUnit(selectedUnitValue);      
     };
 
     const gstOptions = [
@@ -91,12 +100,25 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
         {value: "Strips", label:"Strips"}
     ]
 
-    const distributersList = distributors.map((distributor)=>({
-        value: distributor.distributorName,
-        label:distributor.distributorName
-    }))
-
-
+  
+    useEffect(() => {
+   
+    const fetchDistributors = async()=>{
+        try{
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll?branchId=${appState.currentBranchId}`);
+            const distributors = response.data.map((distributor:Distributors)=>({
+                value: distributor.id,
+                label: distributor.distributorName
+            }));
+            console.log(distributors);
+            setDistributor(distributors);
+        }catch(error){
+            console.log("Error fetching distributors",error);
+        }
+    }
+      fetchDistributors();
+    }, []); // Empty dependency array to fetch data only once on component mount
+  
     return <>
 
         {!lastStep && <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
@@ -122,8 +144,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                             placeholder="Select Provider"
                             isClearable={false}
                             isSearchable={true}
-                            options={distributersList}
-                            isMulti={true}
+                            options={distributor}
+                            isMulti={true} // Allow selecting multiple distributors (if needed)
                             name="providers"
                             onChange={(value) => handleChange("providers", value)}
                         />

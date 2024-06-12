@@ -47,7 +47,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
     const [products, setProducts] = useState<{ value: number; label: string }[]>([]);
     const [batches,setBatches] = useState<{value:number;label:string}[]>([])
     const [inventory, setInventory] = useState<any[]>([]);
-    const appState = useAppSelector((state) => state.app)
+    const appState = useAppSelector((state: { app: any; }) => state.app)
 
     useEffect(() => {
         fetchProducts();
