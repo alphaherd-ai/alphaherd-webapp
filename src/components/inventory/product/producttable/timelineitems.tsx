@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Tooltip, Button, Spinner } from "@nextui-org/react";
 import InventoryProductTableBottombar from './bottombar'; 
 import useSWR from 'swr';
+import 'ldrs/helix'
 import { useAppSelector } from '@/lib/hooks';
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
@@ -37,7 +38,7 @@ const ProductAllItem = () => {
   const paginate = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
-if(isLoading) return <Spinner/> 
+if(isLoading) return (<div className='w-full min-h-[25rem]'><l-helix bg-opacity=".1" size="35" color="black"></l-helix></div>) 
   return (
     <div>
       {currentProducts?.map(product => (

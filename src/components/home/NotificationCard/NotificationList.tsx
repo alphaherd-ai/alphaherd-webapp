@@ -45,21 +45,21 @@ const NotificationList =  ({ notifs,isLoading }) => {
             <span className="text-stone-300 text-sm font-medium font-['Roboto']">
               You owe{" "}
             </span>
-            <span className="text-emerald-50 text-sm font-bold font-['Roboto']">
+            <span className="text-emerald-50 text-sm font-bold ">
               ₹22,406
             </span>
-            <span className="text-stone-300 text-sm font-medium font-['Roboto']">
+            <span className="text-stone-300 text-sm font-medium ">
               {" "}
               to{" "}
             </span>
-            <span className="text-emerald-50 text-sm font-bold font-['Roboto']">
+            <span className="text-emerald-50 text-sm font-bold ">
               WeCare
             </span>
-            <span className="text-stone-300 text-sm font-medium font-['Roboto']">
+            <span className="text-stone-300 text-sm font-medium ">
               {" "}
               distributor. This invoice expires on{" "}
             </span>
-            <span className="text-emerald-50 text-sm font-bold font-['Roboto']">
+            <span className="text-emerald-50 text-sm font-bold ">
               15/12/2023.
             </span>
           </div> */}

@@ -7,7 +7,7 @@ import FinancesOverviewSheet from '@/components/finances/overview/balancesheet/b
 const Overview = () => {
   return (
     <>
-    <div className='w-full bg-gray-200 p-8 px-10'>
+    <div className='w-full min-h-screen bg-gray-200 p-8 px-10'>
         <FinancesNavbar/>
         <FinancesOverviewSheet/>
      <FinancesOverviewTable/>

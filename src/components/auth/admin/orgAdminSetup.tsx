@@ -25,14 +25,14 @@ const OrgAdminSetup = (props: any) => {
                     <div className="flex flex-col items-center justify-between gap-[18px]">
                         <div className="flex items-center justify-between gap-12">
                             <div className="text-gray-500 text-base font-medium ">Name*</div>
-                            <input className="w-[645px] h-11 bg-white text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="adminName" value={props.data.adminName} onChange={props.handleChange} />
+                            <input className="w-[645px] h-11 bg-white text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="adminName" value={props.data.adminName} onChange={props.handleChange} />
                             {props.validationErrors.adminName && (
                                 <div className="error">{props.validationErrors.adminName}</div>
                             )}
                         </div>
                         <div className="flex items-center justify-between gap-12">
                             <div className="text-gray-500 text-base font-medium ">Email*</div>
-                            <input className="w-[645px] h-11 bg-white text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="adminEmail" value={props.data.adminEmail} onChange={props.handleChange} />
+                            <input className="w-[645px] h-11 bg-white text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="adminEmail" value={props.data.adminEmail} onChange={props.handleChange} />
                             {props.validationErrors.adminEmail && (
                                 <div className="error">{props.validationErrors.adminEmail}</div>
                             )}
@@ -42,14 +42,14 @@ const OrgAdminSetup = (props: any) => {
                 <div className="flex items-center justify-between mt-[24px] mb-[24px]">
                     <div className="flex items-center justify-between gap-[18px]">
                         <div className="w-[137px] text-gray-500 text-base font-medium ">Phone No.</div>
-                        <input className="w-[304px] h-11 bg-white  text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" minLength={10} maxLength={10} name="adminPhoneNo" value={props.data.adminPhoneNo} onChange={props.handleChange} />
+                        <input className="w-[304px] h-11 bg-white  text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" minLength={10} maxLength={10} name="adminPhoneNo" value={props.data.adminPhoneNo} onChange={props.handleChange} />
                         {props.validationErrors.adminPhoneNo && (
                             <div className="error">{props.validationErrors.adminPhoneNo}</div>
                         )}
                     </div>
                     <div className="flex items-center justify-between gap-[2px]">
                         <div className="w-[137px] text-gray-500 text-base font-medium ">Alt. Phone No.</div>
-                        <input className="w-[304px] h-11 bg-white  text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" minLength={10} maxLength={10} name="adminAltPhoneNo" value={props.data.adminAltPhoneNo} onChange={props.handleChange} />
+                        <input className="w-[304px] h-11 bg-white  text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" minLength={10} maxLength={10} name="adminAltPhoneNo" value={props.data.adminAltPhoneNo} onChange={props.handleChange} />
                         {props.validationErrors.adminAltPhoneNo && (
                             <div className="error">{props.validationErrors.adminAltPhoneNo}</div>
                         )}
@@ -61,14 +61,14 @@ const OrgAdminSetup = (props: any) => {
                 <div className="flex items-center justify-between mt-[8px]">
                     <div className="flex items-center justify-between gap-[18px]">
                         <div className="w-[137px] text-gray-500 text-base font-medium ">Create password*</div>
-                        <input className="w-[304px] h-11 bg-white text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="password" minLength={8} name="adminPassword" value={props.data.adminPassword} onChange={props.handleChange} />
+                        <input className="w-[304px] h-11 bg-white text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="password" minLength={8} name="adminPassword" value={props.data.adminPassword} onChange={props.handleChange} />
                         {props.validationErrors.adminPassword && (
                             <div className="error">{props.validationErrors.adminPassword}</div>
                         )}
                     </div>
                     <div className="flex items-center justify-between gap-[18px]">
                         <div className="text-gray-500 text-base font-medium ">Re-enter password*</div>
-                        <input className="w-[304px] h-11 bg-white text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" minLength={8} type="password" name="reAdminPassword" value={props.data.reAdminPassword} onChange={props.handleChange} />
+                        <input className="w-[304px] h-11 bg-white text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" minLength={8} type="password" name="reAdminPassword" value={props.data.reAdminPassword} onChange={props.handleChange} />
                         {props.validationErrors.reAdminPassword && (
                             <div className="error">{props.validationErrors.reAdminPassword}</div>
                         )}
