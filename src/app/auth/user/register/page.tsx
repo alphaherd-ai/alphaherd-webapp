@@ -96,17 +96,19 @@ export default function UserAccountSetupPage() {
     return <>
         <div className='flex flex-col'>
 
-            <div className='w-full bg-gray-200 p-4 px-10 justify-center items-center flex'>
+            <div className='w-full min-h-screen bg-gray-200 p-4 px-10 justify-center items-center flex'>
                 <div className="w-[1016px] bg-white bg-opacity-50 rounded-[30px] border border-solid border-stone-300">
                     <UserAccountSetup data={data} handleChange={handleChange} />
-                    <button className=" bg-gray-200 rounded-[5px] justify-end items-center gap-2 flex border-0"
+                    <div className="w-[936px] mx-auto flex justify-end mb-[2rem]">
+                    <button className=" bg-gray-200 rounded-[5px] gap-2 flex border-0 cursor-pointer hover:shadow-lg"
                         onClick={() => formSubmit()}>
                         <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
-                            <div className="text-white text-sm font-bold font-['Satoshi']">
+                            <div className="text-white text-sm font-bold">
                                 Submit Details
                             </div>
                         </div>
                     </button>
+                    </div>
                 </div>
             </div>
         </div>

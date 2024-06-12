@@ -33,7 +33,7 @@ const AdminProfile = () => {
     return (
 
         <>
-            <div className="min-h-screen border-solid bg-gray-200 rounded-[20px]  z-1">
+            <div className="min-h-screen  bg-gray-200 rounded-[20px] ">
                 <div className="flex h-11 items-center justify-between ">
                     <div className="flex justify-center items-center">
                         <div className="w-11 h-11 bg-gray-100 rounded-[5px] border border-neutral-400 flex justify-center items-center mr-16">
