@@ -78,27 +78,24 @@ export const POST = async (req: NextRequest) => {
 
       console.log(orgBranchUserRole)
 
-      if (orgBranchUserRole) {
-        throw new Error("User already part of branch");
+      if (!orgBranchUserRole) {
+        const orgBranch = await prismaClient.orgBranch.findUnique({
+          where: {
+            id: branchId
+          }
+        });
+  
+        console.log(user);
+        await prismaClient.orgBranchUserRole.create({
+          data: {
+            orgBranchId: Number(orgBranch?.orgId),
+            userId: user!.id,
+            role: role
+          }
+        });
       }
 
       console.log(branchId, role, email);
-
-      const orgBranch = await prismaClient.orgBranch.findUnique({
-        where: {
-          id: branchId
-        }
-      });
-
-      console.log(user);
-
-      await prismaClient.orgBranchUserRole.create({
-        data: {
-          orgBranchId: Number(orgBranch?.orgId),
-          userId: user!.id,
-          role: role
-        }
-      });
 
       user = await prismaClient.user.findUnique({
         where: { email },
