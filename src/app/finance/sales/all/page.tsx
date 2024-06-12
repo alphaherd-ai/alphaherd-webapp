@@ -3,6 +3,7 @@ import FinancesNavbar from '@/components/finances/navbar/navbar';
 import FinancesSalesTable from '@/components/finances/sales/table/table';
 
 
+
 const SalesAll = () => {
   return (
     <>

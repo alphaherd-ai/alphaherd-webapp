@@ -10,7 +10,10 @@ import calicon from "../../../../../assets/icons/finance/calendar_today.svg";
 import formatDateAndTime from '@/utils/formateDateTime';
 import { useSearchParams } from 'next/navigation';
 import { previousDay } from 'date-fns';
-
+import useSWR from 'swr';
+import { useAppSelector } from '@/lib/hooks';
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 const NewsalesHeader = ({existingHeaderData}: any) => {
     const url=useSearchParams();
@@ -22,7 +25,10 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
     const [isSearchable, setIsSearchable] = useState(true);
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
+    const [customers,setCustomers]=useState<any[]>([]);
+    const appState = useAppSelector((state) => state.app)
     const [dueDate, setDueDate] = useState(new Date());
+    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
     useEffect(() => {
         if (!disableButton && inputRef.current) {
             inputRef.current.focus();
@@ -46,12 +52,19 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
         if(id){
             setHeaderData(existingHeaderData)
         }
-    })
-    const colourOptions = [
-        { value: 'chocolate', label: 'Chocolate' },
-        { value: 'strawberry', label: 'Strawberry' },
-        { value: 'vanilla', label: 'Vanilla' }
-    ];
+    },[])
+    
+    useEffect(()=>{
+        if(!isLoading&&!error&&data){
+              const  clients=data.map((client:any)=>({
+                value:client.id,
+                label:client.clientName
+            }))
+            setCustomers(clients);
+
+        }
+    },[data])
+    
 
     return (
         <>
@@ -59,15 +72,16 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
                 <div className="px-6 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold ">Customer:</div>
-                        {id===null?(
+                        
+                        { id===null?(
+                            isLoading?<div>Loading...</div>:(
                                 <Select
                                 className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
                                 classNamePrefix="select"
-                                defaultValue={colourOptions[0]}
                                 isClearable={isClearable}
                                 isSearchable={isSearchable}
                                 name="color"
-                                options={colourOptions}
+                                options={customers}
                                 styles={{
                                     control: (provided, state) => ({
                                         ...provided,
@@ -76,7 +90,7 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
                                 }}
                                 onChange={(selectedOption) => setHeaderData((prevData) => ({ ...prevData, customer: selectedOption }))}
                                 />
-                        ):(
+                        )):(
                             existingHeaderData.customer
                         )}
                        

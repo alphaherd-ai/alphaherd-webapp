@@ -9,7 +9,10 @@ import editicon from "../../../../../assets/icons/finance/1. Icons-25.svg";
 import calicon from "../../../../../assets/icons/finance/calendar_today.svg";
 import formatDateAndTime from '@/utils/formateDateTime';
 import { useSearchParams } from 'next/navigation';
-
+import useSWR from 'swr';
+import { useAppSelector } from '@/lib/hooks';
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 const NewsalesReturnHeader = ({existingHeaderData}:any) => {
     const url=useSearchParams();
@@ -21,7 +24,10 @@ const NewsalesReturnHeader = ({existingHeaderData}:any) => {
     const [isSearchable, setIsSearchable] = useState(true);
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
+    const [customers,setCustomers]=useState<any[]>([]);
+    const appState = useAppSelector((state) => state.app)
     const [dueDate, setDueDate] = useState(new Date());
+    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
     useEffect(() => {
         if (!disableButton && inputRef.current) {
             inputRef.current.focus();
@@ -41,17 +47,22 @@ const NewsalesReturnHeader = ({existingHeaderData}:any) => {
         setHeaderData((prevData)=>({...prevData,dueDate:date}))
     }
     useEffect(()=>{
-        setHeaderData((prevData)=>({...prevData,invoiceNo:"SR-"+count}))
+        setHeaderData((prevData)=>({...prevData,invoiceNo:"SI-"+count}))
         if(id){
             setHeaderData(existingHeaderData)
         }
-    })
-    const colourOptions = [
-        { value: 'chocolate', label: 'Chocolate' },
-        { value: 'strawberry', label: 'Strawberry' },
-        { value: 'vanilla', label: 'Vanilla' }
-    ];
+    },[])
+    
+    useEffect(()=>{
+        if(!isLoading&&!error&&data){
+              const  clients=data.map((client:any)=>({
+                value:client.id,
+                label:client.clientName
+            }))
+            setCustomers(clients);
 
+        }
+    },[data])
 
 
     return (
@@ -62,15 +73,15 @@ const NewsalesReturnHeader = ({existingHeaderData}:any) => {
                 <div className="px-6 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold ">Customer:</div>
-                        {id===null?(
+                        { id===null?(
+                            isLoading?<div>Loading...</div>:(
                                 <Select
                                 className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
                                 classNamePrefix="select"
-                                defaultValue={colourOptions[0]}
                                 isClearable={isClearable}
                                 isSearchable={isSearchable}
                                 name="color"
-                                options={colourOptions}
+                                options={customers}
                                 styles={{
                                     control: (provided, state) => ({
                                         ...provided,
@@ -79,7 +90,7 @@ const NewsalesReturnHeader = ({existingHeaderData}:any) => {
                                 }}
                                 onChange={(selectedOption) => setHeaderData((prevData) => ({ ...prevData, customer: selectedOption }))}
                                 />
-                        ):(
+                        )):(
                             existingHeaderData.customer
                         )}
                     </div>
@@ -161,25 +172,25 @@ const NewsalesReturnHeader = ({existingHeaderData}:any) => {
                         //     )}
                         // />
                         <div className='w-full relative'>
-                        <DatePicker
-                                        className="w-[34.5rem]"
-                                        selected={startDate}
-                                        onChange={handleDateChange}
-                                        calendarClassName="react-datepicker-custom"
-                                        customInput={
-                                            <div className='relative'>
-                                                <input
-                                                    className="w-[34.5rem] h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={startDate.toLocaleDateString()}
-                                                    readOnly
-                                                />
-                                                <Image
-                                                    src={calicon}
-                                                    alt="Calendar Icon"
-                                                    className="absolute right-2 top-2 cursor-pointer"
-                                                    width={50}
-                                                    height={20}
-                                                />
+                         <DatePicker
+                            className="w-[34.5rem]"
+                            selected={dueDate} 
+                            onChange={handleDueDateChange} 
+                            calendarClassName="react-datepicker-custom"
+                            customInput={
+                            <div className='relative'>
+                                <input
+                                className="w-[34.5rem] h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                value={dueDate.toLocaleDateString()}
+                                readOnly
+                                />
+                                <Image
+                                src={calicon}
+                                alt="Calendar Icon"
+                                className="absolute right-2 top-2 cursor-pointer"
+                                width={50}
+                                height={20}
+                                />
                                             </div>
                                         }
                                     />
