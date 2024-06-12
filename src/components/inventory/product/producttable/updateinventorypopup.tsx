@@ -330,12 +330,12 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                             />
                         </div>
                         <div className="relative">
-                            <div className="w-[132px] h-11 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+                        <button className="text-white text-base font-bold  bg-transparent border-0" onClick={handleAddItemClick}>
+                        <div className="w-[132px] h-11 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
                                 <Image src={addicon} alt="add" />
-                                <button className="text-white text-base font-bold  bg-transparent border-0" onClick={handleAddItemClick}>
-                                    Add Item
-                                </button>
+                                Add Item
                             </div>
+                                </button>
                         </div>
                     </div>
                     <div className="pb-6">

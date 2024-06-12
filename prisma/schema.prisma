@@ -117,7 +117,7 @@ model User {
   altPhoneNo         String?
   hashedPassword     String
   adminOrganizations Organization[]
-  orgBranchId        Int?                @unique
+  orgBranchId        Int?          
   lastUsedBranch     OrgBranch?          @relation(fields: [orgBranchId], references: [id])
   userRoles          OrgBranchUserRole[]
 }

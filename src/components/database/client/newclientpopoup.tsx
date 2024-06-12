@@ -73,8 +73,8 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }) => {
     ];
 
     const City = [
-        {value:'Delhi',label:'Delhi'},
-        {value:'Mumbai',label:'Mumbai'}
+            { value: 'Delhi', label: 'Delhi' },
+            { value: 'Mumbai', label: 'Mumbai' },
     ]
 
     return <>

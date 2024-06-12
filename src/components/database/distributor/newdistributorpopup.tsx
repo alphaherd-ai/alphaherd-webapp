@@ -70,6 +70,11 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
         {}
     ];
 
+    const City = [
+        { value: 'Delhi', label: 'Delhi' },
+        { value: 'Mumbai', label: 'Mumbai' },
+]
+
     return <>
 
        <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0  inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
@@ -160,8 +165,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                             className="text-neutral-400 w-[10rem] text-base font-medium "
                             placeholder=""
                             isClearable={false}
-                            isSearchable={true}
-                            options={gstOptions}
+                            isSearchable={true}     
+                            options={City}
                             isMulti={true}
                             name="city"
                             onChange={(value) => handleChange("city", value)}
