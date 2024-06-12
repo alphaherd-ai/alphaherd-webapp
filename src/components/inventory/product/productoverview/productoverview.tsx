@@ -287,27 +287,27 @@ function useProductBatchfetch(id:string|null,branchId:number|null){
                                 <div key={item.id} className="w-full border-b border-solid border-0 border-stone-300 flex items-start justify-between">
                                     <div className="w-full flex p-6">
                                         <div className="w-full flex items-center justify-between">
-                                            <div className="text-neutral-400 text-base font-medium ">
+                                            <div className="text-neutral-400 text-base font-medium w-1/12 mr-10">
                                                 {formatDateAndTime(item.createdAt).formattedDate}
                                             </div>
-                                            <div className="w-[69px] text-neutral-400 text-base font-medium ">
+                                            <div className="w-[69px] text-neutral-400 text-base font-medium w-1/12">
                                                 {formatDateAndTime(item.createdAt).formattedTime}
                                             </div>
-                                            <div className="text-gray-500 text-base font-medium ">
+                                            <div className="text-gray-500 text-base font-medium w-1/12 ml-10">
                                                 {item.quantityChange} Strips
                                             </div>
-                                            <div className="w-15 h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">
+                                            <div className="w-15 h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex w-2/12 ml-10">
                                                 <div className="text-green-600 text-sm font-medium ">
                                                     {item.stockChange}
                                                 </div>
                                             </div>
-                                            <div className="text-neutral-400 text-base font-medium ">
+                                            <div className="text-neutral-400 text-base font-medium w-1/12 ml-10">
                                                 {item.batchNumber}
                                             </div>
-                                            <div className="text-neutral-400 text-base font-medium ">
+                                            <div className="text-neutral-400 text-base font-medium w-1/12">
                                                 {item.party}
                                             </div>
-                                            <div className="text-teal-400 text-base font-medium  underline">
+                                            <div className="text-teal-400 text-base font-medium  underline w-2/12">
                                                 {item.invoiceType}
                                             </div>
                                         </div>

@@ -43,11 +43,11 @@ export const PUT=async (req: NextRequest,
             const data={stockStatus,productId,invoiceType,...body};
             const validatedData = ProductBatchSchema.safeParse(data);
       
-            if (!validatedData.success) {
-              return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
-                status: 422,
-              });
-            }
+            // if (!validatedData.success) {
+            //   return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
+            //     status: 422,
+            //   });
+            // }
            const productBatch= await prismaClient.productBatch.findUnique({
                 where: { id: Number(params.id) },
             });  
