@@ -292,7 +292,7 @@ useEffect(() => {
                                     <div className="pr-[4px]">
                                         <input value="test" type="checkbox" className="border-0" onChange={handleCheckBoxChange} />
                                     </div>
-                                    <div className="text-neutral-400 text-base font-bold ">Price Range</div>
+                                    <div className="text-textGrey2 text-base font-bold ">Price Range</div>
                                 </div>
                                 <Button onClick={handleAddItem} className='cursor-pointer text-white flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg border-0 outline-none'>
                                     <div className='w-4 h-4 mb-3 mr-2'>
@@ -326,8 +326,8 @@ useEffect(() => {
                             </div>
                             {items.map((item:any,index:number) => (
                                 <div key={index+1} className='flex justify-evenly items-center w-full box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-400 py-2'>
-                                <div className={`${isChecked === true ? "ml-[5px]": ""} w-[3rem] flex items-center text-neutral-400 text-base font-medium`}>{index+1}</div>
-                                <div className={`${isChecked === true ? "px-4": ""} w-[15rem] flex items-center text-neutral-400 text-base font-medium`}><Select
+                                <div className={`${isChecked === true ? "ml-[5px]": ""} w-[3rem] flex items-center text-textGrey2 text-base font-medium`}>{index+1}</div>
+                                <div className={`${isChecked === true ? "px-4": ""} w-[15rem] flex items-center text-textGrey2 text-base font-medium`}><Select
                                         className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
                                         classNamePrefix="select"
                                         value={products.find((prod) => prod.value.id === item.productId)}
@@ -344,7 +344,7 @@ useEffect(() => {
                                         }}
                                     />
                                 </div>
-                                <div className='w-[10rem] flex-col items-center text-neutral-400 text-base font-medium'>
+                                <div className='w-[10rem] flex-col items-center text-textGrey2 text-base font-medium'>
                                     <Select
                                       className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
                                       classNamePrefix="select"
@@ -361,12 +361,12 @@ useEffect(() => {
                                         }),
                                     }}
                                   />  
-                                        <div className="text-neutral-400 text-[10px] font-medium  px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
+                                        <div className="text-textGrey2 text-[10px] font-medium  px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
                                 </div>
-                                <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-5'>
+                                <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium gap-5'>
                                         {item.sellingPrice}
                                         <Select
-                                            className="text-neutral-400 text-sm font-medium "
+                                            className="text-textGrey2 text-sm font-medium "
                                             defaultValue={taxOptions[0]}
                                             isClearable={false}
                                             isSearchable={true}
@@ -381,8 +381,8 @@ useEffect(() => {
                                         />
                                 </div>
                                     {!isChecked && (
-                                        <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
-                                            <div className='flex items-center text-neutral-400 text-base font-medium gap-[20px] bg-white'>
+                                        <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium gap-[12px]'>
+                                            <div className='flex items-center text-textGrey2 text-base font-medium gap-[20px] bg-white'>
                                         <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
                                             <Image className='rounded-md' src={Subtract} alt="-"></Image>
                                         </button>
@@ -395,8 +395,8 @@ useEffect(() => {
                                     )}
                                     {isChecked && (
                                         <>
-                                        <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
-                                            <div className='flex items-center text-neutral-400 text-base font-medium gap-[20px] bg-white'>
+                                        <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium gap-[12px]'>
+                                            <div className='flex items-center text-textGrey2 text-base font-medium gap-[20px] bg-white'>
                                         <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
                                             <Image className='rounded-md' src={Subtract} alt="-"></Image>
                                         </button>
@@ -406,8 +406,8 @@ useEffect(() => {
                                         </button>
                                         </div>
                                         </div>
-                                        <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
-                                            <div className='flex items-center text-neutral-400 text-base font-medium gap-[20px] bg-white'>
+                                        <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium gap-[12px]'>
+                                            <div className='flex items-center text-textGrey2 text-base font-medium gap-[20px] bg-white'>
                                         <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
                                             <Image className='rounded-md' src={Subtract} alt="-"></Image>
                                         </button>
@@ -419,9 +419,9 @@ useEffect(() => {
                                         </div>
                                         </>
                                     )}
-                                    <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
+                                    <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium'>
                                         <Select
-                                            className="text-neutral-400 text-base font-medium"
+                                            className="text-textGrey2 text-base font-medium"
                                             defaultValue={[]}
                                             isClearable={false}
                                             isSearchable={true}
@@ -436,9 +436,9 @@ useEffect(() => {
                                             onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
                                         />
                                     </div>
-                                    <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>{`₹${((item?.sellingPrice*item?.quantity * item?.gst)||0).toFixed(2)}`}</div>
-                                    <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium'>{`₹${((item?.quantity * item?.sellingPrice +item?.sellingPrice*item.quantity*item.gst)||0).toFixed(2)}`}</div>
-                                    <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
+                                    <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium'>{`₹${((item?.sellingPrice*item?.quantity * item?.gst)||0).toFixed(2)}`}</div>
+                                    <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium'>{`₹${((item?.quantity * item?.sellingPrice +item?.sellingPrice*item.quantity*item.gst)||0).toFixed(2)}`}</div>
+                                    <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[12px]'>
                                         <button className="border-0">
                                             <Image src={sellicon} alt="sell" ></Image>
                                         </button>
@@ -458,7 +458,7 @@ useEffect(() => {
                                 
                                 <div className='flex text-gray-500 text-base font-medium w-[10rem]'>
                                     <Select
-                                        className="text-neutral-400 text-base font-medium"
+                                        className="text-textGrey2 text-base font-medium"
                                         defaultValue={gstOptions[0]}
                                         isClearable={false}
                                         isSearchable={true}

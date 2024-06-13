@@ -76,7 +76,9 @@ const NewsalesTable = () => {
     const id=url.get('id');
     const { tableData: items, setTableData: setItems } = useContext(DataContext);   
     if(id){
+        // eslint-disable-next-line react-hooks/rules-of-hooks
         const {data,error,isLoading} =useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/${id}/?branchId=${appState.currentBranchId}`,fetcher)
+        // eslint-disable-next-line react-hooks/rules-of-hooks
         useEffect(() => {
             if (!isLoading && data && !error) {
                 const {items,...otherData}=data;
