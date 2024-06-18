@@ -4,7 +4,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import calicon from "../../../../../assets/icons/finance/calendar_today.svg";
 import check from "../../../../../assets/icons/finance/check.svg"
-import React, {useState}  from 'react'
+import React, {useContext, useState}  from 'react'
 import { Button } from '@nextui-org/react';
 import Select from 'react-select';
 import { DataContext } from './DataContext';
@@ -14,12 +14,18 @@ type PopupProps = {
 }
 
 const ConvertToRecurringPopup: React.FC<PopupProps> = ({ onClose }) => {
-
+    const { recurringData, setRecurringData } = useContext(DataContext);
     const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate]=useState();
 
-    const handleDateChange = (date:any) => {
+    const handleStartDateChange = (date:any) => {
         setStartDate(date);
+        setRecurringData((prevData)=>({...prevData,startDate:date}));
     };
+    const handleEndDateChange =(date:any)=>{
+        setEndDate(date);
+        setRecurringData((prevData)=>({...prevData,endDate:date}));
+    }
 
     const Repeat = [
         {value: "Every Day", label: "Every Day"},
@@ -62,6 +68,7 @@ const ConvertToRecurringPopup: React.FC<PopupProps> = ({ onClose }) => {
                             options={Repeat}
                             isMulti={false}
                             name="repeat"
+                            onChange={(selectedOption) => setRecurringData((prevData) => ({ ...prevData, repeatType: selectedOption }))}
                         />
                     </div>
                 </div>
@@ -72,7 +79,7 @@ const ConvertToRecurringPopup: React.FC<PopupProps> = ({ onClose }) => {
                         <DatePicker
                                         className="w-[10rem]"
                                         selected={startDate}
-                                        onChange={handleDateChange}
+                                        onChange={handleStartDateChange}
                                         calendarClassName="react-datepicker-custom"
                                         customInput={
                                             <div className='relative'>
@@ -92,12 +99,12 @@ const ConvertToRecurringPopup: React.FC<PopupProps> = ({ onClose }) => {
                                         }
                                     />
                         </div>
-                        <div><span className='text-gray-500 text-base font-medium '>Start Date</span></div>
+                        <div><span className='text-gray-500 text-base font-medium '>End Date</span></div>
                         <div className='relative'>
                         <DatePicker
                                         className="w-[10rem]"
-                                        selected={startDate}
-                                        onChange={handleDateChange}
+                                        selected={endDate}
+                                        onChange={handleEndDateChange}
                                         calendarClassName="react-datepicker-custom"
                                         customInput={
                                             <div className='relative'>
