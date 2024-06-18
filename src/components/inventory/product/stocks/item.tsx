@@ -37,7 +37,8 @@ const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
     setProducts(data);
    }
   }, [data]);
-  const filteredProducts = products.filter(product => {
+  console.log(products);
+  const filteredProducts = products?.filter(product => {
     console.log(product)
     if (activeTabValue === "Low Stock") {
       return product?.quantity <= product?.product?.minStock;

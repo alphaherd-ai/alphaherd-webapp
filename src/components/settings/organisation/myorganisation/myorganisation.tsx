@@ -11,10 +11,36 @@ import OrganisationNavbar from "../navbar/navbar"
 
 import { useAppSelector } from "@/lib/hooks";
 import Link from "next/link"
+import AddBranchPopup from "../addBranchPopup"
 
 export const MyOrganisationSettings = () => {
 
     const appState = useAppSelector((state) => state.app);
+
+    const [showPopup, setShowPopup] = React.useState(false);
+    const togglePopup = () => {
+        setShowPopup(!showPopup);
+    }
+
+    const [orgBranches,setOrgBranches] = useState([]);
+
+    async function fetchOrgBranches(){
+        let resp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/admin/branch/all?orgId=${appState.currentOrgId}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include'
+          });
+          if (resp.ok) {
+            let body = await resp.json();
+            setOrgBranches(body.branches);
+          }
+    }
+
+    useEffect(() => {
+        fetchOrgBranches();
+    },[]);
 
     return (
 
@@ -94,34 +120,9 @@ export const MyOrganisationSettings = () => {
                                     <div className="text-neutral-400 text-base font-medium ">Link a new branch with your Organisation</div>
                                 </div>
                                 <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '>
-
-                                    <Popover placement="bottom-end" showArrow offset={10}>
-                                        <PopoverTrigger>
-                                            <Button
-                                                variant="solid"
-                                                className="capitalize flex border-none bg-black text-white rounded-lg "> Add Branch
-                                                <div className='flex pl-2'><Image src={downicon} alt='DownArrow' className='w-4 h-4 ' /></div></Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
-
-                                            <div className="flex flex-col ">
-
-                                                <div className='flex flex-col'>
-
-
-                                                    <div className='text-base p-4 text-white flex '>
-                                                        <div className='flex pr-2'></div>Update Inventory</div>
-
-                                                    <div className='text-base p-4  text-white flex '>
-                                                        <div className='flex pr-2'></div>New Product</div>
-                                                </div>
-                                            </div>
-
-
-                                        </PopoverContent>
-                                    </Popover>
-
-
+                                    <Button
+                                        variant="solid"
+                                        className="capitalize flex border-none bg-black text-white rounded-lg " onClick={togglePopup}> Add Branch</Button>
 
                                 </div>
                             </div>
@@ -129,18 +130,15 @@ export const MyOrganisationSettings = () => {
                                 <div className="w-full h-full rounded-[10px] border border-stone-300 justify-start items-start flex flex-col">
                                     <div className='flex  w-full  items-center box-border bg-gray-100  h-12 py-4 border-b border-neutral-400 text-gray-500'>
                                         <div className='flex text-gray-500 text-base font-medium px-6 w-5/12'>Branch Name</div>
-                                        <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'>Employees</div>
-                                        <div className='flex text-gray-500 text-base font-medium px-6 w-3/12'>Phone No.</div>
-                                        <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'>Email</div>
                                     </div>
                                     <div className='flex  items-center w-full  box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-7 h-7 relative rounded-full border border-neutral-400" src={branchlogo} alt="logo" />
-                                            <div className="text-teal-400 text-base font-bold ">Caravet, HSR Layout</div>
-                                        </div>
-                                        <div className='w-2/12 px-6 flex items-center text-neutral-400 text-base font-medium'>5</div>
-                                        <div className='w-3/12 px-6 flex items-center text-neutral-400 text-base font-medium'>+91 99999 99999</div>
-                                        <div className='w-2/12 px-6 flex items-center text-neutral-400 text-base font-medium'>an@gmail.com</div>
+                                        {
+                                            orgBranches.map((branch : any) => {
+                                                return <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                                <div className="text-teal-400 text-base font-bold ">{branch.branchName}</div>
+                                            </div>
+                                            })
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -148,6 +146,8 @@ export const MyOrganisationSettings = () => {
                     </div>
                 </div >
             </div >
+
+            {showPopup && <AddBranchPopup onClose={togglePopup} />}
 
             {
                 appState.isCurrentOrgAdmin ?

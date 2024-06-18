@@ -41,7 +41,7 @@ export const POST = async (req: NextRequest) => {
     });
 
     if (duplicateAdminUser != null) {
-      return new Response(JSON.stringify({ "message": "Admin user already exists... Enter the correct password in password fields." }), {
+      return new Response(JSON.stringify({ "message": "Admin user already exists..." }), {
         status: 400,
         headers: {
           'Content-Type': 'application/json',

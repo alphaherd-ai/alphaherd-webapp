@@ -78,14 +78,17 @@ export const GET=async(req: NextRequest)=> {
         for(const org of user?.adminOrganizations!){
             const orgBranches = await prismaClient.orgBranch.findMany({
                 where: {
-                    id: org.id
+                    orgId: org.id
                 }
             });
+            console.log("Org Branches",orgBranches);
             adminOrgAndBranchMapping.push({
                 ...org,
                 allowedBranches : orgBranches
             })
         }
+
+        console.log(adminOrgAndBranchMapping);
 
         const combinedMapping = [...adminOrgAndBranchMapping,...managerOrgAndBranchMapping.filter((mapping) => !user?.adminOrganizations.find((org) => org.id==mapping.id))];
 
