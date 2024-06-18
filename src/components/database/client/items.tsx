@@ -4,6 +4,7 @@ import formatDateAndTime from '@/utils/formateDateTime';
 import { useAppSelector } from '@/lib/hooks';
 import { Spinner} from '@nextui-org/react';
 import useSWR from 'swr';
+import Loading from '@/app/loading';
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 interface Clients {
@@ -42,7 +43,7 @@ const DatabaseClientTableItem = () => {
     },[data]);
    
 
-    if(isLoading)return <Spinner/>
+    if(isLoading)return (<Loading/>)
     return (
         <>
             {clients?.map(client => (

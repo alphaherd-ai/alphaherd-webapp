@@ -349,7 +349,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                             <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>Quantity</div>
                             <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>Batch No.</div>
                             <div className=' flex text-gray-500 text-base font-medium  w-[8rem]'>Expiry</div>
-                            <div className=' flex text-gray-500 text-base font-medium  w-[5rem]'>Code</div>
+                            <div className=' flex text-gray-500 text-base font-medium  w-[5rem]'>Barcode</div>
                             <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>Location</div>
                             <div className=' flex text-gray-500 text-base font-medium  w-[8rem]'>Distributor</div>
                             <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>Total Cost</div>

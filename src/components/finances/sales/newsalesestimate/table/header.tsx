@@ -51,7 +51,7 @@ const NewsaleEstimateHeader = () => {
     useEffect(()=>{
         if(!isLoading&&!error&&data){
               const  clients=data.map((client:any)=>({
-                value:client.id,
+                value:client.clientName,
                 label:client.clientName
             }))
             setCustomers(clients);
@@ -87,16 +87,16 @@ const NewsaleEstimateHeader = () => {
                 </div>
                 <div className="px-6 py-1 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full">
                     <div className="flex w-full">
-                        <div className="text-gray-500 text-base font-bold  pr-[16px] w-3/12 py-3">Invoice Number:</div>
-                        <div className="flex items-center justify-between w-[29.4rem]">
+                        <div className="text-gray-500 text-base font-bold w-[12rem] py-3">Invoice Number:</div>
+                        <div className="flex items-center justify-between w-full">
                             <input
                                 ref={inputRef}
-                                className={`w-[25rem] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border-0 rounded-[5px] focus:border focus:border-solid focus:border-[#35BEB1] bg-inherit`}
+                                className={`w-[90%] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border-0 rounded-[5px] focus:border focus:border-solid focus:border-[#35BEB1] bg-inherit`}
                                 value={"SE-"+count}
                                 disabled={disableButton}
                                 autoFocus={!disableButton}
                             />
-                            <button onClick={handleEditButtonClick} className="border-0">
+                            <button onClick={handleEditButtonClick} className="border-0 mr-5">
                                 <Image src={editicon} alt="edit" />
                             </button>
                         </div>
@@ -116,16 +116,16 @@ const NewsaleEstimateHeader = () => {
                                 <Image src={calicon} alt="Calendar Icon" width={20} height={20} />
                             )}
                         /> */}
-                        <div className='w-full relative'>
+                        <div className='customDatePickerWidth'>
                         <DatePicker
-                                        className="w-[37rem]"
+                                        className="w-full"
                                         selected={startDate}
                                         onChange={handleDateChange}
                                         calendarClassName="react-datepicker-custom"
                                         customInput={
                                             <div className='relative'>
                                                 <input
-                                                    className="w-[37rem] h-9 text-borderGrey text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                                    className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
                                                     value={startDate.toLocaleDateString()}
                                                     readOnly
                                                 />
@@ -154,16 +154,16 @@ const NewsaleEstimateHeader = () => {
                                 <Image src={calicon} alt="Calendar Icon" width={20} height={20} />
                             )}
                         /> */}
-                        <div className='w-full relative'>
+                        <div className='customDatePickerWidth'>
                         <DatePicker
-                            className="w-[34.5rem]"
+                            className="w-full"
                             selected={dueDate} 
                             onChange={handleDueDateChange} 
                             calendarClassName="react-datepicker-custom"
                             customInput={
                             <div className='relative'>
                                 <input
-                                className="w-[34.5rem] h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
                                 value={dueDate.toLocaleDateString()}
                                 readOnly
                                 />

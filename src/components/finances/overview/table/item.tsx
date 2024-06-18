@@ -1,4 +1,5 @@
 'use client';
+import Loading from '@/app/loading';
 import { useAppSelector } from '@/lib/hooks';
 import formatDateAndTime from '@/utils/formateDateTime';
 import { Spinner, spinner } from '@nextui-org/react';
@@ -17,7 +18,7 @@ const FinacesOverviewTableItem = () => {
       setTimeline(data);
     }
   })
-  if(isLoading)return <Spinner/>
+  if(isLoading)return (<Loading/>)
   return (
    <>
    {timeline?.map((data)=>

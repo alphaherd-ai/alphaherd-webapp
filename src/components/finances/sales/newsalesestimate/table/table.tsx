@@ -113,7 +113,6 @@ const NewsaleEstimateTable = () => {
             },
              label: product.itemName,
          }));
-         console.log(formattedProducts)
          setProducts(formattedProducts);
      }
      if(!batchError&&!isBatchLoading&&fetchedBathces){
@@ -157,7 +156,10 @@ const handleCheckBoxChange = () => {
     setItems((prevItems) =>
         prevItems.map((item) => ({
             ...item,
-            quantity: isChecked ? item.quantity * 2 : item.quantity,
+            quantity: isChecked ? item.quantity  : item.quantity,
+            lowQty: item.quantity,
+            highQty:item.quantity,
+
         }))
     );
 };
@@ -187,8 +189,8 @@ const handleQuantityIncClick = (itemId: any) => {
 const handleQuantityDecClick1 = (itemId: any) => {
     setItems((prevItems) =>
         prevItems.map((item) => {
-            if (item.id === itemId && item.quantity2 > 1) {
-                return { ...item, quantity2: item.quantity2 - 1 };
+            if (item.id === itemId && item.lowQty > 1) {
+                return { ...item, lowQty: item.lowQty - 1 };
             }
             return item;
         })
@@ -199,13 +201,33 @@ const handleQuantityIncClick1 = (itemId: any) => {
     setItems((prevItems) =>
         prevItems.map((item) => {
             if (item.id === itemId) {
-                return { ...item, quantity2: item.quantity2 + 1 };
+                return { ...item, lowQty: item.lowQty + 1 };
+            }
+            return item;
+        })
+    );
+};
+const handleQuantityDecClick2= (itemId: any) => {
+    setItems((prevItems) =>
+        prevItems.map((item) => {
+            if (item.id === itemId && item.highQty > 1) {
+                return { ...item, highQty: item.highQty - 1 };
             }
             return item;
         })
     );
 };
 
+const handleQuantityIncClick2 = (itemId: any) => {
+    setItems((prevItems) =>
+        prevItems.map((item) => {
+            if (item.id === itemId) {
+                return { ...item, highQty: item.highQty + 1 };
+            }
+            return item;
+        })
+    );
+};
 const handleAddItem= useCallback(() => {
     setItems([...items, {}]);
 }, [items]);
@@ -226,7 +248,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
         setItems(updatedItems);
 
         // Set first element of filteredBatches as default value for batches
-        const productBatches = batches?.filter((batch) => batch.value.productId === selectedProduct.value.id);
+        const productBatches = batches?.filter((batch) => batch.value.productId === selectedProduct.value.id).sort((a, b) => a.value.id - b.value.id);
         setFilteredBatches(productBatches);
         const defaultBatch = productBatches?.[0];
         setItems((prevItems) =>
@@ -236,6 +258,8 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                 batchNumber: defaultBatch?.value?.batchNumber,
                 expiry:  defaultBatch?.value?.expiry,
                 sellingPrice:  defaultBatch?.value?.sellingPrice,
+                lowQty:isChecked?defaultBatch?.value?.quantity:0,
+                highQty:isChecked?defaultBatch?.value?.quantity:0,
                 productId:defaultBatch?.value?.productId } : item
           )
         );
@@ -255,6 +279,8 @@ const handleBatchSelect = useCallback(async (selectedProduct: any, index: number
                 ...updatedItems[index],
                 id: data.value.id,
                 quantity: data.value.quantity ,
+                lowQty:isChecked?data.value?.quantity:0,
+                highQty:isChecked?data.value?.quantity:0,
                 batchNumber: data.value.batchNumber,
                 expiry:  data.value.expiry,
                 sellingPrice:  data.value.sellingPrice,
@@ -292,7 +318,7 @@ useEffect(() => {
                                     <div className="pr-[4px]">
                                         <input value="test" type="checkbox" className="border-0" onChange={handleCheckBoxChange} />
                                     </div>
-                                    <div className="text-neutral-400 text-base font-bold ">Price Range</div>
+                                    <div className="text-textGrey2 text-base font-bold ">Price Range</div>
                                 </div>
                                 <Button onClick={handleAddItem} className='cursor-pointer text-white flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg border-0 outline-none'>
                                     <div className='w-4 h-4 mb-3 mr-2'>
@@ -326,8 +352,8 @@ useEffect(() => {
                             </div>
                             {items.map((item:any,index:number) => (
                                 <div key={index+1} className='flex justify-evenly items-center w-full box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-400 py-2'>
-                                <div className={`${isChecked === true ? "ml-[5px]": ""} w-[3rem] flex items-center text-neutral-400 text-base font-medium`}>{index+1}</div>
-                                <div className={`${isChecked === true ? "px-4": ""} w-[15rem] flex items-center text-neutral-400 text-base font-medium`}><Select
+                                <div className={`${isChecked === true ? "ml-[5px]": ""} w-[3rem] flex items-center text-textGrey2 text-base font-medium`}>{index+1}</div>
+                                <div className={`${isChecked === true ? "px-4": ""} w-[15rem] flex items-center text-textGrey2 text-base font-medium`}><Select
                                         className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
                                         classNamePrefix="select"
                                         value={products.find((prod) => prod.value.id === item.productId)}
@@ -344,7 +370,7 @@ useEffect(() => {
                                         }}
                                     />
                                 </div>
-                                <div className='w-[10rem] flex-col items-center text-neutral-400 text-base font-medium'>
+                                <div className='w-[10rem] flex-col items-center text-textGrey2 text-base font-medium'>
                                     <Select
                                       className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
                                       classNamePrefix="select"
@@ -361,12 +387,12 @@ useEffect(() => {
                                         }),
                                     }}
                                   />  
-                                        <div className="text-neutral-400 text-[10px] font-medium  px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
+                                        <div className="text-textGrey2 text-[10px] font-medium  px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
                                 </div>
-                                <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-5'>
+                                <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium gap-5'>
                                         {item.sellingPrice}
                                         <Select
-                                            className="text-neutral-400 text-sm font-medium "
+                                            className="text-textGrey2 text-sm font-medium "
                                             defaultValue={taxOptions[0]}
                                             isClearable={false}
                                             isSearchable={true}
@@ -381,8 +407,8 @@ useEffect(() => {
                                         />
                                 </div>
                                     {!isChecked && (
-                                        <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
-                                            <div className='flex items-center text-neutral-400 text-base font-medium gap-[20px] bg-white'>
+                                        <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium gap-[12px]'>
+                                            <div className='flex items-center text-textGrey2 text-base font-medium gap-[20px] bg-white'>
                                         <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
                                             <Image className='rounded-md' src={Subtract} alt="-"></Image>
                                         </button>
@@ -395,33 +421,33 @@ useEffect(() => {
                                     )}
                                     {isChecked && (
                                         <>
-                                        <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
-                                            <div className='flex items-center text-neutral-400 text-base font-medium gap-[20px] bg-white'>
+                                        <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium gap-[12px]'>
+                                            <div className='flex items-center text-textGrey2 text-base font-medium gap-[20px] bg-white'>
                                         <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
                                             <Image className='rounded-md' src={Subtract} alt="-"></Image>
                                         </button>
-                                        <div>{item.quantity}</div>
-                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
+                                        <div>{item.lowQty}</div>
+                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick1(item.id)}>
                                             <Image className="rounded-md" src={Add} alt="+"></Image>
                                         </button>
                                         </div>
                                         </div>
-                                        <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
-                                            <div className='flex items-center text-neutral-400 text-base font-medium gap-[20px] bg-white'>
-                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
+                                        <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium gap-[12px]'>
+                                            <div className='flex items-center text-textGrey2 text-base font-medium gap-[20px] bg-white'>
+                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick2(item.id)}>
                                             <Image className='rounded-md' src={Subtract} alt="-"></Image>
                                         </button>
-                                        <div>{item.quantity}</div>
-                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
+                                        <div>{item.highQty}</div>
+                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick2(item.id)}>
                                             <Image className="rounded-md" src={Add} alt="+"></Image>
                                         </button>
                                         </div>
                                         </div>
                                         </>
                                     )}
-                                    <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
+                                    <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium'>
                                         <Select
-                                            className="text-neutral-400 text-base font-medium"
+                                            className="text-textGrey2 text-base font-medium"
                                             defaultValue={[]}
                                             isClearable={false}
                                             isSearchable={true}
@@ -436,9 +462,41 @@ useEffect(() => {
                                             onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
                                         />
                                     </div>
-                                    <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>{`₹${((item?.sellingPrice*item?.quantity * item?.gst)||0).toFixed(2)}`}</div>
-                                    <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium'>{`₹${((item?.quantity * item?.sellingPrice +item?.sellingPrice*item.quantity*item.gst)||0).toFixed(2)}`}</div>
-                                    <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
+                                    <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium'>{isChecked ? (
+                                            '₹' +
+                                            ((item?.sellingPrice * item?.lowQty * item?.gst).toFixed(2) +
+                                                '-' +
+                                                (item?.sellingPrice * item?.highQty * item?.gst).toFixed(2) ||
+                                                0)
+                                            
+                                            ) : (
+                                            '₹' +
+                                            ((item?.sellingPrice * item?.quantity * item?.gst) || 0)
+                                            .toFixed(2)
+                                            )}</div>
+                                   <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium'>
+                                        {isChecked ? (
+                                            <>
+                                            {item?.lowQty && (
+                                                <>
+                                                ₹{(item?.sellingPrice * item?.lowQty * (1 + item?.gst)).toFixed(2) || 0}
+                                                     -{' '}
+                                                </>
+                                            )}
+                                            {item?.highQty && (
+                                                <>₹{(item?.sellingPrice * item?.highQty * (1 + item?.gst)).toFixed(2) || 0}
+                                                </>
+                                            )}
+                                            </>
+                                        ) : (
+                                            <>
+                                            ₹{(item?.quantity * item?.sellingPrice * (1 + item?.gst)).toFixed(2) || 0}
+                                               
+                                            </>
+                                        )}
+                                        </div>
+
+                                    <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[12px]'>
                                         <button className="border-0">
                                             <Image src={sellicon} alt="sell" ></Image>
                                         </button>
@@ -458,7 +516,7 @@ useEffect(() => {
                                 
                                 <div className='flex text-gray-500 text-base font-medium w-[10rem]'>
                                     <Select
-                                        className="text-neutral-400 text-base font-medium"
+                                        className="text-textGrey2 text-base font-medium"
                                         defaultValue={gstOptions[0]}
                                         isClearable={false}
                                         isSearchable={true}
@@ -471,8 +529,89 @@ useEffect(() => {
                                         }}
                                     />
                                 </div>
-                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>{`₹${(items.reduce((acc:any, item:any) => acc + item.quantity * item.gst*item.sellingPrice , 0)||0).toFixed(2)}`}</div>
-                                <div className='flex text-gray-500 text-base font-medium w-1/12' >{`₹${(items.reduce((acc:any, item:any) => acc + item.quantity * item.sellingPrice +item.quantity*item.gst*item.sellingPrice, 0)||0).toFixed(2)}`}</div>
+                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>
+                                        {isChecked ? (
+                                           
+                                            <>
+                                            {items?.some((item) => item?.lowQty) && ( 
+                                                <>
+                                                ₹{
+                                                    items.reduce(
+                                                    (acc, item) =>
+                                                        acc + (item?.lowQty || 0) * item?.gst * item?.sellingPrice,
+                                                    0
+                                                    ).toFixed(2) ||
+                                                    0
+                                                }
+                                               -{' '}
+                                                </>
+                                            )}
+                                            {items?.some((item) => item?.highQty) && ( 
+                                                <>
+                                                ₹{
+                                                    items.reduce(
+                                                    (acc, item) =>
+                                                        acc + (item?.highQty || 0) * item?.gst * item?.sellingPrice,
+                                                    0
+                                                    ).toFixed(2) ||
+                                                    0
+                                                }
+                                                
+                                                </>
+                                            )}
+                                            </>
+                                        ) : (
+                                           
+                                            <>
+                                            ₹{
+                                                items.reduce((acc, item) => acc + item.quantity * item.gst * item?.sellingPrice, 0).toFixed(2) ||
+                                                0
+                                            }
+                                            </>
+                                        )}
+                                     </div>
+
+                                     <div className='flex text-gray-500 text-base font-medium w-1/12' >
+  {isChecked ? (
+    
+    <>
+      {items?.some((item) => item?.lowQty) && ( 
+        <>
+          ₹{
+            items.reduce(
+              (acc, item) => acc + (item?.lowQty || 0) * item?.sellingPrice,
+              0
+            ).toFixed(2) ||
+            0
+          }
+         -{' '}
+        </>
+      )}
+      {items?.some((item) => item?.highQty) && ( 
+        <>
+          ₹{
+            items.reduce(
+              (acc, item) => acc + (item?.highQty || 0) * item?.sellingPrice+(item?.highQty || 0) * item?.gst*item?.sellingPrice,
+              0
+            ).toFixed(2) ||
+            0
+          }
+          
+        </>
+      )}
+    </>
+  ) : (
+   
+    <>
+      ₹{
+        items.reduce((acc, item) => acc + item.quantity * item?.sellingPrice, 0) .toFixed(2) ||
+        0
+      }
+     
+    </>
+  )}
+</div>
+
                                 <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
                             </div>
                         </div>

@@ -89,14 +89,14 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                 <div className="flex items-center gap-[88px]">
                     <div className="text-gray-500 text-base font-medium ">Name*</div>
                     <div>
-                    <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="name" onChange={(e) => handleChange("name", e.target.value)} />
+                    <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="name" onChange={(e) => handleChange("name", e.target.value)} />
                     </div>
                 </div>
               
                 <div className="flex items-center gap-[96px]">
                     <div className="text-gray-500 text-base font-medium ">Email</div>
                     <div>
-                    <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="email" onChange={(e) => handleChange("email", e.target.value)} />
+                    <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="email" onChange={(e) => handleChange("email", e.target.value)} />
                     </div>
                 </div>
                 <div className="flex items-center gap-[45px]  w-[581px]">
@@ -115,7 +115,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                         />
                     
                     <div className="w-full h-full">
-                        <input className="h-full w-full text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="contact" onChange={(e) => handleChange("contact", e.target.value)} />
+                        <input className="h-full w-full text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="contact" onChange={(e) => handleChange("contact", e.target.value)} />
                     </div>
                     </div>
                     <div className=" ml-1  w-10 h-9 ">
@@ -128,30 +128,30 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                 <div className="flex items-center gap-[85px]">
                     <div className="text-gray-500 text-base font-medium ">GSTIN </div>
       
-                    <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="gstinNo" onChange={(e) => handleChange("gstinNo", e.target.value)} />
+                    <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="gstinNo" onChange={(e) => handleChange("gstinNo", e.target.value)} />
                   
                     <div className="h-6 px-2 py-1.5 bg-teal-400 rounded-[5px] justify-center items-center gap-2 inline-flex absolute right-12">
 <div className="text-white text-sm font-medium ">Fetch Details</div>
 </div>  
                 </div>
-                <div className="flex items-center gap-[77px]">
-                    <div className="text-gray-500 text-base font-medium ">PAN Number</div>
+                <div className="flex items-center gap-1">
+                    <div className="text-gray-500 text-base font-medium w-[8.2rem]">PAN Number</div>
                     <div>
-                    <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="panNo" onChange={(e) => handleChange("panNo", e.target.value)} />
+                    <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="panNo" onChange={(e) => handleChange("panNo", e.target.value)} />
                     </div>
                 </div>
                 <div className="flex items-center gap-[45px] w-[581px]">
                     <div className="text-gray-500 text-base font-medium  w-2/12">Address</div>
                     <div className="flex w-10/12">
                   
-                    <div className="flex-1 ml-1">
-                        <input className="w-[25.5rem] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="address" onChange={(e) => handleChange("address", e.target.value)} />
+                    <div className="flex-1">
+                        <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="address" onChange={(e) => handleChange("address", e.target.value)} />
                     </div>
-                    <div className=" ml-1  w-9 h-9 ">
+                    {/* <div className=" ml-1  w-9 h-9 ">
                     <button  className="w-full h-full rounded-[5px] justify-center text-2xl items-center gap-2 flex border-borderGrey border border-solid bg-white outline-none">
                         <div className="text-neutral-400 text-lg">+</div>
                     </button>
-                    </div>
+                    </div> */}
                     </div>
                 </div>
                 <div className="flex gap-[14px] justify-between  w-[584px]">
@@ -182,7 +182,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                     <div className="flex  h-9">
            
                    
-                        <input className=" w-[7.5rem] ml-[25px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="pinCode" onChange={(e) => handleChange("pinCode", e.target.value)} />
+                        <input className=" w-[7.5rem] ml-[25px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="pinCode" onChange={(e) => handleChange("pinCode", e.target.value)} />
             
                    
                     </div>

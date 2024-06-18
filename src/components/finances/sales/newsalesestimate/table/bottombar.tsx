@@ -34,7 +34,9 @@ const NewsaleEstimateBottomBar = () => {
             quantity: data.quantity,  
             sellingPrice:data.sellingPrice,
             taxAmount:data.gst,
-            name:data.itemName
+            name:data.itemName,
+            lowQty:data.lowQty,
+            highQty:data.highQty
     }));
         const data={
             customer: allData.headerData.customer.value,

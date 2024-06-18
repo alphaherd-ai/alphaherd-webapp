@@ -251,7 +251,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
         setItems(updatedItems);
 
         // Set first element of filteredBatches as default value for batches
-        const productBatches = batches?.filter((batch) => batch.value.productId === selectedProduct.value.id);
+        const productBatches = batches?.filter((batch) => batch.value.productId === selectedProduct.value.id).sort((a, b) => a.value.id - b.value.id);
         setFilteredBatches(productBatches);
         const defaultBatch = productBatches?.[0];
         setItems((prevItems) =>
@@ -307,9 +307,9 @@ useEffect(() => {
         <>
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
             <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-between items-center gap-6 flex">
-                    <div className='bg-orange-200 rounded-md px-2' >
-                        <span className="text-orange-600  text-sm font-medium ">You’re owed: ₹</span>
-                        <span className="text-orange-600 text-sm font-bold ">2,124</span>
+                    <div className='bg-[#FFF0E9] rounded-md px-2 py-2' >
+                        <span className="text-[#FC6E20]  text-sm font-medium ">You’re owed: ₹</span>
+                        <span className="text-[#FC6E20] text-sm font-bold ">2,124</span>
                     </div>
                     {/* <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '> */}
                         {/* <Popover placement="bottom-end" showArrow offset={10}>
