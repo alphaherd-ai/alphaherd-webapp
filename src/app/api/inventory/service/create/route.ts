@@ -30,6 +30,7 @@ export const POST=async(req: NextRequest)=> {
               }},
       
         });
+        console.log(service);
         const inventory= await prismaClient.inventoryTimeline.create({
           data:{
             quantityChange:body.quantity,

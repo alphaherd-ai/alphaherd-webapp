@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import closeicon from "../../../../assets/icons/inventory/closeIcon.svg";
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
@@ -16,25 +16,15 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
     const [formData, setFormData] = useState<any>({});
   const appState = useAppSelector((state) => state.app)
   const [buttonDisabled, setButtonDisabled] = useState(false);
-
-  const Providers =[
-    { value: 'GST@0%.', label: 'GST@0%.' },
-    { value: 'GST@5%.', label: 'GST@5%.' },
-    { value: 'GST@12%.', label: 'GST@12%.' }, // this provider is employee of the clinic
-]
-
-const LinkProducts =[
-    { value: 'GST@0%.', label: 'GST@0%.' },
-    { value: 'GST@5%.', label: 'GST@5%.' },
-    { value: 'GST@12%.', label: 'GST@12%.' },
-]
+    const [Providers,setProviders] = useState([]);
+    const [LinkProducts,setLinkProducts] = useState([]);
 
 const gstOptions = [
-    { value: 'GST@0%.', label: 'GST@0%.' },
-    { value: 'GST@5%.', label: 'GST@5%.' },
-    { value: 'GST@12%.', label: 'GST@12%.' },
-    { value: 'GST@18%.', label: 'GST@18%.' },
-    { value: 'GST@28%.', label: 'GST@28%.' },
+    { value: 0, label: 'GST@0%.' },
+    { value: 5, label: 'GST@5%.' },
+    { value: 12, label: 'GST@12%.' },
+    { value: 18, label: 'GST@18%.' },
+    { value: 28, label: 'GST@28%.' },
 ];
 
 const categoryOptions = [
@@ -47,13 +37,35 @@ const categoryOptions = [
     {value: "Rescue", label: "Rescue"},
 ]
 
+    useEffect(() => {
+        fetchProductsAndProviders();
+    },[]);
+
 
     const handleContinueClick = () => {
         setLastStep(true);
     }
 
     const fetchProductsAndProviders = async () => {
-        
+        console.log("inside fetch");
+        const productsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/branch/products?branchId=${appState.currentBranchId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        let productsJson = await productsResponse.json();
+        console.log(productsJson);
+        const staffResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/branch/staff?branchId=${appState.currentBranchId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        let staffJson = await staffResponse.json();
+        console.log(staffJson);
+        setLinkProducts(productsJson.products.map((product) => {return {label : product.itemName,value : product.id}}));
+        setProviders(staffJson.staff.map((user) => {return {label : user.name,value : user.id}}));
     }
 
 
