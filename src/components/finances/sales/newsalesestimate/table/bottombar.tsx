@@ -13,6 +13,7 @@ import { FinanceCreationType } from '@prisma/client'
 import axios from "axios"
 import { useAppSelector } from '@/lib/hooks';
 import { Button } from "@nextui-org/react"
+import {useRouter} from "next/navigation"
 
 
 
@@ -20,7 +21,7 @@ const NewsaleEstimateBottomBar = () => {
   
     const { headerData, tableData, totalAmountData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
-
+    const router=useRouter();
     const handleSubmit = async () => {
         const allData = {headerData, tableData, totalAmountData};
         console.log(allData)
@@ -36,7 +37,8 @@ const NewsaleEstimateBottomBar = () => {
             taxAmount:data.gst,
             name:data.itemName,
             lowQty:data.lowQty,
-            highQty:data.highQty
+            highQty:data.highQty,
+            discount:data.discount
     }));
         const data={
             customer: allData.headerData.customer.value,
@@ -59,10 +61,11 @@ const NewsaleEstimateBottomBar = () => {
         console.log(JSON.stringify(data))
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Estimate}?branchId=${appState.currentBranchId}`,data)
-
             if (!response.data) {
                 throw new Error('Network response was not ok');
             }
+            router.back();
+    
         } catch (error) {
             console.error('Error:', error);
         }

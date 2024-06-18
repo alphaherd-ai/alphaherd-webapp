@@ -29,7 +29,8 @@ export const POST = async (req: NextRequest) => {
         adminOrganizations: {
           select: {
             id: true,
-            orgName: true
+            orgName: true,
+            address:true
           }
         },
         userRoles: {}
@@ -103,7 +104,8 @@ export const POST = async (req: NextRequest) => {
           adminOrganizations: {
             select: {
               id: true,
-              orgName: true
+              orgName: true,
+              address:true
             }
           },
           userRoles: {}

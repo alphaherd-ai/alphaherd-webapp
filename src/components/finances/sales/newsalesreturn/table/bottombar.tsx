@@ -1,5 +1,4 @@
 "use client"
-
 import printicon from "../../../../../assets/icons/finance/print.svg"
 import shareicon from "../../../../../assets/icons/finance/share.svg"
 import drafticon from "../../../../../assets/icons/finance/draft.svg"
@@ -14,7 +13,7 @@ import axios from "axios"
 import { useAppSelector } from '@/lib/hooks';
 import { useSearchParams } from "next/navigation"
 import { Button } from "@nextui-org/react"
-
+import { useRouter } from "next/navigation"
 
 
 const NewsalesReturnBottomBar = () => {
@@ -22,6 +21,7 @@ const NewsalesReturnBottomBar = () => {
     const appState = useAppSelector((state) => state.app);
     const url=useSearchParams();
     const id=url.get('id');
+    const router=useRouter();
     const handleSubmit = async () => {
         const allData = {headerData, tableData, totalAmountData};
         console.log("this is all data",allData)
@@ -35,7 +35,7 @@ const NewsalesReturnBottomBar = () => {
             quantity: data.quantity,  
             sellingPrice:data.sellingPrice,
             taxAmount:data.gst,
-            name:data.itemName
+            name:data.itemName,
     }));
      const data={
             customer: (id===null)?allData.headerData.customer.value:allData.headerData.customer,
@@ -62,6 +62,7 @@ const NewsalesReturnBottomBar = () => {
             if (!response.data) {
                 throw new Error('Network response was not ok');
             }
+            router.back();
         } catch (error) {
             console.error('Error:', error);
         }

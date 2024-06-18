@@ -12,6 +12,7 @@ export interface UserState {
   phoneNo:       String,
   altPhoneNo:     String | null,
   hashedPassword: String,
+  address: String,
   adminOrganizations: [],
   orgBranchId: number | null,
   userRoles: []
@@ -24,9 +25,11 @@ const initialState: UserState = {
   phoneNo:       "",
   altPhoneNo:     null,
   hashedPassword: "",
+  address:"",
   adminOrganizations: [],
   orgBranchId: null,
   userRoles: []
+
 };
 
 export const userSlice = createSlice({
