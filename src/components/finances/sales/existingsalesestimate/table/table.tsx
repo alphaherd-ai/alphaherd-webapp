@@ -45,7 +45,8 @@ const ExistingsaleEstimateTable = () => {
                 batchNumber:item.productBatch.batchNumber,
                 tax:item.taxAmount,
                 lowQty:item.lowQty,
-                highQty:item.highQty
+                highQty:item.highQty,
+                discount:item.discount
               }));
               setItems(itemData);
             }
@@ -120,7 +121,8 @@ const ExistingsaleEstimateTable = () => {
                                 <div className=' flex text-gray-500 text-base font-medium w-1/12 '>Total</div>
                             </div>
                             {items.map((item,index) => (
-                                <div key={item.id} className='flex justify-evenly items-center w-full  box-border  bg-white  border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-400   '>
+                            <div key={item.id} className="flex flex-col">
+                                <div  className='flex justify-evenly items-center w-full  box-border  bg-white  border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-400   '>
                                     <div className='w-[3rem] flex items-center text-textGrey2 text-base font-medium '>{index+1}</div>
                                     <div className='w-[15rem] flex items-center text-textGrey2  text-base font-medium'>{item.itemName}</div>
                                     <div className='w-[10rem] flex-col items-center text-textGrey2  text-base font-medium '>
@@ -185,6 +187,30 @@ const ExistingsaleEstimateTable = () => {
                                             </>
                                         )}
                                         </div>
+                                        
+                                </div>
+                                <div>
+                                    <div className='flex  w-full justify-evenly items-center box-border bg-white  h-12  border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-500'>
+                                        <div className=' flex text-gray-500 text-base font-medium w-[3rem]'></div>
+                                        <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>
+                                            <div className=" h-7 px-2 py-1.5 bg-violet-100 rounded-[5px] justify-center items-center gap-2 inline-flex">
+                                                <div className="text-indigo-600 text-sm font-medium ">Item Discount</div>
+                                            </div>
+                                        </div>
+                                        <div className=' flex text-gray-500 text-base font-medium w-[10rem]'> {item.discount*100}% off</div>
+                                        <div className=' flex text-gray-500 text-base font-medium w-1/12'>
+
+                                        </div>
+
+                                        <div className=' flex text-gray-500 text-base font-medium w-[10rem]'></div>
+
+                                        <div className=' flex text-gray-500 text-base font-medium w-1/12'> </div>
+                                        <div className=' flex text-gray-500 text-base font-medium w-[10rem]'></div>
+                                        <div className="text-red-500 text-base font-bold w-1/12 ">-₹{item.discount*item.sellingPrice*item.quantity}</div>
+                                     
+                                    </div>
+
+                                    </div>
                                 </div>
                             ))}
                             <div className='flex  w-full justify-evenly items-center box-border bg-gray-100  h-12  border-b border-neutral-400 text-gray-500 rounded-b-md'>
@@ -200,7 +226,7 @@ const ExistingsaleEstimateTable = () => {
                                 <div className="text-neutral-400 text-base  font-medium   "> Tax inc</div>
                                 </div>
                                 <div className=' flex text-gray-500 text-base font-medium  w-[10rem]'>{`₹ ${items.reduce((acc, item) => acc + item.quantity *  item.tax, 0).toFixed(2)}`}</div>
-                                <div className=' flex text-gray-500 text-base font-medium  w-1/12'>{`₹ ${items.reduce((acc, item) => acc + item.quantity * item.sellingPrice +item.quantity* item.tax, 0).toFixed(2)}`}</div>
+                                <div className=' flex text-gray-500 text-base font-medium  w-1/12'>{`₹ ${items.reduce((acc, item) => acc + item.quantity * item.sellingPrice +item.quantity* item.tax*item.sellingPrice-(item.quantity*item.sellingPrice*item.discount||0), 0).toFixed(2)}`}</div>
                             </div>
                         </div>
 

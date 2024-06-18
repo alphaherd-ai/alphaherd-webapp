@@ -7,6 +7,7 @@ import check from "../../../../../assets/icons/finance/check.svg"
 import React, {useState}  from 'react'
 import { Button } from '@nextui-org/react';
 import Select from 'react-select';
+import { DataContext } from './DataContext';
 
 type PopupProps = {
     onClose: () => void;

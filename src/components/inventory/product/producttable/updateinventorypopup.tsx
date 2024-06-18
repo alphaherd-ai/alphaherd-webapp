@@ -3,8 +3,6 @@ import Image from "next/image";
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import closeicon from "../../../../assets/icons/inventory/closeIcon.svg";
-import arrowicon from "../../../../assets/icons/inventory/arrow.svg";
-import minicon from "../../../../assets/icons/inventory/mini.svg";
 import addicon from "../../../../assets/icons/inventory/add.svg";
 import deleteicon from "../../../../assets/icons/loginsignup/delete.svg";
 import add1icon from "../../../../assets/icons/inventory/add (1).svg";
@@ -73,7 +71,6 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
     const [filteredBatches,setFilteredBatches]=useState<any[]>([]);
     const [inventory, setInventory] = useState<any[]>([]);
     const appState = useAppSelector((state) => state.app)
-    const [startDate, setStartDate] = useState(new Date());
 
 
     const {fetchedProducts,isLoading,error}=useProductfetch(appState.currentBranchId);
@@ -245,7 +242,6 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
             }
         }
     }, [inventory, products, selectedOption]);
-
     const handleUpdateInventory = useCallback(async () => {
         try {
             for (const item of inventory) {
@@ -301,6 +297,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                 
             }
             alert('Inventory updated successfully');
+            onClose();
         } catch (error) {
             console.error("Error updating inventory:", error);
             alert('Error updating inventory. Please try again.');
@@ -409,9 +406,10 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
         <DatePicker
             // showIcon
             className="w-full rounded-[5px] border border-solid border-borderGrey outline-none  focus:border focus:border-textGreen px-1 py-2"
-            selected={startDate}
+            selected={item.expiry}
             placeholderText="MM/DD/YYYY"
-            onChange={(date:any) => setStartDate(date)}
+            onChange={(date:any) =>{ 
+                handleInputChange(index,"expiry",date)}}
             calendarClassName="react-datepicker-custom"
             // value={startDate.toLocaleDateString()}
             // customInput={
