@@ -3,6 +3,7 @@ import { Tooltip, Button, Spinner } from "@nextui-org/react";
 import { useAppSelector } from '@/lib/hooks';
 import useSWR from 'swr';
 import formatDateAndTime from '@/utils/formateDateTime';
+import Loading from '@/app/loading';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 interface Products{
@@ -55,7 +56,7 @@ const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
  
     return true;
   });
-  if(isLoading)return <Spinner/>
+  if(isLoading)return (<Loading/>)
   return (
     <>
       {filteredProducts.map(product => (

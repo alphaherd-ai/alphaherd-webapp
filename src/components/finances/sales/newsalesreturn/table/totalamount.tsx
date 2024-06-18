@@ -125,6 +125,11 @@ const NewsalesReturnTotalAmout = () => {
 <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
     {totalAmount.toFixed(2)}
     <span className="px-2 py-1 rounded-md bg-[#FFEAEA] text-[#FF3030] text-sm font-medium ml-[5px]">Out</span>
+    
+    {/* USE THE LABELS AS PER REQ. ----------------------*/}
+
+    {/* <span className="px-2 py-1 rounded-md bg-[#E7F5EE] text-[#0F9D58] text-sm font-medium ml-[5px]">In</span>
+    <span className="px-2 py-1 rounded-md bg-[#FFF0E9] text-[#FC6E20] text-sm font-medium ml-[5px]">You Owe</span> */}
 </div>
 
 

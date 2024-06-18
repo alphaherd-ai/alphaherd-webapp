@@ -89,7 +89,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }) => {
                 <div className="text-gray-500 text-xl font-medium ">New Client</div>
                 <div className="text-textGrey1 text-base font-medium ">New client? Enter their details to get started.</div>
                 <div className="flex items-center">
-                    <div className="text-gray-500 text-base font-medium  w-[8rem]">Client Name*</div>
+                    <div className="text-gray-500 text-base font-medium  w-[8rem]">Client Name<span className="text-[red]">*</span></div>
                     <div>
                         <input className="w-[447px] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="name" onChange={(e) => handleChange("name", e.target.value)} />
                     </div>
@@ -102,7 +102,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }) => {
                     </div>
                 </div>
                 <div className="flex items-center gap-[38px] w-full">
-                    <div className="text-gray-500 text-base font-medium  w-2/12">Mobile No</div>
+                    <div className="text-gray-500 text-base font-medium  w-2/12">Mobile No.<span className="text-[red]">*</span></div>
                     <div className="flex w-10/12">
                     <div className="flex gap-0 bg-white w-full items-center h-9">
                     
