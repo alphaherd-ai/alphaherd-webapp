@@ -17,10 +17,43 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
   const appState = useAppSelector((state) => state.app)
   const [buttonDisabled, setButtonDisabled] = useState(false);
 
+  const Providers =[
+    { value: 'GST@0%.', label: 'GST@0%.' },
+    { value: 'GST@5%.', label: 'GST@5%.' },
+    { value: 'GST@12%.', label: 'GST@12%.' }, // this provider is employee of the clinic
+]
+
+const LinkProducts =[
+    { value: 'GST@0%.', label: 'GST@0%.' },
+    { value: 'GST@5%.', label: 'GST@5%.' },
+    { value: 'GST@12%.', label: 'GST@12%.' },
+]
+
+const gstOptions = [
+    { value: 'GST@0%.', label: 'GST@0%.' },
+    { value: 'GST@5%.', label: 'GST@5%.' },
+    { value: 'GST@12%.', label: 'GST@12%.' },
+    { value: 'GST@18%.', label: 'GST@18%.' },
+    { value: 'GST@28%.', label: 'GST@28%.' },
+];
+
+const categoryOptions = [
+    {value: "General Consultation", label: "General Consultation"},
+    {value: "Follow Up", label: "Follow Up"},
+    {value: "Surgery", label: "Surgery"},
+    {value: "Vaccination", label: "Vaccination"},
+    {value: "Grooming", label: "Grooming"},
+    {value: "Boarding", label: "Boarding"},
+    {value: "Rescue", label: "Rescue"},
+]
 
 
     const handleContinueClick = () => {
         setLastStep(true);
+    }
+
+    const fetchProductsAndProviders = async () => {
+        
     }
 
 
@@ -63,36 +96,6 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
     const handleChange = (field: string, value: any) => {
         setFormData({ ...formData, [field]: value });
     };
-
-    const Providers =[
-        { value: 'GST@0%.', label: 'GST@0%.' },
-        { value: 'GST@5%.', label: 'GST@5%.' },
-        { value: 'GST@12%.', label: 'GST@12%.' }, // this provider is employee of the clinic
-    ]
-    
-    const LinkProducts =[
-        { value: 'GST@0%.', label: 'GST@0%.' },
-        { value: 'GST@5%.', label: 'GST@5%.' },
-        { value: 'GST@12%.', label: 'GST@12%.' },
-    ]
-
-    const gstOptions = [
-        { value: 'GST@0%.', label: 'GST@0%.' },
-        { value: 'GST@5%.', label: 'GST@5%.' },
-        { value: 'GST@12%.', label: 'GST@12%.' },
-        { value: 'GST@18%.', label: 'GST@18%.' },
-        { value: 'GST@28%.', label: 'GST@28%.' },
-    ];
-
-    const categoryOptions = [
-        {value: "General Consultation", label: "General Consultation"},
-        {value: "Follow Up", label: "Follow Up"},
-        {value: "Surgery", label: "Surgery"},
-        {value: "Vaccination", label: "Vaccination"},
-        {value: "Grooming", label: "Grooming"},
-        {value: "Boarding", label: "Boarding"},
-        {value: "Rescue", label: "Rescue"},
-    ]
 
     return <>
         {!lastStep &&

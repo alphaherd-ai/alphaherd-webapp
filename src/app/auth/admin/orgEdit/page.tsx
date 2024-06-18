@@ -79,6 +79,14 @@ const OrgEdit = () => {
               return newErrors;
             });
           }
+          else{
+            setValidationErrors((prevErrors) => {
+              console.log("here");
+              let newErrors = prevErrors;
+              newErrors[name] = '';
+              return newErrors;
+            });
+          }
         }
       }
     };
