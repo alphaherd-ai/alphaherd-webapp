@@ -251,7 +251,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
         setItems(updatedItems);
 
         // Set first element of filteredBatches as default value for batches
-        const productBatches = batches?.filter((batch) => batch.value.productId === selectedProduct.value.id);
+        const productBatches = batches?.filter((batch) => batch.value.productId === selectedProduct.value.id).sort((a, b) => a.value.id - b.value.id);
         setFilteredBatches(productBatches);
         const defaultBatch = productBatches?.[0];
         setItems((prevItems) =>
