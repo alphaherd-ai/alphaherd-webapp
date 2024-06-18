@@ -207,7 +207,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
             <Image src={Check} alt="Check" />
         </div>
     </div>
-    <div className="text-gray-100 text-base font-bold ">Save</div>
+    <div onClick={handleSaveClick} className="text-gray-100 text-base font-bold ">Save</div>
 </div>
                   
                 </div>

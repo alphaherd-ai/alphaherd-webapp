@@ -10,11 +10,20 @@ import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { useAppSelector } from "@/lib/hooks";
 import useSWR from 'swr';
+import axios from "axios";
+import Distributors from "@/app/database/distributor/page";
+
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 type PopupProps = {
     onClose: () => void;
 }
+
+interface Distributors{
+    id:string,
+    distributorName:string
+}
+
 function useProductfetch (id: number | null) {
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`,fetcher,{revalidateOnFocus:true});
    return {
@@ -27,6 +36,9 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
     const [lastStep, setLastStep] = useState(false);
     const [formData, setFormData] = useState<any>({});
     const [buttonDisabled, setButtonDisabled] = useState(false);
+    const [selectedUnit, setSelectedUnit] = useState<string | undefined>('');
+    const [distributors, setDistributor] = useState<Distributors[]>([]); 
+
     const [categories, setCategories] = useState<any[]>([
         { value: "Pet food", label: "Pet food" },
         { value: "Medicines", label: "Medicines" },
@@ -53,6 +65,24 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
             setCategories(uniqueCategories);
         }
     }, [isLoading, error, fetchedProducts, categories]);
+
+    useEffect(() => {
+
+        const fetchDistributors = async()=>{
+            try{
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll?branchId=${appState.currentBranchId}`);
+                const distributors = response.data.map((distributor:Distributors)=>({
+                    value: distributor.id,
+                    label: distributor.distributorName
+                }));
+                console.log(distributors);
+                setDistributor(distributors);
+            }catch(error){
+                console.log("Error fetching distributors",error);
+            }
+        }
+          fetchDistributors();
+        }, []);
 
     const handleContinueClick = () => {
         setLastStep(true);
@@ -114,6 +144,11 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
         { value: 'GST@28%', label: 'GST@28%' },
     ];
 
+    const distributersList = distributors.map((distributor)=>({
+        value: distributor.distributorName,
+        label:distributor.distributorName
+    }))
+
     return (
         <>
             {!lastStep && (
@@ -138,7 +173,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                                     placeholder="Select Category"
                                     isClearable={false}
                                     isSearchable={true}
-                                    options={categories}
+                                    options={distributersList}
                                     isMulti={true}
                                     name="providers"
                                     onChange={(value) => handleChange("providers", value)}
@@ -161,7 +196,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                                     isClearable={false}
                                     isSearchable={true}
                                     options={gstOptions}
-                                    isMulti={true}
+                                    isMulti={false}
                                     name="tax"
                                     onChange={(value) => handleChange("tax", value)}
                                 />
