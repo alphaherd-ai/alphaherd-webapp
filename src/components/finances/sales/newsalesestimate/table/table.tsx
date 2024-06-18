@@ -338,7 +338,7 @@ useEffect(() => {
                                     <div className="pr-[4px]">
                                         <input value="test" type="checkbox" className="border-0" onChange={handleCheckBoxChange} />
                                     </div>
-                                    <div className="text-neutral-400 text-base font-bold ">Price Range</div>
+                                    <div className="text-textGrey2 text-base font-bold ">Price Range</div>
                                 </div>
                                 <Button onClick={handleAddItem} className='cursor-pointer text-white flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg border-0 outline-none'>
                                     <div className='w-4 h-4 mb-3 mr-2'>
@@ -565,7 +565,7 @@ useEffect(() => {
                                 
                                 <div className='flex text-gray-500 text-base font-medium w-[10rem]'>
                                     <Select
-                                        className="text-neutral-400 text-base font-medium"
+                                        className="text-textGrey2 text-base font-medium"
                                         defaultValue={gstOptions[0]}
                                         isClearable={false}
                                         isSearchable={true}

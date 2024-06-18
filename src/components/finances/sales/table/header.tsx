@@ -143,13 +143,13 @@ const FinancesSalesTableHeader = ({invoiceCount,estimateCount,returnCount}:any) 
 </Dropdown>
 </div>
 
-<div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '>
+{/* <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '> */}
 
 <Popover placement="bottom-end" showArrow offset={10}>
 <PopoverTrigger>
     <Button color="gray-400"
         variant="solid"
-        className="capitalize flex border-none bg-black text-white rounded-lg ">  Create
+        className="capitalize px-4 py-2.5 flex border-none bg-black text-white rounded-lg ">  Create
         <div className='flex pl-2'><Image src={DownArrow} alt='DownArrow' className='w-4 h-4 ' /></div>
     </Button>
 </PopoverTrigger>
@@ -181,7 +181,7 @@ const FinancesSalesTableHeader = ({invoiceCount,estimateCount,returnCount}:any) 
 
 
 
-</div>
+{/* </div> */}
 </div>
 </div >
 

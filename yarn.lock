@@ -5376,6 +5376,11 @@
   "resolved" "https://registry.npmjs.org/ldrs/-/ldrs-1.0.2.tgz"
   "version" "1.0.2"
 
+ldrs@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/ldrs/-/ldrs-1.0.2.tgz#75e8ff51ff32c3e12523617bb30f742a50f4951c"
+  integrity sha512-sYJmivdkIiHrUEqTrEWccBoLdaENpzbzkABI5rk8rRxTXrg9i2xVuDvUUuhOhJY3RmQyaoxs046pM1DCRdcIpg==
+
 "legacy-swc-helpers@npm:@swc/helpers@=0.4.14":
   "integrity" "sha512-4C7nX/dvpzB7za4Ql9K81xK3HPxCpHMgwTZVyf+9JQ6VUbn9jjZVN7/Nkdz/Ugzs2CSjqnL/UPXroiVBVHUWUw=="
   "resolved" "https://registry.npmjs.org/@swc/helpers/-/helpers-0.4.14.tgz"
@@ -6714,33 +6719,33 @@
     "prop-types" "^15.6.0"
     "tiny-warning" "^1.0.0"
 
-"react-is@^16.13.1", "react-is@^16.7.0":
-  "integrity" "sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ=="
-  "resolved" "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz"
-  "version" "16.13.1"
+react-is@^16.13.1, react-is@^16.7.0:
+  version "16.13.1"
+  resolved "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz"
+  integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
-"react-is@^18.2.0":
-  "integrity" "sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg=="
-  "resolved" "https://registry.npmjs.org/react-is/-/react-is-18.3.1.tgz"
-  "version" "18.3.1"
+react-is@^18.2.0:
+  version "18.3.1"
+  resolved "https://registry.npmjs.org/react-is/-/react-is-18.3.1.tgz"
+  integrity sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==
 
-"react-loader-spinner@^6.1.6":
-  "integrity" "sha512-x5h1Jcit7Qn03MuKlrWcMG9o12cp9SNDVHVJTNRi9TgtGPKcjKiXkou4NRfLAtXaFB3+Z8yZsVzONmPzhv2ErA=="
-  "resolved" "https://registry.npmjs.org/react-loader-spinner/-/react-loader-spinner-6.1.6.tgz"
-  "version" "6.1.6"
+react-loader-spinner@^6.1.6:
+  version "6.1.6"
+  resolved "https://registry.yarnpkg.com/react-loader-spinner/-/react-loader-spinner-6.1.6.tgz#744d84a9763e963b565054f4f281dadfbd17e9e9"
+  integrity sha512-x5h1Jcit7Qn03MuKlrWcMG9o12cp9SNDVHVJTNRi9TgtGPKcjKiXkou4NRfLAtXaFB3+Z8yZsVzONmPzhv2ErA==
   dependencies:
-    "react-is" "^18.2.0"
-    "styled-components" "^6.1.2"
+    react-is "^18.2.0"
+    styled-components "^6.1.2"
 
-"react-onclickoutside@^6.13.0":
-  "integrity" "sha512-LdrrxK/Yh9zbBQdFbMTXPp3dTSN9B+9YJQucdDu3JNKRrbdU+H+/TVONJoWtOwy4II8Sqf1y/DTI6w/vGPYW0w=="
-  "resolved" "https://registry.npmjs.org/react-onclickoutside/-/react-onclickoutside-6.13.1.tgz"
-  "version" "6.13.1"
+react-onclickoutside@^6.13.0:
+  version "6.13.1"
+  resolved "https://registry.npmjs.org/react-onclickoutside/-/react-onclickoutside-6.13.1.tgz"
+  integrity sha512-LdrrxK/Yh9zbBQdFbMTXPp3dTSN9B+9YJQucdDu3JNKRrbdU+H+/TVONJoWtOwy4II8Sqf1y/DTI6w/vGPYW0w==
 
-"react-redux@^9.1.0":
-  "integrity" "sha512-0OA4dhM1W48l3uzmv6B7TXPCGmokUU4p1M44DGN2/D9a1FjVPukVjER1PcPX97jIg6aUeLq1XJo1IpfbgULn0w=="
-  "resolved" "https://registry.npmjs.org/react-redux/-/react-redux-9.1.2.tgz"
-  "version" "9.1.2"
+react-redux@^9.1.0:
+  version "9.1.2"
+  resolved "https://registry.npmjs.org/react-redux/-/react-redux-9.1.2.tgz"
+  integrity sha512-0OA4dhM1W48l3uzmv6B7TXPCGmokUU4p1M44DGN2/D9a1FjVPukVjER1PcPX97jIg6aUeLq1XJo1IpfbgULn0w==
   dependencies:
     "@types/use-sync-external-store" "^0.0.3"
     "use-sync-external-store" "^1.0.0"
@@ -6788,7 +6793,12 @@
     "invariant" "^2.2.4"
     "tslib" "^2.0.0"
 
-"react-tailwindcss-datepicker@^1.6.6":
+"react-tailwindcss-datepicker@^1.6.6:
+  version "1.6.6"
+  resolved "https://registry.yarnpkg.com/react-tailwindcss-datepicker/-/react-tailwindcss-datepicker-1.6.6.tgz#b6afe0ff8efacf8fa4eaf02e6dadd5fe4719963d"
+  integrity sha512-kHSUonRO86PoYQQWPqpaSw2JeEn9OafdLsLBG85zO5Sfs23Ku8Ixt/YO+Is3TCBcFeOKnZgzhGLmP3NAXVlFkA==
+
+react-tailwindcss-datepicker@^1.6.6":
   "integrity" "sha512-kHSUonRO86PoYQQWPqpaSw2JeEn9OafdLsLBG85zO5Sfs23Ku8Ixt/YO+Is3TCBcFeOKnZgzhGLmP3NAXVlFkA=="
   "resolved" "https://registry.npmjs.org/react-tailwindcss-datepicker/-/react-tailwindcss-datepicker-1.6.6.tgz"
   "version" "1.6.6"
@@ -7350,20 +7360,20 @@
   dependencies:
     "ansi-regex" "^6.0.1"
 
-"strip-bom@^3.0.0":
-  "integrity" "sha512-vavAMRXOgBVNF6nyEEmL3DBK19iRpDcoIwW+swQ+CbGiu7lju6t+JklA1MHweoWtadgt4ISVUsXLyDq34ddcwA=="
-  "resolved" "https://registry.npmjs.org/strip-bom/-/strip-bom-3.0.0.tgz"
-  "version" "3.0.0"
+strip-bom@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.npmjs.org/strip-bom/-/strip-bom-3.0.0.tgz"
+  integrity sha512-vavAMRXOgBVNF6nyEEmL3DBK19iRpDcoIwW+swQ+CbGiu7lju6t+JklA1MHweoWtadgt4ISVUsXLyDq34ddcwA==
 
-"strip-json-comments@^3.1.1":
-  "integrity" "sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig=="
-  "resolved" "https://registry.npmjs.org/strip-json-comments/-/strip-json-comments-3.1.1.tgz"
-  "version" "3.1.1"
+strip-json-comments@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.npmjs.org/strip-json-comments/-/strip-json-comments-3.1.1.tgz"
+  integrity sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==
 
-"styled-components@^6.1.2", "styled-components@^6.1.8":
-  "integrity" "sha512-Ui0jXPzbp1phYij90h12ksljKGqF8ncGx+pjrNPsSPhbUUjWT2tD1FwGo2LF6USCnbrsIhNngDfodhxbegfEOA=="
-  "resolved" "https://registry.npmjs.org/styled-components/-/styled-components-6.1.11.tgz"
-  "version" "6.1.11"
+styled-components@^6.1.2, styled-components@^6.1.8:
+  version "6.1.11"
+  resolved "https://registry.yarnpkg.com/styled-components/-/styled-components-6.1.11.tgz#01948e5195bf1d39e57e0a85b41958c80e40cfb8"
+  integrity sha512-Ui0jXPzbp1phYij90h12ksljKGqF8ncGx+pjrNPsSPhbUUjWT2tD1FwGo2LF6USCnbrsIhNngDfodhxbegfEOA==
   dependencies:
     "@emotion/is-prop-valid" "1.2.2"
     "@emotion/unitless" "0.8.1"

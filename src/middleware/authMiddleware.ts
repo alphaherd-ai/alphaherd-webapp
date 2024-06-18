@@ -10,7 +10,7 @@ export const nonApiMiddleware: NextMiddleware = async (request: NextRequest) => 
     
     console.log("session: ", session);
     if (!session) {
-      return NextResponse.redirect(new URL('/alphaherd/auth/login', request.url));
+      return new Response(JSON.stringify({ "message": 'Not Authorized' }), { status: 401 });
     }
   }
 

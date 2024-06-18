@@ -43,7 +43,7 @@ export const getVerifyOrgandBranch= async(userId:number,branchId:number,request:
                 orgBranchId: branchId
             }
         })
-        console.log(orgBranch,org,userOrgRole)
+        console.log(orgBranch,user,org,userOrgRole)
         if(!(userOrgRole || org?.adminUsers.includes(user!))){
             return new Response(JSON.stringify("User not allowed for request"));
         }

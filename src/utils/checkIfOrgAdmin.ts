@@ -8,7 +8,7 @@ export async function checkIfOrgAdmin(request: NextRequest) {
         const token = request.cookies.get('session')?.value;
         console.log("token", token)
         if (!token) {
-            return redirect(process.env.NEXT_PUBLIC_API_BASE_PATH + '/alphaherd/auth/login');
+            return new Response(JSON.stringify({ "message": 'Not Authorized' }), { status: 401 });
         }
         let tokenPayload = await decrypt(token!);
         console.log(tokenPayload);
@@ -37,7 +37,7 @@ export async function checkIfOrgAdmin(request: NextRequest) {
             });
         }
         else{
-            return redirect(process.env.NEXT_PUBLIC_API_BASE_PATH + '/alphaherd/auth/login');
+            return new Response(JSON.stringify({ "message": 'Not Authorized' }), { status: 401 });
         }
     } catch (error) {
         console.error(error);

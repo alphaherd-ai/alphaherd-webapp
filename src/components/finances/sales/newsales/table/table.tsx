@@ -95,6 +95,7 @@ const NewsalesTable = () => {
     useEffect(()=>{
             if (!isEstimateDataLoading && estimateData && !isEstimateDataError) {
                 const {items,...otherData}=estimateData;
+                // eslint-disable-next-line react-hooks/rules-of-hooks
                 setOtherData(otherData)
               const shallowDataCopy = [...items]; 
               const itemData = shallowDataCopy.map((item: any) => ({

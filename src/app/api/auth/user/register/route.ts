@@ -57,23 +57,16 @@ export const POST = async (req : NextRequest) => {
         });
 
         console.log(orgBranchUserRole);
-        if(!userInviteString){
-            return new Response(JSON.stringify({ user }), {
-              status: 200,
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            });
-        }
+        return new Response(JSON.stringify({ user }), {
+            status: 200,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
     }
     catch(error){
         console.error('Error:', error);
         userInviteString=null; // to stop from redirect
         return new Response(JSON.stringify({ "message": 'Internal server error' }), { status: 500 });
-    }
-    finally{
-        if(userInviteString){
-            return redirect(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/auth/login?userInviteString=${userInviteString}`); // successfull redirect to login page
-        }
     }
 }

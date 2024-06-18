@@ -11,6 +11,7 @@ import { useAppSelector } from '@/lib/hooks';
 import formatDateAndTime from '@/utils/formateDateTime';
 import useSWR from 'swr';
 import { usePathname, useSearchParams } from 'next/navigation';
+import Loading from '@/app/loading';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 interface Sales {
@@ -68,7 +69,7 @@ const FinancesSalesTableItem = ({onCountsChange}:any) => {
     handleCounts(); 
   }, [sales]);
  
-if(isLoading&&!data)return <Spinner/>
+if(isLoading&&!data)return (<Loading/>)
   return (
      <div>
       {sales?.map(sale=>(

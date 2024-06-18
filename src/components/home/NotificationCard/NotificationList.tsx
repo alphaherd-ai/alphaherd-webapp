@@ -6,6 +6,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { useAppSelector } from "@/lib/hooks";
+import Loading from "@/app/loading";
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 //@ts-ignore
@@ -13,7 +14,7 @@ const NotificationList =  ({ notifs,isLoading }) => {
    
   const appState = useAppSelector((state) => state.app)
   if(isLoading)return ( <div className="flex justify-center items-center ml-40 pr-40 p-20">
-  <Spinner />
+  (<Loading/>)
   </div>)
 
   const readNotifs =  axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/updateAll?orgId=${appState.currentOrgId}`);

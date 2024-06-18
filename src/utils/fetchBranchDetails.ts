@@ -41,6 +41,7 @@ export const fetchInventoryId = async (request:NextRequest) => {
         }
     });
     if (!inventorySection && orgBranch) {
+        console.log("here");
         await prismaClient.inventorySection.create({
             data: {
                 name: "Inventory-" + orgBranch.branchName,
