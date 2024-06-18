@@ -117,6 +117,8 @@ model User {
   altPhoneNo         String?
   hashedPassword     String
   adminOrganizations Organization[]
+  serviceProvider    Services? @relation(fields: [serviceId],references: [id])
+  serviceId          Int?
   orgBranchId        Int?          
   lastUsedBranch     OrgBranch?          @relation(fields: [orgBranchId], references: [id])
   userRoles          OrgBranchUserRole[]
@@ -235,6 +237,8 @@ model Products {
   maxStock           Int?
   productBatches     ProductBatch[]
   items              Items[]
+  service            Services? @relation(fields: [serviceId],references: [id])
+  serviceId          Int?
   InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId Int?
 }
@@ -267,10 +271,10 @@ model Services {
   sacCode            String?
   description        String?
   sellingPrice       String?
-  tax                String?
+  tax                Float?
   category           String?
-  providers          String[]
-  linkProducts       String[]
+  providers          User[]
+  linkProducts       Products[]
   serviceCost        Int?
   serviceCharge      Int?
   inventoryEntries   Inventory[]
@@ -373,6 +377,7 @@ model Items {
   quantity         Int?
   lowQty           Int?
   highQty          Int?
+  discount         Float?
   name             String?
   productId        Int?
   products         Products?       @relation(fields: [productId], references: [id])

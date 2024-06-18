@@ -46,9 +46,9 @@ function htmlTemplate(userInviteString : String){
     <body>
         <div class="container">
             <h2>Invitation to Join Our Platform</h2>
-            <p>Hello [Recipient Name],</p>
+            <p>Hello,</p>
             <p>You have been invited to join our platform. Click the button below to accept the invitation:</p>
-            <p><a href="[INVITE_LINK]" class="btn">Accept Invitation</a></p>
+            <p><a href=${inviteLink} class="btn">Accept Invitation</a></p>
             <p>If you are unable to click the button above, you can also copy and paste the following link into your browser:</p>
             <a href=${inviteLink}>${inviteLink}</a>
             <p>We look forward to seeing you!</p>

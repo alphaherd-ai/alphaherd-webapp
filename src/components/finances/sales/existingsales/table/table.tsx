@@ -45,7 +45,8 @@ const ExistingsalesTable = () => {
                 sellingPrice:item.sellingPrice,
                 expiry:item.productBatch.expiry,
                 batchNumber:item.productBatch.batchNumber,
-                tax:item.taxAmount
+                tax:item.taxAmount,
+                discount:item.discount
               }));
               setItems(itemData);
             }
@@ -163,7 +164,7 @@ const ExistingsalesTable = () => {
                                     <div className='w-1/12 flex items-center text-[#6B7E7D] text-base font-medium'>{`₹${item.quantity * item.sellingPrice +item.quantity* item.tax}`}</div>
                                    
                                 </div>
-                                    {/* <div>
+                                    <div>
                                     <div className='flex  w-full justify-evenly items-center box-border bg-white  h-12  border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-500'>
                                         <div className=' flex text-gray-500 text-base font-medium w-[3rem]'></div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>
@@ -171,7 +172,7 @@ const ExistingsalesTable = () => {
                                                 <div className="text-indigo-600 text-sm font-medium ">Item Discount</div>
                                             </div>
                                         </div>
-                                        <div className=' flex text-gray-500 text-base font-medium w-[10rem]'> 8%</div>
+                                        <div className=' flex text-gray-500 text-base font-medium w-[10rem]'> {item.discount*100}% off</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-1/12'>
 
                                         </div>
@@ -180,11 +181,11 @@ const ExistingsalesTable = () => {
 
                                         <div className=' flex text-gray-500 text-base font-medium w-1/12'> </div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[10rem]'></div>
-                                        <div className="text-red-500 text-base font-bold w-1/12 ">-₹236</div>
+                                        <div className="text-red-500 text-base font-bold w-1/12 ">-₹{item.discount*item.sellingPrice*item.quantity}</div>
                                      
                                     </div>
 
-                                    </div> */}
+                                    </div>
                                 </div>
                                 
                                
@@ -202,7 +203,8 @@ const ExistingsalesTable = () => {
                                 <div className="text-neutral-400 text-base  font-medium   "></div>
                                 </div>
                                 <div className=' flex text-gray-500 text-base font-medium  w-[10rem]'>{`₹${items.reduce((acc, item) => acc + item.quantity  * item.tax, 0).toFixed(2)}`}</div>
-                                <div className=' flex text-gray-500 text-base font-medium  w-1/12'>{`₹${items.reduce((acc, item) => acc + item.quantity * item.sellingPrice+item.quantity* item.tax, 0).toFixed(2)}`}</div>
+                                <div className='flex text-gray-500 text-base font-medium w-1/12' >{`₹${(items.reduce((acc, item) => acc + item.quantity * item?.sellingPrice+item.quantity*item?.sellingPrice*item.tax-(item.quantity*item?.sellingPrice*item.discount||0), 0) .toFixed(2) ||0)}`}</div>
+
                             </div>
                         </div>
 

@@ -22,7 +22,6 @@ console.log(otherData)
 
 
 
-
     useEffect(() => {
         if (!disableButton && inputRef.current) {
             inputRef.current.focus();

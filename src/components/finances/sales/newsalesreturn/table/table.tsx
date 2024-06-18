@@ -64,6 +64,14 @@ function useProductBatchfetch(id:number|null){
         batchError:error
     }
 }
+function dataFromEstimate(id:number|null,branchId:number|null){
+    const {data,error,isLoading} =useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/${id}/?branchId=${branchId}`,fetcher);
+    return {
+       data,
+       isLoading,
+       error
+    }
+}
 const NewsalesReturnTable = () => {
     const { tableData, setTableData } = useContext(DataContext);
     const [selectedProductDetails,setSelectedProduct]= useState<Products>()
@@ -74,14 +82,19 @@ const NewsalesReturnTable = () => {
     const appState = useAppSelector((state) => state.app)
     const url= useSearchParams();
     const id=url.get('id');
+    let estimateData:any=null,isEstimateDataLoading=false,isEstimateDataError=false;
     const { tableData: items, setTableData: setItems } = useContext(DataContext);   
     if(id){
-        const {data,error,isLoading} =useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/${id}/?branchId=${appState.currentBranchId}`,fetcher)
-        useEffect(() => {
-            if (!isLoading && data && !error) {
-                const {items,...otherData}=data;
+        const {data,isLoading,error}=dataFromEstimate(Number(id),appState.currentBranchId);
+        estimateData=data;
+        isEstimateDataError=error;
+        isEstimateDataLoading=isLoading;        
+    }
+
+    useEffect(()=>{
+            if (!isEstimateDataLoading && estimateData && !isEstimateDataError) {
+                const {items,...otherData}=estimateData;
                 setOtherData(otherData)
-                console.log(items)
               const shallowDataCopy = [...items]; 
               const itemData = shallowDataCopy.map((item: any) => ({
                 productId: item.productBatch.productId,
@@ -94,11 +107,9 @@ const NewsalesReturnTable = () => {
                 id:item.productBatch.id
               }));
               setItems(itemData);
+              
             }
-          }, [data]); 
-          
-        console.log(items)
-    }
+          }, [estimateData]); 
     
     const taxOptions = [
         { value: 'Tax excl.', label: 'Tax excl.' },
@@ -146,7 +157,7 @@ const NewsalesReturnTable = () => {
             value:{
                 id:product.id,
                 productId:product.productId,
-                quantity: product.quantity ,
+                quantity:1 ,
                 batchNumber: product.batchNumber,
                 expiry:  product.expiry,
                 sellingPrice:  product.sellingPrice,
@@ -250,7 +261,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
         };
         setItems(updatedItems);
 
-        // Set first element of filteredBatches as default value for batches
+      
         const productBatches = batches?.filter((batch) => batch.value.productId === selectedProduct.value.id).sort((a, b) => a.value.id - b.value.id);
         setFilteredBatches(productBatches);
         const defaultBatch = productBatches?.[0];
@@ -298,10 +309,13 @@ const handleBatchSelect = useCallback(async (selectedProduct: any, index: number
 
 
 
-useEffect(() => {
-    setItems(items);
-    setTableData(items)
+if(id==null){
+    useEffect(() => {
+        setItems(items);
+    setTableData(items)   
 }, [items]);
+}
+   
 
     return (
         <>

@@ -4,8 +4,9 @@ import Link from 'next/link';
 import { Tooltip, Button, Spinner } from "@nextui-org/react";
 import InventoryProductTableBottombar from './bottombar'; 
 import useSWR from 'swr';
-import 'ldrs/helix'
+import 'ldrs/helix';
 import { useAppSelector } from '@/lib/hooks';
+//@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 interface Products {

@@ -7,8 +7,10 @@ import Menu from '@/assets/icons/finance/Menu.svg';
 import Link from "next/link"
 import Image from "next/image"
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
+import { useRouter } from "next/navigation"
 
 const NewsalesReturnNavbar = () => {
+    const router=useRouter();
 
     return (
         <>
@@ -17,7 +19,7 @@ const NewsalesReturnNavbar = () => {
                     <div className="flex">
 
                     <div className="w-11 h-11 bg-gray-100 rounded-[5px] border border-neutral-400 flex justify-center items-center mr-4">
-                        <Image className="w-6 h-6 relative rounded-[5px]" src={lefticon} alt="Back"></Image>
+                    <Image className="w-6 h-6 relative rounded-[5px]  cursor-pointer" src={lefticon} alt="Back"  onClick={()=>router.back()}></Image>
                     </div>
                     <div className="text-gray-500 text-[28px] flex items-center font-bold ">
                     New Sales Return
