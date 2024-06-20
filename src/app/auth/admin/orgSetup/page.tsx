@@ -73,8 +73,11 @@ const OrgSetup = () => {
         ...prevData,
         [name]: value,
       }));
-      formSchema.parse({...data,[name]: value,});
+      console.log("inside handle change 1");
+      formSchema.parse({...data,[name]: value});
+      console.log("inside handle change 2");
       setValidationErrors((prevErrors) => {
+        console.log("here");
         let newErrors = prevErrors;
         newErrors[name] = '';
         return newErrors;
@@ -86,10 +89,20 @@ const OrgSetup = () => {
         let fieldErrors = err.flatten().fieldErrors;
         console.log(fieldErrors);
         let fields: string[] = Object.keys(fieldErrors);
+        console.log(name);
+        console.log(fields);
         if(fields.includes(name)){
           setValidationErrors((prevErrors) => {
             let newErrors = prevErrors;
             newErrors[name] = fieldErrors[name].length > 0 ? fieldErrors[name][0] : '';
+            return newErrors;
+          });
+        }
+        else{
+          setValidationErrors((prevErrors) => {
+            console.log("here");
+            let newErrors = prevErrors;
+            newErrors[name] = '';
             return newErrors;
           });
         }
