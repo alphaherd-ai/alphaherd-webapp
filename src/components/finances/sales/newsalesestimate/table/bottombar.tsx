@@ -140,18 +140,18 @@ const NewsaleEstimateBottomBar = () => {
                                     <Image src={downloadicon} alt="download"></Image>
                                     <div>Download</div>
                                 </div>
-                                <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
+                                <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                                     <Image src={shareicon} alt="share"></Image>
                                     <div onClick={sendSMS}>Share via SMS</div>
-                                </div>
-                                <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
+                                </Button>
+                                <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                                     <Image src={shareicon} alt="share"></Image>
                                     <div onClick={sendEmail}>Share via Email</div>
-                                </div>
-                                <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
+                                </Button>
+                                <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                                     <Image src={shareicon} alt="share"></Image>
                                     <div onClick={sendWhatsapp}>Share via WhatsApp</div>
-                                </div>
+                                </Button>
 
                             </div>
                             <div className="flex justify-between items-center gap-4 pr-4">
