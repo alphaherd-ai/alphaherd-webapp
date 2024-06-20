@@ -60,8 +60,8 @@ const NewExpensesBottomBar = () => {
             source:Notif_Source.Expense_Invoice,
             totalCost:data.totalCost,
             dueDate:data.dueDate,
-            orgId:appState.currentBranch.org.id,
-            orgBranch:appState.currentBranch.org.orgName
+            orgId:appState.currentOrgId,
+            orgBranch:appState.currentOrg.orgName
         }
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/create/${"Recurring"}?branchId=${appState.currentBranchId}`,data)

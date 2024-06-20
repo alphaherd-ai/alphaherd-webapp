@@ -18,12 +18,12 @@ const appState = useAppSelector((state) => state.app);
   if(!isLoading&&data&&!error){
   setExpenses(data);
   }
-  },[data]);
+  },[data,error,isLoading]);
   if(isLoading)return (<Loading/>)
   return (
   <div>
-    {expenses?.map(expense=>
-    <div
+    {expenses?.map((expense,index)=>
+    <div key={index+1}
       className='flex  w-full justify-evenly items-center  box-border h-16 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
       <div className='w-[6rem] flex    text-neutral-400 text-base font-medium'>{formatDateAndTime(expense.date).formattedDate}</div>
       <div className='w-[6rem] flex    text-neutral-400 text-base font-medium'>{formatDateAndTime(expense.date).formattedTime}</div>

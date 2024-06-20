@@ -56,7 +56,7 @@ const DatabasePatientTableItem = () => {
             setPatients(fetchedPatients);
         }
 
-        if(!isClientLoading&&fetchedClients&&!isClientLoading){
+        if(!isClientLoading&&fetchedClients&&!isClientError){
             const clientNames = fetchedClients.reduce((acc: { [key: string]: string }, client: Clients) => {
                 acc[client.id] = client.clientName;
                 return acc;
@@ -65,7 +65,7 @@ const DatabasePatientTableItem = () => {
         }
                 
             
-    }, [fetchedClients,fetchedPatients]);
+    }, [fetchedClients,fetchedPatients,isClientError,isClientLoading,isPatientError,isPatientLoading]);
 if(isPatientLoading)return (<Loading/>)
     return (
         <>

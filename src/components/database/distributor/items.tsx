@@ -30,7 +30,7 @@ const DatabaseDistributorTableItem = () => {
      if(!isLoading&&!error&&data){
         setDistributor(data);
      }
-    },[data]);
+    },[data,error,isLoading]);
     return (
 <>{ distributors.map(distributor=>(
     <div key={distributor.id} className='flex justify-evenly w-full  box-border h-16 py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>

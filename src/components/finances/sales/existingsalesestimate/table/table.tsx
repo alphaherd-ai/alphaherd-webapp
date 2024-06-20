@@ -50,7 +50,7 @@ const ExistingsaleEstimateTable = () => {
               }));
               setItems(itemData);
             }
-          }, [data]); 
+          }, [data,error,isLoading]); 
           
     console.log(items)
 

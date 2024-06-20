@@ -40,7 +40,7 @@ export const MyOrganisationSettings = () => {
 
     useEffect(() => {
         fetchOrgBranches();
-    },[]);
+    },[fetchOrgBranches]);
 
     return (
 
@@ -133,8 +133,8 @@ export const MyOrganisationSettings = () => {
                                     </div>
                                     <div className='flex  items-center w-full  box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
                                         {
-                                            orgBranches.map((branch : any) => {
-                                                return <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                            orgBranches.map((branch : any,index:number) => {
+                                                return <div key={index+1} className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
                                                 <div className="text-teal-400 text-base font-bold ">{branch.branchName}</div>
                                             </div>
                                             })

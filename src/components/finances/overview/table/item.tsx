@@ -19,7 +19,7 @@ const FinacesOverviewTableItem = () => {
     if(!isLoading&&!error&&data){
       setTimeline(data);
     }
-  })
+  },[data,isLoading,error])
   if(isLoading)return (<Loading/>)
   return (
    <>

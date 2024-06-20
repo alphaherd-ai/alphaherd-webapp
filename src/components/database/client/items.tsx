@@ -40,7 +40,7 @@ const DatabaseClientTableItem = () => {
         if(!isLoading&&data&&!error){
             setClients(data);
         }
-    },[data]);
+    },[data,error,isLoading]);
    
 
     if(isLoading)return (<Loading/>)

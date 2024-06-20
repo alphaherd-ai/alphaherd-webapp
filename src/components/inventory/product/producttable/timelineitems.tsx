@@ -28,7 +28,7 @@ const ProductAllItem = () => {
   if(!isLoading&&data&&!error){
     setProducts(data.reverse())
   }
-  }, [data]);
+  }, [data,isLoading,error]);
 
   
 

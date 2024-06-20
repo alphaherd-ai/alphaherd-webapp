@@ -57,7 +57,7 @@ const ProductAllItem = () => {
       console.log('Products Data:', filteredData); 
     }
     
-  },[data])
+  },[data,error,isLoading])
   
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
