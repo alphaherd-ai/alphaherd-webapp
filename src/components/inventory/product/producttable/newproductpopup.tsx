@@ -19,6 +19,7 @@ type PopupProps = {
     onClose: () => void;
 }
 
+
 interface Distributors{
     id:string,
     distributorName:string
@@ -37,7 +38,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
     const [formData, setFormData] = useState<any>({});
     const [buttonDisabled, setButtonDisabled] = useState(false);
     const [selectedUnit, setSelectedUnit] = useState<string | undefined>('');
-    const [distributors, setDistributor] = useState<Distributors[]>([]); 
+    const [distributor, setDistributor] = useState<Distributors[]>([]); 
 
     const [categories, setCategories] = useState<any[]>([
         { value: "Pet food", label: "Pet food" },
@@ -144,10 +145,10 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
         { value: 'GST@28%', label: 'GST@28%' },
     ];
 
-    const distributersList = distributors.map((distributor)=>({
-        value: distributor.distributorName,
-        label:distributor.distributorName
-    }))
+    // const distributersList = distributor.map((distributor)=>({
+    //     value: distributor.distributorName,
+    //     label:distributor.distributorName
+    // }))
 
     return (
         <>
@@ -166,15 +167,15 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                             </div>
                         </div>
                         <div className="flex items-center gap-[70px] w-full">
-                            <div className="text-gray-500 text-base font-medium">Providers</div>
+                            <div className="text-gray-500 text-base font-medium">Distributor</div>
                             <div className="w-4/5">
                                 <Select
                                     className="text-neutral-400 text-base font-medium w-full"
                                     placeholder="Select Category"
                                     isClearable={false}
                                     isSearchable={true}
-                                    options={distributersList}
-                                    isMulti={true}
+                                    options={distributor}
+                                    isMulti={false}
                                     name="providers"
                                     onChange={(value) => handleChange("providers", value)}
                                     

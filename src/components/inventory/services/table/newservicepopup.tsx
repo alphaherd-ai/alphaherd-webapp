@@ -64,8 +64,8 @@ const categoryOptions = [
         });
         let staffJson = await staffResponse.json();
         console.log(staffJson);
-        setLinkProducts(productsJson.products.map((product) => {return {label : product.itemName,value : product.id}}));
-        setProviders(staffJson.staff.map((user) => {return {label : user.name,value : user.id}}));
+        setLinkProducts(productsJson.products.map((product: { itemName: any; id: any; }) => {return {label : product.itemName,value : product.id}}));
+        setProviders(staffJson.staff.map((user: { name: any; id: any; }) => {return {label : user.name,value : user.id}}));
     }
 
 
@@ -175,6 +175,7 @@ const categoryOptions = [
                                     isClearable={false}
                                     isSearchable={true}
                                     options={gstOptions}
+                                    isMulti={false}
                                     name="tax"
                             onChange={(value) => handleChange("tax", value)}
                                 />

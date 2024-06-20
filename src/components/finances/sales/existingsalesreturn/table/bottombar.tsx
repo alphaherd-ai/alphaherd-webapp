@@ -13,6 +13,59 @@ import Image from "next/image"
 
 
 const ExistingsalesReturnBottomBar = () => {
+    const sendSMS = async () => {
+        try {   
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/sms`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    phone: "+917637834918",
+
+                }),
+            });
+            console.log('SMS sent successfully:', response);
+        } catch (error) {
+            console.error('Error while sending message', error);
+        } 
+    };
+
+    const sendWhatsapp = async () => {
+        try {   
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/whatsapp`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    phone: "+917637834918",
+
+                }),
+            });
+            console.log('Whatsapp Message sent successfully:', response);
+        } catch (error) {
+            console.error('Error while sending message', error);
+        } 
+    };
+
+    const sendEmail = ()=>{
+        try {   
+            const response = fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/email`, {
+                method: 'POST',
+                headers:{
+                    'Content-type':'application/json',
+                },
+                body: JSON.stringify({
+                    email:'hembramshristi07@gmail.com'
+                })
+            });
+            console.log('Email sent successfully:', response);
+        } catch (error) {
+            console.error('Error while saving data:', error);
+        } 
+    };
+
   
 
  
@@ -35,7 +88,15 @@ const ExistingsalesReturnBottomBar = () => {
                                 </div>
                                 <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                                     <Image src={shareicon} alt="share"></Image>
-                                    <div>Share</div>
+                                    <div onClick={sendSMS}>Share via SMS</div>
+                                </div>
+                                <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
+                                    <Image src={shareicon} alt="share"></Image>
+                                    <div onClick={sendEmail}>Share via Email</div>
+                                </div>
+                                <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
+                                    <Image src={shareicon} alt="share"></Image>
+                                    <div onClick={sendWhatsapp}>Share via WhatsApp</div>
                                 </div>
                             </div>
                           
