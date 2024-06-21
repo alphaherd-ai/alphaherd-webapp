@@ -2,6 +2,16 @@ FROM node:18-alpine
 WORKDIR  /app
 COPY . ./
 
+# Define build arguments
+ARG NEXT_PUBLIC_API_BASE_PATH
+ARG DATABASE_URL
+ARG DIRECT_URL
+
+# Set environment variables
+ENV NEXT_PUBLIC_API_BASE_PATH=$NEXT_PUBLIC_API_BASE_PATH
+ENV DATABASE_URL=$DATABASE_URL
+ENV DIRECT_URL=$DIRECT_URL
+
 RUN if [ -z "$DATABASE_URL" ]; then \
         echo "DATABASE_URL is not set."; \
     else \
