@@ -6,7 +6,7 @@ RUN yarn
 
 RUN npx prisma generate
 
-ENV NEXT_PUBLIC_API_BASE_PATH=https://alphaherd.azurewebsites.net
+COPY ./prisma/schema.prisma ./prisma/
 
 COPY . ./
 
