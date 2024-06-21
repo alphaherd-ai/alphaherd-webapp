@@ -4,9 +4,9 @@ COPY package*.json ./
 
 RUN yarn
 
-RUN npx prisma generate
-
 COPY ./prisma/schema.prisma ./prisma/
+
+RUN npx prisma generate
 
 COPY . ./
 
