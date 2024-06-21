@@ -2,8 +2,6 @@ FROM node:18-alpine
 WORKDIR  /app
 COPY package*.json ./
 
-RUN npm install --global yarn
-
 RUN yarn
 
 RUN npx prisma generate
