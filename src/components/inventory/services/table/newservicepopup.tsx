@@ -11,7 +11,7 @@ type PopupProps = {
     onClose: () => void;
 }
 
-const Popup: React.FC<PopupProps> = ({ onClose }) => {
+const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     const [lastStep, setLastStep] = useState(false);
     const [formData, setFormData] = useState<any>({});
   const appState = useAppSelector((state) => state.app)
@@ -27,7 +27,7 @@ const gstOptions = [
     { value: 28, label: 'GST@28%.' },
 ];
 
-const categoryOptions = [
+const [categories, setCategories] = useState<any[]>([
     {value: "General Consultation", label: "General Consultation"},
     {value: "Follow Up", label: "Follow Up"},
     {value: "Surgery", label: "Surgery"},
@@ -35,13 +35,13 @@ const categoryOptions = [
     {value: "Grooming", label: "Grooming"},
     {value: "Boarding", label: "Boarding"},
     {value: "Rescue", label: "Rescue"},
-]
+]);
 
     useEffect(() => {
         fetchProductsAndProviders();
     },[]);
 
-
+ 
     const handleContinueClick = () => {
         setLastStep(true);
     }
@@ -64,16 +64,16 @@ const categoryOptions = [
         });
         let staffJson = await staffResponse.json();
         console.log(staffJson);
-        setLinkProducts(productsJson.products.map((product) => {return {label : product.itemName,value : product.id}}));
-        setProviders(staffJson.staff.map((user) => {return {label : user.name,value : user.id}}));
+        setLinkProducts(productsJson.products.map((product:any) => {return {label : product.itemName,value : product.id}}));
+        setProviders(staffJson.staff.map((user:any) => {return {label : user.name,value : user.id}}));
     }
 
 
     const handleSaveClick = async () => {
         try {
             setButtonDisabled(true);
-            const selectedProviders = formData.providers.map((provider:any) => provider.value);
-            const selectedProducts = formData.linkProducts.map((linkProducts:any) => linkProducts.value);
+            const selectedProviders = formData.providers.map((provider:any) => provider.label);
+            const selectedProducts = formData.linkProducts.map((linkProducts:any) => linkProducts.label);
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
@@ -88,7 +88,7 @@ const categoryOptions = [
                     serviceCost: parseInt(formData.serviceCost),
                     serviceCharge: parseInt(formData.serviceCharge),
                     tax: formData.tax ? formData.tax.value : undefined,
-                    category: formData.category ? formData.category.value : undefined,
+                    category: formData.category ? formData.category[0].value : undefined,
                     description: formData.description,
                   
                 }),
@@ -193,11 +193,16 @@ const categoryOptions = [
                                 name="category"
                             onChange={(value) => handleChange("category", value)}
                             /> */}
-                            <CreatableSelect 
-                            className="w-full text-neutral-400 text-base font-medium focus:outline-none  rounded-[5px] focus:border focus:border-[#35BEB1]"
-                            isMulti
-                            options={categoryOptions} 
-                            onChange={(value) => handleChange("category", value)}/>
+                           <CreatableSelect
+                                    className="text-neutral-400 text-base font-medium w-full"
+                                    placeholder="Select Category"
+                                    isClearable={false}
+                                    isSearchable={true}
+                                    options={categories}
+                                    isMulti={true}
+                                    name="category"
+                                    onChange={(value) => handleChange("category", value)}
+                                />
                         </div>
                     </div>
                     <div className="flex items-center gap-[75px] w-full">

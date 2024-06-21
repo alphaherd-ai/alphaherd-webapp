@@ -62,7 +62,7 @@ function useProductBatchfetch(id:number|null){
         batchError:error
     }
 }
-const Popup2: React.FC<PopupProps> = ({ onClose }) => {
+const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
     const [selectedOption, setSelectedOption] = useState<string>(Stock.StockIN);
     const [selectedProductDetails,setSelectedProduct]= useState<Products>()
     const [isChecked, setChecked] = useState(false);

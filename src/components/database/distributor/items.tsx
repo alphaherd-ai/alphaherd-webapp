@@ -5,6 +5,7 @@ import Distributors from '@/app/database/distributor/page';
 import { useAppSelector } from '@/lib/hooks';
 import { Spinner} from '@nextui-org/react';
 import useSWR from 'swr';
+//@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 interface Distributors{
     id:string,

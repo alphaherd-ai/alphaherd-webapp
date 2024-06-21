@@ -15,7 +15,7 @@ export default function OrganisationSettings() {
 
     const [selectedTab, setSelectedTab] = useState(0);
 
-    const tabComponents = [<MyOrganisationSettings />, <UsersAndRolesSettings />]
+    const tabComponents = [<MyOrganisationSettings key={1}/>, <UsersAndRolesSettings key={2} />]
 
 
     return <>

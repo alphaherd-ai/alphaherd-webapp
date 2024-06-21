@@ -39,7 +39,7 @@ const ProductAllItem = () => {
   const paginate = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
-if(isLoading) return (<div className='w-full min-h-[25rem]'><l-helix bg-opacity=".1" size="35" color="black"></l-helix></div>) 
+if(isLoading) return (<Spinner/>) 
   return (
     <div>
       {currentProducts?.map(product => (

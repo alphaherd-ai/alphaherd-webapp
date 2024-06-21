@@ -309,12 +309,13 @@ const handleBatchSelect = useCallback(async (selectedProduct: any, index: number
 
 
 
-if(id==null){
-    useEffect(() => {
+useEffect(() => {
+    if (id == null) {
         setItems(items);
-    setTableData(items)   
-}, [items]);
-}
+        setTableData(items);  
+    }
+}, [id, items]);
+
    
 
     return (

@@ -12,7 +12,13 @@ const recurringExpensesQueue = new Queue('recurring-expenses', {
 
 recurringExpensesQueue.process(async (job:any) => {
   const { expenseId } = job.data;
-  const {id:number,...expense} = await prismaClient.expenses.findUnique({ where: { id: expenseId } });
+  const expenseRecord = await prismaClient.expenses.findUnique({ where: { id: expenseId } });
+
+  if (!expenseRecord) {
+    throw new Error('Expense not found');
+  }
+
+  const { id, ...expense } = expenseRecord;
 
   if (!expense) {
     throw new Error('Expense not found');

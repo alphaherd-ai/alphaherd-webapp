@@ -30,7 +30,8 @@ const FinancesTransactionsTableItem = () => {
       
       <Popover placement="left" showArrow offset={10}>
           <PopoverTrigger>
-              <Button color="gray-400"
+              <Button 
+              // color="gray-400"
                   variant="solid"
                   className="capitalize flex border-none  text-gray rounded-lg ">  
                   <div className='flex items-center '><Image src={Menu} alt='Menu' className='w-5  h-5' /></div></Button>

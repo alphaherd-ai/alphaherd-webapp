@@ -8,17 +8,17 @@ export function generatePdfForInvoice(data: any, appState: any, items: any) {
     format: 'a4'
   });
 
-  function addText(text, x, y, fontSize = 10, align = 'left', weight = "regular") {
-    y = checkPageBreak(doc, y, pageHeight);
+  function addText(text:any, x:any, y:any, fontSize = 10, align = 'left', weight = "regular") {
+    y = checkPageBreak(doc, y, pageHeight,0);
     if (weight !== "regular") {
-      doc.setFontSize(fontSize, weight);
+      doc.setFontSize(fontSize);
     }
     else doc.setFontSize(fontSize);
-    doc.text(text, x, y, { align: align });
+    doc.text(text, x, y, { align: "left" });
     return y;
   };
   
-  function checkPageBreak(doc, y, pageHeight, margin) {
+  function checkPageBreak(doc:any, y:any, pageHeight:any, margin:any) {
     if (y > pageHeight - margin) {
       doc.addPage();
       return 10; // Reset y to the top margin
@@ -26,17 +26,17 @@ export function generatePdfForInvoice(data: any, appState: any, items: any) {
     return y;
   };
   
-  function addRow(data, y, columnPositions, rowHeight = 7) {
-    y = checkPageBreak(doc, y, pageHeight);
-    data.forEach((text, index) => {
+  function addRow(data:any, y:any, columnPositions:any, rowHeight = 7) {
+    y = checkPageBreak(doc, y, pageHeight,0);
+    data.forEach((text:any, index:any) => {
       addText(text, columnPositions[index], y);
     });
     return y + rowHeight;
   };
   
-  function addLine(startX, startY, endX, endY) {
-    startY = checkPageBreak(doc, startY, pageHeight);
-    endY = checkPageBreak(doc, endY, pageHeight);
+  function addLine(startX:any, startY:any, endX:any, endY:any) {
+    startY = checkPageBreak(doc, startY, pageHeight,0);
+    endY = checkPageBreak(doc, endY, pageHeight,0);
     doc.line(startX, startY, endX, endY);
   };
 
@@ -154,9 +154,9 @@ export function generatePdfForInvoice(data: any, appState: any, items: any) {
   //     ['2', 'General Consultation', '1', '500', '500'],
   // ];
 
-  const rows = items.map((item, idx) => [String(idx + 1), item.name, String(item.quantity), String(item.sellingPrice)]);
+  const rows = items.map((item:any, idx:any) => [String(idx + 1), item.name, String(item.quantity), String(item.sellingPrice)]);
 
-  rows.forEach(row => {
+  rows.forEach((row:any) => {
     y = addRow(row, y, [10, 30, 110, 130, 160]);
     y = checkPageBreak(doc, y, pageHeight, 20);
   });
@@ -216,9 +216,9 @@ export function generatePdfForInvoice(data: any, appState: any, items: any) {
   //     ['₹500', '0%', '₹0']
   // ];
 
-  const summaryValues = items.map((item) => [String(item.quantity * item.sellingPrice), "18%", String(item.taxAmount)]); // Tax rate not getting for now...
+  const summaryValues = items.map((item:any) => [String(item.quantity * item.sellingPrice), "18%", String(item.taxAmount)]); // Tax rate not getting for now...
 
-  summaryValues.forEach(values => {
+  summaryValues.forEach((values:any) => {
     y = addRow(summaryHeaders, y, [10, 60, 110], lineHeight);
     y = addRow(values, y, [10, 60, 110], lineHeight);
     y += lineHeight / 2;

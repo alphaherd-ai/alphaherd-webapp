@@ -5,6 +5,7 @@ import { useAppSelector } from '@/lib/hooks';
 import { Spinner} from '@nextui-org/react';
 import useSWR from 'swr';
 import Loading from '@/app/loading';
+//@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 interface Clients {
     id: number;

@@ -421,7 +421,7 @@ const TableList: React.FC = () => {
             disallowEmptySelection
             selectionMode="single"
             selectedKeys={selectedKeys}
-            onSelectionChange={setSelectedKeys}
+            // onSelectionChange={setSelectedKeys}
           >
             <DropdownItem key="text">Text</DropdownItem>
             <DropdownItem key="number">Number</DropdownItem>

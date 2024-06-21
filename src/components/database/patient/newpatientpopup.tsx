@@ -11,7 +11,6 @@ import calicon from "../../../assets/icons/finance/calendar_today.svg"
 import Paws from "../../../assets/icons/database/1. Icons-24 (12).svg"
 import Check from "../../../assets/icons/database/check.svg"
 import { response } from "express";
-import { Clients } from "@/client";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useAppSelector } from "@/lib/hooks";
@@ -34,7 +33,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
         fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`)
             .then((response) => response.json())
             .then((data) => {
-                const formattedClients = data.map((client: Clients) => ({
+                const formattedClients = data.map((client: any) => ({
                     value: client.id,
                     label: client.clientName
                 }))

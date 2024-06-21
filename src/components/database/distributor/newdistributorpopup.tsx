@@ -16,7 +16,7 @@ type PopupProps = {
 }
 
 
-const Popup: React.FC<PopupProps> = ({ onClose }) => {
+const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     const [formData, setFormData] = useState<any>({});
     const [isSaveDisabled, setIsSaveDisabled] = useState(true)
     

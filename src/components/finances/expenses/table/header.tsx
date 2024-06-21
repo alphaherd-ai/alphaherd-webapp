@@ -100,7 +100,7 @@ const FinancesExpensesTableHeader = () => {
                 disallowEmptySelection
                 selectionMode="single"
                 selectedKeys={selectedSort}
-                onChange={setselectedSort}
+                // onChange={setselectedSort}
             >
                 <DropdownItem
                     className=" p-2 text-base" key="Category:text">Sort:Recently Used</DropdownItem>
@@ -131,7 +131,7 @@ const FinancesExpensesTableHeader = () => {
                 disallowEmptySelection
                 selectionMode="single"
                 selectedKeys={selectedCategory}
-                onChange={setSelectedCategory}
+                // onChange={setSelectedCategory}
             >
                 <DropdownItem
                     className=" p-2" key="Category:text">Category: Text</DropdownItem>

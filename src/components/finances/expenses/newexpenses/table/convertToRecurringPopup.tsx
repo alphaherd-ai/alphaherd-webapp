@@ -13,10 +13,10 @@ type PopupProps = {
     onClose: () => void;
 }
 
-const ConvertToRecurringPopup: React.FC<PopupProps> = ({ onClose }) => {
+const ConvertToRecurringPopup: React.FC<PopupProps> = ({ onClose }:any) => {
     const { recurringData, setRecurringData } = useContext(DataContext);
     const [startDate, setStartDate] = useState(new Date());
-    const [endDate, setEndDate]=useState();
+    const [endDate, setEndDate]=useState(new Date());
 
     const handleStartDateChange = (date:any) => {
         setStartDate(date);
@@ -110,7 +110,7 @@ const ConvertToRecurringPopup: React.FC<PopupProps> = ({ onClose }) => {
                                             <div className='relative'>
                                                 <input
                                                     className="w-[10rem] h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={startDate.toLocaleDateString()}
+                                                    value={endDate.toLocaleDateString()}
                                                     readOnly
                                                 />
                                                 <Image

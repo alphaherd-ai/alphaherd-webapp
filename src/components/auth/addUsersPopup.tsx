@@ -13,7 +13,7 @@ import deleteicon from "../../assets/icons/loginsignup/delete.svg"
 import { useAppSelector } from "@/lib/hooks";
 import { Bounce, ToastContainer, toast } from 'react-toastify';
 
-const Popup = ({ onClose }) => {
+const Popup = ({ onClose }:any) => {
 
     const appState = useAppSelector((state) => state.app);
 
