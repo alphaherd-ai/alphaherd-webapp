@@ -8,6 +8,4 @@ RUN echo $DATABASE_URL
 
 RUN yarn
 
-RUN npx prisma generate
-
 RUN npm run build
