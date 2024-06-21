@@ -34,13 +34,13 @@ jobs:
         DIRECT_URL: ${{ secrets.DIRECT_URL }}
       
       run: |
-        echo $DIRECT_URL
-        echo $DATABASE_URL
+        echo "$DIRECT_URL"
+        echo "$DATABASE_URL"
 
-      with:
-        push: true
-        tags: index.docker.io/${{ secrets.AzureAppService_ContainerUsername_bf91d6436dd14effb8146c625859aadf }}/alphaherd-webapp:${{ github.sha }}
-        file: ./Dockerfile
+      # with:
+      #   push: true
+      #   tags: index.docker.io/${{ secrets.AzureAppService_ContainerUsername_bf91d6436dd14effb8146c625859aadf }}/alphaherd-webapp:${{ github.sha }}
+      #   file: ./Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
