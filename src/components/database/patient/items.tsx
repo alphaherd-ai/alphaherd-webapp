@@ -5,6 +5,7 @@ import { useAppSelector } from '@/lib/hooks';
 import { Spinner} from '@nextui-org/react';
 import useSWR from 'swr';
 import Loading from '@/app/loading';
+//@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 interface Clients {
     id: number;
@@ -56,7 +57,7 @@ const DatabasePatientTableItem = () => {
             setPatients(fetchedPatients);
         }
 
-        if(!isClientLoading&&fetchedClients&&!isClientLoading){
+        if(!isClientLoading&&fetchedClients&&!isClientError){
             const clientNames = fetchedClients.reduce((acc: { [key: string]: string }, client: Clients) => {
                 acc[client.id] = client.clientName;
                 return acc;
@@ -65,7 +66,7 @@ const DatabasePatientTableItem = () => {
         }
                 
             
-    }, [fetchedClients,fetchedPatients]);
+    }, [fetchedClients,fetchedPatients,isClientError,isClientLoading,isPatientError,isPatientLoading]);
 if(isPatientLoading)return (<Loading/>)
     return (
         <>

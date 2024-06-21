@@ -63,8 +63,8 @@ const NewsalesBottomBar = () => {
             source: Notif_Source.Sales_Invoice,
             totalCost: data.totalCost,
             dueDate: data.dueDate,
-            orgId: appState.currentBranch.org.id,
-            orgBranch: appState.currentBranch.org.orgName
+            orgId: appState.currentOrgId,
+            orgBranch: appState.currentOrg.orgName
         }
         console.log(JSON.stringify(data))
         console.log("this is notif data", notifData)

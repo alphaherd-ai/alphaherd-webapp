@@ -1,6 +1,6 @@
 import React from 'react';
 
-const HomeIcon = ({ fill }) => (
+const HomeIcon = ({ fill }:any) => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g id="1. Icons-24">
     <mask id="mask0_205_5011" style={{ maskType: 'alpha' }} maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">

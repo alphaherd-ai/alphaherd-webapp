@@ -62,7 +62,7 @@ function useProductBatchfetch(id:number|null){
         batchError:error
     }
 }
-const Popup2: React.FC<PopupProps> = ({ onClose }) => {
+const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
     const [selectedOption, setSelectedOption] = useState<string>(Stock.StockIN);
     const [selectedProductDetails,setSelectedProduct]= useState<Products>()
     const [isChecked, setChecked] = useState(false);
@@ -109,7 +109,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
         console.log(formattedProductBatches)
         setBatches(formattedProductBatches)
     }
-    },[fetchedProducts,fetchedBathces])
+    },[fetchedProducts,fetchedBathces,batchError,error,isBatchLoading,isLoading])
 
     //Handlers
     const handleRadioChange = useCallback((value: string) => {
@@ -278,7 +278,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                         totalItems:body.quantity,
                         source:Notif_Source.Inventory_Timeline_Removed,
                         url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/timeline`,
-                        orgId:appState.currentBranch.org.id
+                        orgId:appState.currentOrgId
                     }
                     const notif= await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`,notifData)
                     console.log('Updated inventory item:', response.data);
@@ -289,7 +289,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                         totalItems:body.quantity,
                         source:Notif_Source.Inventory_Timeline_Added,
                         url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/timeline`,
-                        orgId:appState.currentBranch.org.id
+                        orgId:appState.currentOrgId
                     }
                     const notif= await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`,notifData)
                     console.log('Created New Batch Item:', response.data);

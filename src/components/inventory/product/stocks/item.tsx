@@ -37,7 +37,7 @@ const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
    if(!isLoading&&!error&&data){
     setProducts(data);
    }
-  }, [data]);
+  }, [data,error,isLoading]);
   console.log(products);
   const filteredProducts = products?.filter(product => {
     console.log(product)

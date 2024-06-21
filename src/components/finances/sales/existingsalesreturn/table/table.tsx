@@ -58,7 +58,7 @@ const [otherData, setOtherData] = useState({});
           }));
           setItems(itemData);
         }
-      }, [data]); 
+      }, [data,error,isLoading]); 
       
 console.log(items)
 

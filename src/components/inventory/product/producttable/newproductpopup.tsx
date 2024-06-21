@@ -23,7 +23,7 @@ function useProductfetch (id: number | null) {
     error
    }
 }
-const Popup: React.FC<PopupProps> = ({ onClose }) => {
+const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     const [lastStep, setLastStep] = useState(false);
     const [formData, setFormData] = useState<any>({});
     const [buttonDisabled, setButtonDisabled] = useState(false);
@@ -96,13 +96,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
         setFormData({ ...formData, [field]: value });
     };
 
-    const handleAddCategory = () => {
-        const newCategory = prompt("Enter new category:");
-        if (newCategory) {
-            const newCategoryOption = { value: newCategory, label: newCategory };
-            setCategories([...categories, newCategoryOption]);
-        }
-    };
+    
 
     
 

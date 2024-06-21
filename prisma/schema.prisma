@@ -117,8 +117,6 @@ model User {
   altPhoneNo         String?
   hashedPassword     String
   adminOrganizations Organization[]
-  serviceProvider    Services? @relation(fields: [serviceId],references: [id])
-  serviceId          Int?
   orgBranchId        Int?          
   lastUsedBranch     OrgBranch?          @relation(fields: [orgBranchId], references: [id])
   userRoles          OrgBranchUserRole[]
@@ -197,7 +195,7 @@ model Clients {
 model Patients {
   id                Int              @id @default(autoincrement())
   patientName       String?
-  clientId          Int? // Foreign key to Client 
+  clientId          Int? 
   species           String?
   breed             String?
   dateOfBirth       DateTime?
@@ -237,8 +235,6 @@ model Products {
   maxStock           Int?
   productBatches     ProductBatch[]
   items              Items[]
-  service            Services? @relation(fields: [serviceId],references: [id])
-  serviceId          Int?
   InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId Int?
 }
@@ -273,8 +269,8 @@ model Services {
   sellingPrice       String?
   tax                Float?
   category           String?
-  providers          User[]
-  linkProducts       Products[]
+  providers          String[]
+  linkProducts       String[]
   serviceCost        Int?
   serviceCharge      Int?
   inventoryEntries   Inventory[]

@@ -62,7 +62,8 @@ const OrgEdit = () => {
         formSchema.parse({...data,[name]: value,});
         setValidationErrors((prevErrors) => {
           let newErrors = prevErrors;
-          newErrors[name] = '';
+          newErrors[name as keyof typeof prevErrors] = '';
+
           return newErrors;
         });
       }
@@ -75,7 +76,7 @@ const OrgEdit = () => {
           if(fields.includes(name)){
             setValidationErrors((prevErrors) => {
               let newErrors = prevErrors;
-              newErrors[name] = fieldErrors[name].length > 0 ? fieldErrors[name][0] : '';
+              newErrors[name as keyof typeof prevErrors] = fieldErrors[name]!.length > 0 ? fieldErrors[name]![0] : '';
               return newErrors;
             });
           }
@@ -83,7 +84,7 @@ const OrgEdit = () => {
             setValidationErrors((prevErrors) => {
               console.log("here");
               let newErrors = prevErrors;
-              newErrors[name] = '';
+              newErrors[name as keyof typeof prevErrors] = '';
               return newErrors;
             });
           }
