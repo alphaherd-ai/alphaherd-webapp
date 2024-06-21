@@ -18,6 +18,12 @@ RUN if [ -z "$DATABASE_URL" ]; then \
         echo "DATABASE_URL is set to: $DATABASE_URL"; \
     fi
 
+RUN if [ -z "$NEXT_PUBLIC_API_BASE_PATH" ]; then \
+    echo "NEXT_PUBLIC_API_BASE_PATH is not set."; \
+else \
+    echo "NEXT_PUBLIC_API_BASE_PATH is set to: $NEXT_PUBLIC_API_BASE_PATH"; \
+fi
+
 RUN yarn
 
 RUN npm run build

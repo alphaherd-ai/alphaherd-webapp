@@ -5,6 +5,9 @@ import axios from "axios";
 import { useEffect } from "react";
 
 const LoginPage = () => {
+
+    console.log(process.env.NEXT_PUBLIC_API_BASE_PATH);
+
     useEffect(() => {
         axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/bullScheduler`)
       }, []);
