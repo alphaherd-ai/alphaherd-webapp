@@ -41,6 +41,8 @@ const Login = () => {
   };
 
   async function userDetailsLoginSubmit() {
+    console.log(process.env.NEXT_PUBLIC_API_BASE_PATH);
+    console.log(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/login${userInviteString ? "?userInviteString=" + userInviteString : ""}`);
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/login${userInviteString ? "?userInviteString=" + userInviteString : ""}`,
       {
         method: 'POST',
