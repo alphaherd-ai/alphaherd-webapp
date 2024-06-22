@@ -38,7 +38,8 @@ export const fetchInventoryId = async (request:NextRequest) => {
     const inventorySection = await prismaClient.inventorySection.findUnique({
         where: {
             branchId: Number(branchId),
-        }
+        },
+        cacheStrategy: { ttl: 60 },
     });
     if (!inventorySection && orgBranch) {
         console.log("here");
@@ -71,7 +72,8 @@ export const fetchFinanceId = async (request:NextRequest) => {
     const financeSection = await prismaClient.financeSection.findUnique({
         where: {
             branchId: Number(branchId)
-        }
+        },
+        cacheStrategy: { ttl: 60 },
     });
     if (!financeSection && orgBranch) {
         await prismaClient.financeSection.create({
@@ -101,7 +103,8 @@ export const fetchDatabaseId = async (request:NextRequest) => {
     const databaseSection = await prismaClient.databaseSection.findUnique({
         where: {
             branchId: Number(branchId)
-        }
+        },
+        cacheStrategy: { ttl: 60 },
     });
     if(!databaseSection&&orgBranch){
         await prismaClient.databaseSection.create({

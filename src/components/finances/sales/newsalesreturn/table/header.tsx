@@ -53,7 +53,7 @@ const NewsalesReturnHeader = ({existingHeaderData}:any) => {
             }
          else{
             setHeaderData((prevData)=>({...prevData,invoiceNo:"SR-"+count}))}
-        },[id])
+        },[headerData])
     
     useEffect(()=>{
         if(!isLoading&&!error&&data){
