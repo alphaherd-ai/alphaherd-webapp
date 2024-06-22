@@ -1,0 +1,56 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy container app to Azure Web App - alphaherd
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Log in to registry
+      uses: docker/login-action@v2
+      with:
+        registry: https://index.docker.io/v1/
+        username: ${{ secrets.AzureAppService_ContainerUsername_bf91d6436dd14effb8146c625859aadf }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_9536ce516cfd481eac903c9e2f1f53d6 }}
+
+    - name: Build and push container image to registry
+      uses: docker/build-push-action@v3
+
+      with:
+        push: true
+        tags: index.docker.io/${{ secrets.AzureAppService_ContainerUsername_bf91d6436dd14effb8146c625859aadf }}/alphaherd-webapp:${{ github.sha }}
+        file: ./Dockerfile
+        build-args: |
+          NEXT_PUBLIC_API_BASE_PATH=${{ secrets.NEXT_PUBLIC_API_BASE_PATH }}
+          DATABASE_URL=${{ secrets.DATABASE_URL }}
+          DIRECT_URL=${{ secrets.DIRECT_URL }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+    - name: Deploy to Azure Web App
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'alphaherd'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_0b0708b1812f401dbc3918187dc84a10 }}
+        images: 'index.docker.io/${{ secrets.AzureAppService_ContainerUsername_bf91d6436dd14effb8146c625859aadf }}/alphaherd-webapp:${{ github.sha }}'
