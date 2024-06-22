@@ -147,7 +147,7 @@ const NewPurchasesTable = () => {
 
                     </div>
                     <div className="flex">
-                    <div className="w-full overflow-x-auto container">
+                    <div className="w-full overflow-x-auto overflow-y-hidden container">
                         <div className='flex w-[125%] justify-evenly items-center box-border bg-gray-100 h-12  text-gray-500 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey'>
                             <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[5rem]'>No.</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[18rem]'>Name</div>
@@ -166,20 +166,22 @@ const NewPurchasesTable = () => {
                         {items.map((item:any,index:number) => (
                             <div key={item.id} className='flex justify-evenly items-center w-[125%] box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-gray-200 text-gray-400 h-12'>
                                 <div className=' flex text-textGrey2 text-base font-medium px-[10px] w-[5rem]'>{index+1}.</div>
-                            <div className=' flex text-textGrey2 text-base font-medium w-[18rem]'>
+                            <div className=' flex text-textGrey2 text-base font-medium w-[18rem] '>
                             <Select
-                                        className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
+                                        className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0 absolute"
                                         classNamePrefix="select"
                                         // value={products.find((prod) => prod.value.id === item.productId)}
                                         isClearable={false}
                                         isSearchable={true}
                                         name="itemName"
                                         options={taxOptions}
+                                        menuPortalTarget={document.body}
                                         styles={{
                                             control: (provided, state) => ({
                                                 ...provided,
                                                 border: state.isFocused ? 'none' : 'none',
                                             }),
+                                            menuPortal: base => ({ ...base, zIndex: 9999 })
                                         }}
                                     />
                             </div>
@@ -211,18 +213,20 @@ const NewPurchasesTable = () => {
                                     />
                             </div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>Subtotal</div>
-                            <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>
+                            <div className='flex text-textGrey2 text-base font-medium w-[10rem]'>
                                 <Select
-                                            className="text-textGrey2 text-sm font-medium "
+                                            className="text-textGrey2 text-sm font-medium absolute "
                                             defaultValue={taxOptions[0]}
                                             isClearable={false}
                                             isSearchable={true}
                                             options={taxOptions}
+                                            menuPortalTarget={document.body}
                                             styles={{
                                                 control: (provided, state) => ({
                                                     ...provided,
                                                     border: state.isFocused ? 'none' : 'none',
                                                 }),
+                                                menuPortal: base => ({ ...base, zIndex: 9999 })
                                             }}
                                             
                                         />
