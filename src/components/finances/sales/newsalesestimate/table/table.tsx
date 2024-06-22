@@ -353,7 +353,8 @@ useEffect(() => {
                             {items.map((item:any,index:number) => (
                                 <div key={index+1} className='flex justify-evenly items-center w-full box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-400 py-2'>
                                 <div className={`${isChecked === true ? "ml-[5px]": ""} w-[3rem] flex items-center text-textGrey2 text-base font-medium`}>{index+1}</div>
-                                <div className={`${isChecked === true ? "px-4": ""} w-[15rem] flex items-center text-textGrey2 text-base font-medium`}><Select
+                                <div className={`${isChecked === true ? "px-4": ""} w-[15rem] flex items-center text-textGrey2 text-base font-medium`}>
+                                    <Select
                                         className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
                                         classNamePrefix="select"
                                         value={products.find((prod) => prod.value.id === item.productId)}

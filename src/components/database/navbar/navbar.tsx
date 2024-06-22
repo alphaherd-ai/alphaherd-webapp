@@ -58,7 +58,7 @@ const DatabaseNavbar = () => {
                         <input
                             name="Search"
                             type="text"
-                            className='rounded-lg px-3 py-2 h-full box-border text-base border border-solid border-gray-400 w-full text-gray-400' style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }}
+                            className='rounded-lg px-3 py-2 h-full box-border text-base border border-solid border-gray-400 w-full text-gray-400 ' style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }}
                             placeholder="Search"
 
                         />

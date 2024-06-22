@@ -146,13 +146,13 @@ const FinancesPurchasesTableHeader = () => {
         </Dropdown>
     </div>
 
-    <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '>
+    {/* <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '> */}
       
-        <Popover placement="bottom-end" showArrow offset={10}>
+        <Popover placement="bottom-end" showArrow offset={5}>
             <PopoverTrigger>
                 <Button color="gray-400"
                     variant="solid"
-                    className="capitalize flex border-none bg-black text-white rounded-lg ">  Create
+                    className="cursor-pointer capitalize px-4 py-2.5 flex border-none bg-black text-white rounded-lg ">  Create
                     <div className='flex pl-2'><Image src={DownArrow} alt='DownArrow' className='w-4 h-4 ' /></div></Button>
             </PopoverTrigger>
             <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
@@ -161,13 +161,13 @@ const FinancesPurchasesTableHeader = () => {
                    
                     <div className='flex flex-col'>
                     
-                    <Link className='no-underline flex item-center' href='/finance/overview'>
+                    <Link className='no-underline flex item-center' href='/finance/purchases/order'>
                     <div className='text-base p-4   text-white flex '>
                     <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Purchase Order</div>
                     </Link>
                     <Link className='no-underline flex item-center' href='/finance/overview'>
                     <div className='text-base p-4  text-white flex '>
-                    <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Purchase Invoice</div>
+                    <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Create GRN</div>
                     </Link>
                     <Link className='no-underline flex item-center' href='/finance/overview'>
                     <div className='text-base p-4  text-white flex '>
@@ -183,7 +183,7 @@ const FinancesPurchasesTableHeader = () => {
 
 
 
-    </div>
+    {/* </div> */}
 </div>
 </div >
 
