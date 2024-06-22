@@ -20,6 +20,12 @@ button:focus {
 .customDatePickerWidth > div > div.react-datepicker__input-container input {
    width: 100%;
 }
+.customDatePickerWidth1, 
+.customDatePickerWidth1 > div.react-datepicker-wrapper, 
+.customDatePickerWidth1 > div > div.react-datepicker__input-container
+.customDatePickerWidth1 > div > div.react-datepicker__input-container input {
+   width: 90%;
+}
 
 
 .container::-webkit-scrollbar {
