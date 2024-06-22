@@ -32,6 +32,8 @@ enum Sales_Status {
 enum Source {
   Sales_Invoice
   Sales_Return
+  Purchase_Invoice
+  Purchase_Return
 }
 
 enum Stock {
@@ -45,6 +47,9 @@ enum FinanceCreationType {
   Sales_Return
   Expense_Recurring
   Expense_NonRecurring
+  Purchase_Order
+  Purchase_Invoice
+  Purchase_Return
 }
 
 enum Inventory {
@@ -302,20 +307,20 @@ model Sales {
 
 model Purchases {
   id                   Int               @id @default(autoincrement())
-  distributor          String
+  distributor          String?
   date                 DateTime?         @default(now())
   dueDate              DateTime
   returnLastDate       DateTime?
-  invoiceNo            String
+  invoiceNo            String?
   purchaseOrderNumber  String?
   distributorInvoiceNo String?
-  grnNo                String
-  notes                String
-  shipping             Int
-  adjustment           Int
-  totalCost            Int
-  totalQty             Int
-  status               String
+  grnNo                String?
+  notes                String?
+  shipping             Float?
+  adjustment           Float?
+  totalCost            Float?
+  totalQty             Int?
+  status               String?
   type                 String?
   items                Items[]
   financeTimeline      FinanceTimeline[]

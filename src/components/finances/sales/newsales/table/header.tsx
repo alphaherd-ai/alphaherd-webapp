@@ -54,7 +54,7 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
         }
      else{
         setHeaderData((prevData)=>({...prevData,invoiceNo:"SI-"+count}))}
-    },[id])
+    },[headerData])
     
     
     useEffect(()=>{
