@@ -1,8 +1,17 @@
 'use client'
 import Login from "@/components/auth/login/login";
+import initializeScheduling from "@/lib/initializeScheduling";
+import axios from "axios";
+import { useEffect } from "react";
 
 const LoginPage = () => {
 
+    console.log(process.env.NEXT_PUBLIC_API_BASE_PATH);
+
+    useEffect(() => {
+        axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/bullScheduler`)
+      }, []);
+    
     return <div className='flex h-screen flex-col'>
 
         <div className='w-full h-full flex-1 bg-backgroundImg  p-4 px-10'>

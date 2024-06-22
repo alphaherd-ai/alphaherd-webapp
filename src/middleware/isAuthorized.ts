@@ -8,7 +8,11 @@ import { checkIfOrgAdmin } from '@/utils/checkIfOrgAdmin';
 export const isAuthorized = async (request: NextRequest) => {
   try {
 
-    if (request.nextUrl.pathname.startsWith("/api/auth/admin/orgEdit")) {
+    console.log("Inside is Authorized");
+
+    console.log(request.nextUrl.pathname);
+
+    if (request.nextUrl.pathname.startsWith("/api/auth/admin/orgEdit") || request.nextUrl.pathname==="/api/auth/admin/branch") {
       return checkIfOrgAdmin(request);
     }
 
@@ -19,7 +23,7 @@ export const isAuthorized = async (request: NextRequest) => {
     const token = request.cookies.get('session')?.value;
     console.log("token", token)
     if (!token) {
-      return redirect(process.env.NEXT_PUBLIC_API_BASE_PATH + '/alphaherd/auth/login');
+      return new Response(JSON.stringify({ "message": 'Not Authorized' }), { status: 401 });
     }
     let tokenPayload = await decrypt(token!);
     console.log(tokenPayload);
@@ -31,6 +35,6 @@ export const isAuthorized = async (request: NextRequest) => {
     return await getVerifyOrgandBranch(Number(userId),Number(branchId),request);
   }
   catch (err) {
-    return redirect(process.env.NEXT_PUBLIC_API_BASE_PATH + '/alphaherd/auth/login');
+    return new Response(JSON.stringify({ "message": 'Not Authorized' }), { status: 401 });
   }
 }

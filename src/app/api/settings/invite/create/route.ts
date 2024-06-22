@@ -7,7 +7,7 @@ import nodemailer from 'nodemailer';
 
 function htmlTemplate(userInviteString : String){
 
-    let inviteLink = process.env.NEXT_PUBLIC_API_BASE_PATH + "/api/settings/invite?userInviteString=" + userInviteString;
+    let inviteLink = process.env.CUSTOMCONNSTR_NEXT_PUBLIC_API_BASE_PATH + "/api/settings/invite?userInviteString=" + userInviteString;
 
     return `<!DOCTYPE html>
     <html lang="en">
@@ -46,9 +46,9 @@ function htmlTemplate(userInviteString : String){
     <body>
         <div class="container">
             <h2>Invitation to Join Our Platform</h2>
-            <p>Hello [Recipient Name],</p>
+            <p>Hello,</p>
             <p>You have been invited to join our platform. Click the button below to accept the invitation:</p>
-            <p><a href="[INVITE_LINK]" class="btn">Accept Invitation</a></p>
+            <p><a href=${inviteLink} class="btn">Accept Invitation</a></p>
             <p>If you are unable to click the button above, you can also copy and paste the following link into your browser:</p>
             <a href=${inviteLink}>${inviteLink}</a>
             <p>We look forward to seeing you!</p>
@@ -134,14 +134,14 @@ export const POST = async (req: NextRequest) => {
     const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-            user: process.env.AUTOMATED_GMAIL,
-            pass: process.env.AUTOMATED_GMAIL_APP_PASSWORD,
+            user: process.env.CUSTOMCONNSTR_AUTOMATED_GMAIL,
+            pass: process.env.CUSTOMCONNSTR_AUTOMATED_GMAIL_APP_PASSWORD,
         },
     });
 
     const message = "Hi there, you were emailed me through nodemailer"
     const options = {
-        from: process.env.AUTOMATED_GMAIL, // sender address
+        from: process.env.CUSTOMCONNSTR_AUTOMATED_GMAIL, // sender address
         to: email, // receiver email
         subject: "Invitation to join Organization: Alphaherd", // Subject line
         text: message,

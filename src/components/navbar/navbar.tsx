@@ -50,7 +50,7 @@ const Navbar = () => {
      const hasNewNotifications = data.newNotifs?.length > 0;
      setNewNotificationIndicator(hasNewNotifications);
    }
- }, [data]); 
+ }, [data,error,isLoading]); 
  if (user.name === "" || currentRoute.startsWith("/auth"))return null;
 
   return (

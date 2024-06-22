@@ -11,12 +11,12 @@ export const apiMiddleware: NextMiddleware = async (request: NextRequest) => {
     console.log("this is the token from API: ",token)
     if (!token) {
         console.log("hello this is blocked")
-      return NextResponse.redirect(new URL('/blocked', request.url));
+        return new Response(JSON.stringify({ "message": 'Not Authorized' }), { status: 401 });
     }
     const user =await validateToken(token);
     if(!user){
         console.log("hello this is blocked")
-        return NextResponse.redirect(new URL('/blocked',request.url));
+        return new Response(JSON.stringify({ "message": 'Not Authorized' }), { status: 401 });
     }
   
     console.log('not blocked!!')

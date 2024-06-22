@@ -19,17 +19,17 @@ let lineHeight = 6;
 
 // http://localhost:3000/alphaherd/api/finance/invoice
 
-function addText(text, x, y, fontSize = 10, align = 'left', weight = "regular"){
-    y = checkPageBreak(doc, y, pageHeight);
+function addText(text:any, x:any, y:any, fontSize = 10, align = "left", weight = "regular"){
+    y = checkPageBreak(doc, y, pageHeight,0);
     if(weight!=="regular"){
-      doc.setFontSize(fontSize,weight);
+      doc.setFontSize(fontSize);
     }
     else doc.setFontSize(fontSize);
-    doc.text(text, x, y, { align: align });
+    doc.text(text, x, y, { align: "left" });
     return y;
 };
 
-function checkPageBreak(doc, y, pageHeight, margin){
+function checkPageBreak(doc:any, y:any, pageHeight:any, margin:any){
     if (y > pageHeight - margin) {
         doc.addPage();
         return 10; // Reset y to the top margin
@@ -37,17 +37,17 @@ function checkPageBreak(doc, y, pageHeight, margin){
     return y;
 };
 
-function addRow(data, y, columnPositions, rowHeight = 7){
-    y = checkPageBreak(doc, y, pageHeight);
-    data.forEach((text, index) => {
+function addRow(data:any, y:any, columnPositions:any, rowHeight = 7){
+    y = checkPageBreak(doc, y, pageHeight,0);
+    data.forEach((text:any, index:0) => {
         addText(text, columnPositions[index], y);
     });
     return y + rowHeight;
 };
 
-function addLine(startX, startY, endX, endY){
-    startY = checkPageBreak(doc, startY, pageHeight);
-    endY = checkPageBreak(doc, endY, pageHeight);
+function addLine(startX:any, startY:any, endX:any, endY:any){
+    startY = checkPageBreak(doc, startY, pageHeight,0);
+    endY = checkPageBreak(doc, endY, pageHeight,0);
     doc.line(startX, startY, endX, endY);
 };
 

@@ -74,7 +74,7 @@ const NewsaleEstimateTable = () => {
     const [otherData, setOtherData] = useState({});
     const appState = useAppSelector((state) => state.app)
     const { tableData: items, setTableData: setItems } = useContext(DataContext);   
-    
+    const [discountStates, setDiscountStates] = useState(new Array(items.length).fill(false));
     const taxOptions = [
         { value: 'Tax excl.', label: 'Tax excl.' },
         { value: 'Tax incl.', label: 'Tax incl.' }
@@ -84,6 +84,13 @@ const NewsaleEstimateTable = () => {
         { value: 0.18, label: Tax.GST_18 },
         { value: 0.09, label: Tax.GST_9 }
     ];
+    const discountOptions= [
+        {value:0.05,label:"5% off"},
+        {value:0.08,label:"8% off"},
+        {value:0.10, label:"10% off"},
+        {value:0.12,label:"12% off"},
+        {value:0.15,label:"15% off"},
+    ]
 
     
     const Checkbox = ({ children, ...props }: JSX.IntrinsicElements['input']) => (
@@ -120,7 +127,7 @@ const NewsaleEstimateTable = () => {
             value:{
                 id:product.id,
                 productId:product.productId,
-                quantity: product.quantity ,
+                quantity: 1,
                 batchNumber: product.batchNumber,
                 expiry:  product.expiry,
                 sellingPrice:  product.sellingPrice,
@@ -146,7 +153,20 @@ const handleGstSelect = (selectedGst: any, index: number) => {
     };
     setTableData(updatedItems);
 };
-
+const handleDiscountSelect= (selectedDiscount:any,index:number)=>{
+    const updatedItems=[...tableData];
+    console.log(selectedDiscount);
+    updatedItems[index]={
+        ...updatedItems[index],
+        discount:selectedDiscount.value
+    };
+    setTableData(updatedItems);
+}
+const handleAddDiscount = (index:number) => {
+    const newDiscountStates = [...discountStates]; 
+    newDiscountStates[index] = !newDiscountStates[index]; 
+    setDiscountStates(newDiscountStates);
+};
 const handleEditButtonClick = () => {
     setDisableButton(!disableButton);
 };
@@ -350,164 +370,192 @@ useEffect(() => {
                                 <div className='flex text-gray-500 text-base font-medium w-1/12'>Total</div>
                                 <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
                             </div>
-                            {items.map((item:any,index:number) => (
-                                <div key={index+1} className='flex justify-evenly items-center w-full box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-400 py-2'>
-                                <div className={`${isChecked === true ? "ml-[5px]": ""} w-[3rem] flex items-center text-textGrey2 text-base font-medium`}>{index+1}</div>
-                                <div className={`${isChecked === true ? "px-4": ""} w-[15rem] flex items-center text-textGrey2 text-base font-medium`}>
-                                    <Select
-                                        className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
-                                        classNamePrefix="select"
-                                        value={products.find((prod) => prod.value.id === item.productId)}
-                                        isClearable={false}
-                                        isSearchable={true}
-                                        name="itemName"
-                                        options={products}
-                                        onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
-                                        styles={{
-                                            control: (provided, state) => ({
-                                                ...provided,
-                                                border: state.isFocused ? 'none' : 'none',
-                                            }),
-                                        }}
-                                    />
-                                </div>
-                                <div className='w-[10rem] flex-col items-center text-textGrey2 text-base font-medium'>
-                                    <Select
-                                      className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
-                                      classNamePrefix="select"
-                                      value={batches.find((prod) => prod.value.id === item.id)}
-                                      isClearable={false}
-                                      isSearchable={true}
-                                      name={`batchNumber=${index}`}
-                                      options={filteredBatches}
-                                      onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
-                                      styles={{
-                                        control: (provided, state) => ({
-                                            ...provided,
-                                            border: state.isFocused ? 'none' : 'none',
-                                        }),
-                                    }}
-                                  />  
-                                        <div className="text-textGrey2 text-[10px] font-medium  px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
-                                </div>
-                                <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium gap-5'>
-                                        {item.sellingPrice}
-                                        <Select
-                                            className="text-textGrey2 text-sm font-medium "
-                                            defaultValue={taxOptions[0]}
-                                            isClearable={false}
-                                            isSearchable={true}
-                                            options={taxOptions}
-                                            styles={{
-                                                control: (provided, state) => ({
-                                                    ...provided,
-                                                    border: state.isFocused ? 'none' : 'none',
-                                                }),
-                                            }}
-                                            
-                                        />
-                                </div>
-                                    {!isChecked && (
-                                        <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium gap-[12px]'>
-                                            <div className='flex items-center text-textGrey2 text-base font-medium gap-[20px] bg-white'>
-                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
-                                            <Image className='rounded-md' src={Subtract} alt="-"></Image>
-                                        </button>
-                                        <div>{item.quantity}</div>
-                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
-                                            <Image className="rounded-md" src={Add} alt="+"></Image>
-                                        </button>
-                                        </div>
-                                        </div>
-                                    )}
-                                    {isChecked && (
-                                        <>
-                                        <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium gap-[12px]'>
-                                            <div className='flex items-center text-textGrey2 text-base font-medium gap-[20px] bg-white'>
-                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
-                                            <Image className='rounded-md' src={Subtract} alt="-"></Image>
-                                        </button>
-                                        <div>{item.lowQty}</div>
-                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick1(item.id)}>
-                                            <Image className="rounded-md" src={Add} alt="+"></Image>
-                                        </button>
-                                        </div>
-                                        </div>
-                                        <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium gap-[12px]'>
-                                            <div className='flex items-center text-textGrey2 text-base font-medium gap-[20px] bg-white'>
-                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick2(item.id)}>
-                                            <Image className='rounded-md' src={Subtract} alt="-"></Image>
-                                        </button>
-                                        <div>{item.highQty}</div>
-                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick2(item.id)}>
-                                            <Image className="rounded-md" src={Add} alt="+"></Image>
-                                        </button>
-                                        </div>
-                                        </div>
-                                        </>
-                                    )}
-                                    <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium'>
-                                        <Select
-                                            className="text-textGrey2 text-base font-medium"
-                                            defaultValue={[]}
-                                            isClearable={false}
-                                            isSearchable={true}
-                                            options={gstOptions}
-                                            styles={{
-                                                control: (provided, state) => ({
-                                                    ...provided,
-                                                    border: state.isFocused ? 'none' : 'none',
-                                                    padding: '0',
-                                                }),
-                                            }}
-                                            onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
-                                        />
-                                    </div>
-                                    <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium'>{isChecked ? (
-                                            '₹' +
-                                            ((item?.sellingPrice * item?.lowQty * item?.gst).toFixed(2) +
-                                                '-' +
-                                                (item?.sellingPrice * item?.highQty * item?.gst).toFixed(2) ||
-                                                0)
-                                            
-                                            ) : (
-                                            '₹' +
-                                            ((item?.sellingPrice * item?.quantity * item?.gst) || 0)
-                                            .toFixed(2)
-                                            )}</div>
-                                   <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium'>
-                                        {isChecked ? (
-                                            <>
-                                            {item?.lowQty && (
-                                                <>
-                                                ₹{(item?.sellingPrice * item?.lowQty * (1 + item?.gst)).toFixed(2) || 0}
-                                                     -{' '}
-                                                </>
-                                            )}
-                                            {item?.highQty && (
-                                                <>₹{(item?.sellingPrice * item?.highQty * (1 + item?.gst)).toFixed(2) || 0}
-                                                </>
-                                            )}
-                                            </>
-                                        ) : (
-                                            <>
-                                            ₹{(item?.quantity * item?.sellingPrice * (1 + item?.gst)).toFixed(2) || 0}
-                                               
-                                            </>
-                                        )}
-                                        </div>
+                            {items.map((item:any, index:number) => (
+    <div key={index + 1} className='flex flex-col w-full'>
+        <div className='flex justify-evenly items-center w-full box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-400 py-2'>
+            <div className={`${isChecked === true ? "ml-[5px]" : ""} w-[3rem] flex items-center text-neutral-400 text-base font-medium`}>{index + 1}</div>
+            <div className={`${isChecked === true ? "px-4" : ""} w-[15rem] flex items-center text-neutral-400 text-base font-medium`}>
+                <Select
+                    className="text-gray-500 text-base font-medium w-[90%] border-0 boxShadow-0"
+                    classNamePrefix="select"
+                    value={products.find((prod) => prod.value.id === item.productId)}
+                    isClearable={false}
+                    isSearchable={true}
+                    name="itemName"
+                    options={products}
+                    onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
+                    styles={{
+                        control: (provided, state) => ({
+                            ...provided,
+                            border: state.isFocused ? 'none' : 'none',
+                        }),
+                    }}
+                />
+            </div>
+            <div className='w-[10rem] flex-col items-center text-neutral-400 text-base font-medium'>
+                <Select
+                    className="text-gray-500 text-base font-medium w-[90%] border-0 boxShadow-0"
+                    classNamePrefix="select"
+                    value={batches.find((prod) => prod.value.id === item.id)}
+                    isClearable={false}
+                    isSearchable={true}
+                    name={`batchNumber=${index}`}
+                    options={filteredBatches}
+                    onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
+                    styles={{
+                        control: (provided, state) => ({
+                            ...provided,
+                            border: state.isFocused ? 'none' : 'none',
+                        }),
+                    }}
+                />
+                <div className="text-neutral-400 text-[10px] font-medium px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
+            </div>
+            <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-5'>
+                {item.sellingPrice}
+                <Select
+                    className="text-neutral-400 text-sm font-medium"
+                    defaultValue={taxOptions[0]}
+                    isClearable={false}
+                    isSearchable={true}
+                    options={taxOptions}
+                    styles={{
+                        control: (provided, state) => ({
+                            ...provided,
+                            border: state.isFocused ? 'none' : 'none',
+                        }),
+                    }}
+                />
+            </div>
+            {!isChecked && (
+                <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
+                    <div className='flex items-center text-neutral-400 text-base font-medium gap-[20px] bg-white'>
+                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
+                            <Image className='rounded-md' src={Subtract} alt="-"></Image>
+                        </button>
+                        <div>{item.quantity}</div>
+                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
+                            <Image className="rounded-md" src={Add} alt="+"></Image>
+                        </button>
+                    </div>
+                </div>
+            )}
+            {isChecked && (
+                <>
+                    <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
+                        <div className='flex items-center text-neutral-400 text-base font-medium gap-[20px] bg-white'>
+                            <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick1(item.id)}>
+                                <Image className='rounded-md' src={Subtract} alt="-"></Image>
+                            </button>
+                            <div>{item.lowQty}</div>
+                            <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick1(item.id)}>
+                                <Image className="rounded-md" src={Add} alt="+"></Image>
+                            </button>
+                        </div>
+                    </div>
+                    <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
+                        <div className='flex items-center text-neutral-400 text-base font-medium gap-[20px] bg-white'>
+                            <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick2(item.id)}>
+                                <Image className='rounded-md' src={Subtract} alt="-"></Image>
+                            </button>
+                            <div>{item.highQty}</div>
+                            <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick2(item.id)}>
+                                <Image className="rounded-md" src={Add} alt="+"></Image>
+                            </button>
+                        </div>
+                    </div>
+                </>
+            )}
+            <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
+                <Select
+                    className="text-neutral-400 text-base font-medium"
+                    defaultValue={[]}
+                    isClearable={false}
+                    isSearchable={true}
+                    options={gstOptions}
+                    styles={{
+                        control: (provided, state) => ({
+                            ...provided,
+                            border: state.isFocused ? 'none' : 'none',
+                            padding: '0',
+                        }),
+                    }}
+                    onChange={(selectedOption: any) => handleGstSelect(selectedOption, index)}
+                />
+            </div>
+            <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
+                {isChecked ? (
+                    '₹' +
+                    ((item?.sellingPrice * item?.lowQty * item?.gst).toFixed(2) +
+                        '-' +
+                        (item?.sellingPrice * item?.highQty * item?.gst).toFixed(2) || 0)
+                ) : (
+                    '₹' +
+                    ((item?.sellingPrice * item?.quantity * item?.gst) || 0).toFixed(2)
+                )}
+            </div>
+            <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium'>
+                {isChecked ? (
+                    <>
+                        {item?.lowQty && (
+                            <>
+                                ₹{(item?.sellingPrice * item?.lowQty * (1 + item?.gst)).toFixed(2) || 0}
+                                -{' '}
+                            </>
+                        )}
+                        {item?.highQty && (
+                            <>₹{(item?.sellingPrice * item?.highQty * (1 + item?.gst)).toFixed(2) || 0}</>
+                        )}
+                    </>
+                ) : (
+                    <>
+                        ₹{(item?.quantity * item?.sellingPrice * (1 + item?.gst)).toFixed(2) || 0}
+                    </>
+                )}
+            </div>
+            <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
+                <button className="border-0">
+                                <Image src={sellicon} alt="sell" onClick={() => handleAddDiscount(index)}></Image>
+                </button>
+                <button className="border-0" onClick={() => handleDeleteRow(index)}>
+                    <Image src={delicon} alt="delete"></Image>
+                </button>
+            </div>
+        </div>
 
-                                    <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[12px]'>
-                                        <button className="border-0">
-                                            <Image src={sellicon} alt="sell" ></Image>
-                                        </button>
-                    
-                                        <button className="border-0" onClick={() => handleDeleteRow(index)}>
-                                            <Image src={delicon} alt="delete" ></Image>
-                                        </button>
-                                    </div>
+        {discountStates[index]  && (
+                        <div className='flex w-full justify-evenly items-center box-border bg-white h-12 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-500'>
+                            <div className='flex text-gray-500 text-base font-medium w-[3rem]'></div>
+                            <div className='flex text-gray-500 text-base font-medium w-[15rem]'>
+                                <div className="h-7 px-2 py-1.5 bg-violet-100 rounded-[5px] justify-center items-center gap-2 inline-flex">
+                                    <div className="text-indigo-600 text-sm font-medium">Item Discount</div>
                                 </div>
-                            ))}
+                            </div>
+                            <div className='flex text-gray-500 text-base font-medium w-[10rem]'><Select
+                    className="text-neutral-400 text-base font-medium"
+                    defaultValue={[]}
+                    isClearable={false}
+                    isSearchable={true}
+                    options={discountOptions}
+                    styles={{
+                        control: (provided, state) => ({
+                            ...provided,
+                            border: state.isFocused ? 'none' : 'none',
+                            padding: '0',
+                        }),
+                    }}
+                    onChange={(selectedOption: any) => handleDiscountSelect(selectedOption, index)}
+                /></div>
+                            <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
+                            <div className='flex text-gray-500 text-base font-medium w-[10rem]'></div>
+                            <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
+                            <div className='flex text-gray-500 text-base font-medium w-[10rem]'></div>
+                            <div className="text-red-500 text-base font-bold w-1/12">-₹{(item.sellingPrice*item.discount*item. quantity).toFixed(2)}</div>
+                        </div>
+                    )}
+    </div>
+))}
+
                             <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12 border-b border-neutral-400 text-gray-500 rounded-b-md'>
                                 <div className='flex text-gray-500 text-base font-medium w-[3rem]'></div>
                                 <div className='flex text-gray-500 text-base font-medium w-[15rem]'>Total</div>
@@ -605,7 +653,7 @@ useEffect(() => {
    
     <>
       ₹{
-        items.reduce((acc, item) => acc + item.quantity * item?.sellingPrice, 0) .toFixed(2) ||
+        items.reduce((acc, item) => acc + item.quantity * item?.sellingPrice+item.quantity*item?.sellingPrice*item.gst-(item.quantity*item?.sellingPrice*item.discount||0), 0) .toFixed(2) ||
         0
       }
      

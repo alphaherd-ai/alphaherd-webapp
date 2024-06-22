@@ -12,7 +12,7 @@ import TransactionsBlanceSheetItem from "./item";
 const FinancesTransactionSheet = () => {
     const [clickedIndex, setClickedIndex] = useState(0);
 
-    const handleClick = (index) => {
+    const handleClick = (index:any) => {
         setClickedIndex(index);
     };
 

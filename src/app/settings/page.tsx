@@ -39,10 +39,5 @@ export default function SettingsPage() {
         {
             tabComponents[selectedTab]
         }
-        {
-            selectedTab === 0 && appState.isCurrentOrgAdmin ? <Link href={`/auth/admin/orgEdit`}><button className="fixed bottom-4 right-4 bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-              Edit
-            </button></Link> : null
-        }
     </>
 }

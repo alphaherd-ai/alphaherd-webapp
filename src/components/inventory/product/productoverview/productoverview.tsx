@@ -56,7 +56,7 @@ function useProductBatchfetch(id:string|null,branchId:number|null){
       if(!error&&!isLoading&&fetchedProduct){
         setProduct(fetchedProduct);
       }
-    },[fetchedProduct]);
+    },[fetchedProduct,error,isLoading]);
     const {fetchedBatches,batchError,isBatchLoading}=useProductBatchfetch(id,appState.currentBranchId);
 
     useEffect(() => {
@@ -73,7 +73,7 @@ function useProductBatchfetch(id:string|null,branchId:number|null){
         setInventory(inventoryTimeline);
       }
     
-        },[fetchedBatches]);
+        },[fetchedBatches,batchError,isBatchLoading]);
        
   console.log(inventory)
 

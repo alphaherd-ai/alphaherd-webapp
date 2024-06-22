@@ -19,12 +19,12 @@ import { Button } from "@nextui-org/react"
 
 
 const NewExpensesBottomBar = () => {
-    const { headerData, tableData, totalAmountData } = useContext(DataContext);
+    const { headerData, tableData, totalAmountData,recurringData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
     const url=useSearchParams();
     const id=url.get('id');
     const handleSubmit = async () => {
-        const allData = {headerData, tableData, totalAmountData};
+        const allData = {headerData, tableData, totalAmountData,recurringData};
         console.log("this is all data",allData)
         let totalQty=0;
         tableData.forEach(data => {
@@ -46,7 +46,10 @@ const NewExpensesBottomBar = () => {
             totalCost: allData.totalAmountData.totalCost,
             overallDiscount: allData.totalAmountData.gst.value,
             totalQty:totalQty,
-            type:"Non-Recurring",
+            recurringStartedOn: allData.recurringData.startDate ,
+            recurringRepeatType: "everyDay",
+            recurringEndson:     allData.recurringData.endDate,
+            type:allData.recurringData.startDate?"Recurring":"Non-Recurring",
             items:{
                 create:items
             }
@@ -57,8 +60,8 @@ const NewExpensesBottomBar = () => {
             source:Notif_Source.Expense_Invoice,
             totalCost:data.totalCost,
             dueDate:data.dueDate,
-            orgId:appState.currentBranch.org.id,
-            orgBranch:appState.currentBranch.org.orgName
+            orgId:appState.currentOrgId,
+            orgBranch:appState.currentOrg.orgName
         }
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/create/${"Recurring"}?branchId=${appState.currentBranchId}`,data)

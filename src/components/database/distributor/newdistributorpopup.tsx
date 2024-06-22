@@ -16,7 +16,7 @@ type PopupProps = {
 }
 
 
-const Popup: React.FC<PopupProps> = ({ onClose }) => {
+const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     const [formData, setFormData] = useState<any>({});
     const [isSaveDisabled, setIsSaveDisabled] = useState(true)
     
@@ -73,6 +73,9 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
     const City = [
         { value: 'Delhi', label: 'Delhi' },
         { value: 'Mumbai', label: 'Mumbai' },
+        {value:'Chennai', label:'Chennai'},
+        {value:'Bangalore', label:'Bangalore'},
+        {value:'Gurgaon', label:'Gurgaon'}
 ]
 
     return <>

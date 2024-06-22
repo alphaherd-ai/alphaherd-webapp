@@ -11,17 +11,19 @@ import { DataContext } from './DataContext'
 import { FinanceCreationType, Notif_Source } from '@prisma/client'
 import axios from "axios"
 import { useAppSelector } from '@/lib/hooks';
-import { useSearchParams } from "next/navigation"
+import { redirect, useSearchParams } from "next/navigation"
 import { getTime } from "date-fns"
 import { Button } from "@nextui-org/react"
 import formatDateAndTime from "@/utils/formateDateTime"
 import { generatePdfForInvoice } from "@/utils/salesPdf"
+import { useRouter } from "next/navigation"
 
 const NewsalesBottomBar = () => {
     const { headerData, tableData, totalAmountData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
     const url = useSearchParams();
     const id = url.get('id');
+    const router = useRouter();
     const handleSubmit = async () => {
         const allData = { headerData, tableData, totalAmountData };
         console.log("this is all data", allData)
@@ -35,7 +37,8 @@ const NewsalesBottomBar = () => {
             quantity: data.quantity,
             sellingPrice: data.sellingPrice,
             taxAmount: data.gst,
-            name: data.itemName
+            name: data.itemName,
+            discount:data.discount
         }));
         const data = {
             customer: (id === null) ? allData.headerData.customer.value : allData.headerData.customer,
@@ -60,17 +63,18 @@ const NewsalesBottomBar = () => {
             source: Notif_Source.Sales_Invoice,
             totalCost: data.totalCost,
             dueDate: data.dueDate,
-            orgId: appState.currentBranch.org.id,
-            orgBranch: appState.currentBranch.org.orgName
+            orgId: appState.currentOrgId,
+            orgBranch: appState.currentOrg.orgName
         }
         console.log(JSON.stringify(data))
         console.log("this is notif data", notifData)
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Invoice}?branchId=${appState.currentBranchId}`, data)
-            const notif = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
             if (!response.data) {
                 throw new Error('Network response was not ok');
             }
+            router.back();
+            const notif = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
         } catch (error) {
             console.error('Error:', error);
         }

@@ -15,7 +15,7 @@ const NewsaleEstimateTotalAmout = () => {
     let totalAmount = 0,totalAmountLow=0,totalAmountHigh=0,lowGrandTotal=0,highGrandTotal=0;
     tableData.forEach(data => {
         if(data.lowQty==0&&data.highQty==0){
-            totalAmount += (data.quantity * data.sellingPrice + data.quantity * data.gst*data.sellingPrice)||0;
+            totalAmount += (data.quantity * data.sellingPrice + data.quantity * data.gst*data.sellingPrice-(data.quantity*data.discount*data.sellingPrice||0))||0;
         }
         else {
              totalAmountLow+=(data.lowQty*data.sellingPrice+data.lowQty*data.gst*data.sellingPrice)||0;

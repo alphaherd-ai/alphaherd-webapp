@@ -4,8 +4,9 @@ import Link from 'next/link';
 import { Tooltip, Button, Spinner } from "@nextui-org/react";
 import InventoryProductTableBottombar from './bottombar'; 
 import useSWR from 'swr';
-import 'ldrs/helix'
+import 'ldrs/helix';
 import { useAppSelector } from '@/lib/hooks';
+//@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 interface Products {
@@ -25,9 +26,9 @@ const ProductAllItem = () => {
   const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${appState.currentBranchId}`,fetcher)
   useEffect(() => {
   if(!isLoading&&data&&!error){
-    setProducts(data.reverse())
+    setProducts(data?.reverse())
   }
-  }, [data]);
+  }, [data,isLoading,error]);
 
   
 
@@ -38,7 +39,7 @@ const ProductAllItem = () => {
   const paginate = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
-if(isLoading) return (<div className='w-full min-h-[25rem]'><l-helix bg-opacity=".1" size="35" color="black"></l-helix></div>) 
+if(isLoading) return (<Spinner/>) 
   return (
     <div>
       {currentProducts?.map(product => (

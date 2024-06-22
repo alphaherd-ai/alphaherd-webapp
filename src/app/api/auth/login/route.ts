@@ -29,7 +29,8 @@ export const POST = async (req: NextRequest) => {
         adminOrganizations: {
           select: {
             id: true,
-            orgName: true
+            orgName: true,
+            address:true
           }
         },
         userRoles: {}
@@ -103,7 +104,8 @@ export const POST = async (req: NextRequest) => {
           adminOrganizations: {
             select: {
               id: true,
-              orgName: true
+              orgName: true,
+              address:true
             }
           },
           userRoles: {}
@@ -122,11 +124,4 @@ export const POST = async (req: NextRequest) => {
     console.error('Error:', error);
     return new Response(JSON.stringify({ "message": error.message }), { status: 500 });
   }
-  // finally {
-  //   console.log(userInviteString)
-  //   if (userInviteString) {
-  //     console.log("here")
-  //     return NextResponse.redirect(process.env.NEXT_PUBLIC_API_BASE_PATH + "/api/settings/invite?userInviteString=" + userInviteString);
-  //   }
-  // }
 };

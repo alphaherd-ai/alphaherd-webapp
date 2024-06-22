@@ -67,8 +67,6 @@ const DatabaseClientHeader = () => {
         <Dropdown>
             <DropdownTrigger>
                 <Button
-                
-                    color="gray-400"
                     variant="solid"
                     className="capitalize border-none  bg-transparent rounded-lg"
                 >
@@ -77,13 +75,12 @@ const DatabaseClientHeader = () => {
             </DropdownTrigger>
             <DropdownMenu
                 aria-label="Single selection example"
-                color="gray-500"
                 className=" text-base  text-gray-500 bg-gray-200 rounded-lg"
                 variant="solid"
                 disallowEmptySelection
                 selectionMode="single"
                 selectedKeys={selectedSort}
-                onSelectionChange={setselectedSort}
+                // onSelectionChange={setselectedSort}
             >
                 <DropdownItem
                     className=" p-2 text-base" key="Category:text">Sort:Recently Used</DropdownItem>
@@ -101,7 +98,6 @@ const DatabaseClientHeader = () => {
             <DropdownTrigger>
                 <Button
                     //   variant="bordered" 
-                    color="gray-400"
                     variant="solid"
                     className="capitalize border-none bg-transparent rounded-lg"
                 >
@@ -110,13 +106,12 @@ const DatabaseClientHeader = () => {
             </DropdownTrigger>
             <DropdownMenu
                 aria-label="Single selection example"
-                color="gray-500"
                 className=" text-base bg-gray-200 rounded-lg"
                 variant="solid"
                 disallowEmptySelection
                 selectionMode="single"
                 selectedKeys={selectedCategory}
-                onSelectionChange={setSelectedCategory}
+                // onSelectionChange={setSelectedCategory}
             >
                 <DropdownItem
                     className=" p-2" key="Category:text">Category: Text</DropdownItem>

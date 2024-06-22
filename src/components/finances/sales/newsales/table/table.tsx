@@ -64,6 +64,14 @@ function useProductBatchfetch(id:number|null){
         batchError:error
     }
 }
+function DataFromEstimate(id:number|null,branchId:number|null){
+    const {data,error,isLoading} =useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/${id}/?branchId=${branchId}`,fetcher);
+    return {
+       data,
+       isLoading,
+       error
+    }
+}
 const NewsalesTable = () => {
     const { tableData, setTableData } = useContext(DataContext);
     const [selectedProductDetails,setSelectedProduct]= useState<Products>()
@@ -74,16 +82,21 @@ const NewsalesTable = () => {
     const appState = useAppSelector((state) => state.app)
     const url= useSearchParams();
     const id=url.get('id');
+    
+    let estimateData:any=null,isEstimateDataLoading=false,isEstimateDataError=false;
     const { tableData: items, setTableData: setItems } = useContext(DataContext);   
     if(id){
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        const {data,error,isLoading} =useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/${id}/?branchId=${appState.currentBranchId}`,fetcher)
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        useEffect(() => {
-            if (!isLoading && data && !error) {
-                const {items,...otherData}=data;
+        const {data,isLoading,error}=DataFromEstimate(Number(id),appState.currentBranchId);
+        estimateData=data;
+        isEstimateDataError=error;
+        isEstimateDataLoading=isLoading;        
+    }
+
+    useEffect(()=>{
+            if (!isEstimateDataLoading && estimateData && !isEstimateDataError) {
+                const {items,...otherData}=estimateData;
+                // eslint-disable-next-line react-hooks/rules-of-hooks
                 setOtherData(otherData)
-                console.log(items)
               const shallowDataCopy = [...items]; 
               const itemData = shallowDataCopy.map((item: any) => ({
                 productId: item.productBatch.productId,
@@ -96,12 +109,18 @@ const NewsalesTable = () => {
                 id:item.productBatch.id
               }));
               setItems(itemData);
+              
             }
-          }, [data]); 
-          
-        console.log(items)
-    }
-    
+          }, [estimateData]); 
+        
+          const [discountStates, setDiscountStates] = useState(new Array(items.length).fill(false));
+          const discountOptions= [
+              {value:0.05,label:"5% off"},
+              {value:0.08,label:"8% off"},
+              {value:0.10, label:"10% off"},
+              {value:0.12,label:"12% off"},
+              {value:0.15,label:"15% off"},
+          ]
     const taxOptions = [
         { value: 'Tax excl.', label: 'Tax excl.' },
         { value: 'Tax incl.', label: 'Tax incl.' }
@@ -148,7 +167,7 @@ const NewsalesTable = () => {
             value:{
                 id:product.id,
                 productId:product.productId,
-                quantity: product.quantity ,
+                quantity: 1 ,
                 batchNumber: product.batchNumber,
                 expiry:  product.expiry,
                 sellingPrice:  product.sellingPrice,
@@ -174,7 +193,20 @@ const handleGstSelect = (selectedGst: any, index: number) => {
     };
     setTableData(updatedItems);
 };
-
+const handleDiscountSelect= (selectedDiscount:any,index:number)=>{
+    const updatedItems=[...tableData];
+    console.log(selectedDiscount);
+    updatedItems[index]={
+        ...updatedItems[index],
+        discount:selectedDiscount.value
+    };
+    setTableData(updatedItems);
+}
+const handleAddDiscount = (index:number) => {
+    const newDiscountStates = [...discountStates]; 
+    newDiscountStates[index] = !newDiscountStates[index]; 
+    setDiscountStates(newDiscountStates);
+};
 const handleEditButtonClick = () => {
     setDisableButton(!disableButton);
 };
@@ -198,6 +230,7 @@ const handleQuantityDecClick = (itemId: any) => {
             return item;
         })
     );
+
 };
 
 const handleQuantityIncClick = (itemId: any) => {
@@ -252,8 +285,8 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
         };
         setItems(updatedItems);
 
-        // Set first element of filteredBatches as default value for batches
-        const productBatches = batches?.filter((batch) => batch.value.productId === selectedProduct.value.id);
+        const productBatches = batches?.filter((batch) => batch.value.productId === selectedProduct.value.id).sort((a, b) => a.value.id - b.value.id);
+
         setFilteredBatches(productBatches);
         const defaultBatch = productBatches?.[0];
         setItems((prevItems) =>
@@ -299,11 +332,15 @@ const handleBatchSelect = useCallback(async (selectedProduct: any, index: number
 }, [items, products]);
 
 
-
 useEffect(() => {
-    setItems(items);
-    setTableData(items)
-}, [items]);
+    if (id == null) {
+        setItems(items);
+        setTableData(items);  
+    }
+}, [id, items]);
+
+   
+
 
     return (
         <>
@@ -379,8 +416,10 @@ useEffect(() => {
                                 <div className='flex text-gray-500 text-base font-medium w-1/12'>Total</div>
                                 <div className='flex text-gray-500 text-base font-medium w-1/12 '></div>
                             </div>
-                            {items.map((item:any,index:number) => (
-                                <div key={index+1} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400 py-2'>
+                            {items?.map((item:any,index:number) => (
+                     <div key={index + 1} className='flex flex-col w-full'>
+
+                               <div className='flex justify-evenly items-center w-full box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-400 py-2'>
                                     <div className='w-[3rem] flex items-center text-neutral-400 text-base font-medium '>{index+1}.</div>
                                     <div className='w-[15rem] flex items-center text-neutral-400 text-base font-medium'>
                                     {id === null ? (
@@ -480,7 +519,7 @@ useEffect(() => {
                                     <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium'>{`₹${((item?.quantity * item?.sellingPrice +item?.sellingPrice*item.quantity*item.gst)||0).toFixed(2)}`}</div>
                                     <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
                                         <button className="border-0">
-                                            <Image src={sellicon} alt="sell" ></Image>
+                                            <Image src={sellicon} alt="sell" onClick={() => handleAddDiscount(index)} ></Image>
                                         </button>
                     
                                         <button className="border-0" onClick={() => handleDeleteRow(index)}>
@@ -488,6 +527,37 @@ useEffect(() => {
                                         </button>
                                     </div>
                                 </div>
+                                {discountStates[index]  && (
+                        <div className='flex w-full justify-evenly items-center box-border bg-white h-12 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-500'>
+                            <div className='flex text-gray-500 text-base font-medium w-[3rem]'></div>
+                            <div className='flex text-gray-500 text-base font-medium w-[15rem]'>
+                                <div className="h-7 px-2 py-1.5 bg-violet-100 rounded-[5px] justify-center items-center gap-2 inline-flex">
+                                    <div className="text-indigo-600 text-sm font-medium">Item Discount</div>
+                                </div>
+                            </div>
+                            <div className='flex text-gray-500 text-base font-medium w-[10rem]'><Select
+                    className="text-neutral-400 text-base font-medium"
+                    defaultValue={[]}
+                    isClearable={false}
+                    isSearchable={true}
+                    options={discountOptions}
+                    styles={{
+                        control: (provided, state) => ({
+                            ...provided,
+                            border: state.isFocused ? 'none' : 'none',
+                            padding: '0',
+                        }),
+                    }}
+                    onChange={(selectedOption: any) => handleDiscountSelect(selectedOption, index)}
+                /></div>
+                            <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
+                            <div className='flex text-gray-500 text-base font-medium w-[10rem]'></div>
+                            <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
+                            <div className='flex text-gray-500 text-base font-medium w-[10rem]'></div>
+                            <div className="text-red-500 text-base font-bold w-1/12">-₹{(item.sellingPrice*item.discount*item. quantity).toFixed(2)}</div>
+                        </div>
+                    )}
+    </div>
                             ))}
                             <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12 border-b border-neutral-400 text-gray-500 rounded-b-md'>
                                 <div className='flex text-gray-500 text-base font-medium w-[3rem]'></div>
@@ -512,7 +582,7 @@ useEffect(() => {
                                     />
                                 </div>
                                 <div className='flex text-gray-500 text-base font-medium w-[10rem]'>{`₹${(items.reduce((acc:any, item:any) => acc + item.quantity * item.gst*item.sellingPrice , 0)||0).toFixed(2)}`}</div>
-                                <div className='flex text-gray-500 text-base font-medium w-1/12' >{`₹${(items.reduce((acc:any, item:any) => acc + item.quantity * item.sellingPrice +item.quantity*item.gst*item.sellingPrice, 0)||0).toFixed(2)}`}</div>
+                                <div className='flex text-gray-500 text-base font-medium w-1/12' >{`₹${(items.reduce((acc, item) => acc + item.quantity * item?.sellingPrice+item.quantity*item?.sellingPrice*item.gst-(item.quantity*item?.sellingPrice*item.discount||0), 0) .toFixed(2) ||0)}`}</div>
                                 <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
                             </div>
                         </div>

@@ -71,7 +71,7 @@ export default function UserAccountSetupPage() {
                     theme: "colored",
                     transition: Bounce,
                 });
-                router.push(`/auth/login`)
+                router.push(`/auth/login`);
             }
             else {
                 throw new Error(json.message);

@@ -46,12 +46,14 @@ const NewsalesReturnHeader = ({existingHeaderData}:any) => {
         setDueDate(date);
         setHeaderData((prevData)=>({...prevData,dueDate:date}))
     }
-    useEffect(()=>{
-        setHeaderData((prevData)=>({...prevData,invoiceNo:"SI-"+count}))
-        if(id){
-            setHeaderData(existingHeaderData)
-        }
-    },[])
+    
+        useEffect(()=>{
+            if(id){
+                setHeaderData(existingHeaderData)
+            }
+         else{
+            setHeaderData((prevData)=>({...prevData,invoiceNo:"SR-"+count}))}
+        },[headerData])
     
     useEffect(()=>{
         if(!isLoading&&!error&&data){

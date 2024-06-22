@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import closeicon from "../../../../assets/icons/inventory/closeIcon.svg";
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
@@ -11,24 +11,69 @@ type PopupProps = {
     onClose: () => void;
 }
 
-const Popup: React.FC<PopupProps> = ({ onClose }) => {
+const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     const [lastStep, setLastStep] = useState(false);
     const [formData, setFormData] = useState<any>({});
   const appState = useAppSelector((state) => state.app)
   const [buttonDisabled, setButtonDisabled] = useState(false);
+    const [Providers,setProviders] = useState([]);
+    const [LinkProducts,setLinkProducts] = useState([]);
 
+const gstOptions = [
+    { value: 0, label: 'GST@0%.' },
+    { value: 5, label: 'GST@5%.' },
+    { value: 12, label: 'GST@12%.' },
+    { value: 18, label: 'GST@18%.' },
+    { value: 28, label: 'GST@28%.' },
+];
 
+const [categories, setCategories] = useState<any[]>([
+    {value: "General Consultation", label: "General Consultation"},
+    {value: "Follow Up", label: "Follow Up"},
+    {value: "Surgery", label: "Surgery"},
+    {value: "Vaccination", label: "Vaccination"},
+    {value: "Grooming", label: "Grooming"},
+    {value: "Boarding", label: "Boarding"},
+    {value: "Rescue", label: "Rescue"},
+]);
 
+    useEffect(() => {
+        fetchProductsAndProviders();
+    },[]);
+
+ 
     const handleContinueClick = () => {
         setLastStep(true);
+    }
+
+    const fetchProductsAndProviders = async () => {
+        console.log("inside fetch");
+        const productsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/branch/products?branchId=${appState.currentBranchId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        let productsJson = await productsResponse.json();
+        console.log(productsJson);
+        const staffResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/branch/staff?branchId=${appState.currentBranchId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        let staffJson = await staffResponse.json();
+        console.log(staffJson);
+        setLinkProducts(productsJson.products.map((product:any) => {return {label : product.itemName,value : product.id}}));
+        setProviders(staffJson.staff.map((user:any) => {return {label : user.name,value : user.id}}));
     }
 
 
     const handleSaveClick = async () => {
         try {
             setButtonDisabled(true);
-            const selectedProviders = formData.providers.map((provider:any) => provider.value);
-            const selectedProducts = formData.linkProducts.map((linkProducts:any) => linkProducts.value);
+            const selectedProviders = formData.providers.map((provider:any) => provider.label);
+            const selectedProducts = formData.linkProducts.map((linkProducts:any) => linkProducts.label);
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
@@ -43,7 +88,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                     serviceCost: parseInt(formData.serviceCost),
                     serviceCharge: parseInt(formData.serviceCharge),
                     tax: formData.tax ? formData.tax.value : undefined,
-                    category: formData.category ? formData.category.value : undefined,
+                    category: formData.category ? formData.category[0].value : undefined,
                     description: formData.description,
                   
                 }),
@@ -63,36 +108,6 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
     const handleChange = (field: string, value: any) => {
         setFormData({ ...formData, [field]: value });
     };
-
-    const Providers =[
-        { value: 'GST@0%.', label: 'GST@0%.' },
-        { value: 'GST@5%.', label: 'GST@5%.' },
-        { value: 'GST@12%.', label: 'GST@12%.' }, // this provider is employee of the clinic
-    ]
-    
-    const LinkProducts =[
-        { value: 'GST@0%.', label: 'GST@0%.' },
-        { value: 'GST@5%.', label: 'GST@5%.' },
-        { value: 'GST@12%.', label: 'GST@12%.' },
-    ]
-
-    const gstOptions = [
-        { value: 'GST@0%.', label: 'GST@0%.' },
-        { value: 'GST@5%.', label: 'GST@5%.' },
-        { value: 'GST@12%.', label: 'GST@12%.' },
-        { value: 'GST@18%.', label: 'GST@18%.' },
-        { value: 'GST@28%.', label: 'GST@28%.' },
-    ];
-
-    const categoryOptions = [
-        {value: "General Consultation", label: "General Consultation"},
-        {value: "Follow Up", label: "Follow Up"},
-        {value: "Surgery", label: "Surgery"},
-        {value: "Vaccination", label: "Vaccination"},
-        {value: "Grooming", label: "Grooming"},
-        {value: "Boarding", label: "Boarding"},
-        {value: "Rescue", label: "Rescue"},
-    ]
 
     return <>
         {!lastStep &&
@@ -178,11 +193,16 @@ const Popup: React.FC<PopupProps> = ({ onClose }) => {
                                 name="category"
                             onChange={(value) => handleChange("category", value)}
                             /> */}
-                            <CreatableSelect 
-                            className="w-full text-neutral-400 text-base font-medium focus:outline-none  rounded-[5px] focus:border focus:border-[#35BEB1]"
-                            isMulti
-                            options={categoryOptions} 
-                            onChange={(value) => handleChange("category", value)}/>
+                           <CreatableSelect
+                                    className="text-neutral-400 text-base font-medium w-full"
+                                    placeholder="Select Category"
+                                    isClearable={false}
+                                    isSearchable={true}
+                                    options={categories}
+                                    isMulti={true}
+                                    name="category"
+                                    onChange={(value) => handleChange("category", value)}
+                                />
                         </div>
                     </div>
                     <div className="flex items-center gap-[75px] w-full">
