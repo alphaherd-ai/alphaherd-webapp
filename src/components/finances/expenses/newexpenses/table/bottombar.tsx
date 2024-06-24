@@ -14,15 +14,14 @@ import { DataContext } from './DataContext'
 import { FinanceCreationType, Notif_Source } from '@prisma/client'
 import axios from "axios"
 import { useAppSelector } from '@/lib/hooks';
-import { useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@nextui-org/react"
 
 
 const NewExpensesBottomBar = () => {
     const { headerData, tableData, totalAmountData,recurringData } = useContext(DataContext);
+    const router=useRouter();
     const appState = useAppSelector((state) => state.app);
-    const url=useSearchParams();
-    const id=url.get('id');
     const handleSubmit = async () => {
         const allData = {headerData, tableData, totalAmountData,recurringData};
         console.log("this is all data",allData)
@@ -36,7 +35,7 @@ const NewExpensesBottomBar = () => {
             name:data.itemName
     }));
      const data={
-            party: (id===null)?allData.headerData.customer.value:allData.headerData.customer,
+            party: allData.headerData.customer.value,
             notes: allData.headerData.notes,
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo: "Expense-0001",
@@ -69,6 +68,7 @@ const NewExpensesBottomBar = () => {
             if (!response.data) {
                 throw new Error('Network response was not ok');
             }
+            router.back()
         } catch (error) {
             console.error('Error:', error);
         }

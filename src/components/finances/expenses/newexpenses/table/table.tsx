@@ -173,7 +173,7 @@ useEffect(() => {
                     </div> */}
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px]">
-                    <NewExpensesHeader />
+                    <NewExpensesHeader  />
 
                     <div className="w-full rounded-md border border-solid border-borderGrey">
                     <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
@@ -249,7 +249,7 @@ useEffect(() => {
                             <div className=' flex text-textGrey2 text-base font-medium w-1/12'></div>
                         </div>
                         {items.map((item:any,index:number) => (
-                            <div key={item.id} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400 py-2'>
+                            <div key={index+1} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400 py-2'>
                                 <div className='w-[3rem] flex items-center text-neutral-400 text-base font-medium'>{index+1}</div>
                                 <input className='w-[15rem] flex items-center text-neutral-400 text-base font-medium border-none outline-none'
                                  value={item.itemName} 
