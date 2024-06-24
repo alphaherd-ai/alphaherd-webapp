@@ -28,7 +28,7 @@ const ExsistingPurchaseOrderNavbar = () => {
                     </Button>
                     
                     <div className="ml-2">
-                    <Popover placement="bottom-left" showArrow offset={10}>
+                    <Popover  showArrow offset={10}>
           <PopoverTrigger>
               <Button 
                   variant="solid"

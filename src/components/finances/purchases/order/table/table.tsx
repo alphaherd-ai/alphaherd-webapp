@@ -7,27 +7,77 @@ import addicon1 from "../../../../../assets/icons/finance/add (3).svg"
 
 import Subtract from "../../../../../assets/icons/finance/Subtract.svg"
 import Add from "../../../../../assets/icons/finance/add (2).svg"
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import Select from 'react-select';
 import Image from "next/image"
 import { Button } from "@nextui-org/react";
 import NewPurchasesHeader from "./header";
 import NewPurchasesBottomBar from "./bottombar";
 import NewPurchasesTotalAmount from "./totalamount";
+import { useAppSelector } from "@/lib/hooks";
+import formatDateAndTime from '@/utils/formateDateTime';
+import { Tax } from '@prisma/client';
+import useSWR from 'swr';
+import { DataContext } from "./DataContext"
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
+interface Products{
+    id :string,
+    itemName:string,
+    productBatch:ProductBatch[],
+    hsnCode:string,
+    quantity:number
+}
+interface ProductBatch {
+    id: number;
+    date: string;
+    time: string;
+    quantity: number;
+    batchNumber:string;
+    expiry:string;
+    costPrice:number;
+    sellingPrice :number;
+    hsnCode:string;
+    category :string;
+    distributors:string[];
+    productId:number;
+}
 
+function useProductfetch (id: number | null) {
+    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`,fetcher,{revalidateOnFocus:true});
+   return {
+    fetchedProducts:data,
+    isLoading,
+    error
+   }
+}
+// function useProductBatchfetch(id:number|null){
+//     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll/?branchId=${id}`,fetcher,{revalidateOnFocus:true});
+//     return {
+//         fetchedBathces:data,
+//         isBatchLoading:isLoading,
+//         batchError:error
+//     }
+// }
 const NewPurchasesTable = () => {
-
+    const { tableData, setTableData } = useContext(DataContext);
+    const [selectedProductDetails,setSelectedProduct]= useState<Products>()
+    const [products, setProducts] = useState<any[]>([]);
+    const [otherData, setOtherData] = useState({});
+    const appState = useAppSelector((state) => state.app)
+    const { tableData: items, setTableData: setItems } = useContext(DataContext);   
+    const [discountStates, setDiscountStates] = useState(new Array(items.length).fill(false));
     const taxOptions = [
         { value: 'Tax excl.', label: 'Tax excl.' },
         { value: 'Tax incl.', label: 'Tax incl.' }
     ]; 
     
     const gstOptions = [
-        {value: "GST@5%", label: "GST@5%"},
-        {value: "GST@*%", label: "GST@8%"},
-        {value: "GST@18%", label: "GST@18%"},
-        {value: "GST@20%", label: "GST@20%"},
+        {value: 0.05, label: "GST@5%"},
+        {value: 0.08, label: "GST@8%"},
+        {value: 0.18, label: "GST@18%"},
+        {value: 0.20, label: "GST@20%"},
     ]
 
     const category = [
@@ -40,13 +90,6 @@ const NewPurchasesTable = () => {
         {value: "Other", label: "Other"},
     ]
 
-    const initialItems = [
-        { id: 1, quantity: 4, quantity2: 5 },
-        { id: 2, quantity: 3, quantity2: 6 },
-        // Add more items as needed
-    ];
-
-    const [items, setItems] = useState(initialItems);
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -58,20 +101,43 @@ const NewPurchasesTable = () => {
     }, [disableButton]);
 
 
-    const handleAddItem= useCallback(() => {
-        setItems([...items, {}]);
-    }, [items]);
+    const {fetchedProducts,isLoading,error}=useProductfetch(appState.currentBranchId);
+    useEffect(()=>{
+     if(!isLoading&&products&&!error){
+         const formattedProducts = fetchedProducts.map((product: Products) => ({
+             value:{
+                id: product.id,
+                quantity:product.quantity,
+                itemName:product.itemName
+            },
+             label: product.itemName,
+         }));
+         setProducts(formattedProducts);
+     }
+    
+    },[fetchedProducts])
+  const handleDeleteRow = useCallback((index: number) => {
+    const updatedItems = [...items];
+    updatedItems.splice(index, 1);
+    setItems(updatedItems);
+}, [items]);
 
-
-    const handleDeleteRow = useCallback((index: number) => {
-        const updatedItems = [...items];
-        updatedItems.splice(index, 1);
-        setItems(updatedItems);
-    }, [items]);
+const handleGstSelect = (selectedGst: any, index: number) => {
+    const updatedItems = [...tableData];
+    console.log(selectedGst)
+    updatedItems[index] = {
+        ...updatedItems[index],
+        gst: selectedGst.value
+    };
+    setTableData(updatedItems);
+};
+const handleAddItem= useCallback(() => {
+    setItems([...items, {}]);
+}, [items]);
 
     const handleQuantityDecClick = (itemId: any) => {
-        setItems((prevItems) =>
-            prevItems.map((item) => {
+        setItems((prevItems:any) =>
+            prevItems.map((item:any) => {
                 if (item.id === itemId && item.quantity > 1) {
                     return { ...item, quantity: item.quantity - 1 };
                 }
@@ -81,8 +147,8 @@ const NewPurchasesTable = () => {
     };
     
     const handleQuantityIncClick = (itemId: any) => {
-        setItems((prevItems) =>
-            prevItems.map((item) => {
+        setItems((prevItems:any) =>
+            prevItems.map((item:any) => {
                 if (item.id === itemId) {
                     return { ...item, quantity: item.quantity + 1 };
                 }
@@ -94,8 +160,8 @@ const NewPurchasesTable = () => {
     const handleInputChange = (itemId: number, value: string) => {
         const quantity = parseInt(value, 10);
         if (!isNaN(quantity) && quantity >= 0) {
-            setItems((prevItems) =>
-                prevItems.map((item) => {
+            setItems((prevItems:any) =>
+                prevItems.map((item:any) => {
                     if (item.id === itemId) {
                         return { ...item, quantity };
                     }
@@ -104,6 +170,42 @@ const NewPurchasesTable = () => {
             );
         }
     };
+    const handleItemsDataChange = useCallback((index: number, field: string, value: string | number) => {
+        const updatedItems = [...items];
+        updatedItems[index][field] = value;
+        setItems(updatedItems);
+        console.log(items)
+    }, [items]);
+
+    const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
+        console.log(selectedProduct);
+        if (selectedProduct.value) {
+          try {
+            const data = products.find((product) => product.value.id === selectedProduct.value.id);
+            setSelectedProduct(data);
+            const updatedItems = [...items];
+            updatedItems[index] = {
+              ...updatedItems[index],
+              quantity: data.value.quantity,
+              productId: selectedProduct.value.id,
+              itemName: data.value.itemName,
+            };
+            setItems(updatedItems);
+    
+           console.log("this is the item",items)
+          } catch (error) {
+            console.error("Error fetching product details from API:", error);
+          }
+        }
+      }, [items, products]);
+   
+    
+    
+    
+    useEffect(() => {
+        setItems(items);
+        setTableData(items)
+    }, [items]);
 
 
     return (
@@ -164,7 +266,7 @@ const NewPurchasesTable = () => {
                         </div>
                         
                         {items.map((item:any,index:number) => (
-                            <div key={item.id} className='flex justify-evenly items-center w-[125%] box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-gray-200 text-gray-400 h-12'>
+                            <div key={index+1} className='flex justify-evenly items-center w-[125%] box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-gray-200 text-gray-400 h-12'>
                                 <div className=' flex text-textGrey2 text-base font-medium px-[10px] w-[5rem]'>{index+1}.</div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[18rem] '>
                             <Select
@@ -174,7 +276,8 @@ const NewPurchasesTable = () => {
                                         isClearable={false}
                                         isSearchable={true}
                                         name="itemName"
-                                        options={taxOptions}
+                                        options={products}
+                                        onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
                                         menuPortalTarget={document.body}
                                         styles={{
                                             control: (provided, state) => ({
@@ -209,17 +312,30 @@ const NewPurchasesTable = () => {
                             <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>
                                 <input
                                         type="number"
+                                        value={item.unitPrice}
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                       onChange={(e) => handleItemsDataChange(index,'unitPrice', e.target.value)}
+                                       name={`unitPrice-${index+1}`}
+
                                     />
                             </div>
-                            <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>Subtotal</div>
+                            <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>
+                            <input
+                                        type="number"
+                                        value={item.quantity*Number(item.unitPrice)}
+                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                       onChange={(e) => handleItemsDataChange(index,'subTotal', e.target.value)}
+                                       name={`subTotal-${index+1}`}
+
+                                    />
+                            </div>
                             <div className='flex text-textGrey2 text-base font-medium w-[10rem]'>
                                 <Select
                                             className="text-textGrey2 text-sm font-medium absolute "
-                                            defaultValue={taxOptions[0]}
+                                            defaultValue={gstOptions[0]}
                                             isClearable={false}
                                             isSearchable={true}
-                                            options={taxOptions}
+                                            options={gstOptions}
                                             menuPortalTarget={document.body}
                                             styles={{
                                                 control: (provided, state) => ({
@@ -228,29 +344,40 @@ const NewPurchasesTable = () => {
                                                 }),
                                                 menuPortal: base => ({ ...base, zIndex: 9999 })
                                             }}
+                                        onChange={(selectedOption: any) => handleGstSelect(selectedOption, index)}
+
                                             
                                         />
                             </div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[10rem] items-center gap-1'>
                             ₹
-                                <input
+                            <input
                                         type="number"
+                                        value={(item.quantity*item.gst*Number(item.unitPrice)).toFixed(2)||0}
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                        onChange={(e) => handleItemsDataChange(index,'taxAmount', e.target.value)}
+                                       name={`taxAmount-${index+1}`}
                                     />
                             </div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[10rem] items-center gap-1'>
                                 <input
                                         type="number"
+                                        value={item.discountPercent}
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                        onChange={(e) => handleItemsDataChange(index,'discountPercent', e.target.value)}
+                                       name={`discountPercent-${index+1}`}
                                     />
                                     %
                             </div>
                             
                             <div className=' flex text-textGrey2 text-base font-medium w-[10rem] items-center gap-1'>
                             ₹    
-                                <input
+                            <input
                                         type="number"
+                                        value={(item.discountPercent/100*item.quantity*Number(item.unitPrice)).toFixed(2)}
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                        onChange={(e) => handleItemsDataChange(index,'discountAmount', e.target.value)}
+                                       name={`discountAmount-${index+1}`}
                                     />
                             </div>
                                 <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
@@ -267,14 +394,18 @@ const NewPurchasesTable = () => {
                         <div className='flex  w-[125%] justify-evenly items-center box-border bg-gray-100 h-12 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey py-5  text-textGrey2 '>
                         <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[5rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[18rem]'>Total</div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[15rem]'>220 Items</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[15rem]'>{items.reduce((acc, item) => acc + item.quantity, 0) ||
+                                                0} Items</div>
 
                             <div className=' flex text-gray-500 text-base font-bold w-[10rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'>₹15000</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'>₹{items.reduce((acc, item) => acc + (item.quantity*Number(item.unitPrice)) , 0).toFixed(2) ||
+                                                0}</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[10rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'>₹5222</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'>₹{items.reduce((acc, item) => acc + (item.gst)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2) ||
+                                                0}</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[10rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'>₹2321</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'>₹{items.reduce((acc, item) => acc + (item.discountPercent/100)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2) ||
+                                                0}</div>
                             <div className=' flex text-gray-500 text-base font-bold w-1/12'></div>
                         </div>
                     </div>
@@ -284,10 +415,12 @@ const NewPurchasesTable = () => {
                     </div>
                     {items.map((item:any,index:number) => (
                     <div key={item.id} className="flex items-center justify-center  w-[10rem] box-border bg-white text-gray-500 border-t-0 border-r-0 border-l border-b border-solid border-gray-200 h-12">
-                        <div className=' flex text-gray-500 text-base font-medium'>{index+1}</div>
+                        <div className=' flex text-gray-500 text-base font-medium'>{((item.gst-item.discountPercent/100+1)*(item.quantity*Number(item.unitPrice))).toFixed(2)||
+                                                0}</div>
                     </div>
                     ))}
-                    <div className=' flex text-textGreen text-base font-bold w-[10rem] h-12 items-center justify-center'>₹2321</div>
+                    <div className=' flex text-textGreen text-base font-bold w-[10rem] h-12 items-center justify-center'>₹{items.reduce((acc, item) => acc + (item.gst-item.discountPercent/100+1)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2) ||
+                                                0}</div>
                     </div>
                     </div>
                     

@@ -1,11 +1,9 @@
 "use client"
-
-
 import editicon from "../../../../../assets/icons/finance/1. Icons-25.svg"
 
 import calicon from "../../../../../assets/icons/finance/calendar_today.svg"
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Select from 'react-select';
 import { useRef } from "react"
 import Link from "next/link"
@@ -13,26 +11,23 @@ import Image from "next/image"
 import DatePicker from "react-datepicker"
 import 'react-datepicker/dist/react-datepicker.css';
 import { Button } from "@nextui-org/react";
-
+import useSWR from 'swr';
+import { useAppSelector } from '@/lib/hooks';
+import { DataContext } from "./DataContext";
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 const NewPurchasesHeader = () => {
-
-
-
-    const colourOptions = [
-        { value: 'chocolate', label: 'Chocolate' },
-        { value: 'strawberry', label: 'Strawberry' },
-        { value: 'vanilla', label: 'Vanilla' }
-    ]
-    const initialItems = [
-        { id: 1, quantity: 4, quantity2: 5 },
-        { id: 2, quantity: 3, quantity2: 6 },
-        
-    ]
+    const { headerData, setHeaderData } = useContext(DataContext);
     const [startDate, setStartDate] = useState(new Date());
     const [isClearable, setIsClearable] = useState(true);
     const [isSearchable, setIsSearchable] = useState(true);
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
+    const [distributor,setDistributors]=useState<any[]>([]);
+    const appState = useAppSelector((state) => state.app)
+    const [dueDate, setDueDate] = useState(new Date());
+    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
+  
    
     useEffect(() => {
         if (!disableButton && inputRef.current) {
@@ -43,8 +38,26 @@ const NewPurchasesHeader = () => {
 
     const handleDateChange = (date:any) => {
         setStartDate(date);
-        // setHeaderData((prevData) => ({ ...prevData, date }));
+        setHeaderData((prevData) => ({ ...prevData, date }));
     };
+    const handleDueDateChange= (date:any)=>{
+        setDueDate(date);
+        setHeaderData((prevData)=>({...prevData,dueDate:date}))
+    }
+    useEffect(()=>{
+        setHeaderData((prevData)=>({...prevData,invoiceNo:"PO-"+234}))
+       
+    },[])
+    useEffect(()=>{
+        if(!isLoading&&!error&&data){
+              const distributors=data.map((distributor:any)=>({
+                value:distributor.distributorName,
+                label:distributor.distributorName 
+            }))
+            setDistributors(distributors);
+
+        }
+    },[data])
 
 
 
@@ -74,11 +87,11 @@ const NewPurchasesHeader = () => {
                         <Select
                             className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
                             classNamePrefix="select"
-                            defaultValue={colourOptions[0]}
+                            defaultValue={distributor[0]}
                             isClearable={isClearable}
                             isSearchable={isSearchable}
                             name="color"
-                            options={colourOptions}
+                            options={distributor}
                             styles={{
                                 control: (provided, state) => ({
                                     ...provided,
@@ -86,6 +99,7 @@ const NewPurchasesHeader = () => {
                                 }),
 
                             }}
+                            onChange={(selectedOption) => setHeaderData((prevData) => ({ ...prevData, distributor: selectedOption }))}
                         />
 
                     </div>
@@ -184,14 +198,14 @@ const NewPurchasesHeader = () => {
                         <div className="customDatePickerWidth">
                         <DatePicker
                                         className="w-full"
-                                        selected={startDate}
-                                        onChange={handleDateChange}
+                                        selected={dueDate}
+                                        onChange={handleDueDateChange}
                                         calendarClassName="react-datepicker-custom"
                                         customInput={
                                             <div className='relative'>
                                                 <input
                                                     className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={startDate.toLocaleDateString()}
+                                                    value={dueDate.toLocaleDateString()}
                                                     readOnly
                                                 />
                                                 <Image
@@ -217,9 +231,10 @@ const NewPurchasesHeader = () => {
                         <div className="text-gray-500 text-base font-bold py-3">Notes:</div>
                         <input
                             type="text"
-                            className=" w-full h-9 text-borderGrey text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                            className=" w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
                             defaultValue={"..."}
-                        />                    
+                            onChange={(e) => setHeaderData((prevData) => ({ ...prevData, notes: e.target.value }))}
+                        />                 
                         </div>
                 </div>
             </div>

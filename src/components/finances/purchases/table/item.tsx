@@ -34,7 +34,7 @@ if(isLoading&&!data)return (<Loading/>)
     <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{formatDateAndTime(purchase.date).formattedTime}</div>
     <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{purchase.type}</div>
     <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{purchase.distributor}</div>
-    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{purchase.purchaseOrderNumber}</div>
+    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{purchase.invoiceNo}</div>
     <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{purchase.totalCost}</div>
     <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{purchase.totalQty} items</div>
     <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{formatDateAndTime(purchase.dueDate).formattedDate}</div>
