@@ -59,9 +59,12 @@ const NewPurchasesTable = () => {
 
 
     const handleAddItem= useCallback(() => {
-        setItems([...items, {}]);
+        setItems([...items, {
+            id: 0,
+            quantity: 0,
+            quantity2: 0
+        }]);
     }, [items]);
-
 
     const handleDeleteRow = useCallback((index: number) => {
         const updatedItems = [...items];

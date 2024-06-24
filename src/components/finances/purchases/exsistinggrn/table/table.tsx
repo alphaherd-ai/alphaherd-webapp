@@ -19,9 +19,12 @@ import { Button } from "@nextui-org/react";
 import CreateGrnBottomBar from "./bottombar"
 import CreateGrnTotalAmount from "./totalamount"
 import CreateGrnHeader from "./header"
+import ExsistingGrnTotalAmount from "./totalamount"
+import ExsistingGrnBottomBar from "./bottombar"
+import ExsistingGrnHeader from "./header"
 
 
-const CreateGrnTable = () => {
+const ExsistingGrnTable = () => {
 
     const [startDate, setStartDate] = useState(new Date());
 
@@ -133,15 +136,11 @@ const CreateGrnTable = () => {
                     
                     
 
-                    <Button
-                        variant="solid"
-                        className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer">
-                        <div className='flex'><Image src={addicon} alt='addicon' className='w-6 h-6 ' /></div>New Product 
-                    </Button>
+                    
                     
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px] overflow-auto max-h-[40rem] container">
-                    <CreateGrnHeader />
+                    <ExsistingGrnHeader />
                 <div>
                 <div className="w-full rounded-md border border-solid border-borderGrey">
                     <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
@@ -152,14 +151,7 @@ const CreateGrnTable = () => {
 
                             <div className="flex items-center justify-center ">
                                
-                                <Button onClick={handleAddItem} className='cursor-pointer text-white flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-md border-0 outline-none'>
-                                    <div className='w-4 h-4 mb-3 mr-2'>
-                                        <Image src={addicon} alt='addicon' />
-                                    </div>
-                                   
-                                        Add Item
-                                    
-                                </Button>
+                               
                             </div>
 
                     </div>
@@ -189,7 +181,7 @@ const CreateGrnTable = () => {
                             <div key={item.id} className='flex justify-evenly items-center w-[180%] box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-gray-200 text-gray-400 h-12'>
                                 <div className=' flex text-textGrey2 text-base font-medium px-[10px] w-[5rem]'>{index+1}.</div>
                                     <div className=' flex text-textGrey2 text-base font-medium w-[18rem] '>
-                                    <Select
+                                    {/* <Select
                                                 className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0 absolute"
                                                 classNamePrefix="select"
                                                 // value={products.find((prod) => prod.value.id === item.productId)}
@@ -205,23 +197,25 @@ const CreateGrnTable = () => {
                                                     }),
                                                     menuPortal: base => ({ ...base, zIndex: 9999 })
                                                 }}
-                                            />
+                                            /> */}
+
+                                            HEllo
                                     </div>
 
                                     <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>
-                                        <input
+                                        987{/* <input
                                             type="number"
                                             className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                        />
+                                        /> */}
                                     </div>
                                     <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>
-                                        <input
+                                        564{/* <input
                                             type="number"
                                             className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                        />
+                                        /> */}
                                     </div>
                                     <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>
-                                    <div className="customDatePickerWidth1">
+                                    date{/* <div className="customDatePickerWidth1">
                                     <DatePicker
                                         className="w-full"
                                         selected={startDate}
@@ -244,11 +238,11 @@ const CreateGrnTable = () => {
                                             </div>
                                         }
                                     />
-                                    </div>
+                                    </div> */}
                                     </div>
 
                             <div className=' flex text-textGrey2 text-base font-medium w-[20rem] items-center gap-2'>
-                                <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
+                                789{/* <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
                                     <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
                                         <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
                                     </button>
@@ -261,14 +255,14 @@ const CreateGrnTable = () => {
                                     />
                                     
                                     {/* {item.quantity} */}
-                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
+                                    {/* <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
                                         <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                     </button>
-                                </div>
+                                </div>  */}
                                 <span className="text-textGrey2 font-medium text-base">Strips</span>
                             </div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[20rem] items-center gap-2'>
-                                <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
+                               897 {/* <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
                                     <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
                                         <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
                                     </button>
@@ -281,36 +275,36 @@ const CreateGrnTable = () => {
                                     />
                                     
                                     {/* {item.quantity} */}
-                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
+                                    {/* <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
                                         <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                     </button>
-                                </div>
+                                </div>  */}
                                 <span className="text-textGrey2 font-medium text-base">Strips</span>
                             </div>
 
                             <div className=' flex text-textGrey2 text-base font-medium w-[12rem]'>
-                            ₹
-                                <input
+                            ₹ 545
+                                {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    />
+                                    /> */}
                             </div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
-                            ₹
-                                <input
+                            ₹ 787
+                                {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    />
+                                    /> */}
                             </div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
-                            ₹
-                                <input
+                            ₹ 424
+                                {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    />
+                                    /> */}
                             </div>
                             <div className='flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
-                                <Select
+                                {/* <Select
                                             className="text-textGrey2 text-sm font-medium absolute "
                                             defaultValue={taxOptions[0]}
                                             isClearable={false}
@@ -325,38 +319,35 @@ const CreateGrnTable = () => {
                                                 menuPortal: base => ({ ...base, zIndex: 9999 })
                                             }}
                                             
-                                        />
+                                        /> */}
+
+                                        656
                             </div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
-                            ₹
-                                <input
+                            ₹ 645
+                                {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    />
+                                    /> */}
                             </div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
-                            
-                                <input
+                            5
+                                {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    />
+                                    /> */}
                             %
                             </div>
                             
                             <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
-                            ₹
-                                <input
+                            ₹ 5456
+                                {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    />
+                                    /> */}
                             </div>
                                 <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
-                                    <button className="border-0">
-                                        <Image src={sellicon} alt="sell" ></Image>
-                                    </button>
-                                    <button className="border-0" onClick={() => handleDeleteRow(index)}>
-                                        <Image src={delicon} alt="delete" ></Image>
-                                    </button>
+                                    
                                 </div>
                             </div>
                         ))}
@@ -397,9 +388,9 @@ const CreateGrnTable = () => {
                 </div>
                 </div>
 
-                <CreateGrnTotalAmount />
+                <ExsistingGrnTotalAmount />
             </div>
-            <CreateGrnBottomBar />
+            <ExsistingGrnBottomBar />
         </div>
        
         </>
@@ -407,4 +398,4 @@ const CreateGrnTable = () => {
 
 }
 
-export default CreateGrnTable;
+export default ExsistingGrnTable;

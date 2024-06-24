@@ -19,9 +19,15 @@ import { Button } from "@nextui-org/react";
 import CreateGrnBottomBar from "./bottombar"
 import CreateGrnTotalAmount from "./totalamount"
 import CreateGrnHeader from "./header"
+import NewPurchaseReturnBottomBar from "./bottombar"
+import NewPurchaseReturnTotalAmount from "./totalamount"
+import NewPurchaseReturnHeader from "./header"
 
+interface CheckedItems {
+    [key: number]: boolean;
+}
 
-const CreateGrnTable = () => {
+const NewPurchaseReturnTable = () => {
 
     const [startDate, setStartDate] = useState(new Date());
 
@@ -125,6 +131,20 @@ const CreateGrnTable = () => {
     };
 
 
+
+
+    const [checkedItems, setCheckedItems] = useState<CheckedItems>({});
+
+    const handleCheckboxChange = (id: number) => {
+        setCheckedItems(prevState => ({
+            ...prevState,
+            [id]: !prevState[id]
+        }));
+    };
+
+
+
+
     return (
         <>
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
@@ -133,48 +153,47 @@ const CreateGrnTable = () => {
                     
                     
 
-                    <Button
+                    {/* <Button
                         variant="solid"
                         className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer">
                         <div className='flex'><Image src={addicon} alt='addicon' className='w-6 h-6 ' /></div>New Product 
-                    </Button>
+                    </Button> */}
                     
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px] overflow-auto max-h-[40rem] container">
-                    <CreateGrnHeader />
+                    <NewPurchaseReturnHeader />
                 <div>
                 <div className="w-full rounded-md border border-solid border-borderGrey">
                     <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
-                        <div className="text-gray-500 text-xl font-medium ">
-                            Items
+                        <div className="text-gray-500 text-lg font-medium ">
+                        Select the items that you want to return along with their return quantity and unit price.
                         </div>
                             
 
                             <div className="flex items-center justify-center ">
                                
-                                <Button onClick={handleAddItem} className='cursor-pointer text-white flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-md border-0 outline-none'>
+                                {/* <Button onClick={handleAddItem} className='cursor-pointer text-white flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-md border-0 outline-none'>
                                     <div className='w-4 h-4 mb-3 mr-2'>
                                         <Image src={addicon} alt='addicon' />
                                     </div>
                                    
                                         Add Item
                                     
-                                </Button>
+                                </Button> */}
                             </div>
 
                     </div>
                     <div className="flex">
                     <div className="w-full overflow-x-auto overflow-y-hidden container">
                         <div className='flex w-[180%] justify-evenly items-center box-border bg-gray-100 h-12  text-gray-500 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey'>
+                            <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[5rem]'></div>
                             <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[5rem]'>No.</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[18rem]'>Name</div>
+                            <div className=' flex text-textGreen text-base font-bold w-[20rem]'>Return Quantity</div>
+                            <div className=' flex text-textGreen text-base font-bold w-[12rem]'>Unit Price</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Batch No.</div>
-
-                            <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Bar Code</div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Bar Code</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[15rem] px-2'>Exipry Date</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[20rem]'>Quantity</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[20rem]'>Free Quantity</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Unit Price</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Subtotal</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>MRP</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Tax %</div>
@@ -185,12 +204,23 @@ const CreateGrnTable = () => {
                         
                         </div>
                         
-                        {items.map((item:any,index:number) => (
-                            <div key={item.id} className='flex justify-evenly items-center w-[180%] box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-gray-200 text-gray-400 h-12'>
-                                <div className=' flex text-textGrey2 text-base font-medium px-[10px] w-[5rem]'>{index+1}.</div>
-                                    <div className=' flex text-textGrey2 text-base font-medium w-[18rem] '>
+                        {items.map((item, index) => (
+                <div
+                    key={item.id}
+                    className={`flex justify-evenly items-center w-[180%] box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-gray-200 h-12 ${checkedItems[item.id] ? 'text-textGrey2 font-bold' : 'text-textGrey2 font-medium'}`}
+                >
+                    <div className='flex text-base  px-[10px] w-[5rem] items-center justify-center'>
+                        <input
+                            type="checkbox"
+                            className="accent-teal-500 w-4 h-4"
+                            checked={checkedItems[item.id] || false}
+                            onChange={() => handleCheckboxChange(item.id)}
+                        />
+                    </div>
+                    <div className=' flex text-textGrey2 text-base  px-[10px] w-[5rem]'>{index+1}.</div>
+                                    <div className=' flex text-textGrey2 text-base  w-[18rem] '>
                                     <Select
-                                                className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0 absolute"
+                                                className="text-gray-500 text-base   w-[90%] border-0 boxShadow-0 absolute"
                                                 classNamePrefix="select"
                                                 // value={products.find((prod) => prod.value.id === item.productId)}
                                                 isClearable={false}
@@ -208,19 +238,55 @@ const CreateGrnTable = () => {
                                             />
                                     </div>
 
-                                    <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>
-                                        <input
+                                    <div className=' flex text-textGrey2 text-base  w-[20rem] items-center gap-2'>
+                                <div className='flex items-center text-textGrey2 text-base  gap-1 bg-white'>
+                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
+                                        <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
+                                    </button>
+                                    <input
+                                        type="number"
+                                        value={item.quantity}
+                                        onChange={(e) => handleInputChange(item.id, e.target.value)}
+                                        className={`w-[3rem] text-center border border-solid border-borderGrey h-8  rounded-md text-textGrey2  text-base ${checkedItems[item.id] ? 'text-textGrey2 font-bold' : 'text-textGrey2 font-medium'}`}
+                                        ref={index === items.length - 1 ? inputRef : null}
+                                    />
+                                    
+                                    {/* {item.quantity} */}
+                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
+                                        <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
+                                    </button>
+                                </div>
+                                <span className="text-textGrey2  text-base">Strips</span>
+                            </div>
+
+                                    <div className=' flex text-gray-500 text-base  w-[12rem]'>
+                                    ₹ 789
+                                        {/* <input
                                             type="number"
-                                            className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                        />
+                                            className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                        /> */}
                                     </div>
-                                    <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>
-                                        <input
+                                    
+                                    <div className=' flex text-gray-500 text-base  w-[15rem]'>
+                                    789
+                                        {/* <input
                                             type="number"
-                                            className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                        />
+                                            className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                        /> */}
                                     </div>
-                                    <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>
+                                    
+
+                            
+                            
+
+                            <div className=' flex text-textGrey2 text-base  w-[15rem]'>
+                            789
+                                {/* <input
+                                        type="number"
+                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                    /> */}
+                            </div>
+                            <div className=' flex text-gray-500 text-base  w-[15rem]'>
                                     <div className="customDatePickerWidth1">
                                     <DatePicker
                                         className="w-full"
@@ -230,7 +296,7 @@ const CreateGrnTable = () => {
                                         customInput={
                                             <div className='relative'>
                                                 <input
-                                                    className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                                    className={`w-full h-9 text-base  px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none ${checkedItems[item.id] ? 'text-textGrey2 font-bold' : 'text-textGrey2 font-medium'}`}
                                                     value={startDate.toLocaleDateString()}
                                                     readOnly
                                                 />
@@ -246,72 +312,23 @@ const CreateGrnTable = () => {
                                     />
                                     </div>
                                     </div>
-
-                            <div className=' flex text-textGrey2 text-base font-medium w-[20rem] items-center gap-2'>
-                                <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
-                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
-                                        <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
-                                    </button>
-                                    <input
+                            <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
+                            ₹ 789
+                                {/* <input
                                         type="number"
-                                        value={item.quantity}
-                                        onChange={(e) => handleInputChange(item.id, e.target.value)}
-                                        className="w-[3rem] text-center border border-solid border-borderGrey h-8  rounded-md text-textGrey2 font-medium text-base"
-                                        ref={index === items.length - 1 ? inputRef : null}
-                                    />
-                                    
-                                    {/* {item.quantity} */}
-                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
-                                        <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
-                                    </button>
-                                </div>
-                                <span className="text-textGrey2 font-medium text-base">Strips</span>
+                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                    /> */}
                             </div>
-                            <div className=' flex text-textGrey2 text-base font-medium w-[20rem] items-center gap-2'>
-                                <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
-                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
-                                        <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
-                                    </button>
-                                    <input
+                            <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
+                            ₹ 789
+                                {/* <input
                                         type="number"
-                                        value={item.quantity}
-                                        onChange={(e) => handleInputChange(item.id, e.target.value)}
-                                        className="w-[3rem] text-center border border-solid border-borderGrey h-8  rounded-md text-textGrey2 font-medium text-base"
-                                        ref={index === items.length - 1 ? inputRef : null}
-                                    />
-                                    
-                                    {/* {item.quantity} */}
-                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
-                                        <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
-                                    </button>
-                                </div>
-                                <span className="text-textGrey2 font-medium text-base">Strips</span>
+                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                    /> */}
                             </div>
-
-                            <div className=' flex text-textGrey2 text-base font-medium w-[12rem]'>
-                            ₹
-                                <input
-                                        type="number"
-                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    />
-                            </div>
-                            <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
-                            ₹
-                                <input
-                                        type="number"
-                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    />
-                            </div>
-                            <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
-                            ₹
-                                <input
-                                        type="number"
-                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    />
-                            </div>
-                            <div className='flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
+                            <div className='flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
                                 <Select
-                                            className="text-textGrey2 text-sm font-medium absolute "
+                                            className="text-textGrey2 text-sm  absolute "
                                             defaultValue={taxOptions[0]}
                                             isClearable={false}
                                             isSearchable={true}
@@ -327,69 +344,64 @@ const CreateGrnTable = () => {
                                             
                                         />
                             </div>
-                            <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
-                            ₹
-                                <input
+                            <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
+                            ₹ 789
+                                {/* <input
                                         type="number"
-                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    />
+                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                    /> */}
                             </div>
-                            <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
-                            
-                                <input
+                            <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
+                             789
+                                {/* <input
                                         type="number"
-                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    />
+                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                    /> */}
                             %
                             </div>
                             
-                            <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
-                            ₹
-                                <input
+                            <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
+                            ₹ 7
+                                {/* <input
                                         type="number"
-                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    />
+                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                    /> */}
                             </div>
-                                <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
-                                    <button className="border-0">
-                                        <Image src={sellicon} alt="sell" ></Image>
-                                    </button>
-                                    <button className="border-0" onClick={() => handleDeleteRow(index)}>
-                                        <Image src={delicon} alt="delete" ></Image>
-                                    </button>
+                                <div className='w-1/12 flex items-center text-neutral-400 text-base  gap-[12px]'>
+                                    
                                 </div>
-                            </div>
-                        ))}
-                        
+                </div>
+            ))}
+                    
                         <div className='flex  w-[180%] justify-evenly items-center box-border bg-gray-100 h-12 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey py-5  text-textGrey2 '>
-                        <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[5rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[18rem]'>Name</div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[15rem]'></div>
+                        <div className=' flex text-gray-500 text-base font-bold px-[10px] w-[5rem]'></div>
+                            <div className=' flex text-gray-500 text-base font-bold px-[10px] w-[5rem]'></div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[18rem]'>Total</div>
 
+                            <div className=' flex text-gray-500 text-base font-bold w-[20rem]'>5 Items</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[15rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[15rem] px-2'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[20rem]'>15000</div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[20rem]'>15000</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹ 789</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹ 789</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹15000</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹ 789</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹15000</div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹15000</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹ 789</div>
                             <div className=' flex text-gray-500 text-base font-bold w-1/12'></div>
                         </div>
                     </div>
                     <div className="flex-col shadow-left">
-                    <div className="flex items-center justify-center  w-[10rem] h-12 text-gray-500 border-t-0 border-r-0 border-l border-b border-solid border-borderGrey">
+                    <div className="flex items-center justify-center  w-[15rem] h-12 text-gray-500 border-t-0 border-r-0 border-l border-b border-solid border-borderGrey">
                         <div className=' flex text-gray-500 text-base font-medium '>Total</div>
                     </div>
                     {items.map((item:any,index:number) => (
-                    <div key={item.id} className="flex items-center justify-center  w-[10rem] box-border bg-white text-gray-500 border-t-0 border-r-0 border-l border-b border-solid border-gray-200 h-12">
-                        <div className=' flex text-gray-500 text-base font-medium'>{index+1}</div>
+                    <div key={item.id} className={`flex items-center justify-center  w-[15rem] box-border bg-white border-t-0 border-r-0 border-l border-b border-solid border-gray-200 h-12 ${checkedItems[item.id] ? 'text-textGrey2 font-bold' : 'text-textGrey2 font-medium'}`}>
+                        <div className=' flex text-base'>{index+1}</div>
                     </div>
                     ))}
-                    <div className=' flex text-textGreen text-base font-bold w-[10rem] h-12 items-center justify-center'>₹2321</div>
+                    <div className=' flex text-textGreen text-base font-bold w-[15rem] h-12 items-center justify-center'>₹2321</div>
                     </div>
                     </div>
                     
@@ -397,9 +409,9 @@ const CreateGrnTable = () => {
                 </div>
                 </div>
 
-                <CreateGrnTotalAmount />
+                <NewPurchaseReturnTotalAmount />
             </div>
-            <CreateGrnBottomBar />
+            <NewPurchaseReturnBottomBar />
         </div>
        
         </>
@@ -407,4 +419,4 @@ const CreateGrnTable = () => {
 
 }
 
-export default CreateGrnTable;
+export default NewPurchaseReturnTable;

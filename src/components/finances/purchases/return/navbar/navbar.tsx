@@ -2,30 +2,31 @@
 
 import lefticon from "../../../../../assets/icons/finance/left_icon.svg"
 import Link from "next/link"
-import Menu from '@/assets/icons/finance/Menu.svg';
-import addicon1 from "../../../../../assets/icons/finance/add.svg"
 import Image from "next/image"
+import Attachment from "../../../../../assets/icons/finance/attachment.svg"
+
+import Menu from '@/assets/icons/finance/Menu.svg';
 import { Button, Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react"
 
-const ExsistingPurchaseOrderNavbar = () => {
+
+const NewPurchaseReturnNavbar = () => {
 
     return (
         <>
            
-                <div className="flex g-4 items-center justify-between pb-[27px]  text-gray-500 text-[28px] font-bold">
-                    <div className="flex justify-start items-center">
+           <div className="flex g-4 items-center justify-between pb-[27px]  text-gray-500 text-[28px] font-bold">
+                    <div className="flex">
+
                     <div className="w-11 h-11 bg-gray-100 rounded-[5px] border border-neutral-400 flex justify-center items-center mr-4">
-                        <Image className="w-6 h-6 relative rounded-[5px]" src={lefticon} alt="Back"></Image>
+                    <Image className="w-6 h-6 relative rounded-[5px]  cursor-pointer" src={lefticon} alt="Back"></Image>
                     </div>
-                    <div className="text-gray-500 text-[28px] font-bold">
-                    Purchase Order
+                    <div className="text-gray-500 text-[28px] flex items-center font-bold ">
+                    New Purchase Return - PR - 01
+
                     </div>
                     </div>
                     <div className="flex justify-start items-center">
-                    <Button className='text-textGrey2 text-base font-bold bg-gray-100 h-11 rounded-[5px] border border-solid border-borderGrey flex justify-center items-center cursor-pointer'>
-                    <div className='flex pr-2'><Image src={addicon1} alt='addicon1' className='w-6 h-6 ' /></div>
-                            Repeat Order
-                    </Button>
+                    
                     
                     <div className="ml-2">
                     <Popover placement="bottom" showArrow offset={10}>
@@ -71,4 +72,4 @@ const ExsistingPurchaseOrderNavbar = () => {
     )
 }
 
-export default ExsistingPurchaseOrderNavbar;
+export default NewPurchaseReturnNavbar;
