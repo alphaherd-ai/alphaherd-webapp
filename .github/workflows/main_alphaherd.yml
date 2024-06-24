@@ -4,10 +4,12 @@
 name: Build and deploy container app to Azure Web App - alphaherd
 
 on:
+  pull_request:
   push:
     branches:
       - main
   workflow_dispatch:
+  merge_group:
 
 jobs:
   build:
