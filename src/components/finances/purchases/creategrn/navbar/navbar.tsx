@@ -4,10 +4,10 @@ import lefticon from "../../../../../assets/icons/finance/left_icon.svg"
 import Link from "next/link"
 import Image from "next/image"
 import Attachment from "../../../../../assets/icons/finance/attachment.svg"
-
+import { useRouter } from "next/navigation"
 
 const CreateGrnNavbar = () => {
-
+    const router=useRouter();
     return (
         <>
            

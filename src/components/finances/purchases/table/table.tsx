@@ -1,4 +1,4 @@
-
+"use client";
 import React from 'react'
 import FinancesPurchasesTableBottombar from './bottombar'
 
@@ -27,8 +27,6 @@ const FinancesPurchasesTable = () => {
                 <div className=' flex text-gray-500 text-base font-medium px-6 w-2/12'>Status</div>
             </div>
 
-<FinancesPurchasesTableItem/>
-<FinancesPurchasesTableItem/>
 <FinancesPurchasesTableItem/>
 <FinancesPurchasesTableBottombar/>
      

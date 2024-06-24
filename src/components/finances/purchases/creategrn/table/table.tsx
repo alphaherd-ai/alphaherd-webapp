@@ -152,7 +152,7 @@ const CreateGrnTable = () => {
 
                             <div className="flex items-center justify-center ">
                                
-                                <Button onClick={handleAddItem} className='cursor-pointer text-white flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-md border-0 outline-none'>
+                                <Button  className='cursor-pointer text-white flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-md border-0 outline-none'>
                                     <div className='w-4 h-4 mb-3 mr-2'>
                                         <Image src={addicon} alt='addicon' />
                                     </div>
