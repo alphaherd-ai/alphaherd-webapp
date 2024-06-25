@@ -6,7 +6,7 @@ import React from 'react'
 
 
 
-const PurchasesInvoice = () => {
+const ExsistingGrn = () => {
   return (
     <>
     <div className='w-full min-h-screen bg-gray-200 p-8 px-10'>
@@ -17,4 +17,4 @@ const PurchasesInvoice = () => {
   )
 }
 
-export default PurchasesInvoice
+export default ExsistingGrn
