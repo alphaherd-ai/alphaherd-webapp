@@ -11,7 +11,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from '@nextui-org/react'
 
-const ExsistingPurchasesBottomBar = () => {
+const ExsistingPurchasesBottomBar = ({existingPurchaseData}: any) => {
   return (
     <>
 
@@ -32,10 +32,11 @@ const ExsistingPurchasesBottomBar = () => {
                                 </div>
                             </div>
                             <div className="flex justify-between items-center gap-4 pr-4">
+                            <Link href={{pathname:'creategrn',query:{id:existingPurchaseData?.id}}} style={{textDecoration:'none',color:'white'}}>
                     <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
                         <Image src={drafticon} alt="draft"></Image>
                         <div>Convert to GRN</div>
-                    </Button>
+                    </Button></Link>
                     {/* <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer" >
                         <Image src={checkicon} alt="check"></Image>
                         <div>Save</div>

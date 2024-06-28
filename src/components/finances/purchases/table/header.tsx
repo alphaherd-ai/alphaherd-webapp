@@ -14,6 +14,7 @@ import { usePathname } from 'next/navigation';
 
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
+import { FinanceCreationType } from '@prisma/client';
 
 
 
@@ -45,27 +46,27 @@ const FinancesPurchasesTableHeader = () => {
             <div className='flex w-full bg-white h-20  p-4 px-6 mt-6 justify-between border border-solid border-gray-300 border-t-0.5 rounded-tl-lg rounded-tr-lg'>
 
             <div className='flex  text-gray-500 items-center w-5/12'>
-                    <Link className='no-underline flex item-center' href='/finance/purchases/all'>
+                    <Link className='no-underline flex item-center' href={{pathname:'/finance/purchases/all',query:{type:'all'}}}>
 
                         <div className={currentRoute.startsWith("/finance/purchases/all")
                             ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white  rounded-tl-md rounded-bl-md"
                             : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500  rounded-tl-md rounded-bl-md"}>All</div>
                     </Link>
-                    <Link className='no-underline flex item-center' href='/finance/purchases/order'>
+                    <Link className='no-underline flex item-center' href={{pathname:'/finance/purchases/navorder',query:{type:FinanceCreationType.Purchase_Order}}}>
 
-                        <div className={currentRoute.startsWith("/finance/purchases/order")
+                        <div className={currentRoute.startsWith("/finance/purchases/navorder")
                             ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white"
                             : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}>Purchase Order</div>
                     </Link>
-                    <Link className='no-underline flex item-center' href='/finance/purchases/invoice'>
+                    <Link className='no-underline flex item-center' href={{pathname:'/finance/purchases/navinvoice',query:{type:FinanceCreationType.Purchase_Invoice}}}>
 
-                        <div className={currentRoute.startsWith("/finance/purchases/invoice")
+                        <div className={currentRoute.startsWith("/finance/purchases/navinvoice")
                             ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white"
                             : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}>Purchase Invoices</div>
                     </Link>
-                    <Link className='no-underline flex item-center' href='/finance/purchases/return'>
+                    <Link className='no-underline flex item-center' href={{pathname:'/finance/purchases/navreturn',query:{type:FinanceCreationType.Purchase_Return}}}>
 
-                        <div className={currentRoute.startsWith("/finance/purchases/return")
+                        <div className={currentRoute.startsWith("/finance/purchases/navreturn")
                             ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white  rounded-tr-md rounded-br-md"
                             : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500  rounded-tr-md rounded-br-md"}>Purchase Return</div>
                     </Link>

@@ -13,21 +13,12 @@ import Image from "next/image"
 import DatePicker from "react-datepicker"
 import 'react-datepicker/dist/react-datepicker.css';
 import { Button } from "@nextui-org/react";
+import formatDateAndTime from "@/utils/formateDateTime";
 
-const ExsistingPurchasesHeader = () => {
+const ExsistingPurchasesHeader = ({otherData}:any) => {
 
 
 
-    const colourOptions = [
-        { value: 'chocolate', label: 'Chocolate' },
-        { value: 'strawberry', label: 'Strawberry' },
-        { value: 'vanilla', label: 'Vanilla' }
-    ]
-    const initialItems = [
-        { id: 1, quantity: 4, quantity2: 5 },
-        { id: 2, quantity: 3, quantity2: 6 },
-        
-    ]
     const [startDate, setStartDate] = useState(new Date());
     const [isClearable, setIsClearable] = useState(true);
     const [isSearchable, setIsSearchable] = useState(true);
@@ -71,23 +62,7 @@ const ExsistingPurchasesHeader = () => {
                 <div className="px-6  bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold ">Distributor:</div>
-                        <Select
-                            className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
-                            classNamePrefix="select"
-                            defaultValue={colourOptions[0]}
-                            isClearable={isClearable}
-                            isSearchable={isSearchable}
-                            name="color"
-                            options={colourOptions}
-                            styles={{
-                                control: (provided, state) => ({
-                                    ...provided,
-                                    border: state.isFocused ? 'none' : 'none',
-                                }),
-
-                            }}
-                        />
-
+                       {otherData.distributor}
                     </div>
                 </div>
                 <div className="px-6 py-1  bg-white rounded-[10px] justify-start items-center flex w-full ">
@@ -135,28 +110,7 @@ const ExsistingPurchasesHeader = () => {
                         /> */}
 
 <div className="customDatePickerWidth">
-                                    <DatePicker
-                                        className="w-full"
-                                        selected={startDate}
-                                        onChange={handleDateChange}
-                                        calendarClassName="react-datepicker-custom"
-                                        customInput={
-                                            <div className='relative'>
-                                                <input
-                                                    className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={startDate.toLocaleDateString()}
-                                                    readOnly
-                                                />
-                                                <Image
-                                                    src={calicon}
-                                                    alt="Calendar Icon"
-                                                    className="absolute right-2 top-2 cursor-pointer"
-                                                    width={50}
-                                                    height={20}
-                                                />
-                                            </div>
-                                        }
-                                    />
+                                    {formatDateAndTime(otherData.date).formattedDate}
                                     </div>
 
 
@@ -182,28 +136,7 @@ const ExsistingPurchasesHeader = () => {
                             )}
                         /> */}
                         <div className="customDatePickerWidth">
-                        <DatePicker
-                                        className="w-full"
-                                        selected={startDate}
-                                        onChange={handleDateChange}
-                                        calendarClassName="react-datepicker-custom"
-                                        customInput={
-                                            <div className='relative'>
-                                                <input
-                                                    className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={startDate.toLocaleDateString()}
-                                                    readOnly
-                                                />
-                                                <Image
-                                                    src={calicon}
-                                                    alt="Calendar Icon"
-                                                    className="absolute right-2 top-2 cursor-pointer"
-                                                    width={50}
-                                                    height={20}
-                                                />
-                                            </div>
-                                        }
-                                    />
+                        {formatDateAndTime(otherData.dueDate).formattedDate}
                                     </div>
 
 
@@ -215,11 +148,7 @@ const ExsistingPurchasesHeader = () => {
                 <div className="px-6 py-1  bg-white rounded-[10px] justify-between items-center gap-4 flex w-full ">
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold py-3">Notes:</div>
-                        <input
-                            type="text"
-                            className=" w-full h-9 text-borderGrey text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                            defaultValue={"..."}
-                        />                    
+                        {otherData.notes}              
                         </div>
                 </div>
             </div>

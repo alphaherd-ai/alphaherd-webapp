@@ -267,7 +267,7 @@ const handleAddItem= useCallback(() => {
                         
                         {items.map((item:any,index:number) => (
                             <div key={index+1} className='flex justify-evenly items-center w-[125%] box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-gray-200 text-gray-400 h-12'>
-                                <div className=' flex text-textGrey2 text-base font-medium px-[10px] w-[5rem]'>{index+1}.</div>
+                                <div key={index+1} className=' flex text-textGrey2 text-base font-medium px-[10px] w-[5rem]'>{index+1}.</div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[18rem] '>
                             <Select
                                         className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0 absolute"

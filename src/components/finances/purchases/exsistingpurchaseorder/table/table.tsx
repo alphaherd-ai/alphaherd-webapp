@@ -15,39 +15,47 @@ import NewPurchasesTotalAmount from "./totalamount";
 import ExsistingPurchasesBottomBar from "./bottombar"
 import ExsistingPurchasesTotalAmount from "./totalamount"
 import ExsistingPurchasesHeader from "./header"
-
+import { useSearchParams } from 'next/navigation';
+import { useAppSelector } from '@/lib/hooks';
+import formatDateAndTime from '@/utils/formateDateTime';
+import useSWR from 'swr';
+import Loading from '@/app/loading';
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 const ExsistingPurchasesTable = () => {
-
-    const taxOptions = [
-        { value: 'Tax excl.', label: 'Tax excl.' },
-        { value: 'Tax incl.', label: 'Tax incl.' }
-    ]; 
+    const url = useSearchParams();
+    const id = url.get('id');
+    const appState = useAppSelector((state) => state.app);
+    const [otherData, setOtherData] = useState({});
+      
     
-    const gstOptions = [
-        {value: "GST@5%", label: "GST@5%"},
-        {value: "GST@*%", label: "GST@8%"},
-        {value: "GST@18%", label: "GST@18%"},
-        {value: "GST@20%", label: "GST@20%"},
-    ]
+        const initialItems: any[] | (() => any[])=[];
+        const [items, setItems] = useState(initialItems);
+    
+        const {data,error,isLoading} =useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/${id}/?branchId=${appState.currentBranchId}`,fetcher)
+        
+        
+        useEffect(() => {
+            if (!isLoading && data && !error) {
+                const {items,...otherData}=data;
+                setOtherData(otherData)
+              const shallowDataCopy = [...items]; 
+              const itemData = shallowDataCopy.map((item: any) => ({
+                id: item.productId,
+                itemName:item.name,
+                quantity:item.quantity,
+                sellingPrice:item.sellingPrice,
+                tax:item.taxAmount,
+                discount:item.discount
+              }));
+              setItems(itemData);
+            }
+          }, [data,error,isLoading]); 
+          
+    console.log(items)
 
-    const category = [
-        {value: "Utilities", label: "Utilities"},
-        {value: "Rent", label: "Rent"},
-        {value: "Medical Supplies", label: "Medical Supplies"},
-        {value: "Repair and Maintainance", label: "Repair and Maintainance"},
-        {value: "Payroll", label: "Payroll"},
-        {value: "Inventory", label: "Inventory"},
-        {value: "Other", label: "Other"},
-    ]
 
-    const initialItems = [
-        { id: 1, quantity: 4, quantity2: 5 },
-        { id: 2, quantity: 3, quantity2: 6 },
-        // Add more items as needed
-    ];
-
-    const [items, setItems] = useState(initialItems);
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -69,7 +77,7 @@ const ExsistingPurchasesTable = () => {
     //     updatedItems.splice(index, 1);
     //     setItems(updatedItems);
     // }, [items]);
-
+    if(isLoading) return (<Loading/>)
 
     return (
         <>
@@ -90,7 +98,7 @@ const ExsistingPurchasesTable = () => {
                     
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px] overflow-auto max-h-[40rem] container">
-                    <ExsistingPurchasesHeader />
+                    <ExsistingPurchasesHeader otherData={otherData}/>
                 <div>
                 <div className="w-full rounded-md border border-solid border-borderGrey">
                     <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
@@ -125,7 +133,6 @@ const ExsistingPurchasesTable = () => {
                             <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Unit Price</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Subtotal</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Tax%</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Tax%</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Tax Amt.</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Discount%</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Discount Amt.</div>
@@ -135,20 +142,19 @@ const ExsistingPurchasesTable = () => {
                         
                         {items.map((item:any,index:number) => (
                             <div key={item.id} className='flex justify-evenly items-center w-[125%] box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-gray-200 text-gray-400 h-12'>
-                                <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[5rem]'>No.</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[13rem]'>Name</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[8rem]'>Quantity</div>
+                                <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[5rem]'>{index+1}</div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[13rem]'>{item.itemName}</div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[8rem]'>{item.quantity}</div>
 
 
 
-                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Free Quantity</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Unit Price</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Subtotal</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Tax%</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Tax%</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Tax Amt.</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Discount%</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Discount Amt.</div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>{item.freeQuantity}</div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>{item.sellingPrice}</div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>{item.quantity*item.sellingPrice}</div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>{item.tax*100}%</div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>{(item.tax*item.quantity*item.sellingPrice).toFixed(2)}</div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>{item.discount*100}%</div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>{(item.discount*item.quantity*item.sellingPrice).toFixed(2)}</div>
                                 <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
                                     {/* <button className="border-0">
                                         <Image src={sellicon} alt="sell" ></Image>
@@ -163,14 +169,18 @@ const ExsistingPurchasesTable = () => {
                         <div className='flex  w-[125%] justify-evenly items-center box-border bg-gray-100 h-12 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey py-5  text-textGrey2 '>
                         <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[5rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[18rem]'>Total</div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[15rem]'>220 Items</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[15rem]'>{items.reduce((acc, item) => acc + item.quantity, 0) ||
+                                                0} Items</div>
 
                             <div className=' flex text-gray-500 text-base font-bold w-[10rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'>₹15000</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'>₹{items.reduce((acc, item) => acc + (item.quantity*Number(item.sellingPrice)) , 0).toFixed(2) ||
+                                                0}</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[10rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'>₹5222</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'>₹{items.reduce((acc, item) => acc + (item.tax)*(item.quantity*Number(item.sellingPrice)) , 0).toFixed(2) ||
+                                                0}</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[10rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'>₹2321</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'>₹{items.reduce((acc, item) => acc + (item.discount)*(item.quantity*Number(item.sellingPrice)) , 0).toFixed(2) ||
+                                                0}</div>
                             <div className=' flex text-gray-500 text-base font-bold w-1/12'></div>
                         </div>
                     </div>
@@ -180,10 +190,12 @@ const ExsistingPurchasesTable = () => {
                     </div>
                     {items.map((item:any,index:number) => (
                     <div key={item.id} className="flex items-center justify-center  w-[10rem] box-border bg-white text-gray-500 border-t-0 border-r-0 border-l border-b border-solid border-gray-200 h-12">
-                        <div className=' flex text-gray-500 text-base font-medium'>{index+1}</div>
+                        <div className=' flex text-gray-500 text-base font-medium'>{((item.tax-item.discount+1)*(item.quantity*Number(item.sellingPrice))).toFixed(2)||
+                                                0}</div>
                     </div>
                     ))}
-                    <div className=' flex text-textGreen text-base font-bold w-[10rem] h-12 items-center justify-center'>₹2321</div>
+                    <div className=' flex text-textGreen text-base font-bold w-[10rem] h-12 items-center justify-center'>₹{items.reduce((acc, item) => acc + (item.tax-item.discount+1)*(item.quantity*Number(item.sellingPrice)) , 0).toFixed(2) ||
+                                                0}</div>
                     </div>
                     </div>
                     
@@ -191,9 +203,9 @@ const ExsistingPurchasesTable = () => {
                 </div>
                 </div>
 
-                <ExsistingPurchasesTotalAmount />
+                <ExsistingPurchasesTotalAmount otherData={otherData} />
             </div>
-            <ExsistingPurchasesBottomBar />
+            <ExsistingPurchasesBottomBar existingPurchaseData={data}/>
         </div>
        
         </>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Rupee from "../../../../../assets/icons/finance/rupee.svg"
 import Image from "next/image"
 import { Button } from "@nextui-org/react";
@@ -6,25 +6,71 @@ import calicon from "../../../../../assets/icons/finance/calendar_today.svg"
 
 import DatePicker from "react-datepicker"
 import 'react-datepicker/dist/react-datepicker.css';
+import { DataContext } from './DataContext';
+import { Tax } from '@prisma/client';
 
 
 const NewPurchaseReturnTotalAmount = () => {
+    const { tableData } = useContext(DataContext);
+    console.log("Here is the tableData",tableData)
+    let totalAmount = 0;
+    tableData.forEach(data => {
+      
+            totalAmount += (data.quantity * Number(data.unitPrice) + data.quantity * data.tax*Number(data.unitPrice)-(data.quantity*data.discount*Number(data.unitPrice)||0))||0;    
+    });
 
-    const [startDate, setStartDate] = useState(new Date());
-
+    const { totalAmountData, setTotalAmountData } = useContext(DataContext);
+    const [grandAmt, setGrandAmt] = useState(totalAmount);
 
     
-    const handleDateChange = (date:any) => {
-        setStartDate(date);
-        // setHeaderData((prevData) => ({ ...prevData, date }));
+
+    const [startDate,setDate]=useState(new Date());
+    const [shipping, setShipping] = useState(0);
+    const [adjustment, setAdjustment] = useState(0);
+    const [overAllDiscount,setDiscount]=useState(0); 
+
+    const handleShippingChange = (event:any) => {
+        const value = parseFloat(event.target.value) || 0; 
+        setShipping(value);
+        updateGrandTotal(); 
     };
 
+    const handleAdjustmentChange = (event:any) => {
+        const value = parseFloat(event.target.value) || 0; 
+        setAdjustment(value);
+        updateGrandTotal(); 
+    };
+    const handleDiscountChange= (event:any)=>{
+        const value= parseFloat(event.target.value)||0;
+        setDiscount(value);
+        updateGrandTotal();
+    }
+    const handleDateChange= (date:any)=>{
+        setDate(date);
+        setTotalAmountData((prevData)=>({
+            ...prevData,
+            lastDateOfReturn:date
+        }))
+    }
+    const updateGrandTotal = () => {
+        const discountedAmount = (totalAmount - totalAmount * overAllDiscount/100)||0;
+        const newGrandTotal = discountedAmount + shipping + adjustment;
+        
+        setGrandAmt(newGrandTotal);
+        setTotalAmountData((prevData) => ({
+            ...prevData,
+            subTotal:totalAmount,
+            totalCost: newGrandTotal, 
+            shipping:shipping,
+            adjustment:adjustment,
+            overAllDiscount:overAllDiscount
+        }));
+    };
 
+    useEffect(() => {
+        updateGrandTotal(); 
+    }, [totalAmount, overAllDiscount, shipping, adjustment]);
 
-  const gstOptions = [
-    { value: 'GST@18%.', label: 'GST@18%.' },
-    { value: 'GST@9%.', label: 'GST@9%.' }
-];
 
   return (
     <>
@@ -95,39 +141,55 @@ const NewPurchaseReturnTotalAmount = () => {
 
             </div>
             
-                <div className="w-1/2 h-full  bg-white rounded-[10px]">
+            <div className="w-1/2 h-full  bg-white rounded-[10px]">
                 <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">
                         <div className="text-gray-500 text-base font-bold  ">Subtotal</div>
-                        <div className="text-right text-gray-500 text-base font-bold ">₹2,124</div>
+                        <div className="text-right text-gray-500 text-base font-bold ">{totalAmount.toFixed(2)}</div>
                     </div>
                     <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
                         <div className="text-gray-500 text-base font-bold ">Overall Discount</div>
                         <div className="flex items-center">
-                            <div className="text-right text-textGrey1 text-base  ">0%</div>
+                            <div className="text-right text-textGrey1 text-base  "><input
+                                            className="text-right text-textGrey1 text-base   border-none outline-none"
+                                            placeholder='₹______'
+                                            value={overAllDiscount} 
+                                            onChange={handleDiscountChange} 
+                                        />%</div>
                             
                         </div>
                     </div>
                     <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
                         <div className="text-gray-500 text-base font-bold ">Shipping</div>
                         <div className="flex items-center">
-                            <div className="text-right text-textGrey1 text-base  ">₹0</div>
+                            <div className="text-right text-textGrey1 text-base  "><input
+                                            className="text-right text-textGrey1 text-base   border-none outline-none"
+                                            placeholder='₹______'
+                                            value={shipping} 
+                                            onChange={handleShippingChange} 
+                                        /></div>
                             
                         </div>
                     </div>
                     <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
                         <div className="text-gray-500 text-base font-bold ">Adjustment</div>
                         <div className="flex items-center">
-                            <div className="text-right text-textGrey1 text-base  ">₹0</div>
+                            <div className="text-right text-textGrey1 text-base  "><input
+                                            className="text-right text-textGrey1 text-base   border-none outline-none"
+                                            placeholder='₹______'
+                                            value={adjustment} 
+                                            onChange={handleAdjustmentChange} 
+                                        /></div>
                             
                         </div>
                     </div>
                     
                     <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 rounded-b-md justify-between items-center gap-2.5    ">
                     <div className="text-textGreen text-base font-bold ">Grand total</div>
-                        <div className="text-right text-textGreen text-base font-bold ">7894</div>
+                        <div className="text-right text-textGreen text-base font-bold "> { grandAmt.toFixed(2)}</div>
                     </div>
                 </div>
             </div>
+
 
 
         </>

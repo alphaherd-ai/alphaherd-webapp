@@ -4,14 +4,71 @@ import printicon from "../../../../../assets/icons/finance/print.svg"
 import shareicon from "../../../../../assets/icons/finance/share.svg"
 import drafticon from "../../../../../assets/icons/finance/draft.svg"
 import checkicon from "../../../../../assets/icons/finance/check.svg"
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import downloadicon from "../../../../../assets/icons/finance/download.svg"
 
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from '@nextui-org/react'
+import { DataContext } from "./DataContext"
+import { useAppSelector } from "@/lib/hooks"
+import { useRouter, useSearchParams } from "next/navigation"
+import { FinanceCreationType } from "@prisma/client"
+import axios from "axios"
 
 const CreateGrnBottomBar = () => {
+    const { headerData, tableData, totalAmountData } = useContext(DataContext);
+    const appState = useAppSelector((state) => state.app);
+    const url = useSearchParams();
+    const id = url.get('id');
+    const router=useRouter();
+    const handleSubmit = async () => {
+        const allData = {headerData, tableData, totalAmountData};
+        console.log(allData)
+        let totalQty=0;
+        tableData.forEach(data => {
+            totalQty+=(data.quantity)||0;
+        });
+        const items = tableData.map(data => ({
+            productId: data.productId,
+            quantity: data.quantity,  
+            sellingPrice:Number(data.maxRetailPrice),
+            taxAmount:data.gst,
+            name:data.itemName,
+            discount:Number(data.discountPercent)/100,
+            expiry:data.expiry,
+            batchNumber:data.batchNumber,
+            hsnCode:data.barCode,
+            costPrice:Number(data.unitPrice)
+    }));
+        const data={
+            distributor: (id === null) ?allData.headerData.distributor.value:allData.headerData.distributor,
+            notes: allData.headerData.notes,
+            invoiceNo: "jlaksd",
+            dueDate: allData.headerData.dueDate,
+            shipping: allData.totalAmountData.shipping,
+            adjustment: allData.totalAmountData.adjustment,
+            totalCost: allData.totalAmountData.totalCost,
+            totalQty: totalQty,
+            status: "Pending",
+            type: FinanceCreationType.Purchase_Order,
+            items:{
+                create:items
+            }
+            
+        }
+        console.log(JSON.stringify(data))
+        try {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Invoice}?branchId=${appState.currentBranchId}`,data)
+            if (!response.data) {
+                throw new Error('Network response was not ok');
+            }
+            router.back();
+    
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
   return (
     <>
 
@@ -36,7 +93,7 @@ const CreateGrnBottomBar = () => {
                         <Image src={drafticon} alt="draft"></Image>
                         <div>Save as Draft</div>
                     </Button>
-                    <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer" >
+                    <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer" onClick={handleSubmit} >
                         <Image src={checkicon} alt="check"></Image>
                         <div>Save</div>
                     </Button>

@@ -1,54 +1,121 @@
 "use client"
 
-import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
-import addicon from "../../../../../assets/icons/finance/add.svg"
-import sellicon from "../../../../../assets/icons/finance/sell.svg"
-import addicon1 from "../../../../../assets/icons/finance/add (3).svg"
-import calicon from "../../../../../assets/icons/finance/calendar_today.svg"
 
-import DatePicker from "react-datepicker"
 import 'react-datepicker/dist/react-datepicker.css';
 
 
 import Subtract from "../../../../../assets/icons/finance/Subtract.svg"
 import Add from "../../../../../assets/icons/finance/add (2).svg"
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import Select from 'react-select';
 import Image from "next/image"
-import { Button } from "@nextui-org/react";
-import CreateGrnBottomBar from "./bottombar"
-import CreateGrnTotalAmount from "./totalamount"
-import CreateGrnHeader from "./header"
 import NewPurchaseReturnBottomBar from "./bottombar"
 import NewPurchaseReturnTotalAmount from "./totalamount"
 import NewPurchaseReturnHeader from "./header"
+import { useAppSelector } from "@/lib/hooks";
+import formatDateAndTime from '@/utils/formateDateTime';
+import { Tax } from '@prisma/client';
+import useSWR from 'swr';
+import { DataContext } from "./DataContext"
+import { useSearchParams } from "next/navigation"
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
+interface Products{
+    id :string,
+    itemName:string,
+    productBatch:ProductBatch[],
+    hsnCode:string,
+    quantity:number
+}
+interface ProductBatch {
+    id: number;
+    date: string;
+    time: string;
+    quantity: number;
+    batchNumber:string;
+    expiry:string;
+    costPrice:number;
+    sellingPrice :number;
+    hsnCode:string;
+    category :string;
+    distributors:string[];
+    productId:number;
+}
+
+function useProductfetch (id: number | null) {
+    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`,fetcher,{revalidateOnFocus:true});
+   return {
+    fetchedProducts:data,
+    isLoading,
+    error
+   }
+}
+function DataFromGRN(id:number|null,branchId:number|null){
+    const {data,error,isLoading} =useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/${id}/?branchId=${branchId}`,fetcher);
+    return {
+       data,
+       isLoading,
+       error
+    }
+}
 interface CheckedItems {
     [key: number]: boolean;
 }
 
 const NewPurchaseReturnTable = () => {
+    const { tableData, setTableData } = useContext(DataContext);
+    const [selectedProductDetails,setSelectedProduct]= useState<Products>()
+    const [products, setProducts] = useState<any[]>([]);
+    const [otherData, setOtherData] = useState({});
+    const appState = useAppSelector((state) => state.app)
+    // const { tableData: items, setTableData: setItems } = useContext(DataContext);
+    const [items,setItems]=useState<any[]>([]);   
+    const [discountStates, setDiscountStates] = useState(new Array(items.length).fill(false));
+    const url= useSearchParams();
+    const id=url.get('id');
+    let grnData:any=null,isgrnDataLoading=false,isgrnDataError=false; 
+    if(id){
+        const {data,isLoading,error}=DataFromGRN(Number(id),appState.currentBranchId);
+        grnData=data;
+        isgrnDataError=error;
+        isgrnDataLoading=isLoading;        
+    }
 
-    const [startDate, setStartDate] = useState(new Date());
+    useEffect(()=>{
+            if (!isgrnDataLoading && grnData && !isgrnDataError) {
+                const {items,...otherData}=grnData;
+                setOtherData(otherData)
+              const shallowDataCopy = [...items]; 
+              const itemData = shallowDataCopy.map((item: any) => ({
+                id: item.productBatchId,
+                productId:item.productId,
+                itemName:item.name,
+                quantity:item.quantity,
+                unitPrice:item.productBatch.costPrice,
+                tax:item.taxAmount,
+                discount:item.discount,
+                expiry:item.productBatch.expiry,
+                batchNumber:item.productBatch.batchNumber,
+                freeQuantity:item.freeQuantity,
+                maxRetailPrice:item.productBatch.sellingPrice
+              }));
+              setItems(itemData);
 
-
-    
-    const handleDateChange = (date:any) => {
-        setStartDate(date);
-        // setHeaderData((prevData) => ({ ...prevData, date }));
-    };
-
-
+              console.log("These are the items",items)
+              
+            }
+          }, [grnData]); 
     const taxOptions = [
         { value: 'Tax excl.', label: 'Tax excl.' },
         { value: 'Tax incl.', label: 'Tax incl.' }
     ]; 
     
     const gstOptions = [
-        {value: "GST@5%", label: "GST@5%"},
-        {value: "GST@*%", label: "GST@8%"},
-        {value: "GST@18%", label: "GST@18%"},
-        {value: "GST@20%", label: "GST@20%"},
+        {value: 0.05, label: "GST@5%"},
+        {value: 0.08, label: "GST@8%"},
+        {value: 0.18, label: "GST@18%"},
+        {value: 0.20, label: "GST@20%"},
     ]
 
     const category = [
@@ -61,13 +128,6 @@ const NewPurchaseReturnTable = () => {
         {value: "Other", label: "Other"},
     ]
 
-    const initialItems = [
-        { id: 1, quantity: 4, quantity2: 5 },
-        { id: 2, quantity: 3, quantity2: 6 },
-        // Add more items as needed
-    ];
-
-    const [items, setItems] = useState(initialItems);
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -79,24 +139,9 @@ const NewPurchaseReturnTable = () => {
     }, [disableButton]);
 
 
-    const handleAddItem= useCallback(() => {
-        setItems([...items, {
-            id: 0,
-            quantity: 0,
-            quantity2: 0
-        }]);
-    }, [items]);
-
-
-    const handleDeleteRow = useCallback((index: number) => {
-        const updatedItems = [...items];
-        updatedItems.splice(index, 1);
-        setItems(updatedItems);
-    }, [items]);
-
     const handleQuantityDecClick = (itemId: any) => {
-        setItems((prevItems) =>
-            prevItems.map((item) => {
+        setItems((prevItems:any) =>
+            prevItems.map((item:any) => {
                 if (item.id === itemId && item.quantity > 1) {
                     return { ...item, quantity: item.quantity - 1 };
                 }
@@ -106,8 +151,8 @@ const NewPurchaseReturnTable = () => {
     };
     
     const handleQuantityIncClick = (itemId: any) => {
-        setItems((prevItems) =>
-            prevItems.map((item) => {
+        setItems((prevItems:any) =>
+            prevItems.map((item:any) => {
                 if (item.id === itemId) {
                     return { ...item, quantity: item.quantity + 1 };
                 }
@@ -116,11 +161,13 @@ const NewPurchaseReturnTable = () => {
         );
     };
 
+    
+
     const handleInputChange = (itemId: number, value: string) => {
         const quantity = parseInt(value, 10);
         if (!isNaN(quantity) && quantity >= 0) {
-            setItems((prevItems) =>
-                prevItems.map((item) => {
+            setItems((prevItems:any) =>
+                prevItems.map((item:any) => {
                     if (item.id === itemId) {
                         return { ...item, quantity };
                     }
@@ -129,18 +176,39 @@ const NewPurchaseReturnTable = () => {
             );
         }
     };
+ 
+    const handleItemsDataChange = useCallback((index: number, field: string, value: string | number) => {
+        const updatedItems = [...items];
+        updatedItems[index][field] = value;
+        setItems(updatedItems);
+        console.log(items)
+    }, [items]);
 
+    
+      useEffect(() => {
+        if (id == null) {
+            setItems(items);
+            setTableData(items);  
+        }
+    }, [id, items]);
 
 
 
     const [checkedItems, setCheckedItems] = useState<CheckedItems>({});
 
-    const handleCheckboxChange = (id: number) => {
-        setCheckedItems(prevState => ({
-            ...prevState,
-            [id]: !prevState[id]
-        }));
-    };
+    const handleCheckboxChange = useCallback((id: number) => {
+        setCheckedItems(prevState => {
+            const newCheckedItems = {
+                ...prevState,
+                [id]: !prevState[id]
+            };
+    
+            const filteredItems = items.filter(item => newCheckedItems[item.id] === true);
+            setTableData(filteredItems);
+    
+            return newCheckedItems;
+        });
+    }, [items]);
 
 
 
@@ -161,7 +229,7 @@ const NewPurchaseReturnTable = () => {
                     
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px] overflow-auto max-h-[40rem] container">
-                    <NewPurchaseReturnHeader />
+                    <NewPurchaseReturnHeader existingHeaderData={otherData}/>
                 <div>
                 <div className="w-full rounded-md border border-solid border-borderGrey">
                     <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
@@ -206,7 +274,7 @@ const NewPurchaseReturnTable = () => {
                         
                         {items.map((item, index) => (
                 <div
-                    key={item.id}
+                    key={index+1}
                     className={`flex justify-evenly items-center w-[180%] box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-gray-200 h-12 ${checkedItems[item.id] ? 'text-textGrey2 font-bold' : 'text-textGrey2 font-medium'}`}
                 >
                     <div className='flex text-base  px-[10px] w-[5rem] items-center justify-center'>
@@ -219,23 +287,7 @@ const NewPurchaseReturnTable = () => {
                     </div>
                     <div className=' flex text-textGrey2 text-base  px-[10px] w-[5rem]'>{index+1}.</div>
                                     <div className=' flex text-textGrey2 text-base  w-[18rem] '>
-                                    <Select
-                                                className="text-gray-500 text-base   w-[90%] border-0 boxShadow-0 absolute"
-                                                classNamePrefix="select"
-                                                // value={products.find((prod) => prod.value.id === item.productId)}
-                                                isClearable={false}
-                                                isSearchable={true}
-                                                name="itemName"
-                                                options={taxOptions}
-                                                menuPortalTarget={document.body}
-                                                styles={{
-                                                    control: (provided, state) => ({
-                                                        ...provided,
-                                                        border: state.isFocused ? 'none' : 'none',
-                                                    }),
-                                                    menuPortal: base => ({ ...base, zIndex: 9999 })
-                                                }}
-                                            />
+                                    {item.itemName}
                                     </div>
 
                                     <div className=' flex text-textGrey2 text-base  w-[20rem] items-center gap-2'>
@@ -260,7 +312,7 @@ const NewPurchaseReturnTable = () => {
                             </div>
 
                                     <div className=' flex text-gray-500 text-base  w-[12rem]'>
-                                    ₹ 789
+                                    ₹ {item.unitPrice}
                                         {/* <input
                                             type="number"
                                             className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
@@ -268,7 +320,7 @@ const NewPurchaseReturnTable = () => {
                                     </div>
                                     
                                     <div className=' flex text-gray-500 text-base  w-[15rem]'>
-                                    789
+                                    {item.batchNumber}
                                         {/* <input
                                             type="number"
                                             className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
@@ -280,7 +332,7 @@ const NewPurchaseReturnTable = () => {
                             
 
                             <div className=' flex text-textGrey2 text-base  w-[15rem]'>
-                            789
+                            {item.batchNumber}
                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
@@ -288,71 +340,35 @@ const NewPurchaseReturnTable = () => {
                             </div>
                             <div className=' flex text-gray-500 text-base  w-[15rem]'>
                                     <div className="customDatePickerWidth1">
-                                    <DatePicker
-                                        className="w-full"
-                                        selected={startDate}
-                                        onChange={handleDateChange}
-                                        calendarClassName="react-datepicker-custom"
-                                        customInput={
-                                            <div className='relative'>
-                                                <input
-                                                    className={`w-full h-9 text-base  px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none ${checkedItems[item.id] ? 'text-textGrey2 font-bold' : 'text-textGrey2 font-medium'}`}
-                                                    value={startDate.toLocaleDateString()}
-                                                    readOnly
-                                                />
-                                                <Image
-                                                    src={calicon}
-                                                    alt="Calendar Icon"
-                                                    className="absolute right-0 top-2 cursor-pointer"
-                                                    width={50}
-                                                    height={20}
-                                                />
-                                            </div>
-                                        }
-                                    />
+                                   {formatDateAndTime(item.expiry).formattedDate}
                                     </div>
                                     </div>
                             <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                            ₹ 789
+                            ₹ {item.quantity*item.unitPrice}
                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                     /> */}
                             </div>
                             <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                            ₹ 789
+                            ₹ {item.maxRetailPrice}
                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                     /> */}
                             </div>
                             <div className='flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                                <Select
-                                            className="text-textGrey2 text-sm  absolute "
-                                            defaultValue={taxOptions[0]}
-                                            isClearable={false}
-                                            isSearchable={true}
-                                            options={taxOptions}
-                                            menuPortalTarget={document.body}
-                                            styles={{
-                                                control: (provided, state) => ({
-                                                    ...provided,
-                                                    border: state.isFocused ? 'none' : 'none',
-                                                }),
-                                                menuPortal: base => ({ ...base, zIndex: 9999 })
-                                            }}
-                                            
-                                        />
+                                {item.tax*100}%
                             </div>
                             <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                            ₹ 789
+                            ₹ {(item.tax*item.quantity*item.unitPrice).toFixed(2)}
                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                     /> */}
                             </div>
                             <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                             789
+                             {item.discount*100}
                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
@@ -361,7 +377,7 @@ const NewPurchaseReturnTable = () => {
                             </div>
                             
                             <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                            ₹ 7
+                            ₹ {item.discount*item.unitPrice*item.quantity}
                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
@@ -378,17 +394,22 @@ const NewPurchaseReturnTable = () => {
                             <div className=' flex text-gray-500 text-base font-bold px-[10px] w-[5rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[18rem]'>Total</div>
 
-                            <div className=' flex text-gray-500 text-base font-bold w-[20rem]'>5 Items</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[20rem]'>{items.reduce((acc, item) => checkedItems[item.id] ? acc + item.quantity : acc , 0) ||
+                                                0} Items</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[15rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[15rem] px-2'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹ 789</div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹ 789</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => checkedItems[item.id] ? acc + (item.quantity*Number(item.unitPrice)):acc , 0).toFixed(2) ||
+                                                0}</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => checkedItems[item.id] ? acc + Number(item.maxRetailPrice) :acc , 0).toFixed(2) ||
+                                                0}</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹ 789</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) =>  checkedItems[item.id] ?acc + (item.tax)*(item.quantity*Number(item.unitPrice)) :acc , 0).toFixed(2) ||
+                                                0}</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹ 789</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => checkedItems[item.id] ? acc + (item.discount)*(item.quantity*Number(item.unitPrice)) :acc , 0).toFixed(2) ||
+                                                0}</div>
                             <div className=' flex text-gray-500 text-base font-bold w-1/12'></div>
                         </div>
                     </div>
@@ -397,11 +418,13 @@ const NewPurchaseReturnTable = () => {
                         <div className=' flex text-gray-500 text-base font-medium '>Total</div>
                     </div>
                     {items.map((item:any,index:number) => (
-                    <div key={item.id} className={`flex items-center justify-center  w-[15rem] box-border bg-white border-t-0 border-r-0 border-l border-b border-solid border-gray-200 h-12 ${checkedItems[item.id] ? 'text-textGrey2 font-bold' : 'text-textGrey2 font-medium'}`}>
-                        <div className=' flex text-base'>{index+1}</div>
+                    <div key={item.id} className="flex items-center justify-center  w-[10rem] box-border bg-white text-gray-500 border-t-0 border-r-0 border-l border-b border-solid border-gray-200 h-12">
+                        <div className=' flex text-gray-500 text-base font-medium'>{ checkedItems[item.id]?((item.tax-item.discount+1)*(item.quantity*Number(item.maxRetailPrice))).toFixed(2):0||
+                                                0}</div>
                     </div>
                     ))}
-                    <div className=' flex text-textGreen text-base font-bold w-[15rem] h-12 items-center justify-center'>₹2321</div>
+                    <div className=' flex text-textGreen text-base font-bold w-[10rem] h-12 items-center justify-center'>₹{items.reduce((acc, item) =>  checkedItems[item.id]?acc + (item.tax-item.discount+1)*(item.quantity*Number(item.unitPrice)):acc , 0).toFixed(2) ||
+                                                0}</div>
                     </div>
                     </div>
                     
@@ -411,7 +434,7 @@ const NewPurchaseReturnTable = () => {
 
                 <NewPurchaseReturnTotalAmount />
             </div>
-            <NewPurchaseReturnBottomBar />
+            <NewPurchaseReturnBottomBar invoiceData={grnData}/>
         </div>
        
         </>
