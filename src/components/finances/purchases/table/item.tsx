@@ -10,6 +10,7 @@ import formatDateAndTime from '@/utils/formateDateTime';
 import useSWR from 'swr';
 import { usePathname, useSearchParams } from 'next/navigation';
 import Loading from '@/app/loading';
+import { FinanceCreationType } from '@prisma/client';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 const FinancesPurchasesTableItem = () => {
@@ -20,8 +21,14 @@ const FinancesPurchasesTableItem = () => {
 const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/getAll?branchId=${appState.currentBranchId}`,fetcher)
 useEffect(()=>{
   if(data&&!error&&!isLoading){
-    console.log(data,appState.currentBranchId)
-    setPurchases(data);
+    const filteredData=data?.filter((purchase:any)=>{
+      if(currentUrl.get('type')==='all'){
+        return true;
+      }else {
+        return purchase.type===currentUrl.get('type');
+      }
+    })
+    setPurchases(filteredData);
   }
 },[data,setPurchases])
 
@@ -32,7 +39,14 @@ if(isLoading&&!data)return (<Loading/>)
     <div key={index+1} className='flex  w-full  box-border h-16 py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  hover:bg-gray-200 hover:text-gray-500 transition'>
     <div className='w-1/12 flex items-center  px-6  text-neutral-400 text-base font-medium'>{formatDateAndTime(purchase.date).formattedDate}</div>
     <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{formatDateAndTime(purchase.date).formattedTime}</div>
-    <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{purchase.type}</div>
+    <Link
+  href={{
+    pathname: purchase.type === FinanceCreationType.Purchase_Order ? 'exsistingpurchaseorder' : 
+              purchase.type === FinanceCreationType.Purchase_Invoice ? 'exsistinggrn' : 
+              purchase.type===FinanceCreationType.Purchase_Return?'exsistingpurchasereturn':"",
+    query: { id: purchase.id}
+  }}>
+    <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{purchase.type}</div></Link>
     <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{purchase.distributor}</div>
     <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{purchase.invoiceNo}</div>
     <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{purchase.totalCost}</div>

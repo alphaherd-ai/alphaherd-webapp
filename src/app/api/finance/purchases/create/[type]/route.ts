@@ -11,11 +11,25 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
 
   try {
     const body: any = await req.json();
+    const itemData=body.items.create;
+    const allItemsData=itemData.map((data:any) => ({
+      productId: data.productId,
+      quantity: data.quantity,  
+      sellingPrice:data.sellingPrice,
+      taxAmount:data.taxAmount,
+      name:data.name,
+      discount:data.discount,
+      productBatchId:data.productBatchId
+}));
     const inventoryId=await fetchInventoryId(req);
     const financeId=await fetchFinanceId(req);
     const purchases = await prismaClient.purchases.create({
       data: {
         ...body,
+        items:{
+          create:
+            allItemsData
+        },
         type: params.type,
         FinanceSection:{
           connect:{
@@ -24,11 +38,11 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
         }
       },
     });
+      const items = await prismaClient.items.createMany({
+        data: allItemsData,
+      });
 
-    const items = await prismaClient.items.createMany({
-      data: body.items.create,
-    });
-
+    
     const finance = await prismaClient.financeTimeline.create({
       data: {
         type: params.type,
@@ -45,20 +59,33 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
     if (params.type === FinanceCreationType.Purchase_Invoice) {
       await Promise.all(
         body.items.create.map(async (item: any) => {
-          const batch=await prismaClient.productBatch.findUnique({
+          console.log("these are the items",item)
+          const batch = await prismaClient.productBatch.create({
+            data: {
+               quantity:item.quantity,
+               batchNumber:item.batchNumber,
+               expiry:item.expiry,
+               costPrice:item.costPrice,
+               sellingPrice:item.sellingPrice,
+               distributors:item.distributors,
+              product:{
+                connect:{id: item.productId }
+              },
+              InventorySection:{
+                connect:{id:inventoryId}
+              }
+            }
+        });
+       
+          const updatedItems =await prismaClient.items.updateMany({
             where:{
-              id:Number(item.productBatchId),
-              inventorySectionId:inventoryId
+              purchasesId:purchases.id,
+              productId:item.productId
+            },
+            data:{
+              productBatchId:batch?.id
             }
           })
-          const updatedBatch = await prismaClient.productBatch.update({
-            where: { id: batch?.id ,inventorySectionId:inventoryId},
-            data: {
-              quantity: {
-                increment: item.quantity,
-              },
-            },
-          });
           const updatedProduct =await prismaClient.products.update({
             where:{
               id:item.productId,
@@ -141,7 +168,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
       );
     }
 
-    return new Response(JSON.stringify({ purchases, finance, items }), {
+    return new Response(JSON.stringify({ purchases, finance,items }), {
       status: 201,
       headers: {
         'Content-Type': 'application/json',

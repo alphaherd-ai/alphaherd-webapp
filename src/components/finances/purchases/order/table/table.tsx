@@ -157,19 +157,11 @@ const handleAddItem= useCallback(() => {
         );
     };
 
-    const handleInputChange = (itemId: number, value: string) => {
-        const quantity = parseInt(value, 10);
-        if (!isNaN(quantity) && quantity >= 0) {
-            setItems((prevItems:any) =>
-                prevItems.map((item:any) => {
-                    if (item.id === itemId) {
-                        return { ...item, quantity };
-                    }
-                    return item;
-                })
-            );
-        }
-    };
+    const handleInputChange = useCallback((index: number, value: any,field: string) => {   
+        const updatedItems = [...items];
+            updatedItems[index][field] =Number(value);
+        setItems(updatedItems);
+    },[items]);
     const handleItemsDataChange = useCallback((index: number, field: string, value: string | number) => {
         const updatedItems = [...items];
         updatedItems[index][field] = value;
@@ -267,7 +259,7 @@ const handleAddItem= useCallback(() => {
                         
                         {items.map((item:any,index:number) => (
                             <div key={index+1} className='flex justify-evenly items-center w-[125%] box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-gray-200 text-gray-400 h-12'>
-                                <div className=' flex text-textGrey2 text-base font-medium px-[10px] w-[5rem]'>{index+1}.</div>
+                                <div key={index+1} className=' flex text-textGrey2 text-base font-medium px-[10px] w-[5rem]'>{index+1}.</div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[18rem] '>
                             <Select
                                         className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0 absolute"
@@ -296,9 +288,9 @@ const handleAddItem= useCallback(() => {
                                     <input
                                         type="number"
                                         value={item.quantity}
-                                        onChange={(e) => handleInputChange(item.id, e.target.value)}
+                                        onChange={(e) => handleInputChange(index, e.target.value,'quantity')}
                                         className="w-[3rem] text-center border border-solid border-borderGrey h-8  rounded-md text-textGrey2 font-medium text-base"
-                                        ref={index === items.length - 1 ? inputRef : null}
+                                        name={`quantity-${index+1}`}
                                     />
                                     
                                     {/* {item.quantity} */}
