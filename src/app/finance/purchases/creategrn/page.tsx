@@ -5,7 +5,7 @@ import React from 'react'
 import { DataProvider } from '@/components/finances/purchases/creategrn/table/DataContext'
 
 
-const PurchasesInvoice = () => {
+const PurchasesGrn = () => {
   return (
     <>
     <div className='w-full min-h-screen bg-gray-200 p-8 px-10'>
@@ -19,4 +19,4 @@ const PurchasesInvoice = () => {
   )
 }
 
-export default PurchasesInvoice
+export default PurchasesGrn
