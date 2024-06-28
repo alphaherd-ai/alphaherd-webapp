@@ -419,7 +419,7 @@ const NewPurchaseReturnTable = () => {
                     </div>
                     {items.map((item:any,index:number) => (
                     <div key={item.id} className="flex items-center justify-center  w-[10rem] box-border bg-white text-gray-500 border-t-0 border-r-0 border-l border-b border-solid border-gray-200 h-12">
-                        <div className=' flex text-gray-500 text-base font-medium'>{ checkedItems[item.id]?((item.tax-item.discount+1)*(item.quantity*Number(item.maxRetailPrice))).toFixed(2):0||
+                        <div className=' flex text-gray-500 text-base font-medium'>{ checkedItems[item.id]?((item.tax-item.discount+1)*(item.quantity*Number(item.unitPrice))).toFixed(2):0||
                                                 0}</div>
                     </div>
                     ))}

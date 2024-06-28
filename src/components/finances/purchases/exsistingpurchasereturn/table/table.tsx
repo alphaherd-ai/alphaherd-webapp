@@ -25,116 +25,79 @@ import NewPurchaseReturnHeader from "./header"
 import ExsistingPurcaseReturnBottomBar from "./bottombar"
 import ExsistingPurcaseReturnTotalAmount from "./totalamount"
 import ExsistingPurcaseReturnHeader from "./header"
-
+import { useSearchParams } from 'next/navigation';
+import { useAppSelector } from '@/lib/hooks';
+import formatDateAndTime from '@/utils/formateDateTime';
+import useSWR from 'swr';
+import Loading from '@/app/loading';
 interface CheckedItems {
     [key: number]: boolean;
 }
 
-
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 const ExsistingPurcaseReturnTable = () => {
 
-    const [startDate, setStartDate] = useState(new Date());
+    const url = useSearchParams();
+    const id = url.get('id');
+    const appState = useAppSelector((state) => state.app);
+    const [otherData, setOtherData] = useState({});
 
-
-    
-    const handleDateChange = (date:any) => {
-        setStartDate(date);
-        // setHeaderData((prevData) => ({ ...prevData, date }));
-    };
-
-
-    const taxOptions = [
-        { value: 'Tax excl.', label: 'Tax excl.' },
-        { value: 'Tax incl.', label: 'Tax incl.' }
-    ]; 
-    
-    const gstOptions = [
-        {value: "GST@5%", label: "GST@5%"},
-        {value: "GST@*%", label: "GST@8%"},
-        {value: "GST@18%", label: "GST@18%"},
-        {value: "GST@20%", label: "GST@20%"},
-    ]
-
-    const category = [
-        {value: "Utilities", label: "Utilities"},
-        {value: "Rent", label: "Rent"},
-        {value: "Medical Supplies", label: "Medical Supplies"},
-        {value: "Repair and Maintainance", label: "Repair and Maintainance"},
-        {value: "Payroll", label: "Payroll"},
-        {value: "Inventory", label: "Inventory"},
-        {value: "Other", label: "Other"},
-    ]
-
-    const initialItems = [
-        { id: 1, quantity: 4, quantity2: 5 },
-        { id: 2, quantity: 3, quantity2: 6 },
-        // Add more items as needed
-    ];
-
+    const initialItems: any[] | (() => any[])=[];
     const [items, setItems] = useState(initialItems);
-    const [disableButton, setDisableButton] = useState(true);
-    const inputRef = useRef<HTMLInputElement | null>(null);
 
-
-    useEffect(() => {
-        if (!disableButton && inputRef.current) {
-            inputRef.current.focus();
-        }
-    }, [disableButton]);
-
-
-    const handleAddItem= useCallback(() => {
-        setItems([...items, {
-            id: 0,
-            quantity: 0,
-            quantity2: 0
-        }]);
-    }, [items]);
-
-
-    const handleDeleteRow = useCallback((index: number) => {
-        const updatedItems = [...items];
-        updatedItems.splice(index, 1);
-        setItems(updatedItems);
-    }, [items]);
-
-    const handleQuantityDecClick = (itemId: any) => {
-        setItems((prevItems) =>
-            prevItems.map((item) => {
-                if (item.id === itemId && item.quantity > 1) {
-                    return { ...item, quantity: item.quantity - 1 };
-                }
-                return item;
-            })
-        );
-    };
+    const {data,error,isLoading} =useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/${id}/?branchId=${appState.currentBranchId}`,fetcher)
     
-    const handleQuantityIncClick = (itemId: any) => {
-        setItems((prevItems) =>
-            prevItems.map((item) => {
-                if (item.id === itemId) {
-                    return { ...item, quantity: item.quantity + 1 };
-                }
-                return item;
-            })
-        );
-    };
+    
+    useEffect(() => {
+        if (!isLoading && data && !error) {
+            const {items,...otherData}=data;
+            setOtherData(otherData)
+            console.log(items)
+          const shallowDataCopy = [...items]; 
+          const itemData = shallowDataCopy.map((item: any) => ({
+            id: item.productBatchId,
+            productId:item.productId,
+            itemName:item.name,
+            quantity:item.quantity,
+            unitPrice:item.productBatch?.costPrice,
+            tax:item.tax,
+            discount:item.discount,
+            expiry:item.productBatch?.expiry,
+            batchNumber:item.productBatch?.batchNumber,
+            freeQuantity:item.freeQuantity,
+            maxRetailPrice:item.productBatch?.sellingPrice
 
-    const handleInputChange = (itemId: number, value: string) => {
-        const quantity = parseInt(value, 10);
-        if (!isNaN(quantity) && quantity >= 0) {
-            setItems((prevItems) =>
-                prevItems.map((item) => {
-                    if (item.id === itemId) {
-                        return { ...item, quantity };
-                    }
-                    return item;
-                })
-            );
+          }));
+          setItems(itemData);
         }
-    };
+      }, [data,error,isLoading]); 
+      
+console.log(items)
 
+
+const [disableButton, setDisableButton] = useState(true);
+const inputRef = useRef<HTMLInputElement | null>(null);
+
+
+useEffect(() => {
+    if (!disableButton && inputRef.current) {
+        inputRef.current.focus();
+    }
+}, [disableButton]);
+
+
+// const handleAddItem= useCallback(() => {
+//     setItems([...items, {}]);
+// }, [items]);
+
+
+// const handleDeleteRow = useCallback((index: number) => {
+//     const updatedItems = [...items];
+//     updatedItems.splice(index, 1);
+//     setItems(updatedItems);
+// }, [items]);
 
 
 
@@ -148,6 +111,7 @@ const ExsistingPurcaseReturnTable = () => {
     };
 
 
+    if(isLoading) return (<Loading/>)
 
 
     return (
@@ -166,7 +130,7 @@ const ExsistingPurcaseReturnTable = () => {
                     
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px] overflow-auto max-h-[40rem] container">
-                    <ExsistingPurcaseReturnHeader />
+                    <ExsistingPurcaseReturnHeader otherData={data}/>
                 <div>
                 <div className="w-full rounded-md border border-solid border-borderGrey">
                     <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
@@ -240,8 +204,8 @@ const ExsistingPurcaseReturnTable = () => {
                                                     }),
                                                     menuPortal: base => ({ ...base, zIndex: 9999 })
                                                 }}
-                                            /> */}.
-                                            hello
+                                            /> */}
+                                           {item.itemName}
                                     </div>
 
                                     <div className=' flex text-textGrey2 text-base  w-[20rem] items-center gap-2'>
@@ -262,12 +226,12 @@ const ExsistingPurcaseReturnTable = () => {
                                         <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                     </button>
                                 </div>  */}
-                                485
+                               {item.quantity}
                                 <span className="text-textGrey2  text-base">Strips</span>
                             </div>
 
                                     <div className=' flex text-gray-500 text-base  w-[12rem]'>
-                                    ₹ 789
+                                    ₹ {item.unitPrice}
                                         {/* <input
                                             type="number"
                                             className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
@@ -275,7 +239,7 @@ const ExsistingPurcaseReturnTable = () => {
                                     </div>
                                     
                                     <div className=' flex text-gray-500 text-base  w-[15rem]'>
-                                    789
+                                    {item.batchNumber}
                                         {/* <input
                                             type="number"
                                             className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
@@ -287,7 +251,7 @@ const ExsistingPurcaseReturnTable = () => {
                             
 
                             <div className=' flex text-textGrey2 text-base  w-[15rem]'>
-                            789
+                            {item.batchNumber}
                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
@@ -295,71 +259,35 @@ const ExsistingPurcaseReturnTable = () => {
                             </div>
                             <div className=' flex text-gray-500 text-base  w-[15rem]'>
                                     <div className="customDatePickerWidth1">
-                                    <DatePicker
-                                        className="w-full"
-                                        selected={startDate}
-                                        onChange={handleDateChange}
-                                        calendarClassName="react-datepicker-custom"
-                                        customInput={
-                                            <div className='relative'>
-                                                <input
-                                                    className={`w-full h-9 text-base  px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none ${checkedItems[item.id] ? 'text-textGrey2 font-bold' : 'text-textGrey2 font-medium'}`}
-                                                    value={startDate.toLocaleDateString()}
-                                                    readOnly
-                                                />
-                                                <Image
-                                                    src={calicon}
-                                                    alt="Calendar Icon"
-                                                    className="absolute right-0 top-2 cursor-pointer"
-                                                    width={50}
-                                                    height={20}
-                                                />
-                                            </div>
-                                        }
-                                    />
+                                    {formatDateAndTime(item.expiry).formattedDate}
                                     </div>
                                     </div>
                             <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                            ₹ 789
+                            ₹ {item.unitPrice*item.quantity}
                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                     /> */}
                             </div>
                             <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                            ₹ 789
+                            ₹ {item.maxRetailPrice}
                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                     /> */}
                             </div>
                             <div className='flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                                <Select
-                                            className="text-textGrey2 text-sm  absolute "
-                                            defaultValue={taxOptions[0]}
-                                            isClearable={false}
-                                            isSearchable={true}
-                                            options={taxOptions}
-                                            menuPortalTarget={document.body}
-                                            styles={{
-                                                control: (provided, state) => ({
-                                                    ...provided,
-                                                    border: state.isFocused ? 'none' : 'none',
-                                                }),
-                                                menuPortal: base => ({ ...base, zIndex: 9999 })
-                                            }}
-                                            
-                                        />
+                               {item.tax*100}%
                             </div>
                             <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                            ₹ 789
+                            ₹ {item.tax*item.quantity*item.unitPrice}
                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                     /> */}
                             </div>
                             <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                             789
+                             {item.discount*100}
                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
@@ -368,7 +296,7 @@ const ExsistingPurcaseReturnTable = () => {
                             </div>
                             
                             <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                            ₹ 7
+                            ₹ {item.discount*item.unitPrice*item.quantity}
                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
@@ -385,17 +313,22 @@ const ExsistingPurcaseReturnTable = () => {
                             <div className=' flex text-gray-500 text-base font-bold px-[10px] w-[5rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[18rem]'>Total</div>
 
-                            <div className=' flex text-gray-500 text-base font-bold w-[20rem]'>5 Items</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[20rem]'>{items.reduce((acc, item) => acc + item.quantity, 0) ||
+                                                0} Items</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[15rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[15rem] px-2'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹ 789</div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹ 789</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => acc + (item.quantity*Number(item.unitPrice)) , 0).toFixed(2) ||
+                                                0}</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹ {items.reduce((acc, item) => acc + item.maxRetailPrice , 0).toFixed(2) ||
+                                                0}</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹ 789</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => acc + (item.tax)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2) ||
+                                                0}</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹ 789</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹ {items.reduce((acc, item) => acc + (item.discount)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2) ||
+                                                0}</div>
                             <div className=' flex text-gray-500 text-base font-bold w-1/12'></div>
                         </div>
                     </div>
@@ -416,7 +349,7 @@ const ExsistingPurcaseReturnTable = () => {
                 </div>
                 </div>
 
-                <ExsistingPurcaseReturnTotalAmount />
+                <ExsistingPurcaseReturnTotalAmount otherData={data}/>
             </div>
             <ExsistingPurcaseReturnBottomBar />
         </div>

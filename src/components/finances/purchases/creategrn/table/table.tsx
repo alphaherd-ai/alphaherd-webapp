@@ -581,7 +581,7 @@ const handleAddItem= useCallback(() => {
 
                 <CreateGrnTotalAmount />
             </div>
-            <CreateGrnBottomBar />
+            <CreateGrnBottomBar orderData={orderData}/>
         </div>
        
         </>

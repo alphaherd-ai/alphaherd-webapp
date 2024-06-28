@@ -19,6 +19,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
       taxAmount:data.taxAmount,
       name:data.name,
       discount:data.discount,
+      productBatchId:data.productBatchId
 }));
     const inventoryId=await fetchInventoryId(req);
     const financeId=await fetchFinanceId(req);

@@ -43,7 +43,7 @@ if(isLoading&&!data)return (<Loading/>)
   href={{
     pathname: purchase.type === FinanceCreationType.Purchase_Order ? 'exsistingpurchaseorder' : 
               purchase.type === FinanceCreationType.Purchase_Invoice ? 'exsistinggrn' : 
-              purchase.type===FinanceCreationType.Purchase_Return?'exsistingsalesreturn':"",
+              purchase.type===FinanceCreationType.Purchase_Return?'exsistingpurchasereturn':"",
     query: { id: purchase.id}
   }}>
     <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{purchase.type}</div></Link>

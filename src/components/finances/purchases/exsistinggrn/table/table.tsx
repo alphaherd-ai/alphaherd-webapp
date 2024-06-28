@@ -46,6 +46,7 @@ const ExsistingGrnTable = () => {
         if (!isLoading && data && !error) {
             const {items,...otherData}=data;
             setOtherData(otherData)
+            console.log(items)
           const shallowDataCopy = [...items]; 
           const itemData = shallowDataCopy.map((item: any) => ({
             id: item.productId,

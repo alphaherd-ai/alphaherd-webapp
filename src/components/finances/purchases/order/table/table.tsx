@@ -157,19 +157,11 @@ const handleAddItem= useCallback(() => {
         );
     };
 
-    const handleInputChange = (itemId: number, value: string) => {
-        const quantity = parseInt(value, 10);
-        if (!isNaN(quantity) && quantity >= 0) {
-            setItems((prevItems:any) =>
-                prevItems.map((item:any) => {
-                    if (item.id === itemId) {
-                        return { ...item, quantity };
-                    }
-                    return item;
-                })
-            );
-        }
-    };
+    const handleInputChange = useCallback((index: number, value: any,field: string) => {   
+        const updatedItems = [...items];
+            updatedItems[index][field] =Number(value);
+        setItems(updatedItems);
+    },[items]);
     const handleItemsDataChange = useCallback((index: number, field: string, value: string | number) => {
         const updatedItems = [...items];
         updatedItems[index][field] = value;
@@ -296,9 +288,9 @@ const handleAddItem= useCallback(() => {
                                     <input
                                         type="number"
                                         value={item.quantity}
-                                        onChange={(e) => handleInputChange(item.id, e.target.value)}
+                                        onChange={(e) => handleInputChange(index, e.target.value,'quantity')}
                                         className="w-[3rem] text-center border border-solid border-borderGrey h-8  rounded-md text-textGrey2 font-medium text-base"
-                                        ref={index === items.length - 1 ? inputRef : null}
+                                        name={`quantity-${index+1}`}
                                     />
                                     
                                     {/* {item.quantity} */}

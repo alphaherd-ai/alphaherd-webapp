@@ -32,10 +32,10 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
             productId: data.productId,
             quantity: data.quantity,  
             sellingPrice:Number(data.maxRetailPrice),
-            taxAmount:data.gst,
+            taxAmount:data.tax,
             name:data.itemName,
             discount:data.discount,
-           productBatchId:data.id
+            productBatchId:data.id
     }));
         const data={
             distributor: (id === null) ?allData.headerData.distributor.value:invoiceData.distributor,

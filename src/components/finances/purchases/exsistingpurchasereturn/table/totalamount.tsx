@@ -6,9 +6,10 @@ import calicon from "../../../../../assets/icons/finance/calendar_today.svg"
 
 import DatePicker from "react-datepicker"
 import 'react-datepicker/dist/react-datepicker.css';
+import formatDateAndTime from '@/utils/formateDateTime';
 
 
-const ExsistingPurcaseReturnTotalAmount = () => {
+const ExsistingPurcaseReturnTotalAmount = ({otherData}:any) => {
 
     const [startDate, setStartDate] = useState(new Date());
 
@@ -30,7 +31,7 @@ const ExsistingPurcaseReturnTotalAmount = () => {
     <>
 
 
-            <div className="flex w-full box-border bg-gray-100 pt-[20px] pb-[20px]">
+<div className="flex w-full box-border bg-gray-100 pt-[20px] pb-[20px]">
             <div className="w-1/2 mr-4 flex flex-col gap-4">
 
             <div className="px-6 py-2 bg-white rounded-[5px] justify-between items-center gap-4 flex w-full border border-solid border-borderGrey">
@@ -38,28 +39,7 @@ const ExsistingPurcaseReturnTotalAmount = () => {
                         <div className="text-gray-500 text-base font-bold  w-[20rem]">Last Date Of Item Returns:</div>
                         
                         <div className="customDatePickerWidth">
-                        <DatePicker
-                                        className="w-full"
-                                        selected={startDate}
-                                        onChange={handleDateChange}
-                                        calendarClassName="react-datepicker-custom"
-                                        customInput={
-                                            <div className='relative'>
-                                                <input
-                                                    className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={startDate.toLocaleDateString()}
-                                                    readOnly
-                                                />
-                                                <Image
-                                                    src={calicon}
-                                                    alt="Calendar Icon"
-                                                    className="absolute right-2 top-2 cursor-pointer"
-                                                    width={50}
-                                                    height={20}
-                                                />
-                                            </div>
-                                        }
-                                    />
+                        {formatDateAndTime(otherData.returnLastDate).formattedDate}
                                     </div>
                     </div>
             </div>
@@ -95,39 +75,33 @@ const ExsistingPurcaseReturnTotalAmount = () => {
 
             </div>
             
-                <div className="w-1/2 h-full  bg-white rounded-[10px]">
+            <div className="w-1/2 h-full  bg-white rounded-[10px]">
                 <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">
-                        <div className="text-gray-500 text-base font-bold  ">Subtotal</div>
-                        <div className="text-right text-gray-500 text-base font-bold ">₹2,124</div>
-                    </div>
-                    <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
-                        <div className="text-gray-500 text-base font-bold ">Overall Discount</div>
-                        <div className="flex items-center">
-                            <div className="text-right text-textGrey1 text-base  ">0%</div>
-                            
-                        </div>
-                    </div>
-                    <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
-                        <div className="text-gray-500 text-base font-bold ">Shipping</div>
-                        <div className="flex items-center">
-                            <div className="text-right text-textGrey1 text-base  ">₹0</div>
-                            
-                        </div>
-                    </div>
-                    <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
-                        <div className="text-gray-500 text-base font-bold ">Adjustment</div>
-                        <div className="flex items-center">
-                            <div className="text-right text-textGrey1 text-base  ">₹0</div>
-                            
-                        </div>
-                    </div>
-                    
-                    <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 rounded-b-md justify-between items-center gap-2.5    ">
-                    <div className="text-textGreen text-base font-bold ">Grand total</div>
-                        <div className="text-right text-textGreen text-base font-bold ">7894</div>
-                    </div>
-                </div>
+                <div className="text-gray-500 text-base font-bold ">Subtotal</div>
+                                    <div className="text-right text-gray-500 text-base font-bold ">₹{(otherData.totalCost+otherData.shipping+otherData.adjustment+otherData.overAllDiscount*100)?.toFixed(2)}</div>
+                                </div>
+                                <div className="w-full flex px-4 py-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
+                                    <div className="text-gray-500 text-base font-bold ">Overall Discount</div>
+                                    <div className="flex items-center">
+                                        <div className="text-right text-textGrey1 text-base  ">{otherData.overAllDiscount*100}%</div>
+                                     
+                                    </div>
+                                </div>
+                                <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5   ">
+                                    <div className="text-gray-500 text-base font-bold ">Shipping</div>
+                                    <div className="text-right text-textGrey1 text-base ">₹{otherData.shipping}</div>
+                                </div>
+                                <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5  ">
+                                    <div className="text-gray-500 text-base font-bold ">Adjustment</div>
+                                    <div className="text-right text-textGrey1 text-base ">₹{otherData.adjustment}</div>
+                                </div>
+                                <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 rounded-b-md justify-between items-center gap-2.5    ">
+                                    <div className="text-textGreen text-base font-bold">Grand total</div>
+                                    <div className="text-right text-textGreen text-base font-bold ">₹{(otherData.totalCost)?.toFixed(2)}</div>
+                                </div>
+                            </div>
             </div>
+
 
 
         </>

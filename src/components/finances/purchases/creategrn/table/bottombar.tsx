@@ -16,7 +16,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { FinanceCreationType } from "@prisma/client"
 import axios from "axios"
 
-const CreateGrnBottomBar = () => {
+const CreateGrnBottomBar = ({orderData}:any) => {
     const { headerData, tableData, totalAmountData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
     const url = useSearchParams();
@@ -24,7 +24,7 @@ const CreateGrnBottomBar = () => {
     const router=useRouter();
     const handleSubmit = async () => {
         const allData = {headerData, tableData, totalAmountData};
-        console.log(allData)
+        console.log(orderData)
         let totalQty=0;
         tableData.forEach(data => {
             totalQty+=(data.quantity)||0;
@@ -42,10 +42,10 @@ const CreateGrnBottomBar = () => {
             costPrice:Number(data.unitPrice)
     }));
         const data={
-            distributor: (id === null) ?allData.headerData.distributor.value:allData.headerData.distributor,
-            notes: allData.headerData.notes,
+            distributor: (id === null) ?allData.headerData.distributor.value:orderData.distributor,
+            notes: (id === null) ?allData.headerData.notes:orderData.notes,
             invoiceNo: "jlaksd",
-            dueDate: allData.headerData.dueDate,
+            dueDate: (id === null) ?allData.headerData.dueDate:orderData.dueDate,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
             totalCost: allData.totalAmountData.totalCost,
