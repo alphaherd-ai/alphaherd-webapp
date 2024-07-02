@@ -14,10 +14,17 @@ import { Button } from "@nextui-org/react";
 import useSWR from 'swr';
 import { useAppSelector } from '@/lib/hooks';
 import { DataContext } from "./DataContext";
+import { generateInvoiceNumber } from "@/utils/generateInvoiceNo";
+import { useSearchParams } from "next/navigation";
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
+
 const NewPurchasesHeader = () => {
+
     const { headerData, setHeaderData } = useContext(DataContext);
+    const url=useSearchParams();
+    const count=url.get('count');
+    const initialInvoiceNo =generateInvoiceNumber(Number(count));
     const [startDate, setStartDate] = useState(new Date());
     const [isClearable, setIsClearable] = useState(true);
     const [isSearchable, setIsSearchable] = useState(true);
@@ -34,6 +41,7 @@ const NewPurchasesHeader = () => {
             inputRef.current.focus();
         }
     }, [disableButton]);
+    const [invoiceNo] = useState(`PO-${initialInvoiceNo}`);
 
 
     const handleDateChange = (date:any) => {
@@ -45,7 +53,7 @@ const NewPurchasesHeader = () => {
         setHeaderData((prevData)=>({...prevData,dueDate:date}))
     }
     useEffect(()=>{
-        setHeaderData((prevData)=>({...prevData,invoiceNo:"PO-"+234}))
+        setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo}))
        
     },[])
     useEffect(()=>{
@@ -111,7 +119,7 @@ const NewPurchasesHeader = () => {
                             <input
                                 ref={inputRef}
                                 className={`w-[25rem] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border-0 rounded-[5px] focus:border focus:border-solid focus:border-[#35BEB1] bg-inherit`}
-                                value={"153"}
+                                value={invoiceNo}
                                 disabled={disableButton}
                                 autoFocus={!disableButton}
                             />

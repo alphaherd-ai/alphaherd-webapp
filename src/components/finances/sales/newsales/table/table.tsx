@@ -589,7 +589,7 @@ useEffect(() => {
                     </div>
                         <NewsalesTotalAmout />
                 </div>
-            <NewsalesBottomBar />
+            <NewsalesBottomBar estimateData={otherData}/>
             </div>
         </>
     );

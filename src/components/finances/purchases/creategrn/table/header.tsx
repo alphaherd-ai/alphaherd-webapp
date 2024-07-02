@@ -18,12 +18,15 @@ import { useAppSelector } from '@/lib/hooks';
 import { DataContext } from "./DataContext";
 import { useSearchParams } from "next/navigation";
 import formatDateAndTime from "@/utils/formateDateTime";
+import { generateInvoiceNumber } from "@/utils/generateInvoiceNo";
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 const CreateGrnHeader = ({existingHeaderData}:any) => {
     const url=useSearchParams();
     const id=url.get('id');
+    const count=url.get('count');
+    const initialInvoiceNo =generateInvoiceNumber(Number(count));
     const { headerData, setHeaderData } = useContext(DataContext);
     const [startDate, setStartDate] = useState(new Date());
     const [isClearable, setIsClearable] = useState(true);
@@ -42,7 +45,7 @@ const CreateGrnHeader = ({existingHeaderData}:any) => {
         }
     }, [disableButton]);
 
-
+    const [invoiceNo]=useState(`PI-${initialInvoiceNo}`)
     const handleDateChange = (date:any) => {
         setStartDate(date);
         setHeaderData((prevData) => ({ ...prevData, date }));
@@ -57,7 +60,7 @@ const CreateGrnHeader = ({existingHeaderData}:any) => {
             console.log("this is header data",headerData)
         }
      else{
-        setHeaderData((prevData)=>({...prevData,invoiceNo:"PO-"+123}))}
+        setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo}))}
     },[])
     useEffect(()=>{
         if(!isLoading&&!error&&data){
@@ -124,7 +127,7 @@ const CreateGrnHeader = ({existingHeaderData}:any) => {
                             <input
                                 ref={inputRef}
                                 className={`w-[25rem] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border-0 rounded-[5px] focus:border focus:border-solid focus:border-[#35BEB1] bg-inherit`}
-                                value={"153"}
+                                value={invoiceNo}
                                 disabled={disableButton}
                                 autoFocus={!disableButton}
                             />):(

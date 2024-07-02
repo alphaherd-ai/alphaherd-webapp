@@ -3,8 +3,9 @@ import prismaClient from '../../../../../../../prisma';
 import { fetchFinanceId } from '@/utils/fetchBranchDetails';
 import recurringExpensesQueue from '@/lib/bull';
 import { calculateNextOccurrence } from '@/utils/calculateNextOccurrence';
+import { FinanceCreationType } from '@prisma/client';
 
-export const POST = async (req: NextRequest, { params }: { params: { type: string } }) => {
+export const POST = async (req: NextRequest, { params }: { params: { type: FinanceCreationType } }) => {
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
   }
@@ -33,6 +34,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: strin
 
     const finance = await prismaClient.financeTimeline.create({
       data: {
+        type: params.type,
         expenses: { connect: { id: expense.id } },
         createdAt: new Date(),
         FinanceSection: {
@@ -40,7 +42,8 @@ export const POST = async (req: NextRequest, { params }: { params: { type: strin
         },
       },
     });
-    if(expense.type=="Recurring"){
+    console.log(expense)
+    if(expense.type==FinanceCreationType.Expense_Recurring){
       const nextDate = calculateNextOccurrence(expense.recurringStartedOn!, expense.recurringRepeatType!);
       if (nextDate <= new Date(expense.recurringEndson!)) {
         recurringExpensesQueue.add({ expenseId: expense.id }, { delay: nextDate.getTime() - Date.now() });

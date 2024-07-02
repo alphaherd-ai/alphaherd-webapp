@@ -72,7 +72,7 @@ const ExsistingPurchasesHeader = ({otherData}:any) => {
                             <input
                                 ref={inputRef}
                                 className={`w-[25rem] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border-0 rounded-[5px] focus:border focus:border-solid focus:border-[#35BEB1] bg-inherit`}
-                                value={"153"}
+                                value={otherData.invoiceNo}
                                 disabled={disableButton}
                                 autoFocus={!disableButton}
                             />

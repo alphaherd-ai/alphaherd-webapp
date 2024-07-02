@@ -8,6 +8,7 @@ import React, {useContext, useState}  from 'react'
 import { Button } from '@nextui-org/react';
 import Select from 'react-select';
 import { DataContext } from './DataContext';
+import { useRouter } from 'next/navigation';
 
 type PopupProps = {
     onClose: () => void;
@@ -17,7 +18,7 @@ const ConvertToRecurringPopup: React.FC<PopupProps> = ({ onClose }:any) => {
     const { recurringData, setRecurringData } = useContext(DataContext);
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate]=useState(new Date());
-
+     const router=useRouter();
     const handleStartDateChange = (date:any) => {
         setStartDate(date);
         setRecurringData((prevData)=>({...prevData,startDate:date}));
@@ -28,10 +29,10 @@ const ConvertToRecurringPopup: React.FC<PopupProps> = ({ onClose }:any) => {
     }
 
     const Repeat = [
-        {value: "Every Day", label: "Every Day"},
-        {value: "Every Week", label: "Every Week"},
-        {value: "Every Month", label: "Every Month"},
-        {value: "Every Year", label: "Every Year"},
+        {value: "everyDay", label: "Every Day"},
+        {value: "everyWeek", label: "Every Week"},
+        {value: "everyMonth", label: "Every Month"},
+        {value: "everyYear", label: "Every Year"},
     ]
    
 
@@ -131,7 +132,7 @@ const ConvertToRecurringPopup: React.FC<PopupProps> = ({ onClose }:any) => {
             </div>
 
             <div className='w-full flex justify-end'>
-                    <Button className="px-2 py-2.5 bg-navBar rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer">
+                    <Button className="px-2 py-2.5 bg-navBar rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer" onClick={onClose}>
                         <Image src={check} alt='check' /> 
                         <span className='text-white text-base font-medium pr-2'>Save</span>
                     </Button>

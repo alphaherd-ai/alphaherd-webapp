@@ -1,5 +1,6 @@
 
-import React from 'react'
+'use client';
+import React, { useState } from 'react'
 import FinancesExpensesTableBottombar from './bottombar'
 import FinancesExpensesTableHeader from './header'
 
@@ -11,10 +12,18 @@ import Link from 'next/link'
 
 
 const FinancesExpensesTable = () => {
+  const [nonrecurringCount, setNonRecurringCount] = useState(0);
+  const [recurringCount, setRecurringCount] = useState(0);
+ 
+
+  const handleCountsChange = (counts:any) => {
+    setRecurringCount(counts.nonrecurringCount);
+    setNonRecurringCount(counts.recurringCount);
+  };
   return (
    
         <div className='flex flex-col w-full box-border mb-10  '>
-         <FinancesExpensesTableHeader/>
+         <FinancesExpensesTableHeader recurringCount={recurringCount} nonrecurringCount={nonrecurringCount}/>
               <div className='flex  w-full  box-border bg-gray-100  h-12 items-center justify-evenly border-b border-neutral-400 text-gray-500'>
                <div className='flex text-gray-500 text-base font-medium  w-[6rem] '>Date</div>
                 <div className=' flex text-gray-500 text-base font-medium  w-[6rem] '>Time</div>
@@ -28,7 +37,7 @@ const FinancesExpensesTable = () => {
                 <div className=' flex text-gray-500 text-base font-medium  w-[12rem] '>Status</div>
             </div>
 
-<FinancesExpensesTableItem/>
+<FinancesExpensesTableItem onCountsChange={handleCountsChange}/>
 <FinancesExpensesTableBottombar/>
      
         </div>

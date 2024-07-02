@@ -44,7 +44,7 @@ const CreateGrnBottomBar = ({orderData}:any) => {
         const data={
             distributor: (id === null) ?allData.headerData.distributor.value:orderData.distributor,
             notes: (id === null) ?allData.headerData.notes:orderData.notes,
-            invoiceNo: "jlaksd",
+            invoiceNo: (id === null) ?allData.headerData.invoiceNo:orderData.invoiceNo,
             dueDate: (id === null) ?allData.headerData.dueDate:orderData.dueDate,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
