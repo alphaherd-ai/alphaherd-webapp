@@ -23,9 +23,18 @@ import { DataContext } from './DataContext';
 import { useAppSelector } from "@/lib/hooks";
 import { Tax } from '@prisma/client';
 import formatDateAndTime from '@/utils/formateDateTime';
-import useSWR from 'swr';
 import { useSearchParams } from 'next/navigation';
-
+import useSWR from 'swr';
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
+function DataFromExpense(id:number|null,branchId:number|null){
+    const {data,error,isLoading} =useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/${id}/?branchId=${branchId}`,fetcher);
+    return {
+       data,
+       isLoading,
+       error
+    }
+}
 const NewExpensesTable = () => {
     const { tableData, setTableData } = useContext(DataContext);
     const [otherData, setOtherData] = useState({});
@@ -33,6 +42,35 @@ const NewExpensesTable = () => {
     const url= useSearchParams();
     const id=url.get('id');
     const { tableData: items, setTableData: setItems } = useContext(DataContext);   
+
+    let expenseData:any=null,isExpenseDataLoading=false,isExpenseDataError=false;
+    if(id){
+        const {data,isLoading,error}=DataFromExpense(Number(id),appState.currentBranchId);
+        expenseData=data;
+        isExpenseDataError=error;
+        isExpenseDataLoading=isLoading;        
+    }
+
+    useEffect(()=>{
+            if (!isExpenseDataLoading && expenseData && !isExpenseDataError) {
+                const {items,...otherData}=expenseData;
+                // eslint-disable-next-line react-hooks/rules-of-hooks
+                setOtherData(otherData)
+              const shallowDataCopy = [...items]; 
+              const itemData = shallowDataCopy.map((item: any) => ({
+                id:item.id,
+                itemName:item.name,
+                sellingPrice:item.sellingPrice,
+                gst:item.taxAmount,
+                category:item.category
+              }));
+              setItems(itemData);
+              
+            }
+          }, [expenseData]); 
+
+
+
     const taxOptions = [
         { value: 'Tax excl.', label: 'Tax excl.' },
         { value: 'Tax incl.', label: 'Tax incl.' }
@@ -158,7 +196,7 @@ useEffect(() => {
                                         </Link>
                                         <Link className='no-underline flex item-center' href='/finance/overview'>
                                             <div className='text-base p-4  text-white flex '>
-                                                <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Estimate</div>
+                                                <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Expense</div>
                                         </Link>
 
                                     </div>
@@ -173,7 +211,7 @@ useEffect(() => {
                     </div> */}
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px]">
-                    <NewExpensesHeader  />
+                    <NewExpensesHeader existingHeaderData={otherData} />
 
                     <div className="w-full rounded-md border border-solid border-borderGrey">
                     <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
@@ -292,7 +330,7 @@ useEffect(() => {
                                         }}
                                         onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
                                     />):(
-                                        item.gst
+                                       ` ${item.gst*100}%`
                                     )}
                                 </div>
 
@@ -367,7 +405,7 @@ useEffect(() => {
                 </div>
                     <NewExpensesTotalAmout />
             </div>
-            <NewExpensesBottomBar />
+            <NewExpensesBottomBar expenseData={expenseData}/>
         </div>
 
     {showPopup && <Popup onClose={togglePopup} />}

@@ -13,6 +13,7 @@ import Image from "next/image"
 import DatePicker from "react-datepicker"
 import 'react-datepicker/dist/react-datepicker.css';
 import { Button } from "@nextui-org/react";
+import { useSearchParams } from "next/navigation";
 
 const NewRecurringHeader = () => {
 

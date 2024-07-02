@@ -18,9 +18,11 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@nextui-org/react"
 
 
-const NewExpensesBottomBar = () => {
+const NewExpensesBottomBar = ({expenseData}:any) => {
     const { headerData, tableData, totalAmountData,recurringData } = useContext(DataContext);
     const router=useRouter();
+    const url = useSearchParams();
+    const id = url.get('id');
     const appState = useAppSelector((state) => state.app);
     const handleSubmit = async () => {
         const allData = {headerData, tableData, totalAmountData,recurringData};
@@ -32,23 +34,24 @@ const NewExpensesBottomBar = () => {
         const items = tableData.map(data => ({
             sellingPrice:data.sellingPrice,
             taxAmount:data.gst,
-            name:data.itemName
+            name:data.itemName,
+            category:data.category
     }));
      const data={
-            party: allData.headerData.customer.value,
-            notes: allData.headerData.notes,
+            party: (id === null) ? allData.headerData.customer.value : expenseData.party,
+            notes:(id === null) ?allData.headerData.notes:expenseData.notes,
             subTotal: allData.totalAmountData.subTotal,
-            invoiceNo: "Expense-0001",
-            dueDate: allData.headerData.date,
+            invoiceNo: (id === null) ?allData.headerData.invoiceNo:expenseData.invoiceNo,
+            dueDate: (id === null) ?allData.headerData.dueDate:expenseData.dueDate,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
             totalCost: allData.totalAmountData.totalCost,
             overallDiscount: allData.totalAmountData.gst.value,
             totalQty:totalQty,
             recurringStartedOn: allData.recurringData.startDate ,
-            recurringRepeatType: "everyDay",
+            recurringRepeatType: allData.recurringData?.repeatType?.value,
             recurringEndson:     allData.recurringData.endDate,
-            type:allData.recurringData.startDate?"Recurring":"Non-Recurring",
+            type:allData.recurringData.startDate?FinanceCreationType.Expense_Recurring:FinanceCreationType.Expense_NonRecurring,
             items:{
                 create:items
             }
@@ -63,7 +66,7 @@ const NewExpensesBottomBar = () => {
             orgBranch:appState.currentOrg.orgName
         }
         try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/create/${"Recurring"}?branchId=${appState.currentBranchId}`,data)
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/create/${data.type}?branchId=${appState.currentBranchId}`,data)
             const notif= await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`,notifData)
             if (!response.data) {
                 throw new Error('Network response was not ok');

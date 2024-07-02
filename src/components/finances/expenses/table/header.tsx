@@ -19,7 +19,7 @@ import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/reac
 
 
 
-const FinancesExpensesTableHeader = () => {
+const FinancesExpensesTableHeader = ({recurringCount,nonrecurringCount}:any) => {
     const currentRoute = usePathname();
 
     const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
@@ -147,7 +147,7 @@ const FinancesExpensesTableHeader = () => {
       
         {/* <Popover placement="bottom-end" showArrow offset={10}>
             <PopoverTrigger> */}
-            <Link className='no-underline flex item-center' href='/finance/expenses/newexpenses'>
+            <Link className='no-underline flex item-center' href={{pathname:'/finance/expenses/newexpenses',query:{count:nonrecurringCount}}}>
                 <Button
                     variant="solid"
                     className="capitalize flex h-9 py-2.5 cursor-pointer border-none bg-black text-white rounded-lg ">

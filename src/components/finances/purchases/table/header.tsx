@@ -19,7 +19,7 @@ import { FinanceCreationType } from '@prisma/client';
 
 
 
-const FinancesPurchasesTableHeader = () => {
+const FinancesPurchasesTableHeader = ({invoiceCount,orderCount,returnCount}:any) => {
     const currentRoute = usePathname();
 
     const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
@@ -163,15 +163,15 @@ const FinancesPurchasesTableHeader = () => {
                    
                     <div className='flex flex-col'>
                     
-                    <Link className='no-underline flex item-center' href='/finance/purchases/order'>
+                    <Link className='no-underline flex item-center' href={{pathname:'/finance/purchases/order',query:{count:orderCount}}}>
                     <div className='text-base p-4   text-white flex '>
                     <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Purchase Order</div>
                     </Link>
-                    <Link className='no-underline flex item-center' href='/finance/purchases/creategrn'>
+                    <Link className='no-underline flex item-center' href={{pathname:'/finance/purchases/creategrn',query:{count:invoiceCount}}}>
                     <div className='text-base p-4  text-white flex '>
                     <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Create GRN</div>
                     </Link>
-                    <Link className='no-underline flex item-center' href='/finance/purchases/return'>
+                    <Link className='no-underline flex item-center' href={{pathname:'/finance/purchases/return',query:{count:returnCount}}}>
                     <div className='text-base p-4  text-white flex '>
                     <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Purchase Return</div>
                     </Link>
