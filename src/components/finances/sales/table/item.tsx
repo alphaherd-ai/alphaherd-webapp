@@ -32,15 +32,17 @@ const FinancesSalesTableItem = ({onCountsChange}:any) => {
     
   const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`,fetcher)
   useEffect(()=>{
-    const filteredData=data?.filter((sale:any)=>{
-      if(currentUrl.get('type')==='all'){
-        return true;
-      }else {
-        return sale.type===currentUrl.get('type');
-      }
-    })
-    
-    setSales(filteredData);
+    if(data&&!error&&!isLoading){
+      const filteredData=data?.filter((sale:any)=>{
+        if(currentUrl.get('type')==='all'){
+          return true;
+        }else {
+          return sale.type===currentUrl.get('type');
+        }
+      })
+      
+      setSales(filteredData);
+    }
   },[data,setSales])
 
   const [invoiceCount, setInvoiceCount] = useState(0);
@@ -103,7 +105,8 @@ if(isLoading&&!data)return (<Loading/>)
       
       <Popover placement="left" showArrow offset={10}>
           <PopoverTrigger>
-              <Button color="gray-400"
+              <Button 
+              // color="gray-400"
                   variant="solid"
                   className="capitalize flex border-none  text-gray rounded-lg ">  
                   <div className='flex items-center '><Image src={Menu} alt='Menu' className='w-5  h-5' /></div></Button>

@@ -19,7 +19,7 @@ const FinacesOverviewTableItem = () => {
     if(!isLoading&&!error&&data){
       setTimeline(data);
     }
-  })
+  },[data,isLoading,error])
   if(isLoading)return (<Loading/>)
   return (
    <>
@@ -33,13 +33,13 @@ const FinacesOverviewTableItem = () => {
               data.type === FinanceCreationType.Sales_Invoice ? 'sales/existingsales' : 
               data.type===FinanceCreationType.Sales_Return?'sales/existingsalesreturn':"",
     query: { id: data.id}
-  }}> <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{data.type}</div></Link>
-                <div className='w-1/12 flex  items-center  px-28 text-neutral-400 text-base font-medium'>{data.sale?.customer}</div>
-                <div className='w-1/12 flex  items-center  px-6 ml-36 text-neutral-400 text-base font-medium'>{data.sale?.invoiceNo}</div>
-                <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{(data.sale?.totalCost)?.toFixed(2)}</div>
-                <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{data.sale?.totalQty}</div>
-                <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{formatDateAndTime(data.sale?.dueDate).formattedDate}</div>
-                <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium text-green-500'><span className='bg-green-100 px-1'>{data.sale?.status}</span> </div>
+  }}> <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{data.type||data.expense?.type||"unknown"}</div></Link>
+                <div className='w-1/12 flex  items-center  px-28 text-neutral-400 text-base font-medium'>{data.sale?.customer||data.purchases?.distributor||data.expenses?.party||"unknown"}</div>
+                <div className='w-1/12 flex  items-center  px-6 ml-36 text-neutral-400 text-base font-medium'>{data.sale?.invoiceNo||data.purchases?.invoiceNo||data.expenses?.invoiceNo}</div>
+                <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{(data.sale?.totalCost||data.purchases?.totalCost||data.expenses?.totalCost)?.toFixed(2)}</div>
+                <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{data.sale?.totalQty||data.purchases?.totalQty||data.expenses?.totalQty}</div>
+                <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{formatDateAndTime(data.sale?.dueDate||data.purchases?.dueDate||data.expenses?.dueDate).formattedDate}</div>
+                <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium text-green-500'><span className='bg-green-100 px-1'>{data.sale?.status||data.purchases?.status||data.expenses?.status}</span> </div>
 
         </div>
         )}

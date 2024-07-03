@@ -9,7 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       backgroundImage: {
-        'background-img': "url('/assets/icons/loginsignup/First.png')",
+        'backgroundImg': "url('/assets/icons/loginsignup/First time.svg')",
       },
       height: {
         '7p': '7%',
@@ -32,6 +32,7 @@ const config: Config = {
       },
       boxShadow: {
         'navBar': '0px 4px 6px 0px rgba(0, 0, 0, 0.20)',
+        "left" : "-5px 0px 20px rgba(0, 0, 0, 0.20)",
       },
       padding: {
         '2p': '2vw',

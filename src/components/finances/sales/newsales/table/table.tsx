@@ -64,7 +64,7 @@ function useProductBatchfetch(id:number|null){
         batchError:error
     }
 }
-function dataFromEstimate(id:number|null,branchId:number|null){
+function DataFromEstimate(id:number|null,branchId:number|null){
     const {data,error,isLoading} =useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/${id}/?branchId=${branchId}`,fetcher);
     return {
        data,
@@ -86,7 +86,7 @@ const NewsalesTable = () => {
     let estimateData:any=null,isEstimateDataLoading=false,isEstimateDataError=false;
     const { tableData: items, setTableData: setItems } = useContext(DataContext);   
     if(id){
-        const {data,isLoading,error}=dataFromEstimate(Number(id),appState.currentBranchId);
+        const {data,isLoading,error}=DataFromEstimate(Number(id),appState.currentBranchId);
         estimateData=data;
         isEstimateDataError=error;
         isEstimateDataLoading=isLoading;        
@@ -332,12 +332,13 @@ const handleBatchSelect = useCallback(async (selectedProduct: any, index: number
 }, [items, products]);
 
 
-if(id==null){
-    useEffect(() => {
+useEffect(() => {
+    if (id == null) {
         setItems(items);
-    setTableData(items)   
-}, [items]);
-}
+        setTableData(items);  
+    }
+}, [id, items]);
+
    
 
 
@@ -588,7 +589,7 @@ if(id==null){
                     </div>
                         <NewsalesTotalAmout />
                 </div>
-            <NewsalesBottomBar />
+            <NewsalesBottomBar estimateData={otherData}/>
             </div>
         </>
     );

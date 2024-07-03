@@ -4,28 +4,35 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import calicon from "../../../../../assets/icons/finance/calendar_today.svg";
 import check from "../../../../../assets/icons/finance/check.svg"
-import React, {useState}  from 'react'
+import React, {useContext, useState}  from 'react'
 import { Button } from '@nextui-org/react';
 import Select from 'react-select';
 import { DataContext } from './DataContext';
+import { useRouter } from 'next/navigation';
 
 type PopupProps = {
     onClose: () => void;
 }
 
-const ConvertToRecurringPopup: React.FC<PopupProps> = ({ onClose }) => {
-
+const ConvertToRecurringPopup: React.FC<PopupProps> = ({ onClose }:any) => {
+    const { recurringData, setRecurringData } = useContext(DataContext);
     const [startDate, setStartDate] = useState(new Date());
-
-    const handleDateChange = (date:any) => {
+    const [endDate, setEndDate]=useState(new Date());
+     const router=useRouter();
+    const handleStartDateChange = (date:any) => {
         setStartDate(date);
+        setRecurringData((prevData)=>({...prevData,startDate:date}));
     };
+    const handleEndDateChange =(date:any)=>{
+        setEndDate(date);
+        setRecurringData((prevData)=>({...prevData,endDate:date}));
+    }
 
     const Repeat = [
-        {value: "Every Day", label: "Every Day"},
-        {value: "Every Week", label: "Every Week"},
-        {value: "Every Month", label: "Every Month"},
-        {value: "Every Year", label: "Every Year"},
+        {value: "everyDay", label: "Every Day"},
+        {value: "everyWeek", label: "Every Week"},
+        {value: "everyMonth", label: "Every Month"},
+        {value: "everyYear", label: "Every Year"},
     ]
    
 
@@ -62,6 +69,7 @@ const ConvertToRecurringPopup: React.FC<PopupProps> = ({ onClose }) => {
                             options={Repeat}
                             isMulti={false}
                             name="repeat"
+                            onChange={(selectedOption) => setRecurringData((prevData) => ({ ...prevData, repeatType: selectedOption }))}
                         />
                     </div>
                 </div>
@@ -72,7 +80,7 @@ const ConvertToRecurringPopup: React.FC<PopupProps> = ({ onClose }) => {
                         <DatePicker
                                         className="w-[10rem]"
                                         selected={startDate}
-                                        onChange={handleDateChange}
+                                        onChange={handleStartDateChange}
                                         calendarClassName="react-datepicker-custom"
                                         customInput={
                                             <div className='relative'>
@@ -92,18 +100,18 @@ const ConvertToRecurringPopup: React.FC<PopupProps> = ({ onClose }) => {
                                         }
                                     />
                         </div>
-                        <div><span className='text-gray-500 text-base font-medium '>Start Date</span></div>
+                        <div><span className='text-gray-500 text-base font-medium '>End Date</span></div>
                         <div className='relative'>
                         <DatePicker
                                         className="w-[10rem]"
-                                        selected={startDate}
-                                        onChange={handleDateChange}
+                                        selected={endDate}
+                                        onChange={handleEndDateChange}
                                         calendarClassName="react-datepicker-custom"
                                         customInput={
                                             <div className='relative'>
                                                 <input
                                                     className="w-[10rem] h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={startDate.toLocaleDateString()}
+                                                    value={endDate.toLocaleDateString()}
                                                     readOnly
                                                 />
                                                 <Image
@@ -124,7 +132,7 @@ const ConvertToRecurringPopup: React.FC<PopupProps> = ({ onClose }) => {
             </div>
 
             <div className='w-full flex justify-end'>
-                    <Button className="px-2 py-2.5 bg-navBar rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer">
+                    <Button className="px-2 py-2.5 bg-navBar rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer" onClick={onClose}>
                         <Image src={check} alt='check' /> 
                         <span className='text-white text-base font-medium pr-2'>Save</span>
                     </Button>

@@ -96,7 +96,7 @@ const FinancesTransactionsTableHeader = () => {
 <DropdownTrigger>
     <Button
         //   variant="bordered" 
-        color="gray-400"
+        // color="gray-400"
         variant="solid"
         className="capitalize border-none  bg-transparent rounded-lg"
     >
@@ -110,7 +110,7 @@ const FinancesTransactionsTableHeader = () => {
     disallowEmptySelection
     selectionMode="single"
     selectedKeys={selectedSort}
-    onSelectionChange={setselectedSort}
+    // onSelectionChange={setselectedSort}
 >
     <DropdownItem
         className=" p-2 text-base" key="Category:text">Sort:Recently Used</DropdownItem>
@@ -141,7 +141,7 @@ const FinancesTransactionsTableHeader = () => {
     disallowEmptySelection
     selectionMode="single"
     selectedKeys={selectedCategory}
-    onSelectionChange={setSelectedCategory}
+    // onSelectionChange={setSelectedCategory}
 >
     <DropdownItem
         className=" p-2" key="Category:text">Category: Text</DropdownItem>

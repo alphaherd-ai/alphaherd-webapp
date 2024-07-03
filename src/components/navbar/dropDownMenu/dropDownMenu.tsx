@@ -56,7 +56,7 @@ const DropdownMenu = () => {
 
   useEffect(() => {
     fetchOrgAndBranchMapping()
-  }, []);
+  }, [fetchOrgAndBranchMapping]);
 
 
   return (

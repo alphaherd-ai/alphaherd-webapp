@@ -16,7 +16,7 @@ import { Button } from "@nextui-org/react"
 import { useRouter } from "next/navigation"
 
 
-const NewsalesReturnBottomBar = () => {
+const NewsalesReturnBottomBar = ({invoiceData}:any) => {
     const { headerData, tableData, totalAmountData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
     const url=useSearchParams();
@@ -38,11 +38,11 @@ const NewsalesReturnBottomBar = () => {
             name:data.itemName,
     }));
      const data={
-            customer: (id===null)?allData.headerData.customer.value:allData.headerData.customer,
-            notes: allData.headerData.notes,
+            customer: (id===null)?allData.headerData.customer.value:invoiceData.customer,
+            notes: (id===null)?allData.headerData.notes:invoiceData.notes,
             subTotal: allData.totalAmountData.subTotal,
-            invoiceNo:allData.headerData.invoiceNo,
-            dueDate: allData.headerData.dueDate,
+            invoiceNo:(id===null)?allData.headerData.invoiceNo:invoiceData.invoiceNo,
+            dueDate:(id===null)?allData.headerData.dueDate:invoiceData.dueDate,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
             totalCost: allData.totalAmountData.totalCost,

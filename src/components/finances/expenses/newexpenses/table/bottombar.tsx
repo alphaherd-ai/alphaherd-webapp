@@ -14,17 +14,18 @@ import { DataContext } from './DataContext'
 import { FinanceCreationType, Notif_Source } from '@prisma/client'
 import axios from "axios"
 import { useAppSelector } from '@/lib/hooks';
-import { useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@nextui-org/react"
 
 
-const NewExpensesBottomBar = () => {
-    const { headerData, tableData, totalAmountData } = useContext(DataContext);
+const NewExpensesBottomBar = ({expenseData}:any) => {
+    const { headerData, tableData, totalAmountData,recurringData } = useContext(DataContext);
+    const router=useRouter();
+    const url = useSearchParams();
+    const id = url.get('id');
     const appState = useAppSelector((state) => state.app);
-    const url=useSearchParams();
-    const id=url.get('id');
     const handleSubmit = async () => {
-        const allData = {headerData, tableData, totalAmountData};
+        const allData = {headerData, tableData, totalAmountData,recurringData};
         console.log("this is all data",allData)
         let totalQty=0;
         tableData.forEach(data => {
@@ -33,20 +34,24 @@ const NewExpensesBottomBar = () => {
         const items = tableData.map(data => ({
             sellingPrice:data.sellingPrice,
             taxAmount:data.gst,
-            name:data.itemName
+            name:data.itemName,
+            category:data.category
     }));
      const data={
-            party: (id===null)?allData.headerData.customer.value:allData.headerData.customer,
-            notes: allData.headerData.notes,
+            party: (id === null) ? allData.headerData.customer.value : expenseData.party,
+            notes:(id === null) ?allData.headerData.notes:expenseData.notes,
             subTotal: allData.totalAmountData.subTotal,
-            invoiceNo: "Expense-0001",
-            dueDate: allData.headerData.date,
+            invoiceNo: (id === null) ?allData.headerData.invoiceNo:expenseData.invoiceNo,
+            dueDate: (id === null) ?allData.headerData.dueDate:expenseData.dueDate,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
             totalCost: allData.totalAmountData.totalCost,
             overallDiscount: allData.totalAmountData.gst.value,
             totalQty:totalQty,
-            type:"Non-Recurring",
+            recurringStartedOn: allData.recurringData.startDate ,
+            recurringRepeatType: allData.recurringData?.repeatType?.value,
+            recurringEndson:     allData.recurringData.endDate,
+            type:allData.recurringData.startDate?FinanceCreationType.Expense_Recurring:FinanceCreationType.Expense_NonRecurring,
             items:{
                 create:items
             }
@@ -57,15 +62,16 @@ const NewExpensesBottomBar = () => {
             source:Notif_Source.Expense_Invoice,
             totalCost:data.totalCost,
             dueDate:data.dueDate,
-            orgId:appState.currentBranch.org.id,
-            orgBranch:appState.currentBranch.org.orgName
+            orgId:appState.currentOrgId,
+            orgBranch:appState.currentOrg.orgName
         }
         try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/create/${"Recurring"}?branchId=${appState.currentBranchId}`,data)
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/create/${data.type}?branchId=${appState.currentBranchId}`,data)
             const notif= await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`,notifData)
             if (!response.data) {
                 throw new Error('Network response was not ok');
             }
+            router.back()
         } catch (error) {
             console.error('Error:', error);
         }

@@ -9,7 +9,7 @@ type PopupProps = {
     onClose: () => void;
 }
 
-const NewPartyPopup: React.FC<PopupProps> = ({ onClose }) => {
+const NewPartyPopup: React.FC<PopupProps> = ({ onClose }:any) => {
 
     const [isSelected, setIsSelected] = useState(false)
     const [isSelected1, setIsSelected1] = useState(false)

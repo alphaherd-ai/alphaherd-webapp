@@ -18,7 +18,7 @@ import formatDateAndTime from "@/utils/formateDateTime"
 import { generatePdfForInvoice } from "@/utils/salesPdf"
 import { useRouter } from "next/navigation"
 
-const NewsalesBottomBar = () => {
+const NewsalesBottomBar = ({estimateData}:any) => {
     const { headerData, tableData, totalAmountData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
     const url = useSearchParams();
@@ -41,11 +41,11 @@ const NewsalesBottomBar = () => {
             discount:data.discount
         }));
         const data = {
-            customer: (id === null) ? allData.headerData.customer.value : allData.headerData.customer,
-            notes: allData.headerData.notes,
+            customer: (id === null) ? allData.headerData.customer.value : estimateData.customer,
+            notes: (id === null) ?allData.headerData.notes:estimateData.notes,
             subTotal: allData.totalAmountData.subTotal,
-            invoiceNo: allData.headerData.invoiceNo,
-            dueDate: allData.headerData.dueDate,
+            invoiceNo: (id === null) ?allData.headerData.invoiceNo:estimateData.invoiceNo,
+            dueDate: (id === null) ?allData.headerData.dueDate:estimateData.dueDate,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
             totalCost: allData.totalAmountData.totalCost,
@@ -63,8 +63,8 @@ const NewsalesBottomBar = () => {
             source: Notif_Source.Sales_Invoice,
             totalCost: data.totalCost,
             dueDate: data.dueDate,
-            orgId: appState.currentBranch.org.id,
-            orgBranch: appState.currentBranch.org.orgName
+            orgId: appState.currentOrgId,
+            orgBranch: appState.currentOrg.orgName
         }
         console.log(JSON.stringify(data))
         console.log("this is notif data", notifData)

@@ -50,7 +50,7 @@ const ExistingsalesTable = () => {
               }));
               setItems(itemData);
             }
-          }, [data]); 
+          }, [data,error,isLoading]); 
           
     console.log(items)
     const batchOptions = [
