@@ -223,7 +223,7 @@ const categoryOptions = [
                                 className="text-neutral-400 text-base font-medium focus:outline-none  rounded-[5px] focus:border focus:border-[#35BEB1] w-full"
                                 isClearable={false}
                                 isSearchable={true}
-                                options={LinkProducts}
+                                options={gstOptions}
                                 isMulti={true}
                                 name="linkProducts"
                             onChange={(value) => handleChange("linkProducts", value)}

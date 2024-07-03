@@ -70,6 +70,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
     const [batches,setBatches] = useState<any[]>([]);
     const [filteredBatches,setFilteredBatches]=useState<any[]>([]);
     const [inventory, setInventory] = useState<any[]>([]);
+    const [formData, setFormData] = useState<any>({});
     const appState = useAppSelector((state) => state.app)
 
 
@@ -125,6 +126,10 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
         }));
         setInventory(updatedInventory);
     }, [inventory]);
+
+    const handleChange = (field: string, value: any) => {
+        setFormData({ ...formData, [field]: value });
+    };
 
     const handleDeleteRow = useCallback((index: number) => {
         const updatedInventory = [...inventory];
@@ -303,6 +308,14 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
             alert('Error updating inventory. Please try again.');
         }
     },[inventory]);
+
+    const Reasons = [
+        {value: "Damaged", label: "Damaged"},
+        {value: "Expired", label: "Expired"},
+        {value: "Quality Issues", label: "Quality Issues"},
+        {value: "Wrong Item", label: "Wrong Item"},
+        {value: "Other(mention reason)", label: "Other(mention reason)"},
+    ]
     
 
     return (
@@ -344,6 +357,9 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                             <div className=' flex text-gray-500 text-base font-medium  w-[3rem]'>No.</div>
                             <div className=' flex text-gray-500 text-base font-medium  w-[12rem]'>Product</div>
                             <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>Quantity</div>
+                            {selectedOption === Stock.StockOUT && (
+                                <div className=' flex text-gray-500 text-base font-medium  w-[8rem]'>Reason</div>
+                            )}
                             <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>Batch No.</div>
                             <div className=' flex text-gray-500 text-base font-medium  w-[8rem]'>Expiry</div>
                             <div className=' flex text-gray-500 text-base font-medium  w-[5rem]'>Barcode</div>
@@ -351,7 +367,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                             <div className=' flex text-gray-500 text-base font-medium  w-[8rem]'>Distributor</div>
                             <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>Total Cost</div>
                             <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>MRP</div>
-                            <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>Selling Price</div>
+                            <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>Selling Price</div>                        
                             <div className=' flex text-gray-500 text-base font-medium  w-[2rem]'></div>
                         </div>
                         {inventory.map((item, index) => (
@@ -378,6 +394,21 @@ const Popup2: React.FC<PopupProps> = ({ onClose }) => {
                                         <Image className="w-4 h-2" src={add1icon} alt="+" />
                                     </button>
                                 </div>
+                                {selectedOption === Stock.StockOUT && (
+                                    <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
+                                        <Select
+                                            className=" text-neutral-400 text-base font-medium focus:outline-none  rounded-[5px] focus:border focus:border-[#35BEB1] w-full"
+                                            placeholder="Select clinic staff"
+                                            isClearable={false}
+                                            isSearchable={true}
+                                            options={Reasons}
+                                            isMulti={true}
+                                            name="Reasons"
+                                            onChange={(value) => handleChange("reasons", value)}
+                                        />
+                                    </div>
+                                )}
+                                
                                 <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>
                                     { selectedOption===Stock.StockIN ?(
                                     <input
