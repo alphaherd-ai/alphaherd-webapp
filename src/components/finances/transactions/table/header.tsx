@@ -89,7 +89,7 @@ const FinancesTransactionsTableHeader = ({transactions}:any) => {
 <div className='flex items-center'>
         
 
-        <div onClick={togglePopup1} className='mr-4 flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'>
+        <div onClick={togglePopup1} className='cursor-pointer mr-4 flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'>
             <Image src={Download} alt='Download' className='w-4  h-4' />
         </div>
         
