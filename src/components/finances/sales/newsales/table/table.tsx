@@ -590,7 +590,7 @@ const NewsalesTable = () => {
                     </div>
                         <NewsalesTotalAmout />
                 </div>
-            <NewsalesBottomBar />
+            <NewsalesBottomBar estimateData={otherData}/>
             </div>
         </>
     );

@@ -38,7 +38,7 @@ const NewPurchasesBottomBar = () => {
         const data={
             distributor: allData.headerData.distributor.value,
             notes: allData.headerData.notes,
-            invoiceNo: "jlaksd",
+            invoiceNo: allData.headerData.invoiceNo,
             dueDate: allData.headerData.dueDate,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,

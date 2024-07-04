@@ -13,7 +13,9 @@ import Loading from '@/app/loading';
 import { FinanceCreationType } from '@prisma/client';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
-const FinancesPurchasesTableItem = () => {
+
+const FinancesPurchasesTableItem = ({onCountsChange}:any) => {
+
   const appState = useAppSelector((state) => state.app);
   const [purchases,setPurchases]=useState<any[]>([]);
   const currentUrl=useSearchParams();
@@ -32,6 +34,33 @@ useEffect(()=>{
   }
 },[data,setPurchases])
 
+
+const [invoiceCount, setInvoiceCount] = useState(0);
+  const [orderCount, setOrderCount] = useState(0);
+  const [returnCount, setReturnCount] = useState(0);
+  useEffect(() => {
+    if (data) {
+      setInvoiceCount(data.filter((purchase:any) => purchase.type === FinanceCreationType.Purchase_Invoice).length);
+      setOrderCount(data.filter((purchase:any) => purchase.type === FinanceCreationType.Purchase_Order).length);
+      setReturnCount(data.filter((purchase:any) => purchase.type === FinanceCreationType.Purchase_Return).length);
+    }
+  }, [data]);
+ 
+
+  const handleCounts = () => {
+   
+    if (onCountsChange) {
+      onCountsChange({
+        invoiceCount,
+        orderCount,
+        returnCount,
+      });
+    }
+  };
+  useEffect(() => {
+    handleCounts(); 
+  }, [purchases]);
+
 if(isLoading&&!data)return (<Loading/>)
   return (
    <div>
@@ -49,7 +78,7 @@ if(isLoading&&!data)return (<Loading/>)
     <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{purchase.type}</div></Link>
     <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{purchase.distributor}</div>
     <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{purchase.invoiceNo}</div>
-    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{purchase.totalCost}</div>
+    <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{(purchase.totalCost).toFixed(2)}</div>
     <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{purchase.totalQty} items</div>
     <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{formatDateAndTime(purchase.dueDate).formattedDate}</div>
     <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium text-green-500'><span className='bg-green-100 px-1'> <Tooltip content="message" className='bg-black text-white p-1 px-3 text-xs rounded-lg'>

@@ -64,7 +64,7 @@ function useProductBatchfetch(id:number|null){
         batchError:error
     }
 }
-function DataFromEstimate(id:number|null,branchId:number|null){
+function DataFromInvoice(id:number|null,branchId:number|null){
     const {data,error,isLoading} =useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/${id}/?branchId=${branchId}`,fetcher);
     return {
        data,
@@ -82,18 +82,18 @@ const NewsalesReturnTable = () => {
     const appState = useAppSelector((state) => state.app)
     const url= useSearchParams();
     const id=url.get('id');
-    let estimateData:any=null,isEstimateDataLoading=false,isEstimateDataError=false;
+    let invoiceData:any=null,isInvoiceDataLoading=false,isInvoiceDataError=false;
     const { tableData: items, setTableData: setItems } = useContext(DataContext);   
     if(id){
-        const {data,isLoading,error}=DataFromEstimate(Number(id),appState.currentBranchId);
-        estimateData=data;
-        isEstimateDataError=error;
-        isEstimateDataLoading=isLoading;        
+        const {data,isLoading,error}=DataFromInvoice(Number(id),appState.currentBranchId);
+        invoiceData=data;
+        isInvoiceDataError=error;
+        isInvoiceDataLoading=isLoading;        
     }
 
     useEffect(()=>{
-            if (!isEstimateDataLoading && estimateData && !isEstimateDataError) {
-                const {items,...otherData}=estimateData;
+            if (!isInvoiceDataLoading && invoiceData && !isInvoiceDataError) {
+                const {items,...otherData}=invoiceData;
                 setOtherData(otherData)
               const shallowDataCopy = [...items]; 
               const itemData = shallowDataCopy.map((item: any) => ({
@@ -109,7 +109,7 @@ const NewsalesReturnTable = () => {
               setItems(itemData);
               
             }
-          }, [estimateData]); 
+          }, [invoiceData]); 
     
     const taxOptions = [
         { value: 'Tax excl.', label: 'Tax excl.' },
@@ -339,7 +339,7 @@ useEffect(() => {
                                     <div className='flex flex-col'>
                                         <Link className='no-underline flex item-center' href='/finance/overview'>
                                             <div className='text-base p-4   text-white flex '>
-                                                <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Sales Estimate</div>
+                                                <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Sales Invoice</div>
                                         </Link>
                                         <Link className='no-underline flex item-center' href='/finance/overview'>
                                             <div className='text-base p-4  text-white flex '>
@@ -532,7 +532,7 @@ useEffect(() => {
                     </div>
                         <NewsalesReturnTotalAmout />
                 </div>
-                <NewsalesReturnBottomBar />
+                <NewsalesReturnBottomBar invoiceData={otherData}/>
             </div>
 
 

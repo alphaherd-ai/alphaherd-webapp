@@ -12,6 +12,7 @@ import { useSearchParams } from 'next/navigation';
 import { previousDay } from 'date-fns';
 import useSWR from 'swr';
 import { useAppSelector } from '@/lib/hooks';
+import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
@@ -19,6 +20,7 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
     const url=useSearchParams();
     const id=url.get('id');
     const count=url.get('count');
+    const initialInvoiceNo =generateInvoiceNumber(Number(count));
     const { headerData, setHeaderData } = useContext(DataContext);
     const [startDate, setStartDate] = useState(new Date());
     const [isClearable, setIsClearable] = useState(true);
@@ -34,7 +36,7 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
             inputRef.current.focus();
         }
     }, [disableButton]);
-
+    const [invoiceNo] = useState(`SI-${initialInvoiceNo}`);
     const handleEditButtonClick = () => {
         setDisableButton(!disableButton);
     };
@@ -53,8 +55,8 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
             setHeaderData(existingHeaderData)
         }
      else{
-        setHeaderData((prevData)=>({...prevData,invoiceNo:"SI-"+count}))}
-    },[headerData])
+        setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo}))}
+    },[])
     
     
     useEffect(()=>{
@@ -107,7 +109,7 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
                          <input
                                 ref={inputRef}
                                 className={`w-[90%] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border-0 rounded-[5px] focus:border focus:border-solid focus:border-[#35BEB1] bg-inherit`}
-                                value={"SI-"+count!}
+                                value={invoiceNo!}
                                 disabled={disableButton}
                                 autoFocus={!disableButton}
                                 onChange={(e) => setHeaderData((prevData) => ({ ...prevData, invoiceNo: e.target.value }))}

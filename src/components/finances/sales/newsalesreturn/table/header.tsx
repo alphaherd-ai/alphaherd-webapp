@@ -11,6 +11,7 @@ import formatDateAndTime from '@/utils/formateDateTime';
 import { useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 import { useAppSelector } from '@/lib/hooks';
+import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
@@ -18,6 +19,7 @@ const NewsalesReturnHeader = ({existingHeaderData}:any) => {
     const url=useSearchParams();
     const id=url.get('id');
     const count=url.get('count');
+    const initialInvoiceNo=generateInvoiceNumber(Number(count));
     const { headerData, setHeaderData } = useContext(DataContext);
     const [startDate, setStartDate] = useState(new Date());
     const [isClearable, setIsClearable] = useState(true);
@@ -33,7 +35,7 @@ const NewsalesReturnHeader = ({existingHeaderData}:any) => {
             inputRef.current.focus();
         }
     }, [disableButton]);
-
+    const [invoiceNo] = useState(`SR-${initialInvoiceNo}`);
     const handleEditButtonClick = () => {
         setDisableButton(!disableButton);
     };
@@ -52,8 +54,8 @@ const NewsalesReturnHeader = ({existingHeaderData}:any) => {
                 setHeaderData(existingHeaderData)
             }
          else{
-            setHeaderData((prevData)=>({...prevData,invoiceNo:"SR-"+count}))}
-        },[headerData])
+            setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo}))}
+        },[])
     
     useEffect(()=>{
         if(!isLoading&&!error&&data){
@@ -104,7 +106,7 @@ const NewsalesReturnHeader = ({existingHeaderData}:any) => {
                         {id===null?   (<input
                                 ref={inputRef}
                                 className={`w-[90%] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border-0 rounded-[5px] focus:border focus:border-solid focus:border-[#35BEB1] bg-inherit`}
-                                value={"SR-"+count}
+                                value={invoiceNo}
                                 disabled={disableButton}
                                 autoFocus={!disableButton}
                             />):(
