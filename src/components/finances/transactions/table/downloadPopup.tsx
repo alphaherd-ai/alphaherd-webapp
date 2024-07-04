@@ -36,9 +36,12 @@ const DownloadPopup = ({ onClose, transactions }:any) => {
     }
   };
 
+
+
   return (
     <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
-      <div className="w-[640px] p-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400/opacity-60 backdrop-blur-[60px] flex flex-col justify-start items-start gap-6 overflow-auto">
+      <div className="w-[640px] h-[550px] p-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400/opacity-60 backdrop-blur-[60px] flex flex-col justify-between items-start overflow-auto">
+      <div className='w-full flex flex-col gap-6'>
         <div className="self-end items-start gap-6 flex mt-[0.6rem] cursor-pointer" onClick={onClose}>
           <Image src={closeicon} alt="close" />
         </div>
@@ -46,7 +49,7 @@ const DownloadPopup = ({ onClose, transactions }:any) => {
           <div className="text-gray-500 text-xl font-medium">Download Sales Report</div>
           <div className="text-neutral-400 text-base font-medium">Please specify the date range for the report</div>
         </div>
-    <div className="flex flex-col items-start gap-6">
+    <div className="flex flex-col items-start gap-6 mt-6">
         
             <div className="flex items-center gap-2">
                 <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Custom' ? 'bg-teal-400' : 'bg-white'}`}
@@ -68,8 +71,10 @@ const DownloadPopup = ({ onClose, transactions }:any) => {
             <div className='flex items-center justify-between  w-[576px]'>
                     <div className="text-gray-500 text-base font-medium w-[200px]">Select Date Range</div>
                     <div className="w-full h-11 px-4 py-2 bg-white rounded-[5px] border border-neutral-400 flex items-center gap-2">
-                        <div className="customDatePickerWidth flex" style={{ position: 'relative', zIndex: '9999' }}>
+                        <div className="customDatePickerWidth flex">
                         <DatePicker
+                            showYearDropdown
+                            showMonthDropdown
                             selected={startDate}
                             onChange={onDateChange}
                             startDate={startDate}
@@ -92,6 +97,7 @@ const DownloadPopup = ({ onClose, transactions }:any) => {
             </div>
         )}
         {/* Add similar blocks for other options like Week, Month, etc. */}
+    </div>
     </div>
         <div className='flex gap-4 justify-end w-full'>
             
