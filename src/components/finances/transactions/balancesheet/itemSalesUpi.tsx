@@ -1,15 +1,15 @@
 import React from 'react'
 import {useSelector} from 'react-redux'
-const TransactionsBlanceSheetCashItem = () => {
+const TransactionsBlanceSheetUpiItemSales = () => {
 
   const transactionAmount = useSelector((state:any) => state.transactionAmount)
   console.log(transactionAmount)
 
   const totalMoneyIn = transactionAmount
-    .filter((transaction:any) => transaction.mode === "Cash")
+    .filter((transaction:any) => transaction.mode === "UPI" && transaction.invoiceLink?.startsWith('SI'))
     .reduce((a:any, b:any) => (b.moneyChange === "In" ? a + b.amountPaid : a), 0);
   const totalMoneyOut = transactionAmount
-    .filter((transaction:any) => transaction.mode === "Cash")
+    .filter((transaction:any) => transaction.mode === "UPI" && transaction.invoiceLink?.startsWith('SI'))
     .reduce((a:any, b:any) => (b.moneyChange === "Out" ? a + b.amountPaid : a), 0);
 
     
@@ -48,4 +48,4 @@ const TransactionsBlanceSheetCashItem = () => {
   )
 }
 
-export default TransactionsBlanceSheetCashItem
+export default TransactionsBlanceSheetUpiItemSales

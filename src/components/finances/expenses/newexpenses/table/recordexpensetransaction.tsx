@@ -1,26 +1,27 @@
 "use client";
 import Image from 'next/image';
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux';
-import RadioButton from "../../../../assets/icons/finance/radio_button.svg"
-import RadioButtonSelec from "../../../../assets/icons/finance/radio_button (1).svg"
+import RadioButton from "../../../../../assets/icons/finance/radio_button.svg"
+import RadioButtonSelec from "../../../../../assets/icons/finance/radio_button (1).svg"
 import DatePicker from 'react-datepicker';
-import check from "../../../../assets/icons/finance/check.svg"
-import { addAmount } from '@/lib/features/transactionAmount/transactionAmountSlice';
+import check from "../../../../../assets/icons/finance/check.svg"
+import { useDispatch } from 'react-redux';
 import 'react-datepicker/dist/react-datepicker.css';
+import { addAmount } from '@/lib/features/transactionAmount/transactionAmountSlice';
 
-import calicon from "../../../../assets/icons/finance/calendar_today.svg";
+import calicon from "../../../../../assets/icons/finance/calendar_today.svg";
 
-import closeicon from "../../../../assets/icons/inventory/closeIcon.svg";
+import closeicon from "../../../../../assets/icons/inventory/closeIcon.svg";
 import Select from 'react-select';
 import { Button } from '@nextui-org/react';
 import { useAppSelector } from '@/lib/hooks';
 type PopupProps = {
     onClose: () => void;
+    headerdata: any;
 }
 
 
-const RecordTransactionPopup: React.FC<PopupProps> = ({onClose}) => {
+const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata}) => {
 
     const dispatch = useDispatch();
 
@@ -34,13 +35,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose}) => {
         {value: "Net Banking", label: "Net Banking"},
     ]
 
-    const linkInvoice = [
-        {value: '001', label: '001'},
-        {value: '002', label: '002'},
-        {value: '003', label: '003'},
-        {value: '004', label: '004'},
-    ]
-
+    
+    
 
     const Party =[
         {value: "WeCare", label: "WeCare"},
@@ -71,8 +67,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose}) => {
                 },
                 body: JSON.stringify({
                     partyName: formData.partyName?.value,
-                    subject: formData.subject,
-                    invoiceLink: formData.invoiceLink?.value || "Direct",
+                    invoiceLink: headerdata.invoiceNo,
                     receiptNo: formData.receiptNo,
                     date: formData.date,
                     amountPaid: parseInt(formData.amountPaid, 10),
@@ -93,13 +88,15 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose}) => {
 
         }
 
-        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: formData.mode?.value, invoiceLink: formData.invoiceLink?.value || "Direct", moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: formData.mode?.value, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+
     };
 
     const handleChange = (field: string, value: any) => {
         setFormData({ ...formData, [field]: value });
     }
 
+    console.log(formData)
 
 
   return (
@@ -145,7 +142,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose}) => {
                 
             </div>
             <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Party</span></div>
+                    <div><span className='text-gray-500 text-base font-medium '>Party Name</span></div>
                     <div className='w-[440px]'>
                     <Select
                             className="text-neutral-400 text-base font-medium w-full"
@@ -159,28 +156,11 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose}) => {
                         />
                     </div>                
             </div>
+            
+            
             <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Subject</span></div>
-                    <div><input className="w-[440px] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="text" name="subject" onChange={(e) => handleChange("subject", e.target.value)} /></div>
-            </div>
-            <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Link Invoice</span></div>
-                    <div className='w-[440px]'>
-                    <Select
-                            className="text-neutral-400 text-base font-medium w-full"
-                            placeholder="Select Category"
-                            isClearable={false}
-                            isSearchable={true}
-                            options={linkInvoice}
-                            isMulti={false}
-                            name="invoiceLink"
-                            onChange={(value) => handleChange("invoiceLink", value)}
-                        />
-                    </div>                
-            </div>
-            <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Link Service(s)</span></div>
-                    <div><input className="w-[440px] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="text" name="name"/></div>
+                    <div><span className='text-gray-500 text-base font-medium '>Amount Paid</span></div>
+                    <div><input className="w-[440px] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="number" name="amountPaid" onChange={(e) => handleChange("amountPaid", e.target.value)} /></div>
             </div>
             <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Receipt No.</span></div>
@@ -190,14 +170,14 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose}) => {
                         <div><span className='text-gray-500 text-base font-medium '>Date</span></div>
                         <div className='relative'>
                         <DatePicker
-                                        className="w-[10rem]"
+                                        className="w-[10rem] "
                                         selected={startDate}
                                         onChange={handleDateChange}
                                         calendarClassName="react-datepicker-custom"
                                         customInput={
                                             <div className='relative'>
                                                 <input
-                                                    className="w-[10rem] h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                                    className="w-[10rem] border border-solid border-borderGrey h-9 text-textGrey1 text-base font-medium px-2 rounded   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
                                                     value={startDate.toLocaleDateString()}
                                                     readOnly
                                                 />
@@ -216,12 +196,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose}) => {
 
             </div>
             <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Amount Paid</span></div>
+            <div><span className='text-gray-500 text-base font-medium '>Mode</span></div>
                     <div className='w-[440px] flex justify-between items-center'>
-                    <div><input className="w-[10rem] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="number" name="amountPaid" onChange={(e) => handleChange("amountPaid", e.target.value)}  /></div>
-
-                        <div><span className='text-gray-500 text-base font-medium '>Mode</span></div>
-                        <div className='w-[10rem]'>
                         <Select
                             className="text-neutral-400 text-base font-medium w-full"
                             placeholder="Mode"
@@ -232,7 +208,6 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose}) => {
                             name="mode"
                             onChange={(value) => handleChange("mode", value)}
                         />
-                    </div> 
                     </div>
 
             </div>

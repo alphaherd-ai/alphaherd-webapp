@@ -8,13 +8,14 @@ import Link from "next/link"
 import Rupee from "../../../../../assets/icons/finance/rupee.svg"
 import Image from "next/image"
 import Select from 'react-select';
+import Popup from "../table/recordexpensetransaction"
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
 import { DataContext } from './DataContext';
 import { Tax } from '@prisma/client';
 
 
 const NewExpensesTotalAmout = () => {
-    const { tableData } = useContext(DataContext);
+    const { tableData, headerData } = useContext(DataContext);
     console.log("this is tableData",tableData)
     const [selectedDiscount, setDiscount] = useState(0);
     let totalAmount = 0;
@@ -70,6 +71,19 @@ const NewExpensesTotalAmout = () => {
     }, [totalAmount, selectedDiscount, shipping, adjustment]);
 
 
+
+
+    
+    const [showPopup, setShowPopup] = React.useState(false);
+    
+    const togglePopup = () => {
+        setShowPopup(!showPopup);
+    }
+   
+
+
+
+
     return (
         <>
 
@@ -84,6 +98,7 @@ const NewExpensesTotalAmout = () => {
         {/* <Popover placement="bottom-end" showArrow offset={10}>
             <PopoverTrigger> */}
                 <Button 
+                    onClick={togglePopup}
                     variant="solid"
                     className="capitalize flex h-9 py-2.5 border-none text-base bg-black text-white rounded-lg cursor-pointer">
                     <div className='flex'><Image src={Rupee} alt='Rupee' className='w-6 h-6 ' /></div>
@@ -188,7 +203,7 @@ const NewExpensesTotalAmout = () => {
                             </div>
                         </div>
     
-          
+                        {showPopup && <Popup headerdata={headerData} onClose={togglePopup} />}
         </>
 
     )

@@ -82,7 +82,7 @@ const NewsalesTable = () => {
     const appState = useAppSelector((state) => state.app)
     const url= useSearchParams();
     const id=url.get('id');
-    
+
     let estimateData:any=null,isEstimateDataLoading=false,isEstimateDataError=false;
     const { tableData: items, setTableData: setItems } = useContext(DataContext);   
     if(id){
@@ -97,16 +97,16 @@ const NewsalesTable = () => {
                 const {items,...otherData}=estimateData;
                 // eslint-disable-next-line react-hooks/rules-of-hooks
                 setOtherData(otherData)
-              const shallowDataCopy = [...items]; 
-              const itemData = shallowDataCopy.map((item: any) => ({
-                productId: item.productBatch.productId,
-                itemName:item.name,
-                quantity:item.quantity,
-                sellingPrice:item.sellingPrice,
-                expiry:item.productBatch.expiry,
-                batchNumber:item.productBatch.batchNumber,
-                gst:item.taxAmount,
-                id:item.productBatch.id
+                const shallowDataCopy = [...items]; 
+                const itemData = shallowDataCopy.map((item: any) => ({
+                    productId: item.productBatch.productId,
+                    itemName:item.name,
+                    quantity:item.quantity,
+                    sellingPrice:item.sellingPrice,
+                    expiry:item.productBatch.expiry,
+                    batchNumber:item.productBatch.batchNumber,
+                    gst:item.taxAmount,
+                    id:item.productBatch.id
               }));
               setItems(itemData);
               
@@ -184,162 +184,162 @@ const NewsalesTable = () => {
     setItems(updatedItems);
 }, [items]);
 
-const handleGstSelect = (selectedGst: any, index: number) => {
-    const updatedItems = [...tableData];
-    console.log(selectedGst)
-    updatedItems[index] = {
-        ...updatedItems[index],
-        gst: selectedGst.value
-    };
-    setTableData(updatedItems);
-};
-const handleDiscountSelect= (selectedDiscount:any,index:number)=>{
-    const updatedItems=[...tableData];
-    console.log(selectedDiscount);
-    updatedItems[index]={
-        ...updatedItems[index],
-        discount:selectedDiscount.value
-    };
-    setTableData(updatedItems);
-}
-const handleAddDiscount = (index:number) => {
-    const newDiscountStates = [...discountStates]; 
-    newDiscountStates[index] = !newDiscountStates[index]; 
-    setDiscountStates(newDiscountStates);
-};
-const handleEditButtonClick = () => {
-    setDisableButton(!disableButton);
-};
-
-const handleCheckBoxChange = () => {
-    setChecked(!isChecked);
-    setItems((prevItems) =>
-        prevItems.map((item) => ({
-            ...item,
-            quantity: isChecked ? item.quantity * 2 : item.quantity,
-        }))
-    );
-};
-
-const handleQuantityDecClick = (itemId: any) => {
-    setItems((prevItems) =>
-        prevItems.map((item) => {
-            if (item.id === itemId && item.quantity > 1) {
-                return { ...item, quantity: item.quantity - 1 };
-            }
-            return item;
-        })
-    );
-
-};
-
-const handleQuantityIncClick = (itemId: any) => {
-    setItems((prevItems) =>
-        prevItems.map((item) => {
-            if (item.id === itemId) {
-                return { ...item, quantity: item.quantity + 1 };
-            }
-            return item;
-        })
-    );
-};
-
-const handleQuantityDecClick1 = (itemId: any) => {
-    setItems((prevItems) =>
-        prevItems.map((item) => {
-            if (item.id === itemId && item.quantity2 > 1) {
-                return { ...item, quantity2: item.quantity2 - 1 };
-            }
-            return item;
-        })
-    );
-};
-
-const handleQuantityIncClick1 = (itemId: any) => {
-    setItems((prevItems) =>
-        prevItems.map((item) => {
-            if (item.id === itemId) {
-                return { ...item, quantity2: item.quantity2 + 1 };
-            }
-            return item;
-        })
-    );
-};
-
-const handleAddItem= useCallback(() => {
-    setItems([...items, {}]);
-}, [items]);
-
-const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
-    console.log(selectedProduct);
-    if (selectedProduct.value) {
-      try {
-        const data = products.find((product) => product.value.id === selectedProduct.value.id);
-        setSelectedProduct(data);
-        const updatedItems = [...items];
+    const handleGstSelect = (selectedGst: any, index: number) => {
+        const updatedItems = [...tableData];
+        console.log(selectedGst)
         updatedItems[index] = {
-          ...updatedItems[index],
-          quantity: data.value.quantity,
-          productId: selectedProduct.value.id,
-          itemName: data.value.itemName,
+            ...updatedItems[index],
+            gst: selectedGst.value
         };
-        setItems(updatedItems);
-
-        const productBatches = batches?.filter((batch) => batch.value.productId === selectedProduct.value.id).sort((a, b) => a.value.id - b.value.id);
-
-        setFilteredBatches(productBatches);
-        const defaultBatch = productBatches?.[0];
-        setItems((prevItems) =>
-          prevItems.map((item, itemIndex) =>
-            itemIndex === index ? { ...item, id: defaultBatch?.value?.id,
-                quantity: defaultBatch?.value?.quantity ,
-                batchNumber: defaultBatch?.value?.batchNumber,
-                expiry:  defaultBatch?.value?.expiry,
-                sellingPrice:  defaultBatch?.value?.sellingPrice,
-                productId:defaultBatch?.value?.productId } : item
-          )
-        );
-      } catch (error) {
-        console.error("Error fetching product details from API:", error);
-      }
+        setTableData(updatedItems);
+    };
+    const handleDiscountSelect= (selectedDiscount:any,index:number)=>{
+        const updatedItems=[...tableData];
+        console.log(selectedDiscount);
+        updatedItems[index]={
+            ...updatedItems[index],
+            discount:selectedDiscount.value
+        };
+        setTableData(updatedItems);
     }
-  }, [items, products]);
-const handleBatchSelect = useCallback(async (selectedProduct: any, index: number) => {
-    if (selectedProduct.value) {
+    const handleAddDiscount = (index:number) => {
+        const newDiscountStates = [...discountStates]; 
+        newDiscountStates[index] = !newDiscountStates[index]; 
+        setDiscountStates(newDiscountStates);
+    };
+    const handleEditButtonClick = () => {
+        setDisableButton(!disableButton);
+    };
+
+    const handleCheckBoxChange = () => {
+        setChecked(!isChecked);
+        setItems((prevItems) =>
+            prevItems.map((item) => ({
+                ...item,
+                quantity: isChecked ? item.quantity * 2 : item.quantity,
+            }))
+        );
+    };
+
+    const handleQuantityDecClick = (itemId: any) => {
+        setItems((prevItems) =>
+            prevItems.map((item) => {
+                if (item.id === itemId && item.quantity > 1) {
+                    return { ...item, quantity: item.quantity - 1 };
+                }
+                return item;
+            })
+        );
+
+    };
+
+    const handleQuantityIncClick = (itemId: any) => {
+        setItems((prevItems) =>
+            prevItems.map((item) => {
+                if (item.id === itemId) {
+                    return { ...item, quantity: item.quantity + 1 };
+                }
+                return item;
+            })
+        );
+    };
+
+    const handleQuantityDecClick1 = (itemId: any) => {
+        setItems((prevItems) =>
+            prevItems.map((item) => {
+                if (item.id === itemId && item.quantity2 > 1) {
+                    return { ...item, quantity2: item.quantity2 - 1 };
+                }
+                return item;
+            })
+        );
+    };
+
+    const handleQuantityIncClick1 = (itemId: any) => {
+        setItems((prevItems) =>
+            prevItems.map((item) => {
+                if (item.id === itemId) {
+                    return { ...item, quantity2: item.quantity2 + 1 };
+                }
+                return item;
+            })
+        );
+    };
+
+    const handleAddItem= useCallback(() => {
+        setItems([...items, {}]);
+    }, [items]);
+
+    const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
+        console.log(selectedProduct);
+        if (selectedProduct.value) {
         try {
-            
-            const data = filteredBatches.find((batch)=>batch.value.id==selectedProduct.value.id);
-            console.log(data)
+            const data = products.find((product) => product.value.id === selectedProduct.value.id);
+            setSelectedProduct(data);
             const updatedItems = [...items];
             updatedItems[index] = {
-                ...updatedItems[index],
-                id: data.value.id,
-                quantity: data.value.quantity ,
-                batchNumber: data.value.batchNumber,
-                expiry:  data.value.expiry,
-                sellingPrice:  data.value.sellingPrice,
-                productId:data.value.productId
+            ...updatedItems[index],
+            quantity: data.value.quantity,
+            productId: selectedProduct.value.id,
+            itemName: data.value.itemName,
             };
-            console.log("these are updated",updatedItems)
             setItems(updatedItems);
-            setTableData(updatedItems);
-                // const updatedProducts = products.filter((product) => product.value !== selectedProduct.value);
-                // setProducts(updatedProducts);
+
+            const productBatches = batches?.filter((batch) => batch.value.productId === selectedProduct.value.id).sort((a, b) => a.value.id - b.value.id);
+
+            setFilteredBatches(productBatches);
+            const defaultBatch = productBatches?.[0];
+            setItems((prevItems) =>
+            prevItems.map((item, itemIndex) =>
+                itemIndex === index ? { ...item, id: defaultBatch?.value?.id,
+                    quantity: defaultBatch?.value?.quantity ,
+                    batchNumber: defaultBatch?.value?.batchNumber,
+                    expiry:  defaultBatch?.value?.expiry,
+                    sellingPrice:  defaultBatch?.value?.sellingPrice,
+                    productId:defaultBatch?.value?.productId } : item
+            )
+            );
         } catch (error) {
             console.error("Error fetching product details from API:", error);
         }
-    }
-}, [items, products]);
+        }
+    }, [items, products]);
+    const handleBatchSelect = useCallback(async (selectedProduct: any, index: number) => {
+        if (selectedProduct.value) {
+            try {
+                
+                const data = filteredBatches.find((batch)=>batch.value.id==selectedProduct.value.id);
+                console.log(data)
+                const updatedItems = [...items];
+                updatedItems[index] = {
+                    ...updatedItems[index],
+                    id: data.value.id,
+                    quantity: data.value.quantity ,
+                    batchNumber: data.value.batchNumber,
+                    expiry:  data.value.expiry,
+                    sellingPrice:  data.value.sellingPrice,
+                    productId:data.value.productId
+                };
+                console.log("these are updated",updatedItems)
+                setItems(updatedItems);
+                setTableData(updatedItems);
+                    // const updatedProducts = products.filter((product) => product.value !== selectedProduct.value);
+                    // setProducts(updatedProducts);
+            } catch (error) {
+                console.error("Error fetching product details from API:", error);
+            }
+        }
+    }, [items, products]);
 
 
-useEffect(() => {
-    if (id == null) {
-        setItems(items);
-        setTableData(items);  
-    }
-}, [id, items]);
+            useEffect(() => {
+                if (id == null) {
+                    setItems(items);
+                    setTableData(items);  
+                }
+            }, [id, items]);
 
-   
+            
 
 
     return (
@@ -535,29 +535,30 @@ useEffect(() => {
                                     <div className="text-indigo-600 text-sm font-medium">Item Discount</div>
                                 </div>
                             </div>
-                            <div className='flex text-gray-500 text-base font-medium w-[10rem]'><Select
-                    className="text-neutral-400 text-base font-medium"
-                    defaultValue={[]}
-                    isClearable={false}
-                    isSearchable={true}
-                    options={discountOptions}
-                    styles={{
-                        control: (provided, state) => ({
-                            ...provided,
-                            border: state.isFocused ? 'none' : 'none',
-                            padding: '0',
-                        }),
-                    }}
-                    onChange={(selectedOption: any) => handleDiscountSelect(selectedOption, index)}
-                /></div>
-                            <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
-                            <div className='flex text-gray-500 text-base font-medium w-[10rem]'></div>
-                            <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
-                            <div className='flex text-gray-500 text-base font-medium w-[10rem]'></div>
-                            <div className="text-red-500 text-base font-bold w-1/12">-₹{(item.sellingPrice*item.discount*item. quantity).toFixed(2)}</div>
-                        </div>
-                    )}
-    </div>
+                            <div className='flex text-gray-500 text-base font-medium w-[10rem]'>
+                                <Select
+                                    className="text-neutral-400 text-base font-medium"
+                                    defaultValue={[]}
+                                    isClearable={false}
+                                    isSearchable={true}
+                                    options={discountOptions}
+                                    styles={{
+                                        control: (provided, state) => ({
+                                            ...provided,
+                                            border: state.isFocused ? 'none' : 'none',
+                                            padding: '0',
+                                        }),
+                                    }}
+                                  onChange={(selectedOption: any) => handleDiscountSelect(selectedOption, index)}
+                                    /></div>
+                                        <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
+                                        <div className='flex text-gray-500 text-base font-medium w-[10rem]'></div>
+                                        <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
+                                        <div className='flex text-gray-500 text-base font-medium w-[10rem]'></div>
+                                        <div className="text-red-500 text-base font-bold w-1/12">-₹{(item.sellingPrice*item.discount*item. quantity).toFixed(2)}</div>
+                                    </div>
+                                )}
+                                </div>
                             ))}
                             <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12 border-b border-neutral-400 text-gray-500 rounded-b-md'>
                                 <div className='flex text-gray-500 text-base font-medium w-[3rem]'></div>

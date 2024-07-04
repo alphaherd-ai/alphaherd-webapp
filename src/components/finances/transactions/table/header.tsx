@@ -1,6 +1,5 @@
 "use client";
-import React from 'react'
-
+import React, { useState } from 'react';
 import Sort from '../../../../assets/icons/finance/sort.svg';
 import Filter from '../../../../assets/icons/finance/filter.svg';
 import Chart from '../../../../assets/icons/finance/chart.svg';
@@ -13,19 +12,26 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Popup from "../table/recordTransactionPopup"
-
+import DownloadPopup from "../table/downloadPopup"
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 
 
 
 
-const FinancesTransactionsTableHeader = () => {
+const FinancesTransactionsTableHeader = ({transactions}:any) => {
+
+    
 
     const [showPopup, setShowPopup] = React.useState(false);
+    const [showPopup1, setShowPopup1] = React.useState(false);
     
     const togglePopup = () => {
         setShowPopup(!showPopup);
+    }
+   
+    const togglePopup1 = () => {
+        setShowPopup1(!showPopup1);
     }
    
     const currentRoute = usePathname();
@@ -46,34 +52,34 @@ const FinancesTransactionsTableHeader = () => {
 
         <>
           
-<div className='flex w-full bg-white h-20  p-4 px-6 mt-6 justify-between border border-solid border-gray-300 border-t-0.5 rounded-tl-lg rounded-tr-lg'>
+<div className='flex w-full bg-white h-20  p-4 px-6  justify-between  border-t-0.5 rounded-tl-[5px] rounded-tr-[5px]'>
 
 <div className='flex  text-gray-500 items-center w-5/12'>
-<Link className='no-underline flex item-center' href='/finance/transactions/all'>
+<Link className='no-underline flex item-center' href={{pathname:'/finance/transactions/all',query:{type:'all'}}}>
 
 <div className={currentRoute.startsWith("/finance/transactions/all")
     ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white  rounded-tl-md rounded-bl-md"
     : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500  rounded-tl-md rounded-bl-md"}>All Transactions</div>
 </Link>
-<Link className='no-underline flex item-center' href='/finance/transactions/cash'>
+<Link className='no-underline flex item-center' href={{pathname: '/finance/transactions/cash', query: { type: 'Cash' }}}>
 
 <div className={currentRoute.startsWith("/finance/transactions/cash")
     ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white"
     : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}>Cash</div>
 </Link>
-<Link className='no-underline flex item-center' href='/finance/transactions/upi'>
+<Link className='no-underline flex item-center' href={{pathname: '/finance/transactions/upi', query: { type: 'UPI' }}}>
 
 <div className={currentRoute.startsWith("/finance/transactions/upi")
     ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white"
     : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}> UPI</div>
 </Link>
-<Link className='no-underline flex item-center' href='/finance/transactions/card'>
+<Link className='no-underline flex item-center' href={{pathname: '/finance/transactions/card', query: { type: 'Card' }}}>
 
 <div className={currentRoute.startsWith("/finance/transactions/card")
     ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white "
     : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500 "}>Card</div>
 </Link>
-<Link className='no-underline flex item-center' href='/finance/transactions/netbanking'>
+<Link className='no-underline flex item-center' href={{pathname: '/finance/transactions/netbanking', query: { type: 'Net Banking' }}}>
 
 <div className={currentRoute.startsWith("/finance/transactions/netbanking")
     ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white"
@@ -81,10 +87,11 @@ const FinancesTransactionsTableHeader = () => {
 </Link>
     </div>
 <div className='flex items-center'>
-<Link className='no-underline flex item-center mr-4' href='/finance/overview'>
+        
 
-<div className='flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'><Image src={Download} alt='Download' className='w-4  h-4' /></div>
-</Link>
+        <div onClick={togglePopup1} className='flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'><Image src={Download} alt='Download' className='w-4  h-4' /></div>
+        
+    
 <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
 
 <div  className='flex items-center justify-center w-7 h-7 border border-solid border-gray-300 border-0.5 rounded-md  p-1'><Image src={Chart} alt='Chart' className='w-4  h-4' /></div>
@@ -190,6 +197,7 @@ const FinancesTransactionsTableHeader = () => {
 </PopoverContent>
 </Popover> */}
 {showPopup && <Popup onClose={togglePopup} />}
+{showPopup1 && <DownloadPopup onClose={togglePopup1} transactions={transactions} />}
 
 
 {/* </div> */}
