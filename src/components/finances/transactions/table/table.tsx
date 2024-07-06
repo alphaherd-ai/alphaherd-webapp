@@ -43,10 +43,10 @@ const FinancesTransactionsTable = () => {
         useEffect(()=>{
           if(!isLoading&&data&&!error){
             const filteredData=data?.filter((transaction:any)=>{
-              if(currentUrl.get('type')==='all'){
+              if(currentUrl.get('type') === 'all'){
                 return true;
               }else {
-                return transaction.mode===currentUrl.get('type');
+                return transaction.mode === currentUrl.get('type');
               }
             })
             setTransactions(filteredData);

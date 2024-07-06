@@ -10,7 +10,7 @@ import Invoice from '../../../../assets/icons/finance/invoice.svg';
 import Return from '../../../../assets/icons/finance/Return.svg';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import Popup from "../table/recordTransactionPopup"
 import DownloadPopup from "../table/downloadPopup"
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
@@ -20,6 +20,9 @@ import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/reac
 
 
 const FinancesTransactionsTableHeader = ({transactions}:any) => {
+
+    const currentUrl=useSearchParams();
+    const type = currentUrl.get("type")
 
     
 
@@ -199,7 +202,7 @@ const FinancesTransactionsTableHeader = ({transactions}:any) => {
 </PopoverContent>
 </Popover> */}
 {showPopup && <Popup onClose={togglePopup} />}
-{showPopup1 && <DownloadPopup onClose={togglePopup1} transactions={transactions} />}
+{showPopup1 && <DownloadPopup onClose={togglePopup1} transactions={transactions} type={type} />}
 
 
 {/* </div> */}

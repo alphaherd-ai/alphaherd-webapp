@@ -183,6 +183,10 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose}) => {
                     <div><input className="w-[440px] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="text" name="name"/></div>
             </div>
             <div className='w-full flex justify-between items-center'>
+                    <div><span className='text-gray-500 text-base font-medium '>Link Product(s)</span></div>
+                    <div><input className="w-[440px] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="text" name="name"/></div>
+            </div>
+            <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Receipt No.</span></div>
                     <div className='w-[440px] flex justify-between items-center'>
                     <div><input className="w-[10rem] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="text" name="receiptNo" onChange={(e) => handleChange("receiptNo", e.target.value)} /></div>

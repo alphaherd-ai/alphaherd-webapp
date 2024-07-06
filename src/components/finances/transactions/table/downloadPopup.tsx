@@ -8,12 +8,19 @@ import Image from 'next/image';
 import calenderIcon from "../../../../assets/icons/finance/calendar_today.svg";
 import download from "../../../../assets/icons/finance/downloadGreen.svg";
 import { Button } from '@nextui-org/react';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import logo from "../../../../assets/icons/finance/pfpimg.png";
+import { useAppSelector } from '@/lib/hooks';
 
-const DownloadPopup = ({ onClose, transactions }:any) => {
+const DownloadPopup = ({ onClose, transactions, type }:any) => {
+
+  const appState = useAppSelector((state) => state.app)
   const [data, setData] = useState(transactions);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [selectedOption, setSelectedOption] = useState('Custom');
+
 
   const handleOptionClick = (option:any) => {
     setSelectedOption(option);
@@ -36,6 +43,118 @@ const DownloadPopup = ({ onClose, transactions }:any) => {
     }
   };
 
+  const convertImageToBase64 = (imageSrc:any, callback:any) => {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      const reader = new FileReader();
+      reader.onloadend = function () {
+        callback(reader.result);
+      };
+      reader.readAsDataURL(xhr.response);
+    };
+    xhr.open('GET', imageSrc);
+    xhr.responseType = 'blob';
+    xhr.send();
+  };
+
+  const downloadPDF = () => {
+    convertImageToBase64(logo.src, (base64Image:any) => {
+    const doc = new jsPDF('landscape');
+    const tableColumn = ["Date", "Party", "Receipt No.", "Subject", "Link Invoice", "Amount", "Mode", ""];
+    const tableRows:any = [];
+
+    const modeCounts:any = {};
+
+    let totalAmount = 0;
+    const noOfTransactions = data.length;
+
+    data.forEach((item:any) => {
+      if (modeCounts[item.mode]) {
+        modeCounts[item.mode]++;
+      } else {
+        modeCounts[item.mode] = 1;
+      }
+      if (item.moneyChange === 'In') {
+        totalAmount += item.amountPaid
+      } else if (item.moneyChange === 'Out') {
+        totalAmount -= item.amountPaid;
+      }
+    });
+
+    data.forEach((item:any) => {
+      const transactionData = [
+        format(new Date(item.date), 'yyyy-MM-dd'),
+        item.partyName,
+        item.receiptNo,
+        item.subject,
+        item.invoiceLink,
+        item.amountPaid,
+        item.mode,
+        item.moneyChange,
+      ];
+      tableRows.push(transactionData);
+    });
+
+    doc.addImage(base64Image, 'PNG', 4, 4, 20, 20); 
+      doc.setFontSize(20);
+      doc.text(appState.currentOrg.orgName, 30, 10);
+      
+      doc.setFontSize(12);
+      const text = `${appState.currentOrg.address} ${appState.currentOrg.state}-${appState.currentOrg.pincode}`;
+      const maxWidth = 85;
+      const lines = doc.splitTextToSize(text, maxWidth);
+      doc.text(lines, 30, 15);
+
+
+
+      doc.setFontSize(13);
+      doc.text(`Gst No. :  ${appState.currentOrg.gstNo}`, 126, 12);
+      doc.setFontSize(13);
+      doc.text(`PAN No. :  5465465465465465`, 126, 18);
+
+      doc.setFontSize(13);
+      doc.text(`Email :  ${appState.currentOrg.orgEmail}`, 220, 12);
+      doc.setFontSize(13);
+      doc.text(`Phone No. :  ${appState.currentOrg.phoneNo}`, 220, 18);
+      doc.setFontSize(13);
+      doc.text(`Website :  XYZ.com`, 220, 24);
+
+
+      doc.setLineWidth(0.2);
+      doc.line(1, 26, 320, 26); 
+
+      doc.setFontSize(15);
+      doc.text("Transaction Report", 8, 34);
+
+      doc.setFontSize(11);
+      doc.text(`Category : ${type}`, 90, 33);
+      doc.text(`Period : ${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'} - ${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}`, 90, 37);
+
+      doc.setFontSize(11);
+      let yPosition = 33;
+      Object.entries(modeCounts).forEach(([mode, count]) => {
+        doc.text(`${mode}: ${count}`, 180, yPosition);
+        yPosition += 5
+      })
+      
+      doc.text(`Total Amount: ${totalAmount}`, 230, 33);
+      doc.text(`Total Number Of Transactions: ${noOfTransactions}`, 230, 38);
+
+
+      doc.setLineWidth(0.5);
+      doc.line(1, 53, 320, 53); 
+
+
+    autoTable(doc, {
+      startY: 55,
+      head: [tableColumn],
+      body: tableRows,
+    });
+
+    const fileName = `sales_report_${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'}_to_${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}.pdf`;
+    doc.save(fileName);
+  })
+  }
 
 
   return (
@@ -134,7 +253,7 @@ const DownloadPopup = ({ onClose, transactions }:any) => {
     </div>
         <div className='flex gap-4 justify-end w-full'>
             
-        <Button className="cursor-pointer outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+        <Button className="cursor-pointer outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex" onClick={downloadPDF}>
               
             <div className="w-6 h-6">
                 <Image src={download} alt="download" />
