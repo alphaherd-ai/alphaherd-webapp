@@ -2811,6 +2811,13 @@
   resolved "https://registry.npmjs.org/@types/range-parser/-/range-parser-1.2.7.tgz"
   integrity sha512-hKormJbkJqzQGhziax5PItDUTMAM9uE2XXQmM37dyd4hVM+5aVl7oVxMVUiVQn2oCQFN/LKCZdvSM0pFRqbSmQ==
 
+"@types/react-csv@^1.1.10":
+  version "1.1.10"
+  resolved "https://registry.npmjs.org/@types/react-csv/-/react-csv-1.1.10.tgz"
+  integrity sha512-PESAyASL7Nfi/IyBR3ufd8qZkyoS+7jOylKmJxRZUZLFASLo4NZaRsJ8rNP8pCcbIziADyWBbLPD1nPddhsL4g==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-datepicker@^6.2.0":
   version "6.2.0"
   resolved "https://registry.npmjs.org/@types/react-datepicker/-/react-datepicker-6.2.0.tgz"
@@ -6656,6 +6663,11 @@ react-chartjs-2@^5.2.0:
   version "5.2.0"
   resolved "https://registry.npmjs.org/react-chartjs-2/-/react-chartjs-2-5.2.0.tgz"
   integrity sha512-98iN5aguJyVSxp5U3CblRLH67J8gkfyGNbiK3c+l1QI/G4irHMPQw44aEPmjVag+YKTyQ260NcF82GTQ3bdscA==
+
+react-csv@^2.2.2:
+  version "2.2.2"
+  resolved "https://registry.npmjs.org/react-csv/-/react-csv-2.2.2.tgz"
+  integrity sha512-RG5hOcZKZFigIGE8LxIEV/OgS1vigFQT4EkaHeKgyuCbUAu9Nbd/1RYq++bJcJJ9VOqO/n9TZRADsXNDR4VEpw==
 
 react-date-picker@^10.6.0:
   version "10.6.0"

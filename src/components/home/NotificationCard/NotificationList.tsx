@@ -33,17 +33,17 @@ const NotificationList =  ({ notifs,isLoading }) => {
         <div className="grow shrink basis-0 flex-col justify-start items-start gap-2 inline-flex">
           <div className="self-stretch justify-end items-start inline-flex">
             <div className="grow shrink basis-0 flex-col justify-center items-start inline-flex">
-              <div className="self-stretch text-emerald-50 text-base font-bold font-['Roboto']">
+              <div className="self-stretch text-emerald-50 text-base font-bold ">
                {notif.message}
               </div>
-              <div className="text-neutral-400 text-xs font-medium font-['Roboto']">
+              <div className="text-neutral-400 text-xs font-medium ">
                 {formatDateAndTime(notif.createdAt).formattedTime}
               </div>
             </div>
             <div className="w-2.5 h-2.5 bg-cyan-400 rounded-full" />
           </div>
           {/* <div className="self-stretch">
-            <span className="text-stone-300 text-sm font-medium font-['Roboto']">
+            <span className="text-stone-300 text-sm font-medium ">
               You owe{" "}
             </span>
             <span className="text-emerald-50 text-sm font-bold ">

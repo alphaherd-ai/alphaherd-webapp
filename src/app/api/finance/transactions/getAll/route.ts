@@ -2,6 +2,7 @@
 import { connectToDB } from '../../../../../utils/index';
 import prismaClient from '../../../../../../prisma';
 import { NextRequest } from 'next/server';
+import { fetchFinanceId } from '@/utils/fetchBranchDetails';
 
 export const GET = async (req: NextRequest) => {
   if (req.method !== 'GET') {
@@ -9,8 +10,13 @@ export const GET = async (req: NextRequest) => {
   }
 
   try {
+    const financeId = await fetchFinanceId(req);
     
-    const transactions = await prismaClient.transactions.findMany();
+    const transactions = await prismaClient.transactions.findMany({
+      where: {
+        financeSectionId: financeId
+      }
+    });
 
     return new Response(JSON.stringify(transactions), {
       status: 201,

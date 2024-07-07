@@ -8,13 +8,14 @@ import Rupee from "../../../../../assets/icons/finance/rupee.svg"
 import Link from "next/link"
 import Image from "next/image"
 import Select from 'react-select';
+import Popup from "../table/recordedTransactionPopup"
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
 import { DataContext } from './DataContext';
 import { Tax } from '@prisma/client';
 
 
 const NewsalesTotalAmout = () => {
-    const { tableData } = useContext(DataContext);
+    const { tableData, headerData } = useContext(DataContext);
     const [selectedDiscount, setDiscount] = useState(0);
     let totalAmount = 0;
     tableData.forEach(data => {
@@ -69,6 +70,15 @@ const NewsalesTotalAmout = () => {
     }, [totalAmount, selectedDiscount, shipping, adjustment]); 
 
 
+
+    const [showPopup, setShowPopup] = React.useState(false);
+    
+    const togglePopup = () => {
+        setShowPopup(!showPopup);
+    }
+   
+
+
     return (
         <>
 
@@ -83,11 +93,12 @@ const NewsalesTotalAmout = () => {
                             {/* <Popover placement="bottom-end" showArrow offset={10}>
                                 <PopoverTrigger> */}
                                     <Button 
+                                        onClick={togglePopup}
                                         variant="solid"
                                         className="capitalize flex h-9 py-2.5 border-none text-base bg-black text-white rounded-lg cursor-pointer">
                                         <div className='flex'><Image src={Rupee} alt='Rupee' className='w-6 h-6 ' /></div>
                                         Recorded Transaction
-                                         </Button>
+                                    </Button>
                                 {/* </PopoverTrigger>
                                 <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
 
@@ -186,7 +197,7 @@ const NewsalesTotalAmout = () => {
                                 </div>
                             </div>
                         </div>
-    
+                        {showPopup && <Popup headerdata={headerData} onClose={togglePopup} />}
           
         </>
 
