@@ -46,7 +46,7 @@ const NewsalesReturnBottomBar = ({invoiceData}:any) => {
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
             totalCost: allData.totalAmountData.totalCost,
-            overallDiscount: allData.totalAmountData.gst.value,
+            overallDiscount: allData.totalAmountData.gst,
             totalQty:totalQty,
             status: "Pending",
             type: FinanceCreationType.Sales_Return,

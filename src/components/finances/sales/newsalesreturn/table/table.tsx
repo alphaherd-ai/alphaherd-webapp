@@ -32,7 +32,8 @@ interface Products{
     itemName:string,
     productBatch:ProductBatch[],
     hsnCode:string,
-    quantity:number
+    quantity:number,
+    tax:number
 }
 interface ProductBatch {
     id: number;
@@ -47,6 +48,7 @@ interface ProductBatch {
     category :string;
     distributors:string[];
     productId:number;
+    product:Products;
 }
 function useProductfetch (id: number | null) {
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`,fetcher,{revalidateOnFocus:true});
@@ -103,7 +105,7 @@ const NewsalesReturnTable = () => {
                 sellingPrice:item.sellingPrice,
                 expiry:item.productBatch.expiry,
                 batchNumber:item.productBatch.batchNumber,
-                gst:item.taxAmount,
+                gst:item.productBatch.product.tax,
                 id:item.productBatch.id
               }));
               setItems(itemData);
@@ -145,7 +147,8 @@ const NewsalesReturnTable = () => {
              value:{
                 id: product.id,
                 quantity:product.quantity,
-                itemName:product.itemName
+                itemName:product.itemName,
+                tax:product.tax
             },
              label: product.itemName,
          }));
@@ -258,6 +261,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
           quantity: data.value.quantity,
           productId: selectedProduct.value.id,
           itemName: data.value.itemName,
+          gst:data.value.tax
         };
         setItems(updatedItems);
 
@@ -470,25 +474,25 @@ useEffect(() => {
                                 </div>
                                 
                                 <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
-                                    { id==null?(
-                                    <Select
-                                        className="text-neutral-400 text-base font-medium"
-                                        defaultValue={[]}
-                                        isClearable={false}
-                                        isSearchable={true}
-                                        options={gstOptions}
-                                        styles={{
-                                            control: (provided, state) => ({
-                                                ...provided,
-                                                border: state.isFocused ? 'none' : 'none',
-                                                padding: '0',
-                                            }),
-                                        }}
-                                        onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
-                                    />):(
-                                        item.gst
-                                    )}
-                                </div>
+                                        {/* { id==null?(
+                                        <Select
+                                            className="text-neutral-400 text-base font-medium"
+                                            defaultValue={[]}
+                                            isClearable={false}
+                                            isSearchable={true}
+                                            options={gstOptions}
+                                            styles={{
+                                                control: (provided, state) => ({
+                                                    ...provided,
+                                                    border: state.isFocused ? 'none' : 'none',
+                                                    padding: '0',
+                                                }),
+                                            }}
+                                            onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
+                                        />):( */}
+                                           { item.gst}
+                                        {/* )} */}
+                                    </div>
                                 <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>{`₹${((item?.sellingPrice*item?.quantity * item?.gst)||0).toFixed(2)}`}</div>
                                     <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium'>{`₹${((item?.quantity * item?.sellingPrice +item?.sellingPrice*item.quantity*item.gst)||0).toFixed(2)}`}</div>
                                     <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>

@@ -232,7 +232,7 @@ model Products {
   itemName           String?
   defaultUnit        String?
   hsnCode            String?
-  tax                String?
+  tax                Float?
   category           String?
   description        String?
   providers          String[]
@@ -254,6 +254,7 @@ model ProductBatch {
   costPrice          Int?
   location           Location            @default(NONE)
   totalCost          Int?
+  maxRetailPrice     Float?
   costPerItem        Int?
   profitMargin       String?
   expiry             DateTime?
@@ -320,6 +321,7 @@ model Purchases {
   shipping             Float?
   adjustment           Float?
   totalCost            Float?
+  overallDiscount      Float?
   totalQty             Int?
   status               String?
   type                 String?

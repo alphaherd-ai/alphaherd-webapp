@@ -1,4 +1,5 @@
 import jsPDF from "jspdf";
+import formatDateAndTime from "./formateDateTime";
 
 export function generatePdfForInvoice(data: any, appState: any, items: any) {
   console.log(JSON.stringify(data))
@@ -45,11 +46,11 @@ export function generatePdfForInvoice(data: any, appState: any, items: any) {
   let lineHeight = 6;
 
   // Add header
-  addText(appState.currentBranch?.org.orgName!, 105, y, 20, 'center', 'bold');
+  addText(appState.currentBranch?.org.orgName!, 70, y, 20, 'center', 'bold');
   y += 8;
-  addText(`${appState.currentBranch?.branchName}`, 105, y, 11, 'center');
+  addText(`${appState.currentBranch?.branchName}`, 70, y, 11, 'center');
   y += 5;
-  addText('+91 9834324324 · caravet@gmail.com · petsfirsthospital.in', 105, y, 11, 'center');
+  addText(`${appState.currentBranch?.org?.phoneNo!} · ${appState.currentBranch?.org?.orgEmail!}· petsfirsthospital.in`, 70, y, 11, 'center');
 
   // doc.setFontSize(20)
   // doc.text(appState.currentBranch?.org.orgName!, 65, 6);
@@ -101,18 +102,18 @@ export function generatePdfForInvoice(data: any, appState: any, items: any) {
   // doc.setLineWidth(0.3);
   // doc.line(0, 65, 420, 65);
 
-  today = new Date(data.dueDate);
+  today = new Date();
   dd = String(today.getDate()).padStart(2, '0');
   mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
   yyyy = today.getFullYear();
   todayString = mm + '/' + dd + '/' + yyyy;
 
   // Add sales invoice details
-  addText('Sales Invoice details', 10, y, 12);
+  addText('Invoice details', 10, y, 12);
   y += 5;
   y = addRow([`Invoice No.: ${data.invoiceNo}`, `Date: ${todayString}`], y, [10, 110]);
-  y = addRow([`Billed to: ${data.customer}`, "Phone No.: +91 99999 99999"], y, [10, 110]);
-  y = addRow([`Pay by: ${todayString}`, `Last date of return: ${todayString}`], y, [10, 110]);
+  y = addRow([`Billed to: ${data.customer}`, `Phone No.: ${data.contact}`], y, [10, 110]);
+  y = addRow([`Pay by: ${todayString}`, `Last date of return: ${formatDateAndTime(data.dueDate).formattedDate}`], y, [10, 110]);
   y = addRow([`Notes: ${data.notes}`], y, [10]);
 
   // doc.setFontSize(20)
@@ -135,7 +136,7 @@ export function generatePdfForInvoice(data: any, appState: any, items: any) {
   // doc.text(`Notes: ${data.notes}`, 20, 115);  
 
   // Add line below sales invoice details
-  addLine(10, y, 200, y);
+  addLine(10, y+1, 200, y+1);
   y += lineHeight;
 
   // Add table headers
@@ -154,7 +155,7 @@ export function generatePdfForInvoice(data: any, appState: any, items: any) {
   //     ['2', 'General Consultation', '1', '500', '500'],
   // ];
 
-  const rows = items.map((item:any, idx:any) => [String(idx + 1), item.name, String(item.quantity), String(item.sellingPrice)]);
+  const rows = items.map((item:any, idx:any) => [String(idx + 1), item.name, String(item.quantity), String(item.sellingPrice),String(item.sellingPrice*item.quantity)]);
 
   rows.forEach((row:any) => {
     y = addRow(row, y, [10, 30, 110, 130, 160]);
@@ -207,28 +208,33 @@ export function generatePdfForInvoice(data: any, appState: any, items: any) {
   // y = addRow(['Tax Amount', '360'], y, [150, 180]);
 
   // Add summary headers and values
-
-  y = addRow(['Subtotal', `${data.totalCost}`], y, [150, 180]);
-
+  
+  y = addRow(['Subtotal', `${(items.reduce((acc:any, item:any) => acc + item.quantity *item.sellingPrice , 0)||0).toFixed(2)}`], y, [130, 180]);
+  addLine(200, y, 130, y);
+  y += lineHeight;
   const summaryHeaders = ['Taxable Value', 'Tax Rate', 'Tax Amount'];
   // const summaryValues = [
   //     ['₹2,000', '18% GST', '₹360'],
   //     ['₹500', '0%', '₹0']
   // ];
 
-  const summaryValues = items.map((item:any) => [String(item.quantity * item.sellingPrice), "18%", String(item.taxAmount)]); // Tax rate not getting for now...
-
+  const summaryValues = items.map((item:any) => [String(item.quantity * item.sellingPrice), String(`${item.taxAmount*100}%`), String((item.taxAmount*item.quantity * item.sellingPrice).toFixed(2))]); // Tax rate not getting for now...
+  y+=lineHeight;
+    addLine(200, y+2, 100, y+2);
+  
+  y = addRow(summaryHeaders, y, [100, 130, 160], lineHeight); 
   summaryValues.forEach((values:any) => {
-    y = addRow(summaryHeaders, y, [10, 60, 110], lineHeight);
-    y = addRow(values, y, [10, 60, 110], lineHeight);
-    y += lineHeight / 2;
+    y = addRow(values, y, [100, 130, 160], lineHeight);
+    addLine(200, y, 100, y);
+    y+=lineHeight
   });
-
-
-  y = addRow(['Shipping', `${data.shipping}`], y, [150, 180]);
-  y = addRow(['Total Discounts', `${data.overallDiscount}`], y, [150, 180]);
-  addText('Grand Total', 150, y, 12);
-  addText(`${data.subTotal}`, 180, y, 12);
+  addLine(200, y+2, 130, y+2);
+  y = addRow(['Shipping', `${data.shipping}`], y, [130, 160]);
+  addLine(200, y+2, 130, y+2);
+  y = addRow(['Total Discounts', `${data.overallDiscount}`], y, [130, 160]);
+ 
+  addText('Grand Total', 130, y, 12);
+  addText(`${(data.subTotal).toFixed(2)}`, 160, y, 12);
 
 
   y += lineHeight;
@@ -236,100 +242,7 @@ export function generatePdfForInvoice(data: any, appState: any, items: any) {
   // Add line below summary
   addLine(10, y, 200, y);
 
-  // doc.text("Subtotal", 100, y, { maxWidth: 40 });
-  // doc.text(`${data.totalCost}`, 190, y);
 
-  // y += 5;
-  // if (y > 210) {
-  //   y = 10;
-  //   doc.addPage();
-  // }
-  // doc.setLineWidth(0.3);
-  // doc.line(90, y, 260, y);
-
-  // y += 15;
-  // if (y > 210) {
-  //   y = 10;
-  //   doc.addPage();
-  // }
-  // doc.text("Taxable Value", 100, y, { maxWidth: 40 });
-  // doc.text("Tax Rate", 150, y, { maxWidth: 40 });
-  // doc.text("Tax Amount", 190, y);
-
-  // y += 5;
-  // if (y > 210) {
-  //   y = 10;
-  //   doc.addPage();
-  // }
-
-  // for (let i = 0; i < items.length; i++) {
-  //   doc.setLineWidth(0.3);
-  //   doc.line(90, y, 260, y);
-
-  //   y += 15;
-  //   if (y > 210) {
-  //     y = 10;
-  //     doc.addPage();
-  //   }
-
-  //   doc.text(`${items[i].quantity * items[i].sellingPrice}`, 100, y, { maxWidth: 40 });
-  //   doc.text("Tax Rate: ", 150, y, { maxWidth: 40 });
-  //   doc.text(`${items[i].taxAmount}`, 190, y);
-
-  //   y += 5;
-  //   if (y > 210) {
-  //     y = 10;
-  //     doc.addPage();
-  //   }
-
-  //   doc.setLineWidth(0.3);
-  //   doc.line(90, y, 260, y);
-  // }
-
-  // y += 10;
-  // if (y > 210) {
-  //   y = 10;
-  //   doc.addPage();
-  // }
-  // doc.text("Shipping", 100, y, { maxWidth: 40 });
-  // doc.text(`${data.shipping}`, 190, y);
-
-  // y += 5;
-  // if (y > 210) {
-  //   y = 10;
-  //   doc.addPage();
-  // }
-
-  // y += 10;
-  // if (y > 210) {
-  //   y = 10;
-  //   doc.addPage();
-  // }
-  // doc.text("Total Discount", 100, y, { maxWidth: 40 });
-  // doc.text(`${data.overallDiscount}`, 190, y);
-
-  // y += 5;
-  // if (y > 210) {
-  //   y = 10;
-  //   doc.addPage();
-  // }
-
-  // y += 10;
-  // if (y > 210) {
-  //   y = 10;
-  //   doc.addPage();
-  // }
-  // doc.text("Grand Total", 100, y, { maxWidth: 40 });
-  // doc.text(`${data.subTotal}`, 190, y);
-
-  // y += 5;
-  // if (y > 210) {
-  //   y = 10;
-  //   doc.addPage();
-  // }
-
-  // doc.setLineWidth(0.3);
-  // doc.line(90, y, 260, y);
 
   doc.save('invoice.pdf')
 }

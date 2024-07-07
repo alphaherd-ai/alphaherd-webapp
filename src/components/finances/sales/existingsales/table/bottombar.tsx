@@ -98,7 +98,7 @@ const ExistingsalesBottomBar = ({existingSalesData}:any) => {
                                     <div>Repeat Order</div>
                                 </div>
                                 </Link>
-                                <Link href={{pathname:'newsalesreturn',query:{id:existingSalesData?.id}}} style={{textDecoration:'none',color:'white'}}>
+                                <Link href={{pathname:'invoicereturn',query:{id:existingSalesData?.id}}} style={{textDecoration:'none',color:'white'}}>
                                 <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
                                     <Image src={checkicon} alt="check"></Image>
                                     <div>Convert to Sales Return</div>

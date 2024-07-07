@@ -41,7 +41,7 @@ const FinancesNavbar = () => {
     const currentRoute = usePathname();
 
     const handleSearch = (selectedOption: any) => {
-        const item = selectedOption.value;
+        const item = selectedOption?.value;
         let path = '';
         if (item.type === FinanceCreationType.Sales_Estimate) {
             path = `/finance/sales/existingsalesestimate?id=${item.sale.id}`;
@@ -125,7 +125,7 @@ const FinancesNavbar = () => {
                             isSearchable={true}
                             options={searchOptions}
                             onChange={(selectedProduct: any) => handleSearch(selectedProduct)}
-                            placeholder="Search"
+                            placeholder="Search via client name or invoice no."
                         />
                         {/* <div className="absolute inset-y-0 right-3 pl-2 flex items-center pointer-events-none">
                             <div className='flex items-center '>

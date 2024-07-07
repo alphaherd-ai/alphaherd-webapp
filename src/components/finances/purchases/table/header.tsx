@@ -171,7 +171,7 @@ const FinancesPurchasesTableHeader = ({invoiceCount,orderCount,returnCount}:any)
                     <div className='text-base p-4  text-white flex '>
                     <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Create GRN</div>
                     </Link>
-                    <Link className='no-underline flex item-center' href={{pathname:'/finance/purchases/return',query:{count:returnCount}}}>
+                    <Link className='no-underline flex item-center' href={{pathname:'/finance/purchases/newreturn',query:{count:returnCount}}}>
                     <div className='text-base p-4  text-white flex '>
                     <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Purchase Return</div>
                     </Link>

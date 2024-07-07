@@ -44,6 +44,7 @@ const NewPurchasesBottomBar = () => {
             adjustment: allData.totalAmountData.adjustment,
             totalCost: allData.totalAmountData.totalCost,
             totalQty: totalQty,
+            overallDiscount:allData.totalAmountData.overallDiscount,
             status: "Pending",
             type: FinanceCreationType.Purchase_Order,
             items:{

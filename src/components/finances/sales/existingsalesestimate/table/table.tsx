@@ -197,7 +197,7 @@ const ExistingsaleEstimateTable = () => {
                                                 <div className="text-indigo-600 text-sm font-medium ">Item Discount</div>
                                             </div>
                                         </div>
-                                        <div className=' flex text-gray-500 text-base font-medium w-[10rem]'> {item.discount*100}% off</div>
+                                        <div className=' flex text-gray-500 text-base font-medium w-[10rem]'> {(item.discount*100).toFixed(2)}% off</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-1/12'>
 
                                         </div>
@@ -206,7 +206,7 @@ const ExistingsaleEstimateTable = () => {
 
                                         <div className=' flex text-gray-500 text-base font-medium w-1/12'> </div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[10rem]'></div>
-                                        <div className="text-red-500 text-base font-bold w-1/12 ">-₹{item.discount*item.sellingPrice*item.quantity}</div>
+                                        <div className="text-red-500 text-base font-bold w-1/12 ">-₹{(item.discount*item.sellingPrice*item.quantity).toFixed(2)}</div>
                                      
                                     </div>
 

@@ -33,7 +33,8 @@ interface Products{
     itemName:string,
     productBatch:ProductBatch[],
     hsnCode:string,
-    quantity:number
+    quantity:number,
+    tax:number
 }
 interface ProductBatch {
     id: number;
@@ -143,7 +144,8 @@ const CreateGrnTable = () => {
              value:{
                 id: product.id,
                 quantity:product.quantity,
-                itemName:product.itemName
+                itemName:product.itemName,
+                tax:product.tax
             },
              label: product.itemName,
          }));
@@ -212,7 +214,25 @@ const handleAddItem= useCallback(() => {
             })
         );
     };
-
+    const handleDiscountSelect= (selectedDiscount:number,index:number)=>{
+        const updatedItems=[...tableData];
+        console.log(selectedDiscount);
+        updatedItems[index]={
+            ...updatedItems[index],
+            discountPercent:selectedDiscount,
+            discountAmount:Number(selectedDiscount/100)*updatedItems[index]['unitPrice']*updatedItems[index]['quantity']
+        };
+        setTableData(updatedItems);
+    }
+    const handleDiscountChange= (discount:number,index:number)=>{
+        const updatedItems=[...tableData];
+        updatedItems[index]={
+            ...updatedItems[index],
+            discountAmount:discount,
+            discountPercent:Number((discount/Number(updatedItems[index]['unitPrice']*updatedItems[index]['quantity'])).toFixed(4))*100
+        };
+        setTableData(updatedItems);
+    }
     const handleInputChange = useCallback((index: number, value: any,field: string) => {   
         const updatedItems = [...items];
             updatedItems[index][field] =Number(value);
@@ -250,6 +270,7 @@ const handleAddItem= useCallback(() => {
               quantity: data.value.quantity,
               productId: selectedProduct.value.id,
               itemName: data.value.itemName,
+              gst:data.value.tax
             };
             setItems(updatedItems);
     
@@ -479,26 +500,26 @@ const handleAddItem= useCallback(() => {
 
                                     />
                             </div>
-                            <div className='flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
-                            <Select
-                                            className="text-textGrey2 text-sm font-medium absolute "
+                            <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
+                                        {/* { id==null?(
+                                        <Select
+                                            className="text-neutral-400 text-base font-medium"
                                             defaultValue={[]}
                                             isClearable={false}
                                             isSearchable={true}
                                             options={gstOptions}
-                                            menuPortalTarget={document.body}
                                             styles={{
                                                 control: (provided, state) => ({
                                                     ...provided,
                                                     border: state.isFocused ? 'none' : 'none',
+                                                    padding: '0',
                                                 }),
-                                                menuPortal: base => ({ ...base, zIndex: 9999 })
                                             }}
-                                        onChange={(selectedOption: any) => handleGstSelect(selectedOption, index)}
-
-                                            
-                                        />
-                            </div>
+                                            onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
+                                        />):( */}
+                                           { item.gst*100}%
+                                        {/* )} */}
+                                    </div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
                             ₹
                             <input
@@ -515,7 +536,7 @@ const handleAddItem= useCallback(() => {
                                         type="number"
                                         value={item.discountPercent}
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                        onChange={(e) => handleItemsDataChange(index,'discountPercent', e.target.value)}
+                                        onChange={(e) => handleDiscountSelect( Number(e.target.value),index)}
                                        name={`discountPercent-${index+1}`}
                                     />
                             %
@@ -525,9 +546,9 @@ const handleAddItem= useCallback(() => {
                             ₹
                             <input
                                         type="number"
-                                        value={(item.discountPercent/100*item.quantity*Number(item.unitPrice)).toFixed(2)}
+                                        value={item.discountAmount}
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                        onChange={(e) => handleItemsDataChange(index,'discountAmount', e.target.value)}
+                                        onChange={(e) => handleDiscountChange(Number( e.target.value),index)}
                                        name={`discountAmount-${index+1}`}
                                     />
                             </div>
