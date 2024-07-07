@@ -84,7 +84,7 @@ const NewsalesTable = () => {
     const appState = useAppSelector((state) => state.app)
     const url= useSearchParams();
     const id=url.get('id');
-    
+
     let estimateData:any=null,isEstimateDataLoading=false,isEstimateDataError=false;
     const { tableData: items, setTableData: setItems } = useContext(DataContext);   
     if(id){
@@ -284,6 +284,9 @@ const handleAddItem= useCallback(() => {
     setItems([...items, {}]);
 }, [items]);
 
+
+ 
+
 const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
     console.log(selectedProduct);
     if (selectedProduct.value) {
@@ -319,42 +322,42 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
       }
     }
   }, [items, products]);
-const handleBatchSelect = useCallback(async (selectedProduct: any, index: number) => {
-    if (selectedProduct.value) {
-        try {
-            
-            const data = filteredBatches.find((batch)=>batch.value.id==selectedProduct.value.id);
-            console.log(data)
-            const updatedItems = [...items];
-            updatedItems[index] = {
-                ...updatedItems[index],
-                id: data.value.id,
-                quantity: data.value.quantity ,
-                batchNumber: data.value.batchNumber,
-                expiry:  data.value.expiry,
-                sellingPrice:  data.value.sellingPrice,
-                productId:data.value.productId
-            };
-            console.log("these are updated",updatedItems)
-            setItems(updatedItems);
-            setTableData(updatedItems);
-                // const updatedProducts = products.filter((product) => product.value !== selectedProduct.value);
-                // setProducts(updatedProducts);
-        } catch (error) {
-            console.error("Error fetching product details from API:", error);
+    const handleBatchSelect = useCallback(async (selectedProduct: any, index: number) => {
+        if (selectedProduct.value) {
+            try {
+                
+                const data = filteredBatches.find((batch)=>batch.value.id==selectedProduct.value.id);
+                console.log(data)
+                const updatedItems = [...items];
+                updatedItems[index] = {
+                    ...updatedItems[index],
+                    id: data.value.id,
+                    quantity: data.value.quantity ,
+                    batchNumber: data.value.batchNumber,
+                    expiry:  data.value.expiry,
+                    sellingPrice:  data.value.sellingPrice,
+                    productId:data.value.productId
+                };
+                console.log("these are updated",updatedItems)
+                setItems(updatedItems);
+                setTableData(updatedItems);
+                    // const updatedProducts = products.filter((product) => product.value !== selectedProduct.value);
+                    // setProducts(updatedProducts);
+            } catch (error) {
+                console.error("Error fetching product details from API:", error);
+            }
         }
-    }
-}, [items, products]);
+    }, [items, products]);
 
 
-useEffect(() => {
-    if (id == null) {
-        setItems(items);
-        setTableData(items);  
-    }
-}, [id, items]);
+            useEffect(() => {
+                if (id == null) {
+                    setItems(items);
+                    setTableData(items);  
+                }
+            }, [id, items]);
 
-   
+            
 
 
     return (
@@ -527,7 +530,7 @@ useEffect(() => {
                                             }}
                                             onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
                                         />):( */}
-                                           { item.gst}
+                                           { item.gst*100}%
                                         {/* )} */}
                                     </div>
                                     <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>{`₹${((item?.sellingPrice*item?.quantity * item?.gst)||0).toFixed(2)}`}</div>
