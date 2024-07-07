@@ -26,7 +26,8 @@ interface Products{
     itemName:string,
     productBatch:ProductBatch[],
     hsnCode:string,
-    quantity:number
+    quantity:number,
+    tax:number
 }
 interface ProductBatch {
     id: number;

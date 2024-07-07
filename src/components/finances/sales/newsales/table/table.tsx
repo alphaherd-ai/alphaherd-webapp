@@ -33,6 +33,7 @@ interface Products{
     productBatch:ProductBatch[],
     hsnCode:string,
     quantity:number
+    tax:number,
 }
 interface ProductBatch {
     id: number;
@@ -47,6 +48,7 @@ interface ProductBatch {
     category :string;
     distributors:string[];
     productId:number;
+    product:Products;
 }
 function useProductfetch (id: number | null) {
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`,fetcher,{revalidateOnFocus:true});
@@ -105,7 +107,7 @@ const NewsalesTable = () => {
                 sellingPrice:item.sellingPrice,
                 expiry:item.productBatch.expiry,
                 batchNumber:item.productBatch.batchNumber,
-                gst:item.taxAmount,
+                gst:item.productBatch.product.tax,
                 id:item.productBatch.id
               }));
               setItems(itemData);
@@ -155,7 +157,8 @@ const NewsalesTable = () => {
              value:{
                 id: product.id,
                 quantity:product.quantity,
-                itemName:product.itemName
+                itemName:product.itemName,
+                tax:product.tax
             },
              label: product.itemName,
          }));
@@ -198,7 +201,18 @@ const handleDiscountSelect= (selectedDiscount:any,index:number)=>{
     console.log(selectedDiscount);
     updatedItems[index]={
         ...updatedItems[index],
-        discount:selectedDiscount.value
+        discount:selectedDiscount.value,
+        discountAmount:selectedDiscount.value*updatedItems[index]['sellingPrice']*updatedItems[index]['quantity']
+    };
+    setTableData(updatedItems);
+}
+const handleDiscountChange= (discount:number,index:number)=>{
+    const updatedItems=[...tableData];
+    console.log((discount/(updatedItems[index]['sellingPrice']*updatedItems[index]['quantity'])).toFixed(10))
+    updatedItems[index]={
+        ...updatedItems[index],
+        discountAmount:discount,
+        discount:Number((discount/Number(updatedItems[index]['sellingPrice']*updatedItems[index]['quantity'])).toFixed(10))
     };
     setTableData(updatedItems);
 }
@@ -282,6 +296,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
           quantity: data.value.quantity,
           productId: selectedProduct.value.id,
           itemName: data.value.itemName,
+          gst:data.value.tax
         };
         setItems(updatedItems);
 
@@ -496,7 +511,7 @@ useEffect(() => {
                                     </div>
                                     
                                     <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
-                                        { id==null?(
+                                        {/* { id==null?(
                                         <Select
                                             className="text-neutral-400 text-base font-medium"
                                             defaultValue={[]}
@@ -511,9 +526,9 @@ useEffect(() => {
                                                 }),
                                             }}
                                             onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
-                                        />):(
-                                            item.gst
-                                        )}
+                                        />):( */}
+                                           { item.gst}
+                                        {/* )} */}
                                     </div>
                                     <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>{`₹${((item?.sellingPrice*item?.quantity * item?.gst)||0).toFixed(2)}`}</div>
                                     <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium'>{`₹${((item?.quantity * item?.sellingPrice +item?.sellingPrice*item.quantity*item.gst)||0).toFixed(2)}`}</div>
@@ -554,7 +569,14 @@ useEffect(() => {
                             <div className='flex text-gray-500 text-base font-medium w-[10rem]'></div>
                             <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
                             <div className='flex text-gray-500 text-base font-medium w-[10rem]'></div>
-                            <div className="text-red-500 text-base font-bold w-1/12">-₹{(item.sellingPrice*item.discount*item. quantity).toFixed(2)}</div>
+                            <div className="text-red-500 text-base font-bold w-1/12">-₹
+                            <input 
+                            type="number"
+                            className="text-right text-red-500 text-base  w-[50%] border-none outline-none"
+                            value={item.discountAmount}
+                            onChange={(e)=>handleDiscountChange(Number(e.target.value),index)}
+                            />
+                            </div>
                         </div>
                     )}
     </div>

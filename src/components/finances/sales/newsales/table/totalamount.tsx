@@ -25,16 +25,31 @@ const NewsalesTotalAmout = () => {
     const [grandAmt, setGrandAmt] = useState(totalAmount);
 
     const gstOptions = [
-        { value: 0.18, label: Tax.GST_18 },
-        { value: 0.09, label: Tax.GST_9 }
+        { value: 'percent', label: '₹ in Percent' },
+        { value: 'amount', label: '₹ in Amount' }
     ];
-
+    const [discountMethod,setDiscountMethod]=useState('amount');
     const handleSelectChange = (selectedOption: any) => {
-        let discountedAmount = totalAmount - totalAmount * selectedOption.value;
-        setDiscount(selectedOption.value);
-        setGrandAmt(discountedAmount);
-        setTotalAmountData((prevData) => ({ ...prevData, gst: selectedOption }));
+        setDiscountMethod(selectedOption.value);
     };
+    const [discountInput,setDiscountInput]=useState(0);
+    const handleDiscountChange =(discount:number)=>{
+        if(discountMethod==='amount'){
+            setDiscountInput(discount);
+            let discountedAmount=grandAmt-discount;
+            let discountPercent=Number(discount/totalAmount).toFixed(4)
+            setDiscount(Number(discountPercent))
+            setGrandAmt(discountedAmount);
+            setTotalAmountData((prevData)=>({...prevData,gst:Number(discountPercent)}))
+        }
+        else if(discountMethod==='percent'){
+            setDiscountInput(discount);
+            let discountedAmount=grandAmt-grandAmt*(discount/100);
+            setDiscount(Number(discount/100));
+            setGrandAmt(discountedAmount);
+            setTotalAmountData((prevData)=>({...prevData,gst:Number(discount/100)}))
+        }
+    }
 
     const [shipping, setShipping] = useState(0);
     const [adjustment, setAdjustment] = useState(0); 
@@ -143,11 +158,17 @@ const NewsalesTotalAmout = () => {
                                 <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
                                     <div className="text-gray-500 text-base font-bold ">Overall Discount</div>
                                     <div className="flex items-center">
-                                        <div className="text-right text-textGrey1 text-base  ">{selectedDiscount*100}%</div>
+                                        <div className="text-right text-borderText text-base  ">
+                                        <input
+                                        type='number'
+                                        className="text-right  text-base  w-[50%] border-none outline-none"
+                                        value={discountInput}
+                                        onChange={(e)=>handleDiscountChange(Number(e.target.value))}
+                                        /></div>
                                         <div className=' flex text-gray-500 text-base font-medium pl-6'>
                                             <Select
                                                 className="text-neutral-400 text-base font-medium"
-                                                defaultValue={gstOptions[0]}
+                                                defaultValue={gstOptions[1]}
                                                 isClearable={false}
                                                 isSearchable={true}
                                                 options={gstOptions}

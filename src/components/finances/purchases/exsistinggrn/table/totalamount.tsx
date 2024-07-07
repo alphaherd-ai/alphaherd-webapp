@@ -63,12 +63,12 @@ const ExsistingGrnTotalAmount = ({otherData}: any) => {
             <div className="w-1/2 h-full  bg-white rounded-[10px]">
                 <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">
                 <div className="text-gray-500 text-base font-bold ">Subtotal</div>
-                                    <div className="text-right text-gray-500 text-base font-bold ">₹{(otherData.totalCost+otherData.shipping+otherData.adjustment+otherData.overAllDiscount*100)?.toFixed(2)}</div>
+                                    <div className="text-right text-gray-500 text-base font-bold ">₹{((otherData.totalCost-otherData.shipping-otherData.adjustment)/(1-otherData.overallDiscount))?.toFixed(2)}</div>
                                 </div>
                                 <div className="w-full flex px-4 py-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
                                     <div className="text-gray-500 text-base font-bold ">Overall Discount</div>
                                     <div className="flex items-center">
-                                        <div className="text-right text-textGrey1 text-base  ">{otherData.overAllDiscount*100}%</div>
+                                        <div className="text-right text-textGrey1 text-base  ">{(otherData.overallDiscount*100).toFixed(2)}%</div>
                                      
                                     </div>
                                 </div>

@@ -41,7 +41,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             discount:data.discount
         }));
         const data = {
-            customer: (id === null) ? allData.headerData.customer.value : estimateData.customer,
+            customer: (id === null) ? allData.headerData.customer.value.clientName : estimateData.customer,
             notes: (id === null) ?allData.headerData.notes:estimateData.notes,
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo: (id === null) ?allData.headerData.invoiceNo:estimateData.invoiceNo,
@@ -49,7 +49,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
             totalCost: allData.totalAmountData.totalCost,
-            overallDiscount: allData.totalAmountData.gst.value,
+            overallDiscount: allData.totalAmountData.gst,
             totalQty: totalQty,
             status: "Pending",
             type: FinanceCreationType.Sales_Invoice,
@@ -93,24 +93,27 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             quantity: data.quantity,
             sellingPrice: data.sellingPrice,
             taxAmount: data.gst,
-            name: data.itemName
+            name: data.itemName,
+            discount:data.discount
         }));
         const data = {
-            customer: (id === null) ? allData.headerData.customer.value : allData.headerData.customer,
-            notes: allData.headerData.notes,
+            customer: (id === null) ? allData.headerData.customer.value.clientName : estimateData.customer,
+            notes: (id === null) ?allData.headerData.notes:estimateData.notes,
             subTotal: allData.totalAmountData.subTotal,
-            invoiceNo: 234234,
-            dueDate: allData.headerData.date,
+            invoiceNo: (id === null) ?allData.headerData.invoiceNo:estimateData.invoiceNo,
+            dueDate: (id === null) ?allData.headerData.dueDate:estimateData.dueDate,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
             totalCost: allData.totalAmountData.totalCost,
-            overallDiscount: allData.totalAmountData.gst.value,
+            contact:allData.headerData.customer.value.contact,
+            overallDiscount: `${allData.totalAmountData.gst*100}%`,
             totalQty: totalQty,
             status: "Pending",
             type: FinanceCreationType.Sales_Invoice,
             items: {
                 create: items
             }
+
         }
 
         generatePdfForInvoice(data, appState, items);

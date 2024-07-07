@@ -32,7 +32,8 @@ export const fetchInventoryId = async (request:NextRequest) => {
     const orgBranch=await prismaClient.orgBranch.findUnique({
         where: {
             id : Number(branchId)
-        }
+        },
+        cacheStrategy:{ttl:60}
     });
     console.log(orgBranch)
     const inventorySection = await prismaClient.inventorySection.findUnique({
@@ -66,7 +67,12 @@ export const fetchFinanceId = async (request:NextRequest) => {
     if (!branchId) {
         throw new Error("Branch ID not found in request");
     }
-    const orgBranch=await fetchBranchDetailsById(Number(branchId));
+    const orgBranch=await prismaClient.orgBranch.findUnique({
+        where: {
+            id : Number(branchId)
+        },
+        cacheStrategy:{ttl:60}
+    });
     console.log(orgBranch)
 
     const financeSection = await prismaClient.financeSection.findUnique({
@@ -98,7 +104,12 @@ export const fetchDatabaseId = async (request:NextRequest) => {
     if (!branchId) {
         throw new Error("Branch ID not found in request");
     }
-    const orgBranch=await fetchBranchDetailsById(Number(branchId));
+    const orgBranch=await prismaClient.orgBranch.findUnique({
+        where: {
+            id : Number(branchId)
+        },
+        cacheStrategy:{ttl:60}
+    });
     console.log(orgBranch)
     const databaseSection = await prismaClient.databaseSection.findUnique({
         where: {

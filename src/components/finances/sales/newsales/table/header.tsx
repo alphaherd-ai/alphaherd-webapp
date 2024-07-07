@@ -28,6 +28,7 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [customers,setCustomers]=useState<any[]>([]);
+    const [clientContact,setContact]=useState<any[]>([]);
     const appState = useAppSelector((state) => state.app)
     const [dueDate, setDueDate] = useState(new Date());
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
@@ -62,8 +63,9 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
     useEffect(()=>{
         if(!isLoading&&!error&&data){
               const  clients=data.map((client:any)=>({
-                value:client.clientName,
-                label:client.clientName
+                value:{clientName:client.clientName,
+                       contact:client.contact},
+                label:`${client.clientName}\u00A0\u00A0\u00A0\u00A0\u00A0${client.contact}`
             }))
             setCustomers(clients);
 

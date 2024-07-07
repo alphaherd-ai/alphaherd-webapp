@@ -62,7 +62,7 @@ const ExsistingPurcaseReturnTable = () => {
             itemName:item.name,
             quantity:item.quantity,
             unitPrice:item.productBatch?.costPrice,
-            tax:item.tax,
+            tax:item.taxAmount,
             discount:item.discount,
             expiry:item.productBatch?.expiry,
             batchNumber:item.productBatch?.batchNumber,
@@ -280,14 +280,14 @@ useEffect(() => {
                                {item.tax*100}%
                             </div>
                             <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                            ₹ {item.tax*item.quantity*item.unitPrice}
+                            ₹ {(item.tax*item.quantity*item.unitPrice).toFixed(2)}
                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                     /> */}
                             </div>
                             <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                             {item.discount*100}
+                             {(item.discount*100).toFixed(2)}
                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
@@ -296,7 +296,7 @@ useEffect(() => {
                             </div>
                             
                             <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                            ₹ {item.discount*item.unitPrice*item.quantity}
+                            ₹ {(item.discount*item.unitPrice*item.quantity).toFixed(2)}
                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"

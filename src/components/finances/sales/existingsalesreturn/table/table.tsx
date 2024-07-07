@@ -149,7 +149,7 @@ console.log(items)
                                 <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>Tax Amt.</div>
                                 <div className=' flex text-gray-500 text-base font-medium  w-1/12'>Subtotal</div>
                             </div>
-                            {items.map((item,index) => (
+                            {items?.map((item,index) => (
                                 <div key={item.id} className="flex flex-col">
                                      <div  className='flex justify-evenly items-center w-full  box-border  bg-white  border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-400   '>
                                     <div className='w-[3rem] flex items-center text-textGrey2 text-base font-medium '>{index+1}</div>
@@ -166,7 +166,7 @@ console.log(items)
                                   </div>
                                   <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium '>{item.returnReason}</div>
               
-                                    <div className='w-[8rem] flex items-center text-textGrey2 text-base font-medium gap-1 '>
+                                    <div className='w-[8rem] flex items-center text-textGrey2 text-base font-medium gap-6 '>
                                           <div className="w-1/12 flex items-center text-textGrey2 text-base font-medium">{item.sellingPrice}</div>
                                         <div className="text-neutral-400 text-[12px]  font-medium  "> Tax inc</div>
 
@@ -174,11 +174,11 @@ console.log(items)
                                    
                                  
                                     <div className='w-[8rem] flex items-center text-textGrey2 text-base font-medium '>
-                                    <div className="text-textGrey2 text-base  font-medium  "> {(item.tax).toFixed(2)}</div>
+                                    <div className="text-textGrey2 text-base  font-medium  "> {(item.tax*100)}</div>
 
                                     </div>
-                                    <div className='w-[6rem] flex items-center text-textGrey2 text-base font-medium '>{`₹${(item.quantity * item.tax).toFixed(2)}`}</div>
-                                    <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium '>{`₹${(item.quantity * item.sellingPrice +item.quantity* item.tax).toFixed(2)}`}</div>
+                                    <div className='w-[6rem] flex items-center text-textGrey2 text-base font-medium '>{`₹${(item.quantity * item.tax*100).toFixed(2)}`}</div>
+                                    <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium '>{`₹${(item.quantity * item.sellingPrice +item.quantity* item.tax*100).toFixed(2)}`}</div>
                                    
                                 </div>
                                     {/* <div>
@@ -219,8 +219,8 @@ console.log(items)
                                 <div className=' flex text-gray-500 text-base font-medium w-[8rem]'>
                                 <div className="text-neutral-400 text-base  font-medium   "> Tax inc</div>
                                 </div>
-                                <div className=' flex text-gray-500 text-base font-medium w-[6rem]'>{`₹${items.reduce((acc, item) => acc + item.quantity  * item.tax, 0).toFixed(2)}`}</div>
-                                <div className=' flex text-gray-500 text-base font-medium w-1/12'>{`₹${items.reduce((acc, item) => acc + item.quantity * item.sellingPrice+item.quantity* item.tax, 0).toFixed(2)}`}</div>
+                                <div className=' flex text-gray-500 text-base font-medium w-[6rem]'>{`₹${items.reduce((acc, item) => acc + item.quantity  * item.tax*100, 0).toFixed(2)}`}</div>
+                                <div className=' flex text-gray-500 text-base font-medium w-1/12'>{`₹${items.reduce((acc, item) => acc + item.quantity * item.sellingPrice+item.quantity* item.tax*100, 0).toFixed(2)}`}</div>
                             </div>
                         </div>
 

@@ -49,6 +49,7 @@ const CreateGrnBottomBar = ({orderData}:any) => {
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
             totalCost: allData.totalAmountData.totalCost,
+            overallDiscount:(id===null)? allData.totalAmountData.overallDiscount:orderData.overallDiscount,
             totalQty: totalQty,
             status: "Pending",
             type: FinanceCreationType.Purchase_Order,

@@ -8,5 +8,5 @@ export const productSchema = z.object({
   description: z.string().min(1).max(1000),
   minStock: z.number().int().min(1).max(10000),
   maxStock:z.number().int().min(1).max(10000),
-  tax:z.string().optional()
+  tax:z.number().optional()
 });
