@@ -6,7 +6,7 @@ import { calculateNextOccurrence } from '../utils/calculateNextOccurrence';
 const recurringExpensesQueue = new Queue('recurring-expenses', {
   redis: {
     host: 'alphaherd.in',
-    port: 6380,
+    port: 6379,
   },
 });
 
