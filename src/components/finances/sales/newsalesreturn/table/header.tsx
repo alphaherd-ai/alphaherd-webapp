@@ -57,16 +57,17 @@ const NewsalesReturnHeader = ({existingHeaderData}:any) => {
             setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo}))}
         },[])
     
-    useEffect(()=>{
-        if(!isLoading&&!error&&data){
-              const  clients=data.map((client:any)=>({
-                value:client.clientName,
-                label:`${client.clientName}\u00A0\u00A0\u00A0\u00A0\u00A0${client.contact}`
-            }))
-            setCustomers(clients);
-
-        }
-    },[data])
+        useEffect(()=>{
+            if(!isLoading&&!error&&data){
+                  const  clients=data.map((client:any)=>({
+                    value:{clientName:client.clientName,
+                           contact:client.contact},
+                    label:`${client.clientName}\u00A0\u00A0\u00A0\u00A0\u00A0${client.contact}`
+                }))
+                setCustomers(clients);
+    
+            }
+        },[data])
 
 
     return (

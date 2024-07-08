@@ -53,7 +53,8 @@ const NewsaleEstimateHeader = () => {
     useEffect(()=>{
         if(!isLoading&&!error&&data){
               const  clients=data.map((client:any)=>({
-                value:client.clientName,
+                value:{clientName:client.clientName,
+                       contact:client.contact},
                 label:`${client.clientName}\u00A0\u00A0\u00A0\u00A0\u00A0${client.contact}`
             }))
             setCustomers(clients);
