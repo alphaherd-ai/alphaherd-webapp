@@ -77,11 +77,8 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
 
     const handleChange = (field: string, value: any) => {
         setFormData({ ...formData, [field]: value });
-        if (field === "patientName" && value.trim() !== "") {
-            setIsSaveDisabled(false);
-        } else if (field === "patientName" && value.trim() === "") {
-            setIsSaveDisabled(true);
-        }
+        const areNamesFilled = formData.clientName?.trim() !== "" && formData.patientName?.trim() !== "";
+        setIsSaveDisabled(!areNamesFilled);
     };
 
     const calculateAge = (years: number, months: number, days: number): string => {

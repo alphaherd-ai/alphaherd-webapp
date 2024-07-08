@@ -59,9 +59,9 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
 
     const handleChange = (field: string, value: any) => {
         setFormData({ ...formData, [field]: value });
-        if (field === "name" && value.trim() !== "") {
+        if (field === ("name"||"contact") && value.trim() !== "") {
             setIsSaveDisabled(false);
-        } else if (field === "name" && value.trim() === "") {
+        } else if (field === ("name"||"contact") && value.trim() === "") {
             setIsSaveDisabled(true);
         }
     };

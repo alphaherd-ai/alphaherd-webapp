@@ -273,7 +273,7 @@ model Services {
   sacCode            String?
   description        String?
   sellingPrice       String?
-  tax                String?
+  tax                Float?
   category           String?
   providers          String[]
   linkProducts       String[]

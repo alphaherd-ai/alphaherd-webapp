@@ -34,6 +34,15 @@ function useServicefetch (id: string | null,branchId:number|null) {
    }
 }
 
+function useServiceBatchfetch(id:string|null,branchId:number|null){
+    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/getAll/${id}?branchId=${branchId}`,fetcher,{revalidateOnFocus:true});
+    return {
+        fetchedBatches:data,
+        isBatchLoading:isLoading,
+        batchError:error
+    }
+}
+
 
   const ServiceDetails = () => {
     const [service, setService] = useState<any | null>(null);
@@ -47,6 +56,12 @@ function useServicefetch (id: string | null,branchId:number|null) {
         setValue(event.target.value === '' ? 0 : Number(event.target.value));
     };
 
+    useEffect(() => {
+        if(!error&&!isLoading&&fetchedProduct){
+          setService(fetchedProduct);
+        }
+      },[fetchedProduct,error,isLoading]);
+      const {fetchedBatches,batchError,isBatchLoading}=useServiceBatchfetch(id,appState.currentBranchId);
 
     function valuetext(value: number) {
         return `${value}°C`;
@@ -57,7 +72,7 @@ function useServicefetch (id: string | null,branchId:number|null) {
             <div className="flex items-center justify-between">
                 <div className="flex gap-2">
                     <div className="w-11 h-11  rounded-[5px] border border-neutral-400 flex justify-center items-center ">
-                        <Link className='no-underline h-full  ml-4' href='/finance/overview'>
+                        <Link className='no-underline h-full  ml-4' href='/inventory/services/timeline'>
                             <div className='flex items-center border border-solid border-gray-300 bg-white rounded-lg p-3  '>   <Image className="w-6 h-6 relative rounded-[5px]" src={lefticon} alt="Back"></Image></div>
                         </Link>
                     </div>
@@ -66,7 +81,7 @@ function useServicefetch (id: string | null,branchId:number|null) {
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
-                    <div className=' '>
+                    
 
                         <Popover placement="left" showArrow offset={10}>
                             <PopoverTrigger>
@@ -92,11 +107,11 @@ function useServicefetch (id: string | null,branchId:number|null) {
 
                             </PopoverContent>
                         </Popover>
-                    </div>
+                    
                 </div>
             </div>
 
-            <div className="w-full mt-[25px] pt-8 bg-white rounded-[10px] border border-solid border-neutral-400 flex-col justify-start items-start gap-8 flex">
+            <div className="w-full mt-[25px] pt-8 bg-white rounded-[10px] border-0.5 border-solid border-neutral-400 flex-col justify-start items-start gap-8 flex">
                 <div className="w-full px-6 justify-start items-center gap-8 flex">
                     <div className="w-40 text-gray-500 text-[20px] font-bold ">
                         Description
@@ -104,7 +119,7 @@ function useServicefetch (id: string | null,branchId:number|null) {
                 </div>
                 <div className="w-full px-6 justify-start items-center gap-8 flex">
                     <div className="w-full rounded-[10px] flex items-center">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum dolorum esse, sapiente ipsa libero vel repellat nesciunt ut laudantium error iste, eum recusandae officiis ipsum ea dicta porro exercitationem nobis eius, quisquam eligendi deserunt inventore! Assumenda culpa sunt nesciunt! Totam impedit, magni atque velit eligendi doloremque eius ipsum vel sint.
+                        {service?.description}
                     </div>            
                 </div>
                 <div className="w-full justify-start items-start flex rounded-[10px]">
@@ -127,7 +142,7 @@ function useServicefetch (id: string | null,branchId:number|null) {
                 </div>
             </div>
             <div className="w-full flex gap-6">
-                <div className="w-6/12 bg-white mt-[25px] rounded-[10px] border  border-solid border-neutral-400 flex-col justify-center items-start flex">
+                <div className="w-6/12 bg-white mt-[25px] rounded-[10px] border-0.5  border-solid border-neutral-400 flex-col justify-center items-start flex">
                     <div className="w-full border-b border-solid border-0 border-stone-300">
                         <div className="w-full flex gap-2 items-center p-6 h-3/12">
                             <div className="text-neutral-400 text-base font-medium ">SAC Code: </div>
@@ -152,11 +167,11 @@ function useServicefetch (id: string | null,branchId:number|null) {
                         <div className="w-full flex gap-2 items-center p-6 h-3/12">
                             <div className="text-neutral-400 text-base font-medium ">Tax Rate:</div>
                             <div className="px-2 py-1.5 bg-gray-100 rounded-[5px] justify-center items-center gap-2 flex">
-                                <div className="text-gray-500 text-base font-medium ">{service?.tax}</div>
+                                <div className="text-gray-500 text-base font-medium ">{service?.tax} %</div>
                             </div>
                         </div>
                     </div>
-                    <div className="w-full border-b border-solid border-0 border-stone-300">
+                    <div className="w-full">
                         <div className="w-full flex gap-2 items-center p-6 h-3/12">
                             <div className="text-neutral-400 text-base font-medium ">Providers:</div>
                             <div className="px-2 py-1.5 bg-gray-100 rounded-[5px] justify-center items-center gap-2 flex">
@@ -166,7 +181,7 @@ function useServicefetch (id: string | null,branchId:number|null) {
                         </div>
                     </div>
                 </div>
-                <div className="w-6/12 bg-white mt-[25px] rounded-[10px] border border-solid border-neutral-400 flex-auto justify-center flex">
+                <div className="w-6/12 bg-white mt-[25px] rounded-[10px] border-0.5 border-solid border-neutral-400 flex-auto justify-center flex">
                     <div className="w-full border-b border-solid border-0 border-stone-300 flex items-start justify-between">                        
                         <div className="w-full flex p-6 items-start justify-between w-full border-0 border-b border-solid border-neutral-400">
                             <div className="text-gray-500 text-xl font-medium ">
@@ -188,8 +203,8 @@ function useServicefetch (id: string | null,branchId:number|null) {
                     </div>
             </div>
             <div className="rounded-md">
-                <div className="w-full mt-[25px] rounded-md border-neutral-400 border border-solid  border-neutral-40  ">
-                    <div className="w-full h-[72px] px-6 py-4 bg-white border-b border-solid border-0 border-neutral-400 justify-start items-center gap-4 flex">
+                <div className="w-full mt-[25px] rounded-[10px] border-neutral-400 border-0.5 border-solid  border-neutral-40  ">
+                <div className="w-full flex p-6 bg-white items-start justify-between w-full border-0 border-b border-solid border-neutral-400 rounded-md">
                         <div className="text-gray-500 text-xl font-medium ">
                             Product List
                         </div>

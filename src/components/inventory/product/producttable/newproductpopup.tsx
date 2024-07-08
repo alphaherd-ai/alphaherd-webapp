@@ -12,12 +12,28 @@ import { useAppSelector } from "@/lib/hooks";
 import useSWR from 'swr';
 import axios from "axios";
 import Distributors from "@/app/database/distributor/page";
+import { Bounce, ToastContainer, toast } from 'react-toastify';
+import { z } from 'zod';
+import { ZodError } from 'zod'; 
+import { setValidationErrorsForForm } from '@/utils/setValidationErrorForForm';
 
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 type PopupProps = {
     onClose: () => void;
 }
+
+const productSchema = z.object({
+    itemName: z.string().min(4,'Provide Item Name'),
+    providers: z.string().min(2,'Provide Item Name'),
+    unit: z.string().min(2,'Mention the units'),
+    hsnCode: z.string().min(15,'Invalid HSN Code'),
+    tax: z.string(),
+    category: z.string(),
+    description: z.string(),
+    minStock: z.string(),
+    maxStock: z.string()
+})
 
 
 interface Distributors{
@@ -44,7 +60,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     const [formData, setFormData] = useState<any>({});
     const [buttonDisabled, setButtonDisabled] = useState(false);
     const [selectedUnit, setSelectedUnit] = useState<any>(null); 
-    const [distributor, setDistributor] = useState<Distributors[]>([]); 
+    const [distributor, setDistributor] = useState<Distributors[]>([]);
+    const [isSaveDisabled, setIsSaveDisabled] = useState(true)
 
     const [categories, setCategories] = useState<any[]>([
         { value: "Pet food", label: "Pet food" },
@@ -53,6 +70,22 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
         { value: "Pet accessories", label: "Pet accessories" },
         { value: "Equipments", label: "Equipments" },
     ]);
+
+    const initialData ={
+        itemName: '',
+        providers: '',
+        unit: '',
+        hsnCode: '',
+        tax: '',
+        category: '',
+        description: '',
+        minStock: '',
+        maxStock: ''
+    }
+
+    const [data, setData] = useState(initialData);
+    const [validationErrors, setValidationErrors] = useState(data);
+    console.log(validationErrors);
 
     const appState = useAppSelector((state) => state.app);
     const {fetchedProducts,isLoading,error}=useProductfetch(appState.currentBranchId);
@@ -95,49 +128,148 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
         setLastStep(true);
     }
 
-    const handleSaveClick = async () => {
-        try {
-            setButtonDisabled(true);
-            const selectedProviders = formData.providers.map((provider: any) => provider.value);
+    // const handleSaveClick = async () => {
+    //     try {
+    //         setButtonDisabled(true);
+    //         const selectedProviders = formData.providers.map((provider: any) => provider.value);
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/create?branchId=${appState.currentBranchId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    itemName: formData.name,
-                    providers: selectedProviders,
-                    unit: formData.unit ? formData.unit[0].value : undefined,
-                    hsnCode: formData.hsnCode,
-                    tax: formData.tax ? formData.tax[0].value : undefined,
-                    category: formData.category ? formData.category[0].value : undefined,
-                    description: formData.description,
-                    minStock: parseInt(formData.minStock),
-                    maxStock: parseInt(formData.maxStock)
-                }),
-            });
-            if (response.ok) {
-                console.log('Data saved successfully');
-                onClose();
-            } else {
-                console.error('Failed to save data:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error while saving data:', error);
-        } finally {
-            setButtonDisabled(false);
+    //         const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/create?branchId=${appState.currentBranchId}`, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },q
+    //             body: JSON.stringify({
+    //                 itemName: formData.name,
+    //                 providers: selectedProviders,
+    //                 unit: formData.unit ? formData.unit[0].value : undefined,
+    //                 hsnCode: formData.hsnCode,
+    //                 tax: formData.tax ? formData.tax[0].value : undefined,
+    //                 category: formData.category ? formData.category[0].value : undefined,
+    //                 description: formData.description,
+    //                 minStock: parseInt(formData.minStock),
+    //                 maxStock: parseInt(formData.maxStock)
+    //             }),
+    //         });
+    //         if (response.ok) {
+    //             console.log('Data saved successfully');
+    //             onClose();
+    //         } else {
+    //             console.error('Failed to save data:', response.statusText);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error while saving data:', error);
+    //     } finally {
+    //         setButtonDisabled(false);
+    //     }
+    // };
+
+    // Assuming you're using Zod for validation
+
+    const handleSaveClick = async () => {
+    console.log("Submit button");
+    try {
+        
+        setButtonDisabled(true);
+        productSchema.parse(data);
+        const selectedProviders = formData.providers.map((provider: any) => provider.value);
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/create?branchId=${appState.currentBranchId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            itemName: formData.name,
+            providers: selectedProviders,
+            unit: formData.unit ? formData.unit[0].value : undefined,
+            hsnCode: formData.hsnCode,
+            tax: formData.tax ? formData.tax[0].value : undefined,
+            category: formData.category ? formData.category[0].value : undefined,
+            description: formData.description,
+            minStock: parseInt(formData.minStock),
+            maxStock: parseInt(formData.maxStock),
+        }),
+        });
+
+        console.log(response);
+        let json = await response.json();
+        if (response.ok) {
+            console.log('Data saved successfully');
+            toast.success(json.message, {
+                position: "bottom-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+                transition: Bounce,
+          });
+        onClose();
+        } else {
+            console.error('Failed to save data:', response.statusText);
+            throw new Error(json.message);
+        }
+    } catch (err:any) {
+        console.log(err.message);
+      console.log(typeof(err))
+      if (err instanceof z.ZodError) {
+        console.log(err.flatten());
+      } else {
+        console.error('Error:', err);
+        toast.error(err.message, {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+        });
+      }
+
+    } finally {
+        setButtonDisabled(false);
+    }
+    };
+
+
+    // const handleChange = (field: string, value: any) => {
+    //     setFormData({ ...formData, [field]: value });
+
+    // };
+    const handleChange = (field: string, value: any) => {
+        try {
+          setData((prevData) => ({
+            ...prevData,
+            [field]: value,
+          }));
+      
+          if (productSchema) {
+            productSchema.parse({ ...data, [field]: value });
+            console.log("inside handle change(validation)");
+          }
+      
+          
+        } catch (err: any) {
+          if (err instanceof z.ZodError) {
+            console.log(err.flatten());
+            const fieldErrors = err.flatten().fieldErrors;
+      
+          } else {            
+            setValidationErrors((prevErrors) => {
+                console.log("here");
+                let newErrors = prevErrors;
+                newErrors[field as keyof typeof prevErrors] = '';
+                return newErrors;
+              });
+          }
         }
     };
-
-    const handleChange = (field: string, value: any) => {
-        setFormData({ ...formData, [field]: value });
-       
-    };
-
-    
-
-    
+      
 
     const gstOptions = [
         { value: 'GST@0%', label: 'GST@0%' },
@@ -294,13 +426,19 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                 </div>
                             </div>
                         </div>
-                    
-                   
+
+                        
                         <div className="w-[545px] flex justify-end mt-[5px] cursor-pointer">
                             <button onClick={handleSaveClick} disabled={buttonDisabled} className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none">
                                 <div className="text-white text-base font-bold ">Save</div>
                             </button>
                         </div>
+                        {/* {!isSaveDisabled ? (<div className="h-11 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer"  onClick={handleSaveClick} >
+                            <div className="text-gray-100 text-base font-bold ">Save</div>
+                        </div>) : (<button className="px-4 py-2.5 bg-gray-200 rounded-[5px]  justify-start items-center gap-2 flex border-0 outline-none cursor-not-allowed">
+                        <div className="text-textGrey1 text-base font-bold ">Save</div>
+                        <Image src={arrowicon} alt="arrow"></Image>
+                    </button>)}  */}
                     </div>
                 </div>
             )}

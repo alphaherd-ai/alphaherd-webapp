@@ -7,27 +7,50 @@ import closeicon from "../../../assets/icons/inventory/closeIcon.svg";
 import arrowicon from "../../../assets/icons/inventory/arrow.svg";
 import Paws from "../../../assets/icons/database/1. Icons-24 (12).svg"
 import Check from "../../../assets/icons/database/check.svg"
-
+import { z } from "zod"
 import Select from 'react-select';
 import PatientPopup from '../patient/newpatientpopup'
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 import { useAppSelector } from '@/lib/hooks';
+import { Bounce, ToastContainer, toast } from 'react-toastify';
 
 type PopupProps = {
     onClose: () => void;
 }
 
+const formSchema = z.object({
+    name: z.string().min(1,'Name must be of 3 characters'),
+    email : z.string().email('Invalid Email Format'),
+    contact: z.string().length(10,'Invalid Phone Number'),
+    address: z.string(),
+    city: z.array(z.string()),
+    pincode: z.string()
+});
+
 const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
-    const [formData, setFormData] = useState<any>({});
+    var initialData = {
+        name: '',
+        email : '',
+        contact: '',
+        address: '',
+        city: '',
+        pincode: '',
+    }
+    const [formData, setFormData] = useState<any>(initialData);
     const [showPopup, setShowPopup] = React.useState(false);
     const appState = useAppSelector((state) => state.app)
     const [isSaveDisabled, setIsSaveDisabled] = useState(true)
     const togglePopup = () => {
         setShowPopup(!showPopup);
     }
-    
+
+    //const [data,setData] = useState(initialData);
+    const [validationErrors, setValidationErrors] = useState(formData);
+
     const handleSaveClick = async () => {
+        console.log("form data")
         try {   
+            formSchema.parse(formData)
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
@@ -43,28 +66,105 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                    
                 }),
             });
-            if (response.ok) {
-                console.log('Data saved successfully');
-                onClose();
-                window.dispatchEvent(new FocusEvent('focus'));
-            } else {
-                console.error('Failed to save data:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error while saving data:', error);
-        } finally {
             
+        //     if (response.ok) {
+        //         console.log('Data saved successfully');
+        //         onClose();
+        //         window.dispatchEvent(new FocusEvent('focus'));
+        //     } else {
+        //         console.error('Failed to save data:', response.statusText);
+        //     }
+        // } catch (error) {
+        //     console.error('Error while saving data:', error);
+        // } finally {
+            
+        // }
+        console.log(response);
+        let json = await response.json();
+        if (response.ok) {
+            console.log('Data saved successfully');
+            toast.success(json.message, {
+                position: "bottom-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+                transition: Bounce,
+          });
+        onClose();
+        } else {
+            console.error('Failed to save data:', response.statusText);
+            throw new Error(json.message);
         }
+    } catch (err:any) {
+        console.log(err.message);
+      console.log(typeof(err))
+      if (err instanceof z.ZodError) {
+        console.log(err.flatten());
+      } else {
+        console.error('Error:', err);
+        toast.error(err.message, {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+        });
+      }
+
+    } finally {
+        setIsSaveDisabled(true);
+    }
     };
     
 
     const handleChange = (field: string, value: any) => {
-        setFormData({ ...formData, [field]: value });
+        //setFormData({ ...formData, [field]: value });
+        try {
+            setFormData((prevData: any) => ({
+              ...prevData,
+              [field]: value,
+            }));
+        
+            if (formSchema) {
+              formSchema.parse({ ...formData, [field]: value });
+              console.log("inside handle change(validation)");
+            }
+        
+            
+          } catch (err: any) {
+            if (err instanceof z.ZodError) {
+              console.log(err.flatten());
+              const fieldErrors = err.flatten().fieldErrors;
+        
+            } else {            
+              setValidationErrors((prevErrors: any) => {
+                  console.log("here");
+                  let newErrors = prevErrors;
+                  newErrors[field as keyof typeof prevErrors] = '';
+                  return newErrors;
+                });
+            }
+          }
         if (field === "name" && value.trim() !== "") {
             setIsSaveDisabled(false);
         } else if (field === "name" && value.trim() === "") {
             setIsSaveDisabled(true);
         }
+        if (field === 'contact') {
+            if (value.length < 10) {
+                setIsSaveDisabled(true)
+              console.error('Mobile number must be 10 characters long');
+            }
+          }
+
     };
 
     const countryCode = [
@@ -81,7 +181,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
     ]
 
     return <>
-
+        <ToastContainer/>
        <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0  inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
             <div className="w-[640px] h-[575px]  px-8 py-4 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
                 <div className="self-end items-start gap-6 flex">
@@ -101,7 +201,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                 <div className="flex items-center gap-[88px]">
                     <div className="text-gray-500 text-base font-medium ">Email</div>
                     <div>
-                        <input className="w-[448px] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="email" onChange={(e) => handleChange("email", e.target.value)} />
+                        <input className="w-[448px] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="email" onChange={(e) => handleChange("email", e.target.value)} required/>
                     </div>
                 </div>
                 <div className="flex items-center gap-[38px] w-full">
@@ -119,9 +219,18 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                             onChange={(value) => handleChange("contact-initials", value)}
                         />
                     
+                    {/* <div className="w-full h-full">
+                        <input className="h-full w-full text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="contact" onChange={(e) => handleChange("contact", e.target.value)} required />
+                    </div> */}
                     <div className="w-full h-full">
-                        <input className="h-full w-full text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="contact" onChange={(e) => handleChange("contact", e.target.value)} />
-                    </div>
+                        <input
+                            className="h-full w-full text-textGrey2 text-base font-medium px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
+                            type="text"
+                            name="contact"
+                            placeholder="Enter phone number"  onChange={(e) => handleChange("contact", e.target.value)}
+                        />
+                        <span id="contact-error" className="text-red-500 text-sm hidden">Phone number is required (10 digits).</span>
+                        </div>
                     </div>
                     <div className=" ml-1  w-9 h-9 ">
                     <button  className="w-full h-full rounded-[5px] justify-center text-2xl items-center gap-2 flex border border-borderGrey border-solid bg-white outline-none">
@@ -193,13 +302,13 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                         <div className="text-white border-none text-base font-bold ">Save</div>
                     </button>  */}
                     {!isSaveDisabled ? (<div className="h-11 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer"  onClick={handleSaveClick} >
-    <div className="w-6 h-6 relative">
-        <div className="w-6 h-6 left-0 top-0 absolute" >
-            <Image src={Check} alt="Check" />
-        </div>
-    </div>
-    <div className="text-gray-100 text-base font-bold ">Save</div>
-</div>) : (<button className="px-4 py-2.5 bg-gray-200 rounded-[5px]  justify-start items-center gap-2 flex border-0 outline-none cursor-not-allowed">
+                        <div className="w-6 h-6 relative">
+                            <div className="w-6 h-6 left-0 top-0 absolute" >
+                                <Image src={Check} alt="Check" />
+                            </div>
+                        </div>
+                            <div className="text-gray-100 text-base font-bold ">Save</div>
+                        </div>) : (<button className="px-4 py-2.5 bg-gray-200 rounded-[5px]  justify-start items-center gap-2 flex border-0 outline-none cursor-not-allowed">
                         <div className="text-textGrey1 text-base font-bold ">Save</div>
                         <Image src={arrowicon} alt="arrow"></Image>
                     </button>)} 
