@@ -105,7 +105,7 @@ const FinancesTransactionsTableHeader = ({transactions}:any) => {
 <div className='flex '><Image src={Sort} alt='Sort' className='w-3 h-3 mr-2' /></div>
 
 <Dropdown>
-<DropdownTrigger>
+<DropdownTrigger className='z-0'>
     <Button
         //   variant="bordered" 
         // color="gray-400"
@@ -137,7 +137,7 @@ const FinancesTransactionsTableHeader = ({transactions}:any) => {
 <div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>
 
 <Dropdown>
-<DropdownTrigger>
+<DropdownTrigger className='z-0'>
     <Button
         //   variant="bordered" 
         variant="solid"
