@@ -95,9 +95,9 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
     const handleChange = (field: string, value: any) => {
         try {
             // Dynamically pick the schema for the specific field
-            const fieldSchema = formSchema.shape[field] as ZodType<any, any>;
+            //const fieldSchema = formSchema.shape[field] as ZodType<any, any>;
             // Parse the field value against the picked schema
-            fieldSchema.parse({ [field]: value });
+            //fieldSchema.parse({ [field]: value });
 
             // Clear the error for this field if validation succeeds
             setFormErrors((prevErrors) => ({
@@ -139,7 +139,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
     ]
 
     return <>
-        <ToastContainer/>
+        
        <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0  inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
             <div className="w-[640px] h-[575px]  px-8 py-4 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
                 <div className="self-end items-start gap-6 flex">
