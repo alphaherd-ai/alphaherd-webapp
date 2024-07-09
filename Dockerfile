@@ -1,6 +1,7 @@
 FROM node:18-alpine
 WORKDIR  /app
 COPY . ./
+
 # Install Redis and other necessary utilities
 RUN apk update && \
     apk add --no-cache redis bash
@@ -30,6 +31,7 @@ fi
 RUN yarn
 
 RUN npm run build
+
 # Expose Redis port
 EXPOSE 6379
 
