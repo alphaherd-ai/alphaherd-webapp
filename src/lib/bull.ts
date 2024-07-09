@@ -6,7 +6,7 @@ import { calculateNextOccurrence } from '../utils/calculateNextOccurrence';
 
 console.log("we're here");
 
-// Create a Redis client to verify connection
+
 const redisClient = createClient({
   url: 'redis://localhost:6379'
 });
