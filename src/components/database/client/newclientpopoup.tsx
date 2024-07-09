@@ -7,7 +7,7 @@ import closeicon from "../../../assets/icons/inventory/closeIcon.svg";
 import arrowicon from "../../../assets/icons/inventory/arrow.svg";
 import Paws from "../../../assets/icons/database/1. Icons-24 (12).svg"
 import Check from "../../../assets/icons/database/check.svg"
-import { z } from "zod"
+import { z, ZodError,ZodType } from "zod"
 import Select from 'react-select';
 import PatientPopup from '../patient/newpatientpopup'
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
@@ -19,13 +19,24 @@ type PopupProps = {
 }
 
 const formSchema = z.object({
-    name: z.string().min(1,'Name must be of 3 characters'),
-    email : z.string().email('Invalid Email Format'),
-    contact: z.string().length(10,'Invalid Phone Number'),
-    address: z.string(),
-    city: z.array(z.string()),
-    pincode: z.string()
+    name: z.string().trim().min(1), 
+    email: z.string().email(), 
+    contact: z.string().min(10).max(13), 
+    address: z.string().trim().min(1),
+    city: z.string().optional(),
+    pinCode: z.string().min(6).max(6), 
 });
+
+type FormData = {
+    name: string;
+    email: string;
+    contact: string;
+    address: string;
+    city: string[];
+    pincode: string;
+};
+
+type FormErrors = Partial<Record<keyof FormData, string>>;
 
 const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
     var initialData = {
@@ -37,6 +48,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
         pincode: '',
     }
     const [formData, setFormData] = useState<any>(initialData);
+    const [formErrors, setFormErrors] = useState<FormErrors>({});
     const [showPopup, setShowPopup] = React.useState(false);
     const appState = useAppSelector((state) => state.app)
     const [isSaveDisabled, setIsSaveDisabled] = useState(true)
@@ -45,12 +57,13 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
     }
 
     //const [data,setData] = useState(initialData);
-    const [validationErrors, setValidationErrors] = useState(formData);
+    //const [validationErrors, setValidationErrors] = useState(formData);
 
     const handleSaveClick = async () => {
         console.log("form data")
         try {   
             formSchema.parse(formData)
+            console.log('Form data is valid:', formData);
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
@@ -66,107 +79,50 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                    
                 }),
             });
-            
-        //     if (response.ok) {
-        //         console.log('Data saved successfully');
-        //         onClose();
-        //         window.dispatchEvent(new FocusEvent('focus'));
-        //     } else {
-        //         console.error('Failed to save data:', response.statusText);
-        //     }
-        // } catch (error) {
-        //     console.error('Error while saving data:', error);
-        // } finally {
-            
-        // }
-        console.log(response);
-        let json = await response.json();
-        if (response.ok) {
-            console.log('Data saved successfully');
-            toast.success(json.message, {
-                position: "bottom-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-                transition: Bounce,
-          });
-        onClose();
-        } else {
-            console.error('Failed to save data:', response.statusText);
-            throw new Error(json.message);
+            if (response.ok) {
+                console.log('Data saved successfully');
+                onClose();
+                window.dispatchEvent(new FocusEvent('focus'));
+            } else {
+                console.error('Failed to save data:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error while saving data:', error);
         }
-    } catch (err:any) {
-        console.log(err.message);
-      console.log(typeof(err))
-      if (err instanceof z.ZodError) {
-        console.log(err.flatten());
-      } else {
-        console.error('Error:', err);
-        toast.error(err.message, {
-          position: "bottom-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          transition: Bounce,
-        });
-      }
-
-    } finally {
-        setIsSaveDisabled(true);
-    }
-    };
+    };   
     
 
     const handleChange = (field: string, value: any) => {
-        //setFormData({ ...formData, [field]: value });
         try {
-            setFormData((prevData: any) => ({
-              ...prevData,
-              [field]: value,
+            // Dynamically pick the schema for the specific field
+            const fieldSchema = formSchema.shape[field] as ZodType<any, any>;
+            // Parse the field value against the picked schema
+            fieldSchema.parse({ [field]: value });
+
+            // Clear the error for this field if validation succeeds
+            setFormErrors((prevErrors) => ({
+                ...prevErrors,
+                [field]: '',
             }));
-        
-            if (formSchema) {
-              formSchema.parse({ ...formData, [field]: value });
-              console.log("inside handle change(validation)");
+
+            // Update formData with the new value
+            setFormData((prevFormData: any) => ({
+                ...prevFormData,
+                [field]: value,
+            }));
+        } catch (error) {
+            if (error instanceof ZodError) {
+                // If validation fails, set the specific error message for the field
+                const fieldError = error.errors[0]?.message || 'Validation error';
+                setFormErrors((prevErrors) => ({
+                    ...prevErrors,
+                    [field]: fieldError,
+                }));
             }
-        
-            
-          } catch (err: any) {
-            if (err instanceof z.ZodError) {
-              console.log(err.flatten());
-              const fieldErrors = err.flatten().fieldErrors;
-        
-            } else {            
-              setValidationErrors((prevErrors: any) => {
-                  console.log("here");
-                  let newErrors = prevErrors;
-                  newErrors[field as keyof typeof prevErrors] = '';
-                  return newErrors;
-                });
-            }
-          }
-        if (field === "name" && value.trim() !== "") {
-            setIsSaveDisabled(false);
-        } else if (field === "name" && value.trim() === "") {
-            setIsSaveDisabled(true);
         }
-        if (field === 'contact') {
-            if (value.length < 10) {
-                setIsSaveDisabled(true)
-              console.error('Mobile number must be 10 characters long');
-            }
-          }
-
     };
-
+   
+    
     const countryCode = [
         { value: 'IN', label: '+91' },
         { value: 'US', label: '+1' },
@@ -195,6 +151,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                     <div className="text-gray-500 text-base font-medium  w-[8rem]">Client Name<span className="text-[red]">*</span></div>
                     <div>
                         <input className="w-[447px] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="name" onChange={(e) => handleChange("name", e.target.value)} />
+                        {formErrors.name && <div style={{ color: 'red' }}>{formErrors.name}</div>}
                     </div>
                 </div>
               
@@ -318,6 +275,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
       
         {showPopup && <PatientPopup onClose={togglePopup} clientData={formData} />}
     </>;
+    
 }
 
 export default ClientPopup;
