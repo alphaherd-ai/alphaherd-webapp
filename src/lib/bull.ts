@@ -1,6 +1,7 @@
 import  Queue  from 'bull';
 import { createClient } from 'redis';
 import prismaClient from '../../prisma';
+
 import { calculateNextOccurrence } from '../utils/calculateNextOccurrence';
 
 console.log("we're here");
