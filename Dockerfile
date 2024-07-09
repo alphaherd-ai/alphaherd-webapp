@@ -1,6 +1,9 @@
 FROM node:18-alpine
-WORKDIR  /app
+
+WORKDIR /app
+
 COPY . ./
+
 # Install Redis and other necessary utilities
 RUN apk update && \
     apk add --no-cache redis
@@ -30,8 +33,9 @@ fi
 RUN yarn
 
 RUN npm run build
+
 # Expose Redis port
 EXPOSE 6379
 
-# Start Redis server (this will start Redis in the background)
-CMD ["redis-server", "--daemonize yes"]
+# Start Redis server and Node.js app using a simple process manager
+CMD ["sh", "-c", "redis-server --protected-mode no & yarn start"]
