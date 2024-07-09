@@ -53,7 +53,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
             where:{
               id:Number(item.productBatchId),
               inventorySectionId:inventoryId
-            }
+            },cacheStrategy:{ttl:60}
           })
           const updatedBatch = await prismaClient.productBatch.update({
             where: { id: batch?.id ,inventorySectionId:inventoryId},
@@ -103,7 +103,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
             where:{
               id:Number(item.productBatchId),
               inventorySectionId:inventoryId
-            }
+            },cacheStrategy:{ttl:60}
           })
           const updatedBatch = await prismaClient.productBatch.update({
             where: { id: batch?.id ,inventorySectionId:inventoryId},

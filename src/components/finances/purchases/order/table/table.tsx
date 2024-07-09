@@ -27,7 +27,8 @@ interface Products{
     itemName:string,
     productBatch:ProductBatch[],
     hsnCode:string,
-    quantity:number
+    quantity:number,
+    tax:number
 }
 interface ProductBatch {
     id: number;
@@ -108,7 +109,8 @@ const NewPurchasesTable = () => {
              value:{
                 id: product.id,
                 quantity:product.quantity,
-                itemName:product.itemName
+                itemName:product.itemName,
+                tax:product.tax
             },
              label: product.itemName,
          }));
@@ -181,6 +183,7 @@ const handleAddItem= useCallback(() => {
               quantity: data.value.quantity,
               productId: selectedProduct.value.id,
               itemName: data.value.itemName,
+              gst:data.value.tax
             };
             setItems(updatedItems);
     
@@ -321,26 +324,26 @@ const handleAddItem= useCallback(() => {
 
                                     />
                             </div>
-                            <div className='flex text-textGrey2 text-base font-medium w-[10rem]'>
-                                <Select
-                                            className="text-textGrey2 text-sm font-medium absolute "
-                                            defaultValue={gstOptions[0]}
+                            <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
+                                        {/* { id==null?(
+                                        <Select
+                                            className="text-neutral-400 text-base font-medium"
+                                            defaultValue={[]}
                                             isClearable={false}
                                             isSearchable={true}
                                             options={gstOptions}
-                                            menuPortalTarget={document.body}
                                             styles={{
                                                 control: (provided, state) => ({
                                                     ...provided,
                                                     border: state.isFocused ? 'none' : 'none',
+                                                    padding: '0',
                                                 }),
-                                                menuPortal: base => ({ ...base, zIndex: 9999 })
                                             }}
-                                        onChange={(selectedOption: any) => handleGstSelect(selectedOption, index)}
-
-                                            
-                                        />
-                            </div>
+                                            onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
+                                        />):( */}
+                                           { item.gst*100}%
+                                        {/* )} */}
+                                    </div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[10rem] items-center gap-1'>
                             ₹
                             <input

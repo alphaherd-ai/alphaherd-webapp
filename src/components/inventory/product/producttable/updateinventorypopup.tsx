@@ -45,6 +45,7 @@ interface ProductBatch {
     productId:number;
     location:Location;
     totalCost:number;
+    maxRetailPrice:number;
 }
 function useProductfetch (id: number | null) {
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`,fetcher,{revalidateOnFocus:true});
@@ -103,7 +104,8 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
                 location:product.location,
                 distributors:product.distributors,
                 totalCost:product.totalCost,
-                maxQuantity:product.quantity
+                maxQuantity:product.quantity,
+                maxRetailPrice:product.maxRetailPrice
             },
             label:product.batchNumber
         }));
@@ -201,6 +203,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
                             distributors:defaultBatch?.value?.distributors,
                             totalCost:defaultBatch?.value?.totalCost,
                             maxQuantity:defaultBatch?.value?.quantity,
+                            maxRetailPrice:defaultBatch?.value?.maxRetailPrice,
                             productId:defaultBatch?.value?.productId } :
                              item,  
                       )
@@ -235,6 +238,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
                     location:selectedOption===Stock.StockIN?"":data?.value?.location,
                     distributors: data?.value?.category,
                     providers: data?.value?.distributors,
+                    maxRetailPrice:data?.value?.maxRetailPrice,
                     productId:data?.value?.productId
                 };
                 setInventory(updatedInventory);
@@ -250,7 +254,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
     const handleUpdateInventory = useCallback(async () => {
         try {
             for (const item of inventory) {
-                const { id, date, quantity, batchNumber, distributors,productId} = item;
+                const { id, date, quantity, batchNumber, distributors,productId,maxRetailPrice} = item;
                 const invoiceType="Manual";
                 let {expiry,costPrice,sellingPrice}=item;
                 console.log("here is the product",productId)
@@ -272,6 +276,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
                     batchNumber,
                     expiry,
                     costPrice,
+                    maxRetailPrice,
                     sellingPrice,
                     distributors,
                     productId,
@@ -498,10 +503,10 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
         <div className='w-[6rem] rounded-[5px] flex items-center text-neutral-400 text-base font-medium'>₹
             <input
                 type="number"
-                value={item.costPrice}
-                onChange={(e) =>  handleInputChange(index, 'costPrice',parseFloat(e.target.value))}
+                value={item.maxRetailPrice}
+                onChange={(e) =>  handleInputChange(index, 'maxRetailPrice',parseFloat(e.target.value))}
                 className="w-full rounded-[5px] border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium"
-                name={`costPrice-${index}`}
+                name={`maxRetailPrice-${index}`}
             />
         </div>
 

@@ -287,14 +287,14 @@ if(isLoading) return (<Loading/>)
                                        {item.tax*100}
                             </div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
-                            ₹ {item.tax*item.quantity*item.unitPrice}
+                            ₹ {(item.tax*item.quantity*item.unitPrice).toFixed(2)}
                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                     /> */}
                             </div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
-                            {item.discount}
+                            {(item.discount).toFixed(2)}
                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
@@ -303,7 +303,7 @@ if(isLoading) return (<Loading/>)
                             </div>
                             
                             <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
-                            ₹ {item.discount*item.quantity*item.unitPrice}
+                            ₹ {(item.discount*item.quantity*item.unitPrice).toFixed(2)}
                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"

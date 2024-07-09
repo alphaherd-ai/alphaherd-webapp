@@ -104,7 +104,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
             // Update the state with unique categories
             setCategories(uniqueCategories);
         }
-    }, [isLoading, error, fetchedProducts, categories]);
+    }, [isLoading, error, fetchedProducts]);
 
     useEffect(() => {
 
@@ -272,11 +272,11 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
       
 
     const gstOptions = [
-        { value: 'GST@0%', label: 'GST@0%' },
-        { value: 'GST@5%', label: 'GST@5%' },
-        { value: 'GST@12%', label: 'GST@12%' },
-        { value: 'GST@18%', label: 'GST@18%' },
-        { value: 'GST@28%', label: 'GST@28%' },
+        { value: 0, label: 'GST@0%' },
+        { value: 0.05, label: 'GST@5%' },
+        { value: 0.12, label: 'GST@12%' },
+        { value: 0.18, label: 'GST@18%' },
+        { value: 0.28, label: 'GST@28%' },
     ];
 
     const unitOptions : OptionType[] =[

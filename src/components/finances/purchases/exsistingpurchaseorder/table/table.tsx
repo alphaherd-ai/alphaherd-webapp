@@ -153,7 +153,7 @@ const ExsistingPurchasesTable = () => {
                             <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>{item.quantity*item.sellingPrice}</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>{item.tax*100}%</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>{(item.tax*item.quantity*item.sellingPrice).toFixed(2)}</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>{item.discount*100}%</div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>{(item.discount*100).toFixed(2)}%</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>{(item.discount*item.quantity*item.sellingPrice).toFixed(2)}</div>
                                 <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
                                     {/* <button className="border-0">

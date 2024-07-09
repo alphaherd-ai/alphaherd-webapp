@@ -33,7 +33,8 @@ interface Products{
     itemName:string,
     productBatch:ProductBatch[],
     hsnCode:string,
-    quantity:number
+    quantity:number,
+    tax:number
 }
 interface ProductBatch {
     id: number;
@@ -48,6 +49,7 @@ interface ProductBatch {
     category :string;
     distributors:string[];
     productId:number;
+    product:Products;
 }
 function useProductfetch (id: number | null) {
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`,fetcher,{revalidateOnFocus:true});
@@ -116,7 +118,8 @@ const NewsaleEstimateTable = () => {
              value:{
                 id: product.id,
                 quantity:product.quantity,
-                itemName:product.itemName
+                itemName:product.itemName,
+                tax:product.tax
             },
              label: product.itemName,
          }));
@@ -158,7 +161,18 @@ const handleDiscountSelect= (selectedDiscount:any,index:number)=>{
     console.log(selectedDiscount);
     updatedItems[index]={
         ...updatedItems[index],
-        discount:selectedDiscount.value
+        discount:selectedDiscount.value,
+        discountAmount:selectedDiscount.value*updatedItems[index]['sellingPrice']*updatedItems[index]['quantity']
+    };
+    setTableData(updatedItems);
+}
+const handleDiscountChange= (discount:number,index:number)=>{
+    const updatedItems=[...tableData];
+    console.log((discount/(updatedItems[index]['sellingPrice']*updatedItems[index]['quantity'])).toFixed(10))
+    updatedItems[index]={
+        ...updatedItems[index],
+        discountAmount:discount,
+        discount:Number((discount/Number(updatedItems[index]['sellingPrice']*updatedItems[index]['quantity'])).toFixed(10))
     };
     setTableData(updatedItems);
 }
@@ -260,11 +274,12 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
         setSelectedProduct(data);
         const updatedItems = [...items];
         updatedItems[index] = {
-          ...updatedItems[index],
-          quantity: data.value.quantity,
-          productId: selectedProduct.value.id,
-          itemName: data.value.itemName,
-        };
+            ...updatedItems[index],
+            quantity: data.value.quantity,
+            productId: selectedProduct.value.id,
+            itemName: data.value.itemName,
+            gst:data.value.tax
+          };
         setItems(updatedItems);
 
         // Set first element of filteredBatches as default value for batches
@@ -466,23 +481,26 @@ useEffect(() => {
                     </div>
                 </>
             )}
-            <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
-                <Select
-                    className="text-neutral-400 text-base font-medium"
-                    defaultValue={[]}
-                    isClearable={false}
-                    isSearchable={true}
-                    options={gstOptions}
-                    styles={{
-                        control: (provided, state) => ({
-                            ...provided,
-                            border: state.isFocused ? 'none' : 'none',
-                            padding: '0',
-                        }),
-                    }}
-                    onChange={(selectedOption: any) => handleGstSelect(selectedOption, index)}
-                />
-            </div>
+             <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
+                                        {/* { id==null?(
+                                        <Select
+                                            className="text-neutral-400 text-base font-medium"
+                                            defaultValue={[]}
+                                            isClearable={false}
+                                            isSearchable={true}
+                                            options={gstOptions}
+                                            styles={{
+                                                control: (provided, state) => ({
+                                                    ...provided,
+                                                    border: state.isFocused ? 'none' : 'none',
+                                                    padding: '0',
+                                                }),
+                                            }}
+                                            onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
+                                        />):( */}
+                                           { item.gst}
+                                        {/* )} */}
+                                    </div>
             <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
                 {isChecked ? (
                     '₹' +
@@ -550,7 +568,14 @@ useEffect(() => {
                             <div className='flex text-gray-500 text-base font-medium w-[10rem]'></div>
                             <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
                             <div className='flex text-gray-500 text-base font-medium w-[10rem]'></div>
-                            <div className="text-red-500 text-base font-bold w-1/12">-₹{(item.sellingPrice*item.discount*item. quantity).toFixed(2)}</div>
+                            <div className="text-red-500 text-base font-bold w-1/12">-₹
+                            <input 
+                            type="number"
+                            className="text-right text-red-500 text-base  w-[50%] border-none outline-none"
+                            value={item.discountAmount}
+                            onChange={(e)=>handleDiscountChange(Number(e.target.value),index)}
+                            />
+                            </div>
                         </div>
                     )}
     </div>

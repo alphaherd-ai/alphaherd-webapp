@@ -5,6 +5,7 @@ import Image from "next/image"
 import { Button } from "@nextui-org/react";
 import { DataContext } from './DataContext';
 import { Tax } from '@prisma/client';
+import Select from 'react-select';
 
 const NewPurchasesTotalAmount = () => {
 
@@ -20,8 +21,8 @@ const NewPurchasesTotalAmount = () => {
     const [grandAmt, setGrandAmt] = useState(totalAmount);
 
     const gstOptions = [
-        { value: 0.18, label: Tax.GST_18 },
-        { value: 0.09, label: Tax.GST_9 }
+        { value: 'percent', label: '₹ in Percent' },
+        { value: 'amount', label: '₹ in Amount' }
     ];
 
 
@@ -40,14 +41,31 @@ const NewPurchasesTotalAmount = () => {
         setAdjustment(value);
         updateGrandTotal(); 
     };
-    const handleDiscountChange= (event:any)=>{
-        const value= parseFloat(event.target.value)||0;
-        setDiscount(value);
-        updateGrandTotal();
+    const [discountMethod,setDiscountMethod]=useState('amount');
+    const handleSelectChange = (selectedOption: any) => {
+        setDiscountMethod(selectedOption.value);
+    };
+    const [discountInput,setDiscountInput]=useState(0);
+    const handleDiscountChange =(discount:number)=>{
+        if(discountMethod==='amount'){
+            setDiscountInput(discount);
+            let discountedAmount=grandAmt-discount;
+            let discountPercent=Number(discount/totalAmount).toFixed(10)
+            setDiscount(Number(discountPercent))
+            setGrandAmt(discountedAmount);
+            setTotalAmountData((prevData)=>({...prevData,overallDiscount:Number(discountPercent)}))
+        }
+        else if(discountMethod==='percent'){
+            setDiscountInput(discount);
+            let discountedAmount=grandAmt-grandAmt*(discount/100);
+            setDiscount(Number(discount/100));
+            setGrandAmt(discountedAmount);
+            setTotalAmountData((prevData)=>({...prevData,overallDiscount:Number(discount/100)}))
+        }
     }
 
     const updateGrandTotal = () => {
-        const discountedAmount = (totalAmount - totalAmount * overAllDiscount/100)||0;
+        const discountedAmount = (totalAmount - totalAmount * overAllDiscount)||0;
         const newGrandTotal = discountedAmount + shipping + adjustment;
         
         setGrandAmt(newGrandTotal);
@@ -137,17 +155,33 @@ const NewPurchasesTotalAmount = () => {
                         <div className="text-right text-gray-500 text-base font-bold ">{totalAmount.toFixed(2)}</div>
                     </div>
                     <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
-                        <div className="text-gray-500 text-base font-bold ">Overall Discount</div>
-                        <div className="flex items-center">
-                            <div className="text-right text-textGrey1 text-base  "><input
-                                            className="text-right text-textGrey1 text-base   border-none outline-none"
-                                            placeholder='₹______'
-                                            value={overAllDiscount} 
-                                            onChange={handleDiscountChange} 
-                                        />%</div>
-                            
-                        </div>
-                    </div>
+                                    <div className="text-gray-500 text-base font-bold ">Overall Discount</div>
+                                    <div className="flex items-center">
+                                        <div className="text-right text-borderText text-base  ">
+                                        <input
+                                        type='number'
+                                        className="text-right  text-base  w-[50%] border-none outline-none"
+                                        value={discountInput}
+                                        onChange={(e)=>handleDiscountChange(Number(e.target.value))}
+                                        /></div>
+                                        <div className=' flex text-gray-500 text-base font-medium pl-6'>
+                                            <Select
+                                                className="text-neutral-400 text-base font-medium"
+                                                defaultValue={gstOptions[1]}
+                                                isClearable={false}
+                                                isSearchable={true}
+                                                options={gstOptions}
+                                                styles={{
+                                                    control: (provided, state) => ({
+                                                        ...provided,
+                                                        border: state.isFocused ? 'none' : 'none',
+                                                    }),
+                                                }}
+                                                onChange={handleSelectChange}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
                     <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
                         <div className="text-gray-500 text-base font-bold ">Shipping</div>
                         <div className="flex items-center">

@@ -84,7 +84,7 @@ const FinancesPurchasesTableHeader = ({invoiceCount,orderCount,returnCount}:any)
         <div className='flex '><Image src={Sort} alt='Sort' className='w-3 h-3 mr-2' /></div>
 
         <Dropdown>
-            <DropdownTrigger>
+            <DropdownTrigger className='z-0'>
                 <Button
                     //   variant="bordered" 
                     // color="gray-400"
@@ -117,7 +117,7 @@ const FinancesPurchasesTableHeader = ({invoiceCount,orderCount,returnCount}:any)
         <div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>
 
         <Dropdown>
-            <DropdownTrigger>
+            <DropdownTrigger className='z-0'>
                 <Button
                     //   variant="bordered" 
                     // color="gray-400"
@@ -150,7 +150,7 @@ const FinancesPurchasesTableHeader = ({invoiceCount,orderCount,returnCount}:any)
     {/* <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '> */}
       
         <Popover placement="bottom-end" showArrow offset={5}>
-            <PopoverTrigger>
+            <PopoverTrigger className='z-0'>
                 <Button 
                 // color="gray-400"
                     variant="solid"
@@ -171,7 +171,7 @@ const FinancesPurchasesTableHeader = ({invoiceCount,orderCount,returnCount}:any)
                     <div className='text-base p-4  text-white flex '>
                     <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Create GRN</div>
                     </Link>
-                    <Link className='no-underline flex item-center' href={{pathname:'/finance/purchases/return',query:{count:returnCount}}}>
+                    <Link className='no-underline flex item-center' href={{pathname:'/finance/purchases/newreturn',query:{count:returnCount}}}>
                     <div className='text-base p-4  text-white flex '>
                     <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Purchase Return</div>
                     </Link>

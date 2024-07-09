@@ -121,8 +121,10 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
             }
         }
     };
-   
-    
+
+
+    console.log(formData)
+
     const countryCode = [
         { value: 'IN', label: '+91' },
         { value: 'US', label: '+1' },

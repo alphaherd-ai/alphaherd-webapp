@@ -1,10 +1,12 @@
+"use client";
 import Image from 'next/image';
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux';
 import RadioButton from "../../../../assets/icons/finance/radio_button.svg"
 import RadioButtonSelec from "../../../../assets/icons/finance/radio_button (1).svg"
 import DatePicker from 'react-datepicker';
 import check from "../../../../assets/icons/finance/check.svg"
-
+import { addAmount } from '@/lib/features/transactionAmount/transactionAmountSlice';
 import 'react-datepicker/dist/react-datepicker.css';
 
 import calicon from "../../../../assets/icons/finance/calendar_today.svg";
@@ -12,12 +14,33 @@ import calicon from "../../../../assets/icons/finance/calendar_today.svg";
 import closeicon from "../../../../assets/icons/inventory/closeIcon.svg";
 import Select from 'react-select';
 import { Button } from '@nextui-org/react';
+import { useAppSelector } from '@/lib/hooks';
 type PopupProps = {
     onClose: () => void;
 }
 
 
 const RecordTransactionPopup: React.FC<PopupProps> = ({onClose}) => {
+
+    const dispatch = useDispatch();
+
+    const [formData, setFormData] = useState<any>({});
+    const appState = useAppSelector((state) => state.app)
+
+    const Mode = [
+        {value: "Cash", label: "Cash"},
+        {value: "UPI", label: "UPI"},
+        {value: "Card", label: "Card"},
+        {value: "Net Banking", label: "Net Banking"},
+    ]
+
+    const linkInvoice = [
+        {value: '001', label: '001'},
+        {value: '002', label: '002'},
+        {value: '003', label: '003'},
+        {value: '004', label: '004'},
+    ]
+
 
     const Party =[
         {value: "WeCare", label: "WeCare"},
@@ -27,22 +50,56 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose}) => {
     ]
 
     const [startDate, setStartDate] = useState(new Date());
-    const [isSelected, setIsSelected] = useState(false)
-    const [isSelected1, setIsSelected1] = useState(false)
+    const [transactionType, setTransactionType] = useState<string | null>(null);
 
 
     const handleDateChange = (date:any) => {
         setStartDate(date);
+        setFormData({ ...formData, date});
     };
 
-    const handletoggleRadioButton = () => {
-        setIsSelected(!isSelected)
-        setIsSelected1(false)
+    const handleToggleRadioButton = (type: string) => {
+        setTransactionType(type);
+    };
+
+    const handleSaveClick = async () => {
+        try {
+            const response = await fetch(`http://localhost:3000/alphaherd/api/finance/transactions/create?branchId=${appState.currentBranchId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type' : 'application/json', 
+                },
+                body: JSON.stringify({
+                    partyName: formData.partyName?.value,
+                    subject: formData.subject,
+                    invoiceLink: formData.invoiceLink?.value || "Direct",
+                    receiptNo: formData.receiptNo,
+                    date: formData.date,
+                    amountPaid: parseInt(formData.amountPaid, 10),
+                    mode: formData.mode?.value,
+                    moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
+                })
+            });
+            if (response.ok) {
+                console.log('Data saved Sucessfully')
+                onClose();
+                window.dispatchEvent(new FocusEvent('focus'))
+            } else {
+                console.error('Failed to save data')
+            }
+        } catch (error) {
+            console.error('Error while saving data:', error)
+        } finally {
+
+        }
+
+        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: formData.mode?.value, invoiceLink: formData.invoiceLink?.value || "Direct", moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+    };
+
+    const handleChange = (field: string, value: any) => {
+        setFormData({ ...formData, [field]: value });
     }
-    const handletoggleRadioButton1 = () => {
-        setIsSelected1(!isSelected1)
-        setIsSelected(false)
-    }
+
 
 
   return (
@@ -58,13 +115,13 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose}) => {
             </div>
             <div className='w-full flex gap-36'>
                 <div className='flex gap-1'>
-                    <div onClick={handletoggleRadioButton}>
-                        {isSelected === false ? (
-                            <Image src={RadioButton} alt='RadioButton' />
-                        ) : (
-                            <Image src={RadioButtonSelec} alt='RadioButtonSelec' />
-                        )}
-                    </div>
+                    <div onClick={() => handleToggleRadioButton('Money In')}>
+                            {transactionType !== 'Money In' ? (
+                                <Image src={RadioButton} alt='RadioButton' />
+                            ) : (
+                                <Image src={RadioButtonSelec} alt='RadioButtonSelec' />
+                            )}
+                        </div>
                     <div>
                         <span className='text-base text-textGrey2 font-medium'>
                             Money In
@@ -72,13 +129,13 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose}) => {
                     </div>
                 </div>
                 <div className='flex gap-1'>
-                    <div onClick={handletoggleRadioButton1}>
-                    {isSelected1 === false ? (
-                            <Image src={RadioButton} alt='RadioButton' />
-                        ) : (
-                            <Image src={RadioButtonSelec} alt='RadioButtonSelec' />
-                        )}
-                    </div>
+                    <div onClick={() => handleToggleRadioButton('Money Out')}>
+                            {transactionType !== 'Money Out' ? (
+                                <Image src={RadioButton} alt='RadioButton' />
+                            ) : (
+                                <Image src={RadioButtonSelec} alt='RadioButtonSelec' />
+                            )}
+                        </div>
                     <div>
                         <span className='text-base text-textGrey2 font-medium'>
                             Money Out
@@ -97,13 +154,14 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose}) => {
                             isSearchable={true}
                             options={Party}
                             isMulti={false}
-                            name="repeat"
+                            name="partyName"
+                            onChange={(value) => handleChange("partyName", value)}
                         />
                     </div>                
             </div>
             <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Subject</span></div>
-                    <div><input className="w-[440px] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="text" name="name"/></div>
+                    <div><input className="w-[440px] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="text" name="subject" onChange={(e) => handleChange("subject", e.target.value)} /></div>
             </div>
             <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Link Invoice</span></div>
@@ -113,9 +171,10 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose}) => {
                             placeholder="Select Category"
                             isClearable={false}
                             isSearchable={true}
-                            options={Party}
+                            options={linkInvoice}
                             isMulti={false}
-                            name="repeat"
+                            name="invoiceLink"
+                            onChange={(value) => handleChange("invoiceLink", value)}
                         />
                     </div>                
             </div>
@@ -124,9 +183,13 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose}) => {
                     <div><input className="w-[440px] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="text" name="name"/></div>
             </div>
             <div className='w-full flex justify-between items-center'>
+                    <div><span className='text-gray-500 text-base font-medium '>Link Product(s)</span></div>
+                    <div><input className="w-[440px] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="text" name="name"/></div>
+            </div>
+            <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Receipt No.</span></div>
                     <div className='w-[440px] flex justify-between items-center'>
-                    <div><input className="w-[10rem] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="text" name="name"/></div>
+                    <div><input className="w-[10rem] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="text" name="receiptNo" onChange={(e) => handleChange("receiptNo", e.target.value)} /></div>
 
                         <div><span className='text-gray-500 text-base font-medium '>Date</span></div>
                         <div className='relative'>
@@ -159,7 +222,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose}) => {
             <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Amount Paid</span></div>
                     <div className='w-[440px] flex justify-between items-center'>
-                    <div><input className="w-[10rem] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="text" name="name"/></div>
+                    <div><input className="w-[10rem] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="number" name="amountPaid" onChange={(e) => handleChange("amountPaid", e.target.value)}  /></div>
 
                         <div><span className='text-gray-500 text-base font-medium '>Mode</span></div>
                         <div className='w-[10rem]'>
@@ -168,16 +231,17 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose}) => {
                             placeholder="Mode"
                             isClearable={false}
                             isSearchable={true}
-                            options={Party}
+                            options={Mode}
                             isMulti={false}
-                            name="repeat"
+                            name="mode"
+                            onChange={(value) => handleChange("mode", value)}
                         />
                     </div> 
                     </div>
 
             </div>
             <div className='w-full flex justify-end'>
-                    <Button className="px-2 py-2.5 bg-navBar rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer">
+                    <Button className="px-2 py-2.5 bg-navBar rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer"  onClick={handleSaveClick}>
                         <Image src={check} alt='check' /> 
                         <span className='text-white text-base font-medium pr-2'>Save Transaction</span>
                     </Button>

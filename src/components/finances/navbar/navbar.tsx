@@ -41,7 +41,7 @@ const FinancesNavbar = () => {
     const currentRoute = usePathname();
 
     const handleSearch = (selectedOption: any) => {
-        const item = selectedOption.value;
+        const item = selectedOption?.value;
         let path = '';
         if (item.type === FinanceCreationType.Sales_Estimate) {
             path = `/finance/sales/existingsalesestimate?id=${item.sale.id}`;
@@ -104,8 +104,8 @@ const FinancesNavbar = () => {
                             Expenses
                         </div>
                     </Link>
-                    <Link className='no-underline ' href='/finance/transactions/all'>
-                        <div style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }} className={currentRoute.startsWith("/finance/transactions")
+                    <Link className='no-underline' href={{pathname:'/finance/transactions/all',query:{type:'all'}}}>
+                            <div style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }} className={currentRoute.startsWith("/finance/transactions")
                             ? " flex items-center text-white  bg-black px-4 py-2.5   border-r-0  text-base rounded-tr-lg rounded-br-lg "
                             : " flex items-center text-gray-400 bg-white px-4 py-2.5   border-r-0  text-base rounded-tr-lg rounded-br-lg"}>
 
@@ -125,7 +125,7 @@ const FinancesNavbar = () => {
                             isSearchable={true}
                             options={searchOptions}
                             onChange={(selectedProduct: any) => handleSearch(selectedProduct)}
-                            placeholder="Search"
+                            placeholder="Search via client name or invoice no."
                         />
                         {/* <div className="absolute inset-y-0 right-3 pl-2 flex items-center pointer-events-none">
                             <div className='flex items-center '>

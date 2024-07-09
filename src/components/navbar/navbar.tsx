@@ -126,7 +126,7 @@ const Navbar = () => {
         </Link>
         {isCardOpen && (
   <div className="absolute top-[4rem] flex flex-col right-[5rem] w-[443px] max-h-[35rem] pt-6 pb-5 bg-zinc-800 shadow justify-center items-start gap-[5px] rounded-[20px] z-[100]">
-    <div className="text-gray-100 text-xl font-medium font-['Roboto'] px-6">
+    <div className="text-gray-100 text-xl font-medium mb-2 px-6">
       Notifications
     </div>
     <div className="notification-list-container overflow-auto h-[calc(50rem - 8.5rem)]"> {/* Adjust height as needed */}
