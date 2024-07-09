@@ -1,14 +1,13 @@
-const redis = require('redis');
-const Queue = require('bull');
-const prismaClient = require('../../prisma');
-const { calculateNextOccurrence } = require('../utils/calculateNextOccurrence');
+import  Queue  from 'bull';
+import { createClient } from 'redis';
+import prismaClient from '../../prisma';
+import { calculateNextOccurrence } from '../utils/calculateNextOccurrence';
 
 console.log("we're here");
 
-
-const redisClient = redis.createClient({
-  host: 'localhost',
-  port: 6379,
+// Create a Redis client to verify connection
+const redisClient = createClient({
+  url: 'redis://localhost:6379'
 });
 
 redisClient.on('error', (err: any) => {
@@ -29,7 +28,7 @@ const recurringExpensesQueue = new Queue('recurring-expenses', {
 
 console.log('we reached here');
 
-recurringExpensesQueue.process(async (job: { data: { expenseId: any; }; }) => {
+recurringExpensesQueue.process(async (job) => {
   const { expenseId } = job.data;
   const expenseRecord = await prismaClient.expenses.findUnique({ where: { id: expenseId } });
 
@@ -43,9 +42,9 @@ recurringExpensesQueue.process(async (job: { data: { expenseId: any; }; }) => {
     throw new Error('Expense not found');
   }
 
-  const nextDate = calculateNextOccurrence(expense.recurringStartedOn, expense.recurringRepeatType);
+  const nextDate = calculateNextOccurrence(expense.recurringStartedOn!, expense.recurringRepeatType!);
 
-  if (nextDate <= new Date(expense.recurringEndson)) {
+  if (nextDate <= new Date(expense.recurringEndson!)) {
     const newExpense = await prismaClient.expenses.create({
       data: {
         ...expense,
