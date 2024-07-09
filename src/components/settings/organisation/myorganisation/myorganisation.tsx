@@ -12,7 +12,9 @@ import OrganisationNavbar from "../navbar/navbar"
 import { useAppSelector } from "@/lib/hooks";
 import Link from "next/link"
 import AddBranchPopup from "../addBranchPopup"
-
+import useSWR from 'swr';
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 export const MyOrganisationSettings = () => {
 
     const appState = useAppSelector((state) => state.app);
@@ -23,24 +25,13 @@ export const MyOrganisationSettings = () => {
     }
 
     const [orgBranches,setOrgBranches] = useState([]);
-
-    async function fetchOrgBranches(){
-        let resp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/admin/branch/all?orgId=${appState.currentOrgId}`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            credentials: 'include'
-          });
-          if (resp.ok) {
-            let body = await resp.json();
-            setOrgBranches(body.branches);
-          }
-    }
+    const {data,error,isLoading} = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/admin/branch/all?orgId=${appState.currentOrgId}`,fetcher,{revalidateOnFocus:true});
 
     useEffect(() => {
-        fetchOrgBranches();
-    },[fetchOrgBranches]);
+      if(data&&!error&&!isLoading){
+          setOrgBranches(data.branches)
+      }
+    },[data,error,isLoading]);
 
     return (
 
