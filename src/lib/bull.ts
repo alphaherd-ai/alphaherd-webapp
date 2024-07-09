@@ -2,13 +2,14 @@
 import  Queue  from 'bull';
 import prismaClient from '../../prisma';
 import { calculateNextOccurrence } from '../utils/calculateNextOccurrence'; 
-
+console.log("we're here")
 const recurringExpensesQueue = new Queue('recurring-expenses', {
   redis: {
     host: 'localhost',
     port: 6379,
   },
 });
+console.log('we reached here')
 
 recurringExpensesQueue.process(async (job:any) => {
   const { expenseId } = job.data;
