@@ -1,6 +1,9 @@
 FROM node:18-alpine
 WORKDIR  /app
 COPY . ./
+# Install Redis and other necessary utilities
+RUN apk update && \
+    apk add --no-cache redis bash
 
 # Define build arguments
 ARG NEXT_PUBLIC_API_BASE_PATH
@@ -27,3 +30,8 @@ fi
 RUN yarn
 
 RUN npm run build
+# Expose Redis port
+EXPOSE 6379
+
+# Start Redis server (this will start Redis in the background)
+CMD ["sh", "-c", "redis-server --protected-mode no & yarn start"]
