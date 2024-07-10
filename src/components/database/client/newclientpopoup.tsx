@@ -107,30 +107,19 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                         <input className="w-[448px] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="email" onChange={(e) => handleChange("email", e.target.value)} />
                     </div>
                 </div>
-                <div className="flex items-center gap-[38px] w-full">
-                    <div className="text-gray-500 text-base font-medium  w-2/12">Mobile No.<span className="text-[red]">*</span></div>
+                <div className="flex items-center gap-[33px] w-full">
+                    <div className="text-gray-500 text-base font-medium  w-2/12">Phone No.<span className="text-[red]">*</span></div>
                     <div className="flex w-10/12">
-                    <div className="flex gap-0 bg-white w-full items-center h-9">
                     
-                        <Select
-                            className="text-textGrey2 text-base font-medium h-9 w-[8rem]"
-                            placeholder="+91"
-                            isClearable={false}
-                            isSearchable={true}
-                            options={countryCode}
-                            name="contact-initials"
-                            onChange={(value) => handleChange("contact-initials", value)}
-                        />
                     
-                    <div className="w-full h-full">
-                        <input className="h-full w-full text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="contact" onChange={(e) => handleChange("contact", e.target.value)} />
+                       
+                    
+                    <div className="flex-1 ml-1">
+                        <input className="h-9 w-full text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="contact" onChange={(e) => handleChange("contact", e.target.value)} />
                     </div>
-                    </div>
-                    <div className=" ml-1  w-9 h-9 ">
-                    <button  className="w-full h-full rounded-[5px] justify-center text-2xl items-center gap-2 flex border border-borderGrey border-solid bg-white outline-none">
-                        <div className="text-textGrey1 text-lg">+</div>
-                    </button>
-                    </div>
+                    
+
+                    
                     </div>
                 </div>
                 <div className="flex items-center gap-[33px] w-full">
@@ -138,7 +127,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                     <div className="flex w-10/12">
                   
                     <div className="flex-1 ml-1">
-                        <input className="w-full h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="address" onChange={(e) => handleChange("address", e.target.value)} />
+                        <input className="w-full h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" placeholder="Enter address or Google Maps link" type="text" name="address" onChange={(e) => handleChange("address", e.target.value)} />
                     </div>
                     {/* <div className=" ml-1  w-9 h-9 ">
                     <button  className="w-full h-full rounded-[5px] justify-center text-2xl items-center gap-2 flex border-borderText border border-solid bg-white outline-none">
@@ -157,10 +146,10 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                         <Select
                             className="text-textGrey2 w-[10rem] text-base font-medium "
                             placeholder=""
-                            isClearable={false}
+                            isClearable={true}
                             isSearchable={true}
                             options={City}
-                            isMulti={true}
+                            isMulti={false}
                             name="city"
                             onChange={(value) => handleChange("city", value)}
                         />

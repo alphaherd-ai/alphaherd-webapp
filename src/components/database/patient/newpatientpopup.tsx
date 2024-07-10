@@ -226,6 +226,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                                     type="text"
                                     min="0"
                                     name="years"
+                                    placeholder="0"
                                     onChange={(e) => handleChange("years", parseInt(e.target.value))}
                                 />
                             </div>
@@ -238,6 +239,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                                     type="text"
                                     min="0"
                                     name="months"
+                                    placeholder="0"
                                     onChange={(e) => handleChange("months", parseInt(e.target.value))}
                                 />
                             </div>
@@ -250,6 +252,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                                     type="text"
                                     min="0"
                                     name="days"
+                                    placeholder="0"
                                     onChange={(e) => handleChange("days", parseInt(e.target.value))}
                                 />
                             </div>

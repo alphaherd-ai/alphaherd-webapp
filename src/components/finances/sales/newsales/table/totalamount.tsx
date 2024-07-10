@@ -12,11 +12,36 @@ import Popup from "../table/recordedTransactionPopup"
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
 import { DataContext } from './DataContext';
 import { Tax } from '@prisma/client';
+import useSWR from 'swr'
+import { useAppSelector } from '@/lib/hooks';
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
+interface Transactions {
+  id: number;
+  partyName: string;
+  subject: string;
+  invoiceLink: string;
+  receiptNo: string;
+  date: string;
+  amountPaid: number;
+  mode: string;
+  moneyChange: string;
+  invoiceSource: string;
+}
+
+
+
 
 
 const NewsalesTotalAmout = () => {
     const { tableData, headerData } = useContext(DataContext);
     const [selectedDiscount, setDiscount] = useState(0);
+    const appState = useAppSelector((state) => state.app)
+    // const {data:transactions,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/getAll?branchId=${appState.currentBranchId}`,fetcher, { revalidateOnFocus : true});
+
+
+    // transactions && console.log(transactions)
+
     let totalAmount = 0;
     tableData.forEach(data => {
         totalAmount += (data.quantity * data.sellingPrice + data.quantity * data.gst*data.sellingPrice-(data.quantity*data.discount*data.sellingPrice||0))||0;
@@ -103,10 +128,7 @@ const NewsalesTotalAmout = () => {
 
                     <div className="w-full  p-6 bg-white rounded-tl-md rounded-tr-md border border-solid  border-borderGrey justify-between items-center gap-6 flex">
                         <div className="text-gray-500 text-xl font-medium ">Payments</div>
-                        {/* <div className='flex items-center h-9 py-2.5 bg-black justify-between rounded-lg '> */}
-
-                            {/* <Popover placement="bottom-end" showArrow offset={10}>
-                                <PopoverTrigger> */}
+                        
                                     <Button 
                                         onClick={togglePopup}
                                         variant="solid"
@@ -114,43 +136,29 @@ const NewsalesTotalAmout = () => {
                                         <div className='flex'><Image src={Rupee} alt='Rupee' className='w-6 h-6 ' /></div>
                                         Recorded Transaction
                                     </Button>
-                                {/* </PopoverTrigger>
-                                <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
-
-                                    <div className="flex flex-col ">
-
-                                        <div className='flex flex-col'>
-
-                                            <Link className='no-underline flex item-center' href='/finance/overview'>
-                                                <div className='text-base p-4   text-white flex '>
-                                                    <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Inverse</div>
-                                            </Link>
-                                            <Link className='no-underline flex item-center' href='/finance/overview'>
-                                                <div className='text-base p-4  text-white flex '>
-                                                    <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Return</div>
-                                            </Link>
-                                            <Link className='no-underline flex item-center' href='/finance/overview'>
-                                                <div className='text-base p-4  text-white flex '>
-                                                    <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Estimate</div>
-                                            </Link>
-
-                                        </div>
-                                    </div>
-
-
-                                </PopoverContent>
-                            </Popover> */}
-
-
-
-                        {/* </div> */}
+                                
                     </div>
+
+                    <div className="w-full  px-6 py-4 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
+                        <div className="text-gray-500 text-lg font-medium ">Advance Paid</div>
+                        <div className='flex items-center h-9 px-4 py-2.5 justify-between rounded-lg '>
+
+                            <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
+                            ₹ 6546
+                                
+                            </div>
+
+
+
+                        </div>
+                    </div>
+
                     <div className="w-full  p-6 bg-white rounded-bl-md rounded-br-md  justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
                         <div className="text-gray-500 text-xl font-medium ">Balance Due</div>
                         <div className='flex items-center h-9 px-4 py-2.5 justify-between rounded-lg '>
 
                             <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
-                                {(grandAmt).toFixed(2)}
+                            ₹ {(grandAmt).toFixed(2)}
                                 <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2">
                                     You’re owed
                                 </span>
@@ -196,7 +204,7 @@ const NewsalesTotalAmout = () => {
                                 </div>
                                 <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5   ">
                                         <div className="text-gray-500 text-base font-bold ">Shipping</div>
-                                        <input
+                                         <input
                                             className="text-right text-textGrey1 text-base   border-none outline-none"
                                             placeholder='₹______'
                                             value={shipping} 
@@ -205,7 +213,7 @@ const NewsalesTotalAmout = () => {
                                     </div>
                                     <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5  ">
                                         <div className="text-gray-500 text-base font-bold ">Adjustment</div>
-                                        <input
+                                         <input
                                             className="text-right text-textGrey1 text-base   border-none outline-none"
                                             placeholder='₹______'
                                             value={adjustment} 
@@ -214,7 +222,7 @@ const NewsalesTotalAmout = () => {
                                     </div>
                                 <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 rounded-b-md justify-between items-center gap-2.5    ">
                                     <div className="text-textGreen text-base font-bold ">Grand total</div>
-                                    <div className="text-right text-textGreen text-base ">{(grandAmt).toFixed(2)}</div>
+                                    <div className="text-right text-textGreen text-base ">₹ {(grandAmt).toFixed(2)}</div>
                                 </div>
                             </div>
                         </div>
