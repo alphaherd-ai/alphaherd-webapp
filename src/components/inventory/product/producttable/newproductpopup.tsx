@@ -426,20 +426,13 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                 </div>
                             </div>
                         </div>
-
-                        
-                        <div className="w-[545px] flex justify-end mt-[5px] cursor-pointer">
-                            <button onClick={handleSaveClick} disabled={buttonDisabled} className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none">
-                                <div className="text-white text-base font-bold ">Save</div>
-                            </button>
-                        </div>
-                        {/* {!isSaveDisabled ? (<div className="h-11 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer"  onClick={handleSaveClick} >
-                            <div className="text-gray-100 text-base font-bold ">Save</div>
-                        </div>) : (<button className="px-4 py-2.5 bg-gray-200 rounded-[5px]  justify-start items-center gap-2 flex border-0 outline-none cursor-not-allowed">
-                        <div className="text-textGrey1 text-base font-bold ">Save</div>
-                        <Image src={arrowicon} alt="arrow"></Image>
-                    </button>)}  */}
+                    <div className="w-[545px] flex justify-end mt-[5px] cursor-pointer">
+                        <button onClick={handleSaveClick} disabled={buttonDisabled} className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none">
+                            <div className="text-white text-base font-bold ">Save</div>
+                        </button>
                     </div>
+                    </div>
+                   
                 </div>
             )}
         </>

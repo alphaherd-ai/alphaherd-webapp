@@ -365,7 +365,8 @@ model Transactions {
   amountPaid       Int
   mode             String?
   moneyChange      String?
-  invoiceSource    String?
+  products         Json?
+  services         Json?
   FinanceSection   FinanceSection? @relation(fields: [financeSectionId], references: [id])
   financeSectionId Int?
 }
