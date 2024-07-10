@@ -17,7 +17,7 @@ const initializeScheduling = async () => {
       },
     },
   });
-  
+
   for (const expense of expenses) {
     const nextDate = calculateNextOccurrence(expense.recurringStartedOn!, expense.recurringRepeatType!);
     if (nextDate <= new Date(expense.recurringEndson!)) {
