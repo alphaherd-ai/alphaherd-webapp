@@ -69,8 +69,8 @@ export const POST = async (req: NextRequest) => {
     if (userInviteString) {
       const { branchId, role, email } = await decrypt(userInviteString);
 
-
-      const orgBranchUserRole = await prismaClient.orgBranchUserRole.findFirst({
+    
+         const orgBranchUserRole = await prismaClient.orgBranchUserRole.findFirst({
         where: {
           userId: user.id,
           orgBranchId: branchId
@@ -94,6 +94,30 @@ export const POST = async (req: NextRequest) => {
             role: role
           }
         });
+
+    //     await prismaClient.orgBranch.update({
+    //       where: {
+    //         id: Number(orgBranch?.id),
+    //       },
+    //       data: {
+    //         assignedUsers: {
+    //           connect: {
+    //             id: Number(user.id),  
+    //           },
+    //         },
+    //       },
+    //     });
+        
+
+    //   await prismaClient.user.update({
+    //     where: {
+    //         email
+    //     },
+    //     data: {
+    //         orgBranchId : Number(branchId)
+    //     }
+    // });
+    
       }
 
       console.log(branchId, role, email);

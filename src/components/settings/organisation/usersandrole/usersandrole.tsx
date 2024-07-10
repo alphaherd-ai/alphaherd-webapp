@@ -11,11 +11,22 @@ import downicon from "../../../../assets/icons/settings/downicon.svg"
 import opticon from "../../../../assets/icons/settings/opticon.svg"
 import React, { useState, useEffect } from 'react';
 import OrganisationNavbar from "../navbar/navbar";
-
+import useSWR from 'swr';
+import { useAppSelector } from "@/lib/hooks";
+import Loading from "@/app/loading";
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 export default function UsersAndRolesSettings() {
-
- 
- 
+    const appState = useAppSelector((state) => state.app);
+    const [branchUsers,setBranchUsers]=useState<any[]>([]);
+    console.log(appState.isCurrentOrgAdmin)
+    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true})
+    useEffect(()=>{
+        if(data&&!error&&!isLoading){
+            console.log(data)
+            setBranchUsers(data);
+        }
+    })
     const permission = [
         { value: 'Allow with admin permission', label: 'Allow with admin permission' },
         { value: 'Allow', label: 'Allow' },
@@ -81,18 +92,20 @@ export default function UsersAndRolesSettings() {
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'>Phone No.</div>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-4/12'>Email</div>
                             </div>
-                            <div className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                            {branchUsers?.map((user:any,index:number)=>(
+                                <div key={index+1} className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
                                 <div className='w-3/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
                                     <Image className="w-7 h-7 relative rounded-full border border-neutral-400" src={pfpcion} alt="profile" />
-                                    <div className="">Rani Kumari</div>
+                                    <div className="">{user.name}</div>
                                 </div>
                                 <div className='w-3/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-2'>
-                                    <div className="text-indigo-600 text-sm font-medium  px-2 py-1.5 bg-violet-100 rounded-[5px] justify-center items-center gap-2 flex">Manager</div>
-                                    <div className="text-teal-400 text-sm font-medium  px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">Admin</div>
+                                    <div className="text-indigo-600 text-sm font-medium  px-2 py-1.5 bg-violet-100 rounded-[5px] justify-center items-center gap-2 flex">{user.userRoles.filter((userRole:any)=>userRole.userId===user.id)[0]?.role}</div>
+                                    {user.userRoles.filter((userRole:any)=>userRole.userId===user.id)[0]?.role=='Manager'?<div className="text-teal-400 text-sm font-medium  px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">Admin</div>:""}
+                                    
                                 </div>
-                                <div className='w-2/12 px-6 flex items-center text-neutral-400 text-base font-medium'>+91 99999 99999</div>
+                                <div className='w-2/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{user.phoneNo}</div>
                                 <div className='w-4/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-3'>
-                                    <div>an@gmail.com</div>
+                                    <div>{user.email}</div>
                                     <div className="flex gap-2">
                                         <div className="px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
                                             <Image className="w-4 h-4 relative" src={adminicon} alt="admin" />
@@ -105,54 +118,10 @@ export default function UsersAndRolesSettings() {
                                     </div>
                                 </div>
                             </div>
-                            <div className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                <div className='w-3/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                    <Image className="w-7 h-7 relative rounded-full border border-neutral-400" src={pfpcion} alt="profile" />
-                                    <div className="">Rani Kumari</div>
-                                </div>
-                                <div className='w-3/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-2'>
-                                    <div className="text-indigo-600 text-sm font-medium  px-2 py-1.5 bg-violet-100 rounded-[5px] justify-center items-center gap-2 flex">Manager</div>
-                                    <div className="text-teal-400 text-sm font-medium  px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">Admin</div>
-                                </div>
-                                <div className='w-2/12 px-6 flex items-center text-neutral-400 text-base font-medium'>+91 99999 99999</div>
-                                <div className='w-4/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-3'>
-                                    <div>an@gmail.com</div>
-                                    <div className="flex gap-2">
-                                        <div className="px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
-                                            <Image className="w-4 h-4 relative" src={adminicon} alt="admin" />
-                                            <div className="text-neutral-400 text-sm font-medium ">Make Admin</div>
-                                        </div>
-                                        <div className="px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
-                                            <Image className="w-4 h-4 relative" src={removeusericon} alt="admin" />
-                                            <div className="text-neutral-400 text-sm font-medium ">Remove User</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                <div className='w-3/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                    <Image className="w-7 h-7 relative rounded-full border border-neutral-400" src={pfpcion} alt="profile" />
-                                    <div className="">Rani Kumari</div>
-                                </div>
-                                <div className='w-3/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-2'>
-                                    <div className="text-indigo-600 text-sm font-medium  px-2 py-1.5 bg-violet-100 rounded-[5px] justify-center items-center gap-2 flex">Manager</div>
-                                    <div className="text-teal-400 text-sm font-medium  px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">Admin</div>
-                                </div>
-                                <div className='w-2/12 px-6 flex items-center text-neutral-400 text-base font-medium'>+91 99999 99999</div>
-                                <div className='w-4/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-3'>
-                                    <div>an@gmail.com</div>
-                                    <div className="flex gap-2">
-                                        <div className="px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
-                                            <Image className="w-4 h-4 relative" src={adminicon} alt="admin" />
-                                            <div className="text-neutral-400 text-sm font-medium ">Make Admin</div>
-                                        </div>
-                                        <div className="px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
-                                            <Image className="w-4 h-4 relative" src={removeusericon} alt="admin" />
-                                            <div className="text-neutral-400 text-sm font-medium ">Remove User</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                                ))}
+                            
+                            
+                            
                         </div>
                     </div>
                     <div className="w-full p-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
