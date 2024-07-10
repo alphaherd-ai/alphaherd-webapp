@@ -9,18 +9,18 @@ import { calculateNextOccurrence } from '../utils/calculateNextOccurrence';
 console.log("we're here");
 
 
-const redisClient = createClient({
-  url: 'redis://localhost:6379'
-});
+// const redisClient = createClient({
+//   url: 'redis://localhost:6379'
+// });
 
-redisClient.on('error', (err: any) => {
-  console.log('Redis error:', err);
-});
+// redisClient.on('error', (err: any) => {
+//   console.log('Redis error:', err);
+// });
 
-redisClient.on('connect', () => {
-  console.log('Redis connected');
-  redisClient.quit(); // Close the connection after verification
-});
+// redisClient.on('connect', () => {
+//   console.log('Redis connected');
+//   redisClient.quit(); // Close the connection after verification
+// });
 
 const recurringExpensesQueue = new Queue('recurring-expenses', {
   redis: {
