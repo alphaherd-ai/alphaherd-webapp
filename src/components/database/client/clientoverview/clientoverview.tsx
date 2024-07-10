@@ -2,8 +2,6 @@
 import Image from "next/image"
 import Link from "next/link"
 import lefticon from "../../../../assets/icons/inventory/left_icon.svg"
-import aiicon from "../../../../assets/icons/inventory/Group 2749.svg"
-import infoicon from "../../../../assets/icons/inventory/Icons16.svg"
 import addicon from "../../../../assets/icons/inventory/bar_chart.svg"
 import optionicon from "../../../../assets/icons/inventory/more_vert.svg"
 import downloadicon from "../../../../assets/icons/inventory/1. Icons-24.svg"
@@ -62,7 +60,7 @@ function useClientfetch (id: string | null,branchId:number|null) {
                             <Image src={addicon} alt="add"></Image>
                         </div>
                         <div className="text-white text-base font-bold ">
-                            Update Stock Level
+                            Record Payment
                         </div>
                     </div>
                     <div className=' '>
