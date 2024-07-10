@@ -1,31 +1,12 @@
 // lib/bull.ts
 import  Queue  from 'bull';
 import prismaClient from '../../prisma';
-import { createClient } from 'redis';
-
-
-import { calculateNextOccurrence } from '../utils/calculateNextOccurrence';
-
-console.log("we're here");
-
-
-// const redisClient = createClient({
-//   url: 'redis://localhost:6379'
-// });
-
-// redisClient.on('error', (err: any) => {
-//   console.log('Redis error:', err);
-// });
-
-// redisClient.on('connect', () => {
-//   console.log('Redis connected');
-//   redisClient.quit(); // Close the connection after verification
-// });
+import { calculateNextOccurrence } from '../utils/calculateNextOccurrence'; 
 
 const recurringExpensesQueue = new Queue('recurring-expenses', {
   redis: {
-    host: 'localhost',
-    port: 6379,
+    host: '127.0.0.1',
+    port: 6380,
   },
 });
 
