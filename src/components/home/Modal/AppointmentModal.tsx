@@ -2,14 +2,52 @@ import Image from "next/image"
 import closeModa from "../../../assets/icons/home/1. Icons-24 (2).png"
 import search from "../../../assets/icons/home/search.png"
 import Icons from "../../../assets/icons/home/1. Icons-24 (12).png"
-import React, { useState } from "react";
+import React, { useEffect,useState } from "react";
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import TimePicker from 'react-time-picker';
+interface ServiceOption {
+  label: string;
+  value: string; // Use a string for the dropdown value
+}
 
 const AppointmentModal = () => {
   const [isOpen, setIsOpen] = useState(true); 
+  const [selectedDate, setSelectedDate] = useState(new Date()); 
+  const [formData, setFormData] = useState<any>({});
+  const [selectedService, setSelectedService] = useState<ServiceOption['value']>(
+    'General Consultations' // Initial selected value
+  );
+
+  const serviceOptions: ServiceOption[] = [
+    { label: 'General Consultations', value: 'general-consultations' },
+    { label: 'Grooming Service', value: 'grooming-service' },
+  ];
+
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedService(event.target.value);
+  };
+
+  const handleDateChange = (date: Date) => {
+    setSelectedDate(date);
+  };
+
+  const [startTime, setStartTime] = useState('09:00');
+  const [endTime, setEndTime] = useState('09:30');
+
+  const handleStartTimeChange = (time: string) => {
+    setStartTime(time);
+  };
+
+  const handleEndTimeChange = (time: string) => {
+    setEndTime(time);
+  };
 
   const closeModal = () => {
     setIsOpen(false);
   };
+
+  
 
   return (
     <>
@@ -60,10 +98,12 @@ const AppointmentModal = () => {
                         <div className="w-[120px] text-gray-500 text-base font-medium font-['Satoshi']">
                           Date
                         </div>
-                        <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-start gap-2 inline-flex">
-                          <div className="text-gray-500 text-base font-medium font-['Satoshi'] ml-[10px]">
-                            26/03/24
-                          </div>
+                        <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] flex-col justify-center items-start gap-2 inline-flex">
+                          <DatePicker
+                            selected={selectedDate}
+                            onChange={handleDateChange}
+                            className="text-gray-500 text-base font-medium font-['Satoshi'] ml-[10px]" 
+                          />
                         </div>
                       </div>
                       <div className="self-stretch justify-start items-center gap-6 inline-flex">
@@ -91,12 +131,17 @@ const AppointmentModal = () => {
                           Service
                         </div>
                         <div className="grow shrink basis-0 h-11 px-4 py-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center flex">
-                          <div className="grow shrink basis-0 h-[22px] justify-start items-center flex">
-                            <div className="grow shrink basis-0 text-neutral-400 text-base font-medium font-['Satoshi']">
-                              General Consultation
-                            </div>
-                          </div>
-                          <div className="w-4 h-4 relative" />
+                        <select
+                          className="grow shrink basis-0 text-neutral-400 text-base font-medium font-['Satoshi'] w-full"
+                          value={selectedService}
+                          onChange={handleChange}
+                        >
+                          {serviceOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                          </select>
                         </div>
                       </div>
                     </div>
