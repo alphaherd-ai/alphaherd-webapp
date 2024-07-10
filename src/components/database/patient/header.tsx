@@ -137,7 +137,8 @@ const DatabasePatientHeader = () => {
                         <div className='flex'>
                             <Image src={Add} alt='Add' className='w-3 h-3 ' />
                         </div>
-                        New Patients
+                        
+                        Add Patients
                     </Button>
             
 

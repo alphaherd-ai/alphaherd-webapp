@@ -17,7 +17,6 @@ export const GET = async (req: NextRequest) => {
         financeSectionId: financeId
       }
     });
-
     return new Response(JSON.stringify(transactions), {
       status: 201,
       headers: {

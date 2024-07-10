@@ -8,9 +8,9 @@ const LoginPage = () => {
 
     console.log(process.env.NEXT_PUBLIC_API_BASE_PATH);
 
-    useEffect(() => {
-        axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/bullScheduler`)
-      }, []);
+    // useEffect(() => {
+    //     axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/bullScheduler`)
+    //   }, []);
     
     return <div className='flex h-screen flex-col'>
 

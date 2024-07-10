@@ -12,6 +12,8 @@ export const POST=async(req: NextRequest, { params }: { params: { type: string }
       const body = await req.json();
       const financeId = await fetchFinanceId(req);
 
+
+      console.log("here")
         console.log(body)
         
         const transactions = await prismaClient.transactions.create({
