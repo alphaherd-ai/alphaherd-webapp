@@ -21,7 +21,7 @@ const Popup = ({ onClose }:any) => {
 
     const tabs = ["Staff", "Manager", "Veterinarian"];
     const [selectedTab, setSelectedTab] = useState(tabs[0]);
-
+    const [loading, setLoading] = useState<boolean>(false);
     const handleInputChange = (event: any) => {
         setEmailInput(event.target.value);
     };
@@ -29,6 +29,7 @@ const Popup = ({ onClose }:any) => {
     const handleSendInvite = async () => {
         try{
             if (emailInput.trim() !== '') {
+                setLoading(true);
                 let resp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/invite/create?branchId=${appState.currentBranchId}`, {
                     method: 'POST',
                     headers: {
@@ -57,7 +58,7 @@ const Popup = ({ onClose }:any) => {
                     theme: "colored",
                     transition: Bounce,
                   });
-                setTimeout(() => onClose(),4000)
+                setTimeout(() => {onClose(),setLoading(false);},4000)
             }
         }
         catch(err : any){
@@ -72,6 +73,7 @@ const Popup = ({ onClose }:any) => {
                 theme: "colored",
                 transition: Bounce,
               });
+              setLoading(false);
         }
     };
 
@@ -92,7 +94,7 @@ const Popup = ({ onClose }:any) => {
                     <div className="text-neutral-400 text-base  ">Enter email ID to send invite for current branch</div>
                 </div>
                 <div className="self-stretch h-[147px] flex-col justify-start items-start gap-4 flex">
-                    <div className="w-[576px] h-[27px] justify-start items-center gap-2 inline-flex">
+                    <div className="w-[576px] h-[27px] justify-start items-center gap-2 inline-flex"><p className="text-gray-500">User Role:</p>
                         <div className="grow shrink basis-0 h-[27px] justify-start items-center flex hover:cursor-pointer">
                             {selectedTab == tabs[0] && (<div className="px-2 py-1 bg-zinc-900 rounded-tl-[5px] rounded-[5px] border border-zinc-900 justify-start items-center gap-1 flex">
                                 <div className="text-white text-sm font-bold font-['Satoshi']">
@@ -156,8 +158,8 @@ const Popup = ({ onClose }:any) => {
                             <input type="text" name="" id="" className="text-neutral-400 text-base  h-11 px-4 py-[13px] w-[100%] bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-4 flex" placeholder="Enter Email" value={emailInput}
                                 onChange={handleInputChange} />
                         </div>
-                        <div className="w-[132px] self-stretch px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex" onClick={handleSendInvite}>
-                            <div className="text-white text-base hover:cursor-pointer">Send Invite</div>
+                        <div className={`w-[132px] self-stretch px-4 py-2.5 ${loading ? "bg-gray-400" : "bg-zinc-900"} rounded-[5px] justify-start items-center gap-2 flex ${loading ? "cursor-not-allowed" : "hover:cursor-pointer"}`} onClick={!loading ? handleSendInvite : undefined}>
+                            <div className="text-white text-base">{loading ? "Sending..." : "Send Invite"}</div>
                         </div>
                     </div>
                 </div>

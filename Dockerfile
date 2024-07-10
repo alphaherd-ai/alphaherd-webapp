@@ -2,6 +2,7 @@ FROM node:18-alpine
 WORKDIR  /app
 COPY . ./
 
+
 # Define build arguments
 ARG NEXT_PUBLIC_API_BASE_PATH
 ARG DATABASE_URL
@@ -27,3 +28,5 @@ fi
 RUN yarn
 
 RUN npm run build
+
+

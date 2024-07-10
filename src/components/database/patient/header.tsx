@@ -65,7 +65,7 @@ const DatabasePatientHeader = () => {
         <div className='flex '><Image src={Sort} alt='Sort' className='w-3 h-3 mr-2' /></div>
 
         <Dropdown>
-            <DropdownTrigger>
+            <DropdownTrigger className='z-0'>
                 <Button
                 
                     // color="gray-400"
@@ -98,12 +98,12 @@ const DatabasePatientHeader = () => {
         <div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>
 
         <Dropdown>
-            <DropdownTrigger>
+            <DropdownTrigger className='z-0'>
                 <Button
                     //   variant="bordered" 
                     // color="gray-400"
                     variant="solid"
-                    className="capitalize border-none bg-transparent rounded-lg"
+                    className="capitalize border-none bg-transparent rounded-lg z-0"
                 >
                     {selectedCategoryValue}
                 </Button>

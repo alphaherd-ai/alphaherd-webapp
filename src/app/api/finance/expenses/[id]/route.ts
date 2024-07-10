@@ -1,6 +1,7 @@
 import { connectToDB } from '../../../../../utils/index';
 import prismaClient from '../../../../../../prisma';
 import { NextRequest } from 'next/server';
+import { fetchFinanceId } from '@/utils/fetchBranchDetails';
 
 export const GET = async (req: NextRequest, { params }: { params: { id: number } }) => {
   if (req.method !== 'GET') {
@@ -8,9 +9,9 @@ export const GET = async (req: NextRequest, { params }: { params: { id: number }
   }
 
   try {
-    
+    const financeId=await fetchFinanceId(req);
     const expenses = await prismaClient.expenses.findUnique({
-      where: { id: Number(params.id) },
+      where: { id: Number(params.id),financeSectionId:financeId },
       include: {
         items:true   
       },
@@ -35,10 +36,10 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: number }
     }
   
     try {
-      
+      const financeId=await fetchFinanceId(req);
       const body = await req.json();
       const expenses = await prismaClient.expenses.update({
-        where: { id: Number(params.id) },
+        where: { id: Number(params.id),financeSectionId:financeId },
         data: body,
         include: {
           items: {

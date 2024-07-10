@@ -29,7 +29,7 @@ const InventoryNavbar = () => {
    
     useEffect(() => {
         if (!error && !isLoading && data) {
-            const options = data.map((item: any) => ({
+            const options = data?.map((item: any) => ({
                 label: item.productBatch?(`${item.productBatch?.product?.itemName}------${item.productBatch?.batchNumber}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0Product`):item.service?(`${item.service?.name}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0Service`):"",
                 value: item
             }));
