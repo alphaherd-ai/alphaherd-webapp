@@ -3,20 +3,20 @@ import { CSVLink } from 'react-csv';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { format } from 'date-fns';
-import closeicon from "../../../../assets/icons/inventory/closeIcon.svg";
+import closeicon from "../../../assets/icons/inventory/closeIcon.svg";
 import Image from 'next/image';
-import calenderIcon from "../../../../assets/icons/finance/calendar_today.svg";
-import download from "../../../../assets/icons/finance/downloadGreen.svg";
+import calenderIcon from "../../../assets/icons/finance/calendar_today.svg";
+import download from "../../../assets/icons/finance/downloadGreen.svg";
 import { Button } from '@nextui-org/react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import logo from "../../../../assets/icons/finance/pfpimg.png";
+import logo from "../../../assets/icons/finance/pfpimg.png";
 import { useAppSelector } from '@/lib/hooks';
 
-const DownloadPopup = ({ onClose, transactions, type }:any) => {
+const DownloadPopup = ({ onClose, clients }:any) => {
 
   const appState = useAppSelector((state) => state.app)
-  const [data, setData] = useState(transactions);
+  const [data, setData] = useState(clients);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [selectedOption, setSelectedOption] = useState('Custom');
@@ -27,7 +27,7 @@ const DownloadPopup = ({ onClose, transactions, type }:any) => {
   };
 
   const handleFilter = (start:any, end:any) => {
-    const filteredData = transactions.filter((item:any) => {
+    const filteredData = clients.filter((item:any) => {
       const date = new Date(item.date);
       return date >= start && date <= end;
     });
@@ -60,39 +60,22 @@ const DownloadPopup = ({ onClose, transactions, type }:any) => {
   const downloadPDF = () => {
     convertImageToBase64(logo.src, (base64Image:any) => {
     const doc = new jsPDF('landscape');
-    const tableColumn = ["Date", "Party", "Receipt No.", "Subject", "Link Invoice", "Amount", "Mode", ""];
+    const tableColumn = ["Client", "Pet(s)", "Phone No.", "Email", "Last Visit"];
     const tableRows:any = [];
 
-    const modeCounts:any = {};
-
-    let totalAmount = 0;
-    const noOfTransactions = data.length;
-
     data.forEach((item:any) => {
-      if (modeCounts[item.mode]) {
-        modeCounts[item.mode]++;
-      } else {
-        modeCounts[item.mode] = 1;
-      }
-      if (item.moneyChange === 'In') {
-        totalAmount += item.amountPaid
-      } else if (item.moneyChange === 'Out') {
-        totalAmount -= item.amountPaid;
-      }
-    });
-
-    data.forEach((item:any) => {
-      const transactionData = [
-        format(new Date(item.date), 'yyyy-MM-dd'),
-        item.partyName,
-        item.receiptNo,
-        item.subject,
-        item.invoiceLink,
-        item.amountPaid,
-        item.mode,
-        item.moneyChange,
+      const clientsData = [
+        item.clientName,
+        item.patients?.map((patient:any, index:number) => (
+            <span key={patient.id}>
+                {patient.patientName}{index < (item.patients?.length ?? 0) - 1 ? ', ' : ''}
+            </span>
+        )),
+        item.contact,
+        item.email,
+        item.city,
       ];
-      tableRows.push(transactionData);
+      tableRows.push(clientsData);
     });
 
     doc.addImage(base64Image, 'PNG', 4, 4, 20, 20); 
@@ -124,22 +107,14 @@ const DownloadPopup = ({ onClose, transactions, type }:any) => {
       doc.line(1, 26, 320, 26); 
 
       doc.setFontSize(15);
-      doc.text("Transaction Report", 8, 34);
+      doc.text("Database Report", 8, 34);
 
       doc.setFontSize(11);
-      doc.text(`Category : ${type}`, 90, 33);
-      doc.text(`Period : ${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'} - ${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}`, 90, 37);
+      doc.text(`Category : Clients`, 60, 33);
+      doc.text(`Period : ${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'} - ${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}`, 60, 37);
 
-      doc.setFontSize(11);
-      let yPosition = 33;
-      Object.entries(modeCounts).forEach(([mode, count]) => {
-        doc.text(`${mode}: ${count}`, 180, yPosition);
-        yPosition += 5
-      })
-      
-      doc.text(`Total Amount: ${totalAmount}`, 230, 33);
-      doc.text(`Total Number Of Transactions: ${noOfTransactions}`, 230, 38);
 
+      doc.text(`Total Clients : ${data.length}`, 120, 33);
 
       doc.setLineWidth(0.5);
       doc.line(1, 53, 320, 53); 
@@ -151,7 +126,7 @@ const DownloadPopup = ({ onClose, transactions, type }:any) => {
       body: tableRows,
     });
 
-    const fileName = `transactions_report_${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'}_to_${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}.pdf`;
+    const fileName = `clients_report_${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'}_to_${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}.pdf`;
     doc.save(fileName);
   })
   }

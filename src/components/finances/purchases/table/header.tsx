@@ -10,16 +10,28 @@ import Invoice from '../../../../assets/icons/finance/invoice.svg';
 import Return from '../../../../assets/icons/finance/Return.svg';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 import { FinanceCreationType } from '@prisma/client';
+import DownloadPopup from './downloadPurchasePopup';
 
 
 
+const FinancesPurchasesTableHeader = ({invoiceCount,orderCount,returnCount, purchases}:any) => {
 
-const FinancesPurchasesTableHeader = ({invoiceCount,orderCount,returnCount}:any) => {
+
+    const currentUrl=useSearchParams();
+    const type = currentUrl.get("type")
+
+    
+    const [showPopup1, setShowPopup1] = React.useState(false);
+    const togglePopup1 = () => {
+        setShowPopup1(!showPopup1);
+    }
+   
+
     const currentRoute = usePathname();
 
     const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
@@ -43,7 +55,7 @@ const FinancesPurchasesTableHeader = ({invoiceCount,orderCount,returnCount}:any)
              
               
         
-            <div className='flex w-full bg-white h-20  p-4 px-6 mt-6 justify-between border border-solid border-gray-300 border-t-0.5 rounded-tl-lg rounded-tr-lg'>
+            <div className='flex w-full bg-white h-20  p-4 px-6  justify-between border-0 border-b border-solid border-borderGrey rounded-tl-lg rounded-tr-lg'>
 
             <div className='flex  text-gray-500 items-center w-5/12'>
                     <Link className='no-underline flex item-center' href={{pathname:'/finance/purchases/all',query:{type:'all'}}}>
@@ -72,10 +84,9 @@ const FinancesPurchasesTableHeader = ({invoiceCount,orderCount,returnCount}:any)
                     </Link>
                 </div>
 <div className='flex items-center'>
-    <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
-
-        <div className='flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'><Image src={Download} alt='Download' className='w-4  h-4' /></div>
-    </Link>
+<div onClick={togglePopup1} className='cursor-pointer mr-4 flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'>
+            <Image src={Download} alt='Download' className='w-4  h-4' />
+        </div>
     <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
 
         <div  className='flex items-center justify-center w-7 h-7 border border-solid border-gray-300 border-0.5 rounded-md  p-1'><Image src={Chart} alt='Chart' className='w-4  h-4' /></div>
@@ -183,7 +194,7 @@ const FinancesPurchasesTableHeader = ({invoiceCount,orderCount,returnCount}:any)
             </PopoverContent>
         </Popover>
 
-
+        {showPopup1 && <DownloadPopup onClose={togglePopup1} purchases={purchases} type={type}  />}
 
     {/* </div> */}
 </div>

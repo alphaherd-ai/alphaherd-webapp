@@ -25,25 +25,8 @@ interface Sales {
   dueDate:string;
   status:string;
 }
-const FinancesSalesTableItem = ({onCountsChange}:any) => {
-    const appState = useAppSelector((state) => state.app);
-    const [sales,setSales]=useState<Sales[]>([]);
-    const currentUrl=useSearchParams();
+const FinancesSalesTableItem = ({onCountsChange, data, sales, isLoading}:any) => {
     
-  const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`,fetcher)
-  useEffect(()=>{
-    if(data&&!error&&!isLoading){
-      const filteredData=data?.filter((sale:any)=>{
-        if(currentUrl.get('type')==='all'){
-          return true;
-        }else {
-          return sale.type===currentUrl.get('type');
-        }
-      })
-      
-      setSales(filteredData);
-    }
-  },[data,setSales])
 
   const [invoiceCount, setInvoiceCount] = useState(0);
   const [estimateCount, setEstimateCount] = useState(0);
@@ -74,7 +57,7 @@ const FinancesSalesTableItem = ({onCountsChange}:any) => {
 if(isLoading&&!data)return (<Loading/>)
   return (
      <div>
-      {sales?.map(sale=>(
+      {sales?.map((sale:any)=>(
         
 
     <div key={sale.id} className='flex justify-around items items-center  w-full  box-border h-16 py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  hover:bg-gray-200 hover:text-gray-500 transition'>
@@ -90,7 +73,7 @@ if(isLoading&&!data)return (<Loading/>)
 ><div className='flex w-[4rem]  items-center   text-neutral-400 text-base font-medium'>{sale.type==FinanceCreationType.Sales_Estimate?("Estimate"):(sale.type==FinanceCreationType.Sales_Invoice)?("Invoice"):("Return")}</div></Link> 
     <div className='w-2/12 flex  items-center   text-neutral-400 px-4 text-base font-medium'>{sale.customer}</div>
     <div className='w-1/12 flex  items-center   text-neutral-400 text-base font-medium'>{sale.invoiceNo}</div>
-    <div className='w-1/12 flex  items-center   text-neutral-400 text-base font-medium'>$ {(sale.totalCost).toFixed(2)}</div>
+    <div className='w-1/12 flex  items-center   text-neutral-400 text-base font-medium'>₹ {(sale.totalCost).toFixed(2)}</div>
     <div className='w-1/12 flex  items-center  text-neutral-400 text-base font-medium'>{sale.totalQty}</div>
     <div className='w-1/12 flex  items-center   text-neutral-400 text-base font-medium'>{formatDateAndTime(sale.dueDate).formattedDate}</div>
     <div className='w-1/12 flex  items-center    text-base font-medium text-green-500'>

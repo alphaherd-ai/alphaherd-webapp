@@ -14,9 +14,7 @@ const Newsales = () => {
       <NewsalesNavbar/>
      <NewsalesTable/>
       </DataProvider>
-  
-      
-    
+
     </div>
     </>
   )
