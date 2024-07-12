@@ -4,10 +4,47 @@ import updatelogo from "../../../assets/icons/loginsignup/update_logo.png";
 import React, { useState } from 'react';
 import upload from "../../../assets/icons/loginsignup/upload.svg"
 import { Textarea } from "@nextui-org/react";
+import Select from 'react-select';
 
 
 const OrgDetailsSetup = (props: any) => {
-
+    const stateOptions = [
+        { value: 'Andhra Pradesh', label: 'Andhra Pradesh' },
+        { value: 'Arunachal Pradesh', label: 'Arunachal Pradesh' },
+        { value: 'Assam', label: 'Assam' },
+        { value: 'Bihar', label: 'Bihar' },
+        { value: 'Chhattisgarh', label: 'Chhattisgarh' },
+        { value: 'Goa', label: 'Goa' },
+        { value: 'Gujarat', label: 'Gujarat' },
+        { value: 'Haryana', label: 'Haryana' },
+        { value: 'Himachal Pradesh', label: 'Himachal Pradesh' },
+        { value: 'Jharkhand', label: 'Jharkhand' },
+        { value: 'Karnataka', label: 'Karnataka' },
+        { value: 'Kerala', label: 'Kerala' },
+        { value: 'Madhya Pradesh', label: 'Madhya Pradesh' },
+        { value: 'Maharashtra', label: 'Maharashtra' },
+        { value: 'Manipur', label: 'Manipur' },
+        { value: 'Meghalaya', label: 'Meghalaya' },
+        { value: 'Mizoram', label: 'Mizoram' },
+        { value: 'Nagaland', label: 'Nagaland' },
+        { value: 'Odisha', label: 'Odisha' },
+        { value: 'Punjab', label: 'Punjab' },
+        { value: 'Rajasthan', label: 'Rajasthan' },
+        { value: 'Sikkim', label: 'Sikkim' },
+        { value: 'Tamil Nadu', label: 'Tamil Nadu' },
+        { value: 'Telangana', label: 'Telangana' },
+        { value: 'Tripura', label: 'Tripura' },
+        { value: 'Uttar Pradesh', label: 'Uttar Pradesh' },
+        { value: 'Uttarakhand', label: 'Uttarakhand' },
+        { value: 'West Bengal', label: 'West Bengal' },
+        { value: 'Andaman and Nicobar Islands', label: 'Andaman and Nicobar Islands' },
+        { value: 'Chandigarh', label: 'Chandigarh' },
+        { value: 'Dadra and Nagar Haveli and Daman and Diu', label: 'Dadra and Nagar Haveli and Daman and Diu' },
+        { value: 'Delhi', label: 'Delhi' },
+        { value: 'Lakshadweep', label: 'Lakshadweep' },
+        { value: 'Puducherry', label: 'Puducherry' }
+      ];
+      console.log("this is props",props.data.state)
 
     return (
         <div className="w-[1016px] h-[759px] p-10 bg-gray-100 rounded-[30px] border border-stone-300 backdrop-blur-[190.90px] justify-center items-center inline-flex">
@@ -25,7 +62,7 @@ const OrgDetailsSetup = (props: any) => {
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium ">Name*</div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-start gap-2 inline-flex">
-                                <input type="text" className="text-textGrey2 text-base font-medium  h-full w-full px-2 border border-solid border-borderGrey  rounded-[5px]" id="orgName" name="orgName" disabled={true} value={props.data.orgName} />
+                                <input type="text" className="text-textGrey2 text-base font-medium  h-full w-full px-2 border border-solid border-borderGrey  rounded-[5px]" id="orgName" name="orgName"  value={props.data.orgName} onChange={props.handleChange} />
                             </div>
                         </div>
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
@@ -85,6 +122,7 @@ const OrgDetailsSetup = (props: any) => {
                                     name="orgEmail"
                                     onChange={props.handleChange}
                                     value={props.data.orgEmail}
+                                    placeholder="example@gmail.com"
                                 />
                                 {props.validationErrors.orgEmail && (
                                     <div className="text-[red] error">{props.validationErrors.orgEmail}</div>
@@ -94,7 +132,7 @@ const OrgDetailsSetup = (props: any) => {
                     </div>
                     <div className="self-stretch justify-start items-start gap-10 inline-flex">
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
-                            <div className="w-[136px] text-gray-500 text-base font-medium">Business Address*</div>
+                            <div className="w-[140px] text-gray-500 text-base font-medium">Company Address*</div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
                                 <input
                                     type="text"
@@ -111,17 +149,30 @@ const OrgDetailsSetup = (props: any) => {
                         </div>
                     </div>
                     <div className="self-stretch justify-start items-start gap-10 inline-flex">
-                        <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
+                        <div className="grow shrink basis-0  justify-start items-center gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium">Select State*</div>
-                            <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
-                                <input
+                            <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400 " >
+                            <Select 
+                            className="text-textGrey2 text-base font-medium py-1 w-full border-0 boxShadow-0"
+                            classNamePrefix="select"
+                            isClearable={false}
+                            isMulti={false}
+                            isSearchable={true}
+                            name="state"
+                            options={stateOptions}
+                            onChange={props.handleChange}
+                            value={stateOptions.find(option => option.value === props.data.state)}
+                            />
+
+                               
+                                {/* <input
                                     type="text"
                                     className="text-textGrey2 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
                                     id="state"
                                     name="state"
                                     onChange={props.handleChange}
                                     value={props.data.state}
-                                />
+                                /> */}
                                 {props.validationErrors.state && (
                                     <div className="text-[red] error">{props.validationErrors.state}</div>
                                 )}
@@ -147,7 +198,7 @@ const OrgDetailsSetup = (props: any) => {
                     <div className="self-stretch h-[92px] justify-start items-start gap-10 inline-flex">
                         <div className="grow shrink basis-0 h-[92px] self-stretch justify-start items-start gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium ">Description</div>
-                            <textarea className="px-2 py-2 w-full h-full ml-6 text-textGrey2 text-base focus:outline-none border border-solid border-borderGrey  rounded-[5px]  focus:border focus:border-[#35BEB1]" id="description" name="description" value={props.data.description} onChange={props.handleChange} />
+                            <textarea className="px-2 py-2 w-full h-full ml-6 text-textGrey2 text-base focus:outline-none border border-solid border-borderGrey  rounded-[5px]  focus:border focus:border-[#35BEB1]" id="description" name="description" value={props.data.description} onChange={props.handleChange} placeholder="What services does your clinic provide?" />
                         </div>
                     </div>
                 </div>

@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 const AdminProfile = () => {
     const userState= useAppSelector((state)=>state.user)
+    const appState=useAppSelector((state)=>state.app)
     console.log("this is user from appstate",userState)
     const currentRoute = usePathname();
     const [editable, setEditable] = useState(false);
@@ -30,11 +31,12 @@ const AdminProfile = () => {
     const handleChange = (e:any) => {
       setValue(e.target.value);
     };
-    const roles = userState.userRoles.map((e:any) => e.role);
+    const roles = userState.userRoles.filter((e:any) => e.orgBranchId==appState.currentBranchId);
+
     const address= userState.adminOrganizations.map((e:any)=>e.address);
     const orgId=userState.adminOrganizations.map((e:any)=>e.id);
-    console.log(roles[0])
-    const [activeTab, setActiveTab] = useState(roles[0]);
+    //@ts-ignore
+    const [activeTab, setActiveTab] = useState(roles[0].role);
     const router=useRouter();
     const handleTabClick = (tab:string) => {
         setActiveTab(tab);
