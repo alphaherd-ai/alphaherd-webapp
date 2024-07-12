@@ -15,11 +15,11 @@ import { usePathname } from 'next/navigation';
 import ClientPopup from './newclientpopoup';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
+import DownloadPopup from './downloadClientPopup';
 
 
 
-
-const DatabaseClientHeader = () => {
+const DatabaseClientHeader = ({clients}:any) => {
     const currentRoute = usePathname();
 
     const [selectedSort, setselectedSort] = React.useState(new Set(["Category: text"]));
@@ -29,6 +29,12 @@ const DatabaseClientHeader = () => {
         setShowPopup(!showPopup);
     }
     
+    const [showPopup1, setShowPopup1] = React.useState(false);
+    const togglePopup1 = () => {
+        setShowPopup1(!showPopup1);
+    }
+   
+
     const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
     const selectedCategoryValue = React.useMemo(
         () => Array.from(selectedCategory).join(", ").replaceAll("_", " "),
@@ -42,21 +48,15 @@ const DatabaseClientHeader = () => {
     return (
 
         <>
-     
-
-             
-              
-        
-            <div className='flex w-full bg-white h-20  p-4 px-6 mt-6 justify-between border border-solid border-gray-300 border-t-0.5 rounded-tl-lg rounded-tr-lg'>
+            <div className='flex w-full bg-white h-20  p-4 px-6 border-0 border-b border-solid border-borderGrey  justify-between  rounded-tl-lg rounded-tr-lg'>
 
             <div className='flex  text-gray-500  items-center'>
                     <div className=' text-base'>Clients</div>
                 </div>
 <div className='flex items-center'>
-    <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
-
-        <div className='flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'><Image src={Download} alt='Download' className='w-4  h-4' /></div>
-    </Link>
+<div onClick={togglePopup1} className='cursor-pointer mr-4 flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'>
+            <Image src={Download} alt='Download' className='w-4  h-4' />
+        </div>
     <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
 
         <div  className='flex items-center justify-center w-7 h-7 border border-solid border-gray-300 border-0.5 rounded-md  p-1'><Image src={Chart} alt='Chart' className='w-4  h-4' /></div>
@@ -140,6 +140,7 @@ const DatabaseClientHeader = () => {
 
 
 {showPopup && <ClientPopup onClose={togglePopup} />}
+{showPopup1 && <DownloadPopup onClose={togglePopup1}  clients={clients} />}
         </>
     )
 }

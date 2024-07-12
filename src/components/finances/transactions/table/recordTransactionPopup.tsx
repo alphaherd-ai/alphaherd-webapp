@@ -230,14 +230,14 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose}) => {
                     <div><span className='text-gray-500 text-base font-medium '>Party</span></div>
                     <div className='w-[440px]'>
                     <Select
-                            className="text-neutral-400 text-base font-medium w-full"
-                            placeholder="Select Category"
-                            isClearable={false}
-                            isSearchable={true}
-                            options={Party}
-                            isMulti={false}
-                            name="partyName"
-                            onChange={(value) => handleChange("partyName", value)}
+                        className="text-neutral-400 text-base font-medium w-full"
+                        placeholder="Select Category"
+                        isClearable={false}
+                        isSearchable={true}
+                        options={Party}
+                        isMulti={false}
+                        name="partyName"
+                        onChange={(value) => handleChange("partyName", value)}
                         />
                     </div>                
             </div>
@@ -358,27 +358,27 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose}) => {
                         <div><span className='text-gray-500 text-base font-medium '>Date</span></div>
                         <div className='relative'>
                         <DatePicker
-                                        className="w-[10rem]"
-                                        selected={startDate}
-                                        onChange={handleDateChange}
-                                        calendarClassName="react-datepicker-custom"
-                                        customInput={
-                                            <div className='relative'>
-                                                <input
-                                                    className="w-[10rem] h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={startDate.toLocaleDateString()}
-                                                    readOnly
-                                                />
-                                                <Image
-                                                    src={calicon}
-                                                    alt="Calendar Icon"
-                                                    className="absolute right-0 top-2 cursor-pointer"
-                                                    width={50}
-                                                    height={20}
-                                                />
-                                            </div>
-                                        }
+                            className="w-[10rem]"
+                            selected={startDate}
+                            onChange={handleDateChange}
+                            calendarClassName="react-datepicker-custom"
+                            customInput={
+                                <div className='relative'>
+                                    <input
+                                        className="w-[10rem] h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                        value={startDate.toLocaleDateString()}
+                                        readOnly
                                     />
+                                    <Image
+                                        src={calicon}
+                                        alt="Calendar Icon"
+                                        className="absolute right-0 top-2 cursor-pointer"
+                                        width={50}
+                                        height={20}
+                                    />
+                                </div>
+                            }
+                        />
                         </div>
                     </div>
 

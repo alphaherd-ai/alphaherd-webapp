@@ -4,7 +4,7 @@ import ProductDetails from '@/components/inventory/product/productoverview/produ
 const ProductOverview = () => {
   return (
     <>
-    <div className='w-full bg-gray-200 p-8 px-10'>
+    <div className='w-full min-h-screen bg-[#EDEDED] p-8 px-10'>
     <ProductDetails/>
     </div>
     </>
