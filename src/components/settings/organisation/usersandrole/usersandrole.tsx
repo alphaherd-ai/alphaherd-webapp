@@ -22,11 +22,18 @@ export default function UsersAndRolesSettings() {
     console.log(appState.isCurrentOrgAdmin)
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true})
     useEffect(()=>{
-        if(data&&!error&&!isLoading){
-            console.log(data)
-            setBranchUsers(data);
+        if (data && !error && !isLoading) {
+               console.log(data)
+            const usersWithRoles = data.map((user:any) => {
+                return {
+                    ...user,
+                    role:user.role
+                };
+            });
+            console.log(usersWithRoles)
+            setBranchUsers(usersWithRoles);
         }
-    })
+    }, [data, error, isLoading]);
     const permission = [
         { value: 'Allow with admin permission', label: 'Allow with admin permission' },
         { value: 'Allow', label: 'Allow' },
@@ -96,16 +103,16 @@ export default function UsersAndRolesSettings() {
                                 <div key={index+1} className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
                                 <div className='w-3/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
                                     <Image className="w-7 h-7 relative rounded-full border border-neutral-400" src={pfpcion} alt="profile" />
-                                    <div className="">{user.name}</div>
+                                    <div className="">{user.user.name}</div>
                                 </div>
                                 <div className='w-3/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-2'>
-                                    <div className="text-indigo-600 text-sm font-medium  px-2 py-1.5 bg-violet-100 rounded-[5px] justify-center items-center gap-2 flex">{user.userRoles.filter((userRole:any)=>userRole.userId===user.id)[0]?.role}</div>
-                                    {user.userRoles.filter((userRole:any)=>userRole.userId===user.id)[0]?.role=='Manager'?<div className="text-teal-400 text-sm font-medium  px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">Admin</div>:""}
+                                    <div className="text-indigo-600 text-sm font-medium  px-2 py-1.5 bg-violet-100 rounded-[5px] justify-center items-center gap-2 flex">{user.role}</div>
+                                    {user.role=='Manager'?<div className="text-teal-400 text-sm font-medium  px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">Admin</div>:""}
                                     
                                 </div>
-                                <div className='w-2/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{user.phoneNo}</div>
+                                <div className='w-2/12 px-6 flex items-center text-neutral-400 text-base font-medium'>{user.user.phoneNo}</div>
                                 <div className='w-4/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-3'>
-                                    <div>{user.email}</div>
+                                    <div>{user.user.email}</div>
                                     <div className="flex gap-2">
                                         <div className="px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
                                             <Image className="w-4 h-4 relative" src={adminicon} alt="admin" />

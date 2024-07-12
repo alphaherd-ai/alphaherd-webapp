@@ -14,13 +14,13 @@ import { setValidationErrorsForForm } from '@/utils/setValidationErrorForForm';
 import { useAppSelector } from '@/lib/hooks';
 
 const formSchema = z.object({
-  orgName: z.string().min(4, 'Org Name must be at least 4 characters'),
+  orgName: z.string().min(4, 'Organization Name must be at least 4 characters'),
   orgEmail: z.string().email('Invalid Email Address'),
-  gstNo: z.string().length(15, 'Invalid GST No.'),
+  gstNo: z.string().length(15, 'Invalid GST no. - must be 15 digits'),
   phoneNo: z.string().length(10, 'Invalid Phone No.'),
-  address: z.string(),
-  state: z.string(),
-  pincode: z.string(),
+  address: z.string().min(1,"Enter Company Address to continue"),
+  state: z.string().min(1,"Select State to continue").optional(),
+  pincode: z.string().min(1,'Enter pincode to continue'),
   description: z.string(),
   adminName: z.string(),
   adminEmail: z.string().email('Invalid Email Address'),
@@ -65,10 +65,23 @@ const OrgSetup = () => {
   console.log(validationErrors);
 
   const [activeTab, setActiveTab] = useState(0);
+ 
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>|any) => {
+    let name: string,value: any;
+    if(e?.label){
+       name="state"
+       value=e.value
+    }
+    else {
+      name = e.target.name;
+      value=e.target.value;
+    }
+    
     try{
+      console.log(name,value)
       setData((prevData) => ({
         ...prevData,
         [name]: value,
@@ -207,7 +220,7 @@ const OrgSetup = () => {
 
   const formElements = [
     <OrgNameSetup key="orgName" data={data} handleChange={handleChange} validationErrors={validationErrors} />,
-    <OrgDetailsSetup key="orgDetails" data={data} handleChange={handleChange} validationErrors={validationErrors} />,
+    <OrgDetailsSetup key="orgDetails" data={data} handleChange={handleChange}  validationErrors={validationErrors} />,
     <OrgAdminSetup key="orgAdmin" data={data} handleChange={handleChange} validationErrors={validationErrors} />
   ];
 
@@ -223,8 +236,8 @@ const OrgSetup = () => {
               }
               <div className="flex justify-between px-[5rem] pb-[2rem]">
                 {
-                  activeTab!==0 ? <button
-                  className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0" disabled={activeTab === 0 ? true : false}
+                  activeTab!=0 && activeTab!=1 ? <button
+                  className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0" disabled={activeTab === 0 || activeTab===1? true : false}
                   onClick={() => setActiveTab(prev => prev - 1)}>
                   <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
                     <div className="text-white text-sm font-bold ">
@@ -240,7 +253,7 @@ const OrgSetup = () => {
                   activeTab !== formElements.length - 1 ? <button className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0"
                     disabled={activeTab === formElements.length - 1 ? true : false}
                     onClick={() => handleContinue()} >
-                    <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
+                    <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
                       <div className="text-white text-sm font-bold ">
                         Continue
                       </div>
