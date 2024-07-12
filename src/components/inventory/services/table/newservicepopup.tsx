@@ -161,7 +161,7 @@ const [categories, setCategories] = useState<any[]>([
                     <div className="text-neutral-400 text-base font-medium ">Configure your service</div>
                     <div className="flex justify-between items-center  w-full">
                         <div className="flex gap-[35px] items-center">
-                            <div className="text-gray-500 text-base font-medium ">Service Charge</div>
+                            <div className="text-gray-500 text-base font-medium ">Service Cost</div>
                             
                                 <input className="w-[157px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="number" name="serviceCharge" onChange={(e) => handleChange("serviceCharge", e.target.value)}/>
                             
@@ -175,6 +175,7 @@ const [categories, setCategories] = useState<any[]>([
                                     isClearable={false}
                                     isSearchable={true}
                                     options={gstOptions}
+                                    isMulti={false}
                                     name="tax"
                             onChange={(value) => handleChange("tax", value)}
                                 />
@@ -227,7 +228,7 @@ const [categories, setCategories] = useState<any[]>([
                                 className="text-neutral-400 text-base font-medium focus:outline-none  rounded-[5px] focus:border focus:border-[#35BEB1] w-full"
                                 isClearable={false}
                                 isSearchable={true}
-                                options={LinkProducts}
+                                options={gstOptions}
                                 isMulti={true}
                                 name="linkProducts"
                             onChange={(value) => handleChange("linkProducts", value)}

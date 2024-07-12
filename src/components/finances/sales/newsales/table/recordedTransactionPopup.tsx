@@ -212,7 +212,11 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata}) => 
                     </div>
 
             </div>
-            <div className='w-full flex justify-end'>
+            <div className='w-full flex justify-between items-center'>
+                <div className='flex items-center gap-1'>
+                    <input type="checkbox" name="" id=""  />
+                    <span className='text-textGrey2 text-base font-medium'>Mark as advance payment</span>
+                </div>
                     <Button className="px-2 py-2.5 bg-navBar rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer"  onClick={handleSaveClick}>
                         <Image src={check} alt='check' /> 
                         <span className='text-white text-base font-medium pr-2'>Save Transaction</span>

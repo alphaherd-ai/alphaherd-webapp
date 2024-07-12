@@ -14,7 +14,7 @@ const InventoryProductAllTable = () => {
                 <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12 '>Quantity</div>
                 <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12 '></div>
                 <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12 '>Batch No.</div>
-                <div className=' flex text-gray-500 text-base font-medium px-6 w-2/12 '>Party</div>
+                <div className=' flex text-gray-500 text-base font-medium px-6 w-2/12 '>Distributor</div>
                 <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12 '>Source</div>
                 <div className=' flex text-gray-500 text-base font-medium px-6 w-2/12'>Serial No</div>
             </div>

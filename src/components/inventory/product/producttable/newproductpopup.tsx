@@ -10,11 +10,43 @@ import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { useAppSelector } from "@/lib/hooks";
 import useSWR from 'swr';
+import axios from "axios";
+import Distributors from "@/app/database/distributor/page";
+import { Bounce, ToastContainer, toast } from 'react-toastify';
+import { z } from 'zod';
+import { ZodError } from 'zod'; 
+import { setValidationErrorsForForm } from '@/utils/setValidationErrorForForm';
+
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 type PopupProps = {
     onClose: () => void;
 }
+
+const productSchema = z.object({
+    itemName: z.string().min(4,'Provide Item Name'),
+    providers: z.string().min(2,'Provide Item Name'),
+    unit: z.string().min(2,'Mention the units'),
+    hsnCode: z.string().min(15,'Invalid HSN Code'),
+    tax: z.string(),
+    category: z.string(),
+    description: z.string(),
+    minStock: z.string(),
+    maxStock: z.string()
+})
+
+
+interface Distributors{
+    id:string,
+    distributorName:string
+}
+
+
+interface OptionType {
+    value: string;
+    label: string;
+}
+
 function useProductfetch (id: number | null) {
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`,fetcher,{revalidateOnFocus:true});
    return {
@@ -27,6 +59,10 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     const [lastStep, setLastStep] = useState(false);
     const [formData, setFormData] = useState<any>({});
     const [buttonDisabled, setButtonDisabled] = useState(false);
+    const [selectedUnit, setSelectedUnit] = useState<any>(null); 
+    const [distributor, setDistributor] = useState<Distributors[]>([]);
+    const [isSaveDisabled, setIsSaveDisabled] = useState(true)
+
     const [categories, setCategories] = useState<any[]>([
         { value: "Pet food", label: "Pet food" },
         { value: "Medicines", label: "Medicines" },
@@ -34,6 +70,22 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
         { value: "Pet accessories", label: "Pet accessories" },
         { value: "Equipments", label: "Equipments" },
     ]);
+
+    const initialData ={
+        itemName: '',
+        providers: '',
+        unit: '',
+        hsnCode: '',
+        tax: '',
+        category: '',
+        description: '',
+        minStock: '',
+        maxStock: ''
+    }
+
+    const [data, setData] = useState(initialData);
+    const [validationErrors, setValidationErrors] = useState(data);
+    console.log(validationErrors);
 
     const appState = useAppSelector((state) => state.app);
     const {fetchedProducts,isLoading,error}=useProductfetch(appState.currentBranchId);
@@ -54,51 +106,170 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
         }
     }, [isLoading, error, fetchedProducts]);
 
+    useEffect(() => {
+
+        const fetchDistributors = async()=>{
+            try{
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll?branchId=${appState.currentBranchId}`);
+                const distributors = response.data.map((distributor:Distributors)=>({
+                    value: distributor.id,
+                    label: distributor.distributorName
+                }));
+                console.log(distributors);
+                setDistributor(distributors);
+            }catch(error){
+                console.log("Error fetching distributors",error);
+            }
+        }
+          fetchDistributors();
+        }, []);
+
     const handleContinueClick = () => {
         setLastStep(true);
     }
 
-    const handleSaveClick = async () => {
-        try {
-            setButtonDisabled(true);
-            const selectedProviders = formData.providers.map((provider: any) => provider.value);
+    // const handleSaveClick = async () => {
+    //     try {
+    //         setButtonDisabled(true);
+    //         const selectedProviders = formData.providers.map((provider: any) => provider.value);
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/create?branchId=${appState.currentBranchId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    itemName: formData.name,
-                    providers: selectedProviders,
-                    hsnCode: formData.hsnCode,
-                    tax: formData.tax ? formData.tax[0].value : undefined,
-                    category: formData.category ? formData.category[0].value : undefined,
-                    description: formData.description,
-                    minStock: parseInt(formData.minStock),
-                    maxStock: parseInt(formData.maxStock)
-                }),
-            });
-            if (response.ok) {
-                console.log('Data saved successfully');
-                onClose();
-            } else {
-                console.error('Failed to save data:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error while saving data:', error);
-        } finally {
-            setButtonDisabled(false);
+    //         const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/create?branchId=${appState.currentBranchId}`, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },q
+    //             body: JSON.stringify({
+    //                 itemName: formData.name,
+    //                 providers: selectedProviders,
+    //                 unit: formData.unit ? formData.unit[0].value : undefined,
+    //                 hsnCode: formData.hsnCode,
+    //                 tax: formData.tax ? formData.tax[0].value : undefined,
+    //                 category: formData.category ? formData.category[0].value : undefined,
+    //                 description: formData.description,
+    //                 minStock: parseInt(formData.minStock),
+    //                 maxStock: parseInt(formData.maxStock)
+    //             }),
+    //         });
+    //         if (response.ok) {
+    //             console.log('Data saved successfully');
+    //             onClose();
+    //         } else {
+    //             console.error('Failed to save data:', response.statusText);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error while saving data:', error);
+    //     } finally {
+    //         setButtonDisabled(false);
+    //     }
+    // };
+
+    // Assuming you're using Zod for validation
+
+    const handleSaveClick = async () => {
+    console.log("Submit button");
+    try {
+        
+        setButtonDisabled(true);
+        productSchema.parse(data);
+        const selectedProviders = formData.providers.map((provider: any) => provider.value);
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/create?branchId=${appState.currentBranchId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            itemName: formData.name,
+            providers: selectedProviders,
+            unit: formData.unit ? formData.unit[0].value : undefined,
+            hsnCode: formData.hsnCode,
+            tax: formData.tax ? formData.tax[0].value : undefined,
+            category: formData.category ? formData.category[0].value : undefined,
+            description: formData.description,
+            minStock: parseInt(formData.minStock),
+            maxStock: parseInt(formData.maxStock),
+        }),
+        });
+
+        console.log(response);
+        let json = await response.json();
+        if (response.ok) {
+            console.log('Data saved successfully');
+            toast.success(json.message, {
+                position: "bottom-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+                transition: Bounce,
+          });
+        onClose();
+        } else {
+            console.error('Failed to save data:', response.statusText);
+            throw new Error(json.message);
+        }
+    } catch (err:any) {
+        console.log(err.message);
+      console.log(typeof(err))
+      if (err instanceof z.ZodError) {
+        console.log(err.flatten());
+      } else {
+        console.error('Error:', err);
+        toast.error(err.message, {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+        });
+      }
+
+    } finally {
+        setButtonDisabled(false);
+    }
+    };
+
+
+    // const handleChange = (field: string, value: any) => {
+    //     setFormData({ ...formData, [field]: value });
+
+    // };
+    const handleChange = (field: string, value: any) => {
+        try {
+          setData((prevData) => ({
+            ...prevData,
+            [field]: value,
+          }));
+      
+          if (productSchema) {
+            productSchema.parse({ ...data, [field]: value });
+            console.log("inside handle change(validation)");
+          }
+      
+          
+        } catch (err: any) {
+          if (err instanceof z.ZodError) {
+            console.log(err.flatten());
+            const fieldErrors = err.flatten().fieldErrors;
+      
+          } else {            
+            setValidationErrors((prevErrors) => {
+                console.log("here");
+                let newErrors = prevErrors;
+                newErrors[field as keyof typeof prevErrors] = '';
+                return newErrors;
+              });
+          }
         }
     };
-
-    const handleChange = (field: string, value: any) => {
-        setFormData({ ...formData, [field]: value });
-    };
-
-    
-
-    
+      
 
     const gstOptions = [
         { value: 0, label: 'GST@0%' },
@@ -108,10 +279,18 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
         { value: 0.28, label: 'GST@28%' },
     ];
 
+    const unitOptions : OptionType[] =[
+        { value: 'Boxes', label: 'Boxes' },
+        { value: 'Pieces', label: 'Pieces' },
+        { value: 'Units', label: 'Units' },
+        { value: 'Vials', label: 'Vials' },
+        { value: 'Strips', label: 'Strips' },
+    ];
+
     return (
         <>
             {!lastStep && (
-                <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
+                <div className="w-full h-full overflow-auto flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
                     <div className="w-[640px] h-[715px] px-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
                         <div className="self-end items-start gap-6 flex mt-[0.6rem] cursor-pointer" onClick={onClose}>
                             <Image src={closeicon} alt="close"></Image>
@@ -124,38 +303,53 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                 <input className="w-[440px] h-9 rounded-md text-gray-400 text-base font-medium p-2 outline-none border border-solid border-gray-300" type="text" name="name" onChange={(e) => handleChange("name", e.target.value)} />
                             </div>
                         </div>
-                        <div className="flex items-center gap-[70px] w-full">
-                            <div className="text-gray-500 text-base font-medium">Providers</div>
-                            <div className="w-4/5">
+                        <div className="flex items-center justify-between w-full">
+                            <div className="text-gray-500 text-base font-medium">Distributor</div>
+                            <div className="w-[440px]">
                                 <Select
                                     className="text-neutral-400 text-base font-medium w-full"
-                                    placeholder="Select Category"
+                                    placeholder="Select Distributor"
                                     isClearable={false}
                                     isSearchable={true}
-                                    options={categories}
-                                    isMulti={true}
+                                    options={distributor}
+                                    isMulti={false}
                                     name="providers"
                                     onChange={(value) => handleChange("providers", value)}
-                                    
+                                />
+                            </div>
+                        </div>
+                        <div className="flex items-center justify-between w-full">
+                            <div className="text-gray-500 text-base font-medium">Unit(s)</div>
+                            <div className="w-[440px]">
+                                <Select
+                                    className="text-neutral-400 text-base font-medium w-full"
+                                    placeholder="Select Unit Type"
+                                    isClearable={false}
+                                    isSearchable={true}
+                                    options={unitOptions}
+                                    isMulti={false}
+                                    name="units"
+                                    value={selectedUnit}
+                                    onChange={(value) => handleChange("units",value)}
                                 />
                             </div>
                         </div>
                         <div className="flex items-center gap-[55px]">
                             <div className="text-gray-500 text-base font-medium w-[5rem]">HSN Code</div>
                             <div>
-                                <input className="w-[440px] h-9 rounded-md text-gray-400 text-base font-medium p-2 outline-none border border-solid border-gray-300" type="text" name="hsnCode" onChange={(e) => handleChange("hsnCode", e.target.value)} />
+                                <input className="w-[440px] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2 outline-none border border-solid border-gray-300" type="text" name="hsnCode" onChange={(e) => handleChange("hsnCode", e.target.value)} />
                             </div>
                         </div>
                         <div className="flex items-center gap-[110px] w-full">
                             <div className="text-gray-500 text-base font-medium">Tax</div>
                             <div className="w-4/5">
                                 <Select
-                                    className="rounded-md text-gray-400 text-base font-medium outline-none w-full"
-                                    placeholder="Select Category"
+                                    className="rounded-[5px] text-gray-400 text-base font-medium outline-none w-full"
+                                    placeholder="Select Tax"
                                     isClearable={false}
                                     isSearchable={true}
                                     options={gstOptions}
-                                    isMulti={true}
+                                    isMulti={false}
                                     name="tax"
                                     onChange={(value) => handleChange("tax", value)}
                                 />
@@ -210,9 +404,11 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                 <div className="text-right text-gray-500 text-base font-medium"> </div>
                             </div>
                             <div className="grow shrink basis-0 h-11 px-4 py-[13px] bg-white rounded-[5px] justify-start items-center flex">
-                                <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-2 flex">
-                                    <div className="text-neutral-400 text-base font-medium">Strips</div>
-                                </div>
+                                {selectedUnit && (
+                                    <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-2 flex">
+                                        <div className="text-neutral-400 text-base font-medium">{selectedUnit.label}</div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <div className="flex items-center gap-[28px]">
@@ -230,13 +426,13 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                 </div>
                             </div>
                         </div>
-                    </div>
-                   
                     <div className="w-[545px] flex justify-end mt-[5px] cursor-pointer">
                         <button onClick={handleSaveClick} disabled={buttonDisabled} className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none">
                             <div className="text-white text-base font-bold ">Save</div>
                         </button>
                     </div>
+                    </div>
+                   
                 </div>
             )}
         </>

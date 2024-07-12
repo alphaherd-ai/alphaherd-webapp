@@ -59,9 +59,9 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
 
     const handleChange = (field: string, value: any) => {
         setFormData({ ...formData, [field]: value });
-        if (field === "name" && value.trim() !== "") {
+        if (field === ("name"||"contact") && value.trim() !== "") {
             setIsSaveDisabled(false);
-        } else if (field === "name" && value.trim() === "") {
+        } else if (field === ("name"||"contact") && value.trim() === "") {
             setIsSaveDisabled(true);
         }
     };
@@ -102,30 +102,10 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                     <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="email" onChange={(e) => handleChange("email", e.target.value)} />
                     </div>
                 </div>
-                <div className="flex items-center gap-[45px]  w-[581px]">
-                    <div className="text-gray-500 text-base font-medium  w-2/12">Mobile No.*</div>
-                    <div className="flex w-10/12 items-center">
-                    <div className="flex gap-0 bg-white w-full items-center h-9">
-                    
-                        <Select
-                            className="text-neutral-400 text-base font-medium h-9 w-[8rem]"
-                            placeholder="+91"
-                            isClearable={false}
-                            isSearchable={true}
-                            options={gstOptions}
-                            name="providers"
-                            onChange={(value) => handleChange("providers", value)}
-                        />
-                    
-                    <div className="w-full h-full">
-                        <input className="h-full w-full text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="contact" onChange={(e) => handleChange("contact", e.target.value)} />
-                    </div>
-                    </div>
-                    <div className=" ml-1  w-10 h-9 ">
-                    <button  className="w-full h-full rounded-[5px] justify-center text-2xl items-center gap-2 flex border border-borderGrey border-solid bg-white outline-none">
-                        <div className="text-textGrey1 text-lg">+</div>
-                    </button>
-                    </div>
+                <div className="flex items-center gap-[40px]">
+                    <div className="text-gray-500 text-base font-medium w-[6rem]">Phone No.</div>
+                    <div>
+                    <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="contact" onChange={(e) => handleChange("contact", e.target.value)} />
                     </div>
                 </div>
                 <div className="flex items-center gap-[85px]">
@@ -207,7 +187,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
             <Image src={Check} alt="Check" />
         </div>
     </div>
-    <div className="text-gray-100 text-base font-bold ">Save</div>
+    <div onClick={handleSaveClick} className="text-gray-100 text-base font-bold ">Save</div>
 </div>
                   
                 </div>

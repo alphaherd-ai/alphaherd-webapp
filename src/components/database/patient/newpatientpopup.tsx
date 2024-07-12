@@ -77,11 +77,8 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
 
     const handleChange = (field: string, value: any) => {
         setFormData({ ...formData, [field]: value });
-        if (field === "patientName" && value.trim() !== "") {
-            setIsSaveDisabled(false);
-        } else if (field === "patientName" && value.trim() === "") {
-            setIsSaveDisabled(true);
-        }
+        const areNamesFilled = formData.clientName?.trim() !== "" && formData.patientName?.trim() !== "";
+        setIsSaveDisabled(!areNamesFilled);
     };
 
     const calculateAge = (years: number, months: number, days: number): string => {
@@ -226,6 +223,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                                     type="text"
                                     min="0"
                                     name="years"
+                                    placeholder="0"
                                     onChange={(e) => handleChange("years", parseInt(e.target.value))}
                                 />
                             </div>
@@ -238,6 +236,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                                     type="text"
                                     min="0"
                                     name="months"
+                                    placeholder="0"
                                     onChange={(e) => handleChange("months", parseInt(e.target.value))}
                                 />
                             </div>
@@ -250,6 +249,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                                     type="text"
                                     min="0"
                                     name="days"
+                                    placeholder="0"
                                     onChange={(e) => handleChange("days", parseInt(e.target.value))}
                                 />
                             </div>
