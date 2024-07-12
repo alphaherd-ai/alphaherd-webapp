@@ -7,7 +7,7 @@ import InventoryProductTimelineTable from '@/components/inventory/product/produc
 const InventoryAllProductsTable = () => {
   return (
     <>
-      <div className='w-full min-h-screen bg-gray-200 p-8 px-10'>
+      <div className='w-full min-h-screen bg-[#EDEDED] p-8 px-10'>
         <InventoryNavbar />
 
         <InventoryProductStockTable />

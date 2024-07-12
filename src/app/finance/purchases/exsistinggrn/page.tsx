@@ -9,7 +9,7 @@ import React from 'react'
 const ExsistingGrn = () => {
   return (
     <>
-    <div className='w-full min-h-screen bg-gray-200 p-8 px-10'>
+    <div className='w-full min-h-screen bg-[#EDEDED] p-8 px-10'>
        <ExsistingGrnNavbar />
        <ExsistingGrnTable />
     </div>
