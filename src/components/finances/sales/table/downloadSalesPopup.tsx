@@ -13,10 +13,10 @@ import autoTable from 'jspdf-autotable';
 import logo from "../../../../assets/icons/finance/pfpimg.png";
 import { useAppSelector } from '@/lib/hooks';
 
-const DownloadPopup = ({ onClose, transactions, type }:any) => {
+const DownloadPopup = ({ onClose, sales, type }:any) => {
 
   const appState = useAppSelector((state) => state.app)
-  const [data, setData] = useState(transactions);
+  const [data, setData] = useState(sales);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [selectedOption, setSelectedOption] = useState('Custom');
@@ -27,7 +27,7 @@ const DownloadPopup = ({ onClose, transactions, type }:any) => {
   };
 
   const handleFilter = (start:any, end:any) => {
-    const filteredData = transactions.filter((item:any) => {
+    const filteredData = sales.filter((item:any) => {
       const date = new Date(item.date);
       return date >= start && date <= end;
     });
@@ -60,39 +60,43 @@ const DownloadPopup = ({ onClose, transactions, type }:any) => {
   const downloadPDF = () => {
     convertImageToBase64(logo.src, (base64Image:any) => {
     const doc = new jsPDF('landscape');
-    const tableColumn = ["Date", "Party", "Receipt No.", "Subject", "Link Invoice", "Amount", "Mode", ""];
+    const tableColumn = ["Date", "Type", "Customer", "Serial No.", "Total Cost", "Total Qty", "Due Date", "Status"];
     const tableRows:any = [];
 
-    const modeCounts:any = {};
+    const typeCounts:any = {};
+
 
     let totalAmount = 0;
-    const noOfTransactions = data.length;
+    let totalQuantity = 0;
 
     data.forEach((item:any) => {
-      if (modeCounts[item.mode]) {
-        modeCounts[item.mode]++;
-      } else {
-        modeCounts[item.mode] = 1;
-      }
-      if (item.moneyChange === 'In') {
-        totalAmount += item.amountPaid
-      } else if (item.moneyChange === 'Out') {
-        totalAmount -= item.amountPaid;
-      }
-    });
+        if (typeCounts[item.type]) {
+          typeCounts[item.type]++;
+        } else {
+          typeCounts[item.type] = 1;
+        }
+        if(item.totalCost){
+          totalAmount += item.totalCost;
+        }
+        if(item.totalQty){
+          totalQuantity += item.totalQty;
+        }
+    })  
+
+  
 
     data.forEach((item:any) => {
-      const transactionData = [
+      const salesData = [
         format(new Date(item.date), 'yyyy-MM-dd'),
-        item.partyName,
-        item.receiptNo,
-        item.subject,
-        item.invoiceLink,
-        item.amountPaid,
-        item.mode,
-        item.moneyChange,
+        item.type,
+        item.customer,
+        item.invoiceNo,
+        item.totalCost,
+        item.totalQty,
+        item.dueDate,
+        item.status,
       ];
-      tableRows.push(transactionData);
+      tableRows.push(salesData);
     });
 
     doc.addImage(base64Image, 'PNG', 4, 4, 20, 20); 
@@ -124,21 +128,23 @@ const DownloadPopup = ({ onClose, transactions, type }:any) => {
       doc.line(1, 26, 320, 26); 
 
       doc.setFontSize(15);
-      doc.text("Transaction Report", 8, 34);
+      doc.text("Sales Report", 8, 34);
 
       doc.setFontSize(11);
-      doc.text(`Category : ${type}`, 90, 33);
-      doc.text(`Period : ${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'} - ${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}`, 90, 37);
+      doc.text(`Category : ${type}`, 60, 33);
+      doc.text(`Period : ${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'} - ${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}`, 60, 37);
 
+  
       doc.setFontSize(11);
       let yPosition = 33;
-      Object.entries(modeCounts).forEach(([mode, count]) => {
-        doc.text(`${mode}: ${count}`, 180, yPosition);
+      Object.entries(typeCounts).forEach(([type, count]) => {
+        doc.text(`${type}: ${count}`, 140, yPosition);
         yPosition += 5
       })
-      
-      doc.text(`Total Amount: ${totalAmount}`, 230, 33);
-      doc.text(`Total Number Of Transactions: ${noOfTransactions}`, 230, 38);
+
+
+      doc.text(`Total Amount: ${totalAmount}`, 200, 33);
+      doc.text(`Total Quantity: ${totalQuantity}`, 200, 38);
 
 
       doc.setLineWidth(0.5);
@@ -151,7 +157,7 @@ const DownloadPopup = ({ onClose, transactions, type }:any) => {
       body: tableRows,
     });
 
-    const fileName = `transactions_report_${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'}_to_${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}.pdf`;
+    const fileName = `sales_report_${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'}_to_${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}.pdf`;
     doc.save(fileName);
   })
   }

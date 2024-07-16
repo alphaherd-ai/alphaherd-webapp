@@ -43,7 +43,7 @@ const FinancesNavbar = () => {
     const handleSearch = (selectedOption: any) => {
         const item = selectedOption?.value;
         let path = '';
-        if (item.type === FinanceCreationType.Sales_Estimate) {
+        if (item?.type === FinanceCreationType.Sales_Estimate) {
             path = `/finance/sales/existingsalesestimate?id=${item.sale.id}`;
         } else if (item.type === FinanceCreationType.Sales_Invoice) {
             path = `/finance/sales/existingsales?id=${item.sale.id}`;
@@ -64,6 +64,47 @@ const FinancesNavbar = () => {
         }
         router.push(path); // Navigate to the selected route
     };
+
+    const customStyles = {
+        control: (provided:any, state:any) => ({
+          ...provided,
+          height: '2.8rem', 
+          minHeight: '2.8rem' ,
+          width: '22rem',
+          maxWidth: '22rem', 
+          borderColor: state.isFocused ? '#35BEB1' : '#C4C4C4', 
+            '&:hover': {
+            borderColor: state.isFocused ? '#35BEB1' : '#C4C4C4', 
+            },
+            boxShadow: state.isFocused ? 'none' : 'none',
+        }),
+        valueContainer: (provided:any) => ({
+          ...provided,
+          height: '2.8rem', 
+          width: '22rem',
+          maxWidth: '22rem', 
+        }),
+        singleValue: (provided:any) => ({
+          ...provided,
+          width: '22rem',
+          maxWidth: '22rem', 
+        }),
+        menu: (provided:any) => ({
+            ...provided,
+            backgroundColor: 'white',
+            width: '22rem',
+            maxWidth: '22rem', 
+          }),
+          option: (provided:any, state:any) => ({
+            ...provided,
+            backgroundColor: state.isFocused ? '#35BEB1' : 'white', 
+            color: state.isFocused ? 'white' : '#6B7E7D',
+            '&:hover': {
+              backgroundColor: '#35BEB1', 
+            }
+          }),
+          
+      };
 
     return (
         <>
@@ -116,16 +157,17 @@ const FinancesNavbar = () => {
                         </div>
                     </Link>
                 </div>
-                <div className='flex h-full items-center  w-3/12'>
-                    <div className="relative h-full w-10/12 items-center z-[1]">
-                        <Select
-                            className="text-gray-500 text-base font-medium  w-[100%]  border-0 boxShadow-0"
-                            classNamePrefix="select"
-                            isClearable={true}
-                            isSearchable={true}
-                            options={searchOptions}
-                            onChange={(selectedProduct: any) => handleSearch(selectedProduct)}
-                            placeholder="Search via client name or invoice no."
+                <div className='flex h-full items-center'>
+                    <div className="relative h-full w-full items-center z-[1]">
+                    <Select
+                        className="text-gray-500 text-base font-medium w-[100%] border-0 boxShadow-0"
+                        classNamePrefix="select"
+                        isClearable={true}
+                        isSearchable={true}
+                        options={searchOptions}
+                        onChange={(selectedProduct: any) => handleSearch(selectedProduct)}
+                        placeholder="Search via client name or invoice no."
+                        styles={customStyles} // Apply the custom styles
                         />
                         {/* <div className="absolute inset-y-0 right-3 pl-2 flex items-center pointer-events-none">
                             <div className='flex items-center '>
@@ -134,7 +176,7 @@ const FinancesNavbar = () => {
                         </div> */}
                     </div>
                     <Link className='no-underline h-full  ml-4' href='/settings/organisation/myorg'>
-                        <div className='flex items-center border border-solid border-gray-300 bg-white rounded-lg p-3  '>
+                        <div className='flex items-center border border-solid border-gray-300 bg-white rounded-lg px-3 h-[2.8rem] '>
                             <Image src={Settings} alt='Setting' className='w-5  h-5' />
                         </div>
                     </Link>
