@@ -1,5 +1,5 @@
 "use client";
-import React from 'react'
+import React, { useState } from 'react'
 
 import Sort from '../../../../assets/icons/finance/sort.svg';
 import Filter from '../../../../assets/icons/finance/filter.svg';
@@ -10,7 +10,11 @@ import Invoice from '../../../../assets/icons/finance/invoice.svg';
 import Return from '../../../../assets/icons/finance/Return.svg';
 import Image from 'next/image';
 import Link from 'next/link';
-
+import useSWR from 'swr';
+import { useAppSelector } from '@/lib/hooks';
+import Loading from '@/app/loading';
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 
@@ -18,16 +22,24 @@ import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/reac
 
 
 const FinacesOverviewTableHeader = () => {
-   
+    const appState=useAppSelector((state)=>state.app);
+    const {data, isLoading, error} = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/getAll?branchId=${appState.currentBranchId}`, fetcher,{revalidateOnFocus:true});
 
-    const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const [selectedOption, setSelectedOption] = useState<string | null>(null);
+    const [resource, setResource] = useState<string | null>(null);
     const [selectedSort, setselectedSort] = React.useState(new Set(["Category: text"]));
 
 
-    const selectedCategoryValue = React.useMemo(
-        () => Array.from(selectedCategory).join(", ").replaceAll("_", " "),
-        [selectedCategory]
-    );
+    const handleCategorySelect = (category: string) => {
+        setSelectedCategory(category);
+        setSelectedOption(null); // reset the selected option when the category changes
+      };
+    
+      const handleOptionSelect = (option: string) => {
+        setSelectedOption(option);
+        // Apply the filter based on the selected option
+      }
     const selectedSortValue = React.useMemo(
         () => Array.from(selectedSort).join(", ").replaceAll("_", " "),
         [selectedSort]
@@ -86,34 +98,57 @@ const FinacesOverviewTableHeader = () => {
                         <div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>
 
                         <Dropdown>
-                            <DropdownTrigger>
-                                <Button
-                                    //   variant="bordered" 
-                                    // color="gray-400"
-                                    variant="solid"
-                                    className="capitalize border-none bg-transparent rounded-lg"
-                                >
-                                    {selectedCategoryValue}
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                aria-label="Single selection example"
-                                // color="gray-500"
-                                className=" text-base bg-gray-200 rounded-lg"
-                                variant="solid"
-                                disallowEmptySelection
-                                selectionMode="single"
-                                selectedKeys={selectedCategory}
-                                // onSelectionChange={setSelectedCategory}
-                            >
-                                <DropdownItem
-                                    className=" p-2" key="Category:text">Category: Text</DropdownItem>
-                                <DropdownItem
-                                    className=" p-2" key="Category:number">Category: Number</DropdownItem>
-                                <DropdownItem
-                                    className=" p-2" key="Category:date">Date</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
+      <DropdownTrigger>
+        <Button variant="solid" className="capitalize border-none bg-transparent rounded-lg">
+          {selectedCategory || "Select Category"}
+        </Button>
+      </DropdownTrigger>
+      <DropdownMenu aria-label="Category selection" className="text-base bg-white rounded-lg" variant="solid">
+        <DropdownItem className="p-2" key="party" onClick={() => handleCategorySelect("Party")}>
+          Party
+        </DropdownItem>
+        <DropdownItem className="p-2" key="dateRange" onClick={() => handleCategorySelect("Date Range")}>
+          Date Range
+        </DropdownItem>
+        <DropdownItem className="p-2" key="invoiceType" onClick={() => handleCategorySelect("Invoice Type")}>
+          Invoice Type
+        </DropdownItem>
+      </DropdownMenu>
+
+      {selectedCategory && (
+        <DropdownMenu aria-label="Option selection" className="text-base bg-white rounded-lg mt-2" variant="solid">
+          {selectedCategory === "Party" ? (
+            <>
+              <DropdownItem className="p-2" key="partyOption1" onClick={() => handleOptionSelect("Party Option 1")}>
+                Party Option 1
+              </DropdownItem>
+              <DropdownItem className="p-2" key="partyOption2" onClick={() => handleOptionSelect("Party Option 2")}>
+                Party Option 2
+              </DropdownItem>
+            </>
+          ):(selectedCategory==='Date Range')?(
+<>
+              <DropdownItem className="p-2" key="dateRangeOption1" onClick={() => handleOptionSelect("Last Week")}>
+                Last Week
+              </DropdownItem>
+              <DropdownItem className="p-2" key="dateRangeOption2" onClick={() => handleOptionSelect("Last Month")}>
+                Last Month
+              </DropdownItem>
+            </>
+          ):(
+            <>
+            <DropdownItem className="p-2" key="invoiceTypeOption1" onClick={() => handleOptionSelect("Paid")}>
+              Paid
+            </DropdownItem>
+            <DropdownItem className="p-2" key="invoiceTypeOption2" onClick={() => handleOptionSelect("Unpaid")}>
+              Unpaid
+            </DropdownItem>
+          </>
+          )
+          }
+        </DropdownMenu>
+      )}
+    </Dropdown>
                     </div>
 
                       
