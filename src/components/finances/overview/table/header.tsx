@@ -17,6 +17,7 @@ import Loading from '@/app/loading';
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
+import FilterDropdwonCard from './FilterDropdowmCard';
 
 
 
@@ -48,7 +49,7 @@ const FinacesOverviewTableHeader = () => {
     return (
 
         <>
-            <div className='flex w-full bg-white h-20  p-4 px-6 mt-6 justify-between border border-solid border-gray-300 border-t-0.5 rounded-tl-lg rounded-tr-lg'>
+            <div className='flex w-full bg-white h-20  p-4 px-6  justify-between border-0 border-b border-solid border-borderGrey rounded-tl-lg rounded-tr-lg'>
 
                 <div className='flex  text-gray-500  items-center'>
                     <div className=' text-base'>Finance Timeline</div>
@@ -97,58 +98,19 @@ const FinacesOverviewTableHeader = () => {
                     <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg '>
                         <div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>
 
-                        <Dropdown>
-      <DropdownTrigger>
-        <Button variant="solid" className="capitalize border-none bg-transparent rounded-lg">
-          {selectedCategory || "Select Category"}
-        </Button>
-      </DropdownTrigger>
-      <DropdownMenu aria-label="Category selection" className="text-base bg-white rounded-lg" variant="solid">
-        <DropdownItem className="p-2" key="party" onClick={() => handleCategorySelect("Party")}>
-          Party
-        </DropdownItem>
-        <DropdownItem className="p-2" key="dateRange" onClick={() => handleCategorySelect("Date Range")}>
-          Date Range
-        </DropdownItem>
-        <DropdownItem className="p-2" key="invoiceType" onClick={() => handleCategorySelect("Invoice Type")}>
-          Invoice Type
-        </DropdownItem>
-      </DropdownMenu>
-
-      {selectedCategory && (
-        <DropdownMenu aria-label="Option selection" className="text-base bg-white rounded-lg mt-2" variant="solid">
-          {selectedCategory === "Party" ? (
-            <>
-              <DropdownItem className="p-2" key="partyOption1" onClick={() => handleOptionSelect("Party Option 1")}>
-                Party Option 1
-              </DropdownItem>
-              <DropdownItem className="p-2" key="partyOption2" onClick={() => handleOptionSelect("Party Option 2")}>
-                Party Option 2
-              </DropdownItem>
-            </>
-          ):(selectedCategory==='Date Range')?(
-<>
-              <DropdownItem className="p-2" key="dateRangeOption1" onClick={() => handleOptionSelect("Last Week")}>
-                Last Week
-              </DropdownItem>
-              <DropdownItem className="p-2" key="dateRangeOption2" onClick={() => handleOptionSelect("Last Month")}>
-                Last Month
-              </DropdownItem>
-            </>
-          ):(
-            <>
-            <DropdownItem className="p-2" key="invoiceTypeOption1" onClick={() => handleOptionSelect("Paid")}>
-              Paid
-            </DropdownItem>
-            <DropdownItem className="p-2" key="invoiceTypeOption2" onClick={() => handleOptionSelect("Unpaid")}>
-              Unpaid
-            </DropdownItem>
-          </>
-          )
-          }
-        </DropdownMenu>
-      )}
-    </Dropdown>
+                        <Popover>
+                            <PopoverTrigger>
+                                <Button
+                                    variant="solid"
+                                    className="capitalize border-none bg-transparent rounded-lg"
+                                >
+                                    Filter
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent>
+                                 <FilterDropdwonCard />
+                            </PopoverContent>
+                        </Popover>
                     </div>
 
                       
