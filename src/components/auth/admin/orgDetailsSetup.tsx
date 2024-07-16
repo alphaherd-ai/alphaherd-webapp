@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import upload from "../../../assets/icons/loginsignup/upload.svg"
 import { Textarea } from "@nextui-org/react";
 import Select from 'react-select';
+import { CldUploadButton } from "next-cloudinary";
 
 
 const OrgDetailsSetup = (props: any) => {
@@ -45,6 +46,7 @@ const OrgDetailsSetup = (props: any) => {
         { value: 'Puducherry', label: 'Puducherry' }
       ];
       console.log("this is props",props.data.state)
+      const [resource, setResource] = useState<any>();
 
     return (
         <div className="w-[1016px] h-[759px] p-10 bg-gray-100 rounded-[30px] border border-stone-300 backdrop-blur-[190.90px] justify-center items-center inline-flex">
@@ -53,7 +55,48 @@ const OrgDetailsSetup = (props: any) => {
                     <div className="w-[940px] justify-start items-start gap-6 inline-flex">
                     </div>
                     <div className="flex-col justify-start items-start gap-2 flex">
-                        <div className="text-gray-500 text-xl font-medium ">My Organisation</div>
+                    <div className="flex justify-around items-center">
+                        <div className="text-gray-500 text-xl font-medium mr-6">My Organisation</div>
+                        <CldUploadButton
+                            className="bg-none w-50 h-20 border-none"
+                            options={{
+                                sources: ['local', 'url'],
+                                multiple: false,
+                                maxFiles: 1
+                            }}
+                            uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+                            onSuccess={(result, { widget }) => {
+                                //@ts-ignore
+                                setResource(result?.info.secure_url);
+                                console.log(result); // { public_id, secure_url, etc }
+                                props.handlePicChange(result.info, "orgImgUrl");
+                                widget.close();
+                            }}
+                        >
+    <div className="self-stretch justify-start items-center gap-10 inline-flex">
+        <div className="grow shrink basis-0 h-11 justify-start items-start gap-2.5 flex">
+            <div className="px-6 py-2.5 border border-gray-500 justify-center items-center gap-4 flex border-dashed">
+                <div className="">
+                    <div className="">
+                        
+                            {!resource ?
+                                <Image src={updatelogo} alt="upload" />
+                                :
+                                <Image className="w-8 h-8 rounded-full" src={resource} alt="Uploaded image" width={150} height={150} />
+                            }
+                       
+                    </div>
+                </div>
+                <div className="">
+                    <div className="text-gray-500 text-base font-bold">Upload Logo</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </CldUploadButton>
+</div>
+
+                       
                         <div className="text-textGrey2 text-base font-medium ">Enter your organisation details</div>
                     </div>
                 </div>
@@ -151,9 +194,9 @@ const OrgDetailsSetup = (props: any) => {
                     <div className="self-stretch justify-start items-start gap-10 inline-flex">
                         <div className="grow shrink basis-0  justify-start items-center gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium">Select State*</div>
-                            <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400 " >
+                            
                             <Select 
-                            className="text-textGrey2 text-base font-medium py-1 w-full border-0 boxShadow-0"
+                            className="text-textGrey2 text-base font-medium  w-full border-0 boxShadow-0 p-0 grow shrink basis-0"
                             classNamePrefix="select"
                             isClearable={false}
                             isMulti={false}
@@ -176,7 +219,7 @@ const OrgDetailsSetup = (props: any) => {
                                 {props.validationErrors.state && (
                                     <div className="text-[red] error">{props.validationErrors.state}</div>
                                 )}
-                            </div>
+                            
                         </div>
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium">Pincode*</div>
@@ -202,20 +245,7 @@ const OrgDetailsSetup = (props: any) => {
                         </div>
                     </div>
                 </div>
-                <div className="self-stretch justify-start items-center gap-10 inline-flex">
-                    <div className="grow shrink basis-0 h-11 justify-start items-start gap-2.5 flex">
-                        <div className="px-6 py-2.5 rounded-[5px] border border-gray-500 justify-center items-center gap-4 flex border-dashed">
-                            <div className="">
-                                <div className="" ><Image src={updatelogo} alt="upload" /></div>
-                            </div>
-                            <div className="">
-                                <div className="text-gray-500 text-base font-bold ">Upload Logo</div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                </div>
+                
             </div>
         </div>
     );

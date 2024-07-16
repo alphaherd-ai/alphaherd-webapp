@@ -25,10 +25,19 @@ const formSchema = z.object({
   adminName: z.string(),
   adminEmail: z.string().email('Invalid Email Address'),
   adminPhoneNo: z.string().length(10, 'Invalid Phone No.'),
-  adminAltPhoneNo: z.string(),
+  adminAltPhoneNo: z.string().length(10,'Invalid Phone No.'),
   adminPassword: z.string().min(4, 'Admin Password must be at least 4 characters'),
   reAdminPassword: z.string().min(4, 'Admin Password must be at least 4 characters')
+}).superRefine((data, ctx) => {
+  if (data.adminPhoneNo === data.adminAltPhoneNo) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['adminAltPhoneNo'],
+      message: 'Alt. Phone No. must be different',
+    });
+  }
 });
+
 
 const OrgSetup = () => {
 
@@ -37,6 +46,7 @@ const OrgSetup = () => {
   var initialData = {
     orgName: '',
     orgEmail: '',
+    orgImgUrl:'',
     gstNo: '',
     phoneNo: "",
     branchName: "",
@@ -44,6 +54,7 @@ const OrgSetup = () => {
     adminEmail: '',
     adminPhoneNo: "",
     adminAltPhoneNo: "",
+    adminPicUrl:"",
     address: '',
     state: '',
     pincode: '',
@@ -54,8 +65,8 @@ const OrgSetup = () => {
 
   var stepFields = [
     ["orgName"],
-    ["orgEmail","gstNo","phoneNo","branchName","address","state","pincode","description"],
-    ["adminName","adminEmail","adminPhoneNo","adminAltPhoneNo","adminPassword","reAdminPassword"]
+    ["orgEmail","orgImgUrl","gstNo","phoneNo","branchName","address","state","pincode","description"],
+    ["adminName","adminEmail","adminPhoneNo","adminAltPhoneNo","adminPassword","reAdminPassword","adminPicUrl"]
   ];
 
   const [data, setData] = useState(initialData);
@@ -66,9 +77,51 @@ const OrgSetup = () => {
 
   const [activeTab, setActiveTab] = useState(0);
  
-
-
-
+const handlePicChange=(imageUrl:any,source:string)=>{
+  let name=source,value=imageUrl.secure_url;
+  console.log(name,value)
+  try{
+    console.log(name,value)
+    setData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+    console.log("inside handle change 1");
+    formSchema.parse({...data,[name]: value});
+    console.log("inside handle change 2");
+    setValidationErrors((prevErrors) => {
+      console.log("here");
+      let newErrors = prevErrors;
+      newErrors[name as keyof typeof prevErrors] = '';
+      return newErrors;
+    });
+  }
+  catch(err : any){
+    if (err instanceof z.ZodError) {
+      console.log(err.flatten());
+      let fieldErrors = err.flatten().fieldErrors;
+      console.log(fieldErrors);
+      let fields: string[] = Object.keys(fieldErrors);
+      console.log(name);
+      console.log(fields);
+      if(fields.includes(name)){
+        setValidationErrors((prevErrors) => {
+          let newErrors = prevErrors;
+          newErrors[name as keyof typeof prevErrors] = fieldErrors[name]!.length > 0 ? fieldErrors[name]![0] : '';
+          return newErrors;
+        });
+      }
+      else{
+        setValidationErrors((prevErrors) => {
+          console.log("here");
+          let newErrors = prevErrors;
+          newErrors[name as keyof typeof prevErrors] = '';
+          return newErrors;
+        });
+      }
+    }
+  }
+};
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>|any) => {
     let name: string,value: any;
     if(e?.label){
@@ -143,6 +196,7 @@ const OrgSetup = () => {
             "orgDetails": {
               "orgEmail": data.orgEmail,
               "orgName": data.orgName,
+              "orgImgUrl":data.orgImgUrl,
               "gstNo": data.gstNo,
               "address": data.address,
               "state": data.state,
@@ -154,7 +208,8 @@ const OrgSetup = () => {
               "name": data.adminName,
               "email": data.adminEmail,
               "password": data.adminPassword,
-              "phoneNo": data.adminPhoneNo
+              "phoneNo": data.adminPhoneNo,
+              "imageUrl":data.adminPicUrl
             },
             "branchName": data.branchName
           })
@@ -220,8 +275,8 @@ const OrgSetup = () => {
 
   const formElements = [
     <OrgNameSetup key="orgName" data={data} handleChange={handleChange} validationErrors={validationErrors} />,
-    <OrgDetailsSetup key="orgDetails" data={data} handleChange={handleChange}  validationErrors={validationErrors} />,
-    <OrgAdminSetup key="orgAdmin" data={data} handleChange={handleChange} validationErrors={validationErrors} />
+    <OrgDetailsSetup key="orgDetails" data={data} handleChange={handleChange}  validationErrors={validationErrors} handlePicChange={handlePicChange} />,
+    <OrgAdminSetup key="orgAdmin" data={data} handleChange={handleChange} validationErrors={validationErrors} handlePicChange={handlePicChange} />
   ];
 
   return (
@@ -240,12 +295,14 @@ const OrgSetup = () => {
                   className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0" disabled={activeTab === 0 || activeTab===1? true : false}
                   onClick={() => setActiveTab(prev => prev - 1)}>
                   <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
+                  <div className="w-6 h-6.5 relative">
+                    <Image src={continuebutton} alt="button" style={{ transform: 'scaleX(-1)' }} />
+                  </div>
+
                     <div className="text-white text-sm font-bold ">
-                      Prev
+                      Previous
                     </div>
-                    <div className="w-6 h-6 relative">
-                      <Image src={continuebutton} alt="button" />
-                    </div>
+                    
                   </div>
                 </button> : <div></div>
                 }
