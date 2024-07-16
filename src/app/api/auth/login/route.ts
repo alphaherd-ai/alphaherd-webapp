@@ -89,7 +89,7 @@ export const POST = async (req: NextRequest) => {
         console.log(user);
         await prismaClient.orgBranchUserRole.create({
           data: {
-            orgBranchId: Number(orgBranch?.orgId),
+            orgBranchId: Number(orgBranch?.id),
             userId: user!.id,
             role: role
           }

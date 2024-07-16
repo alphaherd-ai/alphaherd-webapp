@@ -4,21 +4,37 @@ import Image from "next/image"
 
 import profilepic from "../../assets/icons/profile/profilepic.png"
 import editicon from "../../assets/icons/profile/editicon.svg"
-
 import lefticon from "../../assets/icons/profile/left_icon.svg"
-
 import React, { useState, useEffect } from 'react';
-import { useAppSelector } from "@/lib/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { useRouter } from 'next/navigation';
+import { CldUploadButton } from 'next-cloudinary';
+import axios from 'axios';
+import { updateUser,UserState } from '@/lib/features/userSlice';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 const AdminProfile = () => {
     const userState= useAppSelector((state)=>state.user)
+    const appState=useAppSelector((state)=>state.app)
     console.log("this is user from appstate",userState)
+    const [resource, setResource] = useState<any>();
     const currentRoute = usePathname();
+  const dispatch = useAppDispatch();
     const [editable, setEditable] = useState(false);
     const [value, setValue] = useState<string>(String(userState.name));
-  
+   const handleUpdatePic =async(imageInfo:any)=>{
+    const response=await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/${userState.id}`, JSON.stringify(imageInfo.secure_url));
+    console.log(response)
+    if (response.data) {
+        const updatedUserState = {
+          ...userState,
+          imageUrl: String(imageInfo.secure_url),
+        };
+      
+        dispatch(updateUser(updatedUserState as UserState));
+        console.log("admin profile updated", response.data);
+      }
+   }
     const handleEditClick = () => {
       setEditable(true);
     };
@@ -30,11 +46,12 @@ const AdminProfile = () => {
     const handleChange = (e:any) => {
       setValue(e.target.value);
     };
-    const roles = userState.userRoles.map((e:any) => e.role);
+    const roles = userState.userRoles.filter((e:any) => e.orgBranchId==appState.currentBranchId);
+
     const address= userState.adminOrganizations.map((e:any)=>e.address);
     const orgId=userState.adminOrganizations.map((e:any)=>e.id);
-    console.log(roles[0])
-    const [activeTab, setActiveTab] = useState(roles[0]);
+    //@ts-ignore
+    const [activeTab, setActiveTab] = useState(roles[0].role);
     const router=useRouter();
     const handleTabClick = (tab:string) => {
         setActiveTab(tab);
@@ -67,8 +84,28 @@ const AdminProfile = () => {
                     </div>
                     <div className="w-full min-h-[30rem]  p-4 bg-gray-100 border border-neutral-400 justify-start items-start gap-6 flex">
                         <div className="w-[245px] h-[270px] relative bg-white rounded-[10px] border border-stone-300 flex justify-end">
-                            <Image className="relative rounded-[10px]  border border-neutral-400" src={profilepic} alt="photo" />
-                            <Image className="absolute bg-gray-100 rounded-[5px] m-2" src={editicon} alt="edit" />
+                            {userState.imageUrl?
+                            <Image className="relative rounded-[10px]  border border-neutral-400" src={String(userState.imageUrl)} alt="photo" width={245} height={270}/>:
+                            <Image className="relative rounded-[10px]  border border-neutral-400" src={profilepic} alt="photo" width={245} height={270}/>
+                            }
+                    <CldUploadButton
+                    className="rounded-full  h-0 border-none"
+                    options={{
+                        sources: ['local', 'url'],
+                        multiple: false,
+                        maxFiles: 1
+                    }}
+                        uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+                        onSuccess={(result, { widget }) => {
+                            //@ts-ignore
+                            setResource(result?.info.secure_url); 
+                            console.log(result) 
+                            handleUpdatePic(result.info)
+                            widget.close();
+                        }}
+                >  
+                            <Image className="absolute bg-gray-100  " src={editicon} alt="edit" />
+                            </CldUploadButton>
                         </div>
                         <div className="w-full flex-col justify-start items-start gap-4 flex">
                             <div className="w-full justify-start items-start gap-4 flex ">

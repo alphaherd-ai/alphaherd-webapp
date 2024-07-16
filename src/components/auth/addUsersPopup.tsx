@@ -8,7 +8,7 @@ import link from "../../assets/icons/settings/link.svg"
 import arrowicon from "../../../assets/icons/inventory/arrow.svg";
 import Select from 'react-select';
 import Attachment from "../../../assets/icons/finance/attachment.svg"
-
+import mailIcon from "@/assets/icons/settings/cash=Mail.svg"
 import deleteicon from "../../assets/icons/loginsignup/delete.svg"
 import { useAppSelector } from "@/lib/hooks";
 import { Bounce, ToastContainer, toast } from 'react-toastify';
@@ -18,14 +18,23 @@ const Popup = ({ onClose }:any) => {
     const appState = useAppSelector((state) => state.app);
 
     const [emailInput, setEmailInput] = useState<string>('');
-
+    const [emailError, setEmailError] = useState('');
     const tabs = ["Staff", "Manager", "Veterinarian"];
     const [selectedTab, setSelectedTab] = useState(tabs[0]);
     const [loading, setLoading] = useState<boolean>(false);
     const handleInputChange = (event: any) => {
+        const email = event.target.value;
         setEmailInput(event.target.value);
+        if (!validateEmail(email)) {
+            setEmailError('Please enter a valid email address.');
+        } else {
+            setEmailError('');
+        }
     };
-
+    const validateEmail = (email:any) => {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(String(email).toLowerCase());
+    };
     const handleSendInvite = async () => {
         try{
             if (emailInput.trim() !== '') {
@@ -155,13 +164,15 @@ const Popup = ({ onClose }:any) => {
         </div> */}
                     <div className="self-stretch justify-start items-center gap-2 inline-flex">
                         <div className="grow shrink basis-0 h-11 py-[13px] bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-4 flex">
-                            <input type="text" name="" id="" className="text-neutral-400 text-base  h-11 px-4 py-[13px] w-[100%] bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-4 flex" placeholder="Enter Email" value={emailInput}
+                            <input type="email" name="" id="" className="text-neutral-400 text-base  h-11 px-4 py-[13px] w-[100%] bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-4 flex" placeholder="Enter Email" value={emailInput}
                                 onChange={handleInputChange} />
                         </div>
-                        <div className={`w-[132px] self-stretch px-4 py-2.5 ${loading ? "bg-gray-400" : "bg-zinc-900"} rounded-[5px] justify-start items-center gap-2 flex ${loading ? "cursor-not-allowed" : "hover:cursor-pointer"}`} onClick={!loading ? handleSendInvite : undefined}>
-                            <div className="text-white text-base">{loading ? "Sending..." : "Send Invite"}</div>
+                        <div className={`w-[145px] self-stretch px-4 py-2.5 ${loading ? "bg-gray-400" : "bg-zinc-900"} rounded-[5px] justify-start items-center gap-2 flex ${loading ? "cursor-not-allowed" : "hover:cursor-pointer"}`} onClick={!loading ? handleSendInvite : undefined}>
+                            <Image src={mailIcon} alt="mail"></Image>
+                            <div className="text-white text-base]">{loading ? "Sending..." : "Send Invite"}</div>
                         </div>
                     </div>
+                    {emailError && <div className="text-red-500 text-sm mt-2">{emailError}</div>}
                 </div>
                 {/* <div className="overflow-auto max-h-[300px] w-[36rem]">
     <div className="self-stretch rounded-[5px] border border-stone-300 justify-start items-start flex">

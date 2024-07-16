@@ -4,7 +4,9 @@ import { UserState } from '@/lib/features/userSlice';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { isAdminOfOrg, isManagerOfBranch } from '@/utils/stateChecks';
 import React, { useEffect, useState } from 'react';
-
+import useSWR from 'swr';
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 const DropdownMenu = () => {
 
   const [selectedOrg,setSelectedOrg] = useState(null);
@@ -18,21 +20,14 @@ const DropdownMenu = () => {
   const user = useAppSelector((state) => state.user);
 
   const dispatch = useAppDispatch();
-
-  async function fetchOrgAndBranchMapping() {
-    let resp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/navbar/dropdown?branchId=${appState.currentBranchId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include'
-    });
-    if (resp.ok) {
-      let body = await resp.json();
-      console.log(body)
-      setOrgAndBranchMapping(body);
+  const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/navbar/dropdown?orgId=${appState.currentOrgId}`,fetcher,{revalidateOnFocus:true})
+  useEffect(() => {
+    if(data&&!error&&!isLoading){
+      
+      const orgs=data.filter((org:any)=>org.id===appState.currentOrgId);
+     setOrgAndBranchMapping(orgs);
     }
-  }
+   }, [data,error,isLoading]);
 
   function handleOrgBranchSelect(orgBranch : any){
 
@@ -54,9 +49,7 @@ const DropdownMenu = () => {
 
   }
 
-  useEffect(() => {
-    fetchOrgAndBranchMapping()
-  }, [fetchOrgAndBranchMapping]);
+  
 
 
   return (
@@ -76,7 +69,7 @@ const DropdownMenu = () => {
           })
         }
         {
-          secondLevelItems.map((orgBranch: any, index) => {
+          secondLevelItems?.map((orgBranch: any, index) => {
             return (
               <div key={index} className="w-48 bg-zinc-900 rounded-lg shadow-lg px-4 py-2 text-white cursor-pointer" onClick={() => handleOrgBranchSelect(orgBranch)}>
                 {orgBranch.branchName}

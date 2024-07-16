@@ -1,6 +1,6 @@
 "use client"
 import Image from "next/image"
-
+import { CldUploadButton, CldUploadWidget } from 'next-cloudinary';
 import upload from "../../../assets/icons/loginsignup/upload.svg";
 
 import continuebutton from "../../assets/icons/loginsignup/1. Icons-24.svg"
@@ -10,10 +10,11 @@ import eyeicon1 from "../../../assets/icons/loginsignup/1. Icons-24 (5).svg"
 
 
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-const OrgAdminSetup = (props: any) => {
+const OrgAdminSetup = (props: any,{handleFileUpload}:any) => {
 
+    const [resource, setResource] = useState<any>();
 
     const [showPassword, setShowPassword] = useState(false);
     const [showPassword1, setShowPassword1] = useState(false);
@@ -24,6 +25,9 @@ const OrgAdminSetup = (props: any) => {
         setShowPassword1(!showPassword1);
     };
 
+   
+      
+       
 
 
 
@@ -37,9 +41,37 @@ const OrgAdminSetup = (props: any) => {
                     These details will be used to set up the admin account. As the admin, you will have access to all the pages of Alphaherd along with the ability to control the access that other users in your organization have.
                 </div>
                 <div className="w-[936px] h-28 justify-between items-center gap-6 flex mt-[40px]">
-                    <div className="w-28 h-28 bg-gray-200 rounded-full border border-neutral-400 flex justify-center items-center">
-                        <Image className="w-8 h-8 relative flex-col justify-between items-center flex" src={upload} alt="upload" />
-                    </div>
+                
+                <div className="w-28 h-28 bg-gray-200 rounded-full border border-neutral-400 flex justify-center items-center cursor-pointer">
+              <CldUploadButton
+              className="rounded-full w-28 h-28 border-none"
+              options={{
+                sources: ['local', 'url'],
+                multiple: false,
+                maxFiles: 1
+              }}
+                uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+                onSuccess={(result, { widget }) => {
+                    //@ts-ignore
+                    setResource(result?.info.secure_url); 
+                    console.log(result) // { public_id, secure_url, etc }
+                    props.handlePicChange(result.info,"adminPicUrl")
+                    widget.close();
+                }}
+                >  
+                 {!resource?
+                    <Image className=" w-8 h-8" src={upload} width={100} height={100} alt="upload" /> 
+                    :
+                    <Image className="w-28 h-28 rounded-full" src={resource} alt="Uploaded image" width={100} height={100} />
+                    }
+                
+                </CldUploadButton>
+
+
+          </div>
+           
+           
+          
                     <div className="flex flex-col items-center justify-between gap-[18px]">
                         <div className="flex items-center justify-between gap-12">
                             <div className="text-gray-500 text-base font-medium ">Name*</div>
@@ -54,7 +86,7 @@ const OrgAdminSetup = (props: any) => {
                             <div className="text-gray-500 text-base font-medium ">Email*</div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
 
-                            <input className="w-[645px] h-11 bg-white text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="adminEmail" value={props.data.adminEmail} onChange={props.handleChange} />
+                            <input className="w-[645px] h-11 bg-white text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="adminEmail" value={props.data.adminEmail} onChange={props.handleChange} placeholder="example@gmail.com"/>
                             {props.validationErrors.adminEmail && (
                                 <div className="text-[red] error">{props.validationErrors.adminEmail}</div>
                             )}
@@ -107,7 +139,7 @@ const OrgAdminSetup = (props: any) => {
                     onClick={togglePasswordVisibility} />)}
                             </div>
                         {props.validationErrors.adminPassword && (
-                            <div className="text-[red] error">{props.validationErrors.adminPassword}</div>
+                            <div className="text-[red] error w-[304px]">{props.validationErrors.adminPassword}</div>
                         )}
                     </div>
                     </div>
@@ -130,7 +162,7 @@ const OrgAdminSetup = (props: any) => {
                     onClick={togglePasswordVisibility1} />)}
                             </div>
                         {props.validationErrors.reAdminPassword && (
-                            <div className="text-[red] error">{props.validationErrors.reAdminPassword}</div>
+                            <div className="text-[red] error w-[304px]">{props.validationErrors.reAdminPassword}</div>
                         )}
                     </div>
                     </div>

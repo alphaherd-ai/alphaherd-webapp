@@ -84,6 +84,7 @@ model Organization {
   orgName     String      @unique
   orgEmail    String
   gstNo       String
+  orgImgUrl   String?
   address     String
   state       String
   pincode     String
@@ -119,6 +120,7 @@ model User {
   name               String
   email              String              @unique
   token              String?             @unique
+  imageUrl           String?
   phoneNo            String
   altPhoneNo         String?
   hashedPassword     String

@@ -8,15 +8,21 @@ import React, { useState, useEffect } from 'react';
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
 import { usePathname } from 'next/navigation';
 import Popup from "@/components/auth/addUsersPopup"
+import OrgPopup from "@/components/auth/changeOrgPopup"
+import { useAppSelector } from "@/lib/hooks"
+import editicon from "@/assets/icons/finance/1. Icons-25.svg";
 
 const OrganisationNavbar = () => {
     const currentRoute = usePathname();
-
+    const appState=useAppSelector((state)=>state.app);
     const [showPopup, setShowPopup] = React.useState(false);
     const togglePopup = () => {
         setShowPopup(!showPopup);
     }
-
+    const [showOrgPopup, setShowOrgPopup] = React.useState(false);
+    const toggleOrgPopup = () => {
+        setShowOrgPopup(!showOrgPopup);
+    }
 
     return (
 
@@ -28,7 +34,7 @@ const OrganisationNavbar = () => {
                         <div className={currentRoute.startsWith("/settings/organisation/myorg")
                             ? "px-2 py-1 bg-zinc-900 rounded-tl-[5px] rounded-bl-[5px] border border-white justify-start items-center gap-1 flex text-white text-sm font-bold "
                             : " px-2 py-1 bg-gray-100 rounded-tl-[5px] rounded-bl-[5px] border border-neutral-400 justify-start items-center gap-1 flex text-neutral-400 text-sm font-bold "} >
-                            Clinic details
+                            My Organization
                         </div>
                     </Link>
                     <Link className='no-underline ' href='/settings/organisation/usersandrole'>
@@ -44,12 +50,40 @@ const OrganisationNavbar = () => {
 
                 {/* <Popover placement="bottom-end" showArrow offset={10}> */}
                 {/* <PopoverTrigger> */}
-                <Button
-                    variant="solid"
-                    className="capitalize border-none bg-black py-2.5 text-white rounded-lg flex gap-2 justify-center items-center hover:cursor-pointer" onClick={togglePopup}>
-                    <div className='flex'><Image src={addUserIcon} alt='addUserIcon' className='w-6 h-6 ' /></div>
-                    <span>Add User</span>
-                </Button>
+                {currentRoute.startsWith("/settings/organisation/myorg")?
+                
+                  (  <div className="flex gap-10">
+
+                     <div>
+                            <Button
+                  variant="solid"
+                  className="capitalize border-none bg-black py-2.5 text-white rounded-lg flex gap-2 justify-center items-center hover:cursor-pointer" onClick={toggleOrgPopup}>
+                  <div className='flex'><Image src={addUserIcon} alt='addUserIcon' className='w-6 h-6 ' /></div>
+                  <span>Change Organization</span>
+                  </Button>
+                            </div>
+                    <div>
+                    {appState.isCurrentOrgAdmin ?
+                        <Link href={`/auth/admin/orgEdit`}>
+                            <Image src={editicon}  alt={""}>
+                            </Image></Link> : null}
+                    </div>
+
+              
+                  </div>
+                  ):
+                 ( currentRoute.startsWith("/settings/organisation/usersandrole"))?
+                 ( <Button
+                  variant="solid"
+                  className="capitalize border-none bg-black py-2.5 text-white rounded-lg flex gap-2 justify-center items-center hover:cursor-pointer" onClick={togglePopup}>
+                  <div className='flex'><Image src={addUserIcon} alt='addUserIcon' className='w-6 h-6 ' /></div>
+                  <span>Add User</span>
+                  </Button>):""
+                
+                    
+                }
+                
+               
                 {/* </PopoverTrigger> */}
                 {/* <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
 
@@ -71,6 +105,7 @@ const OrganisationNavbar = () => {
                 {/* </Popover> */}
 
                 {showPopup && <Popup onClose={togglePopup} />}
+                {showOrgPopup && <OrgPopup onClose={toggleOrgPopup} />}
 
 
             </div>

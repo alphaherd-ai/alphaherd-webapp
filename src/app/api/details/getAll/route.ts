@@ -9,15 +9,14 @@ export const GET = async function (req: NextRequest, res: NextResponse) {
     console.log(searchParams)
     const userId= searchParams.get("userId");
     console.log("Here's the branchasdfID:",userId)
-    const branchDetails = await prismaClient.orgBranch.findMany({
+    const branchDetails = await prismaClient.orgBranchUserRole.findMany({
         where: {
-          assignedUsers: {
-            some: { id: Number(userId) }, 
-          },
+          userId:Number(userId)
         },
         include: {
-          org: true, 
-          assignedUsers:true
+          orgBranch:{include:{
+            org:true
+          }},
         },
       });
       

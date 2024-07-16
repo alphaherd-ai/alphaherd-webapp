@@ -115,7 +115,10 @@ const Navbar = () => {
           </Link>
           <Link className='no-underline flex pl-6' href='/profile'>
             <div className='text-sm flex items-center justify-center rounded-full overflow-hidden border border-solid border-gray-300'>
-              <Image className='w-7 h-7 relative rounded-full border border-neutral-400' src={ProfileIcon} alt='patient' />
+              {user.imageUrl?<Image className='w-7 h-7 relative rounded-full border border-neutral-400' src={String(user?.imageUrl)} width={80} height={80} alt='profilePic' />:
+              <Image className='w-7 h-7 relative rounded-full border border-neutral-400' src={ProfileIcon} width={80} height={80} alt='profilePic' />
+              }
+              
             </div>
           </Link>
         </div>

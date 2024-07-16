@@ -10,12 +10,12 @@ try{
   const url = new URL(req.url);
   const branchId = url.searchParams.get('branchId');
    console.log(branchId)
-   const users=await prismaClient.user.findMany({
+   const users=await prismaClient.orgBranchUserRole.findMany({
     where:{
       orgBranchId:Number(branchId)
     },
     include:{
-      userRoles:true
+      user:true
     }
    })
    console.log(users)

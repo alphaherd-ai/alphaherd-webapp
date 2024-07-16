@@ -1,5 +1,5 @@
 "use client";
-import React from 'react'
+import React, { useState } from 'react'
 
 import Sort from '../../../../assets/icons/finance/sort.svg';
 import Filter from '../../../../assets/icons/finance/filter.svg';
@@ -10,7 +10,11 @@ import Invoice from '../../../../assets/icons/finance/invoice.svg';
 import Return from '../../../../assets/icons/finance/Return.svg';
 import Image from 'next/image';
 import Link from 'next/link';
-
+import useSWR from 'swr';
+import { useAppSelector } from '@/lib/hooks';
+import Loading from '@/app/loading';
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 import FilterDropdwonCard from './FilterDropdowmCard';
@@ -19,16 +23,24 @@ import FilterDropdwonCard from './FilterDropdowmCard';
 
 
 const FinacesOverviewTableHeader = () => {
-   
+    const appState=useAppSelector((state)=>state.app);
+    const {data, isLoading, error} = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/getAll?branchId=${appState.currentBranchId}`, fetcher,{revalidateOnFocus:true});
 
-    const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const [selectedOption, setSelectedOption] = useState<string | null>(null);
+    const [resource, setResource] = useState<string | null>(null);
     const [selectedSort, setselectedSort] = React.useState(new Set(["Category: text"]));
 
 
-    const selectedCategoryValue = React.useMemo(
-        () => Array.from(selectedCategory).join(", ").replaceAll("_", " "),
-        [selectedCategory]
-    );
+    const handleCategorySelect = (category: string) => {
+        setSelectedCategory(category);
+        setSelectedOption(null); // reset the selected option when the category changes
+      };
+    
+      const handleOptionSelect = (option: string) => {
+        setSelectedOption(option);
+        // Apply the filter based on the selected option
+      }
     const selectedSortValue = React.useMemo(
         () => Array.from(selectedSort).join(", ").replaceAll("_", " "),
         [selectedSort]
