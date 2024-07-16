@@ -13,6 +13,7 @@ import Link from 'next/link';
 
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
+import FilterDropdwonCard from './FilterDropdowmCard';
 
 
 
@@ -36,7 +37,7 @@ const FinacesOverviewTableHeader = () => {
     return (
 
         <>
-            <div className='flex w-full bg-white h-20  p-4 px-6 mt-6 justify-between border border-solid border-gray-300 border-t-0.5 rounded-tl-lg rounded-tr-lg'>
+            <div className='flex w-full bg-white h-20  p-4 px-6  justify-between border-0 border-b border-solid border-borderGrey rounded-tl-lg rounded-tr-lg'>
 
                 <div className='flex  text-gray-500  items-center'>
                     <div className=' text-base'>Finance Timeline</div>
@@ -85,35 +86,19 @@ const FinacesOverviewTableHeader = () => {
                     <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg '>
                         <div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>
 
-                        <Dropdown>
-                            <DropdownTrigger>
+                        <Popover>
+                            <PopoverTrigger>
                                 <Button
-                                    //   variant="bordered" 
-                                    // color="gray-400"
                                     variant="solid"
                                     className="capitalize border-none bg-transparent rounded-lg"
                                 >
-                                    {selectedCategoryValue}
+                                    Filter
                                 </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                aria-label="Single selection example"
-                                // color="gray-500"
-                                className=" text-base bg-gray-200 rounded-lg"
-                                variant="solid"
-                                disallowEmptySelection
-                                selectionMode="single"
-                                selectedKeys={selectedCategory}
-                                // onSelectionChange={setSelectedCategory}
-                            >
-                                <DropdownItem
-                                    className=" p-2" key="Category:text">Category: Text</DropdownItem>
-                                <DropdownItem
-                                    className=" p-2" key="Category:number">Category: Number</DropdownItem>
-                                <DropdownItem
-                                    className=" p-2" key="Category:date">Date</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
+                            </PopoverTrigger>
+                            <PopoverContent>
+                                 <FilterDropdwonCard />
+                            </PopoverContent>
+                        </Popover>
                     </div>
 
                       

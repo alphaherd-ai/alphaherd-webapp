@@ -13,19 +13,19 @@ import ProductTimelineItem from './timelineitems'
 
 const InventoryServicesTimelineTable = () => {
   return (
-        <div className='flex flex-col w-full box-border mb-10  cursor-default'>
+        <div className='flex flex-col w-full box-border mb-6 mt-6 border border-solid border-borderGrey rounded-lg cursor-default'>
             
             <InventoryProductTableHeader/>
-    <div className='flex  w-full  box-border bg-gray-100  h-12 py-4 border-b border-neutral-400 text-gray-500'>
-                <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12 '>Date</div>
-                <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12 '>Time</div>
-                <div className=' flex text-gray-500 text-base font-medium px-6 w-2/12 '>Item Name</div>
-                <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12 '>Qty. (units)</div>
-                <div className=' flex text-gray-500 text-base font-medium px-6 w-2/12 '>Party</div>
-                <div className=' flex text-gray-500 text-base font-medium px-6 w-2/12 '>Total Cost </div>
-                <div className=' flex text-gray-500 text-base font-medium px-6 w-2/12 '>Source</div>
-                <div className=' flex text-gray-500 text-base font-medium px-6 w-1/12 '></div>
-            </div>
+              <div className='flex  w-full  box-border bg-gray-100  h-12 justify-evenly items-center border-0 border-b border-solid border-borderGrey text-gray-500'>
+                <div className=' flex text-gray-500 text-base font-medium  w-[8rem] '>Date</div>
+                <div className=' flex text-gray-500 text-base font-medium  w-[8rem] '>Time</div>
+                <div className=' flex text-gray-500 text-base font-medium  w-[12rem] '>Item Name</div>
+                <div className=' flex text-gray-500 text-base font-medium  w-[8rem] '>Qty. (units)</div>
+                <div className=' flex text-gray-500 text-base font-medium  w-[12rem] '>Party</div>
+                <div className=' flex text-gray-500 text-base font-medium  w-[8rem] '>Total Cost </div>
+                <div className=' flex text-gray-500 text-base font-medium  w-[8rem] '>Source</div>
+                <div className=' flex text-gray-500 text-base font-medium  w-[5rem] '></div>
+              </div>
            <ServicesTimelineItem/>
 <InventoryServicesTableBottombar/>
         </div>
