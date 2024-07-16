@@ -37,17 +37,14 @@ const NewsalesTotalAmout = () => {
     const { tableData, headerData } = useContext(DataContext);
     const [selectedDiscount, setDiscount] = useState(0);
     const appState = useAppSelector((state) => state.app)
-    // const {data:transactions,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/getAll?branchId=${appState.currentBranchId}`,fetcher, { revalidateOnFocus : true});
-
-
-    // transactions && console.log(transactions)
-
+    
     let totalAmount = 0;
     tableData.forEach(data => {
         totalAmount += (data.quantity * data.sellingPrice + data.quantity * data.gst*data.sellingPrice-(data.quantity*data.discount*data.sellingPrice||0))||0;
     });
 
     const { totalAmountData, setTotalAmountData } = useContext(DataContext);
+    const { transactionsData, setTransactionsData } = useContext(DataContext);
     const [grandAmt, setGrandAmt] = useState(totalAmount);
 
     const gstOptions = [
@@ -117,6 +114,7 @@ const NewsalesTotalAmout = () => {
         setShowPopup(!showPopup);
     }
    
+    console.log(transactionsData)
 
 
     return (
@@ -144,7 +142,9 @@ const NewsalesTotalAmout = () => {
                         <div className='flex items-center h-9 px-4 py-2.5 justify-between rounded-lg '>
 
                             <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
-                            ₹ 6546
+                            {transactionsData.map((item:any)=>{
+                                return item.amountPaid
+                            })}
                                 
                             </div>
 
@@ -226,7 +226,7 @@ const NewsalesTotalAmout = () => {
                                 </div>
                             </div>
                         </div>
-                        {showPopup && <Popup headerdata={headerData} onClose={togglePopup} />}
+                        {showPopup && <Popup headerdata={headerData} onClose={togglePopup} transactionsData={transactionsData} setTransactionsData={setTransactionsData} />}
           
         </>
 

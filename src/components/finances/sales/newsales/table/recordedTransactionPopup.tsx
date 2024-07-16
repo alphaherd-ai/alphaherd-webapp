@@ -16,13 +16,16 @@ import closeicon from "../../../../../assets/icons/inventory/closeIcon.svg";
 import Select from 'react-select';
 import { Button } from '@nextui-org/react';
 import { useAppSelector } from '@/lib/hooks';
+
 type PopupProps = {
     onClose: () => void;
     headerdata: any;
+    transactionsData: any;
+    setTransactionsData: any;
 }
 
 
-const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata}) => {
+const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, transactionsData, setTransactionsData}) => {
 
     const dispatch = useDispatch();
 
@@ -91,6 +94,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata}) => 
         }
 
         dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: formData.mode?.value, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+
+        setTransactionsData([...transactionsData, parseInt(formData.amountPaid, 10)]);
 
     };
 

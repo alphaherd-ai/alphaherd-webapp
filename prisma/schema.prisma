@@ -300,6 +300,7 @@ model Sales {
   overallDiscount  Float?
   totalQty         Int?
   status           String?
+  amountPaid       Int?
   type             FinanceCreationType?
   items            Items[]
   financeTimeline  FinanceTimeline[]
