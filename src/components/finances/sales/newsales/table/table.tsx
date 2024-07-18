@@ -369,10 +369,14 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                         <span className="text-[#0F9D58] text-sm font-bold "> ₹ 2,124</span>
                     </div>
                     
-                                <Button
-                                    variant="solid"
-                                    className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer">
-                                    <div className='flex pr-2'><Image src={addicon} alt='addicon' className='w-6 h-6 ' /></div>Add Customer </Button>
+                    <Button
+                        variant="solid"
+                        className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer">
+                        <div className='flex pr-2'>
+                            <Image src={addicon} alt='addicon' className='w-6 h-6 ' />
+                        </div>
+                        Add Customer
+                    </Button>
                            
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px]">

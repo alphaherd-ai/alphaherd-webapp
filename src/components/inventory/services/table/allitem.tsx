@@ -5,7 +5,11 @@ import Doctor from '../../../../assets/icons/inventory/doctor.svg';
 import Image from 'next/image';
 import { Tooltip, Button } from "@nextui-org/react";
 import { useAppSelector } from '@/lib/hooks';
+import useSWR from 'swr';
+import Loading from '@/app/loading';
 
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 
 interface Services{
@@ -24,12 +28,24 @@ const ServicesAllItem = () => {
   const appState = useAppSelector((state) => state.app)
 
 
+//   useEffect(() => {
+//     fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/getAll?branchId=${appState.currentBranchId}`)
+//     .then(response => response.json())
+//     .then(data => setServices(data))
+//     .catch(error => console.error('Error fetching data:', error));
+// }, []);
+
+  const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/getAll?branchId=${appState.currentBranchId}`, fetcher, {revalidateOnFocus:true})
+
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/getAll?branchId=${appState.currentBranchId}`)
-    .then(response => response.json())
-    .then(data => setServices(data))
-    .catch(error => console.error('Error fetching data:', error));
-}, []); 
+    if (data) {
+      setServices(data);
+    }
+  }, [data]);
+
+  if (error) return <div>Error fetching services: {error.message}</div>;
+  if (isLoading) return (<Loading />);
+
   return (
     <>
     {services.map(service => (
@@ -40,9 +56,9 @@ const ServicesAllItem = () => {
             {service.name}
           </Link>
         </div>
-      <div className='w-1/6 flex items-center  px-6  text-neutral-400 text-base font-medium'>  {service?.serviceCost}</div>
-      <div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{service.serviceCharge}</div>
-      <div className='w-2/6 flex items-center px-6 text-neutral-400 text-base font-medium '>
+      <div className='w-[8rem] flex items-center     text-base font-medium'>  {service?.serviceCost}</div>
+      <div className='w-[8rem] flex  items-center    text-base font-medium'>{service.serviceCharge}</div>
+      <div className='w-[12rem] flex items-center   text-base font-medium '>
       <div className="relative mr-4">
         <Image src={Doctor} alt='Doctor' className='relative left-0 top-0 w-5 h-5 z-10' />
         <Image src={Doctor} alt='Doctor' className='absolute left-3 top-3 w-5 h-5 z-20' />
@@ -51,12 +67,14 @@ const ServicesAllItem = () => {
         <div>{service.providers}</div>
       </div>
     </div>
-      <div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium text-green-500'><span className='bg-green-100 px-1'> <Tooltip content="message" className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
-
-        <Button className='bg-transparent border-none'>{service.category}</Button>
-      </Tooltip></span>
-
+    <div className='w-[15rem] flex  items-center  text-base font-medium'>
+    <Tooltip content={service.category} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
+      <div className='bg-[#E7F5EE] rounded-md px-2 py-2' >
+          <span className="text-[#0F9D58]  text-sm font-medium ">{service.category}</span>
       </div>
+    </Tooltip>
+
+ </div>
     </div>
 
   ))}

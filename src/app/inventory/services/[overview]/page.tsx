@@ -4,7 +4,7 @@ import ServiceDetails from '@/components/inventory/services/serviceoverview/serv
 const ServiceOverview= () => {
   return (
     <>
-    <div className='w-full bg-gray-200 p-8 px-10'>
+    <div className='w-full min-h-screen bg-[#EDEDED] p-8 px-10'>
     <ServiceDetails/>
     </div>
     </>

@@ -27,25 +27,28 @@ const OrgPopup = ({ onClose }: any) => {
     const dispatch = useAppDispatch();
     useEffect(() => {
         if (data && !error && !isLoading) {
-            // const userOrgs = data.map((branch: any) => ({
-            //     id: branch.org.id,
-            //     orgName: branch.org.orgName,
-            //     branchName:branch.branchName,
-            //     branchId:branch.id  
-            // }));
-            setOrg(data);
+           
+            const uniqueOrgs = data.reduce((acc:any, current:any) => {
+                const x = acc.find((item:any) => item.orgBranch.orgId === current.orgBranch.orgId);
+                if (!x) {
+                    return acc.concat([current]);
+                } else {
+                    return acc;
+                }
+            }, []);
+            setOrg(uniqueOrgs);
         }
     }, [data, error, isLoading]);
 
     const handleChangeOrg = (selectedItem:any) => {
     console.log(selectedItem)
-    const isCurrentOrgAdmin = isAdminOfOrg((selectedItem as any).org.id,userState as UserState);
-    const isCurrentBranchManager = isManagerOfBranch(selectedItem.id,userState as UserState);
+    const isCurrentOrgAdmin = isAdminOfOrg((selectedItem as any).orgBranch.orgId,userState as UserState);
+    const isCurrentBranchManager = isManagerOfBranch(selectedItem.branchId,userState as UserState);
     dispatch(updateApp({
-      currentBranch : selectedItem,
-      currentBranchId : selectedItem.id,
-      currentOrg : selectedItem.org,
-      currentOrgId : (selectedItem as any).id,
+      currentBranch : selectedItem.orgBranch,
+      currentBranchId : selectedItem.orgBranchId,
+      currentOrg : selectedItem.orgBranch.org,
+      currentOrgId : (selectedItem as any).orgBranch.orgId,
       isCurrentBranchManager : isCurrentBranchManager,
       isCurrentOrgAdmin : isCurrentOrgAdmin
     }));
@@ -77,7 +80,7 @@ const OrgPopup = ({ onClose }: any) => {
                                     onChange={(selectedItem:any)=>handleChangeOrg(userOrg)}
                                     className="text-indigo-600 focus:ring-indigo-500"
                                 />
-                                <span>{userOrg.org.orgName}</span>
+                                <span>{userOrg.orgBranch.org.orgName}</span>
                             </label>
                         ))}
                     </div>

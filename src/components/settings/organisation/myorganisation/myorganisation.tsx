@@ -48,7 +48,13 @@ export const MyOrganisationSettings = () => {
                                     <div className="text-neutral-400 text-base font-medium ">Upload an image of your clinic’s logo and watermark</div>
                                 </div>
                                 <div className="flex gap-4">
-                                    <Image src={pfpimg} alt="profile" />
+                                    {appState.currentOrg.orgImgUrl?<Image src={appState.currentOrg.orgImgUrl} alt="profile" width={150} height={150} />:
+                                      <div className="w-[164px] h-[164px] p-2 rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 flex">
+                                      <div className="text-neutral-400 text-base font-bold ">+</div>
+                                      <div className="text-neutral-400 text-base font-bold "> Logo</div>
+                                  </div>
+                                    }
+                                    
                                     <div className="w-[164px] h-[164px] p-2 rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 flex">
                                         <div className="text-neutral-400 text-base font-bold ">+</div>
                                         <div className="text-neutral-400 text-base font-bold ">WaterMark</div>
@@ -140,13 +146,7 @@ export const MyOrganisationSettings = () => {
 
             {showPopup && <AddBranchPopup onClose={togglePopup} />}
 
-            {
-                appState.isCurrentOrgAdmin ?
-                    <Link href={`/auth/admin/orgEdit`}>
-                        <button className="fixed bottom-4 right-4 bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-                            Edit
-                        </button></Link> : null
-            }
+          
         </>
     )
 }

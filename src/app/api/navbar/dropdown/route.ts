@@ -12,6 +12,8 @@ export const GET=async(req: NextRequest)=> {
     // Fetches those orgs and branch mapping in which user is admin or has manager role in some branches
 
     try {
+        const { searchParams } = new URL(req.url!);
+        const orgId = searchParams.get("orgId");
         const token = req.cookies.get('session')?.value;
     console.log("token", token)
    
@@ -30,7 +32,10 @@ export const GET=async(req: NextRequest)=> {
         const managerOrgBranchUserRoles = await prismaClient.orgBranchUserRole.findMany({
             where: {
                 userId : Number(userId),
-                role: "Manager"
+
+                role: {
+                    in:["Manager","Staff","Veterinarian"]
+                }
             }
         });
 
@@ -44,7 +49,8 @@ export const GET=async(req: NextRequest)=> {
             where: {
                 id : {
                     in: managerOrgBranchIds
-                }
+                },
+                orgId:Number(orgId)
             }
         });
 
@@ -56,9 +62,7 @@ export const GET=async(req: NextRequest)=> {
 
         const managerOrgs = await prismaClient.organization.findMany({
             where: {
-                id: {
-                    in: managerOrgIds
-                }
+                id: Number(orgId)
             }
         });
 
@@ -67,7 +71,7 @@ export const GET=async(req: NextRequest)=> {
         const managerOrgAndBranchMapping = managerOrgs.map((org) => {
             return {
                 ...org,
-                allowedBranches : managerOrgsBranches.filter((orgBranch) => orgBranch.orgId==org.id)
+                allowedBranches : managerOrgsBranches.filter((orgBranch) => orgBranch.orgId==Number(orgId))
             }
         });
 

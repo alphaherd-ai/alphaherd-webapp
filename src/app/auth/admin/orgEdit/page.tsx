@@ -31,6 +31,7 @@ const OrgEdit = () => {
     var initialErrors = {
         orgName: '',
         orgEmail: '',
+        orgImgUrl:'',
         gstNo: '',
         phoneNo: "",
         address: '',
@@ -41,7 +42,7 @@ const OrgEdit = () => {
     
       var stepFields = [
         ["orgName"],
-        ["orgEmail","gstNo","phoneNo","branchName","address","state","pincode","description"]
+        ["orgEmail","orgImgUrl","gstNo","phoneNo","branchName","address","state","pincode","description"]
       ];
 
     const [validationErrors, setValidationErrors] = useState(initialErrors);
@@ -51,19 +52,22 @@ const OrgEdit = () => {
     console.log(validationErrors);
 
     const [activeTab, setActiveTab] = useState(0);
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { name, value } = e.target;
+    const handlePicChange=(imageUrl:any,source:string)=>{
+      let name=source,value=imageUrl.secure_url;
+      console.log(name,value)
       try{
+        console.log(name,value)
         setData((prevData) => ({
           ...prevData,
           [name]: value,
         }));
-        formSchema.parse({...data,[name]: value,});
+        console.log("inside handle change 1");
+        formSchema.parse({...data,[name]: value});
+        console.log("inside handle change 2");
         setValidationErrors((prevErrors) => {
+          console.log("here");
           let newErrors = prevErrors;
           newErrors[name as keyof typeof prevErrors] = '';
-
           return newErrors;
         });
       }
@@ -73,6 +77,61 @@ const OrgEdit = () => {
           let fieldErrors = err.flatten().fieldErrors;
           console.log(fieldErrors);
           let fields: string[] = Object.keys(fieldErrors);
+          console.log(name);
+          console.log(fields);
+          if(fields.includes(name)){
+            setValidationErrors((prevErrors) => {
+              let newErrors = prevErrors;
+              newErrors[name as keyof typeof prevErrors] = fieldErrors[name]!.length > 0 ? fieldErrors[name]![0] : '';
+              return newErrors;
+            });
+          }
+          else{
+            setValidationErrors((prevErrors) => {
+              console.log("here");
+              let newErrors = prevErrors;
+              newErrors[name as keyof typeof prevErrors] = '';
+              return newErrors;
+            });
+          }
+        }
+      }
+    };
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>|any) => {
+      let name: string,value: any;
+      if(e?.label){
+         name="state"
+         value=e.value
+      }
+      else {
+        name = e.target.name;
+        value=e.target.value;
+      }
+      
+      try{
+        console.log(name,value)
+        setData((prevData) => ({
+          ...prevData,
+          [name]: value,
+        }));
+        console.log("inside handle change 1");
+        formSchema.parse({...data,[name]: value});
+        console.log("inside handle change 2");
+        setValidationErrors((prevErrors) => {
+          console.log("here");
+          let newErrors = prevErrors;
+          newErrors[name as keyof typeof prevErrors] = '';
+          return newErrors;
+        });
+      }
+      catch(err : any){
+        if (err instanceof z.ZodError) {
+          console.log(err.flatten());
+          let fieldErrors = err.flatten().fieldErrors;
+          console.log(fieldErrors);
+          let fields: string[] = Object.keys(fieldErrors);
+          console.log(name);
+          console.log(fields);
           if(fields.includes(name)){
             setValidationErrors((prevErrors) => {
               let newErrors = prevErrors;
@@ -109,8 +168,8 @@ const OrgEdit = () => {
     }
 
     const formElements = [
-        <OrgNameSetup key="orgName" data={data} handleChange={handleChange} validationErrors={validationErrors} />,
-        <OrgDetailsSetup key="orgDetails" data={data} handleChange={handleChange} validationErrors={validationErrors} />
+      <OrgNameSetup key="orgName" data={data} handleChange={handleChange} validationErrors={validationErrors} />,
+      <OrgDetailsSetup key="orgDetails" data={data} handleChange={handleChange}  validationErrors={validationErrors} handlePicChange={handlePicChange} />,
     ];
 
     const formSubmit = async (e : React.FormEvent) => {

@@ -151,7 +151,7 @@ const DownloadPopup = ({ onClose, transactions, type }:any) => {
       body: tableRows,
     });
 
-    const fileName = `sales_report_${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'}_to_${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}.pdf`;
+    const fileName = `transactions_report_${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'}_to_${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}.pdf`;
     doc.save(fileName);
   })
   }

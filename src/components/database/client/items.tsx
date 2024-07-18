@@ -6,8 +6,6 @@ import { Spinner} from '@nextui-org/react';
 import useSWR from 'swr';
 import Loading from '@/app/loading';
 import Link from 'next/link';
-//@ts-ignore
-const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 interface Clients {
     id: number;
@@ -27,28 +25,11 @@ interface Patients{
     breed:string;
 }
 
-const DatabaseClientTableItem = () => {
-    const [clients, setClients] = useState<Clients[]>([]);
-    const appState = useAppSelector((state) => state.app)
-    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`,fetcher, { revalidateOnFocus : true});
-    useEffect(() => {
-        const handleWindowFocus = () => {
-          console.log('Window focused');
-        };
-        window.addEventListener('focus', handleWindowFocus);
-        return () => window.removeEventListener('focus', handleWindowFocus);
-      }, []);
-    useEffect(()=>{
-        if(!isLoading&&data&&!error){
-            setClients(data);
-        }
-    },[data,error,isLoading]);
-   
-
+const DatabaseClientTableItem = ({clients, data, isLoading}:any) => {
     if(isLoading)return (<Loading/>)
     return (
         <>
-            {clients?.map(client => (
+            {clients?.map((client:any) => (
                 
                 <div key={client.id} className='flex justify-evenly w-full box-border h-16 py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
                   <div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>
@@ -65,9 +46,9 @@ const DatabaseClientTableItem = () => {
                     ))}
                     </div>
 
-                    <div className='w-1/6 flex items-center px-6 text-neutral-400 text-base font-medium'>{client.contact}</div>
-                    <div className='w-1/6 flex items-center px-6 text-neutral-400 text-base font-medium'>{client.email}</div>
-                    <div className='w-1/6 flex items-center px-6 text-neutral-400 text-base font-medium'>{client.city}</div>
+                    <div className='w-[12rem] flex items-center  text-neutral-400 text-base font-medium'>{client.contact}</div>
+                    <div className='w-[12rem] flex items-center  text-neutral-400 text-base font-medium'>{client.email}</div>
+                    <div className='w-[12rem] flex items-center  text-neutral-400 text-base font-medium'>{client.city}</div>
                 </div>
             ))}
         </>

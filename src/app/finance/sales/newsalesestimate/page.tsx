@@ -8,7 +8,7 @@ import { DataProvider } from '@/components/finances/sales/newsalesestimate/table
 const NewsaleEstimate = () => {
   return (
     <>
-    <div className='w-full min-h-screen bg-gray-200 p-8 px-10'>
+    <div className='w-full min-h-screen bg-[#EDEDED] p-8 px-10'>
     <DataProvider>
     <NewsaleEstimateNavbar/>
                
