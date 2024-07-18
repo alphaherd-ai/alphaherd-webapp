@@ -372,7 +372,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                         </div>
                         <div className="flex-col">
                             <div className="text-gray-500 text-base font-medium">Description</div>
-                            <textarea className="text-gray-400 text-base font-medium mt-[8px] px-2 py-2 outline-none border border-solid border-gray-300 rounded-md" placeholder="Provide details of the service" rows={5} cols={68} onChange={(e) => handleChange("description", e.target.value)}></textarea>
+                            <textarea className="text-gray-400 text-base font-medium mt-[8px] px-2 py-2 outline-none border border-solid border-gray-300 rounded-md" placeholder="Provide details about the service" rows={5} cols={68} onChange={(e) => handleChange("description", e.target.value)}></textarea>
                         </div>
                         <div className="self-end items-start gap-6 flex">
                             <button onClick={handleContinueClick} className="px-4 py-2.5 bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer">
