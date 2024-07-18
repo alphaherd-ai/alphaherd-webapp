@@ -34,16 +34,6 @@ function useServicefetch (id: string | null,branchId:number|null) {
    }
 }
 
-function useServiceBatchfetch(id:string|null,branchId:number|null){
-    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/getAll/${id}?branchId=${branchId}`,fetcher,{revalidateOnFocus:true});
-    return {
-        fetchedBatches:data,
-        isBatchLoading:isLoading,
-        batchError:error
-    }
-}
-
-
   const ServiceDetails = () => {
     const [service, setService] = useState<any | null>(null);
     const url = useSearchParams();
@@ -60,19 +50,15 @@ function useServiceBatchfetch(id:string|null,branchId:number|null){
         if(!error&&!isLoading&&fetchedProduct){
           setService(fetchedProduct);
         }
-      },[fetchedProduct,error,isLoading]);
-      const {fetchedBatches,batchError,isBatchLoading}=useServiceBatchfetch(id,appState.currentBranchId);
-
-    function valuetext(value: number) {
-        return `${value}°C`;
-    }
+      },[fetchedProduct,error,isLoading]
+    );
 
     return <>
         <div className="w-full h-full relative bg-gray-200 rounded-[20px] pr-[16px] pl-[16px] z-1">
             <div className="flex items-center justify-between">
                 <div className="flex gap-2">
                     <div className="w-11 h-11  rounded-[5px] border border-neutral-400 flex justify-center items-center ">
-                        <Link className='no-underline h-full  ml-4' href='/inventory/services/timeline'>
+                        <Link className='no-underline h-full  ml-4' href='/database/services'>
                             <div className='flex items-center border border-solid border-gray-300 bg-white rounded-lg p-3  '>   <Image className="w-6 h-6 relative rounded-[5px]" src={lefticon} alt="Back"></Image></div>
                         </Link>
                     </div>
@@ -197,11 +183,11 @@ function useServiceBatchfetch(id:string|null,branchId:number|null){
                             </div>
                         </div>
                     </div>
-                    <div className="w-full max-h-[400px] overflow-y-auto">
-                            
-                        </div>
+                        {/* <div className="w-full max-h-[400px] overflow-y-auto">
+                            Code for service history items
+                        </div> */}
                     </div>
-            </div>
+                </div>
             <div className="rounded-md">
                 <div className="w-full mt-[25px] rounded-[10px] border-neutral-400 border-0.5 border-solid  border-neutral-40  ">
                 <div className="w-full flex p-6 bg-white items-start justify-between w-full border-0 border-b border-solid border-neutral-400 rounded-md">

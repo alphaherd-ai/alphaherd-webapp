@@ -51,7 +51,12 @@ const DatabaseClientTableItem = () => {
             {clients?.map(client => (
                 
                 <div key={client.id} className='flex justify-evenly w-full box-border h-16 py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
-                   <div className='w-1/6 flex items-center px-6 text-neutral-400 text-base font-medium'>{client.clientName}</div>
+                  <div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>
+                    <Link className='transition-colors duration-300 text-gray-400 no-underline hover:underline hover:text-teal-400 ' 
+                    href={{pathname:'clients/overview',query:{id:`${client?.id}`}}}>
+                        {client.clientName}
+                    </Link>
+                    </div>
                     <div className='w-1/6 flex items-center px-6 text-neutral-400 text-base font-medium'>
                     {client.patients?.map((patient, index) => (
                         <span key={patient.id}>
