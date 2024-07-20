@@ -18,11 +18,11 @@ const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 import FilterDropdwonCard from './FilterDropdowmCard';
+import DownloadPopup from './downloadTimeline';
 
 
 
-
-const FinacesOverviewTableHeader = () => {
+const FinacesOverviewTableHeader = ({timeline}:any) => {
     const appState=useAppSelector((state)=>state.app);
     const {data, isLoading, error} = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/getAll?branchId=${appState.currentBranchId}`, fetcher,{revalidateOnFocus:true});
 
@@ -46,6 +46,11 @@ const FinacesOverviewTableHeader = () => {
         [selectedSort]
     );
 
+    const [showPopup1, setShowPopup1] = React.useState(false);
+    const togglePopup1 = () => {
+        setShowPopup1(!showPopup1);
+    }
+
     return (
 
         <>
@@ -55,10 +60,9 @@ const FinacesOverviewTableHeader = () => {
                     <div className=' text-base'>Finance Timeline</div>
                 </div>
                 <div className='flex items-center'>
-                    <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
-
-                        <div className='flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'><Image src={Download} alt='Download' className='w-4  h-4' /></div>
-                    </Link>
+                <div onClick={togglePopup1} className='cursor-pointer mr-4 flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'>
+                    <Image src={Download} alt='Download' className='w-4  h-4' />
+                </div>
                     <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
 
                         <div  className='flex items-center justify-center w-7 h-7 border border-solid border-gray-300 border-0.5 rounded-md  p-1'><Image src={Chart} alt='Chart' className='w-4  h-4' /></div>
@@ -191,7 +195,7 @@ const FinacesOverviewTableHeader = () => {
                 </div>
             </div >
           
-
+            {showPopup1 && <DownloadPopup onClose={togglePopup1} timeline={timeline}  />}
         </>
     )
 }
