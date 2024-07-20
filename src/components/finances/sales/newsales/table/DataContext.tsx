@@ -1,6 +1,13 @@
 // DataContext.tsx
 import React, { createContext, useState, Dispatch, SetStateAction, ReactNode } from 'react';
 
+interface Transaction {
+  id: number;
+  date?: Date;
+  amountPaid?: number;  
+
+}
+
 interface DataContextType {
   headerData: { [key: string]: any };
   setHeaderData: Dispatch<SetStateAction<{ [key: string]: any }>>;

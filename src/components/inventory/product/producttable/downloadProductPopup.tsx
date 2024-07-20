@@ -13,10 +13,10 @@ import autoTable from 'jspdf-autotable';
 import logo from "../../../assets/icons/finance/pfpimg.png";
 import { useAppSelector } from '@/lib/hooks';
 
-const DownloadPopup = ({ onClose, clients }:any) => {
+const DownloadPopup = ({ onClose, products }:any) => {
 
   const appState = useAppSelector((state) => state.app)
-  const [data, setData] = useState(clients);
+  const [data, setData] = useState(products);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [selectedOption, setSelectedOption] = useState('Custom');
@@ -26,22 +26,22 @@ const DownloadPopup = ({ onClose, clients }:any) => {
     setSelectedOption(option);
   };
 
-  // const handleFilter = (start:any, end:any) => {
-  //   const filteredData = clients.filter((item:any) => {
-  //     const date = new Date(item.date);
-  //     return date >= start && date <= end;
-  //   });
-  //   setData(filteredData);
-  // };
+  const handleFilter = (start:any, end:any) => {
+    const filteredData = products.filter((item:any) => {
+      const date = new Date(item.date);
+      return date >= start && date <= end;
+    });
+    setData(filteredData);
+  };
 
-  // const onDateChange = (dates: [any, any]) => {
-  //   const [start, end] = dates;
-  //   setStartDate(start);
-  //   setEndDate(end);
-  //   if (start && end) {
-  //     handleFilter(start, end);
-  //   }
-  // };
+  const onDateChange = (dates: [any, any]) => {
+    const [start, end] = dates;
+    setStartDate(start);
+    setEndDate(end);
+    if (start && end) {
+      handleFilter(start, end);
+    }
+  };
 
   const convertImageToBase64 = (imageSrc:any, callback:any) => {
     const xhr = new XMLHttpRequest();
@@ -58,76 +58,74 @@ const DownloadPopup = ({ onClose, clients }:any) => {
   };
 
   const downloadPDF = () => {
-    convertImageToBase64(logo.src, (base64Image:any) => {
-    const doc = new jsPDF('landscape');
-    const tableColumn = ["Client", "Pet(s)", "Phone No.", "Email", "Last Visit"];
-    const tableRows:any = [];
+    convertImageToBase64(logo.src, (base64Image: any) => {
+      const doc = new jsPDF('landscape');
+      const tableColumn = ["Name", "Phone No.", "GSTIN", "Email"];
+      const tableRows: any = [];
 
-    data.forEach((item:any) => {
-      const patientsNames = item.patients?.map((patient:any) => patient.patientName).join(', ') || '';
-      const clientsData = [
-        item.clientName,
-        patientsNames,
-        item.contact,
-        item.email,
-        item.city,
-      ];
-      tableRows.push(clientsData);
-    });
+      data.forEach((item: any) => {
+        const productsData = [
+          item.distributorName,
+          item.contact,
+          item.gstinNo,
+          item.email,
+        ];
+        tableRows.push(productsData);
+      });
 
-    doc.addImage(base64Image, 'PNG', 4, 4, 20, 20); 
+      const startX = 4;
+      const startY = 4;
+      const logoWidth = 20;
+      const logoHeight = 20;
+      const orgInfoX = startX + logoWidth + 6;
+      let orgInfoY = startY + 6;
+
+      doc.addImage(base64Image, 'PNG', startX, startY, logoWidth, logoHeight);
       doc.setFontSize(20);
-      doc.text(appState.currentOrg.orgName, 30, 10);
-      
+      doc.text(appState.currentOrg.orgName, orgInfoX, orgInfoY);
+
+      orgInfoY += 7;
       doc.setFontSize(12);
-      const text = `${appState.currentOrg.address} ${appState.currentOrg.state}-${appState.currentOrg.pincode}`;
+      const addressText = `${appState.currentOrg.address} ${appState.currentOrg.state}-${appState.currentOrg.pincode}`;
       const maxWidth = 85;
-      const lines = doc.splitTextToSize(text, maxWidth);
-      doc.text(lines, 30, 15);
+      const addressLines = doc.splitTextToSize(addressText, maxWidth);
+      doc.text(addressLines, orgInfoX, orgInfoY);
 
+      orgInfoY += addressLines.length * 5
+      doc.setFontSize(13);  
+      doc.text(`Gst No. :  ${appState.currentOrg.gstNo}`, 126, startY + 12);
+      doc.text(`PAN No. :  5465465465465465`, 126, startY + 18);
 
+      doc.text(`Email :  ${appState.currentOrg.orgEmail}`, 220, startY + 12);
+      doc.text(`Phone No. :  ${appState.currentOrg.phoneNo}`, 220, startY + 18);
+      doc.text(`Website :  XYZ.com`, 220, startY + 24);
 
-      doc.setFontSize(13);
-      doc.text(`Gst No. :  ${appState.currentOrg.gstNo}`, 126, 12);
-      doc.setFontSize(13);
-      doc.text(`PAN No. :  5465465465465465`, 126, 18);
-
-      doc.setFontSize(13);
-      doc.text(`Email :  ${appState.currentOrg.orgEmail}`, 220, 12);
-      doc.setFontSize(13);
-      doc.text(`Phone No. :  ${appState.currentOrg.phoneNo}`, 220, 18);
-      doc.setFontSize(13);
-      doc.text(`Website :  XYZ.com`, 220, 24);
-
-
+      const lineY = orgInfoY + 4;
       doc.setLineWidth(0.2);
-      doc.line(1, 26, 320, 26); 
+      doc.line(1, lineY, 320, lineY);
 
       doc.setFontSize(15);
-      doc.text("Database Report", 8, 34);
+      doc.text("Database Report", startX, lineY + 8);
 
       doc.setFontSize(11);
-      doc.text(`Category : Clients`, 60, 33);
-      doc.text(`Period : ${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'} - ${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}`, 60, 37);
+      doc.text(`Category : products`, 60, lineY + 8);
+      doc.text(`Period : ${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'} - ${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}`, 60, lineY + 13);
 
-
-      doc.text(`Total Clients : ${data.length}`, 120, 33);
+      doc.text(`Total products : ${data.length}`, 120, lineY + 8);
 
       doc.setLineWidth(0.5);
-      doc.line(1, 53, 320, 53); 
+      doc.line(1, lineY + 18, 320, lineY + 18);
 
+      autoTable(doc, {
+        startY: lineY + 20,
+        head: [tableColumn],
+        body: tableRows,
+      });
 
-    autoTable(doc, {
-      startY: 55,
-      head: [tableColumn],
-      body: tableRows,
+      const fileName = `products_report_${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'}_to_${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}.pdf`;
+      doc.save(fileName);
     });
-
-    const fileName = `clients_report_${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'}_to_${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}.pdf`;
-    doc.save(fileName);
-  })
-  }
-
+  };
 
   return (
     <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
@@ -178,8 +176,7 @@ const DownloadPopup = ({ onClose, clients }:any) => {
         
         {selectedOption === 'Custom' && (
             <>
-            <div className='text-[red]'>For now we can download without date range</div>
-            {/* <div className='flex items-center justify-between  w-[576px]'>
+            <div className='flex items-center justify-between  w-[576px]'>
                     <div className="text-gray-500 text-base font-medium w-[200px]">Select Date Range</div>
                     <div className="w-full h-11 px-4 py-2 bg-white rounded-[5px] border border-neutral-400 flex items-center gap-2">
                         <div className="customDatePickerWidth flex">
@@ -199,7 +196,7 @@ const DownloadPopup = ({ onClose, clients }:any) => {
                         <Image src={calenderIcon} alt="calendar" />
                     </div>
                     </div>
-            </div> */}
+            </div>
             </>
         )}
         {selectedOption === 'Day' && (

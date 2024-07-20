@@ -16,18 +16,18 @@ import closeicon from "../../../../../assets/icons/inventory/closeIcon.svg";
 import Select from 'react-select';
 import { Button } from '@nextui-org/react';
 import { useAppSelector } from '@/lib/hooks';
+import { useSearchParams } from 'next/navigation';
 
 type PopupProps = {
     onClose: () => void;
     headerdata: any;
-    transactionsData: any;
-    setTransactionsData: any;
     initialInvoiceNo: any;
 }
 
 
-const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, transactionsData, setTransactionsData, initialInvoiceNo}) => {
-
+const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initialInvoiceNo}) => {
+    const url = useSearchParams();
+    const id = url.get('id');
     const dispatch = useDispatch();
 
 
@@ -84,7 +84,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
             });
             if (response.ok) {
                 console.log('Data saved Sucessfully')
-                onClose();
+                
                 window.dispatchEvent(new FocusEvent('focus'))
             } else {
                 console.error('Failed to save data')
@@ -95,6 +95,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
 
         }
 
+        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: formData.mode?.value, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+
         const newTransaction = {
             amountPaid: parseInt(formData.amountPaid, 10),
             date: formData.date,
@@ -103,16 +105,37 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
         };
 
-        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: formData.mode?.value, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+       try {
+        const putResponse = await fetch(`http://localhost:3000/alphaherd/api/finance/sales/${id}/?branchId=${appState.currentBranchId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type' : 'application/json', 
+            },
+            body: JSON.stringify({
+                recordTransaction: [newTransaction]            })
+            
+        })
+        if (putResponse.ok) {
+            console.log('Data saved Sucessfully2')
+            onClose()
+            window.dispatchEvent(new FocusEvent('focus'))
+        } else {
+            console.error('Failed to save data')
+        }
+       } catch (error) {
+            console.log("Error while put request",error)
+       }finally {
 
-        // setTransactionsData([{amountPaid:parseInt(formData.amountPaid, 10), date:formData.date, isAdvancePayment:isAdvancePayment}]);
+       }
 
-        setTransactionsData((prevTransactions:any) => [...prevTransactions, newTransaction]);
+
     };
 
     const handleChange = (field: string, value: any) => {
         setFormData({ ...formData, [field]: value });
     }
+
+    
 
 
 
@@ -187,27 +210,27 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
                         <div><span className='text-gray-500 text-base font-medium '>Date</span></div>
                         <div className='relative'>
                         <DatePicker
-                            className="w-[10rem] "
-                            selected={startDate}
-                            onChange={handleDateChange}
-                            calendarClassName="react-datepicker-custom"
-                            customInput={
-                                <div className='relative'>
-                                    <input
-                                        className="w-[10rem] border border-solid border-borderGrey h-9 text-textGrey1 text-base font-medium px-2 rounded   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                        value={startDate.toLocaleDateString()}
-                                        readOnly
+                                        className="w-[10rem] "
+                                        selected={startDate}
+                                        onChange={handleDateChange}
+                                        calendarClassName="react-datepicker-custom"
+                                        customInput={
+                                            <div className='relative'>
+                                                <input
+                                                    className="w-[10rem] border border-solid border-borderGrey h-9 text-textGrey1 text-base font-medium px-2 rounded   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                                    value={startDate.toLocaleDateString()}
+                                                    readOnly
+                                                />
+                                                <Image
+                                                    src={calicon}
+                                                    alt="Calendar Icon"
+                                                    className="absolute right-0 top-2 cursor-pointer"
+                                                    width={50}
+                                                    height={20}
+                                                />
+                                            </div>
+                                        }
                                     />
-                                    <Image
-                                        src={calicon}
-                                        alt="Calendar Icon"
-                                        className="absolute right-0 top-2 cursor-pointer"
-                                        width={50}
-                                        height={20}
-                                    />
-                                </div>
-                            }
-                        />
                         </div>
                     </div>
 
@@ -229,10 +252,10 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
 
             </div>
             <div className='w-full flex justify-between items-center'>
-                    <div className='flex items-center gap-1'>
-                        <input type="checkbox" name="advancePayment" id="advancePayment" checked={isAdvancePayment} onChange={(e) => setIsAdvancePayment(e.target.checked)} />
-                        <span className='text-textGrey2 text-base font-medium'>Mark as advance payment</span>
-                    </div>
+                <div className='flex items-center gap-1'>
+                    <input type="checkbox" name="" id=""  />
+                    <span className='text-textGrey2 text-base font-medium'>Mark as advance payment</span>
+                </div>
                     <Button className="px-2 py-2.5 bg-navBar rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer"  onClick={handleSaveClick}>
                         <Image src={check} alt='check' /> 
                         <span className='text-white text-base font-medium pr-2'>Save Transaction</span>

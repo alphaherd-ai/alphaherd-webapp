@@ -7,11 +7,8 @@ import DatePicker from 'react-datepicker';
 import check from "../../../../../assets/icons/finance/check.svg"
 import { useDispatch } from 'react-redux';
 import { addAmount } from '@/lib/features/transactionAmount/transactionAmountSlice';
-
 import 'react-datepicker/dist/react-datepicker.css';
-
 import calicon from "../../../../../assets/icons/finance/calendar_today.svg";
-
 import closeicon from "../../../../../assets/icons/inventory/closeIcon.svg";
 import Select from 'react-select';
 import { Button } from '@nextui-org/react';

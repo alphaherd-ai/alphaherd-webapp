@@ -26,7 +26,7 @@ type PopupProps = {
 }
 
 
-const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, transactionsData, setTransactionsData, initialInvoiceNo}) => {
+const RecordReturnTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, transactionsData, setTransactionsData, initialInvoiceNo}) => {
 
     const dispatch = useDispatch();
 
@@ -105,9 +105,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
 
         dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: formData.mode?.value, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
 
-        // setTransactionsData([{amountPaid:parseInt(formData.amountPaid, 10), date:formData.date, isAdvancePayment:isAdvancePayment}]);
-
         setTransactionsData((prevTransactions:any) => [...prevTransactions, newTransaction]);
+
     };
 
     const handleChange = (field: string, value: any) => {
@@ -187,27 +186,27 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
                         <div><span className='text-gray-500 text-base font-medium '>Date</span></div>
                         <div className='relative'>
                         <DatePicker
-                            className="w-[10rem] "
-                            selected={startDate}
-                            onChange={handleDateChange}
-                            calendarClassName="react-datepicker-custom"
-                            customInput={
-                                <div className='relative'>
-                                    <input
-                                        className="w-[10rem] border border-solid border-borderGrey h-9 text-textGrey1 text-base font-medium px-2 rounded   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                        value={startDate.toLocaleDateString()}
-                                        readOnly
+                                        className="w-[10rem] "
+                                        selected={startDate}
+                                        onChange={handleDateChange}
+                                        calendarClassName="react-datepicker-custom"
+                                        customInput={
+                                            <div className='relative'>
+                                                <input
+                                                    className="w-[10rem] border border-solid border-borderGrey h-9 text-textGrey1 text-base font-medium px-2 rounded   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                                    value={startDate.toLocaleDateString()}
+                                                    readOnly
+                                                />
+                                                <Image
+                                                    src={calicon}
+                                                    alt="Calendar Icon"
+                                                    className="absolute right-0 top-2 cursor-pointer"
+                                                    width={50}
+                                                    height={20}
+                                                />
+                                            </div>
+                                        }
                                     />
-                                    <Image
-                                        src={calicon}
-                                        alt="Calendar Icon"
-                                        className="absolute right-0 top-2 cursor-pointer"
-                                        width={50}
-                                        height={20}
-                                    />
-                                </div>
-                            }
-                        />
                         </div>
                     </div>
 
@@ -245,4 +244,4 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
 
 }
 
-export default RecordTransactionPopup
+export default RecordReturnTransactionPopup

@@ -210,6 +210,7 @@ model Patients {
   age               String?
   gender            String?
   isInpatient       Boolean?
+  date              DateTime?        @default(now())
   clients           Clients?         @relation(fields: [clientId], references: [id])
   DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
   databaseSectionId Int?
@@ -225,6 +226,7 @@ model Distributors {
   address           String?
   city              String?
   pinCode           String?
+  date              DateTime?        @default(now())
   DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
   databaseSectionId Int?
 }
@@ -289,25 +291,38 @@ model Services {
 }
 
 model Sales {
-  id               Int                  @id @default(autoincrement())
-  customer         String?
-  date             DateTime?            @default(now())
-  notes            String?
-  subTotal         Float?
-  invoiceNo        String?
-  dueDate          DateTime?
-  shipping         Float?
-  adjustment       Float?
-  totalCost        Float?
-  overallDiscount  Float?
-  totalQty         Int?
-  status           String?
-  amountPaid       Int?
-  type             FinanceCreationType?
-  items            Items[]
-  financeTimeline  FinanceTimeline[]
-  FinanceSection   FinanceSection?      @relation(fields: [financeSectionId], references: [id])
-  financeSectionId Int?
+  id                Int                  @id @default(autoincrement())
+  customer          String?
+  date              DateTime?            @default(now())
+  notes             String?
+  subTotal          Float?
+  invoiceNo         String?
+  dueDate           DateTime?
+  shipping          Float?
+  adjustment        Float?
+  totalCost         Float?
+  overallDiscount   Float?
+  totalQty          Int?
+  status            String?
+  recordTransaction RecordTransaction[]
+  type              FinanceCreationType?
+  items             Items[]
+  financeTimeline   FinanceTimeline[]
+  FinanceSection    FinanceSection?      @relation(fields: [financeSectionId], references: [id])
+  financeSectionId  Int?
+}
+
+model RecordTransaction {
+  id                Int           @id @default(autoincrement())
+  amountPaid        Int?
+  date              DateTime?     @default(now())
+  isAdvancePayment  Boolean?
+  mode              String?
+  moneyChange       String?
+  sales             Sales?        @relation(fields: [salesId], references: [id])
+  salesId           Int?
+  purchases         Purchases?    @relation(fields: [purchasesId], references: [id])
+  purchasesId       Int?
 }
 
 model Purchases {
@@ -327,6 +342,7 @@ model Purchases {
   overallDiscount      Float?
   totalQty             Int?
   status               String?
+  recordTransaction    RecordTransaction[]
   type                 String?
   items                Items[]
   financeTimeline      FinanceTimeline[]
@@ -364,7 +380,7 @@ model Transactions {
   subject          String?
   invoiceLink      String?
   receiptNo        String?
-  date             DateTime?
+  date             DateTime?      @default(now())
   amountPaid       Int
   mode             String?
   moneyChange      String?

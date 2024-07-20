@@ -14,8 +14,9 @@ export  const GET=async (req: NextRequest)=> {
             databaseSectionId:databaseId
           },
           include:{
-            patients:true
-          }
+            patients:true,
+          },
+          
         });
         return new Response(JSON.stringify(clients), {
           status: 201,

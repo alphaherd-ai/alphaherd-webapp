@@ -1,11 +1,12 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Link from 'next/link';
 import { Tooltip, Button, Spinner } from "@nextui-org/react";
 import InventoryProductTableBottombar from './bottombar'; 
 import useSWR from 'swr';
 import 'ldrs/helix';
 import { useAppSelector } from '@/lib/hooks';
+import { DataContext } from './DataContext';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
@@ -18,6 +19,9 @@ interface Products {
 }
 
 const ProductAllItem = () => {
+
+  const {allData,setAllData}=useContext(DataContext)
+
   const [products, setProducts] = useState<Products[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(10);
@@ -27,10 +31,13 @@ const ProductAllItem = () => {
   useEffect(() => {
   if(!isLoading&&data&&!error){
     setProducts(data?.reverse())
+    setAllData(products);
   }
   }, [data,isLoading,error]);
 
   
+  console.log("xcxcxcxcxc")
+  console.log("products", products);
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;

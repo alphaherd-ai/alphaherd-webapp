@@ -1,4 +1,5 @@
-import React from 'react'
+'use client'
+import React, { useEffect, useState } from 'react'
 import DatabaseDistributorBottombar from './bottombar'
 import RightArrow from '../../../assets/icons/finance/rightArrow.svg';
 import IncrementIcon from '../../../assets/icons/finance/increment_icon.svg';
@@ -7,7 +8,36 @@ import Image from 'next/image';
 import Link from 'next/link';
 import DatabaseDistributorHeader from './header'
 import DatabaseDistributorTableItem from './items'
+import useSWR from 'swr';
+import { useAppSelector } from '@/lib/hooks';
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
+interface Distributors{
+    id:string,
+    distributorName:string,
+    contact:string,
+    gstinNo:string,
+    email:string,
+
+}
 const DatabaseDistributorTable = () => {
+
+  const [distributors,setDistributor]=useState<Distributors[]>([]);
+    const appState = useAppSelector((state) => state.app)
+    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll?branchId=${appState.currentBranchId}`,fetcher,{ revalidateOnFocus : true});
+    useEffect(() => {
+        const handleWindowFocus = () => {
+          console.log('Window focused');
+        };
+        window.addEventListener('focus', handleWindowFocus);
+        return () => window.removeEventListener('focus', handleWindowFocus);
+      }, []);
+    useEffect(()=>{
+     if(!isLoading&&!error&&data){
+        setDistributor(data);
+     }
+    },[data,error,isLoading]);
+
   return (
     <div className='flex flex-col w-full box-border mb-10  cursor-default'>
       {/* <div className="  flex bg-white justify-center mt-10 h-[152px] rounded-lg border border-stone-300 border-solid">
@@ -48,7 +78,7 @@ const DatabaseDistributorTable = () => {
         
           </div>
       </div> */}
-      <DatabaseDistributorHeader />
+      <DatabaseDistributorHeader distributors={distributors} />
       <div className='flex  w-full justify-evenly box-border bg-gray-100  h-12 py-4 border-b border-neutral-400 text-gray-500'>
         <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>Name</div>
         <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>Phone No</div>
@@ -57,7 +87,7 @@ const DatabaseDistributorTable = () => {
         <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>Balance</div>
 
       </div>
-      <DatabaseDistributorTableItem />
+      <DatabaseDistributorTableItem distributors={distributors} data={data} isLoading={isLoading} />
       <DatabaseDistributorBottombar />
 
     </div>
