@@ -66,7 +66,7 @@ if(isLoading&&!data)return (<Loading/>)
     <div className='w-[8rem] flex  items-center  text-base font-medium'>{purchase.totalQty} items</div>
     <div className='w-[8rem] flex  items-center  text-base font-medium'>{formatDateAndTime(purchase.dueDate).formattedDate}</div>
     <div className='w-[8rem] flex  items-center  text-base font-medium'>
-    <Tooltip content="message" className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
+    <Tooltip content={purchase.status} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
       <div className='bg-[#E7F5EE] rounded-md px-2 py-2' >
           <span className="text-[#0F9D58]  text-sm font-medium ">{purchase.status}</span>
       </div>

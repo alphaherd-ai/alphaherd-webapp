@@ -49,7 +49,7 @@ const FinancesSalesTableHeader = ({invoiceCount,estimateCount,returnCount, sales
 
         <>
           
-<div className='flex w-full bg-white h-20  p-4 px-6 mt-6 justify-between border border-solid border-gray-300 border-t-0.5 rounded-tl-lg rounded-tr-lg'>
+          <div className='flex w-full bg-white h-20  p-4 px-6  justify-between border-0 border-b border-solid border-borderGrey rounded-tl-lg rounded-tr-lg'>
 
 <div className='flex  text-gray-500 items-center w-5/12'>
 <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/all',query:{type:'all'}}}>

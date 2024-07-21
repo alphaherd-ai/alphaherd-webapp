@@ -39,7 +39,7 @@ const DatabaseDistributorTable = () => {
     },[data,error,isLoading]);
 
   return (
-    <div className='flex flex-col w-full box-border mb-10  cursor-default'>
+    <div className='flex flex-col w-full box-border border border-solid border-borderGrey rounded-lg mt-6 mb-6'>
       {/* <div className="  flex bg-white justify-center mt-10 h-[152px] rounded-lg border border-stone-300 border-solid">
         <div className="w-1/4 p-6 border border-stone-300 flex-col justify-start items-start border-0 border-r-2 border-stone-300 border-solid">
             
@@ -79,8 +79,8 @@ const DatabaseDistributorTable = () => {
           </div>
       </div> */}
       <DatabaseDistributorHeader distributors={distributors} />
-      <div className='flex  w-full justify-evenly box-border bg-gray-100  h-12 py-4 border-b border-neutral-400 text-gray-500'>
-        <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>Name</div>
+      <div className='flex  w-full  box-border bg-gray-100  h-12 justify-evenly items-center border-0 border-b border-solid border-borderGrey text-textGrey2'>
+      <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>Name</div>
         <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>Phone No</div>
         <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>GSTIN</div>
         <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>Email</div>

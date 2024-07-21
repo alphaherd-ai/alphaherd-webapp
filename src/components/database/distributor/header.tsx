@@ -53,7 +53,7 @@ const DatabaseDistributorHeader = ({ distributors }:any) => {
 
 
 
-            <div className='flex w-full bg-white h-20  p-4 px-6 mt-6 justify-between border border-solid border-gray-300 border-t-0.5 rounded-tl-lg rounded-tr-lg'>
+<div className='flex w-full bg-white h-20  p-4 px-6  justify-between border-0 border-b border-solid border-borderGrey rounded-tl-lg rounded-tr-lg'>
 
                 <div className='flex  text-gray-500  items-center'>
                     <div className=' text-base'>Distributors</div>

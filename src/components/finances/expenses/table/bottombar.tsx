@@ -12,7 +12,7 @@ const FinancesExpensesTableBottombar = () => {
   return (
    
     <>
-    <div className='flex w-full  justify-between border border-solid border-gray-300 border-t-0.5 h-12 px-6 py-3 bg-white rounded-bl-lg rounded-br-lg bg-white'>
+    <div className='flex w-full  justify-between  h-12 px-6 py-3 bg-white rounded-bl-lg rounded-br-lg'>
 
 
       <div className='flex h-full'>
