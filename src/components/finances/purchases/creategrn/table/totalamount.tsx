@@ -125,6 +125,8 @@ const CreateGrnTotalAmount = () => {
     }, [count, showPopup]);
 
 
+    console.log(headerData)
+
   return (
     <>
 

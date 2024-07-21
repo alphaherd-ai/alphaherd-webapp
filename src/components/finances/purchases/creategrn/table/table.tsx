@@ -290,6 +290,11 @@ const handleAddItem= useCallback(() => {
             setTableData(items);  
         }
     }, [id, items]);
+
+
+    
+    console.log("otherdatatattatata", otherData)
+
     return (
         <>
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">

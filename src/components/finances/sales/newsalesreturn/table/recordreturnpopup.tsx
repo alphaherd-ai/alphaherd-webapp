@@ -73,7 +73,7 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata
                     'Content-Type' : 'application/json', 
                 },
                 body: JSON.stringify({
-                    partyName: formData.partyName?.value,
+                    partyName: headerdata?.customer.label,
                     invoiceLink: headerdata.invoiceNo,
                     receiptNo: initialInvoiceNo,
                     date: formData.date,
@@ -159,18 +159,8 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata
             </div>
             <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Party Name</span></div>
-                    <div className='w-[440px]'>
-                    <Select
-                            className="text-neutral-400 text-base font-medium w-full"
-                            placeholder="Select Category"
-                            isClearable={false}
-                            isSearchable={true}
-                            options={Party}
-                            isMulti={false}
-                            name="partyName"
-                            onChange={(value) => handleChange("partyName", value)}
-                        />
-                    </div>                
+                    <div><div className="w-[440px] h-9 rounded-[5px] text-textGrey2 bg-white text-base font-medium p-2  outline-none border border-solid border-gray-300 ">{headerdata?.customer.label}</div></div>
+               
             </div>
             
             

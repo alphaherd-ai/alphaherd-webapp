@@ -11,7 +11,7 @@ import { DataContext } from './DataContext';
 import { Tax } from '@prisma/client';
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 import formatDateAndTime from '@/utils/formateDateTime';
-import Popup from "../table/recordPurchaseOrderTransaction"
+import Popup from "./recordPurchaseRetrunTransaction"
 
 const NewPurchaseReturnNewTotalAmount = () => {
     const { tableData, headerData } = useContext(DataContext);

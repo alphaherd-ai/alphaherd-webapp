@@ -65,6 +65,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
         setTransactionType(type);
     };
 
+    console.log("headerdata", headerdata?.customer.label);
+
     const handleSaveClick = async () => {
         try {
             const response = await fetch(`http://localhost:3000/alphaherd/api/finance/transactions/create?branchId=${appState.currentBranchId}`, {
@@ -73,7 +75,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
                     'Content-Type' : 'application/json', 
                 },
                 body: JSON.stringify({
-                    partyName: formData.partyName?.value,
+                    partyName: headerdata?.customer.label,
                     invoiceLink: headerdata.invoiceNo,
                     receiptNo: initialInvoiceNo,
                     date: formData.date,
@@ -160,29 +162,19 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
             </div>
             <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Party Name</span></div>
-                    <div className='w-[440px]'>
-                    <Select
-                            className="text-neutral-400 text-base font-medium w-full"
-                            placeholder="Select Category"
-                            isClearable={false}
-                            isSearchable={true}
-                            options={Party}
-                            isMulti={false}
-                            name="partyName"
-                            onChange={(value) => handleChange("partyName", value)}
-                        />
-                    </div>                
+                    <div><div className="w-[440px] h-9 rounded-[5px] text-textGrey2 bg-white text-base font-medium p-2  outline-none border border-solid border-gray-300 ">{headerdata?.customer.label}</div></div>
+            
             </div>
             
             
             <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Amount Paid</span></div>
-                    <div><input className="w-[440px] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="number" name="amountPaid" onChange={(e) => handleChange("amountPaid", e.target.value)} /></div>
+                    <div><input className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="number" name="amountPaid" onChange={(e) => handleChange("amountPaid", e.target.value)} /></div>
             </div>
             <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Receipt No.</span></div>
                     <div className='w-[440px] flex justify-between items-center'>
-                    <div><div className="w-[10rem] h-9 rounded-[5px] bg-white text-gray-400 text-base font-medium p-2  border border-solid border-gray-300">#{initialInvoiceNo}</div></div>
+                    <div><div className="w-[10rem] h-9 rounded-[5px] bg-white text-textGrey2 text-base font-medium p-2  border border-solid border-gray-300">#{initialInvoiceNo}</div></div>
 
                         <div><span className='text-gray-500 text-base font-medium '>Date</span></div>
                         <div className='relative'>
