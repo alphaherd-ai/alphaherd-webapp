@@ -75,7 +75,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
                 body: JSON.stringify({
                     partyName: formData.partyName?.value,
                     invoiceLink: headerdata.invoiceNo,
-                    receiptNo: formData.receiptNo,
+                    receiptNo: initialInvoiceNo,
                     date: formData.date,
                     amountPaid: parseInt(formData.amountPaid, 10),
                     mode: formData.mode?.value,
@@ -103,7 +103,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
         };
 
-        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: formData.mode?.value, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+        dispatch(addAmount(newTransaction))
 
         // setTransactionsData([{amountPaid:parseInt(formData.amountPaid, 10), date:formData.date, isAdvancePayment:isAdvancePayment}]);
 

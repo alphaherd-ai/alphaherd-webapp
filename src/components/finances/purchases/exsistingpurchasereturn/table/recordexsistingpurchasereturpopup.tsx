@@ -76,7 +76,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
                 body: JSON.stringify({
                     partyName: formData.partyName?.value,
                     invoiceLink: headerdata.invoiceNo,
-                    receiptNo: formData.receiptNo,
+                    receiptNo: initialInvoiceNo,
                     date: formData.date,
                     amountPaid: parseInt(formData.amountPaid, 10),
                     mode: formData.mode?.value,
