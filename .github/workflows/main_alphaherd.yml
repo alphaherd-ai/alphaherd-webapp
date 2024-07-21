@@ -39,6 +39,8 @@ jobs:
         file: ./Dockerfile
         build-args: |
           NEXT_PUBLIC_API_BASE_PATH=${{ secrets.NEXT_PUBLIC_API_BASE_PATH }}
+          NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=${{ secrets.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME }}
+          NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=${{ secrets.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET }}
           DATABASE_URL=${{ secrets.DATABASE_URL }}
           DIRECT_URL=${{ secrets.DIRECT_URL }}
    
