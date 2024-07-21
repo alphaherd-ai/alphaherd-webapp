@@ -80,9 +80,9 @@ const FinancesSalesTable = () => {
       };
       console.log(invoiceCount,estimateCount,returnCount)
   return (
-        <div className='flex flex-col w-full box-border mb-10  '>
+    <div className='flex flex-col w-full box-border border border-solid border-borderGrey rounded-lg mt-6 mb-6'>
               <FinancesSalesTableHeader invoiceCount={invoiceCount} estimateCount={estimateCount} returnCount={returnCount} sales={sales} />
-    <div className='flex justify-around  w-full  border bg-gray-100  h-12 py-4 border-b border-neutral-400 text-gray-500'>
+              <div className='flex  w-full  box-border bg-gray-100  h-12 justify-evenly items-center border-0 border-b border-solid border-borderGrey text-textGrey2'>
                 <div className=' flex text-gray-500 text-base font-medium   w-1/12 '>Date</div>
                 <div className=' flex text-gray-500 text-base font-medium   w-1/12 '>Time</div>
                 <div className=' flex text-gray-500 text-base font-medium   w-[4rem] '>Type</div>

@@ -33,6 +33,7 @@ const config: Config = {
       boxShadow: {
         'navBar': '0px 4px 6px 0px rgba(0, 0, 0, 0.20)',
         "left" : "-5px 0px 20px rgba(0, 0, 0, 0.20)",
+        "top" : "0 -5px 20px rgba(0, 0, 0, 0.20)",
       },
       padding: {
         '2p': '2vw',

@@ -17,15 +17,16 @@ import { Button } from "@nextui-org/react"
 import formatDateAndTime from "@/utils/formateDateTime"
 import { generatePdfForInvoice } from "@/utils/salesPdf"
 import { useRouter } from "next/navigation"
+import { create } from "domain"
 
 const NewsalesBottomBar = ({estimateData}:any) => {
-    const { headerData, tableData, totalAmountData } = useContext(DataContext);
+    const { headerData, tableData, totalAmountData, transactionsData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
     const url = useSearchParams();
     const id = url.get('id');
     const router = useRouter();
     const handleSubmit = async () => {
-        const allData = { headerData, tableData, totalAmountData };
+        const allData = { headerData, tableData, totalAmountData, transactionsData };
         console.log("this is all data", allData)
         let totalQty = 0;
         tableData.forEach(data => {
@@ -51,6 +52,9 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             totalCost: allData.totalAmountData.totalCost,
             overallDiscount: allData.totalAmountData.gst,
             totalQty: totalQty,
+            recordTransaction: {
+                create: allData.transactionsData
+            },
             status: "Pending",
             type: FinanceCreationType.Sales_Invoice,
             items: {

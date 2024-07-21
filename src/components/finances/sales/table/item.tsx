@@ -60,9 +60,9 @@ if(isLoading&&!data)return (<Loading/>)
       {sales?.map((sale:any)=>(
         
 
-    <div key={sale.id} className='flex justify-around items items-center  w-full  box-border h-16 py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  hover:bg-gray-200 hover:text-gray-500 transition'>
-    <div className='w-1/12 flex items-center     text-neutral-400 text-base font-medium'>{formatDateAndTime(sale.date).formattedDate}</div>
-    <div className='w-1/12 flex  items-center    text-neutral-400 text-base font-medium'>{formatDateAndTime(sale.date).formattedTime}</div>
+    <div key={sale.id} className='flex  w-full  box-border h-16 justify-evenly items-center bg-white   border-0 border-b border-solid border-borderGrey  hover:bg-gray-200 text-textGrey1  hover:text-textGrey2  transition'>
+    <div className='w-1/12 flex items-center    text-base font-medium'>{formatDateAndTime(sale.date).formattedDate}</div>
+    <div className='w-1/12 flex  items-center   text-base font-medium'>{formatDateAndTime(sale.date).formattedTime}</div>
     <Link
   href={{
     pathname: sale.type === FinanceCreationType.Sales_Estimate ? 'existingsalesestimate' : 
@@ -70,18 +70,18 @@ if(isLoading&&!data)return (<Loading/>)
               sale.type===FinanceCreationType.Sales_Return?'existingsalesreturn':"",
     query: { id: sale.id}
   }}
-><div className='flex w-[4rem]  items-center   text-neutral-400 text-base font-medium'>{sale.type==FinanceCreationType.Sales_Estimate?("Estimate"):(sale.type==FinanceCreationType.Sales_Invoice)?("Invoice"):("Return")}</div></Link> 
-    <div className='w-2/12 flex  items-center   text-neutral-400 px-4 text-base font-medium'>{sale.customer}</div>
-    <div className='w-1/12 flex  items-center   text-neutral-400 text-base font-medium'>{sale.invoiceNo}</div>
-    <div className='w-1/12 flex  items-center   text-neutral-400 text-base font-medium'>₹ {(sale.totalCost).toFixed(2)}</div>
-    <div className='w-1/12 flex  items-center  text-neutral-400 text-base font-medium'>{sale.totalQty}</div>
-    <div className='w-1/12 flex  items-center   text-neutral-400 text-base font-medium'>{formatDateAndTime(sale.dueDate).formattedDate}</div>
-    <div className='w-1/12 flex  items-center    text-base font-medium text-green-500'>
-      <span className='bg-green-100 px-1'> 
+><div className='flex w-[4rem]  items-center  text-base font-medium'>{sale.type==FinanceCreationType.Sales_Estimate?("Estimate"):(sale.type==FinanceCreationType.Sales_Invoice)?("Invoice"):("Return")}</div></Link> 
+    <div className='w-2/12 flex  items-center  px-4 text-base font-medium'>{sale.customer}</div>
+    <div className='w-1/12 flex  items-center  text-base font-medium'>{sale.invoiceNo}</div>
+    <div className='w-1/12 flex  items-center  text-base font-medium'>₹ {(sale.totalCost).toFixed(2)}</div>
+    <div className='w-1/12 flex  items-center text-base font-medium'>{sale.totalQty}</div>
+    <div className='w-1/12 flex  items-center  text-base font-medium'>{formatDateAndTime(sale.dueDate).formattedDate}</div>
+    <div className='w-1/12 flex  items-center  text-base font-medium'>
     <Tooltip content={sale.status} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
-
- <Button className='bg-transparent border-none'>{sale.status}</Button>
-</Tooltip></span>
+      <div className='bg-[#E7F5EE] rounded-md px-2 py-2' >
+          <span className="text-[#0F9D58]  text-sm font-medium ">{sale.status}</span>
+      </div>
+    </Tooltip>
 
  </div>
  <div className=' right-16'>

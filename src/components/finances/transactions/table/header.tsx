@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Sort from '../../../../assets/icons/finance/sort.svg';
 import Filter from '../../../../assets/icons/finance/filter.svg';
 import Chart from '../../../../assets/icons/finance/chart.svg';
@@ -15,6 +15,7 @@ import Popup from "../table/recordTransactionPopup"
 import DownloadPopup from "../table/downloadPopup"
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
+import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 
 
 
@@ -36,6 +37,22 @@ const FinancesTransactionsTableHeader = ({transactions}:any) => {
     const togglePopup1 = () => {
         setShowPopup1(!showPopup1);
     }
+
+    const [count, setCount] = useState(0);
+    const [initialInvoiceNo, setInitialInvoiceNo] = useState('');
+  
+    useEffect(() => {
+      if (showPopup) {
+        setCount((prevCount) => prevCount + 1);
+      }
+    }, [showPopup]);
+  
+    useEffect(() => {
+      if (showPopup) {
+        const newInvoiceNo = generateInvoiceNumber(count);
+        setInitialInvoiceNo(newInvoiceNo);
+      }
+    }, [count, showPopup]);
    
     const currentRoute = usePathname();
     const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
@@ -201,8 +218,8 @@ const FinancesTransactionsTableHeader = ({transactions}:any) => {
 
 </PopoverContent>
 </Popover> */}
-{showPopup && <Popup onClose={togglePopup} />}
-{showPopup1 && <DownloadPopup onClose={togglePopup1} transactions={transactions} type={type} />}
+{showPopup && <Popup onClose={togglePopup} initialInvoiceNo={initialInvoiceNo} />}
+{showPopup1 && <DownloadPopup onClose={togglePopup1} transactions={transactions} type={type}  />}
 
 
 {/* </div> */}

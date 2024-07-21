@@ -13,10 +13,10 @@ import autoTable from 'jspdf-autotable';
 import logo from "../../../../assets/icons/finance/pfpimg.png";
 import { useAppSelector } from '@/lib/hooks';
 
-const DownloadPopup = ({ onClose, sales, type }:any) => {
+const DownloadPopup = ({ onClose, products }:any) => {
 
   const appState = useAppSelector((state) => state.app)
-  const [data, setData] = useState(sales);
+  const [data, setData] = useState(products);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [selectedOption, setSelectedOption] = useState('Custom');
@@ -27,7 +27,7 @@ const DownloadPopup = ({ onClose, sales, type }:any) => {
   };
 
   const handleFilter = (start:any, end:any) => {
-    const filteredData = sales.filter((item:any) => {
+    const filteredData = products.filter((item:any) => {
       const date = new Date(item.date);
       return date >= start && date <= end;
     });
@@ -58,110 +58,74 @@ const DownloadPopup = ({ onClose, sales, type }:any) => {
   };
 
   const downloadPDF = () => {
-    convertImageToBase64(logo.src, (base64Image:any) => {
-    const doc = new jsPDF('landscape');
-    const tableColumn = ["Date", "Type", "Customer", "Serial No.", "Total Cost", "Total Qty", "Due Date", "Status"];
-    const tableRows:any = [];
+    convertImageToBase64(logo.src, (base64Image: any) => {
+      const doc = new jsPDF('landscape');
+      const tableColumn = ["Name", "Phone No.", "GSTIN", "Email"];
+      const tableRows: any = [];
 
-    const typeCounts:any = {};
+      data.forEach((item: any) => {
+        const productsData = [
+          item.distributorName,
+          item.contact,
+          item.gstinNo,
+          item.email,
+        ];
+        tableRows.push(productsData);
+      });
 
+      const startX = 4;
+      const startY = 4;
+      const logoWidth = 20;
+      const logoHeight = 20;
+      const orgInfoX = startX + logoWidth + 6;
+      let orgInfoY = startY + 6;
 
-    let totalAmount = 0;
-    let totalQuantity = 0;
-
-    data.forEach((item:any) => {
-        if (typeCounts[item.type]) {
-          typeCounts[item.type]++;
-        } else {
-          typeCounts[item.type] = 1;
-        }
-        if(item.totalCost){
-          totalAmount += item.totalCost;
-        }
-        if(item.totalQty){
-          totalQuantity += item.totalQty;
-        }
-    })  
-
-  
-
-    data.forEach((item:any) => {
-      const salesData = [
-        format(new Date(item.date), 'yyyy-MM-dd'),
-        item.type,
-        item.customer,
-        item.invoiceNo,
-        item.totalCost,
-        item.totalQty,
-        format(new Date(item?.sale?.dueDate), 'yyyy-MM-dd'),
-        item.status,
-      ];
-      tableRows.push(salesData);
-    });
-
-    doc.addImage(base64Image, 'PNG', 4, 4, 20, 20); 
+      doc.addImage(base64Image, 'PNG', startX, startY, logoWidth, logoHeight);
       doc.setFontSize(20);
-      doc.text(appState.currentOrg.orgName, 30, 10);
-      
+      doc.text(appState.currentOrg.orgName, orgInfoX, orgInfoY);
+
+      orgInfoY += 7;
       doc.setFontSize(12);
-      const text = `${appState.currentOrg.address} ${appState.currentOrg.state}-${appState.currentOrg.pincode}`;
+      const addressText = `${appState.currentOrg.address} ${appState.currentOrg.state}-${appState.currentOrg.pincode}`;
       const maxWidth = 85;
-      const lines = doc.splitTextToSize(text, maxWidth);
-      doc.text(lines, 30, 15);
+      const addressLines = doc.splitTextToSize(addressText, maxWidth);
+      doc.text(addressLines, orgInfoX, orgInfoY);
 
+      orgInfoY += addressLines.length * 5
+      doc.setFontSize(13);  
+      doc.text(`Gst No. :  ${appState.currentOrg.gstNo}`, 126, startY + 12);
+      doc.text(`PAN No. :  5465465465465465`, 126, startY + 18);
 
+      doc.text(`Email :  ${appState.currentOrg.orgEmail}`, 220, startY + 12);
+      doc.text(`Phone No. :  ${appState.currentOrg.phoneNo}`, 220, startY + 18);
+      doc.text(`Website :  XYZ.com`, 220, startY + 24);
 
-      doc.setFontSize(13);
-      doc.text(`Gst No. :  ${appState.currentOrg.gstNo}`, 126, 12);
-      doc.setFontSize(13);
-      doc.text(`PAN No. :  5465465465465465`, 126, 18);
-
-      doc.setFontSize(13);
-      doc.text(`Email :  ${appState.currentOrg.orgEmail}`, 220, 12);
-      doc.setFontSize(13);
-      doc.text(`Phone No. :  ${appState.currentOrg.phoneNo}`, 220, 18);
-      doc.setFontSize(13);
-      doc.text(`Website :  XYZ.com`, 220, 24);
-
-
+      const lineY = orgInfoY + 4;
       doc.setLineWidth(0.2);
-      doc.line(1, 26, 320, 26); 
+      doc.line(1, lineY, 320, lineY);
 
       doc.setFontSize(15);
-      doc.text("Sales Report", 8, 34);
+      doc.text("Database Report", startX, lineY + 8);
 
       doc.setFontSize(11);
-      doc.text(`Category : ${type}`, 60, 33);
-      doc.text(`Period : ${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'} - ${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}`, 60, 37);
+      doc.text(`Category : products`, 60, lineY + 8);
+      doc.text(`Period : ${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'} - ${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}`, 60, lineY + 13);
 
-  
-      doc.setFontSize(11);
-      let yPosition = 33;
-      Object.entries(typeCounts).forEach(([type, count]) => {
-        doc.text(`${type}: ${count}`, 140, yPosition);
-        yPosition += 5
-      })
-
-
-      doc.text(`Total Amount: ${totalAmount}`, 200, 33);
-      doc.text(`Total Quantity: ${totalQuantity}`, 200, 38);
-
+      doc.text(`Total products : ${data.length}`, 120, lineY + 8);
 
       doc.setLineWidth(0.5);
-      doc.line(1, 53, 320, 53); 
+      doc.line(1, lineY + 18, 320, lineY + 18);
 
+      autoTable(doc, {
+        startY: lineY + 20,
+        head: [tableColumn],
+        body: tableRows,
+      });
 
-    autoTable(doc, {
-      startY: 55,
-      head: [tableColumn],
-      body: tableRows,
+      const fileName = `products_report_${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'}_to_${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}.pdf`;
+      doc.save(fileName);
     });
-
-    const fileName = `sales_report_${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'}_to_${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}.pdf`;
-    doc.save(fileName);
-  })
-  }
-
+  };
 
   return (
     <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">

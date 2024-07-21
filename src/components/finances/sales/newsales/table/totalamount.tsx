@@ -14,6 +14,8 @@ import { DataContext } from './DataContext';
 import { Tax } from '@prisma/client';
 import useSWR from 'swr'
 import { useAppSelector } from '@/lib/hooks';
+import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
+import formatDateAndTime from '@/utils/formateDateTime';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 interface Transactions {
@@ -37,17 +39,14 @@ const NewsalesTotalAmout = () => {
     const { tableData, headerData } = useContext(DataContext);
     const [selectedDiscount, setDiscount] = useState(0);
     const appState = useAppSelector((state) => state.app)
-    // const {data:transactions,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/getAll?branchId=${appState.currentBranchId}`,fetcher, { revalidateOnFocus : true});
-
-
-    // transactions && console.log(transactions)
-
+    
     let totalAmount = 0;
     tableData.forEach(data => {
         totalAmount += (data.quantity * data.sellingPrice + data.quantity * data.gst*data.sellingPrice-(data.quantity*data.discount*data.sellingPrice||0))||0;
     });
 
     const { totalAmountData, setTotalAmountData } = useContext(DataContext);
+    const { transactionsData, setTransactionsData } = useContext(DataContext);
     const [grandAmt, setGrandAmt] = useState(totalAmount);
 
     const gstOptions = [
@@ -117,15 +116,40 @@ const NewsalesTotalAmout = () => {
         setShowPopup(!showPopup);
     }
    
+    console.log("transactionsData hererererere",transactionsData)
+    console.log("transactionsData hererererere 2",transactionsData?.map(item => item.isAdvancePayment))
+    console.log("transactionsData hererererere 2",transactionsData?.map(item => item.mode))
+    console.log("transactionsData hererererere 2",transactionsData?.map(item => item.moneyChange))
+
+    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+
+    const balanceDue = grandAmt-totalPaidAmount+totalAmountToPay;
+
+
+    const [count, setCount] = useState(0);
+    const [initialInvoiceNo, setInitialInvoiceNo] = useState('');
+  
+    useEffect(() => {
+      if (showPopup) {
+        setCount((prevCount) => prevCount + 1);
+      }
+    }, [showPopup]);
+  
+    useEffect(() => {
+      if (showPopup) {
+        const newInvoiceNo = generateInvoiceNumber(count);
+        setInitialInvoiceNo(newInvoiceNo);
+      }
+    }, [count, showPopup]);
 
 
     return (
         <>
-
-
             <div className="flex  pt-[20px] pb-[20px]">
                 <div className="w-1/2 mr-4 flex flex-col">
-
                     <div className="w-full  p-6 bg-white rounded-tl-md rounded-tr-md border border-solid  border-borderGrey justify-between items-center gap-6 flex">
                         <div className="text-gray-500 text-xl font-medium ">Payments</div>
                         
@@ -134,39 +158,46 @@ const NewsalesTotalAmout = () => {
                                         variant="solid"
                                         className="capitalize flex h-9 py-2.5 border-none text-base bg-black text-white rounded-lg cursor-pointer">
                                         <div className='flex'><Image src={Rupee} alt='Rupee' className='w-6 h-6 ' /></div>
-                                        Recorded Transaction
-                                    </Button>
-                                
+                                        Record Transaction
+                                    </Button>       
                     </div>
-
-                    <div className="w-full  px-6 py-4 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
+                    {transactionsData && transactionsData.map((transaction, index) => (
+                        transaction.isAdvancePayment &&
+                    (<div  key={index} className="w-full  px-6 py-4 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
                         <div className="text-gray-500 text-lg font-medium ">Advance Paid</div>
-                        <div className='flex items-center h-9 px-4 py-2.5 justify-between rounded-lg '>
-
+                        <div className='flex items-center h-9 px-4 py-2.5 justify-between rounded-lg '>   
                             <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
-                            ₹ 6546
-                                
-                            </div>
-
-
-
+                                ₹ {transaction.amountPaid}
+                            </div>       
                         </div>
-                    </div>
+                    </div>)
+                    ))
+                    }
 
-                    <div className="w-full  p-6 bg-white rounded-bl-md rounded-br-md  justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
-                        <div className="text-gray-500 text-xl font-medium ">Balance Due</div>
-                        <div className='flex items-center h-9 px-4 py-2.5 justify-between rounded-lg '>
-
+                    {transactionsData && transactionsData.map((transaction, index) => (
+                    !transaction.isAdvancePayment &&
+                    (<div  key={index} className="w-full  px-6 py-4 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
+                        <div className="text-gray-500 text-lg font-medium ">{formatDateAndTime(transaction.date).formattedDate}</div>
+                        <div className='flex items-center h-9 px-4 py-2.5 justify-between rounded-lg '>   
                             <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
-                            ₹ {(grandAmt).toFixed(2)}
-                                <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2">
-                                    You’re owed
-                                </span>
-                            </div>
-
-
-
+                                ₹ {transaction.amountPaid}
+                            </div>       
                         </div>
+                    </div>)
+                    ))
+                    }       
+
+                    <div className="w-full  px-6 bg-white rounded-bl-md rounded-br-md justify-between items-center flex shadow-top ">
+                        <div className="text-gray-500 text-base font-bold  w-1/3 py-4">Balance Due</div>
+                        <div className="text-gray-500 text-lg font-medium  w-1/3 py-4 flex  items-center"></div>
+                        <div className="text-gray-500 text-base font-bold  w-1/3 py-4 ">₹{balanceDue < 0 ? -1*(balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2) }
+                        {balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                            You owe
+                        </span> : balanceDue === 0 ? "" : <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                            You’re owed
+                        </span>}
+                        </div>
+                       
                     </div>
                 </div>
                 <div className="w-1/2 bg-white rounded-md">
@@ -226,7 +257,7 @@ const NewsalesTotalAmout = () => {
                                 </div>
                             </div>
                         </div>
-                        {showPopup && <Popup headerdata={headerData} onClose={togglePopup} />}
+                        {showPopup && <Popup headerdata={headerData} onClose={togglePopup} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} />}
           
         </>
 

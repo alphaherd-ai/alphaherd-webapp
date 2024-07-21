@@ -18,6 +18,7 @@ export const GET = async (req: NextRequest, { params }: { params: { id: number }
             productBatch: true,
           },
         },
+        recordTransaction: true,
       },
     });
 
@@ -42,15 +43,21 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: number }
     try {
       
       const body = await req.json();
+      const newTransaction = body.recordTransaction[0];
       const purchases = await prismaClient.purchases.update({
         where: { id: Number(params.id) },
-        data: body,
+        data: {
+          recordTransaction: {
+            create: newTransaction,
+          },
+        },
         include: {
           items: {
             include: {
               productBatch: true,
             },
           },
+          recordTransaction: true,
         },
       });
   

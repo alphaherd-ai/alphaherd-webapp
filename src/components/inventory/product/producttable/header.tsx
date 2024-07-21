@@ -1,5 +1,5 @@
 "use client";
-import React from 'react'
+import React, { useContext } from 'react'
 
 import Sort from '../../../../assets/icons/finance/sort.svg';
 import Filter from '../../../../assets/icons/finance/filter.svg';
@@ -20,10 +20,20 @@ import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/reac
 import FilterDropdwonCard from './FilterDropDownCard';
 import FilterDropdownProductsCard from './FilterDropDownProductsCard';
 
+import { DataContext } from './DataContext';
+import DownloadPopup from './downloadProductPopup';
 
 
 
 const InventoryProductTableHeader = () => {
+
+    const { allData } = useContext(DataContext);
+
+    const [showPopup1, setShowPopup1] = React.useState(false);
+    const togglePopup1 = () => {
+        setShowPopup1(!showPopup1);
+    }
+
     const currentRoute = usePathname();
     const [showPopup, setShowPopup] = React.useState(false);
     const [showPopup2, setShowPopup2] = React.useState(false);
@@ -56,7 +66,7 @@ const InventoryProductTableHeader = () => {
 
 
 
-            <div className='flex w-full bg-white h-20  p-4 px-6 mt-6 justify-between border border-solid border-gray-300 border-t-0.5 rounded-tl-lg rounded-tr-lg'>
+<div className='flex w-full bg-white h-20  p-4 px-6  justify-between border-0 border-b border-solid border-borderGrey rounded-tl-lg rounded-tr-lg'>
 
                 <div className='flex  text-gray-500 items-center w-5/12'>
                     <Link className='no-underline flex item-center' href='/inventory/products/timeline'>
@@ -74,10 +84,9 @@ const InventoryProductTableHeader = () => {
                     </Link>
                 </div>
                 <div className='flex items-center'>
-                    <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
-
-                        <div className='flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'><Image src={Download} alt='Download' className='w-4  h-4' /></div>
-                    </Link>
+                    <div onClick={togglePopup1} className='cursor-pointer mr-4 flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'>
+                        <Image src={Download} alt='Download' className='w-4  h-4' />
+                    </div>
                     <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
 
                         <div className='flex items-center justify-center w-7 h-7 border border-solid border-gray-300 border-0.5 rounded-md  p-1'><Image src={Chart} alt='Chart' className='w-4  h-4' /></div>
@@ -198,6 +207,9 @@ const InventoryProductTableHeader = () => {
             </div >
             {showPopup && <Popup onClose={togglePopup} />}
             {showPopup2 && <Popup2 onClose={togglePopup2} />}
+
+            {showPopup1 && <DownloadPopup onClose={togglePopup1}  products={allData} />}
+
         </>
     )
 }

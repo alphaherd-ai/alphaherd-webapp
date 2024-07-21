@@ -1,21 +1,87 @@
-import React from 'react'
-
+'use client'
+import React, { useEffect, useState } from 'react'
 import DatabasePatientBottombar from './bottombar'
 import DatabasePatientHeader from './header'
 import DatabasePatientTableItem from './items'
+import { useAppSelector } from '@/lib/hooks'
+import useSWR from 'swr';
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
+interface Clients {
+    id: number;
+    clientName: string;
+}
+
+
+interface Patients {
+  id: number;
+  patientName: string;
+  clientId: number;
+  species: string;
+  breed: string;
+  age: number;
+  gender: string;
+}
+function useClientFetch (id: number | null) {
+  const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${id}`,fetcher, { revalidateOnFocus : true});
+ return {
+  fetchedClients:data,
+  isClientLoading:isLoading,
+  isClientError:error
+ }
+}
+function usePatientFetch (id: number | null) {
+  const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/patients/getAll?branchId=${id}`,fetcher, { revalidateOnFocus :true});
+ return {
+  fetchedPatients:data,
+  isPatientLoading:isLoading,
+  isPatientError:error
+ }
+}
 const DatabasePatientTable = () => {
+
+  const [patients, setPatients] = useState<Patients[]>([]);
+    const [clients, setClients] = useState<{ [key: string]: string }>({});
+    const appState = useAppSelector((state) => state.app)
+    const {fetchedClients,isClientError,isClientLoading}= useClientFetch(appState.currentBranchId);
+    const {fetchedPatients,isPatientError,isPatientLoading}= usePatientFetch(appState.currentBranchId);
+    useEffect(() => {
+        const handleWindowFocus = () => {
+          console.log('Window focused');
+        };
+        window.addEventListener('focus', handleWindowFocus);
+        return () => window.removeEventListener('focus', handleWindowFocus);
+      }, []);
+    
+    
+    useEffect(() => {
+        if(!isPatientError&&!isPatientLoading&&fetchedPatients){
+            setPatients(fetchedPatients);
+        }
+
+        if(!isClientLoading&&fetchedClients&&!isClientError){
+            const clientNames = fetchedClients.reduce((acc: { [key: string]: string }, client: Clients) => {
+                acc[client.id] = client.clientName;
+                return acc;
+            }, {});
+            setClients(clientNames);
+        }
+                
+            
+    }, [fetchedClients,fetchedPatients,isClientError,isClientLoading,isPatientError,isPatientLoading]);
+
   return (
-        <div className='flex flex-col w-full box-border mb-10  cursor-default'>
-            <DatabasePatientHeader/>
-    <div className='flex  w-full justify-evenly  box-border bg-gray-100  h-12 py-4 border-b border-neutral-400 text-gray-500'>
-                <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>Patient</div>
+    <div className='flex flex-col w-full box-border border border-solid border-borderGrey rounded-lg mt-6 mb-6'>
+            <DatabasePatientHeader patients={patients} clients={clients} />
+            <div className='flex  w-full  box-border bg-gray-100  h-12 justify-evenly items-center border-0 border-b border-solid border-borderGrey text-textGrey2'>
+            <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>Patient</div>
                 <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>Client</div>
                 <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>Species and Breed</div>
                 <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>Age</div>
                 <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>Sex</div>
             
             </div>
-<DatabasePatientTableItem/>
+<DatabasePatientTableItem patients={patients} clients={clients} isPatientLoading={isPatientLoading}  />
 <DatabasePatientBottombar/>
      
         </div>
