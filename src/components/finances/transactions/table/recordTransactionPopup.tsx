@@ -94,8 +94,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
                 body: JSON.stringify({
                     partyName: formData.partyName?.value,
                     subject: formData.subject,
-                    invoiceLink:(selectedInvoiceLink) || "Direct",
-                    receiptNo: `#${initialInvoiceNo}`,
+                    invoiceLink: (selectedInvoiceLink) || "Direct",
+                    receiptNo: initialInvoiceNo,
                     date: formData.date,
                     amountPaid: parseInt(formData.amountPaid, 10),
                     mode: formData.mode?.value,
@@ -117,7 +117,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
 
         }
 
-        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: formData.mode?.value, invoiceLink: formData.invoiceLink?.value || "Direct", moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: formData.mode?.value, invoiceLink: selectedInvoiceLink || "Direct", moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
     };
 
     console.log(formData)
@@ -172,6 +172,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
     console.log(linkInvoice)
 
     const handleLinkInvoice = (selectedOptions: any) => {
+        console.log("hererlabel",selectedOptions.label)
         setSelectedInvoiceLink(selectedOptions.label);
     }
 
