@@ -13,7 +13,10 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
     const inventoryId = await fetchInventoryId(req);
     
     const products = await prismaClient.products.findMany({
-      where: { inventorySectionId: inventoryId }
+      where: { inventorySectionId: inventoryId },
+      cacheStrategy:{
+        ttl:60
+      }
     });
     return new Response(JSON.stringify(products), {
       status: 201,

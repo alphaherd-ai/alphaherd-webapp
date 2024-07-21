@@ -17,6 +17,8 @@ import Popup2 from '../../product/producttable/updateinventorypopup';
 
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
+import FilterDropdwonCard from './FilterDropDownCard';
+import FilterDropdownProductsCard from './FilterDropDownProductsCard';
 
 
 
@@ -116,35 +118,20 @@ const InventoryProductTableHeader = () => {
                     <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg '>
                         <div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>
 
-                        <Dropdown>
-                            <DropdownTrigger className='z-0'>
+                        <Popover>
+                            <PopoverTrigger>
                                 <Button
-                                    //   variant="bordered" 
-                                    // color="gray-400"
                                     variant="solid"
                                     className="capitalize border-none bg-transparent rounded-lg"
                                 >
-                                    {selectedCategoryValue}
+                                    Filter
                                 </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                aria-label="Single selection example"
-                                // color="gray-500"
-                                className=" text-base bg-gray-200 rounded-lg"
-                                variant="solid"
-                                disallowEmptySelection
-                                selectionMode="single"
-                                selectedKeys={selectedCategory}
-                                // onSelectionChange={setSelectedCategory}
-                            >
-                                <DropdownItem
-                                    className=" p-2" key="Category:text">Category: Text</DropdownItem>
-                                <DropdownItem
-                                    className=" p-2" key="Category:number">Category: Number</DropdownItem>
-                                <DropdownItem
-                                    className=" p-2" key="Category:date">Date</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
+                            </PopoverTrigger>
+                            <PopoverContent>
+                            {currentRoute.startsWith("/inventory/products/timeline")?
+                        ( <FilterDropdwonCard />):currentRoute.startsWith("/inventory/products/all")?(<FilterDropdownProductsCard/>):""}                                
+                            </PopoverContent>
+                        </Popover>
                     </div>
 
                     <div className='flex items-center '>

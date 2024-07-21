@@ -6,7 +6,7 @@ import calicon from "../../../../assets/icons/finance/calendar_today.svg";
 import useSWR from 'swr';
 import { useAppSelector } from '@/lib/hooks';
 import Loading from '@/app/loading';
-import { FinanceCreationType } from '@prisma/client';
+import { FinanceCreationType, Stock } from '@prisma/client';
 import {useRouter} from 'next/navigation';
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json());
@@ -17,6 +17,7 @@ const FilterDropdwonCard = () => {
   const [partyInfo, setPartyInfo] = useState<any[]>([]);
   const [selectedParties, setSelectedParties] = useState<any[]>([]);
   const [selectedInvoiceTypes, setSelectedInvoiceTypes] = useState<string[]>([]);
+  const [selectedMoneyTypes, setSelectedMoneyTypes] = useState<string[]>([]);
   const { data, isLoading, error } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -74,6 +75,16 @@ const FilterDropdwonCard = () => {
       }
     });
   };
+  const handleMoneyTypeSelect = (type: string) => {
+    setSelectedMoneyTypes((prevSelectedMoneyTypes) => {
+      if (prevSelectedMoneyTypes.includes(type)) {
+        return prevSelectedMoneyTypes.filter((moneyType) => moneyType !== type);
+      } else {
+        return [...prevSelectedMoneyTypes, type];
+      }
+    });
+  };
+
 
   const [activeTab, setActiveTab] = useState("party");
 
@@ -87,6 +98,7 @@ const FilterDropdwonCard = () => {
     if (startDate) queryParams.set('startDate', startDate.toISOString());
     if (endDate) queryParams.set('endDate', endDate.toISOString());
     selectedInvoiceTypes.forEach((type) => queryParams.append('selectedInvoiceTypes', type));
+    selectedMoneyTypes.forEach((type) => queryParams.append('selectedMoneyTypes', type));
     const queryString = queryParams.toString();
     router.push(`?${queryString}`);
     
@@ -136,12 +148,12 @@ const FilterDropdwonCard = () => {
         </div>
         <div
           className={`px-2 py-1 ${
-            activeTab === "status" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
+            activeTab === "type" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
           } rounded-tr-[5px] rounded-br-[5px] border justify-start items-center gap-1 flex`}
-          onClick={() => handleTabChange("status")}
+          onClick={() => handleTabChange("type")}
         >
-          <div className={`text-sm font-bold ${activeTab === "status" ? "text-white" : "text-neutral-400"}`}>
-            Status
+          <div className={`text-sm font-bold ${activeTab === "type" ? "text-white" : "text-neutral-400"}`}>
+            Type
           </div>
           <div className="w-4 h-4 p-2 bg-teal-400 rounded-[17px] flex-col justify-center items-center gap-2.5 inline-flex">
             <div className="text-white text-[10px] font-medium">1</div>
@@ -257,14 +269,7 @@ const FilterDropdwonCard = () => {
               />
               <div className="text-textGrey2 font-medium text-base">Sales Return</div>
             </div>
-            <div className="w-full flex gap-2 items-center">
-              <input
-                type="checkbox"
-                checked={selectedInvoiceTypes.includes(FinanceCreationType.Purchase_Order)}
-                onChange={() => handleInvoiceTypeSelect(FinanceCreationType.Purchase_Order)}
-              />
-              <div className="text-textGrey2 font-medium text-base">Purchase Order</div>
-            </div>
+            
             <div className="w-full flex gap-2 items-center">
               <input
                 type="checkbox"
@@ -297,10 +302,42 @@ const FilterDropdwonCard = () => {
               />
               <div className="text-textGrey2 font-medium text-base">Recurring Expense</div>
             </div>
+            <div className="w-full flex gap-2 items-center">
+              <input
+                type="checkbox"
+                checked={selectedInvoiceTypes.includes("Manual")}
+                onChange={() => handleInvoiceTypeSelect("Manual")}
+              />
+              <div className="text-textGrey2 font-medium text-base">Manual Update</div>
+            </div>
+            
           </div>
         </div>
       )}
-      {activeTab === "status" && <div className="w-full h-full"></div>}
+      {activeTab === "type" && <div className="w-full h-full">
+     
+          
+          <div className="w-full flex flex-col gap-4">
+            <div className="w-full flex gap-2 items-center">
+              <input
+                type="checkbox"
+                checked={selectedMoneyTypes.includes(Stock.StockIN)}
+                onChange={() => handleMoneyTypeSelect(Stock.StockIN)}
+              />
+              <div className="text-textGrey2 font-medium text-base">Stock In</div>
+            </div>
+            <div className="w-full flex gap-2 items-center">
+              <input
+                type="checkbox"
+                checked={selectedMoneyTypes.includes(Stock.StockOUT)}
+                onChange={() => handleMoneyTypeSelect(Stock.StockOUT)}
+              />
+              <div className="text-textGrey2 font-medium text-base">Stock Out</div>
+            </div>
+            
+          </div>
+        </div>
+ }
       <div className="w-full flex justify-between items-center">
         <div className="flex items-center gap-2">
           <input type="checkbox" name="" id="" />
