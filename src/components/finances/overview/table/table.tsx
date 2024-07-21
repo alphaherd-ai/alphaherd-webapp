@@ -39,7 +39,7 @@ const FinancesOverviewTable = () => {
                 <div className=' flex text-gray-500 text-base font-medium  w-[8rem] '>Due date</div>
                 <div className=' flex text-gray-500 text-base font-medium  w-[10rem]'>Status</div>
             </div>
-<FinacesOverviewTableItem timeline={timeline} isLoading={isLoading} />
+<FinacesOverviewTableItem />
    <FinacesOverviewTableBottombar/>
      
         </div>

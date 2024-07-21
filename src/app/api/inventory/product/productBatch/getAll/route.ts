@@ -14,6 +14,9 @@ export  const GET=async (req: NextRequest )=> {
             where:{inventorySectionId:inventoryId},
             include:{
                 product:true
+            },
+            cacheStrategy:{
+              ttl:60
             }
         });
         return new Response(JSON.stringify(productBatches), {

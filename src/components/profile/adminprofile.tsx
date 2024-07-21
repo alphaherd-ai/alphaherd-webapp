@@ -24,7 +24,7 @@ const AdminProfile = () => {
     const [value, setValue] = useState<string>(String(userState.name));
    const handleUpdatePic =async(imageInfo:any)=>{
     const response=await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/${userState.id}`, JSON.stringify(imageInfo.secure_url));
-    console.log(response)
+    console.log("hello this is response",response)
     if (response.data) {
         const updatedUserState = {
           ...userState,
@@ -104,7 +104,7 @@ const AdminProfile = () => {
                             widget.close();
                         }}
                 >  
-                            <Image className="absolute bg-gray-100  " src={editicon} alt="edit" />
+                            <Image className="absolute bg-gray-100 cursor-pointer  " src={editicon} alt="edit" />
                             </CldUploadButton>
                         </div>
                         <div className="w-full flex-col justify-start items-start gap-4 flex">

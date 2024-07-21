@@ -28,6 +28,9 @@ export const GET=async(req: NextRequest)=> {
             },
             orderBy:{
                 createdAt:'desc'
+            },
+            cacheStrategy:{
+               ttl:60
             }
         });
         
