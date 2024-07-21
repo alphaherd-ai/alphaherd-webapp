@@ -19,8 +19,8 @@ const InventoryProductStockTableHeader:React.FC<InventoryProductStockTableHeader
 
     return (
         <>
-            <div className='flex w-full bg-white h-20 p-4 px-6 mt-6 justify-between border border-solid border-gray-300 border-t-0.5 rounded-tl-lg rounded-tr-lg'>
-                <div className='flex text-gray-500 items-center w-6/12'>
+            <div className='flex w-full bg-white h-20  p-4 px-6  justify-between border-0 border-b border-solid border-borderGrey rounded-tl-lg rounded-tr-lg'>
+            <div className='flex text-gray-500 items-center w-6/12'>
                     <div
                         className={activeTab === 'Low Stock' ? "flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white rounded-tl-md rounded-bl-md" : "flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500 rounded-tl-md rounded-bl-md"}
                         onClick={() => handleTabClick('Low Stock')}

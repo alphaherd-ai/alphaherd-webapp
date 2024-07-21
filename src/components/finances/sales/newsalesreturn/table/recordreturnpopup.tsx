@@ -26,7 +26,7 @@ type PopupProps = {
 }
 
 
-const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, transactionsData, setTransactionsData, initialInvoiceNo}) => {
+const RecordReturnTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, transactionsData, setTransactionsData, initialInvoiceNo}) => {
 
     const dispatch = useDispatch();
 
@@ -64,8 +64,6 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
     const handleToggleRadioButton = (type: string) => {
         setTransactionType(type);
     };
-
-    console.log("headerdata", headerdata?.customer.label);
 
     const handleSaveClick = async () => {
         try {
@@ -107,9 +105,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
 
         dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: formData.mode?.value, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
 
-        // setTransactionsData([{amountPaid:parseInt(formData.amountPaid, 10), date:formData.date, isAdvancePayment:isAdvancePayment}]);
-
         setTransactionsData((prevTransactions:any) => [...prevTransactions, newTransaction]);
+
     };
 
     const handleChange = (field: string, value: any) => {
@@ -163,43 +160,43 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
             <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Party Name</span></div>
                     <div><div className="w-[440px] h-9 rounded-[5px] text-textGrey2 bg-white text-base font-medium p-2  outline-none border border-solid border-gray-300 ">{headerdata?.customer.label}</div></div>
-            
+               
             </div>
             
             
             <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Amount Paid</span></div>
-                    <div><input className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="number" name="amountPaid" onChange={(e) => handleChange("amountPaid", e.target.value)} /></div>
+                    <div><input className="w-[440px] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="number" name="amountPaid" onChange={(e) => handleChange("amountPaid", e.target.value)} /></div>
             </div>
             <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Receipt No.</span></div>
                     <div className='w-[440px] flex justify-between items-center'>
-                    <div><div className="w-[10rem] h-9 rounded-[5px] bg-white text-textGrey2 text-base font-medium p-2  border border-solid border-gray-300">#{initialInvoiceNo}</div></div>
+                    <div><div className="w-[10rem] h-9 rounded-[5px] bg-white text-gray-400 text-base font-medium p-2  border border-solid border-gray-300">#{initialInvoiceNo}</div></div>
 
                         <div><span className='text-gray-500 text-base font-medium '>Date</span></div>
                         <div className='relative'>
                         <DatePicker
-                            className="w-[10rem] "
-                            selected={startDate}
-                            onChange={handleDateChange}
-                            calendarClassName="react-datepicker-custom"
-                            customInput={
-                                <div className='relative'>
-                                    <input
-                                        className="w-[10rem] border border-solid border-borderGrey h-9 text-textGrey1 text-base font-medium px-2 rounded   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                        value={startDate.toLocaleDateString()}
-                                        readOnly
+                                        className="w-[10rem] "
+                                        selected={startDate}
+                                        onChange={handleDateChange}
+                                        calendarClassName="react-datepicker-custom"
+                                        customInput={
+                                            <div className='relative'>
+                                                <input
+                                                    className="w-[10rem] border border-solid border-borderGrey h-9 text-textGrey1 text-base font-medium px-2 rounded   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                                    value={startDate.toLocaleDateString()}
+                                                    readOnly
+                                                />
+                                                <Image
+                                                    src={calicon}
+                                                    alt="Calendar Icon"
+                                                    className="absolute right-0 top-2 cursor-pointer"
+                                                    width={50}
+                                                    height={20}
+                                                />
+                                            </div>
+                                        }
                                     />
-                                    <Image
-                                        src={calicon}
-                                        alt="Calendar Icon"
-                                        className="absolute right-0 top-2 cursor-pointer"
-                                        width={50}
-                                        height={20}
-                                    />
-                                </div>
-                            }
-                        />
                         </div>
                     </div>
 
@@ -237,4 +234,4 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
 
 }
 
-export default RecordTransactionPopup
+export default RecordReturnTransactionPopup

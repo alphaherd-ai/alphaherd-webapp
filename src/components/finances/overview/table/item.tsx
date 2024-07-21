@@ -11,26 +11,22 @@ import useSWR from 'swr'
 
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
-const FinacesOverviewTableItem = () => {
-  const appState = useAppSelector((state) => state.app);
-  const [timeline,setTimeline]=useState<any[]>([]);
-  const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
-  useEffect(()=>{
-    if(!isLoading&&!error&&data){
-      setTimeline(data);
-    }
-  },[data,isLoading,error])
+const FinacesOverviewTableItem = ({ timeline, isLoading }:any) => {
+
   if(isLoading)return (<Loading/>)
+
+
+
   return (
    <>
-   {timeline?.map((data,index)=>
+   {timeline?.map((data:any,index:any)  =>
         <div key={index+1} className='flex  w-full  box-border h-16 justify-evenly items-center bg-white border-0 border-b border-solid border-borderGrey hover:bg-gray-100 text-textGrey1 hover:text-textGrey2 transition '>    <div className='w-[8rem] flex items-center    text-neutral-400 text-base font-medium'>{formatDateAndTime(data.createdAt).formattedDate}</div>
                 <div className='w-[8rem] flex  items-center    text-base font-medium'>{formatDateAndTime(data.createdAt).formattedTime}</div>
                 <Link className='no-underline text-textGrey2' href={{
     pathname: data.type === FinanceCreationType.Sales_Estimate ? 'sales/existingsalesestimate' : 
               data.type === FinanceCreationType.Sales_Invoice ? 'sales/existingsales' : 
               data.type===FinanceCreationType.Sales_Return?'sales/existingsalesreturn':"",
-    query: { id: data.id}
+    query: { id: data.salesId}
   }}> <div className='w-[10rem] flex  items-center    text-base font-medium'>{data.type||data.expense?.type||"unknown"}</div></Link>
                 <div className='w-[12rem] flex  items-center    text-base font-medium'>{data.sale?.customer||data.purchases?.distributor||data.expenses?.party||"unknown"}</div>
                 <div className='w-[12rem] flex  items-center    text-base font-medium'>{data.sale?.invoiceNo||data.purchases?.invoiceNo||data.expenses?.invoiceNo}</div>

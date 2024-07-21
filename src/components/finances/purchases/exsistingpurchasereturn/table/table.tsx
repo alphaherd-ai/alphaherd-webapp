@@ -129,7 +129,7 @@ useEffect(() => {
                     </Button> */}
                     
                 </div>
-                <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px] overflow-auto max-h-[40rem] container">
+                <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px]">
                     <ExsistingPurcaseReturnHeader otherData={data}/>
                 <div>
                 <div className="w-full rounded-md border border-solid border-borderGrey">

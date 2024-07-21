@@ -13,10 +13,10 @@ import autoTable from 'jspdf-autotable';
 import logo from "../../../../assets/icons/finance/pfpimg.png";
 import { useAppSelector } from '@/lib/hooks';
 
-const DownloadPopup = ({ onClose, sales, type }:any) => {
+const DownloadPopup = ({ onClose, timeline }:any) => {
 
   const appState = useAppSelector((state) => state.app)
-  const [data, setData] = useState(sales);
+  const [data, setData] = useState(timeline);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [selectedOption, setSelectedOption] = useState('Custom');
@@ -27,8 +27,8 @@ const DownloadPopup = ({ onClose, sales, type }:any) => {
   };
 
   const handleFilter = (start:any, end:any) => {
-    const filteredData = sales.filter((item:any) => {
-      const date = new Date(item.date);
+    const filteredData = timeline.filter((item:any) => {
+      const date = new Date(item?.sale?.date);
       return date >= start && date <= end;
     });
     setData(filteredData);
@@ -60,7 +60,7 @@ const DownloadPopup = ({ onClose, sales, type }:any) => {
   const downloadPDF = () => {
     convertImageToBase64(logo.src, (base64Image:any) => {
     const doc = new jsPDF('landscape');
-    const tableColumn = ["Date", "Type", "Customer", "Serial No.", "Total Cost", "Total Qty", "Due Date", "Status"];
+    const tableColumn = ["Date", "Type", "Party", "Serial No.", "Total Cost", "Total Qty", "Due Date", "Status"];
     const tableRows:any = [];
 
     const typeCounts:any = {};
@@ -70,33 +70,33 @@ const DownloadPopup = ({ onClose, sales, type }:any) => {
     let totalQuantity = 0;
 
     data.forEach((item:any) => {
-        if (typeCounts[item.type]) {
-          typeCounts[item.type]++;
+        if (typeCounts[item?.sale?.type]) {
+          typeCounts[item?.sale?.type]++;
         } else {
-          typeCounts[item.type] = 1;
+          typeCounts[item?.sale?.type] = 1;
         }
-        if(item.totalCost){
-          totalAmount += item.totalCost;
+        if(item?.sale?.totalCost){
+          totalAmount += item?.sale?.totalCost;
         }
-        if(item.totalQty){
-          totalQuantity += item.totalQty;
+        if(item?.sale?.totalQty){
+          totalQuantity += item?.sale?.totalQty;
         }
     })  
 
   
 
     data.forEach((item:any) => {
-      const salesData = [
-        format(new Date(item.date), 'yyyy-MM-dd'),
-        item.type,
-        item.customer,
-        item.invoiceNo,
-        item.totalCost,
-        item.totalQty,
+      const timelineData = [
+        format(new Date(item?.sale?.date), 'yyyy-MM-dd'),
+        item?.sale?.type,
+        item?.sale?.customer,
+        item?.sale?.invoiceNo,
+        item?.sale?.totalCost,
+        item?.sale?.totalQty,
         format(new Date(item?.sale?.dueDate), 'yyyy-MM-dd'),
-        item.status,
+        item?.sale?.status,
       ];
-      tableRows.push(salesData);
+      tableRows.push(timelineData);
     });
 
     doc.addImage(base64Image, 'PNG', 4, 4, 20, 20); 
@@ -128,10 +128,10 @@ const DownloadPopup = ({ onClose, sales, type }:any) => {
       doc.line(1, 26, 320, 26); 
 
       doc.setFontSize(15);
-      doc.text("Sales Report", 8, 34);
+      doc.text("Timeline Report", 8, 34);
 
       doc.setFontSize(11);
-      doc.text(`Category : ${type}`, 60, 33);
+      doc.text(`Category : Finance All Type`, 60, 33);
       doc.text(`Period : ${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'} - ${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}`, 60, 37);
 
   
@@ -157,7 +157,7 @@ const DownloadPopup = ({ onClose, sales, type }:any) => {
       body: tableRows,
     });
 
-    const fileName = `sales_report_${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'}_to_${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}.pdf`;
+    const fileName = `timeline_report_${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'}_to_${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}.pdf`;
     doc.save(fileName);
   })
   }
