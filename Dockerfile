@@ -38,5 +38,3 @@ fi
 RUN yarn
 
 RUN npm run build
-
-
