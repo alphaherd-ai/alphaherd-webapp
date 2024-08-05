@@ -1,11 +1,13 @@
 'use client';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useMemo, useContext } from 'react';
 import Link from 'next/link';
 import { Tooltip, Button, Spinner } from "@nextui-org/react";
 import InventoryProductTableBottombar from './bottombar'; 
 import useSWR from 'swr';
 import 'ldrs/helix';
 import { useAppSelector } from '@/lib/hooks';
+import Loading from '@/app/loading';
+import { useSearchParams } from 'next/navigation';
 import { DataContext } from './DataContext';
 import Loading from '@/app/loading';
 //@ts-ignore
@@ -27,14 +29,26 @@ const ProductAllItem = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(10);
   const appState = useAppSelector((state) => state.app)
-
+  const urlSearchParams = useSearchParams();
+  const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
+  const selectedCategories = useMemo(() => urlSearchParams.getAll('selectedCategories'), [urlSearchParams]);
   const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${appState.currentBranchId}`,fetcher)
   useEffect(() => {
   if(!isLoading&&data&&!error){
-    setProducts(data?.reverse())
-    setAllData(products);
+    let filteredData=data;
+    if (selectedParties.length > 0) {
+      filteredData = filteredData.filter((item: any) =>
+        selectedParties.includes(item.providers[0])
+      );
+    }
+    if (selectedCategories.length > 0) {
+      filteredData = filteredData.filter((item: any) =>
+        selectedCategories.includes(item.category)
+      );
+    }
+    setProducts(filteredData?.reverse())
   }
-  }, [data,isLoading,error]);
+  }, [data,isLoading,error,selectedCategories,selectedParties]);
 
   
   console.log("xcxcxcxcxc")

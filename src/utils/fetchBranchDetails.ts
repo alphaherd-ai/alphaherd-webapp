@@ -36,7 +36,7 @@ export const fetchInventoryId = async (request:NextRequest) => {
         cacheStrategy:{ttl:60}
     });
     console.log(orgBranch)
-    const inventorySection = await prismaClient.inventorySection.findUnique({
+    let inventorySection = await prismaClient.inventorySection.findUnique({
         where: {
             branchId: Number(branchId),
         },
@@ -44,7 +44,7 @@ export const fetchInventoryId = async (request:NextRequest) => {
     });
     if (!inventorySection && orgBranch) {
         console.log("here");
-        await prismaClient.inventorySection.create({
+       inventorySection= await prismaClient.inventorySection.create({
             data: {
                 name: "Inventory-" + orgBranch.branchName,
                 quantity: 1,
@@ -75,14 +75,14 @@ export const fetchFinanceId = async (request:NextRequest) => {
     });
     console.log(orgBranch)
 
-    const financeSection = await prismaClient.financeSection.findUnique({
+    let financeSection = await prismaClient.financeSection.findUnique({
         where: {
             branchId: Number(branchId)
         },
         cacheStrategy: { ttl: 60 },
     });
     if (!financeSection && orgBranch) {
-        await prismaClient.financeSection.create({
+       financeSection= await prismaClient.financeSection.create({
             data: {
                 name: "Finance-" + orgBranch.branchName,
                 branchId: Number(branchId),
@@ -111,14 +111,14 @@ export const fetchDatabaseId = async (request:NextRequest) => {
         cacheStrategy:{ttl:60}
     });
     console.log(orgBranch)
-    const databaseSection = await prismaClient.databaseSection.findUnique({
+    let databaseSection = await prismaClient.databaseSection.findUnique({
         where: {
             branchId: Number(branchId)
         },
         cacheStrategy: { ttl: 60 },
     });
     if(!databaseSection&&orgBranch){
-        await prismaClient.databaseSection.create({
+       databaseSection= await prismaClient.databaseSection.create({
             data: {
                 name: "Database-" + orgBranch.branchName,
                 branchId: Number(branchId),

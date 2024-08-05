@@ -6,12 +6,54 @@ import { Spinner, spinner, Tooltip } from '@nextui-org/react';
 import { FinanceCreationType } from '@prisma/client';
 import { formatDate } from 'date-fns';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation';
+import React, { useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
 
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
-const FinacesOverviewTableItem = ({ timeline, isLoading }:any) => {
+const FinacesOverviewTableItem = () => {
+  const appState = useAppSelector((state) => state.app);
+  const [timeline, setTimeline] = useState<any[]>([]);
+  const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
+
+  const urlSearchParams = useSearchParams();
+  const startDate = useMemo(() => urlSearchParams.get('startDate') ? new Date(urlSearchParams.get('startDate')!) : null, [urlSearchParams]);
+  const endDate = useMemo(() => urlSearchParams.get('endDate') ? new Date(urlSearchParams.get('endDate')!) : null, [urlSearchParams]);
+  const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
+  const selectedInvoiceTypes = useMemo(() => urlSearchParams.getAll('selectedInvoiceTypes'), [urlSearchParams]);
+
+  useEffect(() => {
+    if (!isLoading && !error && data) {
+      let filteredData = data;
+
+      if (startDate || endDate) {
+        filteredData = filteredData.filter((item: any) => {
+          const itemDate = new Date(item.sale?.date||item.purchases?.date||item.expenses?.date);
+          console.log(itemDate)
+          if (startDate && itemDate < startDate) return false;
+          if (endDate && itemDate > endDate) return false;
+          return true;
+        });
+      }
+
+   
+      if (selectedParties.length > 0) {
+        filteredData = filteredData.filter((item: any) =>
+          selectedParties.includes(item.sale?.customer || item.expenses?.party || item.purchases?.distributor)
+        );
+      }
+
+      // Apply invoice type filter
+      if (selectedInvoiceTypes.length > 0) {
+        filteredData = filteredData.filter((item: any) =>
+          selectedInvoiceTypes.includes(item.type || item.expenses?.type)
+        );
+      }
+
+      setTimeline(filteredData);
+    }
+  }, [data, isLoading, error, startDate, endDate, selectedParties, selectedInvoiceTypes]);
 
   if(isLoading)return (<Loading/>)
 

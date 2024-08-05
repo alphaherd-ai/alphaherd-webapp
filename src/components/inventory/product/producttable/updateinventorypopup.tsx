@@ -48,7 +48,7 @@ interface ProductBatch {
     maxRetailPrice:number;
 }
 function useProductfetch (id: number | null) {
-    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`,fetcher,{revalidateOnFocus:true});
+    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`,fetcher);
    return {
     fetchedProducts:data,
     isLoading,
@@ -56,7 +56,7 @@ function useProductfetch (id: number | null) {
    }
 }
 function useProductBatchfetch(id:number|null){
-    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll/?branchId=${id}`,fetcher,{revalidateOnFocus:true});
+    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll/?branchId=${id}`,fetcher);
     return {
         fetchedBathces:data,
         isBatchLoading:isLoading,
@@ -284,6 +284,8 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
 
                 if(selectedOption===Stock.StockOUT){
                     const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${id}?branchId=${appState.currentBranchId}`, body);
+                    alert('Inventory updated successfully');
+                    onClose();
                     const notifData={
                         totalItems:body.quantity,
                         source:Notif_Source.Inventory_Timeline_Removed,
@@ -295,6 +297,8 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
                 }else if(selectedOption===Stock.StockIN){
                     console.log("saving new batch")
                     const response =await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/create?branchId=${appState.currentBranchId}`,body);
+                    alert('Inventory updated successfully');
+                    onClose();
                     const notifData={
                         totalItems:body.quantity,
                         source:Notif_Source.Inventory_Timeline_Added,
@@ -306,8 +310,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
                 }
                 
             }
-            alert('Inventory updated successfully');
-            onClose();
+            
         } catch (error) {
             console.error("Error updating inventory:", error);
             alert('Error updating inventory. Please try again.');
@@ -539,9 +542,9 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
                                     Update total cost as Expense
                                 </div>
                             </div>
-                            <div className="bg-black px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex">
+                            <div className="bg-black px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
                                 <Image src={checkicon} alt="add" />
-                                <button className="text-white text-base font-bold  bg-transparent border-0" onClick={handleUpdateInventory}>
+                                <button className="text-white text-base font-bold  bg-transparent border-0 cursor-pointer" onClick={handleUpdateInventory}>
                                     Update Inventory
                                 </button>
                             </div>

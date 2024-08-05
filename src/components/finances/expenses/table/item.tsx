@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import useSWR from 'swr'
 import { Spinner, Tooltip } from '@nextui-org/react'
@@ -7,19 +7,40 @@ import formatDateAndTime from '@/utils/formateDateTime'
 import { useAppSelector } from '@/lib/hooks';
 import Loading from '@/app/loading';
 import { FinanceCreationType } from '@prisma/client';
+import { useSearchParams } from 'next/navigation';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 const FinancesExpensesTableItem = ({onCountsChange}:any) => {
 const [expenses,setExpenses]=useState<any[]>([]);
 const appState = useAppSelector((state) => state.app);
-  const
-  {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
+const urlSearchParams = useSearchParams();
+  const startDate = useMemo(() => urlSearchParams.get('startDate') ? new Date(urlSearchParams.get('startDate')!) : null, [urlSearchParams]);
+  const endDate = useMemo(() => urlSearchParams.get('endDate') ? new Date(urlSearchParams.get('endDate')!) : null, [urlSearchParams]);
+  const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
+  const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
   useEffect(()=>{
   if(!isLoading&&data&&!error){
-  setExpenses(data.reverse());
+    let filteredData=data;
+    if (startDate || endDate) {
+      filteredData = filteredData.filter((item: any) => {
+        const itemDate = new Date(item.date);
+        console.log(itemDate)
+        if (startDate && itemDate < startDate) return false;
+        if (endDate && itemDate > endDate) return false;
+        return true;
+      });
+    }
+
+ 
+    if (selectedParties.length > 0) {
+      filteredData = filteredData.filter((item: any) =>
+        selectedParties.includes(item.party)
+      );
+    }
+  setExpenses(filteredData);
   }
-  },[data,error,isLoading]);
+  },[data,error,isLoading,setExpenses,startDate, endDate, selectedParties]);
   const [nonrecurringCount, setNonRecurringCount] = useState(0);
   const [recurringCount, setRecurringCount] = useState(0);
   useEffect(() => {

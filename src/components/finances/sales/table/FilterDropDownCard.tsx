@@ -7,7 +7,7 @@ import useSWR from 'swr';
 import { useAppSelector } from '@/lib/hooks';
 import Loading from '@/app/loading';
 import { FinanceCreationType } from '@prisma/client';
-import {useRouter} from 'next/navigation';
+import {useRouter, useSearchParams} from 'next/navigation';
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json());
 
@@ -16,7 +16,6 @@ const FilterDropdwonCard = () => {
   const appState = useAppSelector((state) => state.app);
   const [partyInfo, setPartyInfo] = useState<any[]>([]);
   const [selectedParties, setSelectedParties] = useState<any[]>([]);
-  const [selectedInvoiceTypes, setSelectedInvoiceTypes] = useState<string[]>([]);
   const { data, isLoading, error } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -65,30 +64,22 @@ const FilterDropdwonCard = () => {
     });
   };
 
-  const handleInvoiceTypeSelect = (type: string) => {
-    setSelectedInvoiceTypes((prevSelectedInvoiceTypes) => {
-      if (prevSelectedInvoiceTypes.includes(type)) {
-        return prevSelectedInvoiceTypes.filter((invoiceType) => invoiceType !== type);
-      } else {
-        return [...prevSelectedInvoiceTypes, type];
-      }
-    });
-  };
+  
 
   const [activeTab, setActiveTab] = useState("party");
 
   const handleTabChange = (tab: any) => {
     setActiveTab(tab);
   };
-
+  const url= useSearchParams();
+  const type=url.get('type')
   const applyFilters = () => {
     const queryParams = new URLSearchParams();
     selectedParties.forEach((id) => queryParams.append('selectedParties', id));
     if (startDate) queryParams.set('startDate', startDate.toISOString());
     if (endDate) queryParams.set('endDate', endDate.toISOString());
-    selectedInvoiceTypes.forEach((type) => queryParams.append('selectedInvoiceTypes', type));
     const queryString = queryParams.toString();
-    router.push(`?${queryString}`);
+    router.push(`?type=${type}&${queryString}`);
     
   };
 
@@ -121,19 +112,7 @@ const FilterDropdwonCard = () => {
             <div className="text-white text-[10px] font-medium">2</div>
           </div>
         </div>
-        <div
-          className={`px-2 py-1 ${
-            activeTab === "invoiceType" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
-          }  border-0 border-r border-solid border-borderGrey justify-start items-center gap-1 flex`}
-          onClick={() => handleTabChange("invoiceType")}
-        >
-          <div className={`text-sm font-bold ${activeTab === "invoiceType" ? "text-white" : "text-neutral-400"}`}>
-            Invoice Type
-          </div>
-          <div className="w-4 h-4 p-2 bg-teal-400 rounded-[17px] flex-col justify-center items-center gap-2.5 inline-flex">
-            <div className="text-white text-[10px] font-medium">2</div>
-          </div>
-        </div>
+        
         <div
           className={`px-2 py-1 ${
             activeTab === "status" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
@@ -230,76 +209,7 @@ const FilterDropdwonCard = () => {
           </div>
         </div>
       )}
-      {activeTab === "invoiceType" && (
-        <div className="w-full h-full flex flex-col gap-4">
-          <div className="w-full">
-            <input
-              className="w-full p-2 border border-solid border-borderGrey outline-none rounded-[5px] text-sm text-textGrey2 font-medium"
-              type="text"
-              name=""
-              id=""
-            />
-          </div>
-          <div className="w-full flex flex-col gap-4">
-            <div className="w-full flex gap-2 items-center">
-              <input
-                type="checkbox"
-                checked={selectedInvoiceTypes.includes(FinanceCreationType.Sales_Invoice)}
-                onChange={() => handleInvoiceTypeSelect(FinanceCreationType.Sales_Invoice)}
-              />
-              <div className="text-textGrey2 font-medium text-base">Sales Invoice</div>
-            </div>
-            <div className="w-full flex gap-2 items-center">
-              <input
-                type="checkbox"
-                checked={selectedInvoiceTypes.includes(FinanceCreationType.Sales_Return)}
-                onChange={() => handleInvoiceTypeSelect(FinanceCreationType.Sales_Return)}
-              />
-              <div className="text-textGrey2 font-medium text-base">Sales Return</div>
-            </div>
-            <div className="w-full flex gap-2 items-center">
-              <input
-                type="checkbox"
-                checked={selectedInvoiceTypes.includes(FinanceCreationType.Purchase_Order)}
-                onChange={() => handleInvoiceTypeSelect(FinanceCreationType.Purchase_Order)}
-              />
-              <div className="text-textGrey2 font-medium text-base">Purchase Order</div>
-            </div>
-            <div className="w-full flex gap-2 items-center">
-              <input
-                type="checkbox"
-                checked={selectedInvoiceTypes.includes(FinanceCreationType.Purchase_Invoice)}
-                onChange={() => handleInvoiceTypeSelect(FinanceCreationType.Purchase_Invoice)}
-              />
-              <div className="text-textGrey2 font-medium text-base">Purchase Invoice</div>
-            </div>
-            <div className="w-full flex gap-2 items-center">
-              <input
-                type="checkbox"
-                checked={selectedInvoiceTypes.includes(FinanceCreationType.Purchase_Return)}
-                onChange={() => handleInvoiceTypeSelect(FinanceCreationType.Purchase_Return)}
-              />
-              <div className="text-textGrey2 font-medium text-base">Purchase Return</div>
-            </div>
-            <div className="w-full flex gap-2 items-center">
-              <input
-                type="checkbox"
-                checked={selectedInvoiceTypes.includes(FinanceCreationType.Expense_NonRecurring)}
-                onChange={() => handleInvoiceTypeSelect(FinanceCreationType.Expense_NonRecurring)}
-              />
-              <div className="text-textGrey2 font-medium text-base">Non Recurring Expense</div>
-            </div>
-            <div className="w-full flex gap-2 items-center">
-              <input
-                type="checkbox"
-                checked={selectedInvoiceTypes.includes(FinanceCreationType.Expense_Recurring)}
-                onChange={() => handleInvoiceTypeSelect(FinanceCreationType.Expense_Recurring)}
-              />
-              <div className="text-textGrey2 font-medium text-base">Recurring Expense</div>
-            </div>
-          </div>
-        </div>
-      )}
+      
       {activeTab === "status" && <div className="w-full h-full"></div>}
       <div className="w-full flex justify-between items-center">
         <div className="flex items-center gap-2">

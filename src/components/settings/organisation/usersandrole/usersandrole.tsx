@@ -102,7 +102,10 @@ export default function UsersAndRolesSettings() {
                             {branchUsers?.map((user:any,index:number)=>(
                                 <div key={index+1} className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
                                 <div className='w-3/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                    <Image className="w-7 h-7 relative rounded-full border border-neutral-400" src={pfpcion} alt="profile" />
+                                    {user.user.imageUrl?(
+                                      <Image className="w-7 h-7 relative rounded-full border border-neutral-400" src={user.user.imageUrl} width={7} height={7} alt="profile" />
+                                    ):(<Image className="w-7 h-7 relative rounded-full border border-neutral-400" src={pfpcion} alt="profile" />)}
+                                    
                                     <div className="">{user.user.name}</div>
                                 </div>
                                 <div className='w-3/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-2'>
