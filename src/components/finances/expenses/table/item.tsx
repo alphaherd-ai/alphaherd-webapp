@@ -17,7 +17,7 @@ const appState = useAppSelector((state) => state.app);
   {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
   useEffect(()=>{
   if(!isLoading&&data&&!error){
-  setExpenses(data);
+  setExpenses(data.reverse());
   }
   },[data,error,isLoading]);
   const [nonrecurringCount, setNonRecurringCount] = useState(0);

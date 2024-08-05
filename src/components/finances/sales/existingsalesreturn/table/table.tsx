@@ -85,7 +85,13 @@ console.log(items)
         <>
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
             <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-between items-center gap-6 flex">
-                    <div className='bg-orange-200 rounded-md px-2' ><span className="text-orange-600  text-sm font-medium ">You’re owed: ₹</span><span className="text-orange-600 text-sm font-bold ">2,124</span></div>
+                    {/* <div className='bg-orange-200 rounded-md px-2' >
+                        <span className="text-orange-600  text-sm font-medium ">You’re owed: ₹</span>
+                        <span className="text-orange-600 text-sm font-bold ">2,124</span>
+                    </div> */}
+                    <div>
+                        
+                    </div>
                     {/* <div className='flex items-center h-9 py-2.5 bg-black justify-between rounded-lg '> */}
 
                         {/* <Popover placement="bottom-end" showArrow offset={10}>
@@ -93,7 +99,7 @@ console.log(items)
                                 <Button 
                                     variant="solid"
                                     className="capitalize flex h-9 py-2.5 border-none bg-black text-white rounded-lg cursor-pointer">
-                                    <div className='flex pr-2'><Image src={addicon} alt='addicon' className='w-4 h-4 ' /></div>Add Customer</Button>
+                                    <div className='flex pr-2'><Image src={addicon} alt='addicon' className='w-4 h-4 ' /></div>New Client</Button>
                             {/* </PopoverTrigger>
                             <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
 
@@ -131,7 +137,7 @@ console.log(items)
                     <div className="w-full rounded-md border border-solid border-borderGrey">
                     <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
                             <div className="text-gray-500 text-xl font-medium ">
-                                Items
+                            Items & Services
                             </div>
 
                         </div>
@@ -157,7 +163,7 @@ console.log(items)
                                     <div className='w-[10rem] flex-col items-center text-textGrey2 text-base font-medium '>
                                     <div className="text-textGrey2 text-base  font-medium  "> {item.batchNumber}</div>
 
-                                        <div className="text-neutral-400 text-[10px] font-medium ">{formatDateAndTime(item.expiry).formattedDate}</div>
+                                        <div className="text-neutral-400 text-[13px] font-medium ">{formatDateAndTime(item.expiry).formattedDate}</div>
                                     </div>
                                     <div className='w-[12rem] flex items-center text-textGrey2 text-base font-medium gap-[12px] '>
                                       

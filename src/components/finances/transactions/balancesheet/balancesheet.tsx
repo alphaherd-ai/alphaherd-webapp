@@ -80,7 +80,7 @@ const FinancesTransactionSheet = () => {
                                 July 17th - 23rd, 2023
                             </div>
                         </div>
-                            {['Day', 'Week', 'Month', 'Quarter', 'Year', 'All Time'].map((label, index) => (
+                            {['Today', 'Week', 'Month', 'Quarter', 'Year', 'All Time'].map((label, index) => (
                                 <button className="border-none bg-transparent" onClick={() => handleClick(index)} key={index}>
                                     <div className={`${index === clickedIndex ? "text-center text-teal-400 font-bold" : "text-neutral-400"} text-neutral-400 text-sm font-medium `}>
                                         {label}

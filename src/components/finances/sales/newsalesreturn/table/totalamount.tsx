@@ -139,7 +139,7 @@ const NewsalesReturnTotalAmout = () => {
                                         variant="solid"
                                         className="capitalize flex h-9 py-2.5 border-none text-base bg-black text-white rounded-lg cursor-pointer">
                                         <div className='flex'><Image src={Rupee} alt='Rupee' className='w-6 h-6 ' /></div>
-                                        Record Transaction
+                                        Record Payment
                                     </Button>
                                
                     </div>

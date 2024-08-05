@@ -36,6 +36,47 @@ interface Transactions {
 
 
 const NewsalesTotalAmout = () => {
+
+    const customStyles = {
+        control: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          border: state.isFocused ? '1px solid #35BEB1' : 'none',
+          '&:hover': {
+            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            },
+          boxShadow: state.isFocused ? 'none' : 'none',
+        }),
+        valueContainer: (provided: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        singleValue: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+        }),
+        menu: (provided: any) => ({
+          ...provided,
+          backgroundColor: 'white',
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        option: (provided: any, state: any) => ({
+          ...provided,
+          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+          color: state.isFocused ? 'white' : '#6B7E7D',
+          '&:hover': {
+            backgroundColor: '#35BEB1',
+            color: 'white',
+          },
+        }),
+      };
+      
+
     const { tableData, headerData } = useContext(DataContext);
     const [selectedDiscount, setDiscount] = useState(0);
     const appState = useAppSelector((state) => state.app)
@@ -158,7 +199,7 @@ const NewsalesTotalAmout = () => {
                                         variant="solid"
                                         className="capitalize flex h-9 py-2.5 border-none text-base bg-black text-white rounded-lg cursor-pointer">
                                         <div className='flex'><Image src={Rupee} alt='Rupee' className='w-6 h-6 ' /></div>
-                                        Record Transaction
+                                        Record Payment
                                     </Button>       
                     </div>
                     {transactionsData && transactionsData.map((transaction, index) => (
@@ -217,17 +258,12 @@ const NewsalesTotalAmout = () => {
                                         /></div>
                                         <div className=' flex text-gray-500 text-base font-medium pl-6'>
                                             <Select
-                                                className="text-neutral-400 text-base font-medium"
+                                                className="text-textGrey2 text-base font-medium"
                                                 defaultValue={gstOptions[1]}
                                                 isClearable={false}
                                                 isSearchable={true}
                                                 options={gstOptions}
-                                                styles={{
-                                                    control: (provided, state) => ({
-                                                        ...provided,
-                                                        border: state.isFocused ? 'none' : 'none',
-                                                    }),
-                                                }}
+                                                styles={customStyles}
                                                 onChange={handleSelectChange}
                                             />
                                         </div>
@@ -236,8 +272,8 @@ const NewsalesTotalAmout = () => {
                                 <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5   ">
                                         <div className="text-gray-500 text-base font-bold ">Shipping</div>
                                          <input
-                                            className="text-right text-textGrey1 text-base   border-none outline-none"
-                                            placeholder='₹______'
+                                            className="text-right text-textGrey2 text-base   border-none outline-none"
+                                            placeholder='0'
                                             value={shipping} 
                                             onChange={handleShippingChange} 
                                         />
@@ -245,15 +281,15 @@ const NewsalesTotalAmout = () => {
                                     <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5  ">
                                         <div className="text-gray-500 text-base font-bold ">Adjustment</div>
                                          <input
-                                            className="text-right text-textGrey1 text-base   border-none outline-none"
-                                            placeholder='₹______'
+                                            className="text-right text-textGrey2 text-base   border-none outline-none"
+                                            placeholder='0'
                                             value={adjustment} 
                                             onChange={handleAdjustmentChange} 
                                         />
                                     </div>
                                 <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 rounded-b-md justify-between items-center gap-2.5    ">
                                     <div className="text-textGreen text-base font-bold ">Grand total</div>
-                                    <div className="text-right text-textGreen text-base ">₹ {(grandAmt).toFixed(2)}</div>
+                                    <div className="text-right text-textGreen text-base font-bold">₹ {(grandAmt).toFixed(2)}</div>
                                 </div>
                             </div>
                         </div>

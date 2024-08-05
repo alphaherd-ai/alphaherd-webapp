@@ -90,7 +90,7 @@ const ProductAllItem = () => {
           </div>
           <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium flex-col'>
             <div className='text-gray-500 text-xs'>{inventory.productBatch?.batchNumber}</div>
-            <div className='text-neutral-400 text-[10px] font-medium'>{formatDateAndTime(inventory.productBatch?.expiry).formattedDate}</div>
+            <div className='text-neutral-400 text-[13px] font-medium'>{formatDateAndTime(inventory.productBatch?.expiry).formattedDate}</div>
           </div>
           <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{inventory.productBatch?.party}</div>
           <div className='w-1/12 flex  items-center justify-center text-gray-500 text-sm font-medium px-2 py-1.5 bg-gray-200 rounded-md'>{inventory.invoiceType}</div>

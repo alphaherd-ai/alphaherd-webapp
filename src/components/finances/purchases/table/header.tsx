@@ -74,7 +74,7 @@ const FinancesPurchasesTableHeader = ({invoiceCount,orderCount,returnCount, purc
 
                         <div className={currentRoute.startsWith("/finance/purchases/navinvoice")
                             ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white"
-                            : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}>Purchase Invoices</div>
+                            : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}>Purchase Invoices (GRN)s</div>
                     </Link>
                     <Link className='no-underline flex item-center' href={{pathname:'/finance/purchases/navreturn',query:{type:FinanceCreationType.Purchase_Return}}}>
 

@@ -338,7 +338,7 @@ useEffect(() => {
                                 <Button
                                     variant="solid"
                                     className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer">
-                                    <div className='flex pr-2'><Image src={addicon} alt='addicon' className='w-6 h-6 ' /></div>Add Customer </Button>
+                                    <div className='flex pr-2'><Image src={addicon} alt='addicon' className='w-6 h-6 ' /></div>New Client</Button>
                             {/* </PopoverTrigger>
                             <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
                                 <div className="flex flex-col ">
@@ -443,7 +443,7 @@ useEffect(() => {
                                     ) : (
                                         item.batchNumber
                                             )}
-                                    <div className="text-neutral-400 text-[10px] font-medium  px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
+                                    <div className="text-neutral-400 text-[13px] font-medium  px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
                                 </div>
                                 <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
                                     {item.sellingPrice}

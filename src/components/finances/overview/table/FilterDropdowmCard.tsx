@@ -214,7 +214,7 @@ const FilterDropdwonCard = () => {
             </div>
             <div className="w-full flex gap-2 items-center">
                 <input type="checkbox" name="" id="" />
-                <div className="text-textGrey2 font-medium text-base">Purchase Invoice</div>
+                <div className="text-textGrey2 font-medium text-base">Purchase Invoices (GRN)</div>
             </div>
             <div className="w-full flex gap-2 items-center">
                 <input type="checkbox" name="" id="" />

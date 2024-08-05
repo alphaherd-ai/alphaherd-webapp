@@ -20,6 +20,7 @@ import { Popover, PopoverTrigger, PopoverContent, Button, Spinner, select } from
 import NewsalesBottomBar from './bottombar';
 import NewsalesTotalAmout from './totalamount';
 import axios from 'axios';
+import ClientPopup from '@/components/database/client/newclientpopoup';
 import { DataContext } from './DataContext';
 import { useAppSelector } from "@/lib/hooks";
 import { useSearchParams } from 'next/navigation';
@@ -258,6 +259,7 @@ const handleQuantityIncClick = (itemId: any) => {
     );
 };
 
+
 const handleQuantityDecClick1 = (itemId: any) => {
     setItems((prevItems) =>
         prevItems.map((item) => {
@@ -285,7 +287,12 @@ const handleAddItem= useCallback(() => {
 }, [items]);
 
 
- 
+const handleInputChange = useCallback((index: number, value: any,field: string) => {   
+    const updatedItems = [...items];
+        updatedItems[index][field] =Number(value);
+    setItems(updatedItems);
+},[items]);
+
 
 const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
     console.log(selectedProduct);
@@ -357,6 +364,11 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                 }
             }, [id, items]);
 
+            const [showPopup, setShowPopup] = React.useState(false);
+
+            const togglePopup = () => {
+                setShowPopup(!showPopup);
+            }
             
 
 
@@ -364,26 +376,31 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
         <>
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
             <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-between items-center gap-6 flex">
-                    <div className='bg-[#E7F5EE] rounded-md px-2 py-2' >
+                    <div>
+
+                    </div>
+                    {/* <div className='bg-[#E7F5EE] rounded-md px-2 py-2' >
                         <span className="text-[#0F9D58]  text-sm font-medium ">You’re owed: </span>
                         <span className="text-[#0F9D58] text-sm font-bold "> ₹ 2,124</span>
-                    </div>
+                    </div> */}
                     
                     <Button
+                        onClick={togglePopup}
                         variant="solid"
                         className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer">
                         <div className='flex pr-2'>
                             <Image src={addicon} alt='addicon' className='w-6 h-6 ' />
                         </div>
-                        Add Customer
+                        New Client
                     </Button>
+                    {showPopup && <ClientPopup onClose={togglePopup} />}
                            
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px]">
                     <NewsalesHeader existingHeaderData={otherData}/>
                     <div className="w-full rounded-md border border-solid border-borderGrey">
                     <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
-                            <div className="text-gray-500 text-xl font-medium ">Items</div>
+                            <div className="text-gray-500 text-xl font-medium ">Items & Services</div>
                             <div className="flex items-center justify-center ">
                                 
                                 <Button onClick={handleAddItem} className='cursor-pointer text-white flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-md border-0 outline-none'>
@@ -458,7 +475,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                                     ) : (
                                         item.batchNumber
                                             )}
-                                        <div className="text-neutral-400 text-[10px] font-medium  px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
+                                        <div className="text-neutral-400 text-[13px] font-medium  px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
                                     </div>
                                     <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
                                         {item.sellingPrice}
@@ -479,15 +496,23 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                                     </div>
                                     
                                     <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
-                                        <div className='flex items-center text-neutral-400 text-base font-medium gap-[20px] bg-white'>
-                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
-                                            <Image className='rounded-md' src={Subtract} alt="-"></Image>
-                                        </button>
-                                        <div>{item.quantity}</div>
-                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
-                                            <Image className="rounded-md" src={Add} alt="+"></Image>
-                                        </button>
-                                        </div>
+                                    <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
+                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
+                                        <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
+                                    </button>
+                                    <input
+                                        type="number"
+                                        value={item.quantity}
+                                        onChange={(e) => handleInputChange(index, e.target.value,'quantity')}
+                                        className="w-[3rem] text-center border border-solid border-borderGrey h-8  rounded-md text-textGrey2 font-medium text-base"
+                                        name={`quantity-${index+1}`}
+                                    />
+                                    
+                                    {/* {item.quantity} */}
+                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
+                                        <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
+                                    </button>
+                                </div>
                                     </div>
                                     
                                     <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
@@ -503,7 +528,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                                         </button>
                     
                                         <button className="border-0" onClick={() => handleDeleteRow(index)}>
-                                            <Image src={delicon} alt="delete" ></Image>
+                                            <Image className='mix-blend-darken' src={delicon} alt="delete" ></Image>
                                         </button>
                                     </div>
                                 </div>
@@ -556,7 +581,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                                 <div className='flex text-gray-500 text-base font-medium w-[10rem]'>{(items.reduce((acc:any, item:any) => acc + item.quantity, 0))||0} Items</div>
                                 
                                 <div className='flex text-gray-500 text-base font-medium w-[10rem]'>
-                                    <Select
+                                    {/* <Select
                                         className="text-neutral-400 text-base font-medium"
                                         defaultValue={gstOptions[0]}
                                         isClearable={false}
@@ -568,7 +593,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                                                 border: state.isFocused ? 'none' : 'none',
                                             }),
                                         }}
-                                    />
+                                    /> */}
                                 </div>
                                 <div className='flex text-gray-500 text-base font-medium w-[10rem]'>{`₹ ${(items.reduce((acc:any, item:any) => acc + item.quantity * item.gst*item.sellingPrice , 0)||0).toFixed(2)}`}</div>
                                 <div className='flex text-gray-500 text-base font-medium w-1/12' >{`₹ ${(items.reduce((acc, item) => acc + item.quantity * item?.sellingPrice+item.quantity*item?.sellingPrice*item.gst-(item.quantity*item?.sellingPrice*item.discount||0), 0) .toFixed(2) ||0)}`}</div>

@@ -149,7 +149,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
             </div>
             <div className='w-full flex flex-col gap-1'>
 
-                <div className="text-gray-500 text-xl font-medium ">Record Transaction</div>
+                <div className="text-gray-500 text-xl font-medium ">Record Payment</div>
                 <div className="text-neutral-400 text-base font-medium ">Note down the details of the transaction</div>
             </div>
             <div className='w-full flex gap-36'>

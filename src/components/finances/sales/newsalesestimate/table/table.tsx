@@ -3,7 +3,7 @@
 import DownArrow from '../../../../../assets/icons/finance/downArrow.svg';
 import subicon from "../../../../../assets/icons/finance/1. Icons-26.svg";
 import delicon from '../../../../../assets/icons/finance/1. Icons-27.svg';
-
+import ClientPopup from '@/components/database/client/newclientpopoup';
 import Subtract from "../../../../../assets/icons/finance/Subtract.svg"
 import Add from "../../../../../assets/icons/finance/add (2).svg"
 import addicon from '../../../../../assets/icons/finance/add.svg';
@@ -266,6 +266,12 @@ const handleAddItem= useCallback(() => {
     setItems([...items, {}]);
 }, [items]);
 
+const handleInputChange = useCallback((index: number, value: any,field: string) => {   
+    const updatedItems = [...items];
+        updatedItems[index][field] =Number(value);
+    setItems(updatedItems);
+},[items]);
+
 const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
     console.log(selectedProduct);
     if (selectedProduct.value) {
@@ -338,16 +344,36 @@ useEffect(() => {
     setItems(items);
     setTableData(items)
 }, [items]);
+
+
+const [showPopup, setShowPopup] = React.useState(false);
+
+const togglePopup = () => {
+    setShowPopup(!showPopup);
+}
+
+
     return (
         <>
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
-            <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-start items-center gap-6 flex">
+            <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-between items-center gap-6 flex">
+                    <div></div>
+                    <Button
+                        onClick={togglePopup}
+                        variant="solid"
+                        className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer">
+                        <div className='flex pr-2'>
+                            <Image src={addicon} alt='addicon' className='w-6 h-6 ' />
+                        </div>
+                        New Client
+                    </Button>
+                    {showPopup && <ClientPopup onClose={togglePopup} />}
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px]">
                     <NewsaleEstimateHeader />
                     <div className="w-full rounded-md border border-solid border-borderGrey">
                         <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
-                            <div className="text-gray-500 text-xl font-medium ">Items</div>
+                            <div className="text-gray-500 text-xl font-medium ">Items & Services</div>
                             <div className="flex items-center justify-center ">
                                 <div className="flex items-center justify-center mr-2">
                                     <div className="pr-[4px]">
@@ -424,7 +450,7 @@ useEffect(() => {
                         }),
                     }}
                 />
-                <div className="text-neutral-400 text-[10px] font-medium px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
+                <div className="text-neutral-400 text-[13px] font-medium px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
             </div>
             <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-5'>
                 {item.sellingPrice}
@@ -444,40 +470,64 @@ useEffect(() => {
             </div>
             {!isChecked && (
                 <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
-                    <div className='flex items-center text-neutral-400 text-base font-medium gap-[20px] bg-white'>
-                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
-                            <Image className='rounded-md' src={Subtract} alt="-"></Image>
-                        </button>
-                        <div>{item.quantity}</div>
-                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
-                            <Image className="rounded-md" src={Add} alt="+"></Image>
-                        </button>
-                    </div>
+                    <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
+                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
+                                        <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
+                                    </button>
+                                    <input
+                                        type="number"
+                                        value={item.quantity}
+                                        onChange={(e) => handleInputChange(index, e.target.value,'quantity')}
+                                        className="w-[3rem] text-center border border-solid border-borderGrey h-8  rounded-md text-textGrey2 font-medium text-base"
+                                        name={`quantity-${index+1}`}
+                                    />
+                                    
+                                    {/* {item.quantity} */}
+                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
+                                        <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
+                                    </button>
+                                </div>
                 </div>
             )}
             {isChecked && (
                 <>
                     <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
-                        <div className='flex items-center text-neutral-400 text-base font-medium gap-[20px] bg-white'>
-                            <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick1(item.id)}>
-                                <Image className='rounded-md' src={Subtract} alt="-"></Image>
-                            </button>
-                            <div>{item.lowQty}</div>
-                            <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick1(item.id)}>
-                                <Image className="rounded-md" src={Add} alt="+"></Image>
-                            </button>
-                        </div>
+                    <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
+                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick1(item.id)}>
+                                        <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
+                                    </button>
+                                    <input
+                                        type="number"
+                                        value={item.lowQty}
+                                        onChange={(e) => handleInputChange(index, e.target.value,'quantity1')}
+                                        className="w-[3rem] text-center border border-solid border-borderGrey h-8  rounded-md text-textGrey2 font-medium text-base"
+                                        name={`quantity-${index+1}`}
+                                    />
+                                    
+                                    {/* {item.quantity} */}
+                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick1(item.id)}>
+                                        <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
+                                    </button>
+                                </div>
                     </div>
                     <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
-                        <div className='flex items-center text-neutral-400 text-base font-medium gap-[20px] bg-white'>
-                            <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick2(item.id)}>
-                                <Image className='rounded-md' src={Subtract} alt="-"></Image>
-                            </button>
-                            <div>{item.highQty}</div>
-                            <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick2(item.id)}>
-                                <Image className="rounded-md" src={Add} alt="+"></Image>
-                            </button>
-                        </div>
+                    <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
+                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick2(item.id)}>
+                                        <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
+                                    </button>
+                                    <input
+                                        type="number"
+                                        value={item.highQty}
+                                        onChange={(e) => handleInputChange(index, e.target.value,'quantity2')}
+                                        className="w-[3rem] text-center border border-solid border-borderGrey h-8  rounded-md text-textGrey2 font-medium text-base"
+                                        name={`quantity-${index+1}`}
+                                    />
+                                    
+                                    {/* {item.quantity} */}
+                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick2(item.id)}>
+                                        <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
+                                    </button>
+                                </div>
                     </div>
                 </>
             )}
@@ -498,7 +548,7 @@ useEffect(() => {
                                             }}
                                             onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
                                         />):( */}
-                                           { item.gst}
+                                           { item.gst * 100} %
                                         {/* )} */}
                                     </div>
             <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
@@ -589,7 +639,7 @@ useEffect(() => {
                                 <div className='flex text-gray-500 text-base font-medium w-[10rem]'>{(items.reduce((acc:any, item:any) => acc + item.quantity, 0))||0} Items</div>
                                 
                                 <div className='flex text-gray-500 text-base font-medium w-[10rem]'>
-                                    <Select
+                                    {/* <Select
                                         className="text-textGrey2 text-base font-medium"
                                         defaultValue={gstOptions[0]}
                                         isClearable={false}
@@ -601,7 +651,7 @@ useEffect(() => {
                                                 border: state.isFocused ? 'none' : 'none',
                                             }),
                                         }}
-                                    />
+                                    /> */}
                                 </div>
                                 <div className='flex text-gray-500 text-base font-medium w-[10rem]'>
                                         {isChecked ? (

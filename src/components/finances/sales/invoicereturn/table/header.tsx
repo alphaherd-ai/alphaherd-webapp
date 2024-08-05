@@ -76,7 +76,7 @@ const InvoiceReturnHeader = ({existingHeaderData}:any) => {
 <div className="flex justify-between w-full pb-[16px]">
                 <div className="px-6 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                     <div className="flex gap-[16px] items-center w-full">
-                        <div className="text-gray-500 text-base font-bold ">Customer:</div>
+                        <div className="text-gray-500 text-base font-bold ">Client:</div>
                         { id===null?(
                             isLoading?<div>Loading...</div>:(
                                 <Select
@@ -212,7 +212,7 @@ const InvoiceReturnHeader = ({existingHeaderData}:any) => {
                         {id===null?(<input
                             type="text"
                             className=" w-full h-9 text-borderGrey text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                            defaultValue={"..."}
+                            placeholder="..."
                             onChange={(e) => setHeaderData((prevData) => ({ ...prevData, notes: e.target.value }))}
                         />):(
                             existingHeaderData.notes

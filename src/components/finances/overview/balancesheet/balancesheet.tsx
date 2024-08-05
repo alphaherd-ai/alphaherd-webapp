@@ -27,7 +27,7 @@ const FinancesOverviewSheet = () => {
     };
 
     const tabs = [
-        { label: 'Day', clicked: clickedIndex === 0 },
+        { label: 'Today', clicked: clickedIndex === 0 },
         { label: 'Week', clicked: clickedIndex === 1 },
         { label: 'Month', clicked: clickedIndex === 2 },
         { label: 'Quarter', clicked: clickedIndex === 3 },

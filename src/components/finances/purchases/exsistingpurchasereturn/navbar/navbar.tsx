@@ -7,9 +7,11 @@ import Attachment from "../../../../../assets/icons/finance/attachment.svg"
 
 import Menu from '@/assets/icons/finance/Menu.svg';
 import { Button, Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react"
+import { useRouter } from "next/navigation"
 
 
 const ExsistingPurcaseReturnNavbar = () => {
+    const router=useRouter();
 
     return (
         <>
@@ -18,11 +20,10 @@ const ExsistingPurcaseReturnNavbar = () => {
                     <div className="flex">
 
                     <div className="w-11 h-11 bg-gray-100 rounded-[5px] border border-neutral-400 flex justify-center items-center mr-4">
-                    <Image className="w-6 h-6 relative rounded-[5px]  cursor-pointer" src={lefticon} alt="Back"></Image>
+                    <Image className="w-6 h-6 relative rounded-[5px]  cursor-pointer" src={lefticon} alt="Back"  onClick={()=>router.back()}></Image>
                     </div>
                     <div className="text-gray-500 text-[28px] flex items-center font-bold ">
-                    Purchase Return - PR - 01
-
+                    Purchase Returns
                     </div>
                     </div>
                     <div className="flex justify-start items-center">

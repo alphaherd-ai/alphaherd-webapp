@@ -7,6 +7,7 @@ import useSWR from 'swr';
 import 'ldrs/helix';
 import { useAppSelector } from '@/lib/hooks';
 import { DataContext } from './DataContext';
+import Loading from '@/app/loading';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
@@ -46,7 +47,7 @@ const ProductAllItem = () => {
   const paginate = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
-if(isLoading) return (<Spinner/>) 
+if(isLoading) return (<Loading />) 
   return (
     <div>
       {currentProducts?.map(product => (

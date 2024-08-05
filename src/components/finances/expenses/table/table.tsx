@@ -29,7 +29,7 @@ const FinancesExpensesTable = () => {
                 <div className=' flex text-gray-500 text-base font-medium  w-[6rem] '>Time</div>
                 <div className=' flex text-gray-500 text-base font-medium  w-[10rem] '>Type</div>
                 <div className=' flex text-gray-500 text-base font-medium  w-2/12 '>Party</div>
-                <div className=' flex text-gray-500 text-base font-medium  w-[9rem] '>Serial NO.</div>
+                <div className=' flex text-gray-500 text-base font-medium  w-[9rem] '>Ref. No.</div>
                 <div className=' flex text-gray-500 text-base font-medium  w-1/12 '>Total cost</div>
                 <div className=' flex text-gray-500 text-base font-medium  w-[9rem] '>Total qty</div>
                 <div className=' flex text-gray-500 text-base font-medium  w-[6rem] '>Due date</div>

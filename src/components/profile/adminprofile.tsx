@@ -56,6 +56,9 @@ const AdminProfile = () => {
     const handleTabClick = (tab:string) => {
         setActiveTab(tab);
     };
+
+    console.log("userState",userState)
+
     return (
 
         <>
