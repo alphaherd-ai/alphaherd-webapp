@@ -27,6 +27,17 @@ const NewsaleEstimateHeader = () => {
     const [customers,setCustomers]=useState<any[]>([]);
     const appState = useAppSelector((state) => state.app)
     const [dueDate, setDueDate] = useState(new Date());
+    const [isCustomerValid, setIsCustomerValid] = useState(true);
+
+    const handleCustomerChange = (selectedOption: any) => {
+        setHeaderData((prevData) => ({ ...prevData, customer: selectedOption }));
+        setIsCustomerValid(!!selectedOption);
+    };
+
+    useEffect(() => {
+        setIsCustomerValid(!!headerData.customer);
+    }, [headerData.customer]);
+
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
     useEffect(() => {
         if (!disableButton && inputRef.current) {
@@ -87,6 +98,7 @@ const NewsaleEstimateHeader = () => {
                                 />
                         )}
                     </div>
+                    {!isCustomerValid && <div className="text-red-500 text-sm mt-1">Customer is required</div>}
                 </div>
                 <div className="px-6 py-1 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full">
                     <div className="flex w-full">

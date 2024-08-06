@@ -58,7 +58,7 @@ function useServicefetch (id: string | null,branchId:number|null) {
             <div className="flex items-center justify-between">
                 <div className="flex gap-2">
                     <div className="w-11 h-11  rounded-[5px] border border-neutral-400 flex justify-center items-center ">
-                        <Link className='no-underline h-full  ml-4' href='/database/services'>
+                        <Link className='no-underline h-full  ml-4' href='inventory/services/timeline'>
                             <div className='flex items-center border border-solid border-gray-300 bg-white rounded-lg p-3  '>   <Image className="w-6 h-6 relative rounded-[5px]" src={lefticon} alt="Back"></Image></div>
                         </Link>
                     </div>

@@ -25,6 +25,10 @@ const NewsalesBottomBar = ({estimateData}:any) => {
     const id = url.get('id');
     const router = useRouter();
     const handleSubmit = async () => {
+        if (!headerData.customer) {
+            alert('Customer is required');
+            return;
+        }
         const allData = { headerData, tableData, totalAmountData };
         console.log("this is all data", allData)
         let totalQty = 0;
@@ -172,6 +176,9 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             console.error('Error while saving data:', error);
         } 
     };
+
+    const isDisabled = !headerData.customer || tableData.length === 0 || tableData.some(data => !data.itemName);
+
     return (
         <>
 
@@ -206,7 +213,10 @@ const NewsalesBottomBar = ({estimateData}:any) => {
                         <Image src={drafticon} alt="draft"></Image>
                         <div>Save as Draft</div>
                     </Button>
-                    <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer" onClick={handleSubmit}>
+                    <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${
+                        isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
+                    }`}
+                    onClick={handleSubmit} disabled={isDisabled}>
                         <Image src={checkicon} alt="check"></Image>
                         <div>Save</div>
                     </Button>

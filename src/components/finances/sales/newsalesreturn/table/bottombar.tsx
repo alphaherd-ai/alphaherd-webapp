@@ -24,6 +24,10 @@ const NewsalesReturnBottomBar = ({invoiceData}:any) => {
     const id=url.get('id');
     const router=useRouter();
     const handleSubmit = async () => {
+        if (!headerData.customer) {
+            alert('Customer is required');
+            return;
+        }
         const allData = {headerData, tableData, totalAmountData};
         console.log("this is all data",allData)
         let totalQty=0;
@@ -160,8 +164,11 @@ const NewsalesReturnBottomBar = ({invoiceData}:any) => {
         } 
     };
 
+    const isDisabled = tableData.length === 0 || tableData.some(data => !data.itemName);
+
     return (
         <>
+        
 
 
 <div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
@@ -178,7 +185,15 @@ const NewsalesReturnBottomBar = ({invoiceData}:any) => {
                     </Button>
                     <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={shareicon} alt="share"></Image>
-                        <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all">Share</div>
+                        <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all" onClick={sendSMS}>Share via SMS</div>
+                    </Button>
+                    <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
+                        <Image src={shareicon} alt="share"></Image>
+                        <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all" onClick={sendWhatsapp}>Share via Whatsapp</div>
+                    </Button>
+                    <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
+                        <Image src={shareicon} alt="share"></Image>
+                        <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all" onClick={sendEmail}>Share via Email</div>
                     </Button>
                             </div>
                             <div className="flex justify-between items-center gap-4 pr-4">
@@ -186,7 +201,10 @@ const NewsalesReturnBottomBar = ({invoiceData}:any) => {
                                     <Image src={drafticon} alt="draft"></Image>
                                     <div>Save as Draft</div>
                                 </Button>
-                                <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer" onClick={handleSubmit}>
+                                <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${
+                                    isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
+                                }`}
+                                onClick={handleSubmit} disabled={isDisabled}>
                                     <Image src={checkicon} alt="check"></Image>
                                     <div>Save</div>
                                 </Button>

@@ -18,29 +18,20 @@ type PopupProps = {
     onClose: () => void;
 }
 
-const formSchema = z.object({
-    name: z.string().trim().min(1), 
-    email: z.string().email(), 
-    contact: z.string().min(10).max(13), 
-    address: z.string().trim().min(1),
-    city: z.string().optional(),
-    pinCode: z.string().min(6).max(6), 
+const clientSchema = z.object({
+  clientName: z.string().min(1,'Provide Client Name'),
+  email: z.string().email('Invalid email address').optional(),
+  contact: z.string().length(10,'Invalid Phone number format'),
+  address: z.string().min(1,'Provide Address').optional(),
+  city: z.string().min(1,"Select City to continue").optional(),
+  pinCode: z.string().length(5,'Pin code must be exactly 5 digits').optional(),
 });
 
-type FormData = {
-    name: string;
-    email: string;
-    contact: string;
-    address: string;
-    city: string[];
-    pincode: string;
-};
 
-type FormErrors = Partial<Record<keyof FormData, string>>;
 
 const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
     var initialData = {
-        name: '',
+        clientName: '',
         email : '',
         contact: '',
         address: '',
@@ -48,7 +39,6 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
         pincode: '',
     }
     const [formData, setFormData] = useState<any>(initialData);
-    const [formErrors, setFormErrors] = useState<FormErrors>({});
     const [showPopup, setShowPopup] = React.useState(false);
     const appState = useAppSelector((state) => state.app)
     const [isSaveDisabled, setIsSaveDisabled] = useState(true)
@@ -56,72 +46,80 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
         setShowPopup(!showPopup);
     }
 
-    //const [data,setData] = useState(initialData);
-    //const [validationErrors, setValidationErrors] = useState(formData);
+    const [validationErrors, setValidationErrors] = useState(formData);
+    console.log(validationErrors);
 
     const handleSaveClick = async () => {
-        console.log("form data")
-        try {   
-            formSchema.parse(formData)
-            console.log('Form data is valid:', formData);
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/create?branchId=${appState.currentBranchId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    clientName: formData.name,
-                    email: formData.email,
-                    contact: formData.contact,
-                    address: formData.address,
-                    city: formData.city?formData.city[0].value:undefined,
-                    pinCode: formData.pinCode,
-                   
-                }),
-            });
-            if (response.ok) {
+        console.log("Save button");
+        try {
+            
+          clientSchema.parse(formData);
+          console.log("Form data is valid:", formData);
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/create?branchId=${appState.currentBranchId}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              clientName: formData.clientName,
+              email: formData.email,
+              contact: formData.contact,
+              address: formData.address,
+              city: formData.city ? formData.city[0].value : undefined,
+              pinCode: formData.pinCode,
+            }),
+          });
+          if (response.ok) {
                 console.log('Data saved successfully');
                 onClose();
                 window.dispatchEvent(new FocusEvent('focus'));
             } else {
-                console.error('Failed to save data:', response.statusText);
+                console.error('Failed to save data', response.statusText);
             }
-        } catch (error) {
-            console.error('Error while saving data:', error);
-        }
-    };   
-    
-
-    const handleChange = (field: string, value: any) => {
-        try {
-            // Dynamically pick the schema for the specific field
-            //const fieldSchema = formSchema.shape[field] as ZodType<any, any>;
-            // Parse the field value against the picked schema
-            //fieldSchema.parse({ [field]: value });
-
-            // Clear the error for this field if validation succeeds
-            setFormErrors((prevErrors) => ({
-                ...prevErrors,
-                [field]: '',
-            }));
-
-            // Update formData with the new value
-            setFormData((prevFormData: any) => ({
-                ...prevFormData,
-                [field]: value,
-            }));
-        } catch (error) {
+        } 
+        catch (error) {
             if (error instanceof ZodError) {
-                // If validation fails, set the specific error message for the field
-                const fieldError = error.errors[0]?.message || 'Validation error';
-                setFormErrors((prevErrors) => ({
-                    ...prevErrors,
-                    [field]: fieldError,
-                }));
+              console.error('Validation Error:', error.errors);
+              error.errors.forEach(err => {
+                console.error(`Error in parameter '${err.path.join('.')}' - ${err.message}`);
+              });
+            } else {
+              console.error('Unexpected error while saving data', error);
             }
         }
     };
-
+      
+    
+    const handleChange = (field: string, value: any) => {
+        setFormData((prevData: any) => ({
+          ...prevData,
+          [field]: value,
+        }));
+        setIsSaveDisabled(false);
+        try {
+          clientSchema.parse({ ...formData, [field]: value });
+          setValidationErrors((prevErrors: any) => ({
+            ...prevErrors,
+            [field]: '',
+          }));
+        } catch (err: any) {
+          if (err instanceof z.ZodError) {
+            let fieldErrors = err.flatten().fieldErrors;
+            if (field in fieldErrors) {
+              setValidationErrors((prevErrors: any) => ({
+                ...prevErrors,
+                [field]: fieldErrors[field]?.[0] ?? '',
+              }));
+            } else {
+              setValidationErrors((prevErrors: any) => ({
+                ...prevErrors,
+                [field]: '',
+              }));
+            }
+          }
+        }
+    };
+        
 
     console.log(formData)
 
@@ -152,30 +150,32 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                 <div className="flex items-center">
                     <div className="text-gray-500 text-base font-medium  w-[8rem]">Client Name<span className="text-[red]">*</span></div>
                     <div>
-                        <input className="w-[447px] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="name" onChange={(e) => handleChange("name", e.target.value)} />
-                        {formErrors.name && <div style={{ color: 'red' }}>{formErrors.name}</div>}
-                    </div>
+                        <input className="w-[447px] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="clientName" onChange={(e) => handleChange("clientName", e.target.value)} required/>
+                        {validationErrors.clientName && (
+                            <div className="text-[red] error">{validationErrors.clientName}</div>
+                        )}
+                        </div>
                 </div>
               
                 <div className="flex items-center gap-[88px]">
                     <div className="text-gray-500 text-base font-medium ">Email</div>
                     <div>
-                        <input className="w-[448px] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="email" onChange={(e) => handleChange("email", e.target.value)} required/>
-                    </div>
+                        <input className="w-[448px] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="email" onChange={(e) => handleChange("email", e.target.value)} />
+                        {validationErrors.email && (
+                            <div className="text-[red] error">{validationErrors.email}</div>
+                        )}
+                        </div>
+                    
                 </div>
                 <div className="flex items-center gap-[33px] w-full">
                     <div className="text-gray-500 text-base font-medium  w-2/12">Phone No.<span className="text-[red]">*</span></div>
                     <div className="flex w-10/12">
-                    
-                    
-                       
-                    
                     <div className="flex-1 ml-1">
-                        <input className="h-9 w-full text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="contact" onChange={(e) => handleChange("contact", e.target.value)} />
+                        <input className="h-9 w-full text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="contact" onChange={(e) => handleChange("contact", e.target.value)} required/>
+                        {validationErrors.contact && (
+                            <div className="text-[red] error">{validationErrors.contact}</div>
+                        )}
                     </div>
-                    
-
-                    
                     </div>
                 </div>
                 <div className="flex items-center gap-[33px] w-full">
@@ -184,6 +184,9 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                   
                     <div className="flex-1 ml-1">
                         <input className="w-full h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" placeholder="Enter address or Google Maps link" type="text" name="address" onChange={(e) => handleChange("address", e.target.value)} />
+                        {validationErrors.address && (
+                            <div className="text-[red] error">{validationErrors.address}</div>
+                        )}
                     </div>
                     {/* <div className=" ml-1  w-9 h-9 ">
                     <button  className="w-full h-full rounded-[5px] justify-center text-2xl items-center gap-2 flex border-borderText border border-solid bg-white outline-none">
@@ -207,7 +210,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                             options={City}
                             isMulti={false}
                             name="city"
-                            onChange={(value) => handleChange("city", value)}
+                            onChange={(value) => handleChange("city", value?.label)}
                         />
          
               
@@ -246,11 +249,11 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                                 <Image src={Check} alt="Check" />
                             </div>
                         </div>
-                            <div className="text-gray-100 text-base font-bold ">Save</div>
+                        <div className="text-gray-100 text-base font-bold ">Save</div>
                         </div>) : (<button className="px-4 py-2.5 bg-gray-200 rounded-[5px]  justify-start items-center gap-2 flex border-0 outline-none cursor-not-allowed">
                         <div className="text-textGrey1 text-base font-bold ">Save</div>
                         <Image src={arrowicon} alt="arrow"></Image>
-                    </button>)} 
+                    </button>)}
                 </div>
             </div>
         </div>

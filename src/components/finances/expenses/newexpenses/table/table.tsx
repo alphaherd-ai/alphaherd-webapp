@@ -1,3 +1,4 @@
+
 'use client';
 import DownArrow from '../../../../../assets/icons/finance/downArrow.svg';
 import subicon from "../../../../../assets/icons/finance/1. Icons-26.svg"
@@ -52,22 +53,22 @@ const NewExpensesTable = () => {
     }
 
     useEffect(()=>{
-            if (!isExpenseDataLoading && expenseData && !isExpenseDataError) {
-                const {items,...otherData}=expenseData;
-                // eslint-disable-next-line react-hooks/rules-of-hooks
-                setOtherData(otherData)
-              const shallowDataCopy = [...items]; 
-              const itemData = shallowDataCopy.map((item: any) => ({
-                id:item.id,
-                itemName:item.name,
-                sellingPrice:item.sellingPrice,
-                gst:item.taxAmount,
-                category:item.category
-              }));
-              setItems(itemData);
-              
-            }
-          }, [expenseData]); 
+        if (!isExpenseDataLoading && expenseData && !isExpenseDataError) {
+            const {items,...otherData}=expenseData;
+            // eslint-disable-next-line react-hooks/rules-of-hooks
+            setOtherData(otherData)
+            const shallowDataCopy = [...items]; 
+            const itemData = shallowDataCopy.map((item: any) => ({
+            id:item.id,
+            itemName:item.name,
+            sellingPrice:item.sellingPrice,
+            gst:item.taxAmount,
+            category:item.category
+            }));
+            setItems(itemData);
+            
+        }
+    }, [expenseData]); 
 
 
 

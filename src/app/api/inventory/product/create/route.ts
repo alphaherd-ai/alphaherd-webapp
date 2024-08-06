@@ -12,14 +12,14 @@ export const POST=async(req: NextRequest,res:Response)=> {
      
       const inventoryId = await fetchInventoryId(req);
       const body = await req.json();
-      const validatedData = productSchema.safeParse(body);
+      // const validatedData = productSchema.safeParse(body);
 
-      if (!validatedData.success) {
-        return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
-          status: 422,
-        });
-      }
-        
+      // if (!validatedData.success) {
+      //   return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
+      //     status: 422,
+      //   });
+      // }
+        console.log("Body of the API",body);
         body.totalQuantity=0;
         const product = await prismaClient.products.create({
             data: {
@@ -32,6 +32,8 @@ export const POST=async(req: NextRequest,res:Response)=> {
             },
             
         });
+        
+        console.log("API is working",product);
         
         return new Response(JSON.stringify(product), {
           status: 201,

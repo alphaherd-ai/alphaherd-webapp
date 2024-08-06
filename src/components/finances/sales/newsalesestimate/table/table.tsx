@@ -77,6 +77,19 @@ const NewsaleEstimateTable = () => {
     const appState = useAppSelector((state) => state.app)
     const { tableData: items, setTableData: setItems } = useContext(DataContext);   
     const [discountStates, setDiscountStates] = useState(new Array(items.length).fill(false));
+
+    const [isItemValid, setIsItemValid] = useState(true);
+    const [newItem, setNewItem] = useState<any>({}); // Define your item structure
+
+    const handleAddItem = useCallback(() => {
+        if (tableData.some(item => !item.itemName)) {
+        setIsItemValid(false);
+        return;
+        }
+        setTableData([...tableData, {}]);
+        setIsItemValid(true);
+    }, [tableData, setTableData]);
+
     const taxOptions = [
         { value: 'Tax excl.', label: 'Tax excl.' },
         { value: 'Tax incl.', label: 'Tax incl.' }
@@ -262,9 +275,9 @@ const handleQuantityIncClick2 = (itemId: any) => {
         })
     );
 };
-const handleAddItem= useCallback(() => {
-    setItems([...items, {}]);
-}, [items]);
+// const handleAddItem= useCallback(() => {
+//     setItems([...items, {}]);
+// }, [items]);
 
 const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
     console.log(selectedProduct);
@@ -363,6 +376,7 @@ useEffect(() => {
                                         Add Item
                                     
                                 </Button>
+        
                             </div>
                         </div>
                         <div>

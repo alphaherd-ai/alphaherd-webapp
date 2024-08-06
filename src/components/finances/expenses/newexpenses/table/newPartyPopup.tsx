@@ -73,10 +73,10 @@ const NewPartyPopup: React.FC<PopupProps> = ({ onClose }:any) => {
             </div>
 
             <div className='w-full flex justify-end'>
-                    <Button className="px-5 py-2.5 bg-navBar rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer">
-                        <span className='text-white text-base font-medium'>Continue</span>
-                    </Button>
-                </div>
+                <Button className="px-5 py-2.5 bg-navBar rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer">
+                    <span className='text-white text-base font-medium'>Continue</span>
+                </Button>
+            </div>
             
                 
             
