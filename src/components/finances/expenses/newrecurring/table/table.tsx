@@ -72,7 +72,44 @@ const NewRecurringTable = () => {
         updatedItems.splice(index, 1);
         setItems(updatedItems);
     }, [items]);
-
+    const customStyles = {
+        control: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          border: state.isFocused ? '1px solid #35BEB1' : 'none',
+          '&:hover': {
+            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            },
+          boxShadow: state.isFocused ? 'none' : 'none',
+        }),
+        valueContainer: (provided: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        singleValue: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+        }),
+        menu: (provided: any) => ({
+          ...provided,
+          backgroundColor: 'white',
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        option: (provided: any, state: any) => ({
+          ...provided,
+          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+          color: state.isFocused ? 'white' : '#6B7E7D',
+          '&:hover': {
+            backgroundColor: '#35BEB1',
+            color: 'white',
+          },
+        }),
+      };
 
     return (
         <>
@@ -214,13 +251,7 @@ const NewRecurringTable = () => {
                                         isClearable={false}
                                         isSearchable={true}
                                         options={taxOptions}
-                                        styles={{
-                                            control: (provided, state) => ({
-                                                ...provided,
-                                                border: state.isFocused ? 'none' : 'none',
-                                            }),
-
-                                        }}
+                                        styles={customStyles}
                                     />
                                 </div>
                                 <div className='w-[10rem] flex-col items-center text-neutral-400 text-base font-medium'>
@@ -230,15 +261,7 @@ const NewRecurringTable = () => {
                                         isClearable={false}
                                         isSearchable={true}
                                         options={gstOptions}
-                                        styles={{
-                                            control: (provided, state) => ({
-                                                ...provided,
-                                                border: state.isFocused ? 'none' : 'none',
-                                                padding: '0',
-                                                height: '2rem'
-                                            }),
-
-                                        }}
+                                        styles={customStyles}
                                     />
                                 </div>
 
@@ -256,15 +279,7 @@ const NewRecurringTable = () => {
                                         isClearable={false}
                                         isSearchable={true}
                                         options={category}
-                                        styles={{
-                                            control: (provided, state) => ({
-                                                ...provided,
-                                                border: state.isFocused ? 'none' : 'none',
-                                                padding: '0',
-                                                height: '2rem'
-                                            }),
-
-                                        }}
+                                        styles={customStyles}
                                     />
                                 </div>
                                 <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
@@ -290,15 +305,7 @@ const NewRecurringTable = () => {
                                     isClearable={false}
                                     isSearchable={true}
                                     options={gstOptions}
-                                    styles={{
-                                        control: (provided, state) => ({
-                                            ...provided,
-                                            border: state.isFocused ? 'none' : 'none',
-                                            padding: '0',
-                                            height: '2rem'
-                                        }),
-
-                                    }}
+                                    styles={customStyles}
                                 />
                             </div>
 

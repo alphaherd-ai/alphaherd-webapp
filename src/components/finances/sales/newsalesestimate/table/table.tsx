@@ -353,6 +353,48 @@ const togglePopup = () => {
 }
 
 
+const customStyles = {
+    control: (provided:any, state:any) => ({
+      ...provided,
+      height: '2.8rem', 
+      minHeight: '2.8rem' ,
+      width: '22rem',
+      maxWidth: '22rem', 
+      borderColor: state.isFocused ? '#35BEB1' : '#C4C4C4', 
+        '&:hover': {
+        borderColor: state.isFocused ? '#35BEB1' : '#C4C4C4', 
+        },
+        boxShadow: state.isFocused ? 'none' : 'none',
+    }),
+    valueContainer: (provided:any) => ({
+      ...provided,
+      height: '2.8rem', 
+      width: '22rem',
+      maxWidth: '22rem', 
+    }),
+    singleValue: (provided:any) => ({
+      ...provided,
+      width: '22rem',
+      maxWidth: '22rem', 
+    }),
+    menu: (provided:any) => ({
+        ...provided,
+        backgroundColor: 'white',
+        width: '22rem',
+        maxWidth: '22rem', 
+      }),
+      option: (provided:any, state:any) => ({
+        ...provided,
+        backgroundColor: state.isFocused ? '#35BEB1' : 'white', 
+        color: state.isFocused ? 'white' : '#6B7E7D',
+        '&:hover': {
+          backgroundColor: '#35BEB1', 
+        }
+      }),
+      menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
+      
+  };
+
     return (
         <>
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
@@ -425,12 +467,7 @@ const togglePopup = () => {
                     name="itemName"
                     options={products}
                     onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
-                    styles={{
-                        control: (provided, state) => ({
-                            ...provided,
-                            border: state.isFocused ? 'none' : 'none',
-                        }),
-                    }}
+                    styles={customStyles}
                 />
             </div>
             <div className='w-[10rem] flex-col items-center text-neutral-400 text-base font-medium'>
@@ -443,12 +480,7 @@ const togglePopup = () => {
                     name={`batchNumber=${index}`}
                     options={filteredBatches}
                     onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
-                    styles={{
-                        control: (provided, state) => ({
-                            ...provided,
-                            border: state.isFocused ? 'none' : 'none',
-                        }),
-                    }}
+                    styles={customStyles}
                 />
                 <div className="text-neutral-400 text-[13px] font-medium px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
             </div>
@@ -460,12 +492,7 @@ const togglePopup = () => {
                     isClearable={false}
                     isSearchable={true}
                     options={taxOptions}
-                    styles={{
-                        control: (provided, state) => ({
-                            ...provided,
-                            border: state.isFocused ? 'none' : 'none',
-                        }),
-                    }}
+                    styles={customStyles}
                 />
             </div>
             {!isChecked && (

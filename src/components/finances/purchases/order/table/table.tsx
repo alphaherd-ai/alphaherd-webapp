@@ -203,6 +203,47 @@ const handleAddItem= useCallback(() => {
     }, [items]);
 
 
+
+    const customStyles = {
+        control: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          border: state.isFocused ? '1px solid #35BEB1' : 'none',
+          '&:hover': {
+            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            },
+          boxShadow: state.isFocused ? 'none' : 'none',
+        }),
+        valueContainer: (provided: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        singleValue: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+        }),
+        menu: (provided: any) => ({
+          ...provided,
+          backgroundColor: 'white',
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        option: (provided: any, state: any) => ({
+          ...provided,
+          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+          color: state.isFocused ? 'white' : '#6B7E7D',
+          '&:hover': {
+            backgroundColor: '#35BEB1',
+            color: 'white',
+          },
+        }),
+        menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
+      };
+
     return (
         <>
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
@@ -274,13 +315,10 @@ const handleAddItem= useCallback(() => {
                                         options={products}
                                         onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
                                         menuPortalTarget={document.body}
-                                        styles={{
-                                            control: (provided, state) => ({
-                                                ...provided,
-                                                border: state.isFocused ? 'none' : 'none',
-                                            }),
-                                            menuPortal: base => ({ ...base, zIndex: 9999 })
-                                        }}
+                                        styles={
+                                            customStyles
+                                            
+                                        }
                                     />
                             </div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[15rem] items-center gap-2'>
@@ -304,21 +342,23 @@ const handleAddItem= useCallback(() => {
                                 <span className="text-textGrey2 font-medium text-base">Strips</span>
                             </div>
 
-                            <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>
+                            <div className=' flex text-textGrey2 text-base font-medium w-[10rem] items-center gap-1'>
+                            ₹
                                 <input
                                         type="number"
                                         value={item.unitPrice}
-                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                        className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                        onChange={(e) => handleItemsDataChange(index,'unitPrice', e.target.value)}
                                        name={`unitPrice-${index+1}`}
 
                                     />
                             </div>
-                            <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>
+                            <div className=' flex text-textGrey2 text-base font-medium w-[10rem] items-center gap-1'>
+                            ₹
                             <input
                                         type="number"
                                         value={item.quantity*Number(item.unitPrice)}
-                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                        className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                        onChange={(e) => handleItemsDataChange(index,'subTotal', e.target.value)}
                                        name={`subTotal-${index+1}`}
 
@@ -341,7 +381,7 @@ const handleAddItem= useCallback(() => {
                                             }}
                                             onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
                                         />):( */}
-                                           { item.gst*100}%
+                                           { item.gst*100 || 0}%
                                         {/* )} */}
                                     </div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[10rem] items-center gap-1'>
@@ -349,7 +389,7 @@ const handleAddItem= useCallback(() => {
                             <input
                                         type="number"
                                         value={(item.quantity*item.gst*Number(item.unitPrice)).toFixed(2)||0}
-                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                        className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                         onChange={(e) => handleItemsDataChange(index,'taxAmount', e.target.value)}
                                        name={`taxAmount-${index+1}`}
                                     />
@@ -358,7 +398,7 @@ const handleAddItem= useCallback(() => {
                                 <input
                                         type="number"
                                         value={item.discountPercent}
-                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                        className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                         onChange={(e) => handleItemsDataChange(index,'discountPercent', e.target.value)}
                                        name={`discountPercent-${index+1}`}
                                     />
@@ -370,7 +410,7 @@ const handleAddItem= useCallback(() => {
                             <input
                                         type="number"
                                         value={(item.discountPercent/100*item.quantity*Number(item.unitPrice)).toFixed(2)}
-                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                        className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                         onChange={(e) => handleItemsDataChange(index,'discountAmount', e.target.value)}
                                        name={`discountAmount-${index+1}`}
                                     />
@@ -393,14 +433,14 @@ const handleAddItem= useCallback(() => {
                                                 0} Items</div>
 
                             <div className=' flex text-gray-500 text-base font-bold w-[10rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'>₹{items.reduce((acc, item) => acc + (item.quantity*Number(item.unitPrice)) , 0).toFixed(2) ||
-                                                0}</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{isNaN(items.reduce((acc, item) => acc + (item.quantity*Number(item.unitPrice)) , 0)) ? 0 : items.reduce((acc, item) => acc + (item.quantity*Number(item.unitPrice)) , 0).toFixed(2)}</div>
+
                             <div className=' flex text-gray-500 text-base font-bold w-[10rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'>₹{items.reduce((acc, item) => acc + (item.gst)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2) ||
-                                                0}</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{isNaN(items.reduce((acc, item) => acc + (item.gst)*(item.quantity*Number(item.unitPrice)) , 0)) ? 0 : items.reduce((acc, item) => acc + (item.gst)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2)}</div>
+
                             <div className=' flex text-gray-500 text-base font-bold w-[10rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'>₹{items.reduce((acc, item) => acc + (item.discountPercent/100)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2) ||
-                                                0}</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{isNaN(items.reduce((acc, item) => acc + (item.discountPercent/100)*(item.quantity*Number(item.unitPrice)) , 0)) ? 0 : items.reduce((acc, item) => acc + (item.discountPercent/100)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2)}</div>
+
                             <div className=' flex text-gray-500 text-base font-bold w-1/12'></div>
                         </div>
                     </div>
@@ -410,12 +450,12 @@ const handleAddItem= useCallback(() => {
                     </div>
                     {items.map((item:any,index:number) => (
                     <div key={item.id} className="flex items-center justify-center  w-[10rem] box-border bg-white text-gray-500 border-t-0 border-r-0 border-l border-b border-solid border-gray-200 h-12">
-                        <div className=' flex text-gray-500 text-base font-medium'>{((item.gst-item.discountPercent/100+1)*(item.quantity*Number(item.unitPrice))).toFixed(2)||
-                                                0}</div>
+                                                <div className=' flex text-gray-500 text-base font-medium'>₹{isNaN(((item.gst-item.discountPercent/100+1)*(item.quantity*Number(item.unitPrice)))) ? 0 : ((item.gst-item.discountPercent/100+1)*(item.quantity*Number(item.unitPrice))).toFixed(2)}</div>
+
                     </div>
                     ))}
-                    <div className=' flex text-textGreen text-base font-bold w-[10rem] h-12 items-center justify-center'>₹{items.reduce((acc, item) => acc + (item.gst-item.discountPercent/100+1)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2) ||
-                                                0}</div>
+                    <div className=' flex text-textGreen text-base font-bold w-[10rem] h-12 items-center justify-center'>₹{isNaN(items.reduce((acc, item) => acc + (item.gst-item.discountPercent/100+1)*(item.quantity*Number(item.unitPrice)) , 0)) ? 0 : items.reduce((acc, item) => acc + (item.gst-item.discountPercent/100+1)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2)}</div>
+
                     </div>
                     </div>
                     

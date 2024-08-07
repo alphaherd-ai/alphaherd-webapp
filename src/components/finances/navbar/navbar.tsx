@@ -103,6 +103,7 @@ const FinancesNavbar = () => {
               backgroundColor: '#35BEB1', 
             }
           }),
+          menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
           
       };
 
@@ -158,7 +159,7 @@ const FinancesNavbar = () => {
                     </Link>
                 </div>
                 <div className='flex h-full items-center'>
-                    <div className="relative h-full w-full items-center z-[1]">
+                    <div className=" h-full w-full items-center">
                     <Select
                         className="text-gray-500 text-base font-medium w-[100%] border-0 boxShadow-0"
                         classNamePrefix="select"
@@ -167,6 +168,7 @@ const FinancesNavbar = () => {
                         options={searchOptions}
                         onChange={(selectedProduct: any) => handleSearch(selectedProduct)}
                         placeholder="Search via client name or invoice no."
+                        menuPortalTarget={document.body}
                         styles={customStyles}
                         />
                         {/* <div className="absolute inset-y-0 right-3 pl-2 flex items-center pointer-events-none">

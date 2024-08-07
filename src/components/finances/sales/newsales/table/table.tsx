@@ -370,7 +370,45 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                 setShowPopup(!showPopup);
             }
             
-
+            const customStyles = {
+                control: (provided: any, state: any) => ({
+                  ...provided,
+                  width: '100%',
+                  maxWidth: '100%',
+                  border: state.isFocused ? '1px solid #35BEB1' : 'none',
+                  '&:hover': {
+                    borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+                    },
+                  boxShadow: state.isFocused ? 'none' : 'none',
+                }),
+                valueContainer: (provided: any) => ({
+                  ...provided,
+                  width: '100%',
+                  maxWidth: '100%',
+                }),
+                singleValue: (provided: any, state: any) => ({
+                  ...provided,
+                  width: '100%',
+                  maxWidth: '100%',
+                  color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+                }),
+                menu: (provided: any) => ({
+                  ...provided,
+                  backgroundColor: 'white',
+                  width: '100%',
+                  maxWidth: '100%',
+                }),
+                option: (provided: any, state: any) => ({
+                  ...provided,
+                  backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+                  color: state.isFocused ? 'white' : '#6B7E7D',
+                  '&:hover': {
+                    backgroundColor: '#35BEB1',
+                    color: 'white',
+                  },
+                }),
+                menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
+              };
 
     return (
         <>
@@ -444,12 +482,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                                         name="itemName"
                                         options={products}
                                         onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
-                                        styles={{
-                                            control: (provided, state) => ({
-                                                ...provided,
-                                                border: state.isFocused ? 'none' : 'none',
-                                            }),
-                                        }}
+                                        styles={customStyles}
                                     />):(
                                           item.itemName
                                     )}
@@ -465,12 +498,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                                         name={`batchNumber=${index}`}
                                         options={filteredBatches}
                                         onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
-                                        styles={{
-                                            control: (provided, state) => ({
-                                                ...provided,
-                                                border: state.isFocused ? 'none' : 'none',
-                                            }),
-                                        }}
+                                        styles={customStyles}
                                         />
                                     ) : (
                                         item.batchNumber
@@ -485,12 +513,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                                             isClearable={false}
                                             isSearchable={true}
                                             options={taxOptions}
-                                            styles={{
-                                                control: (provided, state) => ({
-                                                    ...provided,
-                                                    border: state.isFocused ? 'none' : 'none',
-                                                }),
-                                            }}
+                                            styles={customStyles}
                                             
                                         />
                                     </div>
@@ -547,13 +570,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                                     isClearable={false}
                                     isSearchable={true}
                                     options={discountOptions}
-                                    styles={{
-                                        control: (provided, state) => ({
-                                            ...provided,
-                                            border: state.isFocused ? 'none' : 'none',
-                                            padding: '0',
-                                        }),
-                                            }}
+                                    styles={customStyles}
                                 onChange={(selectedOption: any) => handleDiscountSelect(selectedOption, index)}
                                     />
                                     </div>
@@ -587,12 +604,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                                         isClearable={false}
                                         isSearchable={true}
                                         options={gstOptions}
-                                        styles={{
-                                            control: (provided, state) => ({
-                                                ...provided,
-                                                border: state.isFocused ? 'none' : 'none',
-                                            }),
-                                        }}
+                                        styles={customStyles}
                                     /> */}
                                 </div>
                                 <div className='flex text-gray-500 text-base font-medium w-[10rem]'>{`₹ ${(items.reduce((acc:any, item:any) => acc + item.quantity * item.gst*item.sellingPrice , 0)||0).toFixed(2)}`}</div>
