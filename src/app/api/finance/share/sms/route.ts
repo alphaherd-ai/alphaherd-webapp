@@ -1,30 +1,47 @@
 import { NextRequest, NextResponse } from "next/server";
-import twilio from "twilio";
+import AWS from "aws-sdk";
 
 interface PhoneNumber {
   phone: string;
 }
 
-export const POST=async(req: NextRequest)=> {
+export const POST = async (req: NextRequest) => {
+  AWS.config.update({
+    accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID as string,
+    secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY as string,
+    region: process.env.NEXT_PUBLIC_AWS_REGION as string,
+  });
 
-  const accountSid = process.env.TWILIO_ACCOUNT_SID as string;
-  const authToken = process.env.TWILIO_AUTH_TOKEN as string;
-  const twilioNumber = process.env.TWILIO_PHONE_NUMBER as string;
+  const sns = new AWS.SNS();
 
   try {
-    const client = twilio(accountSid, authToken);
-
     const { phone }: PhoneNumber = await req.json();
 
-    const result = await client.messages.create({
-      body: "This is dummy SMS",
-      from: `${twilioNumber}`,
-      to: `${phone}`,
-    });
+    // Log the phone number to ensure it is in the correct format
+    console.log("Sending SMS to:", phone);
 
-    return NextResponse.json({ message: "success" }, { status: 200 });
+    const params: AWS.SNS.PublishInput = {
+      Message: "This is a dummy SMS - AWS",
+      PhoneNumber: phone,
+      MessageAttributes: {
+        "AWS.SNS.SMS.SenderID": {
+          DataType: "String",
+          StringValue: "SenderName",
+        },
+        "AWS.SNS.SMS.SMSType": {
+          DataType: "String",
+          StringValue: "Transactional", 
+        },
+      },
+    };
+
+    console.log(params)
+    const result = await sns.publish(params).promise();
+    console.log("SMS publish result:", result);
+
+    return NextResponse.json({ message: "success", result }, { status: 200 });
   } catch (error) {
-    console.error("Error sending WhatsApp message:", error);
-    return NextResponse.json({ message: "Error sending message" }, { status: 500 });
+    console.error("Error sending SMS:", error);
+    return NextResponse.json({ message: "Error sending SMS", error: error }, { status: 500 });
   }
-}
+};

@@ -20,7 +20,9 @@ const NewPurchasesBottomBar = () => {
     const { headerData, tableData, totalAmountData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
     const router=useRouter();
+    const [isSaving,setSaving]=useState(false);
     const handleSubmit = async () => {
+        setSaving(true);
         const allData = {headerData, tableData, totalAmountData};
         console.log(allData)
         let totalQty=0;
@@ -54,14 +56,21 @@ const NewPurchasesBottomBar = () => {
         }
         console.log(JSON.stringify(data))
         try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Order}?branchId=${appState.currentBranchId}`,data)
+            const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Order}?branchId=${appState.currentBranchId}`,data)
+            setTimeout(()=>{
+                router.back();
+            },2000);
+            const response= await responsePromise;
             if (!response.data) {
                 throw new Error('Network response was not ok');
             }
-            router.back();
+            
     
         } catch (error) {
             console.error('Error:', error);
+        }
+        finally{
+            setSaving(false);
         }
     };
   return (
@@ -88,9 +97,9 @@ const NewPurchasesBottomBar = () => {
                         <Image src={drafticon} alt="draft"></Image>
                         <div>Save as Draft</div>
                     </Button>
-                    <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer" onClick={handleSubmit} >
+                    <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer" onClick={handleSubmit} disabled={isSaving} >
                         <Image src={checkicon} alt="check"></Image>
-                        <div>Save</div>
+                        <div>{isSaving?"Saving...":"Save"}</div>
                     </Button>
                 </div>
                             

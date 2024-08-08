@@ -11,138 +11,153 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
   }
 
   try {
-    const body: any = await req.json();
-    const inventoryId=await fetchInventoryId(req);
-    const financeId=await fetchFinanceId(req);
-    console.log(financeId)
-    
-    const sales = await prismaClient.sales.create({
-      data: {
-        ...body,
-        type: params.type,
-        FinanceSection:{
-          connect:{
-            id:financeId
+    const {clientId,...body}: any = await req.json();
+    const inventoryId = await fetchInventoryId(req);
+    const financeId = await fetchFinanceId(req);
+    console.log(financeId);
+    console.log("Here's the client id",clientId)
+    const [sales, items,client] = await prismaClient.$transaction([
+      prismaClient.sales.create({
+        data: {
+          ...body,
+          type: params.type,
+          FinanceSection: {
+            connect: {
+              id: financeId,
+            },
+          },
+        },
+      }),
+      prismaClient.items.createMany({
+        data: body.items.create,
+      }),
+      prismaClient.clients.update({
+        where:{
+          id:Number(clientId)
+        },
+        data:{
+          invoiceNo:{
+            push:body.invoiceNo
           }
         }
-      },
-    });
-
-    const items = await prismaClient.items.createMany({
-      data: body.items.create,
-    });
-
+      })
+    ]);
+ console.log("sales done",sales)
     const finance = await prismaClient.financeTimeline.create({
       data: {
         type: params.type,
         sale: { connect: { id: sales.id } },
         createdAt: new Date(),
-        FinanceSection:{
-          connect:{
-            id:financeId
-          }
-        }
+        FinanceSection: {
+          connect: {
+            id: financeId,
+          },
+        },
       },
     });
 
     if (params.type === FinanceCreationType.Sales_Invoice) {
       await Promise.all(
         body.items.create.map(async (item: any) => {
-          console.log(item)
-          const batch=await prismaClient.productBatch.findUnique({
-            where:{
-              id:Number(item.productBatchId),
-              inventorySectionId:inventoryId
-            },cacheStrategy:{ttl:60}
-          })
-          const updatedBatch = await prismaClient.productBatch.update({
-            where: { id: batch?.id ,inventorySectionId:inventoryId},
-            data: {
-              quantity: {
-                decrement: item.quantity,
-              },
+          const batch = await prismaClient.productBatch.findUnique({
+            where: {
+              id: Number(item.productBatchId),
+              inventorySectionId: inventoryId,
             },
-          });
-          const updatedProduct =await prismaClient.products.update({
-            where:{
-              id:item.productId,
-              inventorySectionId:inventoryId
-            },
-            data:{
-              totalQuantity:{
-                decrement:item.quantity
-              }
-            }
+            cacheStrategy: { ttl: 60 },
           });
 
-         const inventory= await prismaClient.inventoryTimeline.create({
-            data: {
-              stockChange:Stock.StockOUT,
-              quantityChange: item.quantity,
-              invoiceType:"Sales_Invoice",
-              inventoryType:Inventory.Product,
-              productBatch:{
-                connect:{
-                  id:batch?.id
-                }
+          await prismaClient.$transaction([
+            prismaClient.productBatch.update({
+              where: { id: batch?.id, inventorySectionId: inventoryId },
+              data: {
+                quantity: {
+                  decrement: item.quantity,
+                },
               },
-              InventorySection:{
-                connect:{
-                  id:inventoryId
-                }
-              }
-            },
-          });
+            }),
+            prismaClient.products.update({
+              where: {
+                id: item.productId,
+                inventorySectionId: inventoryId,
+              },
+              data: {
+                totalQuantity: {
+                  decrement: item.quantity,
+                },
+              },
+            }),
+            prismaClient.inventoryTimeline.create({
+              data: {
+                stockChange: Stock.StockOUT,
+                quantityChange: item.quantity,
+                invoiceType: "Sales_Invoice",
+                inventoryType: Inventory.Product,
+                productBatch: {
+                  connect: {
+                    id: batch?.id,
+                  },
+                },
+                InventorySection: {
+                  connect: {
+                    id: inventoryId,
+                  },
+                },
+              },
+            }),
+          ]);
         })
       );
-      
     } else if (params.type === FinanceCreationType.Sales_Return) {
       await Promise.all(
         body.items.create.map(async (item: any) => {
-          const batch=await prismaClient.productBatch.findUnique({
-            where:{
-              id:Number(item.productBatchId),
-              inventorySectionId:inventoryId
-            },cacheStrategy:{ttl:60}
-          })
-          const updatedBatch = await prismaClient.productBatch.update({
-            where: { id: batch?.id ,inventorySectionId:inventoryId},
-            data: {
-              quantity: {
-                increment: item.quantity,
-              },
+          const batch = await prismaClient.productBatch.findUnique({
+            where: {
+              id: Number(item.productBatchId),
+              inventorySectionId: inventoryId,
             },
-          });
-          const updatedProduct =await prismaClient.products.update({
-            where:{
-              id:item.productId,
-              inventorySectionId:inventoryId
-            },
-            data:{
-              totalQuantity:{
-                increment:item.quantity
-              }
-            }
+            cacheStrategy: { ttl: 60 },
           });
 
-          const inventory= await prismaClient.inventoryTimeline.create({
-            data: {
-              stockChange:Stock.StockIN,
-              quantityChange: item.quantity,
-              invoiceType:"Sales_Return",
-              inventoryType:Inventory.Product,
-              productBatch:{
-                connect:{
-                  id:batch?.id
-                }
+          await prismaClient.$transaction([
+            prismaClient.productBatch.update({
+              where: { id: batch?.id, inventorySectionId: inventoryId },
+              data: {
+                quantity: {
+                  increment: item.quantity,
+                },
               },
-              InventorySection:{
-                connect:{
-                  id:inventoryId
-                }
-              }
-            },
-          });
+            }),
+            prismaClient.products.update({
+              where: {
+                id: item.productId,
+                inventorySectionId: inventoryId,
+              },
+              data: {
+                totalQuantity: {
+                  increment: item.quantity,
+                },
+              },
+            }),
+            prismaClient.inventoryTimeline.create({
+              data: {
+                stockChange: Stock.StockIN,
+                quantityChange: item.quantity,
+                invoiceType: "Sales_Return",
+                inventoryType: Inventory.Product,
+                productBatch: {
+                  connect: {
+                    id: batch?.id,
+                  },
+                },
+                InventorySection: {
+                  connect: {
+                    id: inventoryId,
+                  },
+                },
+              },
+            }),
+          ]);
         })
       );
     }
