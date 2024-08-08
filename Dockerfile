@@ -1,20 +1,8 @@
-# Use Node.js base image
 FROM node:18-alpine
+WORKDIR  /app
+COPY . ./
 
-# Set working directory
-WORKDIR /app
-
-# Copy package.json and install dependencies
-COPY package*.json ./
-
-# Install Yarn (if you prefer using yarn)
-RUN npm install --global yarn
-
-# Install Redis
 RUN apk add --no-cache redis
-
-# Copy the rest of the application
-COPY . .
 
 # Define build arguments
 ARG NEXT_PUBLIC_API_BASE_PATH
@@ -30,7 +18,6 @@ ENV DIRECT_URL=$DIRECT_URL
 ENV NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=$NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
 ENV NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=$NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET
 
-# Verify environment variables
 RUN if [ -z "$DATABASE_URL" ]; then \
         echo "DATABASE_URL is not set."; \
     else \
@@ -49,12 +36,10 @@ else \
     echo "NEXT_PUBLIC_API_BASE_PATH is set to: $NEXT_PUBLIC_API_BASE_PATH"; \
 fi
 
-# Install dependencies and build the app
-RUN yarn install
-RUN yarn build
-
+RUN yarn
 # Expose ports
 EXPOSE 3000 6380
 
-# Start Redis and the Node.js application
-CMD redis-server --port 6380 & yarn start
+CMD redis-server --port 6380 
+
+RUN npm run build
