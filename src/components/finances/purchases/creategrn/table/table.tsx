@@ -25,6 +25,8 @@ import { Tax } from '@prisma/client';
 import useSWR from 'swr';
 import { DataContext } from "./DataContext"
 import { useSearchParams } from "next/navigation"
+import Popup from '../../../../inventory/product/producttable/newproductpopup';
+
 import { custom } from "zod"
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
@@ -80,6 +82,10 @@ const CreateGrnTable = () => {
     const url= useSearchParams();
     const id=url.get('id');
     let orderData:any=null,isorderDataLoading=false,isorderDataError=false; 
+    const [showPopup, setShowPopup] = React.useState(false);
+    const togglePopup = () => {
+        setShowPopup(!showPopup);
+    }
     if(id){
         const {data,isLoading,error}=DataFromOrder(Number(id),appState.currentBranchId);
         orderData=data;
@@ -346,7 +352,7 @@ const handleAddItem= useCallback(() => {
 
                     <Button
                         variant="solid"
-                        className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer">
+                        className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer" onClick={togglePopup}>
                         <div className='flex'><Image src={addicon} alt='addicon' className='w-6 h-6 ' /></div>New Product 
                     </Button>
                     
@@ -644,6 +650,7 @@ const handleAddItem= useCallback(() => {
             </div>
             <CreateGrnBottomBar orderData={orderData}/>
         </div>
+        {showPopup && <Popup onClose={togglePopup} />}
        
         </>
     )

@@ -60,6 +60,7 @@ const NewsalesReturnHeader = ({existingHeaderData}:any) => {
     const url=useSearchParams();
     const id=url.get('id');
     const count=url.get('count');
+    console.log(existingHeaderData)
     const initialInvoiceNo=generateInvoiceNumber(Number(count));
     const { headerData, setHeaderData } = useContext(DataContext);
     const [startDate, setStartDate] = useState(new Date());
@@ -69,6 +70,7 @@ const NewsalesReturnHeader = ({existingHeaderData}:any) => {
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [customers,setCustomers]=useState<any[]>([]);
     const appState = useAppSelector((state) => state.app)
+    const [invoiceOptions,setInvoiceOptions]=useState<any[]>([]);
     const [dueDate, setDueDate] = useState(new Date());
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
     useEffect(() => {
@@ -95,20 +97,33 @@ const NewsalesReturnHeader = ({existingHeaderData}:any) => {
                 setHeaderData(existingHeaderData)
             }
          else{
+            
             setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo}))}
         },[])
     
         useEffect(()=>{
             if(!isLoading&&!error&&data){
+                
                   const  clients=data.map((client:any)=>({
                     value:{clientName:client.clientName,
-                           contact:client.contact},
+                           contact:client.contact,
+                           invoiceNo:client.invoiceNo,
+                           clientId:client.id},
                     label:`${client.clientName}\u00A0\u00A0\u00A0\u00A0\u00A0${client.contact}`
                 }))
+                console.log(clients)
                 setCustomers(clients);
     
             }
-        },[data])
+            if(headerData.customer){
+                 const invoices= headerData.customer.value.invoiceNo.map((client:any)=>({
+                    value:client,
+                    label:client
+                }))
+                setInvoiceOptions(invoices);
+            }
+            
+        },[data,headerData])
 
 
     return (
@@ -140,18 +155,29 @@ const NewsalesReturnHeader = ({existingHeaderData}:any) => {
                     <div className="flex w-full">
                         <div className="text-gray-500 text-base font-bold  w-[12rem] py-3">Invoice Number:</div>
                         <div className="flex items-center justify-between w-full">
-                        {id===null?   (<input
-                                ref={inputRef}
-                                className={`w-[90%] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border-0 rounded-[5px] focus:border focus:border-solid focus:border-[#35BEB1] bg-inherit`}
-                                value={invoiceNo}
-                                disabled={disableButton}
-                                autoFocus={!disableButton}
-                            />):(
-                                existingHeaderData.invoiceNo
-                            )}
+                        { id===null?(
+                            isLoading?<div>Loading...</div>:(
+                                <Select
+                                className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
+                                classNamePrefix="select"
+                                isClearable={isClearable}
+                                isSearchable={isSearchable}
+                                name="invoiceNo"
+                                options={invoiceOptions}
+                                styles={{
+                                    control: (provided, state) => ({
+                                        ...provided,
+                                        border: state.isFocused ? 'none' : 'none',
+                                    }),
+                                }}
+                                onChange={(selectedOption) => setHeaderData((prevData) => ({ ...prevData, invoiceNo: selectedOption.value }))}
+                                />
+                        )):(
+                            existingHeaderData.customer
+                        )}
                             {/* <button onClick={handleEditButtonClick} className="mr-5 border-0">
                                 <Image src={editicon} alt="edit" />
-                            </button> */}
+                            </button> */} 
                         </div>
                     </div>
                 </div>
