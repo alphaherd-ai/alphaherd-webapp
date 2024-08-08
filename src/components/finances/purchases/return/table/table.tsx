@@ -229,7 +229,7 @@ const NewPurchaseReturnTable = () => {
                     </Button> */}
                     
                 </div>
-                <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px] overflow-auto max-h-[40rem] container">
+                <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px] overflow-auto max-h-[40rem]">
                     <NewPurchaseReturnHeader existingHeaderData={otherData}/>
                 <div>
                 <div className="w-full rounded-md border border-solid border-borderGrey">
@@ -253,7 +253,7 @@ const NewPurchaseReturnTable = () => {
 
                     </div>
                     <div className="flex">
-                    <div className="w-full overflow-x-auto overflow-y-hidden container">
+                    <div className="w-full overflow-x-auto overflow-y-hidden">
                         <div className='flex w-[180%] justify-evenly items-center box-border bg-gray-100 h-12  text-gray-500 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey'>
                             <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[5rem]'></div>
                             <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[5rem]'>No.</div>

@@ -18,7 +18,7 @@ const CreateGrnNavbar = () => {
                     <Image className="w-6 h-6 relative rounded-[5px]  cursor-pointer" src={lefticon} alt="Back"></Image>
                     </div>
                     <div className="text-gray-500 text-[28px] flex items-center font-bold ">
-                    New Goods Receive Note - GRN
+                    New Purchase Invoices (GRN)
 
                     </div>
                     </div>

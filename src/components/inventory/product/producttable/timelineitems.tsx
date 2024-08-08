@@ -9,6 +9,7 @@ import { useAppSelector } from '@/lib/hooks';
 import Loading from '@/app/loading';
 import { useSearchParams } from 'next/navigation';
 import { DataContext } from './DataContext';
+
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
@@ -60,7 +61,7 @@ const ProductAllItem = () => {
   const paginate = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
-  if(isLoading)return (<Loading/>)
+if(isLoading) return (<Loading />) 
   return (
     <div>
       {currentProducts?.map(product => (

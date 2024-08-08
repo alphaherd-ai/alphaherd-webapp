@@ -22,8 +22,7 @@ const router= useRouter();
                     <Image className="w-6 h-6 relative rounded-[5px]  cursor-pointer" src={lefticon} alt="Back"></Image>
                     </div>
                     <div className="text-gray-500 text-[28px] flex items-center font-bold ">
-                    Purchase Return - PR - 01
-
+                    Purchase Returns
                     </div>
                     </div>
                     <div className="flex justify-start items-center">

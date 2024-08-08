@@ -219,7 +219,7 @@ const NewRecurringHeader = () => {
                         <input
                             type="text"
                             className=" w-full h-9 text-borderGrey text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                            defaultValue={"..."}
+                            placeholder="..."
                         />                    
                         </div>
                 </div>

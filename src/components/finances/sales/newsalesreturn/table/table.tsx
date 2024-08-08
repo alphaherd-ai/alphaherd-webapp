@@ -245,9 +245,16 @@ const handleQuantityIncClick1 = (itemId: any) => {
     );
 };
 
+
 const handleAddItem= useCallback(() => {
     setItems([...items, {}]);
 }, [items]);
+
+const handleInputChange = useCallback((index: number, value: any,field: string) => {   
+    const updatedItems = [...items];
+        updatedItems[index][field] =Number(value);
+    setItems(updatedItems);
+},[items]);
 
 const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
     console.log(selectedProduct);
@@ -322,13 +329,58 @@ useEffect(() => {
 
    
 
+const customStyles = {
+    control: (provided:any, state:any) => ({
+      ...provided,
+      height: '2.8rem', 
+      minHeight: '2.8rem' ,
+      width: '22rem',
+      maxWidth: '22rem', 
+      borderColor: state.isFocused ? '#35BEB1' : '#C4C4C4', 
+        '&:hover': {
+        borderColor: state.isFocused ? '#35BEB1' : '#C4C4C4', 
+        },
+        boxShadow: state.isFocused ? 'none' : 'none',
+    }),
+    valueContainer: (provided:any) => ({
+      ...provided,
+      height: '2.8rem', 
+      width: '22rem',
+      maxWidth: '22rem', 
+    }),
+    singleValue: (provided:any) => ({
+      ...provided,
+      width: '22rem',
+      maxWidth: '22rem', 
+    }),
+    menu: (provided:any) => ({
+        ...provided,
+        backgroundColor: 'white',
+        width: '22rem',
+        maxWidth: '22rem', 
+      }),
+      option: (provided:any, state:any) => ({
+        ...provided,
+        backgroundColor: state.isFocused ? '#35BEB1' : 'white', 
+        color: state.isFocused ? 'white' : '#6B7E7D',
+        '&:hover': {
+          backgroundColor: '#35BEB1', 
+        }
+      }),
+      menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
+      
+  };
+
+
     return (
         <>
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
             <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-between items-center gap-6 flex">
-                    <div className='bg-[#FFF0E9] rounded-md px-2 py-2' >
+                    <div>
+                    {/* <div className='bg-[#FFF0E9] rounded-md px-2 py-2' >
                         <span className="text-[#FC6E20]  text-sm font-medium ">You’re owed: ₹</span>
                         <span className="text-[#FC6E20] text-sm font-bold ">2,124</span>
+                    </div> */}
                     </div>
                     {/* <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '> */}
                         {/* <Popover placement="bottom-end" showArrow offset={10}>
@@ -336,7 +388,7 @@ useEffect(() => {
                                 <Button
                                     variant="solid"
                                     className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer">
-                                    <div className='flex pr-2'><Image src={addicon} alt='addicon' className='w-6 h-6 ' /></div>Add Customer </Button>
+                                    <div className='flex pr-2'><Image src={addicon} alt='addicon' className='w-6 h-6 ' /></div>New Client</Button>
                             {/* </PopoverTrigger>
                             <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
                                 <div className="flex flex-col ">
@@ -363,7 +415,7 @@ useEffect(() => {
                     <NewsalesReturnHeader existingHeaderData={otherData}/>
                     <div className="w-full rounded-md border border-solid border-borderGrey">
                     <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
-                            <div className="text-gray-500 text-xl font-medium ">Items</div>
+                            <div className="text-gray-500 text-xl font-medium ">Items & Services</div>
                             <div className="flex items-center justify-center ">
                                 {/* <div className="flex items-center justify-center mr-2">
                                     <div className="pr-[4px]">
@@ -410,12 +462,7 @@ useEffect(() => {
                                         name="itemName"
                                         options={products}
                                         onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
-                                        styles={{
-                                            control: (provided, state) => ({
-                                                ...provided,
-                                                border: state.isFocused ? 'none' : 'none',
-                                            }),
-                                        }}
+                                        styles={customStyles}
                                     />):(
                                           item.itemName
                                     )}
@@ -431,17 +478,12 @@ useEffect(() => {
                                         name={`batchNumber=${index}`}
                                         options={filteredBatches}
                                         onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
-                                        styles={{
-                                            control: (provided, state) => ({
-                                                ...provided,
-                                                border: state.isFocused ? 'none' : 'none',
-                                            }),
-                                        }}
+                                        styles={customStyles}
                                         />
                                     ) : (
                                         item.batchNumber
                                             )}
-                                    <div className="text-neutral-400 text-[10px] font-medium  px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
+                                    <div className="text-neutral-400 text-[13px] font-medium  px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
                                 </div>
                                 <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
                                     {item.sellingPrice}
@@ -451,26 +493,29 @@ useEffect(() => {
                                         isClearable={false}
                                         isSearchable={true}
                                         options={taxOptions}
-                                        styles={{
-                                            control: (provided, state) => ({
-                                                ...provided,
-                                                border: state.isFocused ? 'none' : 'none',
-                                            }),
-                                        }}
+                                        styles={customStyles}
                                         
                                     />
                                 </div>
                                 
                                 <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
-                                    <div className='flex items-center text-neutral-400 text-base font-medium gap-[20px] bg-white'>
+                                <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
                                     <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
-                                        <Image className='rounded-md' src={Subtract} alt="-"></Image>
+                                        <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
                                     </button>
-                                    <div>{item.quantity}</div>
+                                    <input
+                                        type="number"
+                                        value={item.quantity}
+                                        onChange={(e) => handleInputChange(index, e.target.value,'quantity')}
+                                        className="w-[3rem] text-center border border-solid border-borderGrey h-8  rounded-md text-textGrey2 font-medium text-base"
+                                        name={`quantity-${index+1}`}
+                                    />
+                                    
+                                    {/* {item.quantity} */}
                                     <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
-                                        <Image className="rounded-md" src={Add} alt="+"></Image>
+                                        <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                     </button>
-                                    </div>
+                                </div>
                                 </div>
                                 
                                 <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
@@ -514,19 +559,14 @@ useEffect(() => {
                                 <div className='flex text-gray-500 text-base font-medium w-[10rem]'>{(items.reduce((acc:any, item:any) => acc + item.quantity, 0))||0} Items</div>
                                 
                                 <div className='flex text-gray-500 text-base font-medium w-[10rem]'>
-                                    <Select
+                                    {/* <Select
                                         className="text-neutral-400 text-base font-medium"
                                         defaultValue={gstOptions[0]}
                                         isClearable={false}
                                         isSearchable={true}
                                         options={gstOptions}
-                                        styles={{
-                                            control: (provided, state) => ({
-                                                ...provided,
-                                                border: state.isFocused ? 'none' : 'none',
-                                            }),
-                                        }}
-                                    />
+                                        styles={customStyles}
+                                    /> */}
                                 </div>
                                 <div className='flex text-gray-500 text-base font-medium w-[10rem]'>{`₹${(items.reduce((acc:any, item:any) => acc + item.quantity * item.gst*item.sellingPrice , 0)||0).toFixed(2)}`}</div>
                                 <div className='flex text-gray-500 text-base font-medium w-1/12' >{`₹${(items.reduce((acc:any, item:any) => acc + item.quantity * item.sellingPrice +item.quantity*item.gst*item.sellingPrice, 0)||0).toFixed(2)}`}</div>

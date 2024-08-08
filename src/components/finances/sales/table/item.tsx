@@ -55,6 +55,8 @@ const FinancesSalesTableItem = ({onCountsChange, data, sales, isLoading}:any) =>
   }, [sales]);
  
 if(isLoading&&!data)return (<Loading/>)
+
+
   return (
      <div>
       {sales?.map((sale:any)=>(

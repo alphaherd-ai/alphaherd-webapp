@@ -320,6 +320,44 @@ useEffect(() => {
 }, [id, items]);
 
 
+const customStyles = {
+    control: (provided: any, state: any) => ({
+      ...provided,
+      width: '100%',
+      maxWidth: '100%',
+      border: state.isFocused ? '1px solid #35BEB1' : 'none',
+      '&:hover': {
+        borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+        },
+      boxShadow: state.isFocused ? 'none' : 'none',
+    }),
+    valueContainer: (provided: any) => ({
+      ...provided,
+      width: '100%',
+      maxWidth: '100%',
+    }),
+    singleValue: (provided: any, state: any) => ({
+      ...provided,
+      width: '100%',
+      maxWidth: '100%',
+      color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+    }),
+    menu: (provided: any) => ({
+      ...provided,
+      backgroundColor: 'white',
+      width: '100%',
+      maxWidth: '100%',
+    }),
+    option: (provided: any, state: any) => ({
+      ...provided,
+      backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+      color: state.isFocused ? 'white' : '#6B7E7D',
+      '&:hover': {
+        backgroundColor: '#35BEB1',
+        color: 'white',
+      },
+    }),
+  };
 
 
    
@@ -337,7 +375,7 @@ useEffect(() => {
                                 <Button
                                     variant="solid"
                                     className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer">
-                                    <div className='flex pr-2'><Image src={addicon} alt='addicon' className='w-6 h-6 ' /></div>Add Customer </Button>
+                                    <div className='flex pr-2'><Image src={addicon} alt='addicon' className='w-6 h-6 ' /></div>New Client</Button>
                             {/* </PopoverTrigger>
                             <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
                                 <div className="flex flex-col ">
@@ -370,7 +408,7 @@ useEffect(() => {
                                     <div className="pr-[4px]">
                                         <input value="test" type="checkbox" className="border-0" onChange={handleCheckBoxChange} />
                                     </div>
-                                    <div className="text-neutral-400 text-base font-bold ">Price Range</div>
+                                    <div className="text-textGrey2 text-base font-bold ">Price Range</div>
                                 </div> */}
                                 <Button onClick={handleAddItem} className='cursor-pointer text-white flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-md border-0 outline-none'>
                                     <div className='w-4 h-4 mb-3 mr-2'>
@@ -399,8 +437,8 @@ useEffect(() => {
                             </div>
                             {items.map((item:any,index:number) => (
                                 <div key={index+1} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400 py-2'>
-                                    <div className='w-[3rem] flex items-center text-neutral-400 text-base font-medium '>{index+1}.</div>
-                                    <div className='w-[15rem] flex items-center text-neutral-400 text-base font-medium'>
+                                    <div className='w-[3rem] flex items-center text-textGrey2 text-base font-medium '>{index+1}.</div>
+                                    <div className='w-[15rem] flex items-center text-textGrey2 text-base font-medium'>
                                     {id === null ? (
                                     <Select
                                         className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
@@ -411,17 +449,12 @@ useEffect(() => {
                                         name="itemName"
                                         options={products}
                                         onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
-                                        styles={{
-                                            control: (provided, state) => ({
-                                                ...provided,
-                                                border: state.isFocused ? 'none' : 'none',
-                                            }),
-                                        }}
+                                        styles={customStyles}
                                     />):(
                                           item.itemName
                                     )}
                                     </div>
-                                    <div className='w-[10rem] flex-col items-center text-neutral-400 text-base font-medium'>
+                                    <div className='w-[10rem] flex-col items-center text-textGrey2 text-base font-medium'>
                                     {id === null ? ( 
                                         <Select
                                         className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
@@ -432,52 +465,44 @@ useEffect(() => {
                                         name={`batchNumber=${index}`}
                                         options={filteredBatches}
                                         onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
-                                        styles={{
-                                            control: (provided, state) => ({
-                                                ...provided,
-                                                border: state.isFocused ? 'none' : 'none',
-                                            }),
-                                        }}
+                                        styles={customStyles}
                                         />
                                     ) : (
                                         item.batchNumber
                                             )}
-                                    <div className="text-neutral-400 text-[10px] font-medium  px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
+                                    {item.expiry && formatDateAndTime(item.expiry).formattedDate && (
+                                        <div className="text-textGrey2 text-[13px] font-medium  px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
+                                    )}
                                 </div>
-                                <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
+                                <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium'>
                                     {item.sellingPrice}
                                     <Select
-                                        className="text-textGrey1 text-sm font-medium "
+                                        className="text-textGrey2 text-sm font-medium "
                                         defaultValue={taxOptions[0]}
                                         isClearable={false}
                                         isSearchable={true}
                                         options={taxOptions}
-                                        styles={{
-                                            control: (provided, state) => ({
-                                                ...provided,
-                                                border: state.isFocused ? 'none' : 'none',
-                                            }),
-                                        }}
+                                        styles={customStyles}
                                         
                                     />
                                 </div>
                                 
-                                <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
-                                    <div className='flex items-center text-neutral-400 text-base font-medium gap-[20px] bg-white'>
+                                <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium gap-[12px]'>
+                                <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
                                     <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
-                                        <Image className='rounded-md' src={Subtract} alt="-"></Image>
+                                        <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
                                     </button>
-                                    <div>{item.quantity}</div>
+                                    <div className="w-[3rem] text-center border border-solid border-borderGrey h-7  rounded-md text-textGrey2 font-medium text-base">{item.quantity}</div>
                                     <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
-                                        <Image className="rounded-md" src={Add} alt="+"></Image>
+                                        <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                     </button>
-                                    </div>
+                                </div>
                                 </div>
                                 
-                                <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
+                                <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium'>
                                         {/* { id==null?(
                                         <Select
-                                            className="text-neutral-400 text-base font-medium"
+                                            className="text-textGrey2 text-base font-medium"
                                             defaultValue={[]}
                                             isClearable={false}
                                             isSearchable={true}
@@ -491,12 +516,12 @@ useEffect(() => {
                                             }}
                                             onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
                                         />):( */}
-                                           { item.gst*100}%
+                                           { item.gst*100 || 0}%
                                         {/* )} */}
                                     </div>
-                                <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>{`₹${((item?.sellingPrice*item?.quantity * item?.gst)||0).toFixed(2)}`}</div>
-                                    <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium'>{`₹${((item?.quantity * item?.sellingPrice +item?.sellingPrice*item.quantity*item.gst)||0).toFixed(2)}`}</div>
-                                    <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
+                                <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium'>{`₹${((item?.sellingPrice*item?.quantity * item?.gst)||0).toFixed(2)}`}</div>
+                                    <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium'>{`₹${((item?.quantity * item?.sellingPrice +item?.sellingPrice*item.quantity*item.gst)||0).toFixed(2)}`}</div>
+                                    <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[12px]'>
                                         <button className="border-0">
                                             <Image src={sellicon} alt="sell" ></Image>
                                         </button>
@@ -507,31 +532,31 @@ useEffect(() => {
                                     </div>
                                 </div>
                             ))}
-                            <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12 border-b border-neutral-400 text-gray-500 rounded-b-md'>
+                            <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12 border-b border-textGrey2 text-gray-500 rounded-b-md'>
                                 <div className='flex text-gray-500 text-base font-medium w-[3rem]'></div>
-                                <div className='flex text-gray-500 text-base font-medium w-[15rem]'>Total</div>
-                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'></div>
-                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'></div>
-                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>{(items.reduce((acc:any, item:any) => acc + item.quantity, 0))||0} Items</div>
+                                <div className='flex text-gray-500 text-base font-bold w-[15rem]'>Total</div>
+                                <div className='flex text-gray-500 text-base font-bold w-[10rem]'></div>
+                                <div className='flex text-gray-500 text-base font-bold w-[10rem]'></div>
+                                <div className='flex text-gray-500 text-base font-bold w-[10rem]'>{(items.reduce((acc:any, item:any) => acc + item.quantity, 0))||0} Items</div>
                                 
-                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>
-                                    <Select
-                                        className="text-neutral-400 text-base font-medium"
-                                        defaultValue={gstOptions[0]}
-                                        isClearable={false}
-                                        isSearchable={true}
-                                        options={gstOptions}
-                                        styles={{
-                                            control: (provided, state) => ({
-                                                ...provided,
-                                                border: state.isFocused ? 'none' : 'none',
-                                            }),
-                                        }}
-                                    />
+                                <div className='flex text-gray-500 text-base font-bold w-[10rem]'>
+                                        {/* <Select
+                                            className="text-textGrey2 text-base font-bold"
+                                            defaultValue={gstOptions[0]}
+                                            isClearable={false}
+                                            isSearchable={true}
+                                            options={gstOptions}
+                                            styles={{
+                                                control: (provided, state) => ({
+                                                    ...provided,
+                                                    border: state.isFocused ? 'none' : 'none',
+                                                }),
+                                            }}
+                                        /> */}
                                 </div>
-                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>{`₹${(items.reduce((acc:any, item:any) => acc + item.quantity * item.gst*item.sellingPrice , 0)||0).toFixed(2)}`}</div>
-                                <div className='flex text-gray-500 text-base font-medium w-1/12' >{`₹${(items.reduce((acc:any, item:any) => acc + item.quantity * item.sellingPrice +item.quantity*item.gst*item.sellingPrice, 0)||0).toFixed(2)}`}</div>
-                                <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
+                                <div className='flex text-gray-500 text-base font-bold w-[10rem]'>{`₹${(items.reduce((acc:any, item:any) => acc + item.quantity * item.gst*item.sellingPrice , 0)||0).toFixed(2)}`}</div>
+                                <div className='flex text-gray-500 text-base font-bold w-1/12' >{`₹${(items.reduce((acc:any, item:any) => acc + item.quantity * item.sellingPrice +item.quantity*item.gst*item.sellingPrice, 0)||0).toFixed(2)}`}</div>
+                                <div className='flex text-gray-500 text-base font-bold w-1/12'></div>
                             </div>
                         </div>
                     </div>

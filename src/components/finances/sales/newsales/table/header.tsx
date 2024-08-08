@@ -17,6 +17,47 @@ import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 const NewsalesHeader = ({existingHeaderData}: any) => {
+
+    const customStyles = {
+        control: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          border: state.isFocused ? '1px solid #35BEB1' : 'none',
+          '&:hover': {
+            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            },
+          boxShadow: state.isFocused ? 'none' : 'none',
+        }),
+        valueContainer: (provided: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        singleValue: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+        }),
+        menu: (provided: any) => ({
+          ...provided,
+          backgroundColor: 'white',
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        option: (provided: any, state: any) => ({
+          ...provided,
+          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+          color: state.isFocused ? 'white' : '#6B7E7D',
+          '&:hover': {
+            backgroundColor: '#35BEB1',
+            color: 'white',
+          },
+        }),
+      };
+      
+
     const url=useSearchParams();
     const id=url.get('id');
     const count=url.get('count');
@@ -79,10 +120,10 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
             <div className="flex justify-between w-full pb-[16px]">
                 <div className="px-6 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                     <div className="flex gap-[16px] items-center w-full">
-                        <div className="text-gray-500 text-base font-bold ">Customer:</div>
+                        <div className="text-gray-500 text-base font-bold ">Client:</div>
                         
                         { id===null?(
-                            isLoading?<div>Loading...</div>:(
+                            isLoading?<div className='text-textGrey2 text-base font-medium'>Loading...</div>:(
                                 <Select
                                 className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
                                 classNamePrefix="select"
@@ -90,12 +131,7 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
                                 isSearchable={isSearchable}
                                 name="color"
                                 options={customers}
-                                styles={{
-                                    control: (provided, state) => ({
-                                        ...provided,
-                                        border: state.isFocused ? 'none' : 'none',
-                                    }),
-                                }}
+                                styles={customStyles}
                                 onChange={(selectedOption) => setHeaderData((prevData) => ({ ...prevData, customer: selectedOption }))}
                                 />
                         )):(
@@ -111,7 +147,7 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
                          {id===null?   (
                          <input
                                 ref={inputRef}
-                                className={`w-[90%] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border-0 rounded-[5px] focus:border focus:border-solid focus:border-[#35BEB1] bg-inherit`}
+                                className={`w-[90%] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border-0 rounded-[5px] focus:border focus:border-solid focus:border-[#35BEB1] bg-inherit`}
                                 value={invoiceNo!}
                                 disabled={disableButton}
                                 autoFocus={!disableButton}
@@ -120,9 +156,9 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
                         ):(
                                 existingHeaderData.invoiceNo
                             )}
-                            <button onClick={handleEditButtonClick} className="border-0 mr-5">
+                            {/* <button onClick={handleEditButtonClick} className="border-0 mr-5">
                                 <Image src={editicon} alt="edit" />
-                            </button>
+                            </button> */}
                         </div>
                     </div>
                 </div>
@@ -152,8 +188,8 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
                                         customInput={
                                             <div className='relative '>
                                                 <input
-                                                    className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={startDate.toLocaleDateString()}
+                                className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                value={startDate.toLocaleDateString()}
                                                     readOnly
                                                 />
                                                 <Image
@@ -186,7 +222,7 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
                             customInput={
                             <div className='relative'>
                                 <input
-                                className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
                                 value={dueDate.toLocaleDateString()}
                                 readOnly
                                 />
@@ -215,8 +251,8 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
                         <textarea
                             rows={4}
                             cols={100}
-                            className=" w-full h-9 text-borderGrey text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                            defaultValue={"..."}
+                            className=" w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                            placeholder="..."
                             onChange={(e) => setHeaderData((prevData) => ({ ...prevData, notes: e.target.value }))}
                         />
                     ):(

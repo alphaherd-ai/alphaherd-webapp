@@ -16,7 +16,7 @@ const ExistingsaleEstimateNavbar = () => {
                         <Image className="w-6 h-6 relative rounded-[5px]  cursor-pointer" src={lefticon} alt="Back"  onClick={()=>router.back()}></Image>
                     </div>
                     <div className="text-gray-500 text-[28px] font-bold ">
-                    Sales Estimate - SE00001
+                    Sales Estimates - SE00001
                     </div>
                 </div>
            

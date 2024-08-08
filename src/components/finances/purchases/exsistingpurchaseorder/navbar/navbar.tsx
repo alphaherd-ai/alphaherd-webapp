@@ -3,7 +3,7 @@
 import lefticon from "../../../../../assets/icons/finance/left_icon.svg"
 import Link from "next/link"
 import Menu from '@/assets/icons/finance/Menu.svg';
-import addicon1 from "../../../../../assets/icons/finance/add.svg"
+import Repeat from "../../../../../assets/icons/finance/replay.svg"
 import Image from "next/image"
 import { Button, Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react"
 import { useRouter } from "next/navigation";
@@ -19,12 +19,12 @@ const router= useRouter();
                         <Image className="w-6 h-6 relative rounded-[5px]" src={lefticon} alt="Back"></Image>
                     </div>
                     <div className="text-gray-500 text-[28px] font-bold">
-                    Purchase Order
+                    Purchase Orders
                     </div>
                     </div>
                     <div className="flex justify-start items-center">
                     <Button className='text-textGrey2 text-base font-bold bg-gray-100 h-11 rounded-[5px] border border-solid border-borderGrey flex justify-center items-center cursor-pointer'>
-                    <div className='flex pr-2'><Image src={addicon1} alt='addicon1' className='w-6 h-6 ' /></div>
+                    <div className='flex'><Image src={Repeat} alt='addicon1' className='w-6 h-6 ' /></div>
                             Repeat Order
                     </Button>
                     
