@@ -109,7 +109,7 @@ const DownloadPopup = ({ onClose, distributors }:any) => {
 
       doc.setFontSize(11);
       doc.text(`Category : distributors`, 60, lineY + 8);
-      doc.text(`Period : ${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'} - ${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}`, 60, lineY + 13);
+      doc.text(`Period : ${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'} - ${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}`, 60, lineY + 13);
 
       doc.text(`Total distributors : ${data.length}`, 120, lineY + 8);
 
@@ -122,7 +122,7 @@ const DownloadPopup = ({ onClose, distributors }:any) => {
         body: tableRows,
       });
 
-      const fileName = `distributors_report_${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'}_to_${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}.pdf`;
+      const fileName = `distributors_report_${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'}_to_${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}.pdf`;
       doc.save(fileName);
     });
   };
@@ -135,7 +135,7 @@ const DownloadPopup = ({ onClose, distributors }:any) => {
           <Image src={closeicon} alt="close" />
         </div>
         <div className="flex-col justify-start items-start gap-2 flex">
-          <div className="text-gray-500 text-xl font-medium">Download Sales Report</div>
+          <div className="text-gray-500 text-xl font-medium">Download Distributor Report</div>
           <div className="text-neutral-400 text-base font-medium">Please specify the date range for the report</div>
         </div>
     <div className="flex flex-col items-start gap-6 mt-6">
@@ -147,10 +147,10 @@ const DownloadPopup = ({ onClose, distributors }:any) => {
                         Custom
                     </div>
                 </div>
-                <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Day' ? 'bg-textGreen' : 'bg-white'}`}
-                    onClick={() => handleOptionClick('Day')}>
-                    <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Day' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
-                    Day
+                <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Today' ? 'bg-textGreen' : 'bg-white'}`}
+                    onClick={() => handleOptionClick('Today')}>
+                    <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Today' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
+                    Today
                     </div>
                 </div>
                 <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Week' ? 'bg-textGreen' : 'bg-white'}`}
@@ -181,6 +181,7 @@ const DownloadPopup = ({ onClose, distributors }:any) => {
                     <div className="w-full h-11 px-4 py-2 bg-white rounded-[5px] border border-neutral-400 flex items-center gap-2">
                         <div className="customDatePickerWidth flex">
                         <DatePicker
+                            dateFormat="dd/MM/yyyy"
                             showYearDropdown
                             showMonthDropdown
                             selected={startDate}
@@ -189,7 +190,7 @@ const DownloadPopup = ({ onClose, distributors }:any) => {
                             endDate={endDate}
                             selectsStart
                             selectsRange
-                            placeholderText="Start Date"
+                            placeholderText="Start Date - End Date"
                             className="text-gray-500 text-base font-medium border-0 outline-none"
                             
                         />
@@ -199,7 +200,7 @@ const DownloadPopup = ({ onClose, distributors }:any) => {
             </div>
             </>
         )}
-        {selectedOption === 'Day' && (
+        {selectedOption === 'Today' && (
             <div className="day-content">
             
             </div>
@@ -232,7 +233,7 @@ const DownloadPopup = ({ onClose, distributors }:any) => {
         </Button>
         <CSVLink
             data={data}
-            filename={`sales_report_${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'}_to_${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}.csv`}
+            filename={`sales_report_${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'}_to_${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}.csv`}
             className="no-underline flex items-center mr-4"
         >
         <Button className="cursor-pointer outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">

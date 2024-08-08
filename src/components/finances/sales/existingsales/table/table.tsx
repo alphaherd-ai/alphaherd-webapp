@@ -124,17 +124,16 @@ const ExistingsalesTable = () => {
     return (
         <>
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
-            <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-start items-center gap-6 flex">
-                <div className='bg-green-200 rounded-md px-2' ><span className="text-green-600  text-sm font-medium ">You’re owed: ₹</span><span className="text-green-600 text-sm font-bold ">2,124</span></div>
-                <div className='flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'><Image src={Download} alt='Download' className='w-4  h-4' /></div>
+                <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-end items-center gap-6 flex">
+                    <div className='flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'><Image src={Download} alt='Download' className='w-4  h-4' /></div>
                 </div>
-                <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px]">
+                <div className="flex-col w-full max-h-[80vh] pr-[16px] pl-[16px] pt-[20px] overflow-y-auto">
                     <ExistingsalesHeader otherData={otherData}/>
 
                     <div className="w-full rounded-md border border-solid border-borderGrey">
                     <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
                     <div className="text-gray-500 text-xl font-medium ">
-                                Items
+                    Items & Services
                             </div>
 
                         </div>
@@ -160,7 +159,7 @@ const ExistingsalesTable = () => {
                                     <div className='w-[10rem] flex-col items-center text-[#6B7E7D] text-base font-medium'>
                                     <div className="text-[#6B7E7D] text-base  font-medium  "> {item.batchNumber}</div>
 
-                                        <div className="text-neutral-400 text-[10px] font-medium ">{formatDateAndTime(item.expiry).formattedDate}</div>
+                                        <div className="text-neutral-400 text-[13px] font-medium ">{formatDateAndTime(item.expiry).formattedDate}</div>
                                     </div>
                                     <div className='w-1/12 flex items-center text-[#6B7E7D] text-base font-medium gap-[12px]'>
                                       

@@ -129,6 +129,45 @@ const NewPurchaseReturnNewTotalAmount = () => {
     }, [count, showPopup]);
 
 
+    const customStyles = {
+        control: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          border: state.isFocused ? '1px solid #35BEB1' : 'none',
+          '&:hover': {
+            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            },
+          boxShadow: state.isFocused ? 'none' : 'none',
+        }),
+        valueContainer: (provided: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        singleValue: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+        }),
+        menu: (provided: any) => ({
+          ...provided,
+          backgroundColor: 'white',
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        option: (provided: any, state: any) => ({
+          ...provided,
+          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+          color: state.isFocused ? 'white' : '#6B7E7D',
+          '&:hover': {
+            backgroundColor: '#35BEB1',
+            color: 'white',
+          },
+        }),
+      };
+
   return (
     <>
 
@@ -176,7 +215,7 @@ const NewPurchaseReturnNewTotalAmount = () => {
                                         variant="solid"
                                         className="capitalize flex h-9 py-2.5 border-none text-base bg-black text-white rounded-lg cursor-pointer">
                                         <div className='flex'><Image src={Rupee} alt='Rupee' className='w-6 h-6 ' /></div>
-                                        Record Transaction
+                                        Record Payment
                                     </Button>       
                     </div> 
                     {transactionsData && transactionsData.map((transaction, index) => (
@@ -243,12 +282,7 @@ const NewPurchaseReturnNewTotalAmount = () => {
                                                 isClearable={false}
                                                 isSearchable={true}
                                                 options={gstOptions}
-                                                styles={{
-                                                    control: (provided, state) => ({
-                                                        ...provided,
-                                                        border: state.isFocused ? 'none' : 'none',
-                                                    }),
-                                                }}
+                                                styles={customStyles}
                                                 onChange={handleSelectChange}
                                             />
                                         </div>

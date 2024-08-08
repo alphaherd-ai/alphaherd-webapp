@@ -19,6 +19,7 @@ import { DataContext } from "./DataContext";
 import { useSearchParams } from "next/navigation";
 import formatDateAndTime from "@/utils/formateDateTime";
 import { generateInvoiceNumber } from "@/utils/generateInvoiceNo";
+import { custom } from "zod";
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
@@ -85,7 +86,45 @@ const CreateGrnHeader = ({existingHeaderData}:any) => {
         setDisableButton(!disableButton);
     };
 
-
+    const customStyles = {
+        control: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          border: state.isFocused ? '1px solid #35BEB1' : 'none',
+          '&:hover': {
+            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            },
+          boxShadow: state.isFocused ? 'none' : 'none',
+        }),
+        valueContainer: (provided: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        singleValue: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+        }),
+        menu: (provided: any) => ({
+          ...provided,
+          backgroundColor: 'white',
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        option: (provided: any, state: any) => ({
+          ...provided,
+          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+          color: state.isFocused ? 'white' : '#6B7E7D',
+          '&:hover': {
+            backgroundColor: '#35BEB1',
+            color: 'white',
+          },
+        }),
+        menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
+      };
 
   return (
     <>
@@ -105,13 +144,7 @@ const CreateGrnHeader = ({existingHeaderData}:any) => {
                             isSearchable={isSearchable}
                             name="color"
                             options={distributor}
-                            styles={{
-                                control: (provided, state) => ({
-                                    ...provided,
-                                    border: state.isFocused ? 'none' : 'none',
-                                }),
-
-                            }}
+                            styles={customStyles}
                             onChange={(selectedOption) => setHeaderData((prevData) => ({ ...prevData, distributor: selectedOption }))}
                         /> )):(
                             existingHeaderData.distributor
@@ -248,7 +281,7 @@ const CreateGrnHeader = ({existingHeaderData}:any) => {
                         <input
                             type="text"
                             className=" w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                            defaultValue={"..."}
+                            placeholder="..."
                             onChange={(e) => setHeaderData((prevData) => ({ ...prevData, notes: e.target.value }))}
                         />    ):(
                             existingHeaderData.notes

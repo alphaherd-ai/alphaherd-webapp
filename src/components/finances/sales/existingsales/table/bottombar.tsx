@@ -5,7 +5,7 @@ import printicon from "../../../../../assets/icons/finance/print.svg"
 import shareicon from "../../../../../assets/icons/finance/share.svg"
 import drafticon from "../../../../../assets/icons/finance/draft.svg"
 import checkicon from "../../../../../assets/icons/finance/check.svg"
-import ReturnIcon    from "../../../../../assets/icons/finance/Return.svg"
+import ReturnIcon    from "../../../../../assets/icons/finance/replay.svg"
 import React, { useState, useEffect } from 'react';
 import downloadicon from "../../../../../assets/icons/finance/download.svg"
 
@@ -92,8 +92,8 @@ const ExistingsalesBottomBar = ({existingSalesData}:any) => {
                                 </div>
                             </div>
                             <div className="flex justify-between items-center gap-4 pr-4">
-                            <Link href={{pathname:'newsales',query:{id:existingSalesData?.id}}} style={{textDecoration:'none',color:'white'}}>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer" style={{textDecoration:'none',color:'white'}} >
+                                <Link href={{pathname:'newsales',query:{id:existingSalesData?.id}}} style={{textDecoration:'none',color:'white'}}>
+                                <div className="px-4 py-[0.78rem] bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
                                     <Image src={ReturnIcon} alt="check"></Image>
                                     <div>Repeat Order</div>
                                 </div>
