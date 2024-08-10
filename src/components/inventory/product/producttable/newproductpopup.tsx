@@ -127,7 +127,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
             }
         }
           fetchDistributors();
-        }, []);
+    }, []);
 
     function handleContinue(){
         try{

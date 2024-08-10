@@ -15,6 +15,7 @@ import { useAppSelector } from '@/lib/hooks';
 import { Button } from "@nextui-org/react"
 import {useRouter} from "next/navigation"
 import { generatePdfForInvoice } from "@/utils/salesPdf"
+import { AppState } from "@/lib/features/appSlice"
 
 
 
@@ -23,7 +24,7 @@ const NewsaleEstimateBottomBar = () => {
     const { headerData, tableData, totalAmountData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
     const router=useRouter();
-
+    const [financeType, setFinanceType] = useState(FinanceCreationType.Sales_Estimate);
     const handleSubmit = async () => {
         if (!headerData.customer || tableData.length === 0) {
             alert('Customer is required');
@@ -132,25 +133,90 @@ const NewsaleEstimateBottomBar = () => {
             console.error('Error while sending message', error);
         } 
     };
+    //const phoneNumber = headerData.customer.contact;
+    // const sendWhatsapp = async (phoneNumber: any) => {
+        
+    //     try {   
+    //         const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/whatsapp`, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({
+    //                 phone: `+91${phoneNumber}`,
+    //                 message: "Hello from the team. You can download your invoice PDF here:"
+    //             }),
+    //         });
+    //         console.log('Whatsapp Message sent successfully:', response);
+    //     } catch (error) {
+    //         console.error('Error while sending message', error);
+    //     } 
+    // };
+    // const sendWhatsapp = async (phoneNumber: any, headerData: { [key: string]: any }, tableData: { [key: string]: any }[], totalAmountData: { [key: string]: any }, type: string, appState: AppState) => {
+    //     try {   
+    //         const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/whatsapp`, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({
+    //                 phone:  `+91${phoneNumber}`,
+    //                 message: 'Hello from the team',
+    //                 headerData: headerData,
+    //                 tableData: tableData,
+    //                 totalAmountData: totalAmountData,
+    //                 type: type, // Send the FinanceCreationType to the backend
+    //             }),
+    //         });
+    //         console.log('WhatsApp message sent successfully:', response);
+    //     } catch (error) {
+    //         console.error('Error while sending message', error);
+    //     } 
+    // };
+    const sendWhatsapp = async (phoneNumber: any, headerData: { [key: string]: any }, tableData: { [key: string]: any }[], totalAmountData: { [key: string]: any }, type: string, appState: AppState) => {
+        try {
+          // Generate the PDF link
+          const pdfResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/pdf-link`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              headerData,
+              tableData,
+              totalAmountData,
+              type,
+              appState,
+            }),
+          });
 
-    const sendWhatsapp = async () => {
-        try {   
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/whatsapp`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    phone: "+917637834918",
-
-                }),
-            });
-            console.log('Whatsapp Message sent successfully:', response);
+          if (!pdfResponse.ok) {
+            const errorText = await pdfResponse.text();
+            console.error('Failed to generate PDF link:', pdfResponse.status, errorText);
+            throw new Error(`Failed to generate PDF: ${pdfResponse.statusText}`);
+          }
+      
+          const pdfData = await pdfResponse.json();
+          const pdfUrl = pdfData.pdfUrl;
+      
+          // Send WhatsApp message with the PDF link
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/whatsapp`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              phone: `+91${phoneNumber}`,
+              message: `Hello from the team. Here is your invoice: ${pdfUrl}`,
+            }),
+          });
+      
+          console.log('WhatsApp message sent successfully:', response);
         } catch (error) {
-            console.error('Error while sending message', error);
-        } 
+          console.error('Error while sending message', error);
+        }
     };
-
+      
     const sendEmail = ()=>{
         try {   
             const response = fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/email`, {
@@ -167,7 +233,13 @@ const NewsaleEstimateBottomBar = () => {
             console.error('Error while saving data:', error);
         } 
     };
+    const [phone, setPhone] = useState('');
 
+    useEffect(() => {
+        if (headerData && headerData.customer && headerData.customer.value) {
+            setPhone(headerData.customer.value.contact);
+        }
+    }, [headerData]);
 
     const isDisabled = !headerData.customer || tableData.length === 0 || tableData.some(data => !data.itemName);
     return (
@@ -192,7 +264,7 @@ const NewsaleEstimateBottomBar = () => {
                     </Button>
                     <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={shareicon} alt="share"></Image>
-                        <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all" onClick={sendWhatsapp}>Share via Whatsapp</div>
+                        <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all" onClick={() => sendWhatsapp(phone, headerData, tableData, totalAmountData, financeType,appState)}>Share via Whatsapp</div>
                     </Button>
                     <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={shareicon} alt="share"></Image>
