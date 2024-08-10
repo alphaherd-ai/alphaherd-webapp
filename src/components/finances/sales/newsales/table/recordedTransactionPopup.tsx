@@ -1,6 +1,6 @@
 "use client";
 import Image from 'next/image';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import RadioButton from "../../../../../assets/icons/finance/radio_button.svg"
 import RadioButtonSelec from "../../../../../assets/icons/finance/radio_button (1).svg"
 import DatePicker from 'react-datepicker';
@@ -23,15 +23,18 @@ type PopupProps = {
     transactionsData: any;
     setTransactionsData: any;
     initialInvoiceNo: any;
+    totalAmount: any;
 }
 
 
-const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, transactionsData, setTransactionsData, initialInvoiceNo}) => {
+const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, transactionsData, setTransactionsData, initialInvoiceNo, totalAmount}) => {
 
     const dispatch = useDispatch();
 
 
-    const [formData, setFormData] = useState<any>({});
+    const [formData, setFormData] = useState<any>({
+        amountPaid: "",
+    });
     const appState = useAppSelector((state) => state.app)
     const [isAdvancePayment, setIsAdvancePayment] = useState(false);
 
@@ -65,8 +68,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
         setTransactionType(type);
     };
 
-    console.log("headerdata", headerdata?.customer.label);
-
+    console.log("headerdata", headerdata);
+    console.log("totalAmountDatatotalAmountData", totalAmount);
     const handleSaveClick = async () => {
         try {
             const response = await fetch(`http://localhost:3000/alphaherd/api/finance/transactions/create?branchId=${appState.currentBranchId}`, {
@@ -78,8 +81,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
                     partyName: headerdata?.customer.label,
                     invoiceLink: headerdata.invoiceNo,
                     receiptNo: initialInvoiceNo,
-                    date: formData.date,
-                    amountPaid: parseInt(formData.amountPaid, 10),
+                    date: formData.date || new Date(),
+                    amountPaid: parseInt(formData.amountPaid, 10) || totalAmount?.totalCost,
                     mode: formData.mode?.value,
                     moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
                 })
@@ -98,19 +101,28 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
         }
 
         const newTransaction = {
-            amountPaid: parseInt(formData.amountPaid, 10),
-            date: formData.date,
+            amountPaid: parseInt(formData.amountPaid, 10) || totalAmount?.totalCost,
+            date: formData.date || new Date(),
             isAdvancePayment: isAdvancePayment,
             mode: formData.mode?.value,
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
         };
 
-        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: formData.mode?.value, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10) || totalAmount?.totalCost, mode: formData.mode?.value, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
 
         // setTransactionsData([{amountPaid:parseInt(formData.amountPaid, 10), date:formData.date, isAdvancePayment:isAdvancePayment}]);
 
         setTransactionsData((prevTransactions:any) => [...prevTransactions, newTransaction]);
     };
+
+    useEffect(() => {
+        if (totalAmount?.totalCost !== undefined) {
+            setFormData((prevData:any) => ({
+                ...prevData,
+                amountPaid: totalAmount.totalCost,
+            }));
+        }
+    }, [totalAmount]);
 
     const handleChange = (field: string, value: any) => {
         setFormData({ ...formData, [field]: value });
@@ -118,26 +130,25 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
 
 
 
-  return (
+return (
     <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
         <div className="w-[640px] py-2 pb-8  px-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
             <div className="self-end items-start gap-6 flex mt-[0.6rem] cursor-pointer" onClick={onClose}>
                 <Image src={closeicon} alt="close"></Image>
             </div>
             <div className='w-full flex flex-col gap-1'>
-
                 <div className="text-gray-500 text-xl font-medium ">Record Payment</div>
                 <div className="text-neutral-400 text-base font-medium ">Note down the details of the transaction</div>
             </div>
             <div className='w-full flex gap-36'>
                 <div className='flex gap-1'>
                     <div onClick={() => handleToggleRadioButton('Money In')}>
-                            {transactionType !== 'Money In' ? (
-                                <Image src={RadioButton} alt='RadioButton' />
-                            ) : (
-                                <Image src={RadioButtonSelec} alt='RadioButtonSelec' />
-                            )}
-                        </div>
+                        {transactionType !== 'Money In' ? (
+                            <Image src={RadioButton} alt='RadioButton' />
+                        ) : (
+                            <Image src={RadioButtonSelec} alt='RadioButtonSelec' />
+                        )}
+                    </div>
                     <div>
                         <span className='text-base text-textGrey2 font-medium'>
                             Money In
@@ -146,48 +157,51 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
                 </div>
                 <div className='flex gap-1'>
                     <div onClick={() => handleToggleRadioButton('Money Out')}>
-                            {transactionType !== 'Money Out' ? (
-                                <Image src={RadioButton} alt='RadioButton' />
-                            ) : (
-                                <Image src={RadioButtonSelec} alt='RadioButtonSelec' />
-                            )}
-                        </div>
+                        {transactionType !== 'Money Out' ? (
+                            <Image src={RadioButton} alt='RadioButton' />
+                        ) : (
+                            <Image src={RadioButtonSelec} alt='RadioButtonSelec' />
+                        )}
+                    </div>
                     <div>
                         <span className='text-base text-textGrey2 font-medium'>
                             Money Out
                         </span>
                     </div>
                 </div>
-                
             </div>
             <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Party Name</span></div>
-                    <div><div className="w-[440px] h-9 rounded-[5px] text-textGrey2 bg-white text-base font-medium p-2  outline-none border border-solid border-gray-300 ">{headerdata?.customer.label}</div></div>
-            
-            </div>
-            
-            
-            <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Amount Paid</span></div>
-                    <div><input className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="number" name="amountPaid" onChange={(e) => handleChange("amountPaid", e.target.value)} /></div>
+                <div><span className='text-gray-500 text-base font-medium '>Party Name</span></div>
+                <div><div className="w-[440px] h-9 rounded-[5px] text-textGrey2 bg-white text-base font-medium p-2  outline-none border border-solid border-gray-300 ">{headerdata?.customer.label}</div></div>
             </div>
             <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Receipt No.</span></div>
-                    <div className='w-[440px] flex justify-between items-center'>
+                <div><span className='text-gray-500 text-base font-medium '>Amount</span></div>
+                <div>
+                <input
+                    className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2 outline-none border border-solid border-gray-300 focus:border-teal-500"
+                    type="number"
+                    name="amountPaid"
+                    value={formData.amountPaid}
+                    onChange={(e) => handleChange("amountPaid", e.target.value)}
+                />
+                </div>
+            </div>
+            <div className='w-full flex justify-between items-center'>
+                <div><span className='text-gray-500 text-base font-medium '>Receipt No.</span></div>
+                <div className='w-[440px] flex justify-between items-center'>
                     <div><div className="w-[10rem] h-9 rounded-[5px] bg-white text-textGrey2 text-base font-medium p-2  border border-solid border-gray-300">#{initialInvoiceNo}</div></div>
-
-                        <div><span className='text-gray-500 text-base font-medium '>Date</span></div>
-                        <div className='relative'>
+                    <div><span className='text-gray-500 text-base font-medium '>Date</span></div>
+                    <div className='relative'>
                         <DatePicker
                             className="w-[10rem] "
-                            selected={startDate}
+                            selected={startDate || new Date()}
                             onChange={handleDateChange}
                             calendarClassName="react-datepicker-custom"
                             customInput={
                                 <div className='relative'>
                                     <input
                                         className="w-[10rem] border border-solid border-borderGrey h-9 text-textGrey1 text-base font-medium px-2 rounded   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                        value={startDate.toLocaleDateString()}
+                                        value={startDate?.toLocaleDateString() || new Date().toLocaleDateString()} // Set current date if startDate is not defined
                                         readOnly
                                     />
                                     <Image
@@ -200,40 +214,43 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
                                 </div>
                             }
                         />
-                        </div>
                     </div>
-
+                </div>
             </div>
             <div className='w-full flex justify-between items-center'>
-            <div><span className='text-gray-500 text-base font-medium '>Mode</span></div>
-                    <div className='w-[440px] flex justify-between items-center'>
-                        <Select
-                            className="text-neutral-400 text-base font-medium w-full"
-                            placeholder="Mode"
-                            isClearable={false}
-                            isSearchable={true}
-                            options={Mode}
-                            isMulti={false}
-                            name="mode"
-                            onChange={(value) => handleChange("mode", value)}
-                        />
-                    </div>
-
+                <div><span className='text-gray-500 text-base font-medium '>Mode</span></div>
+                <div className='w-[440px] flex justify-between items-center'>
+                    <Select
+                        className="text-neutral-400 text-base font-medium w-full"
+                        placeholder="Mode"
+                        isClearable={false}
+                        isSearchable={true}
+                        options={Mode}
+                        isMulti={false}
+                        name="mode"
+                        onChange={(value) => handleChange("mode", value)}
+                    />
+                </div>
             </div>
             <div className='w-full flex justify-between items-center'>
-                    <div className='flex items-center gap-1'>
-                        <input type="checkbox" name="advancePayment" id="advancePayment" checked={isAdvancePayment} onChange={(e) => setIsAdvancePayment(e.target.checked)} />
-                        <span className='text-textGrey2 text-base font-medium'>Mark as advance payment</span>
-                    </div>
-                    <Button className="px-2 py-2.5 bg-navBar rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer"  onClick={handleSaveClick}>
-                        <Image src={check} alt='check' /> 
-                        <span className='text-white text-base font-medium pr-2'>Save Transaction</span>
-                    </Button>
+                <div className='flex items-center gap-1'>
+                    <input
+                        type="checkbox"
+                        name="advancePayment"
+                        id="advancePayment"
+                        checked={isAdvancePayment}
+                        onChange={(e) => setIsAdvancePayment(e.target.checked)}
+                    />
+                    <span className='text-textGrey2 text-base font-medium'>Mark as advance payment</span>
+                </div>
+                <Button className="px-2 py-2.5 bg-navBar rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer"  onClick={handleSaveClick}>
+                    <Image src={check} alt='check' /> 
+                    <span className='text-white text-base font-medium pr-2'>Save Transaction</span>
+                </Button>
             </div>
-            
         </div>
     </div>
-  )
+)
 
 }
 

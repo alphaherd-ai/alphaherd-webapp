@@ -82,7 +82,7 @@ const urlSearchParams = useSearchParams();
       <div className='w-2/12 flex   text-base font-medium '>{expense.party}</div>
       <div className='w-[9rem] flex   text-base font-medium'>{expense.invoiceNo}</div>
       <div className='w-1/12 flex   text-base font-medium'>$ {(expense.totalCost).toFixed(2)}</div>
-      <div className='w-[9rem] flex   text-base font-medium'>{expense.totalQty} items</div>
+      {/* <div className='w-[9rem] flex   text-base font-medium'>{expense.totalQty} items</div> */}
       <div className='w-[6rem] flex   text-base font-medium'>{formatDateAndTime(expense.dueDate).formattedDate}</div>
       <div className='w-[12rem] flex  items-center  text-base font-medium'>
       <Tooltip content={expense.status} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
