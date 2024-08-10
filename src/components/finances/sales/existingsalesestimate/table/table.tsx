@@ -96,7 +96,7 @@ const ExistingsaleEstimateTable = () => {
                     <div className="w-full rounded-md border border-solid border-borderGrey">
                     <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
                             <div className="text-gray-500 text-xl font-medium ">
-                                Items
+                            Items & Services
                             </div>
 
                         </div>
@@ -128,7 +128,7 @@ const ExistingsaleEstimateTable = () => {
                                     <div className='w-[10rem] flex-col items-center text-textGrey2  text-base font-medium '>
                                     <div className="text-textGrey2 text-base  font-medium  "> {item.batchNumber}</div>
 
-                                        <div className="text-neutral-400 text-[10px] font-medium ">{formatDateAndTime(item.expiry).formattedDate}</div>
+                                        <div className="text-neutral-400 text-[13px] font-medium ">{formatDateAndTime(item.expiry).formattedDate}</div>
                                     </div>
                                     <div className='w-[10rem] flex items-center  text-base font-medium gap-1 '>
                                         <div className="flex items-center text-textGrey2  text-base font-medium">₹ {item.sellingPrice}</div>

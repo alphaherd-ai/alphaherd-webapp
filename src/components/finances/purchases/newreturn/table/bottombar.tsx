@@ -16,13 +16,13 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { FinanceCreationType } from "@prisma/client"
 import axios from "axios"
 const NewPurchaseReturnNewBottomBar = ({invoiceData}:any) => {
-    const { headerData, tableData, totalAmountData } = useContext(DataContext);
+    const { headerData, tableData, totalAmountData, transactionsData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
     const url = useSearchParams();
     const id = url.get('id');
     const router=useRouter();
     const handleSubmit = async () => {
-        const allData = {headerData, tableData, totalAmountData};
+        const allData = {headerData, tableData, totalAmountData, transactionsData};
         console.log(allData)
         let totalQty=0;
         tableData.forEach(data => {
@@ -47,6 +47,9 @@ const NewPurchaseReturnNewBottomBar = ({invoiceData}:any) => {
             totalCost: (id === null) ?allData.totalAmountData.totalCost:invoiceData.totalCost,
             totalQty: (id === null) ?totalQty:invoiceData.totalQty,
             overallDiscount:(id===null)? allData.totalAmountData.overallDiscount:invoiceData.overallDiscount,
+            recordTransaction: {
+                create: allData.transactionsData
+            },
             status: "Pending",
             type: FinanceCreationType.Purchase_Return,
             items:{

@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 
 import { Tooltip, Button, Spinner } from "@nextui-org/react";
@@ -10,6 +10,7 @@ import InventoryProductTableBottombar from './bottombar';
 import useSWR from 'swr';
 import { useAppSelector } from '@/lib/hooks';
 import Loading from '@/app/loading';
+import { useSearchParams } from 'next/navigation';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
@@ -17,6 +18,7 @@ interface Products{
   id:string;
   itemName:string;
   hsnCode:string;
+  providers:string;
 }
 interface ProductBatch {
   id: number;
@@ -49,15 +51,49 @@ const ProductAllItem = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(10); 
   const appState = useAppSelector((state) => state.app);
+  const urlSearchParams = useSearchParams();
+  const startDate = useMemo(() => urlSearchParams.get('startDate') ? new Date(urlSearchParams.get('startDate')!) : null, [urlSearchParams]);
+  const endDate = useMemo(() => urlSearchParams.get('endDate') ? new Date(urlSearchParams.get('endDate')!) : null, [urlSearchParams]);
+  const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
+  const selectedInvoiceTypes = useMemo(() => urlSearchParams.getAll('selectedInvoiceTypes'), [urlSearchParams]);
+  const selectedMoneyTypes = useMemo(() => urlSearchParams.getAll('selectedMoneyTypes'), [urlSearchParams]);
   const {data,error,isLoading}= useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/getAll?branchId=${appState.currentBranchId}`,fetcher)
   useEffect(()=>{
     if(!isLoading&&data&&!error){
-      const filteredData = data.filter((inventory: { inventoryType: any; }) => inventory.inventoryType===Inventory.Product)
+      let filteredData = data.filter((inventory: { inventoryType: any; }) => inventory.inventoryType===Inventory.Product)
+      if (startDate || endDate) {
+        filteredData = filteredData.filter((item: any) => {
+          const itemDate = new Date(item.createdAt);
+          console.log(itemDate)
+          if (startDate && itemDate < startDate) return false;
+          if (endDate && itemDate > endDate) return false;
+          return true;
+        });
+      }
+
+   
+      if (selectedParties.length > 0) {
+        filteredData = filteredData.filter((item: any) =>
+          selectedParties.includes(item.productBatch?.product.providers[0])
+        );
+      }
+
+      // Apply invoice type filter
+      if (selectedInvoiceTypes.length > 0) {
+        filteredData = filteredData.filter((item: any) =>
+          selectedInvoiceTypes.includes(item.invoiceType)
+        );
+      }
+      if (selectedMoneyTypes.length > 0) {
+        filteredData = filteredData.filter((item: any) =>
+          selectedMoneyTypes.includes(item.stockChange)
+        );
+      }
       setProducts(filteredData);
       console.log('Products Data:', filteredData); 
     }
     
-  },[data,error,isLoading])
+  },[data,error,isLoading,startDate,endDate,selectedInvoiceTypes,selectedParties,selectedMoneyTypes])
   
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
@@ -72,7 +108,7 @@ const ProductAllItem = () => {
     <div>
       {currentProducts?.map(inventory => (
       
-        <div key={inventory.id} className='flex w-full box-border h-16 py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 hover:bg-gray-200 hover:text-gray-500 transition'>
+        <div key={inventory.id} className='flex  w-full  box-border h-16 justify-evenly items-center bg-white   border-0 border-b border-solid border-borderGrey  hover:bg-gray-200 text-textGrey1  hover:text-textGrey2  transition'>
           <div className='w-1/12 flex items-center px-6 text-neutral-400 text-base font-medium'>{formatDateAndTime(inventory.createdAt).formattedDate}</div>
           <div className='w-1/12 flex items-center px-6 text-neutral-400 text-base font-medium'>{formatDateAndTime(inventory.createdAt).formattedTime}</div>
           <div className='w-2/12 flex items-center px-6 text-neutral-400 text-base font-medium'>
@@ -90,9 +126,9 @@ const ProductAllItem = () => {
           </div>
           <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium flex-col'>
             <div className='text-gray-500 text-xs'>{inventory.productBatch?.batchNumber}</div>
-            <div className='text-neutral-400 text-[10px] font-medium'>{formatDateAndTime(inventory.productBatch?.expiry).formattedDate}</div>
+            <div className='text-neutral-400 text-[13px] font-medium'>{formatDateAndTime(inventory.productBatch?.expiry).formattedDate}</div>
           </div>
-          <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{inventory.productBatch?.party}</div>
+          <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{inventory.productBatch?.product.providers[0]}</div>
           <div className='w-1/12 flex  items-center justify-center text-gray-500 text-sm font-medium px-2 py-1.5 bg-gray-200 rounded-md'>{inventory.invoiceType}</div>
           <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{inventory.productBatch?.product?.hsnCode}</div>
         </div>

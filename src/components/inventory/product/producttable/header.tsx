@@ -1,5 +1,5 @@
 "use client";
-import React from 'react'
+import React, { useContext } from 'react'
 
 import Sort from '../../../../assets/icons/finance/sort.svg';
 import Filter from '../../../../assets/icons/finance/filter.svg';
@@ -17,11 +17,23 @@ import Popup2 from '../../product/producttable/updateinventorypopup';
 
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
+import FilterDropdwonCard from './FilterDropDownCard';
+import FilterDropdownProductsCard from './FilterDropDownProductsCard';
 
+import { DataContext } from './DataContext';
+import DownloadPopup from './downloadProductPopup';
 
 
 
 const InventoryProductTableHeader = () => {
+
+    const { allData } = useContext(DataContext);
+
+    const [showPopup1, setShowPopup1] = React.useState(false);
+    const togglePopup1 = () => {
+        setShowPopup1(!showPopup1);
+    }
+
     const currentRoute = usePathname();
     const [showPopup, setShowPopup] = React.useState(false);
     const [showPopup2, setShowPopup2] = React.useState(false);
@@ -54,7 +66,7 @@ const InventoryProductTableHeader = () => {
 
 
 
-            <div className='flex w-full bg-white h-20  p-4 px-6 mt-6 justify-between border border-solid border-gray-300 border-t-0.5 rounded-tl-lg rounded-tr-lg'>
+<div className='flex w-full bg-white h-20  p-4 px-6  justify-between border-0 border-b border-solid border-borderGrey rounded-tl-lg rounded-tr-lg'>
 
                 <div className='flex  text-gray-500 items-center w-5/12'>
                     <Link className='no-underline flex item-center' href='/inventory/products/timeline'>
@@ -72,10 +84,9 @@ const InventoryProductTableHeader = () => {
                     </Link>
                 </div>
                 <div className='flex items-center'>
-                    <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
-
-                        <div className='flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'><Image src={Download} alt='Download' className='w-4  h-4' /></div>
-                    </Link>
+                    <div onClick={togglePopup1} className='cursor-pointer mr-4 flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'>
+                        <Image src={Download} alt='Download' className='w-4  h-4' />
+                    </div>
                     <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
 
                         <div className='flex items-center justify-center w-7 h-7 border border-solid border-gray-300 border-0.5 rounded-md  p-1'><Image src={Chart} alt='Chart' className='w-4  h-4' /></div>
@@ -116,35 +127,20 @@ const InventoryProductTableHeader = () => {
                     <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg '>
                         <div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>
 
-                        <Dropdown>
-                            <DropdownTrigger className='z-0'>
+                        <Popover>
+                            <PopoverTrigger>
                                 <Button
-                                    //   variant="bordered" 
-                                    // color="gray-400"
                                     variant="solid"
                                     className="capitalize border-none bg-transparent rounded-lg"
                                 >
-                                    {selectedCategoryValue}
+                                    Filter
                                 </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                aria-label="Single selection example"
-                                // color="gray-500"
-                                className=" text-base bg-gray-200 rounded-lg"
-                                variant="solid"
-                                disallowEmptySelection
-                                selectionMode="single"
-                                selectedKeys={selectedCategory}
-                                // onSelectionChange={setSelectedCategory}
-                            >
-                                <DropdownItem
-                                    className=" p-2" key="Category:text">Category: Text</DropdownItem>
-                                <DropdownItem
-                                    className=" p-2" key="Category:number">Category: Number</DropdownItem>
-                                <DropdownItem
-                                    className=" p-2" key="Category:date">Date</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
+                            </PopoverTrigger>
+                            <PopoverContent>
+                            {currentRoute.startsWith("/inventory/products/timeline")?
+                        ( <FilterDropdwonCard />):currentRoute.startsWith("/inventory/products/all")?(<FilterDropdownProductsCard/>):""}                                
+                            </PopoverContent>
+                        </Popover>
                     </div>
 
                     <div className='flex items-center '>
@@ -161,6 +157,9 @@ const InventoryProductTableHeader = () => {
             </div >
             {showPopup && <Popup onClose={togglePopup} />}
             {showPopup2 && <Popup2 onClose={togglePopup2} />}
+
+            {showPopup1 && <DownloadPopup onClose={togglePopup1}  products={allData} />}
+
         </>
     )
 }

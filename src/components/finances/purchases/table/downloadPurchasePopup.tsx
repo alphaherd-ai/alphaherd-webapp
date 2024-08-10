@@ -12,6 +12,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import logo from "../../../../assets/icons/finance/pfpimg.png";
 import { useAppSelector } from '@/lib/hooks';
+import formatDateAndTime from '@/utils/formateDateTime';
 
 const DownloadPopup = ({ onClose, purchases, type }:any) => {
 
@@ -60,7 +61,7 @@ const DownloadPopup = ({ onClose, purchases, type }:any) => {
   const downloadPDF = () => {
     convertImageToBase64(logo.src, (base64Image:any) => {
     const doc = new jsPDF('landscape');
-    const tableColumn = ["Date", "Type", "Distributor", "Serial No.", "Total Cost", "Total Qty", "Due Date", "Status"];
+    const tableColumn = ["Date", "Type", "Distributor", "Ref. No..", "Total Cost", "Total Qty", "Due Date", "Status"];
     const tableRows:any = [];
 
     const typeCounts:any = {};
@@ -87,13 +88,13 @@ const DownloadPopup = ({ onClose, purchases, type }:any) => {
 
     data.forEach((item:any) => {
       const purchasesData = [
-        format(new Date(item.date), 'yyyy-MM-dd'),
+        format(new Date(item.date), 'dd-MM-yyyy'),
         item.type,
         item.distributor,
         item.invoiceNo,
         item.totalCost,
         item.totalQty,
-        item.dueDate,
+        formatDateAndTime(item.dueDate).formattedDate,
         item.status,
       ];
       tableRows.push(purchasesData);
@@ -132,7 +133,7 @@ const DownloadPopup = ({ onClose, purchases, type }:any) => {
 
       doc.setFontSize(11);
       doc.text(`Category : ${type}`, 60, 33);
-      doc.text(`Period : ${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'} - ${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}`, 60, 37);
+      doc.text(`Period : ${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'} - ${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}`, 60, 37);
 
   
       doc.setFontSize(11);
@@ -157,7 +158,7 @@ const DownloadPopup = ({ onClose, purchases, type }:any) => {
       body: tableRows,
     });
 
-    const fileName = `purchases_report_${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'}_to_${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}.pdf`;
+    const fileName = `purchases_report_${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'}_to_${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}.pdf`;
     doc.save(fileName);
   })
   }
@@ -171,7 +172,7 @@ const DownloadPopup = ({ onClose, purchases, type }:any) => {
           <Image src={closeicon} alt="close" />
         </div>
         <div className="flex-col justify-start items-start gap-2 flex">
-          <div className="text-gray-500 text-xl font-medium">Download Sales Report</div>
+          <div className="text-gray-500 text-xl font-medium">Download Purchases Report</div>
           <div className="text-neutral-400 text-base font-medium">Please specify the date range for the report</div>
         </div>
     <div className="flex flex-col items-start gap-6 mt-6">
@@ -183,10 +184,10 @@ const DownloadPopup = ({ onClose, purchases, type }:any) => {
                         Custom
                     </div>
                 </div>
-                <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Day' ? 'bg-textGreen' : 'bg-white'}`}
-                    onClick={() => handleOptionClick('Day')}>
-                    <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Day' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
-                    Day
+                <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Today' ? 'bg-textGreen' : 'bg-white'}`}
+                    onClick={() => handleOptionClick('Today')}>
+                    <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Today' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
+                    Today
                     </div>
                 </div>
                 <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Week' ? 'bg-textGreen' : 'bg-white'}`}
@@ -217,6 +218,7 @@ const DownloadPopup = ({ onClose, purchases, type }:any) => {
                     <div className="w-full h-11 px-4 py-2 bg-white rounded-[5px] border border-neutral-400 flex items-center gap-2">
                         <div className="customDatePickerWidth flex">
                         <DatePicker
+                            dateFormat="dd/MM/yyyy"
                             showYearDropdown
                             showMonthDropdown
                             selected={startDate}
@@ -225,7 +227,7 @@ const DownloadPopup = ({ onClose, purchases, type }:any) => {
                             endDate={endDate}
                             selectsStart
                             selectsRange
-                            placeholderText="Start Date"
+                            placeholderText="Start Date - End Date"
                             className="text-gray-500 text-base font-medium border-0 outline-none"
                             
                         />
@@ -235,7 +237,7 @@ const DownloadPopup = ({ onClose, purchases, type }:any) => {
             </div>
             </>
         )}
-        {selectedOption === 'Day' && (
+        {selectedOption === 'Today' && (
             <div className="day-content">
             
             </div>
@@ -268,7 +270,7 @@ const DownloadPopup = ({ onClose, purchases, type }:any) => {
         </Button>
         <CSVLink
             data={data}
-            filename={`sales_report_${startDate ? format(startDate, 'yyyy-MM-dd') : 'start'}_to_${endDate ? format(endDate, 'yyyy-MM-dd') : 'end'}.csv`}
+            filename={`sales_report_${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'}_to_${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}.csv`}
             className="no-underline flex items-center mr-4"
         >
         <Button className="cursor-pointer outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">

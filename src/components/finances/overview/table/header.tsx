@@ -18,33 +18,20 @@ const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 import FilterDropdwonCard from './FilterDropdowmCard';
+import DownloadPopup from './downloadTimeline';
 
 
 
-
-const FinacesOverviewTableHeader = () => {
+const FinacesOverviewTableHeader = ({timeline}:any) => {
     const appState=useAppSelector((state)=>state.app);
     const {data, isLoading, error} = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/getAll?branchId=${appState.currentBranchId}`, fetcher,{revalidateOnFocus:true});
 
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-    const [selectedOption, setSelectedOption] = useState<string | null>(null);
-    const [resource, setResource] = useState<string | null>(null);
-    const [selectedSort, setselectedSort] = React.useState(new Set(["Category: text"]));
-
-
-    const handleCategorySelect = (category: string) => {
-        setSelectedCategory(category);
-        setSelectedOption(null); // reset the selected option when the category changes
-      };
     
-      const handleOptionSelect = (option: string) => {
-        setSelectedOption(option);
-        // Apply the filter based on the selected option
-      }
-    const selectedSortValue = React.useMemo(
-        () => Array.from(selectedSort).join(", ").replaceAll("_", " "),
-        [selectedSort]
-    );
+
+    const [showPopup1, setShowPopup1] = React.useState(false);
+    const togglePopup1 = () => {
+        setShowPopup1(!showPopup1);
+    }
 
     return (
 
@@ -55,10 +42,9 @@ const FinacesOverviewTableHeader = () => {
                     <div className=' text-base'>Finance Timeline</div>
                 </div>
                 <div className='flex items-center'>
-                    <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
-
-                        <div className='flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'><Image src={Download} alt='Download' className='w-4  h-4' /></div>
-                    </Link>
+                <div onClick={togglePopup1} className='cursor-pointer mr-4 flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'>
+                    <Image src={Download} alt='Download' className='w-4  h-4' />
+                </div>
                     <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
 
                         <div  className='flex items-center justify-center w-7 h-7 border border-solid border-gray-300 border-0.5 rounded-md  p-1'><Image src={Chart} alt='Chart' className='w-4  h-4' /></div>
@@ -66,7 +52,7 @@ const FinacesOverviewTableHeader = () => {
                     <div className='flex items-center justify-center h-7   mr-4 border border-solid border-gray-300 border-0.5 rounded-lg p-2'>
                         <div className='flex '><Image src={Sort} alt='Sort' className='w-3 h-3 mr-2' /></div>
 
-                        <Dropdown>
+                        {/* <Dropdown>
                             <DropdownTrigger>
                                 <Button
                                     //   variant="bordered" 
@@ -93,7 +79,7 @@ const FinacesOverviewTableHeader = () => {
                                 <DropdownItem
                                     className=" p-2 text-base" key="Category:date">Date</DropdownItem>
                             </DropdownMenu>
-                        </Dropdown>
+                        </Dropdown> */}
                     </div>
                     <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg '>
                         <div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>
@@ -151,7 +137,7 @@ const FinacesOverviewTableHeader = () => {
                                     </Link>
                                     <Link className='no-underline flex item-center' href='/finance/overview'>
                                     <div className='text-base p-4  text-white flex '>
-                                    <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Purchase Invoice</div>
+                                    <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Purchase Invoices (GRN)</div>
                                     </Link>
                                     <Link className='no-underline flex item-center' href='/finance/overview'>
                                     <div className='text-base p-4  text-white flex '>
@@ -191,7 +177,7 @@ const FinacesOverviewTableHeader = () => {
                 </div>
             </div >
           
-
+            {showPopup1 && <DownloadPopup onClose={togglePopup1} timeline={timeline}  />}
         </>
     )
 }

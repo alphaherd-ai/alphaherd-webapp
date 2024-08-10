@@ -162,13 +162,52 @@ useEffect(() => {
     const togglePopup = () => {
         setShowPopup(!showPopup);
     }
-    
+
+    const customStyles = {
+        control: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          border: state.isFocused ? '1px solid #35BEB1' : 'none',
+          '&:hover': {
+            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            },
+          boxShadow: state.isFocused ? 'none' : 'none',
+        }),
+        valueContainer: (provided: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        singleValue: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+        }),
+        menu: (provided: any) => ({
+          ...provided,
+          backgroundColor: 'white',
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        option: (provided: any, state: any) => ({
+          ...provided,
+          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+          color: state.isFocused ? 'white' : '#6B7E7D',
+          '&:hover': {
+            backgroundColor: '#35BEB1',
+            color: 'white',
+          },
+        }),
+      };
 
     return (
         <>
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
             <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-between items-center gap-6 flex">
-                    <div className='bg-orange-200 rounded-md px-2' ><span className="text-orange-600  text-sm font-medium ">You’re owed: ₹</span><span className="text-orange-600 text-sm font-bold ">2,124</span></div>
+                    <div></div>
+                    {/* <div className='bg-orange-200 rounded-md px-2' ><span className="text-orange-600  text-sm font-medium ">You’re owed: ₹</span><span className="text-orange-600 text-sm font-bold ">2,124</span></div> */}
                     {/* <div className='flex items-center h-9 py-2.5 bg-black justify-between rounded-lg '>
 
                         <Popover placement="bottom-end" showArrow offset={10}>
@@ -305,13 +344,7 @@ useEffect(() => {
                                         isClearable={false}
                                         isSearchable={true}
                                         options={taxOptions}
-                                        styles={{
-                                            control: (provided, state) => ({
-                                                ...provided,
-                                                border: state.isFocused ? 'none' : 'none',
-                                            }),
-
-                                        }}
+                                        styles={customStyles}
                                     />
                                 </div>
                                 <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
@@ -322,13 +355,7 @@ useEffect(() => {
                                         isClearable={false}
                                         isSearchable={true}
                                         options={gstOptions}
-                                        styles={{
-                                            control: (provided, state) => ({
-                                                ...provided,
-                                                border: state.isFocused ? 'none' : 'none',
-                                                padding: '0',
-                                            }),
-                                        }}
+                                        styles={customStyles}
                                         onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
                                     />):(
                                        ` ${item.gst*100}%`
@@ -349,15 +376,7 @@ useEffect(() => {
                                         isClearable={false}
                                         isSearchable={true}
                                         options={category}
-                                        styles={{
-                                            control: (provided, state) => ({
-                                                ...provided,
-                                                border: state.isFocused ? 'none' : 'none',
-                                                padding: '0',
-                                                height: '2rem'
-                                            }),
-
-                                        }}
+                                        styles={customStyles}
                                         onChange={(selectedOption:any)=>handleCategorySelect(selectedOption,index)}
 
                                     />
@@ -384,15 +403,7 @@ useEffect(() => {
                                     isClearable={false}
                                     isSearchable={true}
                                     options={gstOptions}
-                                    styles={{
-                                        control: (provided, state) => ({
-                                            ...provided,
-                                            border: state.isFocused ? 'none' : 'none',
-                                            padding: '0',
-                                            height: '2rem'
-                                        }),
-
-                                    }}
+                                    styles={customStyles}
                                 />
                             </div>
 

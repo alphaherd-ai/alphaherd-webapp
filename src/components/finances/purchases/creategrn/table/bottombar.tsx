@@ -17,13 +17,13 @@ import { FinanceCreationType } from "@prisma/client"
 import axios from "axios"
 
 const CreateGrnBottomBar = ({orderData}:any) => {
-    const { headerData, tableData, totalAmountData } = useContext(DataContext);
+    const { headerData, tableData, totalAmountData, transactionsData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
     const url = useSearchParams();
     const id = url.get('id');
     const router=useRouter();
     const handleSubmit = async () => {
-        const allData = {headerData, tableData, totalAmountData};
+        const allData = {headerData, tableData, totalAmountData, transactionsData};
         console.log(orderData)
         let totalQty=0;
         tableData.forEach(data => {
@@ -51,6 +51,9 @@ const CreateGrnBottomBar = ({orderData}:any) => {
             totalCost: allData.totalAmountData.totalCost,
             overallDiscount:(id===null)? allData.totalAmountData.overallDiscount:orderData.overallDiscount,
             totalQty: totalQty,
+            recordTransaction: {
+                create: allData.transactionsData
+            },
             status: "Pending",
             type: FinanceCreationType.Purchase_Order,
             items:{

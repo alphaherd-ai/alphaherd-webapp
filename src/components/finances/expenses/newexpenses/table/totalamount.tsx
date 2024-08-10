@@ -12,6 +12,8 @@ import Popup from "../table/recordexpensetransaction"
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
 import { DataContext } from './DataContext';
 import { Tax } from '@prisma/client';
+import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
+import formatDateAndTime from '@/utils/formateDateTime';
 
 
 const NewExpensesTotalAmout = () => {
@@ -24,6 +26,8 @@ const NewExpensesTotalAmout = () => {
     });
 
     const { totalAmountData, setTotalAmountData } = useContext(DataContext);
+    const { transactionsData, setTransactionsData } = useContext(DataContext);
+
     const [grandAmt, setGrandAmt] = useState(totalAmount);
 
     const gstOptions = [
@@ -81,7 +85,32 @@ const NewExpensesTotalAmout = () => {
     }
    
 
+    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
+    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+
+    const balanceDue = grandAmt-totalPaidAmount+totalAmountToPay;
+
+
+    const [count, setCount] = useState(0);
+    const [initialInvoiceNo, setInitialInvoiceNo] = useState('');
+  
+    useEffect(() => {
+      if (showPopup) {
+        setCount((prevCount) => prevCount + 1);
+      }
+    }, [showPopup]);
+  
+    useEffect(() => {
+      if (showPopup) {
+        const newInvoiceNo = generateInvoiceNumber(count);
+        setInitialInvoiceNo(newInvoiceNo);
+      }
+    }, [count, showPopup]);
+
+
+    console.log(headerData)
 
 
     return (
@@ -90,67 +119,56 @@ const NewExpensesTotalAmout = () => {
 
             <div className="flex w-full box-border bg-gray-100 pt-[20px] pb-[20px]">
             <div className="w-1/2 mr-4 flex flex-col">
+                    <div className="w-full  p-6 bg-white rounded-tl-md rounded-tr-md border border-solid  border-borderGrey justify-between items-center gap-6 flex">
+                        <div className="text-gray-500 text-xl font-medium ">Payments</div>
+                        
+                                    <Button 
+                                        onClick={togglePopup}
+                                        variant="solid"
+                                        className="capitalize flex h-9 py-2.5 border-none text-base bg-black text-white rounded-lg cursor-pointer">
+                                        <div className='flex'><Image src={Rupee} alt='Rupee' className='w-6 h-6 ' /></div>
+                                        Record Payment
+                                    </Button>       
+                    </div>
+                    {transactionsData && transactionsData.map((transaction, index) => (
+                        transaction.isAdvancePayment &&
+                    (<div  key={index} className="w-full  px-6 py-4 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
+                        <div className="text-gray-500 text-lg font-medium ">Advance Paid</div>
+                        <div className='flex items-center h-9 px-4 py-2.5 justify-between rounded-lg '>   
+                            <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
+                                ₹ {transaction.amountPaid}
+                            </div>       
+                        </div>
+                    </div>)
+                    ))
+                    }
 
-<div className="w-full  p-6 bg-white rounded-tl-md rounded-tr-md border border-solid  border-borderGrey justify-between items-center gap-6 flex">
-    <div className="text-gray-500 text-xl font-medium ">Payments</div>
-    {/* <div className='flex items-center h-9 py-2.5 bg-black justify-between rounded-lg '> */}
+                    {transactionsData && transactionsData.map((transaction, index) => (
+                    !transaction.isAdvancePayment &&
+                    (<div  key={index} className="w-full  px-6 py-4 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
+                        <div className="text-gray-500 text-lg font-medium ">{formatDateAndTime(transaction.date).formattedDate}</div>
+                        <div className='flex items-center h-9 px-4 py-2.5 justify-between rounded-lg '>   
+                            <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
+                                ₹ {transaction.amountPaid}
+                            </div>       
+                        </div>
+                    </div>)
+                    ))
+                    }       
 
-        {/* <Popover placement="bottom-end" showArrow offset={10}>
-            <PopoverTrigger> */}
-                <Button 
-                    onClick={togglePopup}
-                    variant="solid"
-                    className="capitalize flex h-9 py-2.5 border-none text-base bg-black text-white rounded-lg cursor-pointer">
-                    <div className='flex'><Image src={Rupee} alt='Rupee' className='w-6 h-6 ' /></div>
-                    Recorded Transaction
-                     </Button>
-            {/* </PopoverTrigger>
-            <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
-
-                <div className="flex flex-col ">
-
-                    <div className='flex flex-col'>
-
-                        <Link className='no-underline flex item-center' href='/finance/overview'>
-                            <div className='text-base p-4   text-white flex '>
-                                <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Inverse</div>
-                        </Link>
-                        <Link className='no-underline flex item-center' href='/finance/overview'>
-                            <div className='text-base p-4  text-white flex '>
-                                <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Return</div>
-                        </Link>
-                        <Link className='no-underline flex item-center' href='/finance/overview'>
-                            <div className='text-base p-4  text-white flex '>
-                                <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Estimate</div>
-                        </Link>
-
+                    <div className="w-full  px-6 bg-white rounded-bl-md rounded-br-md justify-between items-center flex shadow-top ">
+                        <div className="text-gray-500 text-base font-bold  w-1/3 py-4">Balance Due</div>
+                        <div className="text-gray-500 text-lg font-medium  w-1/3 py-4 flex  items-center"></div>
+                        <div className="text-gray-500 text-base font-bold  w-1/3 py-4 ">₹{balanceDue < 0 ? -1*(balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2) }
+                        {balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                            You owe
+                        </span> : balanceDue === 0 ? "" : <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                            You’re owed
+                        </span>}
+                        </div>
+                       
                     </div>
                 </div>
-
-
-            </PopoverContent>
-        </Popover> */}
-
-
-
-    {/* </div> */}
-</div>
-<div className="w-full  p-6 bg-white rounded-bl-md rounded-br-md  justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
-    <div className="text-gray-500 text-xl font-medium ">Balance Due</div>
-    <div className='flex items-center h-9 px-4 py-2.5 justify-between rounded-lg '>
-
-        <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
-            7,89,000
-            <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2">
-                You’re owed
-            </span>
-        </div>
-
-
-
-    </div>
-</div>
-</div>
 <div className="w-1/2 bg-white rounded-[10px]">
                 <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">
                                     <div className="text-gray-500 text-base font-bold ">Subtotal</div>
@@ -203,7 +221,7 @@ const NewExpensesTotalAmout = () => {
                             </div>
                         </div>
     
-                        {showPopup && <Popup headerdata={headerData} onClose={togglePopup} />}
+                        {showPopup && <Popup headerdata={headerData} onClose={togglePopup} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} />}
         </>
 
     )

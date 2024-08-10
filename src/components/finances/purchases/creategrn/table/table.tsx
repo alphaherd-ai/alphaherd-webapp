@@ -25,6 +25,7 @@ import { Tax } from '@prisma/client';
 import useSWR from 'swr';
 import { DataContext } from "./DataContext"
 import { useSearchParams } from "next/navigation"
+import { custom } from "zod"
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
@@ -290,6 +291,51 @@ const handleAddItem= useCallback(() => {
             setTableData(items);  
         }
     }, [id, items]);
+
+
+
+    const customStyles = {
+        control: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          border: state.isFocused ? '1px solid #35BEB1' : 'none',
+          '&:hover': {
+            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            },
+          boxShadow: state.isFocused ? 'none' : 'none',
+        }),
+        valueContainer: (provided: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        singleValue: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+        }),
+        menu: (provided: any) => ({
+          ...provided,
+          backgroundColor: 'white',
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        option: (provided: any, state: any) => ({
+          ...provided,
+          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+          color: state.isFocused ? 'white' : '#6B7E7D',
+          '&:hover': {
+            backgroundColor: '#35BEB1',
+            color: 'white',
+          },
+        }),
+      };
+
+    
+    console.log("otherdatatattatata", otherData)
+
     return (
         <>
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
@@ -305,7 +351,7 @@ const handleAddItem= useCallback(() => {
                     </Button>
                     
                 </div>
-                <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px] overflow-auto max-h-[40rem] container">
+                <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px] overflow-auto max-h-[40rem]">
                     <CreateGrnHeader existingHeaderData={otherData} />
                 <div>
                 <div className="w-full rounded-md border border-solid border-borderGrey">
@@ -317,7 +363,7 @@ const handleAddItem= useCallback(() => {
 
                             <div className="flex items-center justify-center ">
                                
-                                <Button  className='cursor-pointer text-white flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-md border-0 outline-none' onClick={handleAddItem}>
+                                <Button  className='cursor-pointer text-white flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-md border border-solid border-borderGrey outline-none' onClick={handleAddItem}>
                                     <div className='w-4 h-4 mb-3 mr-2'>
                                         <Image src={addicon} alt='addicon' />
                                     </div>
@@ -329,16 +375,16 @@ const handleAddItem= useCallback(() => {
 
                     </div>
                     <div className="flex">
-                    <div className="w-full overflow-x-auto overflow-y-hidden container">
+                    <div className="w-full overflow-x-auto overflow-y-hidden">
                         <div className='flex w-[180%] justify-evenly items-center box-border bg-gray-100 h-12  text-gray-500 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey'>
-                            <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[5rem]'>No.</div>
+                            <div className=' flex text-gray-500 text-base font-medium   w-[5rem]'>No.</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[18rem]'>Name</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Batch No.</div>
 
                             <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Bar Code</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[15rem] px-2'>Exipry Date</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[20rem]'>Quantity</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[20rem]'>Free Quantity</div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[15rem] '>Exipry Date</div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[18rem]'>Quantity</div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[18rem]'>Free Quantity</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Unit Price</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Subtotal</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>MRP</div>
@@ -352,7 +398,7 @@ const handleAddItem= useCallback(() => {
                         
                         {items.map((item:any,index:number) => (
                             <div key={index+1} className='flex justify-evenly items-center w-[180%] box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-gray-200 text-gray-400 h-12'>
-                                <div className=' flex text-textGrey2 text-base font-medium px-[10px] w-[5rem]'>{index+1}.</div>
+                                <div className=' flex text-textGrey2 text-base font-medium w-[5rem]'>{index+1}.</div>
                                     <div className=' flex text-textGrey2 text-base font-medium w-[18rem] '>
                                     {id === null ? (
                                     <Select
@@ -365,13 +411,7 @@ const handleAddItem= useCallback(() => {
                                         options={products}
                                         onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
                                         menuPortalTarget={document.body}
-                                        styles={{
-                                            control: (provided, state) => ({
-                                                ...provided,
-                                                border: state.isFocused ? 'none' : 'none',
-                                            }),
-                                            menuPortal: base => ({ ...base, zIndex: 9999 })
-                                        }}
+                                        styles={customStyles}
                                     />):(
                                         item.itemName
                                   )}
@@ -381,7 +421,7 @@ const handleAddItem= useCallback(() => {
                                     <input
                                         type="text"
                                         value={item.batchNumber}
-                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                        className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                        onChange={(e) => handleItemsDataChange(index,'batchNumber', e.target.value)}
                                        name={`batchNumber-${index+1}`}
 
@@ -391,13 +431,13 @@ const handleAddItem= useCallback(() => {
                                     <input
                                         type="text"
                                         value={item.barCode}
-                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                        className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                        onChange={(e) => handleItemsDataChange(index,'barCode', e.target.value)}
                                        name={`barCode-${index+1}`}
 
                                     />
                                     </div>
-                                    <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>
+                                    <div className=' flex text-gray-500 text-base font-medium w-[15rem] '>
                                     <div className="customDatePickerWidth1">
                                     <DatePicker
                                         className="w-full"
@@ -409,14 +449,14 @@ const handleAddItem= useCallback(() => {
                                         customInput={
                                             <div className='relative'>
                                                 <input
-                                                    className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                                    className="w-full h-8 text-textGrey1 text-base font-medium px-2 rounded border border-solid border-borderGrey   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
                                                     value={(item.expiry)?.toLocaleDateString()}
                                                     readOnly
                                                 />
                                                 <Image
                                                     src={calicon}
                                                     alt="Calendar Icon"
-                                                    className="absolute right-0 top-2 cursor-pointer"
+                                                    className="absolute right-[-0.4rem] top-[0.3rem] cursor-pointer"
                                                     width={50}
                                                     height={20}
                                                 />
@@ -426,7 +466,7 @@ const handleAddItem= useCallback(() => {
                                     </div>
                                     </div>
 
-                            <div className=' flex text-textGrey2 text-base font-medium w-[20rem] items-center gap-2'>
+                            <div className=' flex text-textGrey2 text-base font-medium w-[18rem] items-center gap-2'>
                                 <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
                                     <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
                                         <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
@@ -446,7 +486,7 @@ const handleAddItem= useCallback(() => {
                                 </div>
                                 <span className="text-textGrey2 font-medium text-base">Strips</span>
                             </div>
-                            <div className=' flex text-textGrey2 text-base font-medium w-[20rem] items-center gap-2'>
+                            <div className=' flex text-textGrey2 text-base font-medium w-[18rem] items-center gap-2'>
                                 <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
                                     <button className="border-0 rounded-md cursor-pointer" onClick={() => handleFreeQuantityDecClick(item.id)}>
                                         <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
@@ -467,12 +507,12 @@ const handleAddItem= useCallback(() => {
                                 <span className="text-textGrey2 font-medium text-base">Strips</span>
                             </div>
 
-                            <div className=' flex text-textGrey2 text-base font-medium w-[12rem]'>
+                            <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
                             ₹
                             <input
                                         type="number"
                                         value={item.unitPrice}
-                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                        className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                        onChange={(e) => handleItemsDataChange(index,'unitPrice', e.target.value)}
                                        name={`unitPrice-${index+1}`}
 
@@ -483,7 +523,7 @@ const handleAddItem= useCallback(() => {
                             <input
                                         type="number"
                                         value={item.quantity*Number(item.unitPrice)}
-                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                        className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                        onChange={(e) => handleItemsDataChange(index,'subTotal', e.target.value)}
                                        name={`subTotal-${index+1}`}
 
@@ -494,13 +534,13 @@ const handleAddItem= useCallback(() => {
                                 <input
                                         type="number"
                                         value={item.maxRetailPrice}
-                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                        className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                        onChange={(e) => handleItemsDataChange(index,'maxRetailPrice', e.target.value)}
                                        name={`maxRetailPrice-${index+1}`}
 
                                     />
                             </div>
-                            <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
+                            <div className='w-[12rem] flex items-center text-neutral-400 text-base font-medium'>
                                         {/* { id==null?(
                                         <Select
                                             className="text-neutral-400 text-base font-medium"
@@ -517,7 +557,7 @@ const handleAddItem= useCallback(() => {
                                             }}
                                             onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
                                         />):( */}
-                                           { item.gst*100}%
+                                           { item.gst*100 || 0}%
                                         {/* )} */}
                                     </div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
@@ -525,7 +565,7 @@ const handleAddItem= useCallback(() => {
                             <input
                                         type="number"
                                         value={(item.quantity*item.gst*Number(item.unitPrice)).toFixed(2)||0}
-                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                        className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                         onChange={(e) => handleItemsDataChange(index,'taxAmount', e.target.value)}
                                        name={`taxAmount-${index+1}`}
                                     />
@@ -535,7 +575,7 @@ const handleAddItem= useCallback(() => {
                             <input
                                         type="number"
                                         value={item.discountPercent}
-                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                        className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                         onChange={(e) => handleDiscountSelect( Number(e.target.value),index)}
                                        name={`discountPercent-${index+1}`}
                                     />
@@ -547,7 +587,7 @@ const handleAddItem= useCallback(() => {
                             <input
                                         type="number"
                                         value={item.discountAmount}
-                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                        className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                         onChange={(e) => handleDiscountChange(Number( e.target.value),index)}
                                        name={`discountAmount-${index+1}`}
                                     />
@@ -563,21 +603,23 @@ const handleAddItem= useCallback(() => {
                             </div>
                         ))}
                         
-                        <div className='flex  w-[125%] justify-evenly items-center box-border bg-gray-100 h-12 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey py-5  text-textGrey2 '>
-                        <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[5rem]'></div>
+                        <div className='flex  w-[180%]  justify-evenly items-center box-border bg-gray-100 h-12 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey py-5  text-textGrey2 '>
+                        <div className=' flex text-gray-500 text-base font-medium  w-[5rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[18rem]'>Total</div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[15rem]'>{items.reduce((acc, item) => acc + item.quantity, 0) ||
-                                                0} Items</div>
+                            
+                            <div className=' flex text-gray-500 text-base font-medium w-[15rem]'></div>
 
-                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'>₹{items.reduce((acc, item) => acc + (item.quantity*Number(item.unitPrice)) , 0).toFixed(2) ||
-                                                0}</div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'>₹{items.reduce((acc, item) => acc + (item.gst)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2) ||
-                                                0}</div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'>₹{items.reduce((acc, item) => acc + (item.discountPercent/100)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2) ||
-                                                0}</div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[12rem]'></div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[15rem] '></div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[18rem]'>{items.reduce((acc, item) => acc + item.quantity, 0) ||0} Items</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[18rem]'></div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{isNaN(items.reduce((acc, item) => acc + (item.quantity*Number(item.unitPrice)) , 0)) ? 0 : items.reduce((acc, item) => acc + (item.quantity*Number(item.unitPrice)) , 0).toFixed(2)}</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{isNaN(items.reduce((acc, item) => acc + (item.gst)*(item.quantity*Number(item.unitPrice)) , 0)) ? 0 : items.reduce((acc, item) => acc + (item.gst)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2)}</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{isNaN(items.reduce((acc, item) => acc + (item.discountPercent/100)*(item.quantity*Number(item.unitPrice)) , 0)) ? 0 : items.reduce((acc, item) => acc + (item.discountPercent/100)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2)}</div>
                             <div className=' flex text-gray-500 text-base font-bold w-1/12'></div>
                         </div>
                     </div>
@@ -587,12 +629,10 @@ const handleAddItem= useCallback(() => {
                     </div>
                     {items.map((item:any,index:number) => (
                     <div key={item.id} className="flex items-center justify-center  w-[10rem] box-border bg-white text-gray-500 border-t-0 border-r-0 border-l border-b border-solid border-gray-200 h-12">
-                        <div className=' flex text-gray-500 text-base font-medium'>{((item.gst-item.discountPercent/100+1)*(item.quantity*Number(item.unitPrice))).toFixed(2)||
-                                                0}</div>
+                        <div className=' flex text-gray-500 text-base font-medium'>₹{isNaN(((item.gst-item.discountPercent/100+1)*(item.quantity*Number(item.unitPrice)))) ? 0 : ((item.gst-item.discountPercent/100+1)*(item.quantity*Number(item.unitPrice))).toFixed(2)}</div>
                     </div>
                     ))}
-                    <div className=' flex text-textGreen text-base font-bold w-[10rem] h-12 items-center justify-center'>₹{items.reduce((acc, item) => acc + (item.gst-item.discountPercent/100+1)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2) ||
-                                                0}</div>
+                    <div className=' flex text-textGreen text-base font-bold w-[10rem] h-12 items-center justify-center'>₹{isNaN(items.reduce((acc, item) => acc + (item.gst-item.discountPercent/100+1)*(item.quantity*Number(item.unitPrice)) , 0)) ? 0 : items.reduce((acc, item) => acc + (item.gst-item.discountPercent/100+1)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2)}</div>
                     </div>
                     </div>
                     

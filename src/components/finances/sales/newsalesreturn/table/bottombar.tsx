@@ -18,7 +18,7 @@ import { generatePdfForInvoice } from "@/utils/salesPdf"
 
 
 const NewsalesReturnBottomBar = ({invoiceData}:any) => {
-    const { headerData, tableData, totalAmountData } = useContext(DataContext);
+    const { headerData, tableData, totalAmountData, transactionsData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
     const url=useSearchParams();
     const id=url.get('id');
@@ -53,6 +53,9 @@ const NewsalesReturnBottomBar = ({invoiceData}:any) => {
             totalCost: allData.totalAmountData.totalCost,
             overallDiscount: allData.totalAmountData.gst,
             totalQty:totalQty,
+            recordTransaction: {
+                create: allData.transactionsData
+            },
             status: "Pending",
             type: FinanceCreationType.Sales_Return,
             items:{
@@ -173,7 +176,7 @@ const NewsalesReturnBottomBar = ({invoiceData}:any) => {
 
 <div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
                             <div className="flex justify-between items-center gap-4 pl-4">
-                            <Button className="p-2 bg-white rounded-md border border-solid  border-borderGrey  justify-start items-center gap-2 flex cursor-pointer">
+                            {/* <Button className="p-2 bg-white rounded-md border border-solid  border-borderGrey  justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={printicon} alt="print"></Image>
                         <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all">Print</div>
                     </Button>

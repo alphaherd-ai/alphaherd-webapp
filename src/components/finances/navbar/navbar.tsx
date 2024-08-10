@@ -103,6 +103,7 @@ const FinancesNavbar = () => {
               backgroundColor: '#35BEB1', 
             }
           }),
+          menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
           
       };
 
@@ -158,7 +159,7 @@ const FinancesNavbar = () => {
                     </Link>
                 </div>
                 <div className='flex h-full items-center'>
-                    <div className="relative h-full w-full items-center z-[1]">
+                    <div className=" h-full w-full items-center">
                     <Select
                         className="text-gray-500 text-base font-medium w-[100%] border-0 boxShadow-0"
                         classNamePrefix="select"
@@ -167,7 +168,8 @@ const FinancesNavbar = () => {
                         options={searchOptions}
                         onChange={(selectedProduct: any) => handleSearch(selectedProduct)}
                         placeholder="Search via client name or invoice no."
-                        styles={customStyles} // Apply the custom styles
+                        menuPortalTarget={document.body}
+                        styles={customStyles}
                         />
                         {/* <div className="absolute inset-y-0 right-3 pl-2 flex items-center pointer-events-none">
                             <div className='flex items-center '>
@@ -175,11 +177,11 @@ const FinancesNavbar = () => {
                             </div>
                         </div> */}
                     </div>
-                    <Link className='no-underline h-full  ml-4' href='/settings/organisation/myorg'>
+                    {/* <Link className='no-underline h-full  ml-4' href='/settings/organisation/myorg'>
                         <div className='flex items-center border border-solid border-gray-300 bg-white rounded-lg px-3 h-[2.8rem] '>
                             <Image src={Settings} alt='Setting' className='w-5  h-5' />
                         </div>
-                    </Link>
+                    </Link> */}
                 </div>
             </div>
         </>

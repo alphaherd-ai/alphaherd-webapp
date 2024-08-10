@@ -97,7 +97,7 @@ const ExsistingPurchasesTable = () => {
                     </Button> */}
                     
                 </div>
-                <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px] overflow-auto max-h-[40rem] container">
+                <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px] overflow-auto max-h-[40rem]">
                     <ExsistingPurchasesHeader otherData={otherData}/>
                 <div>
                 <div className="w-full rounded-md border border-solid border-borderGrey">
@@ -121,7 +121,7 @@ const ExsistingPurchasesTable = () => {
 
                     </div>
                     <div className="flex">
-                    <div className="w-full overflow-x-auto container">
+                    <div className="w-full overflow-x-auto">
                         <div className='flex w-[125%] justify-evenly items-center box-border bg-gray-100 h-12  text-gray-500 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey'>
                             <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[5rem]'>No.</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[13rem]'>Name</div>
@@ -168,9 +168,11 @@ const ExsistingPurchasesTable = () => {
                         
                         <div className='flex  w-[125%] justify-evenly items-center box-border bg-gray-100 h-12 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey py-5  text-textGrey2 '>
                         <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[5rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[18rem]'>Total</div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[15rem]'>{items.reduce((acc, item) => acc + item.quantity, 0) ||
+                            <div className=' flex text-gray-500 text-base font-bold w-[13rem]'>Total</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[8rem]'>{items.reduce((acc, item) => acc + item.quantity, 0) ||
                                                 0} Items</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'> Items</div>
+
 
                             <div className=' flex text-gray-500 text-base font-bold w-[10rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[10rem]'>₹{items.reduce((acc, item) => acc + (item.quantity*Number(item.sellingPrice)) , 0).toFixed(2) ||

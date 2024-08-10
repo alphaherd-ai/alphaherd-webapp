@@ -18,6 +18,7 @@ export const GET = async (req: NextRequest, { params }: { params: { id: number }
             productBatch: true,
           },
         },
+        recordTransaction: true,
       },
     });
 
@@ -39,19 +40,26 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: number }
     if (req.method !== 'PUT') {
       return new Response('Method not allowed', { status: 405 });
     }
+    
   
     try {
       const financeId=await fetchFinanceId(req);
       const body = await req.json();
+      const newTransaction = body.recordTransaction[0];
       const sales = await prismaClient.sales.update({
         where: { id: Number(params.id),financeSectionId:financeId},
-        data: body,
+        data: {
+          recordTransaction: {
+            create: newTransaction,
+          },
+        }, 
         include: {
           items: {
             include: {
               productBatch: true,
             },
           },
+          recordTransaction: true,
         },
       });
   

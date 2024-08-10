@@ -18,15 +18,19 @@ import { useAppSelector } from '@/lib/hooks';
 type PopupProps = {
     onClose: () => void;
     headerdata: any;
+    transactionsData: any;
+    setTransactionsData: any;
+    initialInvoiceNo: any;
 }
 
 
-const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata}) => {
+const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, transactionsData, setTransactionsData, initialInvoiceNo}) => {
 
     const dispatch = useDispatch();
 
     const [formData, setFormData] = useState<any>({});
     const appState = useAppSelector((state) => state.app)
+    const [isAdvancePayment, setIsAdvancePayment] = useState(false);
 
     const Mode = [
         {value: "Cash", label: "Cash"},
@@ -58,6 +62,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata}) => 
         setTransactionType(type);
     };
 
+
+
     const handleSaveClick = async () => {
         try {
             const response = await fetch(`http://localhost:3000/alphaherd/api/finance/transactions/create?branchId=${appState.currentBranchId}`, {
@@ -66,7 +72,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata}) => 
                     'Content-Type' : 'application/json', 
                 },
                 body: JSON.stringify({
-                    partyName: formData.partyName?.value,
+                    partyName: headerdata?.customer?.value,
                     invoiceLink: headerdata.invoiceNo,
                     receiptNo: formData.receiptNo,
                     date: formData.date,
@@ -88,7 +94,17 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata}) => 
 
         }
 
-        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: formData.mode?.value, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+        const newTransaction = {
+            amountPaid: parseInt(formData.amountPaid, 10),
+            date: formData.date,
+            isAdvancePayment: isAdvancePayment,
+            mode: formData.mode?.value,
+            moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
+        };
+
+        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: formData.mode?.value, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+
+        setTransactionsData((prevTransactions:any) => [...prevTransactions, newTransaction]);
 
     };
 
@@ -107,7 +123,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata}) => 
             </div>
             <div className='w-full flex flex-col gap-1'>
 
-                <div className="text-gray-500 text-xl font-medium ">Record Transaction</div>
+                <div className="text-gray-500 text-xl font-medium ">Record Payment</div>
                 <div className="text-neutral-400 text-base font-medium ">Note down the details of the transaction</div>
             </div>
             <div className='w-full flex gap-36'>
@@ -143,18 +159,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata}) => 
             </div>
             <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Party Name</span></div>
-                    <div className='w-[440px]'>
-                    <Select
-                            className="text-neutral-400 text-base font-medium w-full"
-                            placeholder="Select Category"
-                            isClearable={false}
-                            isSearchable={true}
-                            options={Party}
-                            isMulti={false}
-                            name="partyName"
-                            onChange={(value) => handleChange("partyName", value)}
-                        />
-                    </div>                
+                    <div><div className="w-[440px] h-9 rounded-[5px] text-textGrey2 bg-white text-base font-medium p-2  outline-none border border-solid border-gray-300 ">{headerdata?.customer?.value}</div></div>
+               
             </div>
             
             
@@ -165,7 +171,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata}) => 
             <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Receipt No.</span></div>
                     <div className='w-[440px] flex justify-between items-center'>
-                    <div><input className="w-[10rem] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="text" name="receiptNo" onChange={(e) => handleChange("receiptNo", e.target.value)} /></div>
+                    <div><div className="w-[10rem] h-9 rounded-[5px] bg-white text-gray-400 text-base font-medium p-2  border border-solid border-gray-300">#{initialInvoiceNo}</div></div>
 
                         <div><span className='text-gray-500 text-base font-medium '>Date</span></div>
                         <div className='relative'>
@@ -211,7 +217,11 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata}) => 
                     </div>
 
             </div>
-            <div className='w-full flex justify-end'>
+            <div className='w-full flex justify-between items-center'>
+            <div className='flex items-center gap-1'>
+                        <input type="checkbox" name="advancePayment" id="advancePayment" checked={isAdvancePayment} onChange={(e) => setIsAdvancePayment(e.target.checked)} />
+                        <span className='text-textGrey2 text-base font-medium'>Mark as advance payment</span>
+                    </div>
                     <Button className="px-2 py-2.5 bg-navBar rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer"  onClick={handleSaveClick}>
                         <Image src={check} alt='check' /> 
                         <span className='text-white text-base font-medium pr-2'>Save Transaction</span>

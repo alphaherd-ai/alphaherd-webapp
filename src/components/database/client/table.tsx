@@ -45,6 +45,7 @@ const DatabaseClientTable = () => {
     },[data,error,isLoading]);
    
 
+    console.log(clients)
 
   return (
   <div className='flex flex-col w-full box-border mb-6 mt-6 border border-solid border-borderGrey rounded-lg cursor-default'>

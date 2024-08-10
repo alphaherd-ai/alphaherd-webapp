@@ -56,14 +56,15 @@ const ExsistingPurcaseReturnHeader = ({otherData}:any) => {
                 <div className="px-6  bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold ">Distributor:</div>
-                       {otherData.distributor}
+                       <span className="text-textGrey2 text-base font-medium">{otherData.distributor}</span>
                     </div>
                 </div>
                 <div className="px-6 py-1  bg-white rounded-[10px] justify-start items-center flex w-full ">
                     <div className="flex w-full justify-start">
                         <div className="text-gray-500 text-base font-bold  pr-[8px] w-3/12 py-3">Reference Number:</div>
                         <div className="flex items-center justify-between w-[29.4rem]">
-                            <input
+                            <span className="text-textGrey2 text-base font-medium">{otherData.invoiceNo}</span>
+                            {/* <input
                                 ref={inputRef}
                                 className={`w-[25rem] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border-0 rounded-[5px] focus:border focus:border-solid focus:border-[#35BEB1] bg-inherit`}
                                 value={otherData.invoiceNo}
@@ -74,7 +75,7 @@ const ExsistingPurcaseReturnHeader = ({otherData}:any) => {
                                 onClick={handleEditButtonClick} className="border-0"
                             >
                                 <Image src={editicon} alt="edit" ></Image>
-                            </button>
+                            </button> */}
                         </div>
                     </div>
                 </div>
@@ -103,7 +104,7 @@ const ExsistingPurcaseReturnHeader = ({otherData}:any) => {
                             )}
                         /> */}
 
-<div className="customDatePickerWidth">
+                                    <div className="customDatePickerWidth text-textGrey2 text-base font-medium">
                                     {formatDateAndTime(otherData.date).formattedDate}
                                     </div>
 
@@ -129,8 +130,8 @@ const ExsistingPurcaseReturnHeader = ({otherData}:any) => {
                                 <Image src={calicon} alt="Calendar Icon" width={20} height={20} />
                             )}
                         /> */}
-                        <div className="customDatePickerWidth">
-                        {formatDateAndTime(otherData.dueDate).formattedDate}
+                                    <div className="customDatePickerWidth text-textGrey2 text-base font-medium">
+                                    {formatDateAndTime(otherData.dueDate).formattedDate}
                                     </div>
 
 
@@ -142,7 +143,7 @@ const ExsistingPurcaseReturnHeader = ({otherData}:any) => {
                 <div className="px-6 py-1  bg-white rounded-[10px] justify-between items-center gap-4 flex w-full ">
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold py-3">Notes:</div>
-                        {otherData.notes}              
+                        <span className="text-textGrey2 text-base font-medium">{otherData.notes}</span>             
                         </div>
                 </div>
             </div>

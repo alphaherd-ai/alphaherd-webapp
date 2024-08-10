@@ -32,7 +32,7 @@ interface ProductBatch {
 const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
   const [products, setProducts] = useState<ProductBatch[]>([]);
   const appState = useAppSelector((state) => state.app)
- const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true})
+ const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll?branchId=${appState.currentBranchId}`,fetcher)
   useEffect(() => {
    if(!isLoading&&!error&&data){
     setProducts(data);
@@ -61,7 +61,7 @@ const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
   return (
     <>
       {filteredProducts.map(product => (
-        <div key={product.id} className='flex  w-full  box-border h-16 py-3 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  hover:bg-gray-200 hover:text-gray-500 transition'>
+        <div key={product.id} className='flex  w-full  box-border h-16 justify-evenly items-center bg-white   border-0 border-b border-solid border-borderGrey  hover:bg-gray-200 text-textGrey1  hover:text-textGrey2  transition'>
           <div className='w-2/6 flex items-center  px-6  text-neutral-400 text-base font-medium'>{product.product?.itemName}</div>
           <div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{product.batchNumber}</div>
           <div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{product.party}</div>

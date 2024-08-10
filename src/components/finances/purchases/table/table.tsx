@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import FinancesPurchasesTableBottombar from './bottombar'
 
 import FinancesPurchasesTableHeader from './header'
@@ -19,20 +19,40 @@ const FinancesPurchasesTable = () => {
   const appState = useAppSelector((state) => state.app);
   const [purchases,setPurchases]=useState<any[]>([]);
   const currentUrl=useSearchParams();
+  const urlSearchParams = useSearchParams();
+  const startDate = useMemo(() => urlSearchParams.get('startDate') ? new Date(urlSearchParams.get('startDate')!) : null, [urlSearchParams]);
+  const endDate = useMemo(() => urlSearchParams.get('endDate') ? new Date(urlSearchParams.get('endDate')!) : null, [urlSearchParams]);
+  const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
   
 const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/getAll?branchId=${appState.currentBranchId}`,fetcher)
 useEffect(()=>{
   if(data&&!error&&!isLoading){
-    const filteredData=data?.filter((purchase:any)=>{
+    let filteredData=data?.filter((purchase:any)=>{
       if(currentUrl.get('type')==='all'){
         return true;
       }else {
         return purchase.type===currentUrl.get('type');
       }
     })
+    if (startDate || endDate) {
+      filteredData = filteredData.filter((item: any) => {
+        const itemDate = new Date(item.date);
+        console.log(itemDate)
+        if (startDate && itemDate < startDate) return false;
+        if (endDate && itemDate > endDate) return false;
+        return true;
+      });
+    }
+
+ 
+    if (selectedParties.length > 0) {
+      filteredData = filteredData.filter((item: any) =>
+        selectedParties.includes(item.distributor)
+      );
+    }
     setPurchases(filteredData);
   }
-},[data,setPurchases])
+},[data,error,isLoading,setPurchases,startDate, endDate, selectedParties])
 
   const [invoiceCount, setInvoiceCount] = useState(0);
   const [orderCount, setOrderCount] = useState(0);
@@ -53,7 +73,7 @@ useEffect(()=>{
                 <div className=' flex  text-base font-medium  w-[6rem] '>Time</div>
                 <div className=' flex  text-base font-medium  w-[10rem] '>Type</div>
                 <div className=' flex  text-base font-medium  w-[12rem] '>Distributor</div>
-                <div className=' flex  text-base font-medium  w-[10rem] '>Serial NO.</div>
+                <div className=' flex  text-base font-medium  w-[10rem] '>Ref. No.</div>
                 <div className=' flex  text-base font-medium  w-[8rem] '>Total cost</div>
                 <div className=' flex  text-base font-medium  w-[8rem] '>Total qty</div>
                 <div className=' flex  text-base font-medium  w-[8rem] '>Due date</div>

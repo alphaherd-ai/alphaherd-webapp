@@ -7,6 +7,7 @@ import Chart from '../../../../assets/icons/finance/chart.svg';
 import Download from '../../../../assets/icons/finance/download.svg';
 import DownArrow from '../../../../assets/icons/finance/downArrow.svg';
 import Invoice from '../../../../assets/icons/finance/invoice.svg';
+import Estimate from "../../../../assets/icons/finance/list_alt.svg"
 import Return from '../../../../assets/icons/finance/Return.svg';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -15,6 +16,7 @@ import { FinanceCreationType } from '@prisma/client';
 import DownloadPopup from './downloadSalesPopup';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
+import FilterDropdwonCard from './FilterDropDownCard';
 
 
 
@@ -49,7 +51,7 @@ const FinancesSalesTableHeader = ({invoiceCount,estimateCount,returnCount, sales
 
         <>
           
-<div className='flex w-full bg-white h-20  p-4 px-6 mt-6 justify-between border border-solid border-gray-300 border-t-0.5 rounded-tl-lg rounded-tr-lg'>
+          <div className='flex w-full bg-white h-20  p-4 px-6  justify-between border-0 border-b border-solid border-borderGrey rounded-tl-lg rounded-tr-lg'>
 
 <div className='flex  text-gray-500 items-center w-5/12'>
 <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/all',query:{type:'all'}}}>
@@ -118,71 +120,60 @@ const FinancesSalesTableHeader = ({invoiceCount,estimateCount,returnCount, sales
 </DropdownMenu>
 </Dropdown>
 </div>
-<div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg '>
-<div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>
 
-<Dropdown>
-<DropdownTrigger className='z-0'>
-    <Button
-        //   variant="bordered" 
-        // color="gray-400"
-        variant="solid"
-        className="capitalize border-none bg-transparent rounded-lg"
-    >
-        {selectedCategoryValue}
-    </Button>
-</DropdownTrigger>
-<DropdownMenu
-    aria-label="Single selection example"
-    // color="gray-500"
-    className=" text-base bg-gray-200 rounded-lg"
-    variant="solid"
-    disallowEmptySelection
-    selectionMode="single"
-    selectedKeys={selectedCategory}
-    // onSelectionChange={setSelectedCategory}
->
-    <DropdownItem
-        className=" p-2" key="Category:text">Category: Text</DropdownItem>
-    <DropdownItem
-        className=" p-2" key="Category:number">Category: Number</DropdownItem>
-    <DropdownItem
-        className=" p-2" key="Category:date">Date</DropdownItem>
-</DropdownMenu>
-</Dropdown>
-</div>
+
+
+<div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg '>
+                        <div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>
+
+                        <Popover>
+                            <PopoverTrigger>
+                                <Button
+                                    variant="solid"
+                                    className="capitalize border-none bg-transparent rounded-lg"
+                                >
+                                    Filter
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent>
+                                 <FilterDropdwonCard />
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+
 
 {/* <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '> */}
 
-<Popover placement="bottom-end" showArrow offset={10}>
+<Popover placement="bottom-end" showArrow offset={8}>
 <PopoverTrigger className='z-0'>
     <Button 
     // color="gray-400"
         variant="solid"
-        className="capitalize px-4 py-2.5 flex border-none bg-black text-white rounded-lg ">  Create
+        className="capitalize px-4 py-2.5 flex border-none bg-black text-white rounded-lg cursor-pointer">  Create
         <div className='flex pl-2'><Image src={DownArrow} alt='DownArrow' className='w-4 h-4 ' /></div>
     </Button>
 </PopoverTrigger>
-<PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
+<PopoverContent className="py-4 px-3 bg-black text-white flex flex-row items-start rounded-lg">
 
     <div className="flex flex-col ">
        
-        <div className='flex flex-col'>
         
-        <Link className='no-underline flex item-center' href={{pathname:"/finance/sales/newsalesestimate",query:{count:estimateCount}}}>
-        <div className='text-base p-4   text-white flex '>
-        <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Sales Estimate</div>
-        </Link>
+        
+        
         <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales',query:{count:invoiceCount}}}>
-        <div className='text-base p-4  text-white flex '>
-        <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Sales Invoice</div>
+            <div className='text-base p-4  text-white flex '>
+            <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Sales Invoice</div>
+        </Link>
+        <Link className='no-underline flex item-center' href={{pathname:"/finance/sales/newsalesestimate",query:{count:estimateCount}}}>
+            <div className='text-base p-4   text-white flex '>
+            <div className='flex pr-2'><Image src={Estimate} alt='Invoice' className='w-5 h-5 ' /></div>Sales Estimate</div>
         </Link>
         <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsalesreturn',query:{count:returnCount}}}>
-        <div className='text-base p-4  text-white flex '>
-        <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Sales Return</div>
+            <div className='text-base p-4  text-white flex '>
+            <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Sales Return</div>
         </Link>
       
-        </div>
+        
     </div>
   
 

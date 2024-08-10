@@ -129,7 +129,7 @@ useEffect(() => {
                     </Button> */}
                     
                 </div>
-                <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px] overflow-auto max-h-[40rem] container">
+                <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px]">
                     <ExsistingPurcaseReturnHeader otherData={data}/>
                 <div>
                 <div className="w-full rounded-md border border-solid border-borderGrey">
@@ -153,16 +153,16 @@ useEffect(() => {
 
                     </div>
                     <div className="flex">
-                    <div className="w-full overflow-x-auto overflow-y-hidden container">
+                    <div className="w-full overflow-x-auto overflow-y-hidden">
                         <div className='flex w-[180%] justify-evenly items-center box-border bg-gray-100 h-12  text-gray-500 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey'>
-                            <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[5rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[5rem]'>No.</div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[5rem]'></div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[5rem]'>No.</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[18rem]'>Name</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[20rem]'>Return Quantity</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>Unit Price</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Batch No.</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Bar Code</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[15rem] px-2'>Exipry Date</div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Exipry Date</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Subtotal</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>MRP</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Tax %</div>
@@ -178,7 +178,7 @@ useEffect(() => {
                     key={item.id}
                     className={`flex justify-evenly items-center w-[180%] box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-gray-200 h-12 ${checkedItems[item.id] ? 'text-textGrey2 font-bold' : 'text-textGrey2 font-medium'}`}
                 >
-                    <div className='flex text-base  px-[10px] w-[5rem] items-center justify-center'>
+                    <div className='flex text-base  w-[5rem] items-center justify-center'>
                         <input
                             type="checkbox"
                             className="accent-teal-500 w-4 h-4"
@@ -186,7 +186,7 @@ useEffect(() => {
                             onChange={() => handleCheckboxChange(item.id)}
                         />
                     </div>
-                    <div className=' flex text-textGrey2 text-base  px-[10px] w-[5rem]'>{index+1}.</div>
+                    <div className=' flex text-textGrey2 text-base  w-[5rem]'>{index+1}.</div>
                                     <div className=' flex text-textGrey2 text-base  w-[18rem] '>
                                     {/* <Select
                                                 className="text-gray-500 text-base   w-[90%] border-0 boxShadow-0 absolute"
@@ -309,16 +309,15 @@ useEffect(() => {
             ))}
                     
                         <div className='flex  w-[180%] justify-evenly items-center box-border bg-gray-100 h-12 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey py-5  text-textGrey2 '>
-                        <div className=' flex text-gray-500 text-base font-bold px-[10px] w-[5rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold px-[10px] w-[5rem]'></div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[5rem]'></div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[5rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[18rem]'>Total</div>
 
-                            <div className=' flex text-gray-500 text-base font-bold w-[20rem]'>{items.reduce((acc, item) => acc + item.quantity, 0) ||
-                                                0} Items</div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[20rem]'>{items.reduce((acc, item) => acc + item.quantity, 0) || 0} Items</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[15rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[15rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[15rem] px-2'></div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[15rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => acc + (item.quantity*Number(item.unitPrice)) , 0).toFixed(2) ||
                                                 0}</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹ {items.reduce((acc, item) => acc + item.maxRetailPrice , 0).toFixed(2) ||

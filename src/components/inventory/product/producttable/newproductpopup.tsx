@@ -40,6 +40,11 @@ var stepFields = [
     ["minStock","maxStock"]
   ];
 
+var stepFields = [
+    ["itemName","providers","unit","hsnCode","tax","category","state","description"],
+    ["minStock","maxStock"]
+  ];
+
 
 interface Distributors{
     id:string,
@@ -271,6 +276,10 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                 {validationErrors.itemName && (
                                     <div className="text-[red] error">{validationErrors.itemName}</div>
                                 )}
+                                <input className="w-[440px] h-9 rounded-md text-gray-400 text-base font-medium p-2 outline-none border border-solid border-gray-300" type="text" name="name" onChange={(e) => handleChange("itemName", e.target.value)} />
+                                {validationErrors.itemName && (
+                                    <div className="text-[red] error">{validationErrors.itemName}</div>
+                                )}
                             </div>
                         </div>
                         <div className="flex items-center justify-between w-full">
@@ -285,7 +294,11 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                     isMulti={false}
                                     name="providers"
                                     onChange={(e) => handleChange("providers", e?.label)}
+                                    onChange={(e) => handleChange("providers", e?.label)}
                                 />
+                                {validationErrors.providers && (
+                                    <div className="text-[red] error">{validationErrors.providers}</div>
+                                )}
                                 {validationErrors.providers && (
                                     <div className="text-[red] error">{validationErrors.providers}</div>
                                 )}
@@ -307,12 +320,18 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                 {validationErrors.unit && (
                                     <div className="text-[red] error">{validationErrors.unit}</div>
                                 )}
+                                {validationErrors.unit && (
+                                    <div className="text-[red] error">{validationErrors.unit}</div>
+                                )}
                             </div>
                         </div>
                         <div className="flex items-center gap-[55px]">
                             <div className="text-gray-500 text-base font-medium w-[5rem]">HSN Code</div>
                             <div>
                                 <input className="w-[440px] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2 outline-none border border-solid border-gray-300" type="text" name="hsnCode" onChange={(e) => handleChange("hsnCode", e.target.value)} />
+                                {validationErrors.hsnCode && (
+                                    <div className="text-[red] error">{validationErrors.hsnCode}</div>
+                                )}
                                 {validationErrors.hsnCode && (
                                     <div className="text-[red] error">{validationErrors.hsnCode}</div>
                                 )}
@@ -330,7 +349,11 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                     isMulti={false}
                                     name="tax"
                                     onChange={(e) => handleChange("tax", e?.value)}
+                                    onChange={(e) => handleChange("tax", e?.value)}
                                 />
+                                {validationErrors.tax && (
+                                    <div className="text-[red] error">{validationErrors.tax}</div>
+                                )}
                                 {validationErrors.tax && (
                                     <div className="text-[red] error">{validationErrors.tax}</div>
                                 )}
@@ -346,9 +369,14 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                     isSearchable={true}
                                     options={categories}
                                     isMulti={false}
+                                    isMulti={false}
                                     name="category"
                                     onChange={(e) => handleChange("category", e?.label)}
+                                    onChange={(e) => handleChange("category", e?.label)}
                                 />
+                                {validationErrors.category && (
+                                    <div className="text-[red] error">{validationErrors.category}</div>
+                                )}
                                 {validationErrors.category && (
                                     <div className="text-[red] error">{validationErrors.category}</div>
                                 )}
@@ -360,8 +388,12 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                             {validationErrors.description && (
                                     <div className="text-[red] error">{validationErrors.description}</div>
                                 )}
+                            {validationErrors.description && (
+                                    <div className="text-[red] error">{validationErrors.description}</div>
+                                )}
                         </div>
                         <div className="self-end items-start gap-6 flex">
+                            <button onClick={handleContinue} className="px-4 py-2.5 bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer">
                             <button onClick={handleContinue} className="px-4 py-2.5 bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer">
                                 <div className="text-neutral-400 text-base font-bold">Continue</div>
                                 <Image src={arrowicon} alt="arrow"></Image>
@@ -390,6 +422,9 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                     {validationErrors.minStock && (
                                     <div className="text-[red] error">{validationErrors.maxStock}</div>
                                 )}
+                                    {validationErrors.minStock && (
+                                    <div className="text-[red] error">{validationErrors.maxStock}</div>
+                                )}
                                 </div>
                                 <div className="text-right text-gray-500 text-base font-medium"> </div>
                             </div>
@@ -406,6 +441,9 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                             <div className="justify-start items-center gap-4 flex">
                                 <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-2 flex">
                                     <input className="p-2 rounded-md border-0 focus:border-0 focus:outline-none w-[263px] h-11 text-neutral-400 text-base font-medium" type="number" name="maxStock" onChange={(e) => handleChange("maxStock", e.target.value)} />
+                                    {validationErrors.maxStock && (
+                                    <div className="text-[red] error">{validationErrors.maxStock}</div>
+                                )}
                                     {validationErrors.maxStock && (
                                     <div className="text-[red] error">{validationErrors.maxStock}</div>
                                 )}

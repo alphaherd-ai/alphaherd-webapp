@@ -15,6 +15,7 @@ import { usePathname } from 'next/navigation';
 
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
+import FilterDropdwonCard from './FilterDropDownCard';
 
 
 
@@ -48,7 +49,7 @@ const FinancesExpensesTableHeader = ({recurringCount,nonrecurringCount}:any) => 
              
               
         
-            <div className='flex w-full bg-white h-20  p-4 px-6 mt-6 justify-between border border-solid border-gray-300 border-t-0.5 rounded-tl-lg rounded-tr-lg'>
+     <div className='flex w-full bg-white h-20  p-4 px-6  justify-between border-0 border-b border-solid border-borderGrey rounded-tl-lg rounded-tr-lg'>
 
             <div className='flex  text-gray-500 items-center w-5/12'>
                     <Link className='no-underline flex item-center' href='/finance/expenses/all'>
@@ -112,36 +113,22 @@ const FinancesExpensesTableHeader = ({recurringCount,nonrecurringCount}:any) => 
         </Dropdown>
     </div>
     <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg '>
-        <div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>
+                        <div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>
 
-        <Dropdown>
-            <DropdownTrigger className='z-0'>
-                <Button
-                    //   variant="bordered" 
-                    variant="solid"
-                    className="capitalize border-none bg-transparent rounded-lg"
-                >
-                    {selectedCategoryValue}
-                </Button>
-            </DropdownTrigger>
-            <DropdownMenu
-                aria-label="Single selection example"
-                className=" text-base bg-gray-200 rounded-lg"
-                variant="solid"
-                disallowEmptySelection
-                selectionMode="single"
-                selectedKeys={selectedCategory}
-                // onChange={setSelectedCategory}
-            >
-                <DropdownItem
-                    className=" p-2" key="Category:text">Category: Text</DropdownItem>
-                <DropdownItem
-                    className=" p-2" key="Category:number">Category: Number</DropdownItem>
-                <DropdownItem
-                    className=" p-2" key="Category:date">Date</DropdownItem>
-            </DropdownMenu>
-        </Dropdown>
-    </div>
+                        <Popover>
+                            <PopoverTrigger>
+                                <Button
+                                    variant="solid"
+                                    className="capitalize border-none bg-transparent rounded-lg"
+                                >
+                                    Filter
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent>
+                                 <FilterDropdwonCard />
+                            </PopoverContent>
+                        </Popover>
+                    </div>
 
     {/* <div className='flex items-center h-9 py-2.5 bg-black justify-between rounded-lg '> */}
       

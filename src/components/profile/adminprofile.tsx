@@ -24,7 +24,7 @@ const AdminProfile = () => {
     const [value, setValue] = useState<string>(String(userState.name));
    const handleUpdatePic =async(imageInfo:any)=>{
     const response=await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/${userState.id}`, JSON.stringify(imageInfo.secure_url));
-    console.log(response)
+    console.log("hello this is response",response)
     if (response.data) {
         const updatedUserState = {
           ...userState,
@@ -56,6 +56,9 @@ const AdminProfile = () => {
     const handleTabClick = (tab:string) => {
         setActiveTab(tab);
     };
+
+    console.log("userState",userState)
+
     return (
 
         <>
@@ -95,7 +98,7 @@ const AdminProfile = () => {
                         multiple: false,
                         maxFiles: 1
                     }}
-                        uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+                        uploadPreset={process.env.CUSTOMCONNSTR_NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
                         onSuccess={(result, { widget }) => {
                             //@ts-ignore
                             setResource(result?.info.secure_url); 
@@ -104,7 +107,7 @@ const AdminProfile = () => {
                             widget.close();
                         }}
                 >  
-                            <Image className="absolute bg-gray-100  " src={editicon} alt="edit" />
+                            <Image className="absolute bg-gray-100 cursor-pointer  " src={editicon} alt="edit" />
                             </CldUploadButton>
                         </div>
                         <div className="w-full flex-col justify-start items-start gap-4 flex">

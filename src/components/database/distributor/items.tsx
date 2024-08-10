@@ -1,37 +1,18 @@
-"use client";
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link';
 import Distributors from '@/app/database/distributor/page';
 import { useAppSelector } from '@/lib/hooks';
 import { Spinner} from '@nextui-org/react';
-import useSWR from 'swr';
-//@ts-ignore
-const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
-interface Distributors{
-    id:string,
-    distributorName:string,
-    contact:string,
-    gstinNo:string,
-    email:string,
+import Loading from '@/app/loading';
 
-}
 
-const DatabaseDistributorTableItem = () => {
-    const [distributors,setDistributor]=useState<Distributors[]>([]);
-    const appState = useAppSelector((state) => state.app)
-    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll?branchId=${appState.currentBranchId}`,fetcher,{ revalidateOnFocus : true});
-    useEffect(() => {
-        const handleWindowFocus = () => {
-          console.log('Window focused');
-        };
-        window.addEventListener('focus', handleWindowFocus);
-        return () => window.removeEventListener('focus', handleWindowFocus);
-      }, []);
-    useEffect(()=>{
-     if(!isLoading&&!error&&data){
-        setDistributor(data);
-     }
-    },[data,error,isLoading]);
+const DatabaseDistributorTableItem = ({ distributors, isLoading, data }:any) => {
+    
+
+    if(isLoading)return (<Loading/>)
+
+
+
     return (
       <>
       { 
@@ -53,7 +34,8 @@ const DatabaseDistributorTableItem = () => {
       }
         
 
-  </>  )
+      </>  
+  )
 }
 
 export default DatabaseDistributorTableItem
