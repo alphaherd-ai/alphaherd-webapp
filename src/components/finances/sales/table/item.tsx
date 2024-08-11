@@ -76,7 +76,7 @@ if(isLoading&&!data)return (<Loading/>)
     <div className='w-2/12 flex  items-center  px-4 text-base font-medium'>{sale.customer}</div>
     <div className='w-1/12 flex  items-center  text-base font-medium'>{sale.invoiceNo}</div>
     <div className='w-1/12 flex  items-center  text-base font-medium'>₹ {(sale.totalCost).toFixed(2)}</div>
-    <div className='w-1/12 flex  items-center text-base font-medium'>{sale.totalQty}</div>
+    {/* <div className='w-1/12 flex  items-center text-base font-medium'>{sale.totalQty}</div> */}
     <div className='w-1/12 flex  items-center  text-base font-medium'>{formatDateAndTime(sale.dueDate).formattedDate}</div>
     <div className='w-1/12 flex  items-center  text-base font-medium'>
     <Tooltip content={sale.status} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
