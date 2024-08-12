@@ -26,15 +26,12 @@ const NewsalesBottomBar = ({estimateData}:any) => {
     const id = url.get('id');
     const router = useRouter();
     const handleSubmit = async () => {
-<<<<<<< HEAD
         if (!headerData.customer) {
             alert('Customer is required');
             return;
         }
-        const allData = { headerData, tableData, totalAmountData };
-=======
+        
         const allData = { headerData, tableData, totalAmountData, transactionsData };
->>>>>>> 6c1963b0b94725cc5649cac57e3cda1c8e584708
         console.log("this is all data", allData)
         let totalQty = 0;
         tableData.forEach(data => {
@@ -193,7 +190,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
 
             <div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
                 <div className="flex justify-between items-center gap-4 pl-4">
-                    {/* <Button className="p-2 bg-white rounded-md border border-solid  border-borderGrey  justify-start items-center gap-2 flex cursor-pointer">
+                    <Button className="p-2 bg-white rounded-md border border-solid  border-borderGrey  justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={printicon} alt="print"></Image>
                         <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all">Print</div>
                     </Button>
@@ -214,7 +211,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
                     <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={shareicon} alt="share"></Image>
                         <div onClick={sendEmail} className="text-textGrey1 text-sm hover:text-textGrey2 transition-all">Share via Email</div>
-                    </Button> */}
+                    </Button>
                 </div>
                 <div className="flex justify-between items-center gap-4 pr-4">
                     <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">

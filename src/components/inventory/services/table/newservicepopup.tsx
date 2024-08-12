@@ -18,6 +18,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
   const [buttonDisabled, setButtonDisabled] = useState(false);
     const [Providers,setProviders] = useState([]);
     const [LinkProducts,setLinkProducts] = useState([]);
+    const [nameError, setNameError] = useState<string>("");
 
 const gstOptions = [
     { value: 0, label: 'GST@0%.' },
@@ -43,7 +44,9 @@ const [categories, setCategories] = useState<any[]>([
 
  
     const handleContinueClick = () => {
-        setLastStep(true);
+        if (formData.name) {
+            setLastStep(true);
+        }
     }
 
     const fetchProductsAndProviders = async () => {
@@ -107,6 +110,9 @@ const [categories, setCategories] = useState<any[]>([
 
     const handleChange = (field: string, value: any) => {
         setFormData({ ...formData, [field]: value });
+        if (field === "name") {
+            setNameError(value ? "" : "Name must be provided");
+        }
     };
 
     return <>
@@ -124,6 +130,9 @@ const [categories, setCategories] = useState<any[]>([
                         <div className="text-gray-500 text-base font-medium ">Name*</div>
                         <div>
                             <input className="w-[440px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="name" onChange={(e) => handleChange("name", e.target.value)}/>
+                            {nameError && (
+                                <div className="text-red-500 text-sm mt-1">{nameError}</div>
+                            )}
                         </div>
                     </div>
                     <div className="flex items-center gap-[61px]">
@@ -139,11 +148,27 @@ const [categories, setCategories] = useState<any[]>([
                         {/* <input className="w-[576px] h-[88px] mt-[8px]" placeholder="Provide details of the service" type="text" name="description" onChange={(e) => handleChange("description", e.target.value)} /> */}
                     </div>
                     <div className="self-end items-start gap-4 flex">
-                        <button onClick={handleContinueClick} className="px-4 py-2.5 bg-bg-zinc-900 rounded-[5px] justify-start items-center gap-1 flex border-0 outline-none cursor-pointer">
+                        {/* <button onClick={handleContinueClick} className="px-4 py-2.5 bg-bg-zinc-900 rounded-[5px] justify-start items-center gap-1 flex border-0 outline-none cursor-pointer">
                             <div className="text-white text-base font-bold ">Continue</div>
                             <div className="w-6 h-6">
                                 <Image src={Arrow} alt="Arrow" />
                             </div>
+                        </button> */}
+                        <button
+                            onClick={handleContinueClick}
+                            disabled={!formData.name}
+                            className={`px-4 py-2.5 rounded-[5px] justify-start items-center gap-1 flex border-0 outline-none cursor-pointer ${
+                                formData.name ? "bg-zinc-900" : "bg-red-500"
+                            }`}
+                        >
+                            <div className={`text-base font-bold ${formData.name ? "text-white" : "text-neutral-200"}`}>
+                                Continue
+                            </div>
+                            {formData.name && (
+                                <div className="w-6 h-6">
+                                    <Image src={Arrow} alt="Arrow" />
+                                </div>
+                            )}
                         </button>
                     </div>
                 </div>

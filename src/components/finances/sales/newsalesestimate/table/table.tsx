@@ -77,19 +77,6 @@ const NewsaleEstimateTable = () => {
     const appState = useAppSelector((state) => state.app)
     const { tableData: items, setTableData: setItems } = useContext(DataContext);   
     const [discountStates, setDiscountStates] = useState(new Array(items.length).fill(false));
-
-    const [isItemValid, setIsItemValid] = useState(true);
-    const [newItem, setNewItem] = useState<any>({}); // Define your item structure
-
-    const handleAddItem = useCallback(() => {
-        if (tableData.some(item => !item.itemName)) {
-        setIsItemValid(false);
-        return;
-        }
-        setTableData([...tableData, {}]);
-        setIsItemValid(true);
-    }, [tableData, setTableData]);
-
     const taxOptions = [
         { value: 'Tax excl.', label: 'Tax excl.' },
         { value: 'Tax incl.', label: 'Tax incl.' }
@@ -275,9 +262,9 @@ const handleQuantityIncClick2 = (itemId: any) => {
         })
     );
 };
-// const handleAddItem= useCallback(() => {
-//     setItems([...items, {}]);
-// }, [items]);
+const handleAddItem= useCallback(() => {
+    setItems([...items, {}]);
+}, [items]);
 
 const handleInputChange = useCallback((index: number, value: any,field: string) => {   
     const updatedItems = [...items];
@@ -444,7 +431,6 @@ const customStyles = {
                                         Add Item
                                     
                                 </Button>
-        
                             </div>
                         </div>
                         <div>
@@ -646,7 +632,13 @@ const customStyles = {
                     isClearable={false}
                     isSearchable={true}
                     options={discountOptions}
-                    styles={customStyles}
+                    styles={{
+                        control: (provided, state) => ({
+                            ...provided,
+                            border: state.isFocused ? 'none' : 'none',
+                            padding: '0',
+                        }),
+                    }}
                     onChange={(selectedOption: any) => handleDiscountSelect(selectedOption, index)}
                 /></div>
                             <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
@@ -777,11 +769,10 @@ const customStyles = {
                     </div>
                         <NewsaleEstimateTotalAmout />
                 </div>
-                <NewsaleEstimateBottomBar />
+                <NewsaleEstimateBottomBar smsEnabled={false} mailEnabled={false} whatsappEnabled={false} />
             </div>
         </>
     );
 }
 
 export default NewsaleEstimateTable;
-

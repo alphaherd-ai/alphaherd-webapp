@@ -51,8 +51,7 @@ const ServicesAllItem = () => {
     {services.map(service => (
     <div key={service.id} className='flex  w-full  box-border h-16 py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  hover:bg-gray-200 hover:text-gray-500 transition'>
       <div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>
-          <Link className='transition-colors duration-300 text-gray-400 no-underline hover:underline hover:text-teal-400 
-          ' href={{pathname:'services/overview',query:{id:`${service.id}`}}}>
+          <Link href={{pathname:'overview',query:{id:`${service.id}`}}}className='transition-colors duration-300 text-gray-400 no-underline hover:underline hover:text-teal-400 ' >
             {service.name}
           </Link>
         </div>

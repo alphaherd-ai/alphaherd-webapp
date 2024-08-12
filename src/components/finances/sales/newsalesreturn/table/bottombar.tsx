@@ -132,23 +132,23 @@ const NewsalesReturnBottomBar = ({invoiceData}:any) => {
         } 
     };
 
-    const sendWhatsapp = async () => {
-        try {   
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/whatsapp`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    phone: "+917637834918",
+    // const sendWhatsapp = async () => {
+    //     try {   
+    //         const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/whatsapp`, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({
+    //                 phone: "+917637834918",
 
-                }),
-            });
-            console.log('Whatsapp Message sent successfully:', response);
-        } catch (error) {
-            console.error('Error while sending message', error);
-        } 
-    };
+    //             }),
+    //         });
+    //         console.log('Whatsapp Message sent successfully:', response);
+    //     } catch (error) {
+    //         console.error('Error while sending message', error);
+    //     } 
+    // };
 
     const sendEmail = ()=>{
         try {   
@@ -176,7 +176,7 @@ const NewsalesReturnBottomBar = ({invoiceData}:any) => {
 
 <div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
                             <div className="flex justify-between items-center gap-4 pl-4">
-                            {/* <Button className="p-2 bg-white rounded-md border border-solid  border-borderGrey  justify-start items-center gap-2 flex cursor-pointer">
+                            <Button className="p-2 bg-white rounded-md border border-solid  border-borderGrey  justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={printicon} alt="print"></Image>
                         <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all">Print</div>
                     </Button>
@@ -190,10 +190,10 @@ const NewsalesReturnBottomBar = ({invoiceData}:any) => {
                         <Image src={shareicon} alt="share"></Image>
                         <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all" onClick={sendSMS}>Share via SMS</div>
                     </Button>
-                    <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
+                    {/* <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={shareicon} alt="share"></Image>
                         <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all" onClick={sendWhatsapp}>Share via Whatsapp</div>
-                    </Button>
+                    </Button> */}
                     <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={shareicon} alt="share"></Image>
                         <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all" onClick={sendEmail}>Share via Email</div>

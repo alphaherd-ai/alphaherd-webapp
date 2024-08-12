@@ -13,7 +13,7 @@ import { FinanceCreationType } from '@prisma/client'
 import axios from "axios"
 import { useAppSelector } from '@/lib/hooks';
 import { Button } from "@nextui-org/react"
-import {useRouter} from "next/navigation"
+import {useRouter, useSearchParams} from "next/navigation"
 import { generatePdfForInvoice } from "@/utils/salesPdf"
 import { AppState } from "@/lib/features/appSlice"
 
@@ -116,6 +116,24 @@ const NewsaleEstimateBottomBar = () => {
         generatePdfForInvoice(data, appState, items);
 
     }
+    
+    const [communicationMode, setCommunicationMode] = useState<string | null>(null);
+
+  useEffect(() => {
+    const selectedMode = localStorage.getItem('selectedCommunicationMode');
+    setCommunicationMode(selectedMode);
+  }, []);
+
+  const handleShareClick = () => {
+    if (communicationMode === 'SMS') {
+      sendSMS();
+    } else if (communicationMode === 'Email') {
+      sendEmail();
+    // } else if (communicationMode === 'WhatsApp') {
+    //   sendWhatsapp();
+    }
+  };
+
     const sendSMS = async () => {
         try {   
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/sms`, {
@@ -133,25 +151,7 @@ const NewsaleEstimateBottomBar = () => {
             console.error('Error while sending message', error);
         } 
     };
-    //const phoneNumber = headerData.customer.contact;
-    // const sendWhatsapp = async (phoneNumber: any) => {
-        
-    //     try {   
-    //         const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/whatsapp`, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify({
-    //                 phone: `+91${phoneNumber}`,
-    //                 message: "Hello from the team. You can download your invoice PDF here:"
-    //             }),
-    //         });
-    //         console.log('Whatsapp Message sent successfully:', response);
-    //     } catch (error) {
-    //         console.error('Error while sending message', error);
-    //     } 
-    // };
+    
     // const sendWhatsapp = async (phoneNumber: any, headerData: { [key: string]: any }, tableData: { [key: string]: any }[], totalAmountData: { [key: string]: any }, type: string, appState: AppState) => {
     //     try {   
     //         const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/whatsapp`, {
@@ -270,21 +270,25 @@ const NewsaleEstimateBottomBar = () => {
                         <Image src={shareicon} alt="share"></Image>
                         <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all" onClick={sendEmail}>Share via Email</div>
                     </Button>
-                            </div>
-                            <div className="flex justify-between items-center gap-4 pr-4">
-                                <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
-                                    <Image src={drafticon} alt="draft"></Image>
-                                    <div>Save as Draft</div>
-                                </Button>
-                                <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${
-                                    isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
-                                }`}
-                                onClick={handleSubmit} disabled={isDisabled}>
-                                    <Image src={checkicon} alt="check"></Image>
-                                    <div>Save</div>
-                                </Button>
-                            </div>
-                        </div>
+                    <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
+                        <Image src={shareicon} alt="share"></Image>
+                        <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all" onClick={handleShareClick}>Share</div>
+                    </Button>
+                    </div>
+                    <div className="flex justify-between items-center gap-4 pr-4">
+                        <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
+                            <Image src={drafticon} alt="draft"></Image>
+                            <div>Save as Draft</div>
+                        </Button>
+                        <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${
+                            isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
+                        }`}
+                        onClick={handleSubmit} disabled={isDisabled}>
+                            <Image src={checkicon} alt="check"></Image>
+                            <div>Save</div>
+                        </Button>
+                    </div>
+                </div>
     
           
         </>

@@ -22,8 +22,10 @@ import deleteicon from "../../../assets/icons/settings/deleteicon.svg"
 import React, { useState, useEffect } from 'react';
 import AddSpeciesPopup from "../generalSettingPopup/addSpeciesPopup";
 
-const GeneralSettings = () => {
 
+  
+const GeneralSettings = () => {
+    
     
     const [showPopup, setShowPopup] = useState(false);
     const [showPopup1, setShowPopup1] = useState(false);
@@ -49,7 +51,7 @@ const GeneralSettings = () => {
     const [samedayToggle, setSamedayToggle] = useState(true);
     const [threedayToggle, setThreedayToggle] = useState(false);
     const [oneWeekToggle, setOneWeekToggle] = useState(false);
-    const [smsToggle, setSmsToggle] = useState(true);
+    const [smsToggle, setSmsToggle] = useState(false);
     const [mailToggle, setMailToggle] = useState(false);
     const [whatsappToggle, setWhatsappToggle] = useState(false);
     const [taxIncToggle, setTaxIncToggle] = useState(true);
@@ -117,7 +119,20 @@ const GeneralSettings = () => {
     const whatsappToggleHandler = () => {
         setWhatsappToggle(!whatsappToggle);
     };
-
+    
+    useEffect(() => {
+        const selectedMode = smsToggle
+          ? 'SMS'
+          : mailToggle
+          ? 'Email'
+          : whatsappToggle
+          ? 'WhatsApp'
+          : '';
+      
+        localStorage.setItem('selectedCommunicationMode', selectedMode);
+      }, [smsToggle, mailToggle, whatsappToggle]);
+      
+   
     return (
     <>
         <div className="w-full h-full mt-4">
