@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
   engineType = "library"
 }
 
@@ -92,6 +92,8 @@ model Organization {
   phoneNo     String
   adminUsers  User[]
   orgBranches OrgBranch[]
+
+  @@index([orgEmail])
 }
 
 model OrgBranch {
@@ -104,6 +106,8 @@ model OrgBranch {
   inventories        InventorySection[]
   finances           FinanceSection[]
   databases          DatabaseSection[]
+
+  @@index([branchName, orgId])
 }
 
 model OrgBranchUserRole {
@@ -125,9 +129,11 @@ model User {
   altPhoneNo         String?
   hashedPassword     String
   adminOrganizations Organization[]
-  orgBranchId        Int?          
+  orgBranchId        Int?
   lastUsedBranch     OrgBranch?          @relation(fields: [orgBranchId], references: [id])
   userRoles          OrgBranchUserRole[]
+
+  @@index([email, orgBranchId])
 }
 
 model Notifications {
@@ -139,6 +145,8 @@ model Notifications {
   source    Notif_Source
   isRead    Boolean      @default(false)
   createdAt DateTime?    @default(now())
+
+  @@index([userId, orgId])
 }
 
 model Permissions {
@@ -158,6 +166,8 @@ model InventorySection {
   productBatch ProductBatch[]
   service      Services[]
   timeline     InventoryTimeline[]
+
+  @@index([branchId])
 }
 
 model FinanceSection {
@@ -172,6 +182,8 @@ model FinanceSection {
   purchase     Purchases[]
   items        Items[]
   timeline     FinanceTimeline[]
+
+  @@index([branchId])
 }
 
 model DatabaseSection {
@@ -183,6 +195,8 @@ model DatabaseSection {
   clients      Clients[]
   patients     Patients[]
   distributors Distributors[]
+
+  @@index([branchId])
 }
 
 model Clients {
@@ -191,19 +205,21 @@ model Clients {
   email             String?          @unique
   contact           String?
   address           String?
+  invoiceNo         String[]
   city              String?
   pinCode           String?
   patients          Patients[]
   DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
   databaseSectionId Int?
 
+  @@index([databaseSectionId])
   @@map("client")
 }
 
 model Patients {
   id                Int              @id @default(autoincrement())
   patientName       String?
-  clientId          Int? 
+  clientId          Int?
   species           String?
   breed             String?
   dateOfBirth       DateTime?
@@ -214,6 +230,8 @@ model Patients {
   clients           Clients?         @relation(fields: [clientId], references: [id])
   DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
   databaseSectionId Int?
+
+  @@index([databaseSectionId, clientId])
 }
 
 model Distributors {
@@ -229,6 +247,8 @@ model Distributors {
   date              DateTime?        @default(now())
   DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
   databaseSectionId Int?
+
+  @@index([databaseSectionId])
 }
 
 model Products {
@@ -247,6 +267,8 @@ model Products {
   items              Items[]
   InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId Int?
+
+  @@index([inventorySectionId])
 }
 
 model ProductBatch {
@@ -270,6 +292,8 @@ model ProductBatch {
   inventoryTimeline  InventoryTimeline[] // Add the opposite relation
   InventorySection   InventorySection?   @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId Int?
+
+  @@index([inventorySectionId, productId])
 }
 
 model Services {
@@ -288,6 +312,8 @@ model Services {
   inventoryTimeline  InventoryTimeline[] // Add the opposite relation
   InventorySection   InventorySection?   @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId Int?
+
+  @@index([inventorySectionId])
 }
 
 model Sales {
@@ -310,25 +336,29 @@ model Sales {
   financeTimeline   FinanceTimeline[]
   FinanceSection    FinanceSection?      @relation(fields: [financeSectionId], references: [id])
   financeSectionId  Int?
+
+  @@index([financeSectionId])
 }
 
 model RecordTransaction {
-  id                Int           @id @default(autoincrement())
-  amountPaid        Int?
-  date              DateTime?     @default(now())
-  isAdvancePayment  Boolean?
-  mode              String?
-  moneyChange       String?
-  sales             Sales?        @relation(fields: [salesId], references: [id])
-  salesId           Int?
-  purchases         Purchases?    @relation(fields: [purchasesId], references: [id])
-  purchasesId       Int?
+  id               Int        @id @default(autoincrement())
+  amountPaid       Int?
+  date             DateTime?  @default(now())
+  isAdvancePayment Boolean?
+  mode             String?
+  moneyChange      String?
+  sales            Sales?     @relation(fields: [salesId], references: [id])
+  salesId          Int?
+  purchases        Purchases? @relation(fields: [purchasesId], references: [id])
+  purchasesId      Int?
+
+  @@index([salesId, purchasesId])
 }
 
 model Purchases {
-  id                   Int               @id @default(autoincrement())
+  id                   Int                 @id @default(autoincrement())
   distributor          String?
-  date                 DateTime?         @default(now())
+  date                 DateTime?           @default(now())
   dueDate              DateTime
   returnLastDate       DateTime?
   invoiceNo            String?
@@ -346,8 +376,10 @@ model Purchases {
   type                 String?
   items                Items[]
   financeTimeline      FinanceTimeline[]
-  FinanceSection       FinanceSection?   @relation(fields: [financeSectionId], references: [id])
+  FinanceSection       FinanceSection?     @relation(fields: [financeSectionId], references: [id])
   financeSectionId     Int?
+
+  @@index([financeSectionId])
 }
 
 model Expenses {
@@ -372,6 +404,8 @@ model Expenses {
   financeTimeline     FinanceTimeline[]
   FinanceSection      FinanceSection?   @relation(fields: [financeSectionId], references: [id])
   financeSectionId    Int?
+
+  @@index([financeSectionId])
 }
 
 model Transactions {
@@ -380,7 +414,7 @@ model Transactions {
   subject          String?
   invoiceLink      String?
   receiptNo        String?
-  date             DateTime?      @default(now())
+  date             DateTime?       @default(now())
   amountPaid       Int
   mode             String?
   moneyChange      String?
@@ -388,6 +422,8 @@ model Transactions {
   services         Json?
   FinanceSection   FinanceSection? @relation(fields: [financeSectionId], references: [id])
   financeSectionId Int?
+
+  @@index([financeSectionId])
 }
 
 model Items {
@@ -415,6 +451,8 @@ model Items {
   productBatch     ProductBatch?   @relation(fields: [productBatchId], references: [id])
   FinanceSection   FinanceSection? @relation(fields: [financeSectionId], references: [id])
   financeSectionId Int?
+
+  @@index([salesId, purchasesId, expensesId, financeSectionId])
 }
 
 model InventoryTimeline {
@@ -432,6 +470,8 @@ model InventoryTimeline {
   service            Services?         @relation(fields: [serviceId], references: [id])
   InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId Int?
+
+  @@index([inventorySectionId, productId, serviceId, createdAt])
 }
 
 model FinanceTimeline {
@@ -446,4 +486,6 @@ model FinanceTimeline {
   expenses         Expenses?            @relation(fields: [expensesId], references: [id])
   FinanceSection   FinanceSection?      @relation(fields: [financeSectionId], references: [id])
   financeSectionId Int?
+
+  @@index([salesId, createdAt, expensesId, financeSectionId])
 }

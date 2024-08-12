@@ -22,7 +22,6 @@ const DownloadPopup = ({ onClose, timeline }:any) => {
   const [endDate, setEndDate] = useState(null);
   const [selectedOption, setSelectedOption] = useState('Custom');
 
-
   const handleOptionClick = (option:any) => {
     setSelectedOption(option);
   };
@@ -167,122 +166,122 @@ const DownloadPopup = ({ onClose, timeline }:any) => {
   return (
     <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
       <div className="w-[640px] h-[550px] p-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400/opacity-60 backdrop-blur-[60px] flex flex-col justify-between items-start overflow-auto">
-      <div className='w-full flex flex-col gap-6'>
-        <div className="self-end items-start gap-6 flex mt-[0.6rem] cursor-pointer" onClick={onClose}>
-          <Image src={closeicon} alt="close" />
-        </div>
-        <div className="flex-col justify-start items-start gap-2 flex">
-          <div className="text-gray-500 text-xl font-medium">Download Report</div>
-          <div className="text-neutral-400 text-base font-medium">Please specify the date range for the report</div>
-        </div>
-    <div className="flex flex-col items-start gap-6 mt-6">
-        
+        <div className='w-full flex flex-col gap-6'>
+          <div className="self-end items-start gap-6 flex mt-[0.6rem] cursor-pointer" onClick={onClose}>
+            <Image src={closeicon} alt="close" />
+          </div>
+          <div className="flex-col justify-start items-start gap-2 flex">
+            <div className="text-gray-500 text-xl font-medium">Download Report</div>
+            <div className="text-neutral-400 text-base font-medium">Please specify the date range for the report</div>
+          </div>
+          <div className="flex flex-col items-start gap-6 mt-6">
             <div className="flex items-center gap-2">
-                <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Custom' ? 'bg-textGreen' : 'bg-white'}`}
-                    onClick={() => handleOptionClick('Custom')}>
-                    <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Custom' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
-                        Custom
-                    </div>
+              <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Custom' ? 'bg-textGreen' : 'bg-white'}`}
+                onClick={() => handleOptionClick('Custom')}>
+                <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Custom' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
+                  Custom
                 </div>
-                <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Today' ? 'bg-textGreen' : 'bg-white'}`}
-                    onClick={() => handleOptionClick('Today')}>
-                    <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Today' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
-                    Today
-                    </div>
+              </div>
+              <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Today' ? 'bg-textGreen' : 'bg-white'}`}
+                onClick={() => handleOptionClick('Today')}>
+                <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Today' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
+                  Today
                 </div>
-                <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Week' ? 'bg-textGreen' : 'bg-white'}`}
-                    onClick={() => handleOptionClick('Week')}>
-                    <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Week' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
-                    Week
-                    </div>
+              </div>
+              <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Week' ? 'bg-textGreen' : 'bg-white'}`}
+                onClick={() => handleOptionClick('Week')}>
+                <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Week' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
+                  Week
                 </div>
-                <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Month' ? 'bg-textGreen' : 'bg-white'}`}
-                    onClick={() => handleOptionClick('Month')}>
-                    <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Month' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
-                    Month
-                    </div>
+              </div>
+              <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Month' ? 'bg-textGreen' : 'bg-white'}`}
+                onClick={() => handleOptionClick('Month')}>
+                <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Month' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
+                  Month
                 </div>
-                <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Year' ? 'bg-textGreen' : 'bg-white'}`}
-                    onClick={() => handleOptionClick('Year')}>
-                    <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Year' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
-                    Year
-                    </div>
+              </div>
+              <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Year' ? 'bg-textGreen' : 'bg-white'}`}
+                onClick={() => handleOptionClick('Year')}>
+                <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Year' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
+                  Year
                 </div>
+              </div>
             </div>
-        
-        
-        {selectedOption === 'Custom' && (
-            <>
-            <div className='flex items-center justify-between  w-[576px]'>
-                    <div className="text-gray-500 text-base font-medium w-[200px]">Select Date Range</div>
-                    <div className="w-full h-11 px-4 py-2 bg-white rounded-[5px] border border-neutral-400 flex items-center gap-2">
-                        <div className="customDatePickerWidth flex">
-                        <DatePicker
-                            dateFormat="dd/MM/yyyy"
-                            showYearDropdown
-                            showMonthDropdown
-                            selected={startDate}
-                            onChange={onDateChange}
-                            startDate={startDate}
-                            endDate={endDate}
-                            selectsStart
-                            selectsRange
-                            placeholderText="Start Date - End Date"
-                            className="text-gray-500 text-base font-medium border-0 outline-none"
-                            
-                        />
-                        <Image src={calenderIcon} alt="calendar" />
+            {selectedOption === 'Custom' && (
+              <>
+                <div className='flex items-center justify-between  w-[576px]'>
+                  <div className="text-gray-500 text-base font-medium w-[200px]">Select Date Range</div>
+                  <div className="w-full h-11 px-4 py-2 bg-white rounded-[5px] border border-neutral-400 flex items-center gap-2">
+                    <div className="customDatePickerWidth flex">
+                      <DatePicker
+                        dateFormat="dd/MM/yyyy"
+                        showYearDropdown
+                        showMonthDropdown
+                        selected={startDate}
+                        onChange={onDateChange}
+                        startDate={startDate}
+                        endDate={endDate}
+                        selectsStart
+                        selectsRange
+                        placeholderText="Start Date - End Date"
+                        className="text-gray-500 text-base font-medium border-0 outline-none"
+                      />
+                      <Image src={calenderIcon} alt="calendar" />
                     </div>
-                    </div>
-            </div>
-            </>
-        )}
-        {selectedOption === 'Today' && (
-            <div className="day-content">
-            
-            </div>
-        )}
-        {selectedOption === 'Week' && (
-            <div className="Week-content">
-            
-            </div>
-        )}
-        {selectedOption === 'Month' && (
-            <div className="Month-content">
-            
-            </div>
-        )}
-        {selectedOption === 'Year' && (
-            <div className="Year-content">
-            
-            </div>
-        )}
-    </div>
-    </div>
+                  </div>
+                </div>
+              </>
+            )}
+            {selectedOption === 'Today' && (
+              <div className="day-content">
+
+              </div>
+            )}
+            {selectedOption === 'Week' && (
+              <div className="Week-content">
+
+              </div>
+            )}
+            {selectedOption === 'Month' && (
+              <div className="Month-content">
+
+              </div>
+            )}
+            {selectedOption === 'Year' && (
+              <div className="Year-content">
+
+              </div>
+            )}
+          </div>
+        </div>
         <div className='flex gap-4 justify-end w-full'>
-            
-        <Button className="cursor-pointer outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex" onClick={downloadPDF}>
-              
+          <Button className="cursor-pointer outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex" onClick={downloadPDF}>
             <div className="w-6 h-6">
-                <Image src={download} alt="download" />
-              </div>            
+              <Image src={download} alt="download" />
+            </div>
             <div className="text-white text-base font-medium">Download as PDF</div>
-        </Button>
-        <CSVLink
+          </Button>
+          <CSVLink
             data={data}
             filename={`sales_report_${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'}_to_${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}.csv`}
             className="no-underline flex items-center mr-4"
-        >
-        <Button className="cursor-pointer outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
-        
-            <div className="w-6 h-6">
-            <Image src={download} alt="download" />
-            </div>
-        
-        
-            <div className="text-white text-base font-medium">Download as CSV</div>
-        </Button>
-        </CSVLink>
+            headers={[
+              { label: 'Date', key: 'sale.date' },
+              { label: 'Type', key: 'sale.type' },
+              { label: 'Customer', key: 'sale.customer' },
+              { label: 'Ref. No.', key: 'sale.invoiceNo' },
+              { label: 'Total Cost', key: 'sale.totalCost' },
+              { label: 'Due Date', key: 'sale.dueDate' },
+              { label: 'Status', key: 'sale.status' },
+            ]}
+          >
+            <Button className="cursor-pointer outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+              <div className="w-6 h-6">
+                <Image src={download} alt="download" />
+              </div>
+              <div className="text-white text-base font-medium">Download as CSV</div>
+            </Button>
+          </CSVLink>
         </div>
       </div>
     </div>

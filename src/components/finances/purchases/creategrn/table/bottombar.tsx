@@ -21,8 +21,10 @@ const CreateGrnBottomBar = ({orderData}:any) => {
     const appState = useAppSelector((state) => state.app);
     const url = useSearchParams();
     const id = url.get('id');
+    const [isSaving,setSaving]=useState(false);
     const router=useRouter();
     const handleSubmit = async () => {
+        setSaving(true);
         const allData = {headerData, tableData, totalAmountData, transactionsData};
         console.log(orderData)
         let totalQty=0;
@@ -63,14 +65,21 @@ const CreateGrnBottomBar = ({orderData}:any) => {
         }
         console.log(JSON.stringify(data))
         try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Invoice}?branchId=${appState.currentBranchId}`,data)
+            const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Invoice}?branchId=${appState.currentBranchId}`,data)
+            setTimeout(()=>{
+                router.back();
+            },2000)
+            const response = await responsePromise;
             if (!response.data) {
                 throw new Error('Network response was not ok');
             }
-            router.back();
+           
     
         } catch (error) {
             console.error('Error:', error);
+        }
+        finally{
+            setSaving(false);
         }
     };
 
@@ -104,7 +113,7 @@ const CreateGrnBottomBar = ({orderData}:any) => {
                     }`}
                     onClick={handleSubmit} disabled={isDisabled}>
                         <Image src={checkicon} alt="check"></Image>
-                        <div>Save</div>
+                        <div>{isSaving?"Saving...":"Save"}</div>
                     </Button>
                 </div>
                             

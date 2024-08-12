@@ -169,7 +169,7 @@ const CreateGrnHeader = ({existingHeaderData}:any) => {
                             <button
                                 onClick={handleEditButtonClick} className="border-0"
                             >
-                                <Image src={editicon} alt="edit" ></Image>
+                               
                             </button>
                         </div>
                     </div>

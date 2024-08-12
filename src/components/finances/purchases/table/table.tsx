@@ -50,7 +50,7 @@ useEffect(()=>{
         selectedParties.includes(item.distributor)
       );
     }
-    setPurchases(filteredData);
+    setPurchases(filteredData?.reverse());
   }
 },[data,error,isLoading,setPurchases,startDate, endDate, selectedParties])
 

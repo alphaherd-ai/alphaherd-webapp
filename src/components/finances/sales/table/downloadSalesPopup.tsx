@@ -23,6 +23,7 @@ const DownloadPopup = ({ onClose, sales, type }:any) => {
   const [selectedOption, setSelectedOption] = useState('Custom');
 
 
+
   const handleOptionClick = (option:any) => {
     setSelectedOption(option);
   };
@@ -272,6 +273,15 @@ const DownloadPopup = ({ onClose, sales, type }:any) => {
             data={data}
             filename={`sales_report_${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'}_to_${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}.csv`}
             className="no-underline flex items-center mr-4"
+            headers={[
+              { label: 'Date', key: 'date' },
+              { label: 'Type', key: 'type' },
+              { label: 'Customer', key: 'customer' },
+              { label: 'Ref. No.', key: 'invoiceNo' },
+              { label: 'Total Cost', key: 'totalCost' },
+              { label: 'Due Date', key: 'dueDate' },
+              { label: 'Status', key: 'status' },
+            ]}
         >
         <Button className="cursor-pointer outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
         

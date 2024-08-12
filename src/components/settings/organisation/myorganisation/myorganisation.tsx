@@ -9,20 +9,68 @@ import React, { useState, useEffect } from 'react';
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
 import OrganisationNavbar from "../navbar/navbar"
 
-import { useAppSelector } from "@/lib/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import Link from "next/link"
 import AddBranchPopup from "../addBranchPopup"
 import useSWR from 'swr';
+import { CldUploadButton } from "next-cloudinary"
+import axios from "axios"
+import { AppState, updateApp } from "@/lib/features/appSlice"
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 export const MyOrganisationSettings = () => {
 
     const appState = useAppSelector((state) => state.app);
+    const dispatch = useAppDispatch();
 
     const [showPopup, setShowPopup] = React.useState(false);
     const togglePopup = () => {
         setShowPopup(!showPopup);
     }
+    const handleUpdatePic = async (imageInfo: any) => {
+        
+        const updatedOrg = {
+          ...appState.currentOrg,
+          orgImgUrl: String(imageInfo.secure_url),
+        };
+      
+        
+        const updatedBranch = {
+          ...appState.currentBranch,
+          org: {
+            ...appState.currentBranch.org,
+            orgImgUrl: String(imageInfo.secure_url),
+          },
+        };
+      
+        
+        const updatedAppState = {
+          ...appState,
+          currentOrg: updatedOrg,
+          currentBranch: updatedBranch,
+        };
+      
+        const data = updatedAppState.currentOrg;
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/admin/orgEdit?orgId=${appState.currentOrgId}`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          }
+        );
+      
+        let json = await response.json();
+        console.log('hello this is response', response);
+      
+        if (response.ok) {
+          dispatch(updateApp(updatedAppState as AppState));
+          console.log('admin profile updated', json);
+        }
+      };
+      
 
     const [orgBranches,setOrgBranches] = useState([]);
     const {data,error,isLoading} = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/admin/branch/all?orgId=${appState.currentOrgId}`,fetcher,{revalidateOnFocus:true});
@@ -48,12 +96,40 @@ export const MyOrganisationSettings = () => {
                                     <div className="text-neutral-400 text-base font-medium ">Upload an image of your clinic’s logo and watermark</div>
                                 </div>
                                 <div className="flex gap-4">
-                                    {appState.currentOrg.orgImgUrl?<Image src={appState.currentOrg.orgImgUrl} alt="profile" width={150} height={150} />:
-                                      <div className="w-[164px] h-[164px] p-2 rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 flex">
-                                      <div className="text-neutral-400 text-base font-bold ">+</div>
-                                      <div className="text-neutral-400 text-base font-bold "> Logo</div>
-                                  </div>
-                                    }
+                                    {appState.isCurrentOrgAdmin?(
+                                         <CldUploadButton
+                                         className="rounded-full  h-0 border-none"
+                                         options={{
+                                             sources: ['local', 'url'],
+                                             multiple: false,
+                                             maxFiles: 1
+                                         }}
+                                             uploadPreset={process.env.CUSTOMCONNSTR_NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+                                             onSuccess={(result, { widget }) => {
+                                                 //@ts-ignore
+                                                 handleUpdatePic(result.info)
+                                                 widget.close();
+                                             }}
+                                     >                {appState.currentOrg.orgImgUrl?<Image src={appState.currentOrg.orgImgUrl} alt="profile" width={150} height={150} />:
+                                     <div className="w-[164px] h-[164px] p-2 rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 flex">
+                                     <div className="text-neutral-400 text-base font-bold ">+</div>
+                                     <div className="text-neutral-400 text-base font-bold "> Logo</div>
+                                 </div>
+                                   }
+                                                
+                                                 </CldUploadButton>
+                                    ):(appState.currentOrg.orgImgUrl?<Image src={appState.currentOrg.orgImgUrl} alt="profile" width={150} height={150} />:(
+                                        <div className="flex gap-4">
+                                            <div className="w-[164px] h-[164px] p-2 rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 flex">
+                                     <div className="text-neutral-400 text-base font-bold ">+</div>
+                                     <div className="text-neutral-400 text-base font-bold "> Logo</div>
+                                            </div>
+                                            </div>
+                                    ))
+                                
+                                }
+                               
+                                   
                                     
                                     <div className="w-[164px] h-[164px] p-2 rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 flex">
                                         <div className="text-neutral-400 text-base font-bold ">+</div>

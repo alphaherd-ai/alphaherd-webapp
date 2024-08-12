@@ -26,6 +26,7 @@ interface Sales {
 
 
 
+
 const FinancesSalesTable = () => {
 
     const appState = useAppSelector((state) => state.app);
@@ -35,7 +36,7 @@ const FinancesSalesTable = () => {
   const startDate = useMemo(() => urlSearchParams.get('startDate') ? new Date(urlSearchParams.get('startDate')!) : null, [urlSearchParams]);
   const endDate = useMemo(() => urlSearchParams.get('endDate') ? new Date(urlSearchParams.get('endDate')!) : null, [urlSearchParams]);
   const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
-  const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`,fetcher)
+  const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true})
   useEffect(()=>{
     if(data&&!error&&!isLoading){
       let filteredData=data?.filter((sale:any)=>{
@@ -89,7 +90,7 @@ const FinancesSalesTable = () => {
                 <div className=' flex text-gray-500 text-base font-medium px-4  w-2/12 '>Client</div>
                 <div className=' flex text-gray-500 text-base font-medium   w-1/12 '>Ref. No.</div>
                 <div className=' flex text-gray-500 text-base font-medium   w-1/12 '>Total Cost</div>
-                <div className=' flex text-gray-500 text-base font-medium   w-1/12 '>Total Qty.</div>
+                {/* <div className=' flex text-gray-500 text-base font-medium   w-1/12 '>Total Qty.</div> */}
                 <div className=' flex text-gray-500 text-base font-medium   w-1/12 '>Due date</div>
            
                 <div className=' flex text-gray-500 text-base font-medium  w-1/12'>Status</div>

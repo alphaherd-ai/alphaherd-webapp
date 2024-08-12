@@ -2,6 +2,7 @@ FROM node:18-alpine
 WORKDIR  /app
 COPY . ./
 
+RUN apk add --no-cache redis
 
 # Define build arguments
 ARG NEXT_PUBLIC_API_BASE_PATH
@@ -36,5 +37,9 @@ else \
 fi
 
 RUN yarn
+# Expose ports
+EXPOSE 3000 6380
+
+CMD redis-server --port 6380 
 
 RUN npm run build

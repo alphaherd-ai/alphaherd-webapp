@@ -18,14 +18,14 @@ export const GET = async (req: NextRequest) => {
       include: {
        patients:true
       },
-      cacheStrategy:{ttl:60}
+      cacheStrategy:{ttl:30}
 
     });
     const distributors =await prismaClient.distributors.findMany({
         where:{
             databaseSectionId:databaseSectionId
         },
-        cacheStrategy:{ttl:60}
+        cacheStrategy:{ttl:30}
     })
     const patients = await prismaClient.patients.findMany({
         where:{
@@ -34,7 +34,7 @@ export const GET = async (req: NextRequest) => {
         include:{
           clients:true
         },
-        cacheStrategy:{ttl:60}
+        cacheStrategy:{ttl:30}
     })
  
     return new Response(JSON.stringify({clients,distributors,patients}), {

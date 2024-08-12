@@ -50,8 +50,21 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
                         <div  className='flex items-center justify-center w-7 h-7 border border-solid border-gray-300 border-0.5 rounded-md  p-1'><Image src={Chart} alt='Chart' className='w-4  h-4' /></div>
                     </Link>
                     <div className='flex items-center justify-center h-7   mr-4 border border-solid border-gray-300 border-0.5 rounded-lg p-2'>
-                        <div className='flex '><Image src={Sort} alt='Sort' className='w-3 h-3 mr-2' /></div>
-
+                        <div className='flex '><Image src={Sort} alt='Sort' className='w-4 h-3' /></div>
+                        <Popover>
+                            <PopoverTrigger>
+                                <Button
+                                    variant="solid"
+                                    className="capitalize border-none bg-transparent rounded-lg"
+                                >
+                                   <span className='text-textGrey2 text-sm font-medium'> Sort:Recent</span>
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent>
+                                 {/* <FilterDropdwonCard /> */}
+                                Soon
+                            </PopoverContent>
+                        </Popover>
                         {/* <Dropdown>
                             <DropdownTrigger>
                                 <Button
@@ -82,7 +95,7 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
                         </Dropdown> */}
                     </div>
                     <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg '>
-                        <div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>
+                        <div className='flex '><Image src={Filter} alt='Filter' className='w-4 h-4' /></div>
 
                         <Popover>
                             <PopoverTrigger>
@@ -90,7 +103,7 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
                                     variant="solid"
                                     className="capitalize border-none bg-transparent rounded-lg"
                                 >
-                                    Filter
+                                   <span className='text-textGrey2 text-sm font-medium'> Filter By</span>
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent>

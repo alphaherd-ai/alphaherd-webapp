@@ -23,6 +23,7 @@ const NewsalesReturnBottomBar = ({invoiceData}:any) => {
     const url=useSearchParams();
     const id=url.get('id');
     const router=useRouter();
+    const [isSaving,setSaving]=useState(false);
     const handleSubmit = async () => {
         if (!headerData.customer) {
             alert('Customer is required');
@@ -44,6 +45,7 @@ const NewsalesReturnBottomBar = ({invoiceData}:any) => {
     }));
      const data={
             customer: (id===null)?allData.headerData.customer.value.clientName :invoiceData.customer,
+            clientId: (id===null)?allData.headerData.customer.value.clientId :"",
             notes: (id===null)?allData.headerData.notes:invoiceData.notes,
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo:(id===null)?allData.headerData.invoiceNo:invoiceData.invoiceNo,
@@ -65,14 +67,20 @@ const NewsalesReturnBottomBar = ({invoiceData}:any) => {
         }
         console.log(JSON.stringify(data))
         try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Return}?branchId=${appState.currentBranchId}`,data)
-
+            const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Return}?branchId=${appState.currentBranchId}`,data)
+            setTimeout(()=>{
+                router.back();
+            },2000)
+            const response=await responsePromise;
             if (!response.data) {
                 throw new Error('Network response was not ok');
             }
-            router.back();
+            
         } catch (error) {
             console.error('Error:', error);
+        }
+        finally{
+            setSaving(false);
         }
     };
     const downloadPdf = async () => {
@@ -209,7 +217,7 @@ const NewsalesReturnBottomBar = ({invoiceData}:any) => {
                                 }`}
                                 onClick={handleSubmit} disabled={isDisabled}>
                                     <Image src={checkicon} alt="check"></Image>
-                                    <div>Save</div>
+                                    <div>{isSaving?"Saving...":"Save"}</div>
                                 </Button>
                             </div>
                         </div>
