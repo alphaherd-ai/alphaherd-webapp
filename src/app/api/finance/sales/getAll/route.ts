@@ -21,7 +21,7 @@ export const GET = async (req: NextRequest) => {
             productBatch: true, 
           },
         },
-      },cacheStrategy:{ttl:60}
+      },cacheStrategy:{ttl:30}
     });
 
     return new Response(JSON.stringify(sales), {

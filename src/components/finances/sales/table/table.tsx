@@ -26,6 +26,7 @@ interface Sales {
 
 
 
+
 const FinancesSalesTable = () => {
 
     const appState = useAppSelector((state) => state.app);
@@ -35,7 +36,7 @@ const FinancesSalesTable = () => {
   const startDate = useMemo(() => urlSearchParams.get('startDate') ? new Date(urlSearchParams.get('startDate')!) : null, [urlSearchParams]);
   const endDate = useMemo(() => urlSearchParams.get('endDate') ? new Date(urlSearchParams.get('endDate')!) : null, [urlSearchParams]);
   const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
-  const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`,fetcher)
+  const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true})
   useEffect(()=>{
     if(data&&!error&&!isLoading){
       let filteredData=data?.filter((sale:any)=>{

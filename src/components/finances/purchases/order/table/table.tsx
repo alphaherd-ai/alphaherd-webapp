@@ -19,6 +19,8 @@ import formatDateAndTime from '@/utils/formateDateTime';
 import { Tax } from '@prisma/client';
 import useSWR from 'swr';
 import { DataContext } from "./DataContext"
+import Popup from '../../../../inventory/product/producttable/newproductpopup';
+import Popup1 from "@/components/database/distributor/newdistributorpopup"
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
@@ -73,7 +75,18 @@ const NewPurchasesTable = () => {
         { value: 'Tax excl.', label: 'Tax excl.' },
         { value: 'Tax incl.', label: 'Tax incl.' }
     ]; 
-    
+    const [showPopup, setShowPopup] = React.useState(false);
+    const [showDistributorPopup,setDistributorPopup] = React.useState(false);
+
+    const togglePopup = () => {
+        setShowPopup(!showPopup);
+    }
+    const togglePopup1 = ()=>{
+        setDistributorPopup(!showDistributorPopup);
+    }
+
+
+
     const gstOptions = [
         {value: 0.05, label: "GST@5%"},
         {value: 0.08, label: "GST@8%"},
@@ -261,15 +274,15 @@ const handleAddItem= useCallback(() => {
             <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-end items-center gap-6 flex">
                     
                     
-                    <Button className='bg-textGreen text-white capitalize h-9 flex border-none px-4 py-2.5  rounded-md cursor-pointer'>
+                    <Button className='bg-textGreen text-white capitalize h-9 flex border-none px-4 py-2.5  rounded-md cursor-pointer' onClick={togglePopup1}>
                     <div className='flex pr-2'><Image src={addicon1} alt='addicon1' className='w-6 h-6 ' /></div>
                             New Distributor
                     </Button>
 
                     <Button
                                     variant="solid"
-                                    className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer">
-                                    <div className='flex pr-2'><Image src={addicon} alt='addicon' className='w-6 h-6 ' /></div>New Client</Button>
+                                    className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer" onClick={togglePopup}>
+                                    <div className='flex pr-2'><Image src={addicon} alt='addicon' className='w-6 h-6 ' /></div>New Product </Button>
                     
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px] overflow-auto max-h-[40rem]">
@@ -481,7 +494,8 @@ const handleAddItem= useCallback(() => {
             </div>
             <NewPurchasesBottomBar />
         </div>
-       
+        {showPopup && <Popup onClose={togglePopup} />}
+        {showDistributorPopup && <Popup1 onClose={togglePopup1} />}
         </>
     )
 

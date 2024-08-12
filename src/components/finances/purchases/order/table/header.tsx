@@ -59,7 +59,7 @@ const NewPurchasesHeader = () => {
     },[])
     useEffect(()=>{
         if(!isLoading&&!error&&data){
-              const distributors=data.map((distributor:any)=>({
+              const distributors=data?.map((distributor:any)=>({
                 value:distributor.distributorName,
                 label:`${distributor.distributorName}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0${distributor.contact}`
             }))
