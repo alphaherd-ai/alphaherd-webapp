@@ -480,18 +480,19 @@ const customStyles = {
                     onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
                     styles={customStyles}
                 />
-                <div className="text-neutral-400 text-[13px] font-medium px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
-            </div>
+                    {item.expiry && formatDateAndTime(item.expiry).formattedDate && (
+                        <div className="text-textGrey2 text-[13px] font-medium  px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
+                    )}            </div>
             <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-5'>
-                {item.sellingPrice}
-                <Select
+            ₹{item.sellingPrice || 0}
+                {/* <Select
                     className="text-neutral-400 text-sm font-medium"
                     defaultValue={taxOptions[0]}
                     isClearable={false}
                     isSearchable={true}
                     options={taxOptions}
                     styles={customStyles}
-                />
+                /> */}
             </div>
             {!isChecked && (
                 <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
@@ -573,7 +574,7 @@ const customStyles = {
                                             }}
                                             onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
                                         />):( */}
-                                           { item.gst * 100} %
+                                           { item.gst * 100 || 0} %
                                         {/* )} */}
                                     </div>
             <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>

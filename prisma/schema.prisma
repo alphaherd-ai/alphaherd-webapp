@@ -417,6 +417,11 @@ model Items {
   financeSectionId Int?
 }
 
+model PaymentMethod {
+  id   Int    @id @default(autoincrement())
+  name String
+}
+
 model InventoryTimeline {
   id                 Int               @id @default(autoincrement())
   productId          Int?

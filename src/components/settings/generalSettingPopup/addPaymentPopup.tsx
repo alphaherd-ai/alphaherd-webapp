@@ -10,7 +10,7 @@ import { setValidationErrorsForForm } from '@/utils/setValidationErrorForForm';
 
 
 
-const AddSpeciesPopup = ({onClose}:any) => {
+const AddPaymentPopup = ({onClose}:any) => {
     const [inputs, setInputs] = useState<string[]>(['']);
 
     const handleAddInput = () => {
@@ -36,9 +36,9 @@ const AddSpeciesPopup = ({onClose}:any) => {
                     <Image src={closeicon} alt="close"></Image>
                 </div>
                 <div className="flex-col justify-start items-start gap-2 flex w-full">
-                    <div className="text-gray-500 text-xl font-medium">Add Species</div>
+                    <div className="text-gray-500 text-xl font-medium">Add Payment Method</div>
                     <div className='w-full flex justify-between '>
-                        <div className="text-neutral-400 text-base font-medium">Add and configure your species</div>
+                        <div className="text-neutral-400 text-base font-medium">Add and configure your payment methods</div>
                     </div>
                 </div>
                 <div className="w-full flex items-center gap-[6rem] ">
@@ -46,7 +46,7 @@ const AddSpeciesPopup = ({onClose}:any) => {
                     <div className='w-full flex flex-col  gap-3'>
                         {inputs.map((input, index) => (
                             <div key={index} className="w-full flex  items-center">
-                                <div className="text-gray-500 text-base font-medium">Species</div>
+                                <div className="text-gray-500 text-base font-medium w-[12rem]">Payment Method</div>
                                 <input
                                     className="ml-[5rem] w-[80%] border border-solid border-borderGrey outline-none h-11 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                     type="text"
@@ -77,4 +77,4 @@ const AddSpeciesPopup = ({onClose}:any) => {
 }
 
 
-export default AddSpeciesPopup
+export default AddPaymentPopup
