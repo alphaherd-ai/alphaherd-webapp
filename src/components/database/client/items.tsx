@@ -39,7 +39,7 @@ const DatabaseClientTableItem = ({clients, data, isLoading}:any) => {
                     </Link>
                     </div>
                     <div className='w-1/6 flex items-center px-6 text-neutral-400 text-base font-medium'>
-                    {client.patients?.map((patient, index) => (
+                    {client.patients?.map((patient: { id: React.Key | null | undefined; patientName: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; }, index: number) => (
                         <span key={patient.id}>
                             {patient.patientName}{index < (client.patients?.length ?? 0) - 1 ? ', ' : ''}
                         </span>
