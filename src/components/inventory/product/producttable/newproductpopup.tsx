@@ -6,13 +6,13 @@ import Link from 'next/link';
 import arrow from "../../../../assets/icons/inventory/cash=Right, Color=Green.svg"
 import closeicon from "../../../../assets/icons/inventory/closeIcon.svg";
 import arrowicon from "../../../../assets/icons/inventory/arrow.svg";
+import Check from "../../../../assets/icons/database/check.svg"
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { useAppSelector } from "@/lib/hooks";
 import useSWR from 'swr';
 import axios from "axios";
 import Distributors from "@/app/database/distributor/page";
-import { Bounce, ToastContainer, toast } from 'react-toastify';
 import { z } from 'zod';
 import { ZodError } from 'zod'; 
 import { setValidationErrorsForForm } from '@/utils/setValidationErrorForForm';
@@ -24,16 +24,21 @@ type PopupProps = {
 }
 
 const productSchema = z.object({
-    itemName: z.string().min(4,'Provide Item Name'),
-    providers: z.string().min(2,'Select a Distributor'),
-    unit: z.string().min(2,'Mention the units'),
-    hsnCode: z.string().min(15,'Invalid HSN Code'),
+    itemName: z.string().min(2,'Provide Item Name'),
+    providers: z.string().min(2,'Select a Distributor').optional(),
+    unit: z.string().min(2,'Mention the units').optional(),
+    hsnCode: z.string().length(6,'Invalid HSN Code.It should be of 6 digits').optional(),
     // tax: z.number().min(2,'Select a tax %'),
-    category: z.string().min(1,'Select a category'),
-    description: z.string().min(1,'Provide description'),
+    category: z.string().min(1,'Select a category').optional(),
+    description: z.string().min(1,'Provide description').optional(),
     minStock: z.string().min(1,'Enter Min. Stock'),
     maxStock: z.string().min(1,'Enter Max. Stock')
 })
+
+var stepFields = [
+    ["itemName","providers","unit","hsnCode","tax","category","state","description"],
+    ["minStock","maxStock"]
+  ];
 
 var stepFields = [
     ["itemName","providers","unit","hsnCode","tax","category","state","description"],
@@ -61,23 +66,6 @@ function useProductfetch (id: number | null) {
    }
 }
 const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
-    const [lastStep, setLastStep] = useState(false);
-    const [formData, setFormData] = useState<any>({});
-    const [buttonDisabled, setButtonDisabled] = useState(false);
-    const [selectedUnit, setSelectedUnit] = useState<any>(null); 
-    const [distributor, setDistributor] = useState<any[]>([]);
-    const [isSaveDisabled, setIsSaveDisabled] = useState(true)
-    const [activeTab, setActiveTab] = useState(0);
-
-    const [categories, setCategories] = useState<any[]>([
-        { value: "Pet food", label: "Pet food" },
-        { value: "Medicines", label: "Medicines" },
-        { value: "Supplements", label: "Supplements" },
-        { value: "Pet accessories", label: "Pet accessories" },
-        { value: "Equipments", label: "Equipments" },
-    ]);
-
-    
     const initialData ={
         itemName: '',
         providers: '',
@@ -90,10 +78,23 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
         maxStock: ''
     }
 
+    const [lastStep, setLastStep] = useState(false);
+    const [formData, setFormData] = useState<any>(initialData);
+    const [buttonDisabled, setButtonDisabled] = useState(false);
+    const [distributor, setDistributor] = useState<any[]>([]);
+    const [isSaveDisabled, setIsSaveDisabled] = useState(true)
+    const [activeTab, setActiveTab] = useState(0);
 
-   
-    const [data, setData] = useState(initialData);
-    const [validationErrors, setValidationErrors] = useState(data);
+    const [categories, setCategories] = useState<any[]>([
+        { value: "Pet food", label: "Pet food" },
+        { value: "Medicines", label: "Medicines" },
+        { value: "Supplements", label: "Supplements" },
+        { value: "Pet accessories", label: "Pet accessories" },
+        { value: "Equipments", label: "Equipments" },
+    ]);
+
+    //const [data, setData] = useState(initialData);
+    const [validationErrors, setValidationErrors] = useState(formData);
     console.log(validationErrors);
 
     const appState = useAppSelector((state) => state.app);
@@ -131,26 +132,25 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
             }
         }
           fetchDistributors();
-        }, []);
+    }, []);
 
-        function handleContinue(){
-            try{
-              productSchema.parse(data);
-              setLastStep(true);
-              setActiveTab(prev => prev + 1);
+    function handleContinue(){
+        try{
+            productSchema.parse(formData);
+            setLastStep(true);
+            setActiveTab(prev => prev + 1);
+        }
+        catch(err : any){
+            if (err instanceof z.ZodError) {
+            console.log(err.flatten());
+            if(!setValidationErrorsForForm(err,setValidationErrors,activeTab,stepFields)){
+                setLastStep(true);
+                setActiveTab(prev => prev + 1);
             }
-            catch(err : any){
-              if (err instanceof z.ZodError) {
-                console.log(err.flatten());
-                if(!setValidationErrorsForForm(err,setValidationErrors,activeTab,stepFields)){
-                 setLastStep(true);
-                 setActiveTab(prev => prev + 1);
-                }
-              }
             }
-          }
+        }
+    }
   
-
     // Assuming you're using Zod for validation
 
     const handleSaveClick = async () => {
@@ -170,7 +170,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
             body: JSON.stringify({
                 itemName: formData.itemName,
                 providers: selectedProviders,
-                unit: formData.unit ? formData.unit : undefined,
+                defaultUnit: formData.unit ? formData.unit : undefined,
                 hsnCode: formData.hsnCode,
                 tax: formData.tax ? formData.tax : undefined,
                 category: formData.category ? formData.category : undefined,
@@ -190,7 +190,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
         } catch (error) {
             console.error('Error while saving data:', error);
         }
-        };
+    };
 
 
     // const handleChange = (field: string, value: any) => {
@@ -201,14 +201,14 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
         console.log("this is providers",value,field)
         try{
             console.log(field,value)
-            setData((prevData) => ({
+            setFormData((prevData:any) => ({
               ...prevData,
               [field]: value,
             }));
             console.log("inside handle change 1");
-            productSchema.parse({...data,[field]: value});
+            productSchema.parse({...formData,[field]: value});
             console.log("inside handle change 2");
-            setValidationErrors((prevErrors) => {
+            setValidationErrors((prevErrors:any) => {
               console.log("here");
               let newErrors = prevErrors;
               newErrors[field as keyof typeof prevErrors] = '';
@@ -224,14 +224,14 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
               console.log(field);
               console.log(fields);
               if(fields.includes(field)){
-                setValidationErrors((prevErrors) => {
+                setValidationErrors((prevErrors: any) => {
                   let newErrors = prevErrors;
                   newErrors[field as keyof typeof prevErrors] = fieldErrors[field]!.length > 0 ? fieldErrors[field]![0] : '';
                   return newErrors;
                 });
               }
               else{
-                setValidationErrors((prevErrors) => {
+                setValidationErrors((prevErrors: any) => {
                   console.log("here");
                   let newErrors = prevErrors;
                   newErrors[field as keyof typeof prevErrors] = '';
@@ -239,8 +239,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                 });
               }
             }
-          }
-        };
+        }
+    };
       
 
     const gstOptions = [
@@ -263,7 +263,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
         <>
             {!lastStep && (
                 <div className="w-full h-full overflow-auto flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
-                    <div className="w-[640px] h-[715px] px-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
+                    <div className="w-[640px] h-[787px] px-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
                         <div className="self-end items-start gap-6 flex mt-[0.6rem] cursor-pointer" onClick={onClose}>
                             <Image src={closeicon} alt="close"></Image>
                         </div>
@@ -276,6 +276,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                 {validationErrors.itemName && (
                                     <div className="text-[red] error">{validationErrors.itemName}</div>
                                 )}
+                                
                             </div>
                         </div>
                         <div className="flex items-center justify-between w-full">
@@ -294,6 +295,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                 {validationErrors.providers && (
                                     <div className="text-[red] error">{validationErrors.providers}</div>
                                 )}
+                                
                             </div>
                         </div>
                         <div className="flex items-center justify-between w-full">
@@ -306,12 +308,13 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                     isSearchable={true}
                                     options={unitOptions}
                                     isMulti={false}
-                                    name="units"
+                                    name="unit"
                                     onChange={(e) => handleChange("unit",e?.label)}
                                 />
                                 {validationErrors.unit && (
                                     <div className="text-[red] error">{validationErrors.unit}</div>
                                 )}
+                                
                             </div>
                         </div>
                         <div className="flex items-center gap-[55px]">
@@ -321,6 +324,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                 {validationErrors.hsnCode && (
                                     <div className="text-[red] error">{validationErrors.hsnCode}</div>
                                 )}
+                                
                             </div>
                         </div>
                         <div className="flex items-center gap-[110px] w-full">
@@ -335,10 +339,12 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                     isMulti={false}
                                     name="tax"
                                     onChange={(e) => handleChange("tax", e?.value)}
+                                    
                                 />
                                 {validationErrors.tax && (
                                     <div className="text-[red] error">{validationErrors.tax}</div>
                                 )}
+                                
                             </div>
                         </div>
                         <div className="flex items-center gap-[70px] w-full">
@@ -351,12 +357,15 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                     isSearchable={true}
                                     options={categories}
                                     isMulti={false}
+                                    
                                     name="category"
                                     onChange={(e) => handleChange("category", e?.label)}
+                                   
                                 />
                                 {validationErrors.category && (
                                     <div className="text-[red] error">{validationErrors.category}</div>
                                 )}
+                                
                             </div>
                         </div>
                         <div className="flex-col">
@@ -365,6 +374,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                             {validationErrors.description && (
                                     <div className="text-[red] error">{validationErrors.description}</div>
                                 )}
+                            
                         </div>
                         <div className="self-end items-start gap-6 flex">
                             <button onClick={handleContinue} className="px-4 py-2.5 bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer">
@@ -395,15 +405,14 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                     {validationErrors.minStock && (
                                     <div className="text-[red] error">{validationErrors.maxStock}</div>
                                 )}
+                                
                                 </div>
                                 <div className="text-right text-gray-500 text-base font-medium"> </div>
                             </div>
                             <div className="grow shrink basis-0 h-11 px-4 py-[13px] bg-white rounded-[5px] justify-start items-center flex">
-                                {formData.unit && (
-                                    <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-2 flex">
-                                        <div className="text-neutral-400 text-base font-medium">{formData.unit}</div>
-                                    </div>
-                                )}
+                                <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-2 flex">
+                                    <div className="text-neutral-400 text-base font-medium">{formData.unit}</div>
+                                </div>
                             </div>
                         </div>
                         <div className="flex items-center gap-[28px]">
@@ -416,18 +425,26 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                     {validationErrors.maxStock && (
                                     <div className="text-[red] error">{validationErrors.maxStock}</div>
                                 )}
+                                
                                 </div>
                             </div>
                             <div className="grow shrink basis-0 h-11 px-4 py-[13px] bg-white rounded-[5px] justify-start items-center flex ml-[1.4rem]">
                                 <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-2 flex">
-                                    <div className="text-neutral-400 text-base font-medium">Strips</div>
+                                    <div className="text-neutral-400 text-base font-medium">{formData.unit}</div>
                                 </div>
                             </div>
                         </div>
                     <div className="w-[545px] flex justify-end mt-[5px] cursor-pointer">
-                        <button onClick={handleSaveClick} disabled={buttonDisabled} className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none">
-                            <div className="text-white text-base font-bold ">Save</div>
-                        </button>
+                    <Button 
+                    onClick={handleSaveClick} 
+                    disabled={buttonDisabled} 
+                    className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none"
+                    >
+                        <div className="w-6 h-6">
+                            <Image src={Check} alt="Check" className="mr-4" />
+                        </div>
+                        <div className="text-white text-base font-bold">Save</div>
+                    </Button>
                     </div>
                     </div>
                    

@@ -83,7 +83,7 @@ const NewExpensesBottomBar = ({expenseData}:any) => {
     }
 
 
-
+    // const isDisabled = !headerData.part || tableData.length === 0 || tableData.some(data => !data.itemName);
     return (
         <>
 

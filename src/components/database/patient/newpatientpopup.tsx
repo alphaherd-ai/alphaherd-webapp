@@ -5,7 +5,7 @@ import { Tooltip, Button } from "@nextui-org/react";
 import Link from 'next/link';
 import closeicon from "../../../assets/icons/inventory/closeIcon.svg";
 import arrowicon from "../../../assets/icons/inventory/arrow.svg";
-import Select from 'react-select';
+import Select, { MultiValue } from 'react-select';
 import CretableSelect from "react-select/creatable"
 import calicon from "../../../assets/icons/finance/calendar_today.svg"
 import Paws from "../../../assets/icons/database/1. Icons-24 (12).svg"
@@ -15,20 +15,53 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useAppSelector } from "@/lib/hooks";
 import { useRouter } from "next/navigation";
+import {z,ZodError} from "zod"
 
 type PopupProps = {
     onClose: () => void;
     clientData: any; 
 }
 
+const patientSchema =z.object({
+    patientName: z.string().trim().min(1,'Patient Name is required'),
+    clientId: z.string(), 
+    species: z.string().trim().min(1,'Provide the species').optional(), 
+    breed: z.string().optional(), 
+    dateOfBirth: z.string()
+    .optional()
+    .refine(val => {
+        if (!val) return true; // If dateOfBirth is optional and not provided, it's valid
+        const date = new Date(val);
+        return !isNaN(date.getTime()); // Check if the date is valid
+    }, 'Invalid date format'),
+    age: z.string(), 
+    gender: z.string().optional(),
+    inPatient: z.string(), 
+})
+
 const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
     const router=useRouter();
-    const [formData, setFormData] = useState<any>({});
+    var initialData = {
+        patientName: '',
+        clientId: '', 
+        species: '', 
+        breed: '', 
+        dateOfBirth: '', 
+        age: '', 
+        gender: '',
+        inPatient: '', 
+        
+    }
+    const [formData, setFormData] = useState<any>(initialData);
     const [clients, setClients] = useState<{ value: string; label: string }[]>([]);
     const [startDate, setStartDate] = useState(new Date());
     const [selectedGender, setSelectedGender] = useState('');
     const appState = useAppSelector((state) => state.app)
     const [isSaveDisabled, setIsSaveDisabled] = useState(true);
+
+    const [validationErrors, setValidationErrors] = useState(formData);
+    console.log(validationErrors);
+
     useEffect(() => {
         fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`)
             .then((response) => response.json())
@@ -46,6 +79,8 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
 
     const handleSaveClick = async () => {
         try {
+            patientSchema.parse(formData);
+            console.log("Form data is valid", formData);
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/patients/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
@@ -71,14 +106,48 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 console.error('Failed to save data:', response.statusText);
             }
         } catch (error) {
-            console.error('Error while saving data:', error);
+            if (error instanceof ZodError) {
+              console.error('Validation Error:', error.errors);
+              error.errors.forEach(err => {
+                console.error(`Error in parameter '${err.path.join('.')}' - ${err.message}`);
+              });
+            } else {
+              console.error('Unexpected error while saving data', error);
+            }
         }
     };
 
+    console.log(formData);
+
     const handleChange = (field: string, value: any) => {
-        setFormData({ ...formData, [field]: value });
-        const areNamesFilled = formData.clientName?.trim() !== "" && formData.patientName?.trim() !== "";
-        setIsSaveDisabled(!areNamesFilled);
+        // setFormData({ ...formData, [field]: value });
+        setFormData((prevData: any) => ({
+            ...prevData,
+            [field]: value,
+          }));
+        setIsSaveDisabled(false);
+        try {
+            patientSchema.parse({ ...formData, [field]: value });
+            setValidationErrors((prevErrors: any) => ({
+              ...prevErrors,
+              [field]: '',
+            }));
+        } catch (err: any) {
+        if (err instanceof z.ZodError) {
+            let fieldErrors = err.flatten().fieldErrors;
+            if (field in fieldErrors) {
+            setValidationErrors((prevErrors: any) => ({
+                ...prevErrors,
+                [field]: fieldErrors[field]?.[0] ?? '',
+            }));
+            } else {
+            setValidationErrors((prevErrors: any) => ({
+                ...prevErrors,
+                [field]: '',
+            }));
+            }
+        }
+        }
     };
 
     const calculateAge = (years: number, months: number, days: number): string => {
@@ -89,6 +158,22 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
         const ageMonths = ageDate.getUTCMonth();
         const ageDays = ageDate.getUTCDate() - 1; 
         return `${ageYears} years, ${ageMonths} months, ${ageDays} days`;
+    };
+
+    const handleSelectChange = (value: MultiValue<{ value: string; label: string }>) => {
+        // Flatten the Breed array to get all options in a single array
+        const allOptions = Breed.flatMap(group => group.options);
+    
+        // Extract the labels from the selected values
+        const selectedLabels = Array.isArray(value)
+            ? value.map(val => {
+                const selectedOption = allOptions.find(option => option.value === val.value);
+                return selectedOption ? selectedOption.label : null;
+            })
+            : [];
+    
+        console.log("Selected Labels: ", selectedLabels);
+        return selectedLabels;
     };
 
     const Breed = [
@@ -128,7 +213,12 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 <div className="flex items-center gap-[48px] ">
                     <div className="w-[8rem] text-gray-500 text-base font-medium ">Patient Name<span className="text-[red]">*</span></div>
                     <div>
-                        <input className="w-[25rem] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="patientName" onChange={(e) => handleChange("patientName", e.target.value)} />
+                        <input className="w-[25rem] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" 
+                        type="text" name="patientName" 
+                        onChange={(e) => handleChange("patientName", e.target.value)} />
+                        {validationErrors.patientName && (
+                            <div className="text-[red] error">{validationErrors.patientName}</div>
+                        )}
                     </div>
                 </div>
 
@@ -154,65 +244,58 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 <div className="flex items-center gap-[120px]">
                     <div className="text-gray-500 text-base font-medium ">Species</div>
                     <div>
-                        <input className="w-[25rem] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="species" onChange={(e) => handleChange("species", e.target.value)} />
+                        <input className="w-[25rem] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" 
+                        type="text" name="species" onChange={(e) => handleChange("species", e.target.value)} />
                     </div>
                 </div>
                 <div className="flex items-center gap-[95px] w-full">
                     <div className="text-gray-500 text-base font-medium  w-2/12">Breed</div>
                     <div className="flex w-10/12 h-11">
 
-                        {/* <Select
+                        <Select
                             className="text-textGrey2 text-base font-medium w-[25rem]"
                             placeholder=""
                             isClearable={false}
                             isSearchable={true}
                             options={Breed}
-                            isMulti={true}
+                            isMulti={false}
                             name="breed"
-                            onChange={(value) => handleChange("breed", value)}
-                        /> */}
-
-                        <CretableSelect className="text-textGrey2 text-base font-medium w-[25rem]"
-  isMulti options={Breed} onChange={(value) => handleChange("breed", value)}/>
-
-
+                            onChange={(value) => handleChange("breed", value?.options)}
+                            
+                        />
                     </div>
                 </div>
-
-                
-                    
-                        
-                            <div className="flex gap-[65px] items-center w-full">
-                                <div className="text-gray-500 text-base font-medium w-[10rem]">Date of Birth:</div>
-                                <div className="w-full relative">
-                                    <DatePicker
-                                        peekNextMonth
-                                        showMonthDropdown
-                                        showYearDropdown
-                                        dropdownMode="select"
-                                        className="w-[25rem]"
-                                        selected={startDate}
-                                        onChange={(date:any) => setStartDate(date as Date)}
-                                        calendarClassName="react-datepicker-custom"
-                                        customInput={
-                                            <div className="relative">
-                                                <input
-                                                    className="w-[25rem] h-9 text-textGrey2 text-base font-medium px-2 rounded border border-solid border-borderGrey focus:border focus:border-textGreen outline-none"
-                                                    value={startDate.toLocaleDateString()}
-                                                    readOnly
-                                                />
-                                                <Image
-                                                    src={calicon}
-                                                    alt="Calendar Icon"
-                                                    className="absolute right-2 top-2 cursor-pointer"
-                                                    width={50}
-                                                    height={20}
-                                                />
-                                            </div>
-                                        }
-                                    />
-                                </div>
-                            </div>
+                    <div className="flex gap-[65px] items-center w-full">
+                        <div className="text-gray-500 text-base font-medium w-[10rem]">Date of Birth:</div>
+                        <div className="w-full relative">
+                            <DatePicker
+                                peekNextMonth
+                                showMonthDropdown
+                                showYearDropdown
+                                dropdownMode="select"
+                                className="w-[25rem]"
+                                selected={startDate}
+                                onChange={(date:any) => setStartDate(date as Date)}
+                                calendarClassName="react-datepicker-custom"
+                                customInput={
+                                    <div className="relative">
+                                        <input
+                                            className="w-[25rem] h-9 text-textGrey2 text-base font-medium px-2 rounded border border-solid border-borderGrey focus:border focus:border-textGreen outline-none"
+                                            value={startDate.toLocaleDateString()}
+                                            readOnly
+                                        />
+                                        <Image
+                                            src={calicon}
+                                            alt="Calendar Icon"
+                                            className="absolute right-2 top-2 cursor-pointer"
+                                            width={50}
+                                            height={20}
+                                        />
+                                    </div>
+                                }
+                            />
+                        </div>
+                    </div>
                 <div className="flex items-center gap-[140px] w-full">
                     <div className="text-gray-500 text-base font-medium ">Age<span className="text-[red]">*</span></div>
                     <div className="flex gap-4">
@@ -291,13 +374,13 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                         <div className="text-gray-100 text-base font-medium ">Add another Patient</div>
                     </div>
                     {!isSaveDisabled ? (<div className="h-11 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer"  onClick={handleSaveClick} >
-    <div className="w-6 h-6 relative">
-        <div className="w-6 h-6 left-0 top-0 absolute" >
-            <Image src={Check} alt="Check" />
-        </div>
-    </div>
-    <div className="text-gray-100 text-base font-bold ">Save</div>
-</div>) : (<button className="px-4 py-2.5 bg-gray-200 rounded-[5px]  justify-start items-center gap-2 flex border-0 outline-none cursor-not-allowed">
+                    <div className="w-6 h-6 relative">
+                        <div className="w-6 h-6 left-0 top-0 absolute" >
+                            <Image src={Check} alt="Check" />
+                        </div>
+                    </div>
+                    <div className="text-gray-100 text-base font-bold ">Save</div>
+                </div>) : (<button className="px-4 py-2.5 bg-gray-200 rounded-[5px]  justify-start items-center gap-2 flex border-0 outline-none cursor-not-allowed">
                         <div className="text-textGrey1 text-base font-bold ">Save</div>
                         <Image src={arrowicon} alt="arrow"></Image>
                     </button>)}

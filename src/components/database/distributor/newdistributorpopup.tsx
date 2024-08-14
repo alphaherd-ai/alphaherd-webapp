@@ -9,62 +9,135 @@ import Select from 'react-select';
 import Attachment from "../../../assets/icons/finance/attachment.svg"
 import Check from "../../../assets/icons/database/check.svg"
 import { useAppSelector } from "@/lib/hooks";
-
+import {z} from "zod"
 
 type PopupProps = {
     onClose: () => void;
 }
 
+const formSchema = z.object({
+    distributorName: z.string().min(1,'This is required'),
+    contact: z.string().length(10,'This is required'),
+    email: z.string().email('Invalid email').optional(),
+    gstinNo: z.string().optional(),
+    panNo: z.string().optional(),
+    address: z.string().optional(),
+    city: z.object({ value: z.string() }).optional(),
+    pinCode: z.string().optional(),
+  });
 
 const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     const [formData, setFormData] = useState<any>({});
-    const [isSaveDisabled, setIsSaveDisabled] = useState(true)
+    //const [isSaveDisabled, setIsSaveDisabled] = useState(true)
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [isSaveDisabled, setIsSaveDisabled] = useState(true);
     
     const appState = useAppSelector((state) => state.app)
 
 
+    // const handleSaveClick = async () => {
+    //     try {
+    //         formSchema.parse(formData);
+    //         const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/create?branchId=${appState.currentBranchId}`, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({
+    //                 distributorName: formData.name,
+    //                 email: formData.email,
+    //                 contact: formData.contact,
+    //                 gstinNo: formData.gstinNo,
+    //                 panNo: formData.panNo,
+    //                 address:formData.address,
+    //                 city:formData.city.value,
+    //                 pinCode:formData.pinCode,
+    //             }),
+    //         });
+    //         if (response.ok) {
+    //             console.log('Data saved successfully');
+    //             onClose();
+    //             window.dispatchEvent(new FocusEvent('focus'));
+    //         } else {
+    //             console.error('Failed to save data:', response.statusText);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error while saving data:', error);
+    //     } finally {
+            
+    //     }
+    // };
+
     const handleSaveClick = async () => {
         try {
-            
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/create?branchId=${appState.currentBranchId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    distributorName: formData.name,
-                    email: formData.email,
-                    contact: formData.contact,
-                    gstinNo: formData.gstinNo,
-                    panNo: formData.panNo,
-                    address:formData.address,
-                    city:formData.city.value,
-                    pinCode:formData.pinCode,
-                }),
-            });
-            if (response.ok) {
-                console.log('Data saved successfully');
-                onClose();
-                window.dispatchEvent(new FocusEvent('focus'));
-            } else {
-                console.error('Failed to save data:', response.statusText);
+          formSchema.parse(formData);
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/create?branchId=${appState.currentBranchId}`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                distributorName: formData.name,
+                email: formData.email,
+                contact: formData.contact,
+                gstinNo: formData.gstinNo,
+                panNo: formData.panNo,
+                address: formData.address,
+                city: formData.city.value,
+                pinCode: formData.pinCode,
+              }),
             }
-        } catch (error) {
-            console.error('Error while saving data:', error);
-        } finally {
-            
+          );
+          if (response.ok) {
+            console.log('Data saved successfully');
+            onClose();
+            window.dispatchEvent(new FocusEvent('focus'));
+          } else {
+            console.error('Failed to save data:', response.statusText);
+          }
+        } catch (err) {
+          if (err instanceof z.ZodError) {
+            const fieldErrors: { [key: string]: string } = {};
+            err.errors.forEach((error) => {
+              fieldErrors[error.path[0] as string] = error.message;
+            });
+            setErrors(fieldErrors);
+          } else {
+            console.error('Error while saving data:', err);
+          }
         }
-    };
+      };
     
 
+    // const handleChange = (field: string, value: any) => {
+    //     setFormData({ ...formData, [field]: value });
+    //     if (field === ("name"||"contact") && value.trim() !== "") {
+    //         setIsSaveDisabled(false);
+    //     } else if (field === ("name"||"contact") && value.trim() === "") {
+    //         setIsSaveDisabled(true);
+    //     }
+    // };
     const handleChange = (field: string, value: any) => {
         setFormData({ ...formData, [field]: value });
-        if (field === ("name"||"contact") && value.trim() !== "") {
-            setIsSaveDisabled(false);
-        } else if (field === ("name"||"contact") && value.trim() === "") {
+    
+        try {
+          formSchema.parse({ ...formData, [field]: value });
+          setErrors({});
+          setIsSaveDisabled(false);
+        } catch (err) {
+          if (err instanceof z.ZodError) {
+            const fieldErrors: { [key: string]: string } = {};
+            err.errors.forEach((error) => {
+              fieldErrors[error.path[0] as string] = error.message;
+            });
+            setErrors(fieldErrors);
             setIsSaveDisabled(true);
+          }
         }
-    };
+      };
+    
 
     const gstOptions = [
         {}
@@ -92,7 +165,9 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                 <div className="flex items-center gap-[88px]">
                     <div className="text-gray-500 text-base font-medium ">Name*</div>
                     <div>
-                    <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="name" onChange={(e) => handleChange("name", e.target.value)} />
+                    <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" 
+                    type="text" name="distributorName" onChange={(e) => handleChange("distributorName", e.target.value)} />
+                    {errors.distributorName && <div className="text-red-500 text-sm">{errors.distributorName}</div>}
                     </div>
                 </div>
               
@@ -100,12 +175,15 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                     <div className="text-gray-500 text-base font-medium ">Email</div>
                     <div>
                     <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="email" onChange={(e) => handleChange("email", e.target.value)} />
+                    
+                    {errors.email && <div className="text-red-500 text-sm">{errors.email}</div>}
                     </div>
                 </div>
                 <div className="flex items-center gap-[40px]">
                     <div className="text-gray-500 text-base font-medium w-[6rem]">Phone No.</div>
                     <div>
                     <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="contact" onChange={(e) => handleChange("contact", e.target.value)} />
+                    {errors.contact && <div className="text-red-500 text-sm">{errors.contact}</div>}
                     </div>
                 </div>
                 <div className="flex items-center gap-[85px]">
@@ -182,14 +260,14 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                         </div>
                     </div>
                     <div className="h-11 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer"  onClick={handleSaveClick} >
-    <div className="w-6 h-6 relative">
-        <div className="w-6 h-6 left-0 top-0 absolute" >
-            <Image src={Check} alt="Check" />
-        </div>
-    </div>
-    <div onClick={handleSaveClick} className="text-gray-100 text-base font-bold ">Save</div>
-</div>
-                  
+                        <div className="w-6 h-6 relative">
+                            <div className="w-6 h-6 left-0 top-0 absolute" >
+                                <Image src={Check} alt="Check" />
+                            </div>
+                        </div>
+                        <div onClick={handleSaveClick} className="text-gray-100 text-base font-bold ">Save</div>
+                    </div>
+                                    
                 </div>
             </div>
         </div>

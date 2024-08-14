@@ -631,7 +631,13 @@ const customStyles = {
                     isClearable={false}
                     isSearchable={true}
                     options={discountOptions}
-                    styles={customStyles}
+                    styles={{
+                        control: (provided, state) => ({
+                            ...provided,
+                            border: state.isFocused ? 'none' : 'none',
+                            padding: '0',
+                        }),
+                    }}
                     onChange={(selectedOption: any) => handleDiscountSelect(selectedOption, index)}
                 /></div>
                             <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
@@ -769,4 +775,3 @@ const customStyles = {
 }
 
 export default NewsaleEstimateTable;
-
