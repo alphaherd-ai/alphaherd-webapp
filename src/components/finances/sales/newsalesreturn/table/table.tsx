@@ -481,19 +481,19 @@ const customStyles = {
                                     ) : (
                                         item.batchNumber
                                             )}
-                                    <div className="text-neutral-400 text-[13px] font-medium  px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
-                                </div>
+                                        {item.expiry && formatDateAndTime(item.expiry).formattedDate && (
+                                            <div className="text-textGrey2 text-[13px] font-medium  px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
+                                        )}                                </div>
                                 <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
-                                    {item.sellingPrice}
-                                    <Select
-                                        className="text-textGrey1 text-sm font-medium "
-                                        defaultValue={taxOptions[0]}
-                                        isClearable={false}
-                                        isSearchable={true}
-                                        options={taxOptions}
-                                        styles={customStyles}
-                                        
-                                    />
+                                ₹{item.sellingPrice || 0}
+                                {/* <Select
+                                    className="text-neutral-400 text-sm font-medium"
+                                    defaultValue={taxOptions[0]}
+                                    isClearable={false}
+                                    isSearchable={true}
+                                    options={taxOptions}
+                                    styles={customStyles}
+                                /> */}
                                 </div>
                                 
                                 <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
@@ -533,7 +533,7 @@ const customStyles = {
                                             }}
                                             onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
                                         />):( */}
-                                           { item.gst}
+                                           { item.gst*100 || 0}%
                                         {/* )} */}
                                     </div>
                                 <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>{`₹${((item?.sellingPrice*item?.quantity * item?.gst)||0).toFixed(2)}`}</div>
@@ -551,10 +551,10 @@ const customStyles = {
                             ))}
                             <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12 border-b border-neutral-400 text-gray-500 rounded-b-md'>
                                 <div className='flex text-gray-500 text-base font-medium w-[3rem]'></div>
-                                <div className='flex text-gray-500 text-base font-medium w-[15rem]'>Total</div>
+                                <div className='flex text-gray-500 text-base font-bold w-[15rem]'>Total</div>
                                 <div className='flex text-gray-500 text-base font-medium w-[10rem]'></div>
                                 <div className='flex text-gray-500 text-base font-medium w-[10rem]'></div>
-                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>{(items.reduce((acc:any, item:any) => acc + item.quantity, 0))||0} Items</div>
+                                <div className='flex text-gray-500 text-base font-bold w-[10rem]'>{(items.reduce((acc:any, item:any) => acc + item.quantity, 0))||0} Items</div>
                                 
                                 <div className='flex text-gray-500 text-base font-medium w-[10rem]'>
                                     {/* <Select
@@ -566,8 +566,8 @@ const customStyles = {
                                         styles={customStyles}
                                     /> */}
                                 </div>
-                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>{`₹${(items.reduce((acc:any, item:any) => acc + item.quantity * item.gst*item.sellingPrice , 0)||0).toFixed(2)}`}</div>
-                                <div className='flex text-gray-500 text-base font-medium w-1/12' >{`₹${(items.reduce((acc:any, item:any) => acc + item.quantity * item.sellingPrice +item.quantity*item.gst*item.sellingPrice, 0)||0).toFixed(2)}`}</div>
+                                <div className='flex text-gray-500 text-base font-bold w-[10rem]'>{`₹${(items.reduce((acc:any, item:any) => acc + item.quantity * item.gst*item.sellingPrice , 0)||0).toFixed(2)}`}</div>
+                                <div className='flex text-gray-500 text-base font-bold w-1/12' >{`₹${(items.reduce((acc:any, item:any) => acc + item.quantity * item.sellingPrice +item.quantity*item.gst*item.sellingPrice, 0)||0).toFixed(2)}`}</div>
                                 <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
                             </div>
                         </div>

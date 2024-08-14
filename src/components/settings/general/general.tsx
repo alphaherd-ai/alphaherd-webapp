@@ -21,6 +21,7 @@ import editicon from "../../../assets/icons/settings/editicon.svg"
 import deleteicon from "../../../assets/icons/settings/deleteicon.svg"
 import React, { useState, useEffect } from 'react';
 import AddSpeciesPopup from "../generalSettingPopup/addSpeciesPopup";
+import AddPaymentPopup from "../generalSettingPopup/addPaymentPopup";
 
 
   
@@ -188,7 +189,7 @@ const GeneralSettings = () => {
                                     <div className="text-gray-500 text-base font-bold ">Payment methods</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your payment methods</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex" onClick={togglePopup1}>
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
                                     <div className="text-white text-base font-medium ">Add Payment Method</div>
                                 </div>
@@ -238,7 +239,7 @@ const GeneralSettings = () => {
                                 </div>
                                 <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                    <div className="text-white text-base font-medium cursor-pointer" onClick={togglePopup}>Add Species Method</div>
+                                    <div className="text-white text-base font-medium cursor-pointer" onClick={togglePopup}>Add Species</div>
                                 </div>
                             </div>
                             <div className="w-full h-full">
@@ -384,6 +385,7 @@ const GeneralSettings = () => {
 
 
         {showPopup && <AddSpeciesPopup onClose={togglePopup} />}
+        {showPopup1 && <AddPaymentPopup onClose={togglePopup1} />}
     </>
     )
 }

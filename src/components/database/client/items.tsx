@@ -46,9 +46,9 @@ const DatabaseClientTableItem = ({clients, data, isLoading}:any) => {
                     ))}
                     </div>
 
-                    <div className='w-[12rem] flex items-center  text-neutral-400 text-base font-medium'>{client.contact}</div>
-                    <div className='w-[12rem] flex items-center  text-neutral-400 text-base font-medium'>{client.email}</div>
-                    <div className='w-[12rem] flex items-center  text-neutral-400 text-base font-medium'>{client.city}</div>
+                    <div className='w-[12rem] flex items-center  text-textGrey2 text-base font-medium'>{client.contact}</div>
+                    <div className='w-[12rem] flex items-center  text-textGrey2 text-base font-medium'>{client.email}</div>
+                    <div className='w-[12rem] flex items-center  text-textGrey2 text-base font-medium'>{client.city}</div>
                 </div>
             ))}
         </>
