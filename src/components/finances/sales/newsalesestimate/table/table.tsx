@@ -768,7 +768,7 @@ const customStyles = {
                     </div>
                         <NewsaleEstimateTotalAmout />
                 </div>
-                <NewsaleEstimateBottomBar smsEnabled={false} mailEnabled={false} whatsappEnabled={false} />
+                <NewsaleEstimateBottomBar />
             </div>
         </>
     );
