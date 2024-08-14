@@ -16,7 +16,7 @@ const DatabaseDistributorTableItem = ({ distributors, isLoading, data }:any) => 
     return (
       <>
       { 
-        distributors.map(distributor=>(
+        distributors.map((distributor: { id: React.Key | null | undefined; distributorName: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; contact: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; gstinNo: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; email: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; })=>(
           <div key={distributor.id} className='flex justify-evenly w-full  box-border h-16 py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
           <div className='w-1/6 flex items-center  px-6  text-neutral-400 text-base font-medium'>
             <Link className='transition-colors duration-300 text-gray-400 no-underline hover:underline hover:text-teal-400 ' 
