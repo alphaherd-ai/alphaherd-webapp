@@ -22,14 +22,11 @@ import deleteicon from "../../../assets/icons/settings/deleteicon.svg"
 import React, { useState, useEffect } from 'react';
 import AddSpeciesPopup from "../generalSettingPopup/addSpeciesPopup";
 import AddPaymentPopup from "../generalSettingPopup/addPaymentPopup";
-import { useAppSelector } from "@/lib/hooks";
-import Loading from "@/app/loading1"
-import useSWR from "swr";
-//@ts-ignore
-const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
+
+  
 const GeneralSettings = () => {
-
+    
     
     const [showPopup, setShowPopup] = useState(false);
     const [showPopup1, setShowPopup1] = useState(false);
@@ -55,7 +52,7 @@ const GeneralSettings = () => {
     const [samedayToggle, setSamedayToggle] = useState(true);
     const [threedayToggle, setThreedayToggle] = useState(false);
     const [oneWeekToggle, setOneWeekToggle] = useState(false);
-    const [smsToggle, setSmsToggle] = useState(true);
+    const [smsToggle, setSmsToggle] = useState(false);
     const [mailToggle, setMailToggle] = useState(false);
     const [whatsappToggle, setWhatsappToggle] = useState(false);
     const [taxIncToggle, setTaxIncToggle] = useState(true);
@@ -123,7 +120,20 @@ const GeneralSettings = () => {
     const whatsappToggleHandler = () => {
         setWhatsappToggle(!whatsappToggle);
     };
-    const [paymentMethod, setPaymentMethod] = useState([]);
+    
+    useEffect(() => {
+        const selectedMode = smsToggle
+          ? 'SMS'
+          : mailToggle
+          ? 'Email'
+          : whatsappToggle
+          ? 'WhatsApp'
+          : '';
+      
+        localStorage.setItem('selectedCommunicationMode', selectedMode);
+      }, [smsToggle, mailToggle, whatsappToggle]);
+      
+       const [paymentMethod, setPaymentMethod] = useState([]);
     const appState  = useAppSelector((state) => state.app)
     const {data, error, isLoading} = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
     useEffect(() => {

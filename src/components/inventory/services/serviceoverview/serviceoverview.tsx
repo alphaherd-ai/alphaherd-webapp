@@ -34,16 +34,6 @@ function useServicefetch (id: string | null,branchId:number|null) {
    }
 }
 
-function useServiceBatchfetch(id:string|null,branchId:number|null){
-    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/getAll/${id}?branchId=${branchId}`,fetcher,{revalidateOnFocus:true});
-    return {
-        fetchedBatches:data,
-        isBatchLoading:isLoading,
-        batchError:error
-    }
-}
-
-
   const ServiceDetails = () => {
     const [service, setService] = useState<any | null>(null);
     const url = useSearchParams();
@@ -60,22 +50,19 @@ function useServiceBatchfetch(id:string|null,branchId:number|null){
         if(!error&&!isLoading&&fetchedProduct){
           setService(fetchedProduct);
         }
-      },[fetchedProduct,error,isLoading]);
-      const {fetchedBatches,batchError,isBatchLoading}=useServiceBatchfetch(id,appState.currentBranchId);
-
-    function valuetext(value: number) {
-        return `${value}°C`;
-    }
+      },[fetchedProduct,error,isLoading]
+    );
 
     return <>
         <div className="w-full h-full relative  rounded-[20px] pr-[16px] pl-[16px] z-1">
             <div className="w-full flex items-center justify-between">
                 <div className="flex gap-2">
-                    {/* <div className="w-11 h-11  rounded-[5px] border border-solid border-borderGrey flex justify-center items-center "> */}
-                        <Link className='no-underline h-full' href='/inventory/services/timeline'>
-                            <div className='flex items-center border border-solid border-borderGrey bg-white rounded-lg p-3  '>   <Image className="w-6 h-6 relative rounded-[5px]" src={lefticon} alt="Back"></Image></div>
+                <div className="w-11 h-11  rounded-[5px] border border-neutral-400 flex justify-center items-center mr-16">
+                        <Link className='no-underline h-full  ml-4' href='inventory/products/all'>
+                            <div className='flex items-center border border-solid border-gray-300 bg-white rounded-lg p-3  '>   <Image className="w-6 h-6 relative rounded-[5px]" src={lefticon} alt="Back"></Image></div>
                         </Link>
-                    {/* </div> */}
+
+                    </div>
                     <div className="text-textGrey2 text-[28px] font-bold p-2">
                         {service?.name}
                     </div>
@@ -221,17 +208,17 @@ function useServiceBatchfetch(id:string|null,branchId:number|null){
                             <div className='flex text-textGrey2 text-base font-medium px-6 w-1/7'>Stock Level</div>
                         </div>
                     
-                        
-                        {/* <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                            <div className='w-1/12 px-6 flex items-center text-textGrey2 text-base font-medium'>{item.name} Strips</div>
-                            <div className='w-1/12 px-6 flex items-center text-textGrey2 text-base font-medium'>quantity</div>
+                        {service?.linkProducts?.map((item: any) => (
+                        <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                            <div className='w-1/12 px-6 flex items-center text-textGrey2 text-base font-medium'>{item.name} </div>
+                            <div className='w-1/12 px-6 flex items-center text-textGrey2 text-base font-medium'>{item?.totalQuantity}</div>
                             <div className='w-1/12 px-6 flex items-center text-textGrey2 text-base font-medium'>{item.batchNumber}</div>
                             <div className='w-1/12 px-6 flex items-center text-textGrey2 text-base font-medium'>{formatDateAndTime(item.expiry).formattedDate}</div>
-                            <div className='w-1/12 px-6 flex items-center text-textGrey2 text-base font-medium'>{item.hsnCode}</div>
                             <div className='w-1/12 px-6 flex items-center text-textGrey2 text-base font-medium'>{item.costPrice}</div>
+                            <div className='w-1/12 px-6 flex items-center text-textGrey2 text-base font-medium'>{item.sellingPrice}</div>
                             <div className='w-1/12 px-6 flex items-center text-textGrey2 text-base font-medium'>₹399</div>                            
-                        </div> */}
-                        
+                        </div>
+                        ))}
                     </div>
                 </div>
             </div>

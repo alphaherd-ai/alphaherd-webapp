@@ -25,8 +25,11 @@ const NewsalesReturnBottomBar = ({invoiceData}:any) => {
     const router=useRouter();
     const [isSaving,setSaving]=useState(false);
     const handleSubmit = async () => {
-        setSaving(true);
-        const allData = {headerData, tableData, totalAmountData, transactionsData};
+        if (!headerData.customer) {
+            alert('Customer is required');
+            return;
+        }
+        const allData = {headerData, tableData, totalAmountData};
         console.log("this is all data",allData)
         let totalQty=0;
         tableData.forEach(data => {
@@ -52,9 +55,9 @@ const NewsalesReturnBottomBar = ({invoiceData}:any) => {
             totalCost: allData.totalAmountData.totalCost,
             overallDiscount: allData.totalAmountData.gst,
             totalQty:totalQty,
-            recordTransaction: {
-                create: allData.transactionsData
-            },
+            // recordTransaction: {
+            //     create: allData.transactionsData
+            // },
             status: "Pending",
             type: FinanceCreationType.Sales_Return,
             items:{
@@ -137,23 +140,23 @@ const NewsalesReturnBottomBar = ({invoiceData}:any) => {
         } 
     };
 
-    const sendWhatsapp = async () => {
-        try {   
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/whatsapp`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    phone: "+917637834918",
+    // const sendWhatsapp = async () => {
+    //     try {   
+    //         const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/whatsapp`, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({
+    //                 phone: "+917637834918",
 
-                }),
-            });
-            console.log('Whatsapp Message sent successfully:', response);
-        } catch (error) {
-            console.error('Error while sending message', error);
-        } 
-    };
+    //             }),
+    //         });
+    //         console.log('Whatsapp Message sent successfully:', response);
+    //     } catch (error) {
+    //         console.error('Error while sending message', error);
+    //     } 
+    // };
 
     const sendEmail = ()=>{
         try {   
@@ -172,13 +175,16 @@ const NewsalesReturnBottomBar = ({invoiceData}:any) => {
         } 
     };
 
+    const isDisabled = tableData.length === 0 || tableData.some(data => !data.itemName);
+
     return (
         <>
+        
 
 
 <div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
                             <div className="flex justify-between items-center gap-4 pl-4">
-                            {/* <Button className="p-2 bg-white rounded-md border border-solid  border-borderGrey  justify-start items-center gap-2 flex cursor-pointer">
+                            <Button className="p-2 bg-white rounded-md border border-solid  border-borderGrey  justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={printicon} alt="print"></Image>
                         <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all">Print</div>
                     </Button>
@@ -190,15 +196,26 @@ const NewsalesReturnBottomBar = ({invoiceData}:any) => {
                     </Button>
                     <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={shareicon} alt="share"></Image>
-                        <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all">Share</div>
+                        <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all" onClick={sendSMS}>Share via SMS</div>
+                    </Button>
+                    {/* <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
+                        <Image src={shareicon} alt="share"></Image>
+                        <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all" onClick={sendWhatsapp}>Share via Whatsapp</div>
                     </Button> */}
+                    <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
+                        <Image src={shareicon} alt="share"></Image>
+                        <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all" onClick={sendEmail}>Share via Email</div>
+                    </Button>
                             </div>
                             <div className="flex justify-between items-center gap-4 pr-4">
                             <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
                                     <Image src={drafticon} alt="draft"></Image>
                                     <div>Save as Draft</div>
                                 </Button>
-                                <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer" onClick={handleSubmit} disabled={isSaving}>
+                                <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${
+                                    isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
+                                }`}
+                                onClick={handleSubmit} disabled={isDisabled}>
                                     <Image src={checkicon} alt="check"></Image>
                                     <div>{isSaving?"Saving...":"Save"}</div>
                                 </Button>
