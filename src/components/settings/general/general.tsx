@@ -22,6 +22,11 @@ import deleteicon from "../../../assets/icons/settings/deleteicon.svg"
 import React, { useState, useEffect } from 'react';
 import AddSpeciesPopup from "../generalSettingPopup/addSpeciesPopup";
 import AddPaymentPopup from "../generalSettingPopup/addPaymentPopup";
+import Loading from "@/app/loading1";
+import { useAppSelector } from "@/lib/hooks";
+import useSWR from "swr";
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 
   
