@@ -457,7 +457,7 @@ model Items {
 
 model PaymentMethod {
   id   Int    @id @default(autoincrement())
-  name String
+  name String?
 }
 
 model InventoryTimeline {

@@ -1,7 +1,6 @@
 "use client"
 import Image from "next/image"
 import orangebox from "../../../../assets/icons/finance/orangebox.png"
-
 import greybox from "../../../../assets/icons/finance/greybox.png"
 import bluebox from "../../../../assets/icons/finance/bluebox.png"
 import greenbox from "../../../../assets/icons/finance/greenbox.png"
@@ -11,11 +10,12 @@ import righticon from "../../../../assets/icons/finance/right_icon.svg"
 import selecttab from "../../../../assets/icons/finance/SelectedTab.svg"
 import icn_icon from "../../../../assets/icons/finance/inc_icon.svg"
 import downloadicon from "../../../../assets/icons/finance/download.svg"
-
-
+import NotificIcon from "../../../../assets/icons/finance/NotificIcon.svg"
 import { useState } from "react"
 import { Doughnut } from "react-chartjs-2";
 import { Chart, ArcElement } from 'chart.js';
+import { useToast } from "@/components/Toast/ToastService"
+import { AlertCircle } from "react-feather"
 Chart.register(ArcElement);
 
 
@@ -50,6 +50,46 @@ const FinancesOverviewSheet = () => {
         ],
     };
 
+    const toast: any = useToast();
+    
+    const handleClickNotifi  = () => {
+        toast.open(
+            <div className="w-[443px] h-[172px] px-5 py-4 bg-[#343535] rounded-[10px] border border-[#3b3b3b] z-[10] animate-slide-in">
+                <div className="w-full flex  flex-col gap-3">
+                    <div className="w-full flex gap-2 items-center">
+                        <div className="bg-[#3c50ff] px-1 pt-1 rounded-[5px]">
+                            <Image src={NotificIcon} alt="as" className="bg-transparent" />
+                        </div>
+                        <div>
+                            <span className="text-white text-base font-medium">Approval Requested: Update Inventory</span>
+                        </div>
+                    </div>
+                    <div className="w-full flex gap-12 items-center">
+                        <div>
+                            {/* <Image src={NotificIcon} alt="as" className="bg-transparent" /> */}
+                        </div>
+                        <div>
+                            <span className="text-white text-sm font-medium">Quentin Tarantino wants to stock out certain items. Check stock out</span>
+                        </div>
+                    </div>
+                    <div className="w-full flex gap-12 items-center">
+                        <div>
+                            {/* <Image src={NotificIcon} alt="as" className="bg-transparent" /> */}
+                        </div>
+                        <div className="flex gap-4">
+                            <div className="h-[35px] px-4 py-2 bg-[#35beb1] rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
+                                <div className="text-white text-sm font-medium">Approve</div>
+                            </div>
+                            <div className="h-[35px] px-4 py-2 bg-[#6b7e7d] rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
+                                <div className="text-white text-sm font-medium">Deny</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <>
             <div className="flex flex-col mt-6">
@@ -81,7 +121,7 @@ const FinancesOverviewSheet = () => {
                         <div className="flex">
                             <div className="w-[438.50px] h-[152px] p-6 bg-white  border border-solid border-stone-300 flex-col justify-center items-start gap-4 flex">
                                 <div className="text-gray-500 text-[28px] font-bold ">₹ 92,499</div>
-                                <div className="text-gray-500 text-base font-medium ">Revenue</div>
+                                <div className="text-gray-500 text-base font-medium bg-black text-white" onClick={handleClickNotifi}>TOGGLE NOTIFICATION</div>
                                 <div className="w-[150px] h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex ">
                                     <Image className="w-4 h-4 " src={icn_icon} alt="inc"></Image>
                                     <div className="text-green-600 text-sm font-medium ">12.4%</div>
