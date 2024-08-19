@@ -94,47 +94,44 @@ const NewsaleEstimateTotalAmout = () => {
         updateGrandTotal(); 
     }, [totalAmount, selectedDiscount, shipping, adjustment]);
 
-
     const customStyles = {
-        control: (provided:any, state:any) => ({
+        control: (provided: any, state: any) => ({
           ...provided,
-          height: '2.8rem', 
-          minHeight: '2.8rem' ,
-          width: '22rem',
-          maxWidth: '22rem', 
-          borderColor: state.isFocused ? '#35BEB1' : '#C4C4C4', 
-            '&:hover': {
-            borderColor: state.isFocused ? '#35BEB1' : '#C4C4C4', 
+          width: '100%',
+          maxWidth: '100%',
+          border: state.isFocused ? '1px solid #35BEB1' : 'none',
+          '&:hover': {
+            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
             },
-            boxShadow: state.isFocused ? 'none' : 'none',
+          boxShadow: state.isFocused ? 'none' : 'none',
         }),
-        valueContainer: (provided:any) => ({
+        valueContainer: (provided: any) => ({
           ...provided,
-          height: '2.8rem', 
-          width: '22rem',
-          maxWidth: '22rem', 
+          width: '100%',
+          maxWidth: '100%',
         }),
-        singleValue: (provided:any) => ({
+        singleValue: (provided: any, state: any) => ({
           ...provided,
-          width: '22rem',
-          maxWidth: '22rem', 
+          width: '100%',
+          maxWidth: '100%',
+          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
         }),
-        menu: (provided:any) => ({
-            ...provided,
-            backgroundColor: 'white',
-            width: '22rem',
-            maxWidth: '22rem', 
-          }),
-          option: (provided:any, state:any) => ({
-            ...provided,
-            backgroundColor: state.isFocused ? '#35BEB1' : 'white', 
-            color: state.isFocused ? 'white' : '#6B7E7D',
-            '&:hover': {
-              backgroundColor: '#35BEB1', 
-            }
-          }),
-          menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
-          
+        menu: (provided: any) => ({
+          ...provided,
+          backgroundColor: 'white',
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        option: (provided: any, state: any) => ({
+          ...provided,
+          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+          color: state.isFocused ? 'white' : '#6B7E7D',
+          '&:hover': {
+            backgroundColor: '#35BEB1',
+            color: 'white',
+          },
+        }),
+        menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
       };
 
     return (

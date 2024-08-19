@@ -20,8 +20,33 @@ import upiicon from "../../../assets/icons/settings/upiicon.svg"
 import editicon from "../../../assets/icons/settings/editicon.svg"
 import deleteicon from "../../../assets/icons/settings/deleteicon.svg"
 import React, { useState, useEffect } from 'react';
+import AddSpeciesPopup from "../generalSettingPopup/addSpeciesPopup";
+import AddPaymentPopup from "../generalSettingPopup/addPaymentPopup";
+import Loading from "@/app/loading1";
+import { useAppSelector } from "@/lib/hooks";
+import useSWR from "swr";
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
+
+  
 const GeneralSettings = () => {
+    
+    
+    const [showPopup, setShowPopup] = useState(false);
+    const [showPopup1, setShowPopup1] = useState(false);
+    const [showPopup2, setShowPopup2] = useState(false);
+
+    const togglePopup = () => {
+        setShowPopup(!showPopup);
+    }
+    const togglePopup1 = () => {
+        setShowPopup1(!showPopup1);
+    }
+    const togglePopup2 = () => {
+        setShowPopup2(!showPopup2);
+    }
+
 
     const reminder = [
         { value: 'Everyday', label: 'Everyday' },
@@ -32,7 +57,7 @@ const GeneralSettings = () => {
     const [samedayToggle, setSamedayToggle] = useState(true);
     const [threedayToggle, setThreedayToggle] = useState(false);
     const [oneWeekToggle, setOneWeekToggle] = useState(false);
-    const [smsToggle, setSmsToggle] = useState(true);
+    const [smsToggle, setSmsToggle] = useState(false);
     const [mailToggle, setMailToggle] = useState(false);
     const [whatsappToggle, setWhatsappToggle] = useState(false);
     const [taxIncToggle, setTaxIncToggle] = useState(true);
@@ -100,6 +125,29 @@ const GeneralSettings = () => {
     const whatsappToggleHandler = () => {
         setWhatsappToggle(!whatsappToggle);
     };
+    
+    useEffect(() => {
+        const selectedMode = smsToggle
+          ? 'SMS'
+          : mailToggle
+          ? 'Email'
+          : whatsappToggle
+          ? 'WhatsApp'
+          : '';
+      
+        localStorage.setItem('selectedCommunicationMode', selectedMode);
+      }, [smsToggle, mailToggle, whatsappToggle]);
+      
+       const [paymentMethod, setPaymentMethod] = useState([]);
+    const appState  = useAppSelector((state) => state.app)
+    const {data, error, isLoading} = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
+    useEffect(() => {
+        if(!isLoading&&!error&&data){
+            setPaymentMethod(data)
+        }
+    }, [data,error,isLoading]);
+
+
 
     return (
     <>
@@ -112,87 +160,12 @@ const GeneralSettings = () => {
                     <div className="w-full px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                         <div className="w-full flex justify-between items-start">
                             <div>
-                                <div className="text-gray-500 text-base font-bold ">Invoice Preferences</div>
-                                <div className="text-neutral-400 text-base font-medium ">Edit settings related to invoices</div>
+                                <div className="text-gray-500 text-base font-bold ">Client Communication Preferences</div>
+                                <div className="text-neutral-400 text-base font-medium ">Edit settings related to client communication</div>
                             </div>
-                            <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
-                                <Image className="w-6 h-6 relative rounded-[5px]" src={previewicon} alt="preview" />
-                                <div className="text-white text-base font-bold ">Preview Invoice</div>
-                            </div>
+                            
                         </div>
-                        <div className="mt-4 grid grid-cols-2 gap-x-8 gap-y-6 w-full">
-                            <div className="flex gap-4 items-start">
-                                <input className="mt-1 accent-teal-500" type="checkbox" defaultChecked />
-                                <div>
-                                    <div className="text-gray-500 text-base font-bold ">Show tax splitup</div>
-                                    <div className="text-neutral-400 text-base font-medium  flex">
-                                        <div>Split-up of taxes value will be shown on printed invoice</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex gap-4 items-start">
-                                <input className="mt-1 accent-teal-500" type="checkbox" defaultChecked />
-                                <div>
-                                    <div className="text-gray-500 text-base font-bold ">Show Balance Due</div>
-                                    <div className="text-neutral-400 text-base font-medium ">
-                                        <div>Balance due amount will be shown on printed invoice </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex gap-4 items-start">
-                                <input className="mt-1 accent-teal-500" type="checkbox" defaultChecked />
-                                <div>
-                                    <div className="text-gray-500 text-base font-bold ">Show Payment Due date</div>
-                                    <div className="text-neutral-400 text-base font-medium  flex">
-                                        <div>Payment due date will be shown on all invoice documents</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex gap-4 items-start">
-                                <input className="mt-1 accent-teal-500" type="checkbox" defaultChecked />
-                                <div>
-                                    <div className="text-gray-500 text-base font-bold  flex gap-2">
-                                        <div>Show last date of return</div>
-                                        <div className="text-neutral-400 text-base font-bold ">Default date of return:</div>
-                                        <div className="flex">
-                                            <div className="text-teal-500 text-base font-medium ">7 days after sale</div>
-                                            <Image src={downicon} alt="dwn" />
-                                        </div>
-                                    </div>
-                                    <div className="text-neutral-400 text-base font-medium  flex">
-                                        <div>Last date of return will be shown on all invoice documents</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex gap-4 items-start">
-                                <input className="mt-1 accent-teal-500" type="checkbox" defaultChecked />
-                                <div>
-                                    <div className="text-gray-500 text-base font-bold ">Notes</div>
-                                    <div className="text-neutral-400 text-base font-medium  flex">
-                                        <div>Notes section will be shown on all invoice documents</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex gap-4 items-start">
-                                <input className="mt-1 accent-teal-500" type="checkbox" defaultChecked />
-                                <div>
-                                    <div className="text-gray-500 text-base font-bold ">Auto generate invoice numbers</div>
-                                    <div className="text-neutral-400 text-base font-medium  flex">
-                                        <div>Invoice numbers for all invoices will be auto generated</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex gap-4 items-start">
-                                <input className="mt-1 accent-teal-500" type="checkbox" defaultChecked />
-                                <div>
-                                    <div className="text-gray-500 text-base font-bold ">Footer:</div>
-                                    <div className="text-neutral-400 text-base font-medium  flex">
-                                        <input className="w-[1296px] h-[54px] p-4 rounded-[5px] border border-neutral-400 flex-col justify-start items-start gap-2 inline-flex" type="text" defaultValue={"This is a computer generated statement and requires no signature"} />
-                                  
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        
                         <div>
                             <div className="text-gray-500 text-base font-medium ">Automatically send invoices and receipts to customer via:</div>
                             <div className="flex gap-2">
@@ -222,206 +195,199 @@ const GeneralSettings = () => {
                                 </div></button>)}
                             </div>
                         </div>
-                        <div>
-                            <div className="text-gray-500 text-base font-medium ">Select your default taxation format:</div>
-                            <div className="flex gap-2">
-                                {taxIncToggle && (<button onClick={taxIncToggleHandler}><div className="h-7 p-2 bg-teal-400 rounded-[5px] border border-white justify-start items-center gap-2 flex">
-                                    <Image className="w-4 h-4 relative" src={tickicon} alt="sms" />
-                                    <div className="text-white text-sm font-bold ">Tax Inclusive</div>
-                                </div></button>)}
-                                {!taxIncToggle && (<button onClick={taxIncToggleHandler}><div className="h-7 p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
-                                    <Image className="w-4 h-4 relative" src={tickicon} alt="sms" />
-                                    <div className="text-neutral-400 text-sm font-bold ">Tax Inclusive</div>
-                                </div></button>)}
-                                {taxExcToggle && (<button onClick={taxExcToggleHandler}><div className="h-7 p-2 bg-teal-400 rounded-[5px] border border-white justify-start items-center gap-2 flex">
-                                    <Image className="w-4 h-4 relative" src={crossicon} alt="sms" />
-                                    <div className="text-white text-sm font-bold ">Tax exclusive</div>
-                                </div></button>)}
-                                {!taxExcToggle && (<button onClick={taxExcToggleHandler}><div className="h-7 p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
-                                    <Image className="w-4 h-4 relative" src={crossicon} alt="sms" />
-                                    <div className="text-neutral-400 text-sm font-bold ">Tax exclusive</div>
-                                </div></button>)}
-                            </div>
-                        </div>
+                        
                     </div>
-                    <div className="w-full px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
-                        <div className="w-full flex justify-between items-start">
-                            <div>
-                                <div className="text-gray-500 text-base font-bold ">Payment methods</div>
-                                <div className="text-neutral-400 text-base font-medium ">Add and configure your payment methods</div>
-                            </div>
-                            <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
-                                <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                <div className="text-white text-base font-bold ">Add Payment Method</div>
-                            </div>
-                        </div>
-                        <div className="w-full h-full">
-                            <div className="w-full h-full rounded-[10px] border border-stone-300 justify-start items-start flex flex-col">
-                                <div className='flex  w-full  items-center box-border bg-gray-100  h-12 py-4 border-b border-neutral-400 text-gray-500'>
-                                    <div className='flex text-gray-500 text-base font-medium px-6 w-5/12'>Payment method</div>
-                                    <div className='flex text-gray-500 text-base font-medium px-6 w-5/12'>Active</div>
-                                    <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'></div>
-                                </div>
-                                <div className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                        <Image className="w-[22px] h-[22px] relative" src={cashicon} alt="cash" />
-                                        <div className="text-gray-500 text-base font-medium ">Cash</div>
-                                    </div>
-                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                        <input type="checkbox" className="accent-teal-500" defaultChecked />
-                                    </div>
-                                    <div className='w-2/12 px-6 flex gap-4 items-center justify-end text-neutral-400 text-base font-medium'>
-                                        <Image className="w-6 h-6 p-1 bg-gray-100 rounded-[5px] justify-start items-center gap-2 flex" src={editicon} alt="edit" />
-                                        <Image className="w-6 h-6 p-1 bg-gray-100 rounded-[5px] justify-start items-center gap-2 flex" src={deleteicon} alt="delete" />
-                                    </div>
-                                </div>
-                                <div className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                        <Image className="w-[22px] h-[22px] relative" src={cardicon} alt="cash" />
-                                        <div className="text-gray-500 text-base font-medium ">Card</div>
-                                    </div>
-                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                        <input type="checkbox" className="accent-teal-500" defaultChecked />
-                                    </div>
-                                    <div className='w-2/12 px-6 flex gap-4 items-center justify-end text-neutral-400 text-base font-medium'>
-                                        <Image className="w-6 h-6 p-1 bg-gray-100 rounded-[5px] justify-start items-center gap-2 flex" src={editicon} alt="edit" />
-                                        <Image className="w-6 h-6 p-1 bg-gray-100 rounded-[5px] justify-start items-center gap-2 flex" src={deleteicon} alt="delete" />
-                                    </div>
-                                </div>
-                                <div className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                        <Image className="w-[22px] h-[22px] relative" src={netbankingicon} alt="cash" />
-                                        <div className="text-gray-500 text-base font-medium ">Net Banking</div>
-                                    </div>
-                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                        <input type="checkbox" className="accent-teal-500" defaultChecked />
-                                    </div>
-                                    <div className='w-2/12 px-6 flex gap-4 items-center justify-end text-neutral-400 text-base font-medium'>
-                                        <Image className="w-6 h-6 p-1 bg-gray-100 rounded-[5px] justify-start items-center gap-2 flex" src={editicon} alt="edit" />
-                                        <Image className="w-6 h-6 p-1 bg-gray-100 rounded-[5px] justify-start items-center gap-2 flex" src={deleteicon} alt="delete" />
-                                    </div>
-                                </div>
-                                <div className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                        <Image className="w-[22px] h-[22px] relative" src={upiicon} alt="cash" />
-                                        <div className="text-gray-500 text-base font-medium ">UPI</div>
-                                    </div>
-                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                        <input type="checkbox" className="accent-teal-500" defaultChecked />
-                                    </div>
-                                    <div className='w-2/12 px-6 flex gap-4 items-center justify-end text-neutral-400 text-base font-medium'>
-                                        <Image className="w-6 h-6 p-1 bg-gray-100 rounded-[5px] justify-start items-center gap-2 flex" src={editicon} alt="edit" />
-                                        <Image className="w-6 h-6 p-1 bg-gray-100 rounded-[5px] justify-start items-center gap-2 flex" src={deleteicon} alt="delete" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="w-full px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
-                        <div className="w-full flex justify-between items-start">
-                            <div>
-                                <div className="text-gray-500 text-base font-bold ">Notifications</div>
-                                <div className="text-neutral-400 text-base font-medium ">Choose what notifications you want to receive</div>
-                            </div>
-                        </div>
-                        <div className="mt-4 grid grid-cols-2 gap-x-8 gap-y-6 w-full">
-                            <div className="flex gap-4 items-start">
-                                <input className="mt-1 accent-teal-500" type="checkbox" defaultChecked />
+                    <div className="w-full flex justify-between">
+                        <div className="w-[43.5rem] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
+                            <div className="w-full flex justify-between items-start">
                                 <div>
-                                    <div className="text-gray-500 text-base font-bold ">Low stock items alert</div>
-                                    <div className="text-neutral-400 text-base font-medium  flex">
-                                        <Select
-                                            className="text-neutral-400 text-base font-medium w-[138px] h-6"
-                                            placeholder="Select"
-                                            isClearable={false}
-                                            isSearchable={true}
-                                            options={reminder}
-                                        />
-                                        {/* <Image src={downicon} alt="dwn" /> */}
-                                    </div>
+                                    <div className="text-gray-500 text-base font-bold ">Payment methods</div>
+                                    <div className="text-neutral-400 text-base font-medium ">Add and configure your payment methods</div>
+                                </div>
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex" onClick={togglePopup1}>
+                                    <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
+                                    <div className="text-white text-base font-medium ">Add Payment Method</div>
                                 </div>
                             </div>
-                            <div className="flex gap-4 items-start">
-                                <input className="mt-1 accent-teal-500" type="checkbox" defaultChecked />
-                                <div>
-                                    <div className="text-gray-500 text-base font-bold ">Expiring items alert</div>
-                                    <div className="text-neutral-400 text-base font-medium ">
-                                        <Select
-                                            className="text-neutral-400 text-base font-medium w-[138px] h-6"
-                                            placeholder="Select"
-                                            isClearable={false}
-                                            isSearchable={true}
-                                            options={reminder}
-                                        />
-                                        {/* <Image src={downicon} alt="dwn" /> */}
+                            <div className="w-full h-full">
+                                <div className="w-full h-full rounded-[10px] border border-stone-300 justify-start items-start flex flex-col">
+                                    <div className='flex  w-full  items-center box-border bg-gray-100  h-12 py-4 border-b border-neutral-400 text-gray-500'>
+                                        <div className='flex text-gray-500 text-base font-medium px-6 w-5/12'>Payment method</div>
+                                        
                                     </div>
-                                </div>
-                            </div>
-                            <div className="flex gap-4 items-start">
-                                <input className="mt-1 accent-teal-500" type="checkbox" defaultChecked />
-                                <div>
-                                    <div className="text-gray-500 text-base font-bold ">Expired items alert</div>
-                                    <div className="text-neutral-400 text-base font-medium  flex">
-                                        <Select
-                                            className="text-neutral-400 text-base font-medium w-[138px] h-6"
-                                            placeholder="Select"
-                                            isClearable={false}
-                                            isSearchable={true}
-                                            options={reminder}
-                                        />
-                                        {/* <Image src={downicon} alt="dwn" /> */}
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex gap-4 items-start">
-                                <input className="mt-1 accent-teal-500" type="checkbox" defaultChecked />
-                                <div>
-                                    <div className="text-gray-500 text-base font-bold ">Excess items alert</div>
-                                    <div className="text-neutral-400 text-base font-medium  flex">
-                                        <Select
-                                            className="text-neutral-400 text-base font-medium w-[138px] h-6"
-                                            placeholder="Select"
-                                            isClearable={false}
-                                            isSearchable={true}
-                                            options={reminder}
-                                        />
-                                        {/* <Image src={downicon} alt="dwn" /> */}
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex gap-4 items-start">
-                                <input className="mt-1 accent-teal-500" type="checkbox" defaultChecked />
-                                <div>
-                                    <div className="text-gray-500 text-base font-bold ">Invoice due alert</div>
-                                    <div className="text-neutral-400 text-base font-medium  flex">
-                                        <div className="flex gap-2">
-                                            {samedayToggle && (<button onClick={sameDayToggleHandler}><div className="h-7 p-2 bg-teal-400 rounded-[5px] border border-white justify-start items-center gap-2 flex">
-                                                <div className="text-white text-sm font-bold ">Same day</div>
-                                            </div></button>)}
-                                            {!samedayToggle && (<button onClick={sameDayToggleHandler}><div className="h-7 p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
-                                                <div className="text-neutral-400 text-sm font-bold ">Same day</div>
-                                            </div></button>)}
-                                            {threedayToggle && (<button onClick={threeDayToggleHandler}><div className="h-7 p-2 bg-teal-400 rounded-[5px] border border-white justify-start items-center gap-2 flex">
-                                                <div className="text-white text-sm font-bold ">3 days to go</div>
-                                            </div></button>)}
-                                            {!threedayToggle && (<button onClick={threeDayToggleHandler}><div className="h-7 p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
-                                                <div className="text-neutral-400 text-sm font-bold ">3 days to go</div>
-                                            </div></button>)}
-                                            {oneWeekToggle && (<button onClick={weekToggleHandler}><div className="h-7 p-2 bg-teal-400 rounded-[5px] border border-white justify-start items-center gap-2 flex">
-                                                <div className="text-white text-sm font-bold ">1 week to go</div>
-                                            </div></button>)}
-                                            {!oneWeekToggle && (<button onClick={weekToggleHandler}><div className="h-7 p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
-                                                <div className="text-neutral-400 text-sm font-bold ">1 week to go</div>
-                                            </div></button>)}
+                                    {isLoading && <Loading />}
+                                    <div className="w-full  max-h-[15rem] overflow-y-auto">
+                                    {paymentMethod.map((item:any) => (
+                                        <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                                        <div  className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                            <Image className="w-[22px] h-[22px] relative" src={cashicon} alt="cash" />
+                                            <div className="text-gray-500 text-base font-medium ">{item.name}</div>
                                         </div>
+                                        
+                                    </div>
+                                    ))
+                                    } 
+                                    </div>      
+                                        
+            
+                                </div>
+                            </div>
+                        </div>
+                        <div className="w-[43.5rem] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
+                            <div className="w-full flex justify-between items-start">
+                                <div>
+                                    <div className="text-gray-500 text-base font-bold ">Species</div>
+                                    <div className="text-neutral-400 text-base font-medium ">Add and configure your payment methods</div>
+                                </div>
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+                                    <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
+                                    <div className="text-white text-base font-medium cursor-pointer" onClick={togglePopup}>Add Species</div>
+                                </div>
+                            </div>
+                            <div className="w-full h-full">
+                                <div className="w-full h-full rounded-[10px] border border-stone-300 justify-start items-start flex flex-col">
+                                    <div className='flex  w-full  items-center box-border bg-gray-100  h-12 py-4 border-b border-neutral-400 text-gray-500'>
+                                        <div className='flex text-gray-500 text-base font-medium px-6 w-5/12'>Payment method</div>
+                                        
+                                    </div>
+                                    <div className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                            <Image className="w-[22px] h-[22px] relative" src={cashicon} alt="cash" />
+                                            <div className="text-gray-500 text-base font-medium ">Cash</div>
+                                        </div>
+                                        
+                                    </div>
+                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                            <Image className="w-[22px] h-[22px] relative" src={cardicon} alt="cash" />
+                                            <div className="text-gray-500 text-base font-medium ">Card</div>
+                                        </div>
+                                        
+                                    </div>
+                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                            <Image className="w-[22px] h-[22px] relative" src={netbankingicon} alt="cash" />
+                                            <div className="text-gray-500 text-base font-medium ">Net Banking</div>
+                                        </div>
+                                        
+                                    </div>
+                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                            <Image className="w-[22px] h-[22px] relative" src={upiicon} alt="cash" />
+                                            <div className="text-gray-500 text-base font-medium ">UPI</div>
+                                        </div>
+                                        
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div className="w-full flex justify-between">
+                        <div className="w-[43.5rem] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
+                            <div className="w-full flex justify-between items-start">
+                                <div>
+                                    <div className="text-gray-500 text-base font-bold ">Breeds</div>
+                                    <div className="text-neutral-400 text-base font-medium ">Add and configure your payment methods</div>
+                                </div>
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+                                    <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
+                                    <div className="text-white text-base font-medium ">Add Payment Method</div>
+                                </div>
+                            </div>
+                            <div className="w-full h-full">
+                                <div className="w-full h-full rounded-[10px] border border-stone-300 justify-start items-start flex flex-col">
+                                    <div className='flex  w-full  items-center box-border bg-gray-100  h-12 py-4 border-b border-neutral-400 text-gray-500'>
+                                        <div className='flex text-gray-500 text-base font-medium px-6 w-5/12'>Payment method</div>
+                                        
+                                    </div>
+                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                            <Image className="w-[22px] h-[22px] relative" src={cashicon} alt="cash" />
+                                            <div className="text-gray-500 text-base font-medium ">Cash</div>
+                                        </div>
+                                        
+                                    </div>
+                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                            <Image className="w-[22px] h-[22px] relative" src={cardicon} alt="cash" />
+                                            <div className="text-gray-500 text-base font-medium ">Card</div>
+                                        </div>
+                                        
+                                    </div>
+                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                            <Image className="w-[22px] h-[22px] relative" src={netbankingicon} alt="cash" />
+                                            <div className="text-gray-500 text-base font-medium ">Net Banking</div>
+                                        </div>
+                                        
+                                    </div>
+                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                            <Image className="w-[22px] h-[22px] relative" src={upiicon} alt="cash" />
+                                            <div className="text-gray-500 text-base font-medium ">UPI</div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="w-[43.5rem] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
+                            <div className="w-full flex justify-between items-start">
+                                <div>
+                                    <div className="text-gray-500 text-base font-bold ">Species</div>
+                                    <div className="text-neutral-400 text-base font-medium ">Add and configure your payment methods</div>
+                                </div>
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+                                    <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
+                                    <div className="text-white text-base font-medium ">Add Payment Method</div>
+                                </div>
+                            </div>
+                            <div className="w-full h-full">
+                                <div className="w-full h-full rounded-[10px] border border-stone-300 justify-start items-start flex flex-col">
+                                    <div className='flex  w-full  items-center box-border bg-gray-100  h-12 py-4 border-b border-neutral-400 text-gray-500'>
+                                        <div className='flex text-gray-500 text-base font-medium px-6 w-5/12'>Payment method</div>
+                                        
+                                    </div>
+                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                            <Image className="w-[22px] h-[22px] relative" src={cashicon} alt="cash" />
+                                            <div className="text-gray-500 text-base font-medium ">Cash</div>
+                                        </div>
+                                        
+                                    </div>
+                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                            <Image className="w-[22px] h-[22px] relative" src={cardicon} alt="cash" />
+                                            <div className="text-gray-500 text-base font-medium ">Card</div>
+                                        </div>
+                                        
+                                    </div>
+                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                            <Image className="w-[22px] h-[22px] relative" src={netbankingicon} alt="cash" />
+                                            <div className="text-gray-500 text-base font-medium ">Net Banking</div>
+                                        </div>
+                                        
+                                    </div>
+                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                            <Image className="w-[22px] h-[22px] relative" src={upiicon} alt="cash" />
+                                            <div className="text-gray-500 text-base font-medium ">UPI</div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/*  */}
                 </div>
             </div>
         </div >
+
+
+        {showPopup && <AddSpeciesPopup onClose={togglePopup} />}
+        {showPopup1 && <AddPaymentPopup onClose={togglePopup1} />}
     </>
     )
 }

@@ -11,6 +11,7 @@ import subicon from "../../../../assets/icons/inventory/1. Icons-24 (6) (2).svg"
 import checkicon from "../../../../assets/icons/inventory/check (1).svg";
 import Select from 'react-select';
 import calicon from "../../../../assets/icons/finance/calendar_today.svg"
+import Distributors from "@/app/database/distributor/page";
 import formatDateAndTime from "@/utils/formateDateTime";
 import { Stock } from "@prisma/client";
 import DatePicker from 'react-datepicker';
@@ -24,6 +25,10 @@ import useSWR from 'swr';
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 type PopupProps = {
     onClose: () => void;
+}
+interface Distributors{
+    id:string,
+    distributorName:string
 }
 interface Products{
     id :string,
@@ -75,7 +80,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
     const [inventory, setInventory] = useState<any[]>([]);
     const [formData, setFormData] = useState<any>({});
     const appState = useAppSelector((state) => state.app)
-
+    const [distributor, setDistributor] = useState<any[]>([]);
 
     const {fetchedProducts,isLoading,error}=useProductfetch(appState.currentBranchId);
     const {fetchedBathces,isBatchLoading,batchError}=useProductBatchfetch(appState.currentBranchId);
@@ -344,6 +349,25 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
         }
     },[inventory]);
 
+    //Distributors
+    useEffect(() => {
+
+        const fetchDistributors = async()=>{
+            try{
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll?branchId=${appState.currentBranchId}`);
+                const distributors = response.data.map((distributor:Distributors)=>({
+                    value: distributor.id,
+                    label: distributor.distributorName
+                }));
+                console.log(distributors);
+                setDistributor(distributors);
+            }catch(error){
+                console.log("Error fetching distributors",error);
+            }
+        }
+          fetchDistributors();
+    }, []);
+
     const Reasons = [
         {value: "Damaged", label: "Damaged"},
         {value: "Expired", label: "Expired"},
@@ -513,12 +537,15 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
             />
         </div>
         <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium '>
-        <input
-            type="text"
-            value={item.providers}
-            onChange={(e) => handleInputChange(index,'providers', e.target.value)}
+        <Select
             className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
+            placeholder="Select Distributor"
+            isClearable={false}
+            isSearchable={true}
+            options={distributor}
+            isMulti={false}
             name={`providers-${index}`}
+            onChange={(e) => handleInputChange(index,'providers', e?.label)}
         />
         </div>
         <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>₹ 

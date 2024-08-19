@@ -192,7 +192,7 @@ const handleAddItem= useCallback(() => {
             })
         );
     };
-    
+
     const handleQuantityIncClick = (itemId: any) => {
         setItems((prevItems:any) =>
             prevItems.map((item:any) => {
@@ -203,6 +203,17 @@ const handleAddItem= useCallback(() => {
             })
         );
     };
+
+    useEffect(() => {
+        setItems((prevItems:any) =>
+            prevItems.map((item:any) => {
+                if (item.quantity === undefined) {
+                    return { ...item, quantity: 1 };
+                }
+                return item;
+            })
+        );
+    }, []);
 
     const handleInputChange = useCallback((index: number, value: any,field: string) => {   
         const updatedItems = [...items];
@@ -333,16 +344,16 @@ const handleAddItem= useCallback(() => {
                     <div className="w-full overflow-x-auto overflow-y-hidden">
                         <div className='flex w-[125%] justify-evenly items-center box-border bg-gray-100 h-12  text-gray-500 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey'>
                             <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[5rem]'>No.</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[18rem]'>Name</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Quantity</div>
+                            <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[18rem]'>Name</div>
+                            <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[15rem]'>Quantity</div>
 
-                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Unit Price</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Subtotal</div>
+                            <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[10rem]'>Unit Price</div>
+                            <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[10rem]'>Subtotal</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Tax %</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Tax Amt.</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Discount %</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Discount Amt.</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-1/12'></div>
+                            <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[10rem]'>Tax Amt.</div>
+                            <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[10rem]'>Discount %</div>
+                            <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[10rem]'>Discount Amt.</div>
+                            <div className=' flex text-gray-500 text-base font-medium px-[10px] w-1/12'></div>
                         
                         </div>
                         
@@ -390,6 +401,7 @@ const handleAddItem= useCallback(() => {
                             <div className=' flex text-textGrey2 text-base font-medium w-[10rem] items-center gap-1'>
                             ₹
                                 <input
+                                        
                                         type="number"
                                         value={item.unitPrice}
                                         className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
@@ -401,6 +413,7 @@ const handleAddItem= useCallback(() => {
                             <div className=' flex text-textGrey2 text-base font-medium w-[10rem] items-center gap-1'>
                             ₹
                             <input
+                            readOnly
                                         type="number"
                                         value={item.quantity*Number(item.unitPrice)}
                                         className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
@@ -409,10 +422,10 @@ const handleAddItem= useCallback(() => {
 
                                     />
                             </div>
-                            <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
+                            <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium'>
                                         {/* { id==null?(
                                         <Select
-                                            className="text-neutral-400 text-base font-medium"
+                                            className="text-textGrey2 text-base font-medium"
                                             defaultValue={[]}
                                             isClearable={false}
                                             isSearchable={true}
@@ -432,6 +445,7 @@ const handleAddItem= useCallback(() => {
                             <div className=' flex text-textGrey2 text-base font-medium w-[10rem] items-center gap-1'>
                             ₹
                             <input
+                            readOnly
                                         type="number"
                                         value={(item.quantity*item.gst*Number(item.unitPrice)).toFixed(2)||0}
                                         className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
@@ -460,12 +474,12 @@ const handleAddItem= useCallback(() => {
                                        name={`discountAmount-${index+1}`}
                                     />
                             </div>
-                                <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
-                                    <button className="border-0">
-                                        <Image src={sellicon} alt="sell" ></Image>
-                                    </button>
-                                    <button className="border-0" onClick={() => handleDeleteRow(index)}>
-                                        <Image src={delicon} alt="delete" ></Image>
+                                <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[12px] justify-center'>
+                                    {/* <button className="border-0 bg-transparent w-4 h-4">
+                                        <Image src={sellicon} alt="sell" className="w-4 h-4"></Image>
+                                    </button> */}
+                                    <button className="border-0 bg-transparent w-4 h-4" onClick={() => handleDeleteRow(index)}>
+                                        <Image src={delicon} alt="delete" className="w-4 h-4" ></Image>
                                     </button>
                                 </div>
                             </div>
@@ -478,13 +492,13 @@ const handleAddItem= useCallback(() => {
                                                 0} Items</div>
 
                             <div className=' flex text-gray-500 text-base font-bold w-[10rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{isNaN(items.reduce((acc, item) => acc + (item.quantity*Number(item.unitPrice)) , 0)) ? 0 : items.reduce((acc, item) => acc + (item.quantity*Number(item.unitPrice)) , 0).toFixed(2)}</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'>₹{isNaN(items.reduce((acc, item) => acc + (item.quantity*Number(item.unitPrice)) , 0)) ? 0 : items.reduce((acc, item) => acc + (item.quantity*Number(item.unitPrice)) , 0).toFixed(2)}</div>
 
                             <div className=' flex text-gray-500 text-base font-bold w-[10rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{isNaN(items.reduce((acc, item) => acc + (item.gst)*(item.quantity*Number(item.unitPrice)) , 0)) ? 0 : items.reduce((acc, item) => acc + (item.gst)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2)}</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'>₹{isNaN(items.reduce((acc, item) => acc + (item.gst)*(item.quantity*Number(item.unitPrice)) , 0)) ? 0 : items.reduce((acc, item) => acc + (item.gst)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2)}</div>
 
                             <div className=' flex text-gray-500 text-base font-bold w-[10rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{isNaN(items.reduce((acc, item) => acc + (item.discountPercent/100)*(item.quantity*Number(item.unitPrice)) , 0)) ? 0 : items.reduce((acc, item) => acc + (item.discountPercent/100)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2)}</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[10rem]'>₹{isNaN(items.reduce((acc, item) => acc + (item.discountPercent/100)*(item.quantity*Number(item.unitPrice)) , 0)) ? 0 : items.reduce((acc, item) => acc + (item.discountPercent/100)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2)}</div>
 
                             <div className=' flex text-gray-500 text-base font-bold w-1/12'></div>
                         </div>

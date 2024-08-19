@@ -503,11 +503,14 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                                     ) : (
                                         item.batchNumber
                                             )}
-                                        <div className="text-neutral-400 text-[13px] font-medium  px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
+                                            {item.expiry && formatDateAndTime(item.expiry).formattedDate && (
+                                        <div className="text-textGrey2 text-[13px] font-medium  px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
+                                    )}
+                                      
                                     </div>
                                     <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
-                                        {item.sellingPrice}
-                                        <Select
+                                    ₹ {item.sellingPrice || 0}
+                                        {/* <Select
                                             className="text-textGrey1 text-sm font-medium "
                                             defaultValue={taxOptions[0]}
                                             isClearable={false}
@@ -515,7 +518,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                                             options={taxOptions}
                                             styles={customStyles}
                                             
-                                        />
+                                        /> */}
                                     </div>
                                     
                                     <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
@@ -540,7 +543,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                                     
                                     <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
                                         
-                                           { item.gst*100}%
+                                           { item.gst*100 || 0}%
                                         
                                     </div>
                                     <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>{`₹${((item?.sellingPrice*item?.quantity * item?.gst)||0).toFixed(2)}`}</div>
@@ -608,7 +611,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                                     /> */}
                                 </div>
                                 <div className='flex text-gray-500 text-base font-medium w-[10rem]'>{`₹ ${(items.reduce((acc:any, item:any) => acc + item.quantity * item.gst*item.sellingPrice , 0)||0).toFixed(2)}`}</div>
-                                <div className='flex text-gray-500 text-base font-medium w-1/12' >{`₹ ${(items.reduce((acc, item) => acc + item.quantity * item?.sellingPrice+item.quantity*item?.sellingPrice*item.gst-(item.quantity*item?.sellingPrice*item.discount||0), 0) .toFixed(2) ||0)}`}</div>
+                                <div className='flex text-gray-500 text-base font-medium w-1/12' >{`₹ ${isNaN(items.reduce((acc, item) => acc + item.quantity * item?.sellingPrice+item.quantity*item?.sellingPrice*item.gst-(item.quantity*item?.sellingPrice*item.discount), 0)) ? 0.00 : (items.reduce((acc, item) => acc + item.quantity * item?.sellingPrice+item.quantity*item?.sellingPrice*item.gst-(item.quantity*item?.sellingPrice*item.discount), 0)).toFixed(2)}`}</div>
                                 <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
                             </div>
                         </div>

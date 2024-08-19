@@ -244,15 +244,15 @@ const NewsalesTotalAmout = () => {
                 <div className="w-1/2 bg-white rounded-md">
                 <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">
                                     <div className="text-gray-500 text-base font-bold ">Subtotal</div>
-                                    <div className="text-right text-gray-500 text-base font-bold ">{totalAmount.toFixed(2)}</div>
+                                    <div className="text-right text-gray-500 text-base font-bold ">₹ {totalAmount.toFixed(2)}</div>
                                 </div>
                                 <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
                                     <div className="text-gray-500 text-base font-bold ">Overall Discount</div>
                                     <div className="flex items-center">
-                                        <div className="text-right text-borderText text-base  ">
-                                        <input
+                                        <div className="text-right text-textGrey2 text-base">
+                                        ₹ <input
                                         type='number'
-                                        className="text-right  text-base  w-[50%] border-none outline-none"
+                                        className=" text-textGrey2 w-[4rem]  text-base  border-none outline-none"
                                         value={discountInput}
                                         onChange={(e)=>handleDiscountChange(Number(e.target.value))}
                                         /></div>
@@ -271,7 +271,7 @@ const NewsalesTotalAmout = () => {
                                 </div>
                                 <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5   ">
                                         <div className="text-gray-500 text-base font-bold ">Shipping</div>
-                                         <input
+                                        <input
                                             className="text-right text-textGrey2 text-base   border-none outline-none"
                                             placeholder='0'
                                             value={shipping} 
@@ -280,7 +280,7 @@ const NewsalesTotalAmout = () => {
                                     </div>
                                     <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5  ">
                                         <div className="text-gray-500 text-base font-bold ">Adjustment</div>
-                                         <input
+                                        <input
                                             className="text-right text-textGrey2 text-base   border-none outline-none"
                                             placeholder='0'
                                             value={adjustment} 
@@ -293,7 +293,7 @@ const NewsalesTotalAmout = () => {
                                 </div>
                             </div>
                         </div>
-                        {showPopup && <Popup headerdata={headerData} onClose={togglePopup} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} />}
+                        {showPopup && <Popup headerdata={headerData} onClose={togglePopup} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} />}
           
         </>
 

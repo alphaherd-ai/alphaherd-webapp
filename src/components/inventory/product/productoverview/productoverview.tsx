@@ -97,7 +97,7 @@ function useProductBatchfetch(id:string|null,branchId:number|null){
             <div className="flex items-center justify-between">
                 <div className="flex">
                     <div className="w-11 h-11  rounded-[5px] border border-neutral-400 flex justify-center items-center mr-16">
-                        <Link className='no-underline h-full  ml-4' href='/finance/overview'>
+                        <Link className='no-underline h-full  ml-4' href='inventory/products/all'>
                             <div className='flex items-center border border-solid border-gray-300 bg-white rounded-lg p-3  '>   <Image className="w-6 h-6 relative rounded-[5px]" src={lefticon} alt="Back"></Image></div>
                         </Link>
 

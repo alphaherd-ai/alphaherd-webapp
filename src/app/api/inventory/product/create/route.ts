@@ -19,7 +19,7 @@ export const POST=async(req: NextRequest,res:Response)=> {
       //     status: 422,
       //   });
       // }
-        
+        console.log("Body of the API",body);
         body.totalQuantity=0;
         const product = await prismaClient.products.create({
             data: {
@@ -33,6 +33,8 @@ export const POST=async(req: NextRequest,res:Response)=> {
             },
             
         });
+        
+        console.log("API is working",product);
         
         return new Response(JSON.stringify(product), {
           status: 201,

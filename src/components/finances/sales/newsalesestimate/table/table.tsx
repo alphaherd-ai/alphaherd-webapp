@@ -354,45 +354,43 @@ const togglePopup = () => {
 
 
 const customStyles = {
-    control: (provided:any, state:any) => ({
+    control: (provided: any, state: any) => ({
       ...provided,
-      height: '2.8rem', 
-      minHeight: '2.8rem' ,
-      width: '22rem',
-      maxWidth: '22rem', 
-      borderColor: state.isFocused ? '#35BEB1' : '#C4C4C4', 
-        '&:hover': {
-        borderColor: state.isFocused ? '#35BEB1' : '#C4C4C4', 
+      width: '100%',
+      maxWidth: '100%',
+      border: state.isFocused ? '1px solid #35BEB1' : 'none',
+      '&:hover': {
+        borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
         },
-        boxShadow: state.isFocused ? 'none' : 'none',
+      boxShadow: state.isFocused ? 'none' : 'none',
     }),
-    valueContainer: (provided:any) => ({
+    valueContainer: (provided: any) => ({
       ...provided,
-      height: '2.8rem', 
-      width: '22rem',
-      maxWidth: '22rem', 
+      width: '100%',
+      maxWidth: '100%',
     }),
-    singleValue: (provided:any) => ({
+    singleValue: (provided: any, state: any) => ({
       ...provided,
-      width: '22rem',
-      maxWidth: '22rem', 
+      width: '100%',
+      maxWidth: '100%',
+      color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
     }),
-    menu: (provided:any) => ({
-        ...provided,
-        backgroundColor: 'white',
-        width: '22rem',
-        maxWidth: '22rem', 
-      }),
-      option: (provided:any, state:any) => ({
-        ...provided,
-        backgroundColor: state.isFocused ? '#35BEB1' : 'white', 
-        color: state.isFocused ? 'white' : '#6B7E7D',
-        '&:hover': {
-          backgroundColor: '#35BEB1', 
-        }
-      }),
-      menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
-      
+    menu: (provided: any) => ({
+      ...provided,
+      backgroundColor: 'white',
+      width: '100%',
+      maxWidth: '100%',
+    }),
+    option: (provided: any, state: any) => ({
+      ...provided,
+      backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+      color: state.isFocused ? 'white' : '#6B7E7D',
+      '&:hover': {
+        backgroundColor: '#35BEB1',
+        color: 'white',
+      },
+    }),
+    menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
   };
 
     return (
@@ -482,18 +480,19 @@ const customStyles = {
                     onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
                     styles={customStyles}
                 />
-                <div className="text-neutral-400 text-[13px] font-medium px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
-            </div>
+                    {item.expiry && formatDateAndTime(item.expiry).formattedDate && (
+                        <div className="text-textGrey2 text-[13px] font-medium  px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
+                    )}            </div>
             <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-5'>
-                {item.sellingPrice}
-                <Select
+            ₹{item.sellingPrice || 0}
+                {/* <Select
                     className="text-neutral-400 text-sm font-medium"
                     defaultValue={taxOptions[0]}
                     isClearable={false}
                     isSearchable={true}
                     options={taxOptions}
                     styles={customStyles}
-                />
+                /> */}
             </div>
             {!isChecked && (
                 <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
@@ -575,7 +574,7 @@ const customStyles = {
                                             }}
                                             onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
                                         />):( */}
-                                           { item.gst * 100} %
+                                           { item.gst * 100 || 0} %
                                         {/* )} */}
                                     </div>
             <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
@@ -776,4 +775,3 @@ const customStyles = {
 }
 
 export default NewsaleEstimateTable;
-

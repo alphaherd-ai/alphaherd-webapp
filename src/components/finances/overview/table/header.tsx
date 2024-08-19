@@ -8,6 +8,9 @@ import Download from '../../../../assets/icons/finance/download.svg';
 import DownArrow from '../../../../assets/icons/finance/downArrow.svg';
 import Invoice from '../../../../assets/icons/finance/invoice.svg';
 import Return from '../../../../assets/icons/finance/Return.svg';
+import Estimate from "../../../../assets/icons/finance/list_alt.svg"
+import Expense from "../../../../assets/icons/finance/request_quote.svg"
+import Payments from "../../../../assets/icons/finance/Cash.svg"
 import Image from 'next/image';
 import Link from 'next/link';
 import useSWR from 'swr';
@@ -19,6 +22,7 @@ import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 import FilterDropdwonCard from './FilterDropdowmCard';
 import DownloadPopup from './downloadTimeline';
+import { useSearchParams } from 'next/navigation';
 
 
 
@@ -50,8 +54,21 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
                         <div  className='flex items-center justify-center w-7 h-7 border border-solid border-gray-300 border-0.5 rounded-md  p-1'><Image src={Chart} alt='Chart' className='w-4  h-4' /></div>
                     </Link>
                     <div className='flex items-center justify-center h-7   mr-4 border border-solid border-gray-300 border-0.5 rounded-lg p-2'>
-                        <div className='flex '><Image src={Sort} alt='Sort' className='w-3 h-3 mr-2' /></div>
-
+                        <div className='flex '><Image src={Sort} alt='Sort' className='w-4 h-3' /></div>
+                        <Popover>
+                            <PopoverTrigger>
+                                <Button
+                                    variant="solid"
+                                    className="capitalize border-none bg-transparent rounded-lg"
+                                >
+                                   <span className='text-textGrey2 text-sm font-medium'> Sort:Recent</span>
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent>
+                                 {/* <FilterDropdwonCard /> */}
+                                Soon
+                            </PopoverContent>
+                        </Popover>
                         {/* <Dropdown>
                             <DropdownTrigger>
                                 <Button
@@ -82,7 +99,7 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
                         </Dropdown> */}
                     </div>
                     <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg '>
-                        <div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>
+                        <div className='flex '><Image src={Filter} alt='Filter' className='w-4 h-4' /></div>
 
                         <Popover>
                             <PopoverTrigger>
@@ -90,7 +107,7 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
                                     variant="solid"
                                     className="capitalize border-none bg-transparent rounded-lg"
                                 >
-                                    Filter
+                                   <span className='text-textGrey2 text-sm font-medium'> Filter By</span>
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent>
@@ -104,7 +121,7 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
                             <PopoverTrigger>
                                 <Button 
                                     variant="solid"
-                                    className="capitalize flex border-none bg-black text-white rounded-lg px-4 py-3">  Add
+                                    className="capitalize flex border-none bg-black text-white rounded-lg  py-2 cursor-pointer">  Create
                                     <div className='flex pl-2'><Image src={DownArrow} alt='DownArrow' className='w-4 h-4 ' /></div></Button>
                             </PopoverTrigger>
                             <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
@@ -114,7 +131,7 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
                                     <Link className='no-underline flex item-center' href='/finance/overview'>
 
                                     <div className='text-base p-4  pl-0 text-white flex '>
-                                    <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Inverse</div>
+                                    <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Invoice</div>
                                     </Link>
                                     <Link className='no-underline flex item-center' href='/finance/overview'>
                                     <div className='text-base p-4 pl-0  text-white flex '>
@@ -122,7 +139,7 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
                                     </Link>
                                     <Link className='no-underline flex item-center' href='/finance/overview'>
                                     <div className='text-base p-4  pl-0 text-white flex '>
-                                    <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Estimate</div>
+                                    <div className='flex pr-2'><Image src={Estimate} alt='Return' className='w-5 h-5 ' /></div>Estimate</div>
                                     </Link>
                                 
                                     </div>
@@ -137,11 +154,11 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
                                     </Link>
                                     <Link className='no-underline flex item-center' href='/finance/overview'>
                                     <div className='text-base p-4  text-white flex '>
-                                    <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Purchase Invoices (GRN)</div>
+                                    <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Purchase Invoice (GRN)</div>
                                     </Link>
                                     <Link className='no-underline flex item-center' href='/finance/overview'>
                                     <div className='text-base p-4  text-white flex '>
-                                    <div className='flex pr-2'><Image src={Return} alt='Return' className='w-5 h-5 ' /></div>Purchase Return</div>
+                                    <div className='flex pr-2'><Image src={Estimate} alt='Return' className='w-5 h-5 ' /></div>Purchase Return</div>
                                     </Link>
                                   
                                     </div>
@@ -153,7 +170,7 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
                                   
                                     <Link className='no-underline flex item-center' href='/finance/overview'>
                                     <div className='text-base p-4   text-white flex '>
-                                    <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Record Expense</div>
+                                    <div className='flex pr-2'><Image src={Expense} alt='Invoice' className='w-5 h-5 ' /></div>Record Expense</div>
                                     </Link>
                                     </div>
                                     </div>
@@ -163,7 +180,7 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
                                     <Link className='no-underline flex item-center' href='/finance/overview'>
 
                                     <div className='text-base p-4   text-white flex '>
-                                    <div className='flex pr-2'><Image src={Invoice} alt='Invoice' className='w-5 h-5 ' /></div>Record Transcations</div>
+                                    <div className='flex pr-2'><Image src={Payments} alt='Invoice' className='w-5 h-5 ' /></div>Record Payment</div>
                                     </Link></div>
                                    
                                     </div>

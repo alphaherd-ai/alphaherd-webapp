@@ -459,6 +459,11 @@ model Items {
   @@index([salesId, purchasesId, expensesId, financeSectionId])
 }
 
+model PaymentMethod {
+  id   Int    @id @default(autoincrement())
+  name String?
+}
+
 model InventoryTimeline {
   id                 Int               @id @default(autoincrement())
   productId          Int?
