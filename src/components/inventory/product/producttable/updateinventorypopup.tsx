@@ -111,7 +111,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
             },
             label:product.batchNumber
         }));
-        console.log(formattedProductBatches)
+        console.log("lajsdlfjlkj",formattedProductBatches)
         setBatches(formattedProductBatches)
     }
     },[fetchedProducts,fetchedBathces,batchError,error,isBatchLoading,isLoading])
@@ -241,7 +241,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
                     distributors: data?.value?.category,
                     providers: data?.value?.distributors,
                     maxRetailPrice:data?.value?.maxRetailPrice,
-                    productId:data?.value?.productId
+                    productId:data?.value?.productId,
                 };
                 setInventory(updatedInventory);
                 // if (selectedOption === Stock.StockOUT) {
@@ -256,7 +256,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
     const handleUpdateInventory = useCallback(async () => {
         try {
             for (const item of inventory) {
-                const { id, date, quantity, batchNumber, distributors,productId,maxRetailPrice} = item;
+                const { id, date, quantity, batchNumber, distributors,productId,maxRetailPrice, isApproved} = item;
                 const invoiceType="Manual";
                 let {expiry,costPrice,sellingPrice}=item;
                 console.log("here is the product",productId)
@@ -282,23 +282,43 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
                     sellingPrice,
                     distributors,
                     productId,
+                    isApproved:appState.isCurrentOrgAdmin?true:false
                 };
 
                 if(selectedOption===Stock.StockOUT){
-                    const responsePromise =  axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${id}?branchId=${appState.currentBranchId}`, body);
-                    const notifData={
-                        totalItems:body.quantity,
-                        source:Notif_Source.Inventory_Timeline_Removed,
-                        url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/timeline`,
-                        orgId:appState.currentOrgId
+                    if(appState.isCurrentOrgAdmin){
+                        const responsePromise =  axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${id}?branchId=${appState.currentBranchId}`, body);
+                        const notifData={
+                            totalItems:body.quantity,
+                            source:Notif_Source.Inventory_Timeline_Removed,
+                            url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/timeline`,
+                            orgId:appState.currentOrgId
+                        }
+                        const notifPromise= axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`,notifData)
+                        setTimeout(()=>{
+                            onClose();
+                        },2000)
+                       const [response,notif]= await Promise.all([responsePromise,notifPromise]);
+                        
+                        console.log('Updated inventory item:', response.data);
                     }
-                    const notifPromise= axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`,notifData)
-                    setTimeout(()=>{
-                        onClose();
-                    },2000)
-                   const [response,notif]= await Promise.all([responsePromise,notifPromise]);
-                    
-                    console.log('Updated inventory item:', response.data);
+                    else {
+                        const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${id}?branchId=${appState.currentBranchId}`, body);
+                        console.log("here's the response", response);
+                        const notifData={
+                            source:Notif_Source.Inventory_Update_Approval_Request,
+                            orgId:appState.currentOrgId,
+                            data:{
+                             branchId:response.data.productBatch.id,
+                             productId:response.data.product.id,
+                             inventoryId:response.data.inventory.id
+                            }
+                        }
+                        const notif= await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`,notifData)
+                      
+                        console.log('Updated inventory item:', response.data);
+                    }
+                   
                 }else if(selectedOption===Stock.StockIN){
                     console.log("saving new batch")
                     const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/create?branchId=${appState.currentBranchId}`,body);

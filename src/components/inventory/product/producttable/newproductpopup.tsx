@@ -177,6 +177,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                 description: formData.description,
                 minStock: parseInt(formData.minStock),
                 maxStock: parseInt(formData.maxStock),
+                isApproved:appState.isCurrentOrgAdmin?true:false
             }),
             });
     

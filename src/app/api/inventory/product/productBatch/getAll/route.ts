@@ -11,7 +11,9 @@ export  const GET=async (req: NextRequest )=> {
         
         const inventoryId=await fetchInventoryId(req);
         const productBatches = await prismaClient.productBatch.findMany({
-            where:{inventorySectionId:inventoryId},
+            where:{inventorySectionId:inventoryId,
+            isApproved:true
+            },
             include:{
                 product:true
             },

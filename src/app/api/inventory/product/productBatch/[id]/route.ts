@@ -15,7 +15,7 @@ export const GET=async (req: NextRequest,
             const inventoryId=await fetchInventoryId(req);
             
            const productBatch= await prismaClient.productBatch.findUnique({
-                where: { id: Number(params.id),inventorySectionId:inventoryId },
+                where: { id: Number(params.id),inventorySectionId:inventoryId, isApproved:true },
             });    
             return new Response(JSON.stringify(productBatch), {
                 status: 201,
@@ -39,9 +39,9 @@ export const PUT=async (req: NextRequest,
         try {
             
             const inventoryId=await fetchInventoryId(req);
-            const { productId,stockStatus,invoiceType,...body}=await req.json();
+            const { isApproved,productId,stockStatus,invoiceType,...body}=await req.json();
             const data={stockStatus,productId,invoiceType,...body};
-            const validatedData = ProductBatchSchema.safeParse(data);
+            // const validatedData = ProductBatchSchema.safeParse(data);
       
             // if (!validatedData.success) {
             //   return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
@@ -56,14 +56,16 @@ export const PUT=async (req: NextRequest,
                 data:{
                     totalQuantity:{
                         decrement:body.quantity
-                    }
+                    },
+                    isApproved:isApproved
                 }
             })
             const updateItem = await prismaClient.productBatch.update({
                 where: { id: Number(params.id),inventorySectionId:inventoryId },
                 data: {
                     ...body,
-                    quantity:Math.abs((productBatch?.quantity || 0) - (body.quantity || 0))
+                    quantity:Math.abs((productBatch?.quantity || 0) - (body.quantity || 0)),
+                    isApproved:isApproved
                 }
             });
         
@@ -74,6 +76,7 @@ export const PUT=async (req: NextRequest,
                     invoiceType:invoiceType,
                     quantityChange:body.quantity,
                     inventoryType:Inventory.Product,
+                    isApproved:isApproved,
                     productBatch:{
                      connect:{
                         id:Number(params.id)
@@ -86,7 +89,7 @@ export const PUT=async (req: NextRequest,
                     }
                 }
             });
-            return new Response(JSON.stringify({ inventory }), {
+            return new Response(JSON.stringify({ inventory,product,productBatch }), {
                 status: 201,
                 headers: {
                     'Content-Type': 'application/json',

@@ -15,7 +15,8 @@ export const POST=async(req: NextRequest,res:Response)=> {
             message:message,
             source:body.source,
             url:body.url,
-            orgId:body.orgId
+            orgId:body.orgId,
+            data:body.data
         }
       })
         

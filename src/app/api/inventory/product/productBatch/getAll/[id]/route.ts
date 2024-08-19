@@ -12,7 +12,9 @@ export  const GET=async (req: NextRequest,
         
         const inventoryId= await fetchInventoryId(req);
         const products = await prismaClient.productBatch.findMany({
-          where:{productId:Number(params.id),inventorySectionId:inventoryId},
+          where:{productId:Number(params.id),inventorySectionId:inventoryId,
+          isApproved:true
+          },
           orderBy:[{
             id:'asc'
           }],
