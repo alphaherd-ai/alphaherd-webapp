@@ -20,6 +20,7 @@ enum Notif_Source {
   Inventory_Product_Remain
   Inventory_Product_Expiry
   Inventory_Product_MaxStock
+  Inventory_Update_Approval_Request
   Inventory_ProductBatch
   Sales_Invoice
   Expense_Invoice
@@ -142,6 +143,7 @@ model Notifications {
   orgId     Int?
   url       String?
   message   String?
+  data      Json?
   source    Notif_Source
   isRead    Boolean      @default(false)
   createdAt DateTime?    @default(now())
@@ -263,6 +265,7 @@ model Products {
   totalQuantity      Int?
   minStock           Int?
   maxStock           Int?
+  isApproved         Boolean?       @default(false)
   productBatches     ProductBatch[]
   items              Items[]
   InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
@@ -287,6 +290,7 @@ model ProductBatch {
   sellingPrice       Int?
   date               DateTime?
   balanceDue         Boolean?
+  isApproved         Boolean?          @default(false)
   items              Items[]
   product            Products            @relation(fields: [productId], references: [id])
   inventoryTimeline  InventoryTimeline[] // Add the opposite relation
@@ -455,8 +459,8 @@ model Items {
   @@index([salesId, purchasesId, expensesId, financeSectionId])
 }
 
-model PaymentMethod {
-  id   Int    @id @default(autoincrement())
+model PaymentMethod{
+  id Int @id @default(autoincrement())
   name String?
 }
 
@@ -470,6 +474,7 @@ model InventoryTimeline {
   quantityChange     Int?
   receiptNo          Int?
   party              String?
+  isApproved         Boolean?          @default(false)
   createdAt          DateTime?         @default(now())
   productBatch       ProductBatch?     @relation(fields: [productId], references: [id])
   service            Services?         @relation(fields: [serviceId], references: [id])

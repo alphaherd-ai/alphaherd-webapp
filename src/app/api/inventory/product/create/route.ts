@@ -11,8 +11,8 @@ export const POST=async(req: NextRequest,res:Response)=> {
     try {
      
       const inventoryId = await fetchInventoryId(req);
-      const body = await req.json();
-      // const validatedData = productSchema.safeParse(body);
+      const {isApproved,...body} = await req.json();
+      const validatedData = productSchema.safeParse(body);
 
       // if (!validatedData.success) {
       //   return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
@@ -24,6 +24,7 @@ export const POST=async(req: NextRequest,res:Response)=> {
         const product = await prismaClient.products.create({
             data: {
               ...body,
+              isApproved:isApproved,
             InventorySection:{
               connect:{
                 id:inventoryId

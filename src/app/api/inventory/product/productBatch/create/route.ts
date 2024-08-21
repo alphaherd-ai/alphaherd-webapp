@@ -11,9 +11,9 @@ export const POST = async (req: NextRequest) => {
   }
 
   try {
-    const { stockStatus, productId, invoiceType, ...body } = await req.json();
+    const { isApproved,stockStatus, productId, invoiceType, ...body } = await req.json();
     const data = { stockStatus, productId, invoiceType, ...body };
-    const validatedData = ProductBatchSchema.safeParse(data);
+    // const validatedData = ProductBatchSchema.safeParse(data);
 
     // if (!validatedData.success) {
     //   return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
@@ -27,7 +27,8 @@ export const POST = async (req: NextRequest) => {
     const result = await prismaClient.$transaction(async (prisma) => {
       const product = prisma.products.update({
         where: { id: productId, inventorySectionId: inventoryId },
-        data: { totalQuantity: { increment: quantity } },
+        data: { totalQuantity: { increment: quantity },
+      },
       });
 
       const productBatch = prisma.productBatch.create({
@@ -35,6 +36,7 @@ export const POST = async (req: NextRequest) => {
           ...body,
           productId,
           inventorySectionId: inventoryId,
+          isApproved:isApproved
         },
       });
 
@@ -45,6 +47,7 @@ export const POST = async (req: NextRequest) => {
           quantityChange: quantity,
           inventoryType: Inventory.Product,
           inventorySectionId: inventoryId,
+          isApproved:isApproved
         },
       });
 
@@ -58,6 +61,7 @@ export const POST = async (req: NextRequest) => {
               id: createdProductBatch.id,
             },
           },
+          isApproved:isApproved
         },
       });
 

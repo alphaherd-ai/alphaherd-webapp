@@ -25,5 +25,8 @@ export function notifications(data: any) {
     if(data.source===Notif_Source.Inventory_ProductBatch){
         return `Batch ${data.batchNumber} under ${data.productName} has reached expiry. Evaluate your current inventory needs and consider adjusting levels accordingly.`
     }
+    if(data.source ===Notif_Source.Inventory_Update_Approval_Request){
+        return `User is trying to update stocks.Approve or Deny.`
+    }
   }
   
