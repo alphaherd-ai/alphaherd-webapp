@@ -26,8 +26,8 @@ const NotificationList =  ({ notifs, isLoading }) => {
 
   const readNotifs = axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/updateAll?orgId=${appState.currentOrgId}`);
 
-  const handleAction = (notifId: number, action: string) => {
-    
+  const handleAction = (notifId: number, action: string,notifData:any) => {
+    const acceptRequest= axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${notifData.productBatchId}?branchId=${appState.currentBranchId}`, {isApproved:true});
     console.log(`Notification ID: ${notifId}, Action: ${action}`);
 
   };
@@ -57,13 +57,13 @@ const NotificationList =  ({ notifs, isLoading }) => {
                 </div>
                 <div className="flex gap-2 mt-2">
                   <button
-                    onClick={() => handleAction(notif.id, "accept")}
+                    onClick={() => handleAction(notif.id, "accept",notif.data)}
                     className="px-4 py-2 bg-green-600 text-white rounded-md"
                   >
                     Accept
                   </button>
                   <button
-                    onClick={() => handleAction(notif.id, "deny")}
+                    onClick={() => handleAction(notif.id, "deny",notif.data)}
                     className="px-4 py-2 bg-red-600 text-white rounded-md"
                   >
                     Deny

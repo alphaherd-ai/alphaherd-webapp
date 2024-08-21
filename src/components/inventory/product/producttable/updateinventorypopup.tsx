@@ -308,15 +308,17 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
                         console.log('Updated inventory item:', response.data);
                     }
                     else {
-                        const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${id}?branchId=${appState.currentBranchId}`, body);
+                        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/create?branchId=${appState.currentBranchId}`,body);
                         console.log("here's the response", response);
                         const notifData={
                             source:Notif_Source.Inventory_Update_Approval_Request,
                             orgId:appState.currentOrgId,
                             data:{
-                             branchId:response.data.productBatch.id,
-                             productId:response.data.product.id,
-                             inventoryId:response.data.inventory.id
+                             newBatchId:response.data.productBatch.id,
+                             oldBatchId:id,
+                             productId:response.data.productBatch.productId,
+                             inventoryId:response.data.inventory.id,
+                             branchId:appState.currentBranchId
                             }
                         }
                         const notif= await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`,notifData)

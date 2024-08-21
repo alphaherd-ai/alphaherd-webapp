@@ -233,7 +233,7 @@ console.log(items)
                     </div>
                         <ExistingsalesReturnTotalAmout otherData={otherData}/>
                 </div>
-                <ExistingsalesReturnBottomBar />
+                <ExistingsalesReturnBottomBar existingSalesData={data} />
             </div>
 
 

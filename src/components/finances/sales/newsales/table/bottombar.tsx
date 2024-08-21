@@ -139,21 +139,21 @@ const NewsalesBottomBar = ({estimateData}:any) => {
 
         }
 
-      const pdfUrl=await generatePdfForInvoiceAndUpload(data, appState, items);
-      console.log("this is pdfUrl",pdfUrl)
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/sms`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            phone: "+919336402936",
-            url:pdfUrl
+    //   const pdfUrl=await generatePdfForInvoiceAndUpload(data, appState, items);
+    //   console.log("this is pdfUrl",pdfUrl)
+    //   const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/sms`, {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({
+    //         phone: "+919336402936",
+    //         url:pdfUrl
 
-        }),
-    });
-    console.log('SMS sent successfully:', response);
-
+    //     }),
+    // });
+    // console.log('SMS sent successfully:', response);
+    generatePdfForInvoice(data, appState, items);
     };
 
     const sendSMS = async () => {

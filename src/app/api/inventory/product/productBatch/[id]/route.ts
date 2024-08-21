@@ -57,7 +57,6 @@ export const PUT=async (req: NextRequest,
                     totalQuantity:{
                         decrement:body.quantity
                     },
-                    isApproved:isApproved
                 }
             })
             const updateItem = await prismaClient.productBatch.update({

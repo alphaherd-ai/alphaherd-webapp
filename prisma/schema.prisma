@@ -143,7 +143,7 @@ model Notifications {
   orgId     Int?
   url       String?
   message   String?
-  data      String[]
+  data      Json?
   source    Notif_Source
   isRead    Boolean      @default(false)
   createdAt DateTime?    @default(now())
@@ -457,11 +457,6 @@ model Items {
   financeSectionId Int?
 
   @@index([salesId, purchasesId, expensesId, financeSectionId])
-}
-
-model PaymentMethod {
-  id   Int    @id @default(autoincrement())
-  name String?
 }
 
 model InventoryTimeline {

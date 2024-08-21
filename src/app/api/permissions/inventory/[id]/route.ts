@@ -44,34 +44,36 @@ export const PUT=async (req: NextRequest,
             // const inventoryId = await fetchInventoryId(req);
             
             const { stockStatus,invoiceType,...body}=await req.json();
-            
-            await prismaClient.inventoryTimeline.update({
-                where:{
-                    id:body.inventoryId
-                },
-                data:{
-                    isApproved:true
-                }
+            const result= await prismaClient.$transaction(async (prisma)=>{
+                const inventoryPromise= prisma.inventoryTimeline.update({
+                    where:{
+                        id:body.inventoryId
+                    },
+                    data:{
+                        isApproved:true
+                    }
+                });
+                 const productPromise=prisma.products.update({
+                    where:{
+                        id:body.productId
+                    },
+                    data:{
+                        isApproved:true
+                    }
+                });
+                const productBatchPromise= prisma.productBatch.update({
+                    where:{
+                        id:body.productBatchId
+                    },
+                    data:{
+                        isApproved:true
+                    }
+                })
+                const [product,inventory,productBatch]= await Promise.all([productPromise,inventoryPromise,productBatchPromise]);
+               return {product,productBatch,inventory};
             });
-            await prismaClient.products.update({
-                where:{
-                    id:body.productId
-                },
-                data:{
-                    isApproved:true
-                }
-            });
-            await prismaClient.productBatch.update({
-                where:{
-                    id:body.productBatchId
-                },
-                data:{
-                    isApproved:true
-                }
-            })
            
-          
-            return new Response("Approved", {
+            return new Response(JSON.stringify(result), {
                 status: 201,
                 headers: {
                     'Content-Type': 'application/json',

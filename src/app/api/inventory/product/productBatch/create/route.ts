@@ -28,7 +28,6 @@ export const POST = async (req: NextRequest) => {
       const product = prisma.products.update({
         where: { id: productId, inventorySectionId: inventoryId },
         data: { totalQuantity: { increment: quantity },
-      isApproved:isApproved
       },
       });
 
