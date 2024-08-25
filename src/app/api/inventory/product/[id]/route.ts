@@ -14,7 +14,7 @@ export const GET=async (req: NextRequest,
             const inventoryId = await fetchInventoryId(req);
             
            const product= await prisma.products.findUnique({
-                where: { id: Number(Number(params.id)),inventorySectionId:inventoryId},
+                where: { id: Number(Number(params.id)),inventorySectionId:inventoryId,isApproved:true},
                 include:{
                     productBatches:true
                 }

@@ -16,6 +16,7 @@ import { getTime } from "date-fns"
 import { Button } from "@nextui-org/react"
 import formatDateAndTime from "@/utils/formateDateTime"
 import { generatePdfForInvoice } from "@/utils/salesPdf"
+import { generatePdfForInvoiceAndUpload } from "@/utils/uploadPdf"
 import { useRouter } from "next/navigation"
 import { create } from "domain"
 
@@ -138,8 +139,21 @@ const NewsalesBottomBar = ({estimateData}:any) => {
 
         }
 
-        generatePdfForInvoice(data, appState, items);
+    //   const pdfUrl=await generatePdfForInvoiceAndUpload(data, appState, items);
+    //   console.log("this is pdfUrl",pdfUrl)
+    //   const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/sms`, {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({
+    //         phone: "+919336402936",
+    //         url:pdfUrl
 
+    //     }),
+    // });
+    // console.log('SMS sent successfully:', response);
+    generatePdfForInvoice(data, appState, items);
     };
 
     const sendSMS = async () => {

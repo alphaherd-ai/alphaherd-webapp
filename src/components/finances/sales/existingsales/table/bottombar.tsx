@@ -15,10 +15,31 @@ import { FinanceCreationType, Notif_Source } from "@prisma/client"
 import {useRouter} from "next/navigation"
 import { useAppSelector } from "@/lib/hooks"
 import axios from "axios"
+import { generatePdfForInvoice } from "@/utils/salesPdf"
 
 
 const ExistingsalesBottomBar = ({existingSalesData}:any) => {
-  
+    const appState = useAppSelector((state) => state.app);
+    const downloadPdf = async () => {
+    // const allData = existingSalesData;
+        const data = existingSalesData;
+
+    //   const pdfUrl=await generatePdfForInvoiceAndUpload(data, appState, items);
+    //   console.log("this is pdfUrl",pdfUrl)
+    //   const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/sms`, {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({
+    //         phone: "+919336402936",
+    //         url:pdfUrl
+
+    //     }),
+    // });
+    // console.log('SMS sent successfully:', response);
+    generatePdfForInvoice(data, appState, existingSalesData.items);
+    };
 
 //  console.log("This is existing",existingSalesData)
 //  const appState = useAppSelector((state) => state.app);
@@ -82,7 +103,7 @@ const ExistingsalesBottomBar = ({existingSalesData}:any) => {
                                     <Image src={printicon} alt="print"></Image>
                                     <div>Print</div>
                                 </div>
-                                <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
+                                <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer" onClick={downloadPdf}>
                                     <Image src={downloadicon} alt="download"></Image>
                                     <div>Download</div>
                                 </div>

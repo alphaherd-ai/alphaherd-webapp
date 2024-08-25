@@ -10,10 +10,17 @@ import Newsales from '@/app/finance/sales/newsales/page'
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@mui/material"
+import { generatePdfForInvoice } from "@/utils/salesPdf"
+import { useAppSelector } from "@/lib/hooks"
 
 
 const ExistingsaleEstimateBottomBar = ({existingSalesData}: any) => {
-  
+    const appState = useAppSelector((state) => state.app);
+    const downloadPdf = async () => {
+    // const allData = existingSalesData;
+        const data = existingSalesData;
+    generatePdfForInvoice(data, appState, existingSalesData.items);
+    };
     const sendSMS = async () => {
         try {   
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/sms`, {
@@ -78,7 +85,7 @@ const ExistingsaleEstimateBottomBar = ({existingSalesData}: any) => {
                                     <Image src={printicon} alt="print"></Image>
                                     <div>Print</div>
                                 </div>
-                                <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
+                                <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer" onClick={downloadPdf}>
                                     <Image src={downloadicon} alt="download"></Image>
                                     <div>Download</div>
                                 </div>
