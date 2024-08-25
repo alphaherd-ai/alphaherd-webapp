@@ -13,6 +13,7 @@ import { useAppSelector } from '@/lib/hooks';
 import formatDateAndTime from '@/utils/formateDateTime';
 import useSWR from 'swr';
 import Loading from '@/app/loading';
+import Loading2 from '@/app/loading2';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
@@ -80,10 +81,6 @@ const ExistingsaleEstimateTable = () => {
     }, [disableButton]);
 
 
-
-
-    if(isLoading) return (<Loading/>)
-
     return (
         <>  
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100  rounded-lg border border-solid border-borderGrey">
@@ -91,7 +88,7 @@ const ExistingsaleEstimateTable = () => {
 
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px]">
-                    <ExistingsaleEstimateHeader otherData={otherData}/>
+                    <ExistingsaleEstimateHeader otherData={otherData} isLoading={isLoading}/>
 
                     <div className="w-full rounded-md border border-solid border-borderGrey">
                     <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
@@ -120,7 +117,7 @@ const ExistingsaleEstimateTable = () => {
                                 <div className=' flex text-gray-500 text-base font-medium  w-[10rem] '>Tax Amt.</div>
                                 <div className=' flex text-gray-500 text-base font-medium w-1/12 '>Total</div>
                             </div>
-                            {items.map((item,index) => (
+                            {!isLoading ?  items.map((item,index) => (
                             <div key={item.id} className="flex flex-col">
                                 <div  className='flex justify-evenly items-center w-full  box-border  bg-white  border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-400   '>
                                     <div className='w-[3rem] flex items-center text-textGrey2 text-base font-medium '>{index+1}</div>
@@ -212,7 +209,9 @@ const ExistingsaleEstimateTable = () => {
 
                                     </div>
                                 </div>
-                            ))}
+                            )) : 
+                            <div className='h-[10rem] w-full'><Loading2 /></div>
+                            }
                             <div className='flex  w-full justify-evenly items-center box-border bg-gray-100  h-12  border-b border-neutral-400 text-gray-500 rounded-b-md'>
                                 <div className=' flex text-gray-500 text-base font-medium  w-[3rem]'> </div>
                                 <div className=' flex text-gray-500 text-base font-medium  w-[15rem]'>Total</div>

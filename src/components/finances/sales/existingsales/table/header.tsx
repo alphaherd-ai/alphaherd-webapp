@@ -6,8 +6,9 @@
 import React, { useState, useEffect } from 'react';
 import { useRef } from "react"
 import formatDateAndTime from "@/utils/formateDateTime";
+import Loading2 from '@/app/loading2';
 
-const ExistingsalesHeader = ({otherData}:any) => {
+const ExistingsalesHeader = ({otherData, isLoading}:any) => {
 
 
 
@@ -36,9 +37,7 @@ const ExistingsalesHeader = ({otherData}:any) => {
                 <div className="px-6  bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold ">Client:</div>
-                        <div
-                                className={`text-gray-500 text-base font-medium  border-0 bg-inherit`}
-                                > {otherData.customer} </div>
+                        <div className={`text-gray-500 text-base font-medium  border-0 bg-inherit`}>{!isLoading ? otherData.customer : <Loading2 />} </div>
 
                     </div>
                 </div>
@@ -48,7 +47,7 @@ const ExistingsalesHeader = ({otherData}:any) => {
                         <div className="flex items-center justify-between w-9/12">
                             <div
                                 className={`text-gray-500 text-base font-medium  border-0 bg-inherit`}
-                                > {otherData.invoiceNo} </div>
+                                > {!isLoading ? otherData.invoiceNo : <Loading2 />} </div>
                             
                         </div>
                     </div>
@@ -60,7 +59,7 @@ const ExistingsalesHeader = ({otherData}:any) => {
                         <div className="text-gray-500 text-base font-bold  w-1/8">Date:</div>
                         <div
                             className={"text-gray-500 text-base font-medium  w-full"}>
-                            {formatDateAndTime(otherData.date).formattedDate}
+                            {!isLoading ? formatDateAndTime(otherData.date).formattedDate : <Loading2 />}
                         </div>
                     </div>
                 </div>
@@ -69,7 +68,7 @@ const ExistingsalesHeader = ({otherData}:any) => {
                         <div className="text-gray-500 text-base font-bold  w-2/12">Due Date:</div>
                         <div
                             className={"text-gray-500 text-base font-medium  w-full"}>
-                             {formatDateAndTime(otherData.dueDate).formattedDate}
+                             {!isLoading ? formatDateAndTime(otherData.dueDate).formattedDate : <Loading2 />}
                         </div>
                     </div>
                 </div>
@@ -78,7 +77,8 @@ const ExistingsalesHeader = ({otherData}:any) => {
                 <div className="px-6 py-4  bg-white rounded-[10px] justify-between items-center gap-4 flex w-full ">
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold ">Notes:</div>
-                        <input type="text" className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0 outline-none" defaultValue={otherData.notes} disabled/>
+                        {/* <input type="text" className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0 outline-none" defaultValue={otherData.notes} disabled/> */}
+                        <div className='w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0 outline-none'>{!isLoading ? otherData.notes : <Loading2 />}</div>
                     </div>
                 </div>
             </div>

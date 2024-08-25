@@ -6,10 +6,10 @@ const TransactionsBlanceSheetCardItemSales = () => {
   console.log(transactionAmount)
 
   const totalMoneyIn = transactionAmount
-    .filter((transaction:any) => transaction.mode === "Card" && transaction.invoiceLink?.startsWith('SI'))
+    .filter((transaction:any) => transaction.mode === "Card" && transaction.invoiceLink?.startsWith('S'))
     .reduce((a:any, b:any) => (b.moneyChange === "In" ? a + b.amountPaid : a), 0);
   const totalMoneyOut = transactionAmount
-    .filter((transaction:any) => transaction.mode === "Card" && transaction.invoiceLink?.startsWith('SI'))
+    .filter((transaction:any) => transaction.mode === "Card" && transaction.invoiceLink?.startsWith('S'))
     .reduce((a:any, b:any) => (b.moneyChange === "Out" ? a + b.amountPaid : a), 0);
 
     

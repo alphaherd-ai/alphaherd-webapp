@@ -1,21 +1,21 @@
 import React from 'react'
 import {useSelector} from 'react-redux'
-const TransactionsBlanceSheetCashItemSales = () => {
+const TransactionsBlanceSheetCashItemSales = ({mode}:any) => {
 
   const transactionAmount = useSelector((state:any) => state.transactionAmount)
   console.log(transactionAmount)
 
   const totalMoneyIn = transactionAmount
-    .filter((transaction:any) => transaction.mode === "Cash" && transaction.invoiceLink?.startsWith('SI'))
+    .filter((transaction:any) => transaction.mode === mode && transaction.invoiceLink?.startsWith('S'))
     .reduce((a:any, b:any) => (b.moneyChange === "In" ? a + b.amountPaid : a), 0);
   const totalMoneyOut = transactionAmount
-    .filter((transaction:any) => transaction.mode === "Cash" && transaction.invoiceLink?.startsWith('SI'))
+    .filter((transaction:any) => transaction.mode === mode && transaction.invoiceLink?.startsWith('S'))
     .reduce((a:any, b:any) => (b.moneyChange === "Out" ? a + b.amountPaid : a), 0);
 
     
   return (
     
-  <div className='w-full h-auto    flex flex-col gap-2'>
+  <div className='w-full h-auto    flex flex-col gap-2 px-2'>
     <div className='flex justify-between bg-white px-4 py-2  rounded-[5px] items-center w-full h-full'>
       <div className='flex justify-start items-center gap-[212px]'>
           <div className= {`px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 flex`}>

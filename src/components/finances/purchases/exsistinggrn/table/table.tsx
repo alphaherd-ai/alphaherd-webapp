@@ -27,6 +27,7 @@ import { useAppSelector } from '@/lib/hooks';
 import formatDateAndTime from '@/utils/formateDateTime';
 import useSWR from 'swr';
 import Loading from '@/app/loading';
+import Loading2 from "@/app/loading2"
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
@@ -89,21 +90,15 @@ useEffect(() => {
 //     updatedItems.splice(index, 1);
 //     setItems(updatedItems);
 // }, [items]);
-if(isLoading) return (<Loading/>)
 
     return (
         <>
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
             <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-end items-center gap-6 flex">
-                    
-                    
-                    
-
-                    
-                    
+  
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px] overflow-auto max-h-[40rem]">
-                    <ExsistingGrnHeader otherData={otherData}/>
+                    <ExsistingGrnHeader otherData={otherData} isLoading={isLoading}/>
                 <div>
                 <div className="w-full rounded-md border border-solid border-borderGrey">
                     <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
@@ -140,7 +135,7 @@ if(isLoading) return (<Loading/>)
                         
                         </div>
                         
-                        {items.map((item:any,index:number) => (
+                        {!isLoading ? items.map((item:any,index:number) => (
                             <div key={item.id} className='flex justify-evenly items-center w-[180%] box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-gray-200 text-gray-400 h-12'>
                                 <div className=' flex text-textGrey2 text-base font-medium px-[10px] w-[5rem]'>{index+1}.</div>
                                     <div className=' flex text-textGrey2 text-base font-medium w-[18rem] '>
@@ -313,7 +308,9 @@ if(isLoading) return (<Loading/>)
                                     
                                 </div>
                             </div>
-                        ))}
+                        )) : 
+                        <div className='h-[10rem] w-full'><Loading2 /></div>
+                        }
                         
                         <div className='flex  w-[180%] justify-evenly items-center box-border bg-gray-100 h-12 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey py-5  text-textGrey2 '>
                         <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[5rem]'></div>
@@ -358,7 +355,7 @@ if(isLoading) return (<Loading/>)
                 </div>
                 </div>
 
-                <ExsistingGrnTotalAmount otherData={otherData}/>
+                <ExsistingGrnTotalAmount otherData={otherData} isLoading={isLoading}/>
             </div>
             <ExsistingGrnBottomBar existingPurchaseData={data}/>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 import Image from 'next/image';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import RadioButton from "../../../../../assets/icons/finance/radio_button.svg"
 import RadioButtonSelec from "../../../../../assets/icons/finance/radio_button (1).svg"
 import DatePicker from 'react-datepicker';
@@ -23,15 +23,18 @@ type PopupProps = {
     transactionsData: any;
     setTransactionsData: any;
     initialInvoiceNo: any;
+    totalAmount: any;
 }
 
 
-const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, transactionsData, setTransactionsData, initialInvoiceNo}) => {
+const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, transactionsData, setTransactionsData, initialInvoiceNo, totalAmount}) => {
 
     const dispatch = useDispatch();
 
 
-    const [formData, setFormData] = useState<any>({});
+    const [formData, setFormData] = useState<any>({
+        amountPaid: "",
+    });
     const appState = useAppSelector((state) => state.app)
     const [isAdvancePayment, setIsAdvancePayment] = useState(false);
 
@@ -53,7 +56,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
     ]
 
     const [startDate, setStartDate] = useState(new Date());
-    const [transactionType, setTransactionType] = useState<string | null>(null);
+    const [transactionType, setTransactionType] = useState<string | null>("Money In");
 
 
     const handleDateChange = (date:any) => {
@@ -76,8 +79,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
                     partyName: headerdata?.distributor.value,
                     invoiceLink: headerdata.invoiceNo,
                     receiptNo: formData.receiptNo,
-                    date: formData.date,
-                    amountPaid: parseInt(formData.amountPaid, 10),
+                    date: formData.date || new Date(),
+                    amountPaid: parseInt(formData.amountPaid, 10) || totalAmount?.totalCost,
                     mode: formData.mode?.value,
                     moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
                 })
@@ -96,19 +99,28 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
         }
 
         const newTransaction = {
-            amountPaid: parseInt(formData.amountPaid, 10),
-            date: formData.date,
+            amountPaid: parseInt(formData.amountPaid, 10) || totalAmount?.totalCost,
+            date: formData.date || new Date(),
             isAdvancePayment: isAdvancePayment,
             mode: formData.mode?.value,
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
         };
 
-        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: formData.mode?.value, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10 || totalAmount?.totalCost), mode: formData.mode?.value, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
 
         // setTransactionsData([{amountPaid:parseInt(formData.amountPaid, 10), date:formData.date, isAdvancePayment:isAdvancePayment}]);
 
         setTransactionsData((prevTransactions:any) => [...prevTransactions, newTransaction]);
     };
+
+    useEffect(() => {
+        if (totalAmount?.totalCost !== undefined) {
+            setFormData((prevData:any) => ({
+                ...prevData,
+                amountPaid: totalAmount.totalCost,
+            }));
+        }
+    }, [totalAmount]);
 
     const handleChange = (field: string, value: any) => {
         setFormData({ ...formData, [field]: value });
@@ -166,8 +178,16 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
             
             
             <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Amount Paid</span></div>
-                    <div><input className="w-[440px] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="number" name="amountPaid" onChange={(e) => handleChange("amountPaid", e.target.value)} /></div>
+                    <div><span className='text-gray-500 text-base font-medium '>Amount</span></div>
+                    <div>
+                        <input
+                        className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2 outline-none border border-solid border-gray-300 focus:border-teal-500"
+                        type="number"
+                        name="amountPaid"
+                        value={formData.amountPaid}
+                        onChange={(e) => handleChange("amountPaid", e.target.value)}
+                        />
+                    </div>
             </div>
             <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Receipt No.</span></div>
@@ -178,14 +198,14 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
                         <div className='relative'>
                         <DatePicker
                             className="w-[10rem] "
-                            selected={startDate}
+                            selected={startDate || new Date()}
                             onChange={handleDateChange}
                             calendarClassName="react-datepicker-custom"
                             customInput={
                                 <div className='relative'>
                                     <input
                                         className="w-[10rem] border border-solid border-borderGrey h-9 text-textGrey1 text-base font-medium px-2 rounded   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                        value={startDate.toLocaleDateString()}
+                                        value={startDate.toLocaleDateString() || new Date().toLocaleDateString()}
                                         readOnly
                                     />
                                     <Image

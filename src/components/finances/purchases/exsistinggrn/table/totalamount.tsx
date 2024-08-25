@@ -10,8 +10,9 @@ import 'react-datepicker/dist/react-datepicker.css';
 import formatDateAndTime from '@/utils/formateDateTime';
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 import Popup from "./recordExistingGrnTransaction"
+import Loading2 from '@/app/loading2';
 
-const ExsistingGrnTotalAmount = ({otherData}: any) => {
+const ExsistingGrnTotalAmount = ({otherData, isLoading}: any) => {
 
 
     const [showPopup, setShowPopup] = React.useState(false);
@@ -40,7 +41,6 @@ const ExsistingGrnTotalAmount = ({otherData}: any) => {
     const balanceDue = otherData.totalCost - totalPaidAmount + totalAmountPay
 
 
-    console.log(totalPaidAmount)
 
     const [count, setCount] = useState(0);
     const [initialInvoiceNo, setInitialInvoiceNo] = useState('');
@@ -91,6 +91,7 @@ const ExsistingGrnTotalAmount = ({otherData}: any) => {
                     </div>
                     <div className="w-full  bg-white  justify-between items-center  flex">
                         <div className='w-full h-[9.6rem] flex flex-col overflow-auto container'>
+                        {isLoading && <Loading2 />}
                         {otherData && otherData.recordTransaction && otherData.recordTransaction.map((transaction: any, index: any) => (
                             transaction.isAdvancePayment &&
                             (<div key={index} className='w-full px-6 flex border-0 border-b border-solid border-borderGrey'>
@@ -126,7 +127,7 @@ const ExsistingGrnTotalAmount = ({otherData}: any) => {
                     <div className="w-full  px-6 bg-white rounded-bl-md rounded-br-md justify-between items-center flex shadow-top ">
                     <div className="text-gray-500 text-base font-bold  w-1/3 py-4">Balance Due</div>
                         <div className="text-gray-500 text-lg font-medium  w-1/3 py-4 flex  items-center"></div>
-                        <div className="text-gray-500 text-base font-bold  w-1/3 py-4 ">₹{balanceDue < 0 ? -1*(balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2) }
+                        <div className="text-gray-500 text-base font-bold  w-1/3 py-4 ">₹{balanceDue < 0 ? -1*(balanceDue)?.toFixed(2) : (balanceDue || 0)?.toFixed(2) }
                         {balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
                             You owe
                         </span> : balanceDue === 0 ? "" : <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
@@ -143,26 +144,26 @@ const ExsistingGrnTotalAmount = ({otherData}: any) => {
             <div className="w-1/2 h-full  bg-white rounded-[10px]">
                 <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">
                 <div className="text-gray-500 text-base font-bold ">Subtotal</div>
-                                    <div className="text-right text-gray-500 text-base font-bold ">₹{((otherData.totalCost-otherData.shipping-otherData.adjustment)/(1-otherData.overallDiscount))?.toFixed(2)}</div>
+                                    <div className="text-right text-gray-500 text-base font-bold ">₹{((otherData.totalCost-otherData.shipping-otherData.adjustment)/(1-otherData.overallDiscount))?.toFixed(2) || 0}</div>
                                 </div>
                                 <div className="w-full flex px-4 py-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
                                     <div className="text-gray-500 text-base font-bold ">Overall Discount</div>
                                     <div className="flex items-center">
-                                        <div className="text-right text-textGrey1 text-base  ">{(otherData.overallDiscount*100).toFixed(2)}%</div>
+                                        <div className="text-right text-textGrey1 text-base  ">{(otherData.overallDiscount*100).toFixed(2) || 0}%</div>
                                      
                                     </div>
                                 </div>
                                 <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5   ">
                                     <div className="text-gray-500 text-base font-bold ">Shipping</div>
-                                    <div className="text-right text-textGrey1 text-base ">₹{otherData.shipping}</div>
+                                    <div className="text-right text-textGrey1 text-base ">₹{otherData.shipping || 0}</div>
                                 </div>
                                 <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5  ">
                                     <div className="text-gray-500 text-base font-bold ">Adjustment</div>
-                                    <div className="text-right text-textGrey1 text-base ">₹{otherData.adjustment}</div>
+                                    <div className="text-right text-textGrey1 text-base ">₹{otherData.adjustment || 0}</div>
                                 </div>
                                 <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 rounded-b-md justify-between items-center gap-2.5    ">
                                     <div className="text-textGreen text-base font-bold">Grand total</div>
-                                    <div className="text-right text-textGreen text-base font-bold ">₹{(otherData.totalCost)?.toFixed(2)}</div>
+                                    <div className="text-right text-textGreen text-base font-bold ">₹{(otherData.totalCost)?.toFixed(2) || 0}</div>
                                 </div>
                             </div>
             </div>

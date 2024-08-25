@@ -138,7 +138,7 @@ const GeneralSettings = () => {
         localStorage.setItem('selectedCommunicationMode', selectedMode);
       }, [smsToggle, mailToggle, whatsappToggle]);
       
-       const [paymentMethod, setPaymentMethod] = useState([]);
+    const [paymentMethod, setPaymentMethod] = useState([]);
     const appState  = useAppSelector((state) => state.app)
     const {data, error, isLoading} = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
     useEffect(() => {
@@ -146,6 +146,7 @@ const GeneralSettings = () => {
             setPaymentMethod(data)
         }
     }, [data,error,isLoading]);
+
 
 
 
