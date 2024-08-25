@@ -12,14 +12,16 @@ import Image from "next/image"
 import { Button } from '@nextui-org/react'
 import { DataContext } from "./DataContext"
 import { useAppSelector } from "@/lib/hooks"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { FinanceCreationType } from "@prisma/client"
 import axios from "axios"
 
-const NewPurchasesBottomBar = () => {
+const NewPurchasesBottomBar = ({orderData}:any) => {
     const { headerData, tableData, totalAmountData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
     const router=useRouter();
+    const url =useSearchParams();
+    const id= url.get('id');
     const [isSaving,setSaving]=useState(false);
     const handleSubmit = async () => {
         setSaving(true);
@@ -38,10 +40,10 @@ const NewPurchasesBottomBar = () => {
             discount:Number(data.discountPercent)/100
     }));
         const data={
-            distributor: allData.headerData.distributor.value,
-            notes: allData.headerData.notes,
+            distributor: (id === null) ?allData.headerData.distributor.value:orderData.distributor,
+            notes: (id === null) ?allData.headerData.notes:orderData.notes,
             invoiceNo: allData.headerData.invoiceNo,
-            dueDate: allData.headerData.dueDate,
+            dueDate: (id === null) ?allData.headerData.dueDate:orderData.dueDate,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
             totalCost: allData.totalAmountData.totalCost,

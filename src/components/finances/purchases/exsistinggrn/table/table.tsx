@@ -53,13 +53,13 @@ const ExsistingGrnTable = () => {
             id: item.productId,
             itemName:item.name,
             quantity:item.quantity,
-            unitPrice:item.productBatch.costPrice,
+            unitPrice:item.productBatch?.costPrice,
             tax:item.taxAmount,
             discount:item.discount,
-            expiry:item.productBatch.expiry,
-            batchNumber:item.productBatch.batchNumber,
+            expiry:item.productBatch?.expiry,
+            batchNumber:item.productBatch?.batchNumber,
             freeQuantity:item.freeQuantity,
-            maxRetailPrice:item.productBatch.sellingPrice
+            maxRetailPrice:item.productBatch?.sellingPrice
 
           }));
           setItems(itemData);
@@ -289,7 +289,7 @@ useEffect(() => {
                                     /> */}
                             </div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
-                            {(item.discount).toFixed(2)}
+                            {(item.discount)?.toFixed(2)}
                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"

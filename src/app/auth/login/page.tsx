@@ -1,15 +1,9 @@
 'use client'
 import Login from "@/components/auth/login/login";
-import initializeScheduling from "@/lib/initializeScheduling";
-import axios from "axios";
-import { useEffect } from "react";
+
 
 const LoginPage = () => {
 
-    useEffect(() => {
-        axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/bullScheduler`)
-      }, []);
-    
     
     return <div className='flex h-screen flex-col'>
 

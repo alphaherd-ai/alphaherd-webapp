@@ -237,7 +237,7 @@ console.log(items)
                     </div>
                         <ExistingsalesReturnTotalAmout otherData={otherData} isLoading={isLoading}/>
                 </div>
-                <ExistingsalesReturnBottomBar />
+                <ExistingsalesReturnBottomBar existingSalesData={data} />
             </div>
 
 
