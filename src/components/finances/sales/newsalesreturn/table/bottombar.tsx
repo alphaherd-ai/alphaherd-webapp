@@ -29,7 +29,7 @@ const NewsalesReturnBottomBar = ({invoiceData}:any) => {
             alert('Customer is required');
             return;
         }
-        const allData = {headerData, tableData, totalAmountData};
+        const allData = {headerData, tableData, totalAmountData, transactionsData};
         console.log("this is all data",allData)
         let totalQty=0;
         tableData.forEach(data => {
@@ -55,9 +55,9 @@ const NewsalesReturnBottomBar = ({invoiceData}:any) => {
             totalCost: allData.totalAmountData.totalCost,
             overallDiscount: allData.totalAmountData.gst,
             totalQty:totalQty,
-            // recordTransaction: {
-            //     create: allData.transactionsData
-            // },
+            recordTransaction: {
+                create: allData.transactionsData
+            },
             status: "Pending",
             type: FinanceCreationType.Sales_Return,
             items:{

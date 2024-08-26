@@ -25,7 +25,7 @@ const NewsaleEstimateBottomBar = () => {
     const { headerData, tableData, totalAmountData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
     const router=useRouter();
-    const [financeType, setFinanceType] = useState(FinanceCreationType.Sales_Estimate);
+    
     const handleSubmit = async () => {
         if (!headerData.customer || tableData.length === 0) {
             alert('Customer is required');

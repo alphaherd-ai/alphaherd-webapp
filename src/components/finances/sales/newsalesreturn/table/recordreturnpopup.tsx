@@ -16,6 +16,11 @@ import closeicon from "../../../../../assets/icons/inventory/closeIcon.svg";
 import Select from 'react-select';
 import { Button } from '@nextui-org/react';
 import { useAppSelector } from '@/lib/hooks';
+import useSWR from 'swr';
+import Loading2 from '@/app/loading2';
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
+
 
 type PopupProps = {
     onClose: () => void;
@@ -45,6 +50,26 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata
         {value: "Net Banking", label: "Net Banking"},
     ]
 
+    const [selectedMode, setSelectedMode] = useState([]);
+    const [modeOptions, setModeOptions] = useState<any>([]);
+
+    const {data:modes,error:modesError,isLoading:modesLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
+
+
+    useEffect(() => {
+        if(modes&&!modesError&&!modesLoading){
+            const options3 = modes.map((mode: any) => ({
+                value: mode?.id,
+                label: mode?.name,
+            }))
+            setModeOptions(options3)
+        }
+    }, [modes, modesError, modesLoading])
+
+    const handleModeSelect = (selectedOptions: any) => {
+        setSelectedMode(selectedOptions?.label);
+    }
+
     
     
 
@@ -56,7 +81,7 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata
     ]
 
     const [startDate, setStartDate] = useState(new Date());
-    const [transactionType, setTransactionType] = useState<string | null>(null);
+    const [transactionType, setTransactionType] = useState<string | null>("Money In");
 
 
     const handleDateChange = (date:any) => {
@@ -81,7 +106,7 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata
                     receiptNo: initialInvoiceNo,
                     date: formData.date || new Date(),
                     amountPaid: parseInt(formData.amountPaid, 10),
-                    mode: formData.mode?.value,
+                    mode: selectedMode,
                     moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
                 })
             });
@@ -102,11 +127,11 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata
             amountPaid: parseInt(formData.amountPaid, 10),
             date: formData.date || new Date(),
             isAdvancePayment: isAdvancePayment,
-            mode: formData.mode?.value,
+            mode: selectedMode,
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
         };
 
-        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: formData.mode?.value, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: selectedMode, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
 
         setTransactionsData((prevTransactions:any) => [...prevTransactions, newTransaction]);
 
@@ -123,6 +148,47 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata
     const handleChange = (field: string, value: any) => {
         setFormData({ ...formData, [field]: value });
     }
+
+
+    const customStyles = {
+        control: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          border: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4',
+          '&:hover': {
+            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            },
+          boxShadow: state.isFocused ? 'none' : 'none',
+        }),
+        valueContainer: (provided: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        singleValue: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+        }),
+        menu: (provided: any) => ({
+          ...provided,
+          backgroundColor: 'white',
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        option: (provided: any, state: any) => ({
+          ...provided,
+          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+          color: state.isFocused ? 'white' : '#6B7E7D',
+          '&:hover': {
+            backgroundColor: '#35BEB1',
+            color: 'white',
+          },
+        }),
+        menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
+      };
 
 
 
@@ -221,7 +287,7 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata
             <div className='w-full flex justify-between items-center'>
             <div><span className='text-gray-500 text-base font-medium '>Mode</span></div>
                     <div className='w-[440px] flex justify-between items-center'>
-                        <Select
+                        {/* <Select
                             className="text-neutral-400 text-base font-medium w-full"
                             placeholder="Mode"
                             isClearable={false}
@@ -230,7 +296,22 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata
                             isMulti={false}
                             name="mode"
                             onChange={(value) => handleChange("mode", value)}
+                        /> */}
+                        {!modesError ? 
+                        <Select
+                            className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
+                            placeholder=""
+                            isClearable={true}
+                            isSearchable={true}
+                            options={modeOptions}
+                            isMulti={false}
+                            name="mode"
+                            onChange={(value) => handleModeSelect(value)}
+                            styles={customStyles}
                         />
+                     : 
+                        <Loading2 />
+                    }
                     </div>
 
             </div>

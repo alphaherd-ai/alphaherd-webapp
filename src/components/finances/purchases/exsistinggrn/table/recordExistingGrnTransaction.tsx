@@ -54,7 +54,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
     ]
 
     const [startDate, setStartDate] = useState(new Date());
-    const [transactionType, setTransactionType] = useState<string | null>(null);
+    const [transactionType, setTransactionType] = useState<string | null>("Money In");
 
 
     const handleDateChange = (date:any) => {

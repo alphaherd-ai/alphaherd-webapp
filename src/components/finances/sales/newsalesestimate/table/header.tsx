@@ -10,6 +10,7 @@ import { useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 import { useAppSelector } from '@/lib/hooks';
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
+import Loading2 from '@/app/loading2';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
@@ -122,7 +123,7 @@ const NewsaleEstimateHeader = () => {
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold ">Client:</div>
                         { 
-                            isLoading?<div className='text-textGrey2 text-base font-medium'>Loading...</div>:(
+                            isLoading?<div className='text-textGrey2 text-base font-medium'><Loading2/></div>:(
                                 <Select
                                 className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
                                 classNamePrefix="select"

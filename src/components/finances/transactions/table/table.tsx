@@ -49,7 +49,7 @@ const FinancesTransactionsTable = () => {
                 return transaction.mode === currentUrl.get('type');
               }
             })
-            setTransactions(filteredData);
+            setTransactions(filteredData.reverse());
           }
       },[data,error,isLoading,setTransactions]);
 

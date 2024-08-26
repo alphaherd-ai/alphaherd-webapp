@@ -56,7 +56,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
     ]
 
     const [startDate, setStartDate] = useState(new Date());
-    const [transactionType, setTransactionType] = useState<string | null>(null);
+    const [transactionType, setTransactionType] = useState<string | null>("Money In");
 
 
     const handleDateChange = (date:any) => {
@@ -201,7 +201,7 @@ return (
                                 <div className='relative'>
                                     <input
                                         className="w-[10rem] border border-solid border-borderGrey h-9 text-textGrey1 text-base font-medium px-2 rounded   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                        value={startDate?.toLocaleDateString() || new Date().toLocaleDateString()} // Set current date if startDate is not defined
+                                        value={startDate?.toLocaleDateString() || new Date().toLocaleDateString()}
                                         readOnly
                                     />
                                     <Image

@@ -21,6 +21,7 @@ import useSWR from 'swr';
 import { DataContext } from "./DataContext"
 import Popup from '../../../../inventory/product/producttable/newproductpopup';
 import Popup1 from "@/components/database/distributor/newdistributorpopup"
+import { useSearchParams } from "next/navigation"
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
@@ -55,14 +56,15 @@ function useProductfetch (id: number | null) {
     error
    }
 }
-// function useProductBatchfetch(id:number|null){
-//     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll/?branchId=${id}`,fetcher,{revalidateOnFocus:true});
-//     return {
-//         fetchedBathces:data,
-//         isBatchLoading:isLoading,
-//         batchError:error
-//     }
-// }
+function DataFromOrder(id:number|null,branchId:number|null){
+    const {data,error,isLoading} =useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/${id}/?branchId=${branchId}`,fetcher);
+    return {
+       data,
+       isLoading,
+       error
+    }
+}
+
 const NewPurchasesTable = () => {
     const { tableData, setTableData } = useContext(DataContext);
     const [selectedProductDetails,setSelectedProduct]= useState<Products>()
@@ -71,12 +73,42 @@ const NewPurchasesTable = () => {
     const appState = useAppSelector((state) => state.app)
     const { tableData: items, setTableData: setItems } = useContext(DataContext);   
     const [discountStates, setDiscountStates] = useState(new Array(items.length).fill(false));
+    const url= useSearchParams();
+    const id=url.get('id');
+    let orderData:any=null,isorderDataLoading=false,isorderDataError=false; 
     const taxOptions = [
         { value: 'Tax excl.', label: 'Tax excl.' },
         { value: 'Tax incl.', label: 'Tax incl.' }
     ]; 
     const [showPopup, setShowPopup] = React.useState(false);
     const [showDistributorPopup,setDistributorPopup] = React.useState(false);
+
+    if(id){
+        const {data,isLoading,error}=DataFromOrder(Number(id),appState.currentBranchId);
+        orderData=data;
+        isorderDataError=error;
+        isorderDataLoading=isLoading;        
+    }
+
+    useEffect(()=>{
+            if (!isorderDataLoading && orderData && !isorderDataError) {
+                const {items,...otherData}=orderData;
+                setOtherData(otherData)
+              const shallowDataCopy = [...items]; 
+              const itemData = shallowDataCopy.map((item: any) => ({
+                id: item.productId,
+                productId:item.productId,
+                itemName:item.name,
+                quantity:item.quantity,
+                unitPrice:item.sellingPrice,
+                gst:item.taxAmount,
+                discountPercent:item.discount
+              }));
+              setItems(itemData);
+              
+            }
+          }, [orderData]); 
+
 
     const togglePopup = () => {
         setShowPopup(!showPopup);
@@ -286,7 +318,7 @@ const handleAddItem= useCallback(() => {
                     
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px] overflow-auto max-h-[40rem]">
-                    <NewPurchasesHeader />
+                    <NewPurchasesHeader  existingHeaderData={otherData}/>
                 <div>
                 <div className="w-full rounded-md border border-solid border-borderGrey">
                     <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
@@ -329,7 +361,8 @@ const handleAddItem= useCallback(() => {
                             <div key={index+1} className='flex justify-evenly items-center w-[125%] box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-gray-200 text-gray-400 h-12'>
                                 <div key={index+1} className=' flex text-textGrey2 text-base font-medium px-[10px] w-[5rem]'>{index+1}.</div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[18rem] '>
-                            <Select
+                            {id === null ? (
+                                    <Select
                                         className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0 absolute"
                                         classNamePrefix="select"
                                         // value={products.find((prod) => prod.value.id === item.productId)}
@@ -339,11 +372,10 @@ const handleAddItem= useCallback(() => {
                                         options={products}
                                         onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
                                         menuPortalTarget={document.body}
-                                        styles={
-                                            customStyles
-                                            
-                                        }
-                                    />
+                                        styles={customStyles}
+                                    />):(
+                                        item.itemName
+                                  )}
                             </div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[15rem] items-center gap-2'>
                                 <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
@@ -492,7 +524,7 @@ const handleAddItem= useCallback(() => {
 
                 <NewPurchasesTotalAmount />
             </div>
-            <NewPurchasesBottomBar />
+            <NewPurchasesBottomBar orderData={orderData}/>
         </div>
         {showPopup && <Popup onClose={togglePopup} />}
         {showDistributorPopup && <Popup1 onClose={togglePopup1} />}

@@ -13,7 +13,7 @@ export const GET=async (req: NextRequest,
             const inventoryId = await fetchInventoryId(req);
             
             const inventory= await prismaClient.inventoryTimeline.findUnique({
-                where: { id: Number(params.id),inventorySectionId:inventoryId},
+                where: { id: Number(params.id),inventorySectionId:inventoryId,isApproved:true},
                 include:{
                     productBatch:true,
                     service:true

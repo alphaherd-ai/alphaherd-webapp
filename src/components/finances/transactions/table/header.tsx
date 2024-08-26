@@ -190,7 +190,7 @@ const FinancesTransactionsTableHeader = ({transactions}:any) => {
     onClick={togglePopup}
         variant="solid"
         className="capitalize flex border-none py-2.5 bg-black text-white rounded-lg cursor-pointer">
-        <div className='flex'><Image src={rupee} alt='rupee' className='w-4 h-4 ' /></div>Record Transaction
+        <div className='flex'><Image src={rupee} alt='rupee' className='w-4 h-4 ' /></div>Record Payment
     </Button>
 {/* </PopoverTrigger>
 <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">

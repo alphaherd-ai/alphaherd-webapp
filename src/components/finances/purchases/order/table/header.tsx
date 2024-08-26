@@ -17,10 +17,11 @@ import { DataContext } from "./DataContext";
 import { generateInvoiceNumber } from "@/utils/generateInvoiceNo";
 import { useSearchParams } from "next/navigation";
 import { custom } from "zod";
+import formatDateAndTime from "@/utils/formateDateTime";
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
-const NewPurchasesHeader = () => {
+const NewPurchasesHeader = ({existingHeaderData}:any) => {
 
     const { headerData, setHeaderData } = useContext(DataContext);
     const url=useSearchParams();
@@ -36,7 +37,7 @@ const NewPurchasesHeader = () => {
     const [dueDate, setDueDate] = useState(new Date());
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
   
-   
+   const id= url.get('id');
     useEffect(() => {
         if (!disableButton && inputRef.current) {
             inputRef.current.focus();
@@ -130,6 +131,8 @@ const NewPurchasesHeader = () => {
                 <div className="px-6  bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold ">Distributor:</div>
+                        { id===null?(
+                            isLoading?<div>Loading...</div>:(
                         <Select
                             className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
                             classNamePrefix="select"
@@ -140,7 +143,9 @@ const NewPurchasesHeader = () => {
                             options={distributor}
                             styles={customStyles}
                             onChange={(selectedOption) => setHeaderData((prevData) => ({ ...prevData, distributor: selectedOption }))}
-                        />
+                        /> )):(
+                            existingHeaderData.distributor
+                        )}
 
                     </div>
                 </div>
@@ -168,36 +173,28 @@ const NewPurchasesHeader = () => {
                 <div className="px-6 py-2 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                     <div className="flex gap-[0.8rem] items-center w-full">
                         <div className="text-gray-500 text-base font-bold  w-1/8">Date:</div>
-                        {/* <DatePicker
-                            className={"text-gray-500 text-base font-medium  w-full"}
-
-                            value={startDate}
-
-
-                            onChange={(date) => {
-                                if (date instanceof Date) {
-                                    setStartDate(date);
-                                } else if (Array.isArray(date) && date.length === 2 && date[0] instanceof Date) {
-                                    // Assuming you want the start date of the range
-                                    setStartDate(date[0]);
-                                }
-                            }}
-                            clearIcon={() => null}
-                            calendarIcon={() => (
-                                <Image src={calicon} alt="Calendar Icon" width={20} height={20} />
-                            )}
-                        /> */}
-
-<div className="customDatePickerWidth">
-                                    <DatePicker
+                        {id===null?(
+                        // <DatePicker
+                        //     className={"text-gray-500 text-base font-medium  w-full"}
+                        //     value={startDate}
+                        //     onChange={handleDateChange}
+                        //     clearIcon={() => null}
+                        //     calendarIcon={() => (
+                        //         <Image src={calicon} alt="Calendar Icon" width={20} height={20} />
+                        //     )}
+                        // />
+                        // <div className='w-full relative'>
+                        
+                        <div className="customDatePickerWidth">
+                        <DatePicker
                                         className="w-full"
                                         selected={startDate}
                                         onChange={handleDateChange}
                                         calendarClassName="react-datepicker-custom"
                                         customInput={
-                                            <div className='relative'>
+                                            <div className='relative '>
                                                 <input
-                                                    className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                                    className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
                                                     value={startDate.toLocaleDateString()}
                                                     readOnly
                                                 />
@@ -212,7 +209,10 @@ const NewPurchasesHeader = () => {
                                         }
                                     />
                                     </div>
-
+                                    // </div>
+                    ):(
+                            formatDateAndTime(existingHeaderData.date).formattedDate
+                        )}
 
                     </div>
                 </div>
@@ -235,6 +235,7 @@ const NewPurchasesHeader = () => {
                                 <Image src={calicon} alt="Calendar Icon" width={20} height={20} />
                             )}
                         /> */}
+                      {id === null ? (
                         <div className="customDatePickerWidth">
                         <DatePicker
                                         className="w-full"
@@ -244,7 +245,7 @@ const NewPurchasesHeader = () => {
                                         customInput={
                                             <div className='relative'>
                                                 <input
-                                                    className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                                    className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
                                                     value={dueDate.toLocaleDateString()}
                                                     readOnly
                                                 />
@@ -259,6 +260,9 @@ const NewPurchasesHeader = () => {
                                         }
                                     />
                                     </div>
+                                    ) : (
+                                        formatDateAndTime(existingHeaderData.dueDate).formattedDate
+                                        )}
 
 
 
@@ -269,12 +273,15 @@ const NewPurchasesHeader = () => {
                 <div className="px-6 py-1  bg-white rounded-[10px] justify-between items-center gap-4 flex w-full ">
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold py-3">Notes:</div>
+                        {id===null?(
                         <input
                             type="text"
-                            className=" w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                            className=" w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
                             placeholder="..."
                             onChange={(e) => setHeaderData((prevData) => ({ ...prevData, notes: e.target.value }))}
-                        />                 
+                        />    ):(
+                            existingHeaderData.notes
+                        )}                         
                         </div>
                 </div>
             </div>

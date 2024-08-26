@@ -22,6 +22,11 @@ import deleteicon from "../../../assets/icons/settings/deleteicon.svg"
 import React, { useState, useEffect } from 'react';
 import AddSpeciesPopup from "../generalSettingPopup/addSpeciesPopup";
 import AddPaymentPopup from "../generalSettingPopup/addPaymentPopup";
+import Loading from "@/app/loading1";
+import { useAppSelector } from "@/lib/hooks";
+import useSWR from "swr";
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 
   
@@ -144,7 +149,18 @@ const GeneralSettings = () => {
       
     
       
-   
+    const [paymentMethod, setPaymentMethod] = useState([]);
+    const appState  = useAppSelector((state) => state.app)
+    const {data, error, isLoading} = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
+    useEffect(() => {
+        if(!isLoading&&!error&&data){
+            setPaymentMethod(data)
+        }
+    }, [data,error,isLoading]);
+
+
+
+
     return (
     <>
         <div className="w-full h-full mt-4">
@@ -215,34 +231,21 @@ const GeneralSettings = () => {
                                         <div className='flex text-gray-500 text-base font-medium px-6 w-5/12'>Payment method</div>
                                         
                                     </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                    {isLoading && <Loading />}
+                                    <div className="w-full  max-h-[15rem] overflow-y-auto">
+                                    {paymentMethod.map((item:any) => (
+                                        <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                                        <div  className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
                                             <Image className="w-[22px] h-[22px] relative" src={cashicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">Cash</div>
+                                            <div className="text-gray-500 text-base font-medium ">{item.name}</div>
                                         </div>
                                         
                                     </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={cardicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">Card</div>
-                                        </div>
+                                    ))
+                                    } 
+                                    </div>      
                                         
-                                    </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={netbankingicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">Net Banking</div>
-                                        </div>
-                                        
-                                    </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={upiicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">UPI</div>
-                                        </div>
-                                        
-                                    </div>
+            
                                 </div>
                             </div>
                         </div>
