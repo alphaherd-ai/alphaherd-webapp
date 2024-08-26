@@ -22,45 +22,17 @@ type PopupProps = {
     clientData: any; 
 }
 
-const patientSchema =z.object({
-    patientName: z.string().trim().min(1,'Patient Name is required'),
-    clientId: z.string(), 
-    species: z.string().trim().min(1,'Provide the species').optional(), 
-    breed: z.string().optional(), 
-    dateOfBirth: z.string()
-    .optional()
-    .refine(val => {
-        if (!val) return true; // If dateOfBirth is optional and not provided, it's valid
-        const date = new Date(val);
-        return !isNaN(date.getTime()); // Check if the date is valid
-    }, 'Invalid date format'),
-    age: z.string(), 
-    gender: z.string().optional(),
-    inPatient: z.string(), 
-})
 
 const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
-    const router=useRouter();
-    var initialData = {
-        patientName: '',
-        clientId: '', 
-        species: '', 
-        breed: '', 
-        dateOfBirth: '', 
-        age: '', 
-        gender: '',
-        inPatient: '', 
-        
-    }
-    const [formData, setFormData] = useState<any>(initialData);
+    const [formData, setFormData] = useState<any>({});
     const [clients, setClients] = useState<{ value: string; label: string }[]>([]);
     const [startDate, setStartDate] = useState(new Date());
     const [selectedGender, setSelectedGender] = useState('');
     const appState = useAppSelector((state) => state.app)
     const [isSaveDisabled, setIsSaveDisabled] = useState(true);
+    const [errors, setErrors] =  useState<{ patientName?: string; clientName?: string }>({});
 
-    const [validationErrors, setValidationErrors] = useState(formData);
-    console.log(validationErrors);
+    
 
     useEffect(() => {
         fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`)
@@ -79,7 +51,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
 
     const handleSaveClick = async () => {
         try {
-            patientSchema.parse(formData);
+           
             console.log("Form data is valid", formData);
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/patients/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
@@ -105,49 +77,32 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
             } else {
                 console.error('Failed to save data:', response.statusText);
             }
-        } catch (error) {
-            if (error instanceof ZodError) {
-              console.error('Validation Error:', error.errors);
-              error.errors.forEach(err => {
-                console.error(`Error in parameter '${err.path.join('.')}' - ${err.message}`);
-              });
-            } else {
-              console.error('Unexpected error while saving data', error);
-            }
+        }  catch (error) {
+            console.error('Error while saving data:', error);
         }
     };
 
     console.log(formData);
 
     const handleChange = (field: string, value: any) => {
-        // setFormData({ ...formData, [field]: value });
-        setFormData((prevData: any) => ({
-            ...prevData,
-            [field]: value,
-          }));
-        setIsSaveDisabled(false);
-        try {
-            patientSchema.parse({ ...formData, [field]: value });
-            setValidationErrors((prevErrors: any) => ({
-              ...prevErrors,
-              [field]: '',
-            }));
-        } catch (err: any) {
-        if (err instanceof z.ZodError) {
-            let fieldErrors = err.flatten().fieldErrors;
-            if (field in fieldErrors) {
-            setValidationErrors((prevErrors: any) => ({
-                ...prevErrors,
-                [field]: fieldErrors[field]?.[0] ?? '',
-            }));
-            } else {
-            setValidationErrors((prevErrors: any) => ({
-                ...prevErrors,
-                [field]: '',
-            }));
-            }
-        }
-        }
+        setFormData((prevFormData: any) => {
+        const updatedFormData = { ...prevFormData, [field]: value };
+
+        // Validate fields to enable or disable the Save button
+        // const isFormValid =updatedFormData.patientName !== '' && updatedFormData.clientId !== '' ;
+        // setIsSaveDisabled(!isFormValid);
+        const isPatientNameValid = updatedFormData.patientName !== '';
+        const isClientNameValid = updatedFormData.clientName !== undefined && updatedFormData.clientName.value !== '';
+
+        const newErrors: { patientName?: string; clientName?: string } = {};
+        if (!isPatientNameValid) newErrors.patientName = 'Patient name is required';
+        if (!isClientNameValid) newErrors.clientName = 'Client name is required';
+
+        setErrors(newErrors);
+        setIsSaveDisabled(!(isPatientNameValid && isClientNameValid));
+        return updatedFormData;
+        
+        });
     };
 
     const calculateAge = (years: number, months: number, days: number): string => {
@@ -216,29 +171,33 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                         <input className="w-[25rem] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" 
                         type="text" name="patientName" 
                         onChange={(e) => handleChange("patientName", e.target.value)} />
-                        {validationErrors.patientName && (
-                            <div className="text-[red] error">{validationErrors.patientName}</div>
+                        {errors.patientName && (
+                            <div className="text-[red] error">{errors.patientName}</div>
                         )}
                     </div>
                 </div>
 
                 <div className="flex items-center gap-[48px]">
-                    <div className="  w-[8rem] text-gray-500 text-base font-medium ">Client Name</div>
+                    <div className="w-[8rem] text-gray-500 text-base font-medium">Client Name<span className="text-[red]">*</span></div>
                     <div>
-                        {clientData===undefined?(
-                            <Select
-                            className="text-textGrey2 text-base font-medium  w-[25rem] border-0 boxShadow-0 "
-                            classNamePrefix="select"
-                            isClearable={false}
-                            isSearchable={true}
-                            name="clientName"
-                            options={clients}
-                            onChange={(selectedClient: any) => handleChange("clientName", selectedClient)}
-                            />
-                        ):(
-                          clientData.name
+                        {clientData === undefined ? (
+                            <>
+                                <Select
+                                    className="text-textGrey2 text-base font-medium w-[25rem] border-0 boxShadow-0"
+                                    classNamePrefix="select"
+                                    isClearable={false}
+                                    isSearchable={true}
+                                    name="clientName"
+                                    options={clients}
+                                    onChange={(selectedClient: any) => handleChange("clientName", selectedClient)}
+                                />
+                                {errors.clientName && (
+                                    <div className="text-[red]">{errors.clientName}</div>
+                                )}
+                            </>
+                        ) : (
+                            <div>{clientData.name}</div>
                         )}
-                       
                     </div>
                 </div>
                 <div className="flex items-center gap-[120px]">
@@ -373,17 +332,21 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                         <div className="w-6 h-7"> <Image src={Paws} alt='Paws' className='w-6 h-6 ' /></div>
                         <div className="text-gray-100 text-base font-medium ">Add another Patient</div>
                     </div>
-                    {!isSaveDisabled ? (<div className="h-11 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer"  onClick={handleSaveClick} >
-                    <div className="w-6 h-6 relative">
-                        <div className="w-6 h-6 left-0 top-0 absolute" >
-                            <Image src={Check} alt="Check" />
-                        </div>
+                    <div
+                        className={`h-11 px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer ${
+                            isSaveDisabled ? 'bg-gray-500 cursor-not-allowed' : 'bg-zinc-900'
+                        }`}
+                        onClick={isSaveDisabled ? undefined : handleSaveClick}
+                    >
+                        {!isSaveDisabled && (
+                            <div className="w-6 h-6 relative">
+                                <div className="w-6 h-6 left-0 top-0 absolute">
+                                    <Image src={Check} alt="Check" />
+                                </div>
+                            </div>
+                        )}
+                        <div className="text-gray-100 text-base font-bold">Save</div>
                     </div>
-                    <div className="text-gray-100 text-base font-bold ">Save</div>
-                </div>) : (<button className="px-4 py-2.5 bg-gray-200 rounded-[5px]  justify-start items-center gap-2 flex border-0 outline-none cursor-not-allowed">
-                        <div className="text-textGrey1 text-base font-bold ">Save</div>
-                        <Image src={arrowicon} alt="arrow"></Image>
-                    </button>)}
                 </div>
             </div>
         </div >

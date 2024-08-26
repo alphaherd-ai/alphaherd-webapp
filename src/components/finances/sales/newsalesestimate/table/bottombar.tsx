@@ -126,14 +126,25 @@ const NewsaleEstimateBottomBar = () => {
   }, []);
 
   const handleShareClick = () => {
-    if (communicationMode === 'SMS') {
-      sendSMS();
-    } else if (communicationMode === 'Email') {
-      sendEmail();
-    // } else if (communicationMode === 'WhatsApp') {
-    //   sendWhatsapp();
+    const savedModes = localStorage.getItem('selectedCommunicationModes');
+    
+    if (savedModes) {
+      const communicationModes: string[] = JSON.parse(savedModes);
+  
+      if (communicationModes.includes('SMS')) {
+        sendSMS();
+      }
+      if (communicationModes.includes('Email')) {
+        sendEmail();
+      }
+      if (communicationModes.includes('WhatsApp')) {
+        sendWhatsapp();
+      }
+    } else {
+      alert('No communication modes selected. Please select a mode in the settings.');
     }
   };
+  
 
     const sendSMS = async () => {
         try {   
@@ -209,22 +220,29 @@ const NewsaleEstimateBottomBar = () => {
                 create: items
             }
         }
-        const pdfUrl = generatePdfForInvoiceAndUpload(data,appState,items);
         try {
+            // Generate PDF and get the URL
+            const pdfUrl =  await generatePdfForInvoiceAndUpload(data, appState, items);
+            console.log('PDF URL:', pdfUrl);
+            const message = `Hello from the team. Here is your invoice: ${pdfUrl}`;
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/whatsapp`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-            body: JSON.stringify({
-              phone: `+91${phoneNumber}`,
-              message: `Hello from the team. Here is your invoice: ${pdfUrl}`,
-            }),
-          });
-      
-          console.log('WhatsApp message sent successfully:', response);
+                body: JSON.stringify({
+                    phone: `+91${phoneNumber}`,
+                    message: "Hi",
+                }),
+            });
+    
+            if (response.ok) {
+                console.log('WhatsApp message sent successfully:', response);
+            } else {
+                console.error('Failed to send WhatsApp message:', response.statusText);
+            }
         } catch (error) {
-          console.error('Error while sending message', error);
+            console.error('Error while sending WhatsApp message:', error);
         }
     };
       
@@ -275,7 +293,7 @@ const NewsaleEstimateBottomBar = () => {
                     </Button>
                     <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={shareicon} alt="share"></Image>
-                        <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all" onClick={()=>sendWhatsapp()}>Share via Whatsapp</div>
+                        <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all" onClick={sendWhatsapp}>Share via Whatsapp</div>
                     </Button>
                     <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={shareicon} alt="share"></Image>

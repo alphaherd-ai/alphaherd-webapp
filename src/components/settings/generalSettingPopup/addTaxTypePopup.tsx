@@ -33,14 +33,13 @@ const AddPaymentPopup = ({onClose}:any) => {
 
     const handleSave = async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/invite/generalSettings/create?branchId=${appState.currentBranchId}`, { 
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/generalSettings/create`, { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    type: 'unit',
-                    // unit: inputs.unit
+                    type: 'taxType',
                     data: inputs.map(input => ({ name: input }))
                 }),
             });
@@ -64,9 +63,9 @@ const AddPaymentPopup = ({onClose}:any) => {
                     <Image src={closeicon} alt="close"></Image>
                 </div>
                 <div className="flex-col justify-start items-start gap-2 flex w-full">
-                    <div className="text-gray-500 text-xl font-medium">Add Payment Method</div>
+                    <div className="text-gray-500 text-xl font-medium">Add Tax Type</div>
                     <div className='w-full flex justify-between '>
-                        <div className="text-neutral-400 text-base font-medium">Add and configure your payment methods</div>
+                        <div className="text-neutral-400 text-base font-medium">Add and configure your Tax Types</div>
                     </div>
                 </div>
                 <div className="w-full flex items-center gap-[6rem] ">
@@ -74,12 +73,11 @@ const AddPaymentPopup = ({onClose}:any) => {
                     <div className='w-full flex flex-col  gap-3'>
                         {inputs.map((input, index) => (
                             <div key={index} className="w-full flex  items-center">
-                                <div className="text-gray-500 text-base font-medium w-[12rem]">Payment Method</div>
+                                <div className="text-gray-500 text-base font-medium w-[12rem]">Tax Type</div>
                                 <input
                                     className="ml-[5rem] w-[80%] border border-solid border-borderGrey outline-none h-11 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                     type="text"
                                     value={input}
-                                    name='unit'
                                     onChange={(e) => handleChangeInput(index, e.target.value)}
                                 />
                                 {/* <div className="ml-2 h-11 px-[0.6rem] rounded-[5px] justify-start items-center flex bg-black cursor-pointer" onClick={handleAddInput}>
