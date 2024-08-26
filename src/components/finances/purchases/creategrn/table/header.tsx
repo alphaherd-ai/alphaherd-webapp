@@ -20,6 +20,7 @@ import { useSearchParams } from "next/navigation";
 import formatDateAndTime from "@/utils/formateDateTime";
 import { generateInvoiceNumber } from "@/utils/generateInvoiceNo";
 import { custom } from "zod";
+import Loading2 from "@/app/loading2";
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
@@ -135,7 +136,7 @@ const CreateGrnHeader = ({existingHeaderData}:any) => {
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold ">Distributor:</div>
                         { id===null?(
-                            isLoading?<div>Loading...</div>:(
+                            isLoading?<Loading2/>:(
                         <Select
                             className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
                             classNamePrefix="select"

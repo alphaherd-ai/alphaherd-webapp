@@ -14,8 +14,9 @@ import DatePicker from "react-datepicker"
 import 'react-datepicker/dist/react-datepicker.css';
 import { Button } from "@nextui-org/react";
 import formatDateAndTime from "@/utils/formateDateTime";
+import Loading2 from "@/app/loading2";
 
-const ExsistingPurchasesHeader = ({otherData}:any) => {
+const ExsistingPurchasesHeader = ({otherData, isLoading}:any) => {
 
 
 
@@ -62,7 +63,7 @@ const ExsistingPurchasesHeader = ({otherData}:any) => {
                 <div className="px-6  bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold ">Distributor:</div>
-                       <span className="text-textGrey2 font-medium text-base">{otherData.distributor}</span>
+                       <span className="text-textGrey2 font-medium text-base">{!isLoading ? otherData?.distributor : <Loading2 />}</span>
                     </div>
                 </div>
                 <div className="px-6 py-1  bg-white rounded-[10px] justify-start items-center flex w-full ">
@@ -70,7 +71,7 @@ const ExsistingPurchasesHeader = ({otherData}:any) => {
                         <div className="text-gray-500 text-base font-bold  pr-[8px] w-3/12 py-3">Reference Number:</div>
                         <div className="flex items-center justify-between w-[29.4rem]">
                             <span className="text-textGrey2 font-medium text-base">
-                                {otherData.invoiceNo}
+                            {!isLoading ? otherData?.invoiceNo : <Loading2 />}
                             </span>
                             {/* <input
                                 ref={inputRef}
@@ -112,9 +113,10 @@ const ExsistingPurchasesHeader = ({otherData}:any) => {
                             )}
                         /> */}
 
-                                    <div className="customDatePickerWidth text-textGrey2 font-medium text-base">
-                                        {formatDateAndTime(otherData.date).formattedDate}
-                                    </div>
+<div
+                            className={"text-gray-500 text-base font-medium  w-full"}>
+                            {!isLoading ? formatDateAndTime(otherData?.date).formattedDate : <Loading2 />}
+                            </div>
 
 
                     </div>
@@ -138,9 +140,10 @@ const ExsistingPurchasesHeader = ({otherData}:any) => {
                                 <Image src={calicon} alt="Calendar Icon" width={20} height={20} />
                             )}
                         /> */}
-                        <div className="customDatePickerWidth text-textGrey2 font-medium text-base">
-                        {formatDateAndTime(otherData.dueDate).formattedDate}
-                                    </div>
+                        <div
+                            className={"text-gray-500 text-base font-medium  w-full"}>
+                             {!isLoading ? formatDateAndTime(otherData?.dueDate).formattedDate : <Loading2 />}
+                             </div>
 
 
 
@@ -151,7 +154,7 @@ const ExsistingPurchasesHeader = ({otherData}:any) => {
                 <div className="px-6 py-1  bg-white rounded-[10px] justify-between items-center gap-4 flex w-full ">
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold py-3">Notes:</div>
-                        <span className="text-textGrey2 text-base font-medium">{otherData.notes}</span>              
+                        <div className='w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0 outline-none'>{!isLoading ? otherData?.notes : <Loading2 />}</div>
                     </div>
                 </div>
             </div>

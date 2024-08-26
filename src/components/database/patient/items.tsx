@@ -5,6 +5,7 @@ import { useAppSelector } from '@/lib/hooks';
 import { Spinner} from '@nextui-org/react';
 import useSWR from 'swr';
 import Loading from '@/app/loading';
+import Loading2 from '@/app/loading2';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 interface Clients {
@@ -38,7 +39,7 @@ if(isPatientLoading)return (<Loading/>)
                         </Link>
                     </div>
                     <div className='w-1/6 flex  items-center  px-6  text-base font-medium'>
-                        {clients[patient.clientId] || "Loading..."}
+                        {clients[patient.clientId] || <Loading2 />}
                     </div>
                     <div className='w-1/6 flex  items-center  px-6  text-base font-medium'>
                         {patient.species} & {patient.breed}

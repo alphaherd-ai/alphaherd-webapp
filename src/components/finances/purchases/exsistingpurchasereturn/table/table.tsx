@@ -30,6 +30,7 @@ import { useAppSelector } from '@/lib/hooks';
 import formatDateAndTime from '@/utils/formateDateTime';
 import useSWR from 'swr';
 import Loading from '@/app/loading';
+import Loading2 from "@/app/loading2"
 interface CheckedItems {
     [key: number]: boolean;
 }
@@ -111,8 +112,6 @@ useEffect(() => {
     };
 
 
-    if(isLoading) return (<Loading/>)
-
 
     return (
         <>
@@ -130,7 +129,7 @@ useEffect(() => {
                     
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px]">
-                    <ExsistingPurcaseReturnHeader otherData={data}/>
+                    <ExsistingPurcaseReturnHeader otherData={data} isLoading={isLoading} />
                 <div>
                 <div className="w-full rounded-md border border-solid border-borderGrey">
                     <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
@@ -173,22 +172,22 @@ useEffect(() => {
                         
                         </div>
                         
-                        {items.map((item, index) => (
-                <div
-                    key={item.id}
-                    className={`flex justify-evenly items-center w-[180%] box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-gray-200 h-12 ${checkedItems[item.id] ? 'text-textGrey2 font-bold' : 'text-textGrey2 font-medium'}`}
-                >
-                    <div className='flex text-base  w-[5rem] items-center justify-center'>
-                        <input
-                            type="checkbox"
-                            className="accent-teal-500 w-4 h-4"
-                            checked={checkedItems[item.id] || false}
-                            onChange={() => handleCheckboxChange(item.id)}
-                        />
-                    </div>
-                    <div className=' flex text-textGrey2 text-base  w-[5rem]'>{index+1}.</div>
-                                    <div className=' flex text-textGrey2 text-base  w-[18rem] '>
-                                    {/* <Select
+                        {!isLoading ? items.map((item, index) => (
+                        <div
+                            key={item.id}
+                            className={`flex justify-evenly items-center w-[180%] box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-gray-200 h-12 ${checkedItems[item.id] ? 'text-textGrey2 font-bold' : 'text-textGrey2 font-medium'}`}
+                        >
+                            <div className='flex text-base  w-[5rem] items-center justify-center'>
+                                <input
+                                    type="checkbox"
+                                    className="accent-teal-500 w-4 h-4"
+                                    checked={checkedItems[item.id] || false}
+                                    onChange={() => handleCheckboxChange(item.id)}
+                                />
+                            </div>
+                            <div className=' flex text-textGrey2 text-base  w-[5rem]'>{index+1}.</div>
+                                            <div className=' flex text-textGrey2 text-base  w-[18rem] '>
+                                            {/* <Select
                                                 className="text-gray-500 text-base   w-[90%] border-0 boxShadow-0 absolute"
                                                 classNamePrefix="select"
                                                 // value={products.find((prod) => prod.value.id === item.productId)}
@@ -306,7 +305,10 @@ useEffect(() => {
                                     
                                 </div>
                 </div>
-            ))}
+                        )):
+                        <div className='h-[10rem] w-full'><Loading2 /></div>
+
+                        }
                     
                         <div className='flex  w-[180%] justify-evenly items-center box-border bg-gray-100 h-12 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey py-5  text-textGrey2 '>
                             <div className=' flex text-gray-500 text-base font-bold w-[5rem]'></div>
@@ -348,7 +350,7 @@ useEffect(() => {
                 </div>
                 </div>
 
-                <ExsistingPurcaseReturnTotalAmount otherData={data}/>
+                <ExsistingPurcaseReturnTotalAmount otherData={data} isLoading={isLoading} />
             </div>
             <ExsistingPurcaseReturnBottomBar />
         </div>

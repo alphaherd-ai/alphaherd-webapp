@@ -265,7 +265,7 @@ model Products {
   totalQuantity      Int?
   minStock           Int?
   maxStock           Int?
-  isApproved         Boolean?       @default(false)
+  isApproved         Boolean?          @default(false)
   productBatches     ProductBatch[]
   items              Items[]
   InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
@@ -290,7 +290,7 @@ model ProductBatch {
   sellingPrice       Int?
   date               DateTime?
   balanceDue         Boolean?
-  isApproved         Boolean?          @default(false)
+  isApproved         Boolean?            @default(false)
   items              Items[]
   product            Products            @relation(fields: [productId], references: [id])
   inventoryTimeline  InventoryTimeline[] // Add the opposite relation

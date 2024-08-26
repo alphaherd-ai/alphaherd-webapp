@@ -8,7 +8,7 @@ import selecttab from "../../../../assets/icons/finance/SelectedTab.svg";
 import DownArrow from '../../../../assets/icons/finance/downArrow.svg';
 import cash from "../../../../assets/icons/finance/Cash.svg"
 import upi from "../../../../assets/icons/finance/image 559.svg"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TransactionsBlanceSheetItem from "./item";
 import Link from "next/link";
 import {useSelector} from 'react-redux'
@@ -21,8 +21,24 @@ import TransactionsBlanceSheetCashItemSales from "./itemSalesCash";
 import TransactionsBlanceSheetCardItemSales from "./itemSalesCard";
 import TransactionsBlanceSheetNetBankingItemSales from "./itemSalesRazorpay";
 import TransactionsBlanceSheetUpiItemSales from "./itemSalesUpi";
+import useSWR from "swr";
+import { useAppSelector } from "@/lib/hooks";
+import Loading from "@/app/loading1";
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
+
+
 
 const FinancesTransactionSheet = () => {
+
+    const [paymentMethod, setPaymentMethod] = useState([]);
+    const appState  = useAppSelector((state) => state.app)
+    const {data, error, isLoading} = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
+    useEffect(() => {
+        if(!isLoading&&!error&&data){
+            setPaymentMethod(data)
+        }
+    }, [data,error,isLoading]);
 
 
     const transactionAmount = useSelector((state:any) => state.transactionAmount)
@@ -94,36 +110,43 @@ const FinancesTransactionSheet = () => {
 
 
                 {activeTab === 'All transactions' && 
-                <div>
-                    <div className="h-16 flex border border-neutral-400 bg-white border-l ">
-                        <div className="items-center justify-center flex text-gray-500 text-xl font-bold w-1/4 border-0 border-r border-l border-solid py-4 border-borderGrey"><span className="mr-2"><Image src={cash} alt='cash' className='w-6 h-6 mt-1' /></span> Cash</div>
-                        <div className="items-center justify-center flex text-gray-500 text-xl font-bold w-1/4 border-0 border-r  border-solid py-4 border-borderGrey"><span className="mr-2"><Image src={upi} alt='upi' className='w-6 h-6 mt-1' /></span> UPI</div>
-                        <div className="items-center justify-center flex text-gray-500 text-xl font-bold w-1/4 border-0 border-r  border-solid py-4 border-borderGrey"><span className="mr-2"><Image src={card} alt='card' className='w-6 h-6 mt-1' /></span> Card</div>
-                        <div className="items-center justify-center flex text-gray-500 text-xl font-bold w-1/4 border-0 border-r border-solid py-4 border-borderGrey"><span className="mr-2"><Image src={razorpay} alt='razorpay' className='w-6 h-6 mt-1' /></span> Razorpay</div>
-                    </div>
-                    <div className=" flex bg-gray-100 border-l border-r border-borderGrey py-2 ">
-                        <div className=" border-0 border-r border-l w-1/4 border-solid p-2 border-borderGrey"><TransactionsBlanceSheetCashItem  /> </div>
-                        <div className="items-center justify-center flex text-gray-500 text-xl font-bold w-1/4 border-0 border-r border-solid p-2  flex-col border-borderGrey"><TransactionsBlanceSheetUpiItem  />  </div>
-                        <div className="items-center justify-center flex text-gray-500 text-xl font-bold w-1/4 border-0 border-r border-solid p-2  flex-col border-borderGrey"><TransactionsBlanceSheetCardItem  />  </div>
-                        <div className="items-center justify-center flex text-gray-500 text-xl font-bold w-1/4 border-0 border-r border-solid p-2  flex-col border-borderGrey"><TransactionsBlanceSheetNetBankingItem  />  </div>
-                    </div>
+                <div className="flex">
+
+                        {isLoading ? <Loading /> : paymentMethod.map((item:any) => {
+                            return (
+                                <div key={item.id} className="w-1/4 border-0 border-r border-l border-solid border-borderGrey bg-gray-100 pb-2">
+                                <div className="items-center justify-center flex text-gray-500 text-xl font-bold  py-4 border-borderGrey bg-white mb-2">
+                                    <span className="mr-2">
+                                        <Image src={cash} alt='cash' className='w-6 h-6 mt-1' />
+                                    </span>
+                                    {item.name}
+                                </div>
+                                <TransactionsBlanceSheetCashItem mode={item.name} />
+                                </div>
+                            );
+                        })}
+                    
                 </div>}
 
 
                 {activeTab === 'Sales' &&
-                <div>
-                    <div className="h-16 flex border border-neutral-400 bg-white border-l ">
-                    <div className="items-center justify-center flex text-gray-500 text-xl font-bold w-1/4 border-0 border-r border-l border-solid py-4 border-borderGrey"><span className="mr-2"><Image src={cash} alt='cash' className='w-6 h-6 mt-1' /></span> Cash</div>
-                    <div className="items-center justify-center flex text-gray-500 text-xl font-bold w-1/4 border-0 border-r border-solid py-4 border-borderGrey"><span className="mr-2"><Image src={upi} alt='upi' className='w-6 h-6 mt-1' /></span> UPI</div>
-                    <div className="items-center justify-center flex text-gray-500 text-xl font-bold w-1/4 border-0 border-r border-solid py-4 border-borderGrey"><span className="mr-2"><Image src={card} alt='card' className='w-6 h-6 mt-1' /></span> Card</div>
-                    <div className="items-center justify-center flex text-gray-500 text-xl font-bold w-1/4 border-0 border-r border-solid py-4 border-borderGrey"><span className="mr-2"><Image src={razorpay} alt='razorpay' className='w-6 h-6 mt-1' /></span> Razorpay</div>
-                </div>
-                <div className=" flex bg-gray-100 border-l border-r border-borderGrey  py-2">
-                    <div className=" border-0 border-r border-l w-1/4 border-solid p-2 border-borderGrey"><TransactionsBlanceSheetCashItemSales  /> </div>
-                    <div className="items-center justify-center flex text-gray-500 text-xl font-bold w-1/4 border-0 border-r border-solid p-2  flex-col border-borderGrey"><TransactionsBlanceSheetUpiItemSales  />  </div>
-                    <div className="items-center justify-center flex text-gray-500 text-xl font-bold w-1/4 border-0 border-r border-solid p-2  flex-col border-borderGrey"><TransactionsBlanceSheetCardItemSales  />  </div>
-                    <div className="items-center justify-center flex text-gray-500 text-xl font-bold w-1/4 border-0 border-r border-solid p-2  flex-col border-borderGrey"><TransactionsBlanceSheetNetBankingItemSales  />  </div>
-                </div></div>}
+                <div className="flex">
+
+                {isLoading ? <Loading /> : paymentMethod.map((item:any) => {
+                    return (
+                        <div key={item.id} className="w-1/4 border-0 border-r border-l border-solid border-borderGrey bg-gray-100 pb-2">
+                        <div className="items-center justify-center flex text-gray-500 text-xl font-bold  py-4 border-borderGrey bg-white mb-2">
+                            <span className="mr-2">
+                                <Image src={cash} alt='cash' className='w-6 h-6 mt-1' />
+                            </span>
+                            {item.name}
+                        </div>
+                        <TransactionsBlanceSheetCashItemSales mode={item.name} />
+                        </div>
+                    );
+                })}
+            
+        </div>}
 
 
                 {activeTab === 'Expenses' && <div><div className="h-16 flex border border-neutral-400 bg-white border-l ">

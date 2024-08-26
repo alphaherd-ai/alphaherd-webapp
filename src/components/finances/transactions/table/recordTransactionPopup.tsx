@@ -15,8 +15,10 @@ import { Button } from '@nextui-org/react';
 import { useAppSelector } from '@/lib/hooks';
 import useSWR from 'swr';
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
+import Loading2 from '@/app/loading2';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
+
 type PopupProps = {
     onClose: () => void;
     initialInvoiceNo: any;
@@ -47,6 +49,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
 
     const dispatch = useDispatch();
 
+    const [isSaving,setSaving]=useState(false);
+
     const [formData, setFormData] = useState<any>({});
     const appState = useAppSelector((state) => state.app)
 
@@ -69,12 +73,14 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
 
 
     const [startDate, setStartDate] = useState(new Date());
-    const [transactionType, setTransactionType] = useState<string | null>(null);
+    const [transactionType, setTransactionType] = useState<string | null>("Money In");
     const [selectedProducts, setSelectedProducts] = useState<ProductOption[]>([]);
     const [productOptions, setProductOptions] = useState([]);
     const [selectedServices, setSelectedServices] = useState<ServiceOption[]>([]);
     const [serviceOptions, setServiceOptions] = useState([]);
-    const [selectedInvoiceLink, setSelectedInvoiceLink] = useState([]);
+    const [selectedInvoiceLink, setSelectedInvoiceLink] = useState<string | string[]>([]);
+    const [selectedInvoiceLinkID, setSelectedInvoiceLinkID] = useState([]);
+    const [selectedMode, setSelectedMode] = useState([]);
     const handleDateChange = (date:any) => {
         setStartDate(date);
         setFormData({ ...formData, date});
@@ -85,6 +91,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
     };
 
     const handleSaveClick = async () => {
+        setSaving(true);
         try {
             const response = await fetch(`http://localhost:3000/alphaherd/api/finance/transactions/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
@@ -98,7 +105,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
                     receiptNo: initialInvoiceNo,
                     date: formData.date,
                     amountPaid: parseInt(formData.amountPaid, 10),
-                    mode: formData.mode?.value,
+                    mode: (selectedMode),
                     moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
                     products: JSON.stringify(selectedProducts),
                     services: JSON.stringify(selectedServices),
@@ -114,10 +121,45 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
         } catch (error) {
             console.error('Error while saving data:', error)
         } finally {
-
+            setSaving(false);
         }
 
-        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: formData.mode?.value, invoiceLink: selectedInvoiceLink || "Direct", moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+        const newTransaction = {
+            amountPaid: parseInt(formData.amountPaid, 10),
+            date: formData.date,
+            mode: (selectedMode),
+            moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
+        };
+
+        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: (selectedMode), invoiceLink: selectedInvoiceLink || "Direct", moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+
+        try {
+            if (Array.isArray(selectedInvoiceLink) && selectedInvoiceLink[0].startsWith("P")) {
+                const putResponse = await fetch(`http://localhost:3000/alphaherd/api/finance/purchases/${selectedInvoiceLinkID}/?branchId=${appState.currentBranchId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type' : 'application/json', 
+                    },
+                    body: JSON.stringify({
+                        recordTransaction: [newTransaction]
+                    })
+                });
+            } else {
+                const putResponse = await fetch(`http://localhost:3000/alphaherd/api/finance/sales/${selectedInvoiceLinkID}/?branchId=${appState.currentBranchId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type' : 'application/json', 
+                    },
+                    body: JSON.stringify({
+                        recordTransaction: [newTransaction]
+                    })
+                });
+            }
+           } catch (error) {
+                console.log("Error while put request",error)
+           }finally {
+    
+           }
     };
 
     console.log(formData)
@@ -128,11 +170,12 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
 
 
     const [linkInvoice, setLinkInvoice] = useState<any>([]);
+    const [modeOptions, setModeOptions] = useState<any>([]);
 
     const {data:products,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll/?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
     const {data:service, error:serviceError, isLoading:serviceLoading} = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true})
     const {data:invoice,error:invoiceError,isLoading:invoiceLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
-
+    const {data:modes,error:modesError,isLoading:modesLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
 
     
     invoice && console.log(invoice)
@@ -143,7 +186,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
     useEffect(() => {
         if (products&&!error&&!isLoading) {
             const options = products.map((product: any) => ({
-                value: product.id,
+                value: product?.id,
                 label: product.product?.itemName,
                 price: product?.sellingPrice,
             }));
@@ -152,7 +195,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
 
         if (service&&!serviceError&&!serviceLoading) {
             const options1 = service.map((service: any) => ({
-                value: service.id,
+                value: service?.id,
                 label: service?.name,
                 price: service?.serviceCharge,
             }));
@@ -161,27 +204,40 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
 
         if(invoice&&!invoiceError&&!invoiceLoading){
             const options2 = invoice.map((invoices: any) => ({
-                value: invoices.salesId,
-                label: invoices.sale?.invoiceNo,
+                value: invoices.salesId ? invoices.salesId : (invoices.purchasesId ? invoices.purchasesId : invoices.expensesId),
+                label: invoices.sale?.invoiceNo ? invoices.sale?.invoiceNo : (invoices.purchases?.invoiceNo ? invoices.purchases?.invoiceNo : invoices.expenses?.invoiceNo),
             }))
             setLinkInvoice(options2)
         }
 
-    }, [products, service, error,isLoading,serviceError,serviceLoading, invoice,invoiceError,invoiceLoading]);
+        if(modes&&!modesError&&!modesLoading){
+            const options3 = modes.map((mode: any) => ({
+                value: mode?.id,
+                label: mode?.name,
+            }))
+            setModeOptions(options3)
+        }
+
+    }, [products, service, error,isLoading,serviceError,serviceLoading, invoice,invoiceError,invoiceLoading, modes, modesError, modesLoading]);
 
     console.log(linkInvoice)
 
     const handleLinkInvoice = (selectedOptions: any) => {
-        console.log("hererlabel",selectedOptions.label)
-        setSelectedInvoiceLink(selectedOptions.label);
+        setSelectedInvoiceLinkID(selectedOptions?.value);
+        setSelectedInvoiceLink(selectedOptions?.label);
     }
+
+    const handleModeSelect = (selectedOptions: any) => {
+        setSelectedMode(selectedOptions?.label);
+    }
+
 
     const handleProductSelect = (selectedOptions: any) => {
         setSelectedProducts(selectedOptions);
     };
     
     const handleProductRemove = (productId: any) => {
-        setSelectedProducts(selectedProducts.filter(product => product.value !== productId));
+        setSelectedProducts(selectedProducts?.filter(product => product.value !== productId));
     };
     
     const handleServiceSelect = (selectedOptions: any) => {
@@ -189,7 +245,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
     };
     
     const handleServiceRemove = (serviceId: any) => {
-        setSelectedServices(selectedServices.filter(service => service.value !== serviceId));
+        setSelectedServices(selectedServices?.filter(service => service.value !== serviceId));
     };
 
     
@@ -203,6 +259,48 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
         setFormData((prevFormData:any) => ({ ...prevFormData, amountPaid: totalAmount }));
     }, [selectedProducts, selectedServices]);
 
+    const customStyles = {
+        control: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          border: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4',
+          '&:hover': {
+            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            },
+          boxShadow: state.isFocused ? 'none' : 'none',
+        }),
+        valueContainer: (provided: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        singleValue: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+        }),
+        menu: (provided: any) => ({
+          ...provided,
+          backgroundColor: 'white',
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        option: (provided: any, state: any) => ({
+          ...provided,
+          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+          color: state.isFocused ? 'white' : '#6B7E7D',
+          '&:hover': {
+            backgroundColor: '#35BEB1',
+            color: 'white',
+          },
+        }),
+        menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
+      };
+
+      console.log("setSelectedInvoiceLinkID", selectedInvoiceLinkID)
+
   return (
     <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
         <div className="w-[640px] h-[700px] py-2 pb-8  px-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex overflow-auto container">
@@ -211,7 +309,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
             </div>
             <div className='w-full flex flex-col gap-1'>
 
-                <div className="text-gray-500 text-xl font-medium ">Record Transaction</div>
+                <div className="text-gray-500 text-xl font-medium ">Record Payment</div>
                 <div className="text-neutral-400 text-base font-medium ">Note down the details of the transaction</div>
             </div>
             <div className='w-full flex gap-36'>
@@ -249,7 +347,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
                     <div><span className='text-gray-500 text-base font-medium '>Party</span></div>
                     <div className='w-[440px]'>
                     <Select
-                        className="text-neutral-400 text-base font-medium w-full"
+                        className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
                         placeholder="Select Category"
                         isClearable={false}
                         isSearchable={true}
@@ -257,29 +355,31 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
                         isMulti={false}
                         name="partyName"
                         onChange={(value) => handleChange("partyName", value)}
+                        styles={customStyles}
                         />
                     </div>                
             </div>
             <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Subject</span></div>
-                    <div><input className="w-[440px] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="text" name="subject" onChange={(e) => handleChange("subject", e.target.value)} /></div>
+                    <div><input className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2  outline-none border border-solid border-borderGrey focus:border-teal-500 " type="text" name="subject" onChange={(e) => handleChange("subject", e.target.value)} /></div>
             </div>
             <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Link Invoice</span></div>
                     <div className='w-[440px]'>
                     {linkInvoice ? (
                         <Select
-                        className="text-neutral-400 text-base font-medium w-full"
+                        className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
                         placeholder="Select Category"
-                        isClearable={false}
+                        isClearable={true}
                         isSearchable={true}
                         options={linkInvoice}
                         isMulti={false}
                         name="invoiceLink"
                         onChange={(value) => handleLinkInvoice(value)}
+                        styles={customStyles}
                     />
                     ): (
-                        <div className="text-neutral-400 text-base font-medium w-full">Loading...</div>
+                        <div className="text-neutral-400 text-base font-medium w-full"><Loading2/></div>
                     )}
                     </div>                
             </div>
@@ -290,7 +390,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
                 <div className="w-[440px]">
                     {service ? (
                         <Select
-                            className="text-neutral-400 text-base font-medium w-full"
+                            className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
                             placeholder="Select Service"
                             isClearable={true}
                             isSearchable={true}
@@ -298,9 +398,10 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
                             isMulti={true}
                             name="linkService"
                             onChange={(value) => handleServiceSelect(value)}
+                            styles={customStyles}
                         />
                     ) : (
-                        <div className="text-neutral-400 text-base font-medium w-full">Loading...</div>
+                        <div className="text-neutral-400 text-base font-medium w-full"><Loading2/></div>
                     )}
                 </div>
             </div>
@@ -309,7 +410,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
                     <div className="w-[440px]">
                     {products ? (
                         <Select
-                            className="text-neutral-400 text-base font-medium w-full"
+                            className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
                             placeholder="Select Product"
                             isClearable={true}
                             isSearchable={true}
@@ -317,9 +418,10 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
                             isMulti={true}
                             name="linkProduct"
                             onChange={(value) => handleProductSelect(value)}
+                            styles={customStyles}
                         />
                         ) : (
-                        <div className="text-neutral-400 text-base font-medium w-full">Loading...</div>
+                        <div className="text-neutral-400 text-base font-medium w-full"><Loading2/></div>
                         )}
           </div>            </div>
 
@@ -376,9 +478,47 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
             <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Receipt No.</span></div>
                     <div className='w-[440px] flex justify-between items-center'>
-                    <div><div className="w-[10rem] h-9 rounded-[5px] bg-white text-gray-400 text-base font-medium p-2  border border-solid border-gray-300">#{initialInvoiceNo}</div></div>
+                    <div><div className="w-[10rem] h-9 rounded-[5px] bg-white text-textGrey2 text-base font-medium p-2  border border-solid border-borderGrey flex items-center">#{initialInvoiceNo}</div></div>
 
-                        <div><span className='text-gray-500 text-base font-medium '>Date</span></div>
+                        
+                        <div><span className='text-gray-500 text-base font-medium '>Mode</span></div>
+                        <div className='w-[10rem]'>
+                        {/* <Select
+                            className="text-neutral-400 text-base font-medium w-full"
+                            placeholder="Mode"
+                            isClearable={false}
+                            isSearchable={true}
+                            options={Mode}
+                            isMulti={false}
+                            name="mode"
+                            onChange={(value) => handleChange("mode", value)}
+                            styles={customStyles}
+                        /> */}
+                        {modeOptions ? (
+                        <Select
+                            className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
+                            placeholder=""
+                            isClearable={true}
+                            isSearchable={true}
+                            options={modeOptions}
+                            isMulti={false}
+                            name="mode"
+                            onChange={(value) => handleModeSelect(value)}
+                            styles={customStyles}
+                        />
+                    ) : (
+                        <div className="text-neutral-400 text-base font-medium w-full"><Loading2/></div>
+                    )}
+                    </div>
+                    </div>
+
+            </div>
+            <div className='w-full flex justify-between items-center'>
+                    <div><span className='text-gray-500 text-base font-medium '>Amount Paid</span></div>
+                    <div className='w-[440px] flex justify-between items-center'>
+                    <div><input className="w-[10rem] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2  outline-none border border-solid border-borderGrey focus:border-teal-500 " type="number" name="amountPaid" value={formData.amountPaid} onChange={(e) => handleChange("amountPaid", e.target.value)}  /></div>
+
+                    <div><span className='text-gray-500 text-base font-medium '>Date</span></div>
                         <div className='relative'>
                         <DatePicker
                             className="w-[10rem]"
@@ -402,35 +542,14 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
                                 </div>
                             }
                         />
-                        </div>
-                    </div>
-
-            </div>
-            <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Amount Paid</span></div>
-                    <div className='w-[440px] flex justify-between items-center'>
-                    <div><input className="w-[10rem] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="number" name="amountPaid" value={formData.amountPaid} onChange={(e) => handleChange("amountPaid", e.target.value)}  /></div>
-
-                        <div><span className='text-gray-500 text-base font-medium '>Mode</span></div>
-                        <div className='w-[10rem]'>
-                        <Select
-                            className="text-neutral-400 text-base font-medium w-full"
-                            placeholder="Mode"
-                            isClearable={false}
-                            isSearchable={true}
-                            options={Mode}
-                            isMulti={false}
-                            name="mode"
-                            onChange={(value) => handleChange("mode", value)}
-                        />
-                    </div> 
+                        </div> 
                     </div>
 
             </div>
             <div className='w-full flex justify-end'>
                     <Button className="px-2 py-2.5 bg-navBar rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer"  onClick={handleSaveClick}>
                         <Image src={check} alt='check' /> 
-                        <span className='text-white text-base font-medium pr-2'>Save Transaction</span>
+                        <span className='text-white text-base font-medium pr-2'>{isSaving ? "Saving..." : "Save Payment"}</span>
                     </Button>
             </div>
             

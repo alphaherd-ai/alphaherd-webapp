@@ -313,7 +313,7 @@ const NewPurchaseReturnNewTotalAmount = () => {
                             </div>
             </div>
 
-            {showPopup && <Popup headerdata={headerData} onClose={togglePopup} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} />}
+            {showPopup && <Popup headerdata={headerData} onClose={togglePopup} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} />}
 
 
         </>
