@@ -14,11 +14,13 @@ type PopupProps = {
 const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     const [lastStep, setLastStep] = useState(false);
     const [formData, setFormData] = useState<any>({});
-  const appState = useAppSelector((state) => state.app)
-  const [buttonDisabled, setButtonDisabled] = useState(false);
+    const appState = useAppSelector((state) => state.app)
+    const [buttonDisabled, setButtonDisabled] = useState(true);
     const [Providers,setProviders] = useState([]);
     const [LinkProducts,setLinkProducts] = useState([]);
-    const [nameError, setNameError] = useState<string>("");
+    const [nameError, setNameError] = useState('');
+    const [serviceCostError, setServiceCostError] = useState('');
+    const [taxError, setTaxError] = useState('');
 
 const gstOptions = [
     { value: 0, label: 'GST@0%.' },
@@ -73,10 +75,31 @@ const [categories, setCategories] = useState<any[]>([
 
 
     const handleSaveClick = async () => {
+        console.log("Save Button");
+        if (!formData.name || !formData.serviceCost || !formData.tax) {
+            if (!formData.name) {
+                setNameError('Service name is required');
+            }
+            if (!formData.serviceCost) {
+                setServiceCostError('Service cost is required');
+            }
+            if (!formData.tax) {
+                setTaxError('Tax is required');
+            }
+            return; // Stop the function from proceeding if validation fails
+        }
         try {
-            setButtonDisabled(true);
-            const selectedProviders = formData.providers.map((provider:any) => provider.label);
-            const selectedProducts = formData.linkProducts.map((linkProducts:any) => linkProducts.label);
+            // setButtonDisabled(true);
+            console.log("Form data is valid:", formData);
+            // const selectedProviders = formData.providers.map((provider:any) => provider.label);
+            // const selectedProducts = formData.linkProducts.map((linkProducts:any) => linkProducts.label);
+            const selectedProviders = Array.isArray(formData.providers) 
+            ? formData.providers.map((provider: any) => provider.label) 
+            : [];
+        const selectedProducts = Array.isArray(formData.linkProducts) 
+            ? formData.linkProducts.map((product: any) => product.label) 
+            : [];
+
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
@@ -100,20 +123,39 @@ const [categories, setCategories] = useState<any[]>([
             if (response.ok) {
                 console.log('Data saved successfully');
                 onClose(); 
+                window.dispatchEvent(new FocusEvent('focus'));
             } else {
                 console.error('Failed to save data:', response.statusText);
             }
         } catch (error) {
             console.error('Error while saving data:', error);
         }
-    }
-
-    const handleChange = (field: string, value: any) => {
-        setFormData({ ...formData, [field]: value });
-        if (field === "name") {
-            setNameError(value ? "" : "Name must be provided");
-        }
     };
+    const handleChange = (field: string, value: any) => {
+        setFormData((prevState: any) => {
+            const updatedFormData = { ...prevState, [field]: value };
+            
+            // Validation
+            if (field === 'name') {
+                setNameError(value ? '' : 'Service name is required');
+            }
+            
+            if (field === 'serviceCost') {
+                setServiceCostError(value ? '' : 'Service cost is required');
+            }
+            
+            if (field === 'tax') {
+                setTaxError(value ? '' : 'Tax is required');
+            }
+    
+            // Check if all required fields are filled
+            const allFieldsFilled = updatedFormData.name && updatedFormData.serviceCost && updatedFormData.tax;
+            setButtonDisabled(!allFieldsFilled);
+    
+            return updatedFormData;
+        });
+    };
+    
 
     return <>
         {!lastStep &&
@@ -158,7 +200,7 @@ const [categories, setCategories] = useState<any[]>([
                             onClick={handleContinueClick}
                             disabled={!formData.name}
                             className={`px-4 py-2.5 rounded-[5px] justify-start items-center gap-1 flex border-0 outline-none cursor-pointer ${
-                                formData.name ? "bg-zinc-900" : "bg-red-500"
+                                formData.name ? "bg-zinc-900" : "bg-grey-500"
                             }`}
                         >
                             <div className={`text-base font-bold ${formData.name ? "text-white" : "text-neutral-200"}`}>
@@ -189,7 +231,9 @@ const [categories, setCategories] = useState<any[]>([
                             <div className="text-gray-500 text-base font-medium ">Service Cost</div>
                             
                                 <input className="w-[157px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="number" name="serviceCharge" onChange={(e) => handleChange("serviceCharge", e.target.value)}/>
-                            
+                                {serviceCostError && (
+                                    <div className="text-red-500 text-sm mt-1">{serviceCostError}</div>
+                                )}
                         </div>
                         <div className="flex items-center gap-[16px]">
                             <div className="text-gray-500 text-base font-medium ">Tax</div>
@@ -204,7 +248,9 @@ const [categories, setCategories] = useState<any[]>([
                                     name="tax"
                             onChange={(value) => handleChange("tax", value)}
                                 />
-                            
+                            {taxError && (
+                                <div className="text-red-500 text-sm mt-1">{taxError}</div>
+                            )}
                         </div>
                     </div>
                     <div className="flex items-center gap-[79px] w-full ">
@@ -219,7 +265,7 @@ const [categories, setCategories] = useState<any[]>([
                                 name="category"
                             onChange={(value) => handleChange("category", value)}
                             /> */}
-                           <CreatableSelect
+                           <Select
                                     className="text-neutral-400 text-base font-medium w-full"
                                     placeholder="Select Category"
                                     isClearable={false}
@@ -261,10 +307,19 @@ const [categories, setCategories] = useState<any[]>([
                         </div>
                     </div>
                     <div className="self-end items-start gap-6 flex">
-                        <button onClick={handleSaveClick} disabled={buttonDisabled} className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex border-0 outline-0 cursor-pointer hover:shadow transition">
-                            <div className="text-white text-base font-bold ">Save</div>
-                        </button>
-                    </div>
+                    <button
+                        onClick={handleSaveClick}
+                        disabled={buttonDisabled}
+                        className={`px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${
+                            buttonDisabled ? 'bg-grey-500' : 'bg-zinc-900'
+                        }`}
+                    >
+                        <div className={`text-base font-bold ${buttonDisabled ? 'text-neutral-200' : 'text-white'}`}>
+                            Save
+                        </div>
+                    </button>
+
+                </div>
                 </div>
             </div>
         }

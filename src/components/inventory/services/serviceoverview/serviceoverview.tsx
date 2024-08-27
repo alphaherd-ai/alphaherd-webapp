@@ -34,6 +34,41 @@ function useServicefetch (id: string | null,branchId:number|null) {
    }
 }
 
+// async function fetchProductDetails(productNames: string[]) {
+//     const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/products`, {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ productNames }),
+//     });
+
+//     if (response.ok) {
+//         return response.json();
+//     } else {
+//         console.error('Failed to fetch product details:', response.statusText);
+//         return [];
+//     }
+// }
+
+async function fetchProductDetails(productNames: string[]) {
+    const queryParams = new URLSearchParams({ productNames: JSON.stringify(productNames) });
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/products?${queryParams}`, {
+        method: 'GET', // Changed to GET
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+    if (response.ok) {
+        return response.json();
+    } else {
+        console.error('Failed to fetch product details:', response.statusText);
+        return [];
+    }
+}
+
+
   const ServiceDetails = () => {
     const [service, setService] = useState<any | null>(null);
     const url = useSearchParams();
@@ -52,6 +87,18 @@ function useServicefetch (id: string | null,branchId:number|null) {
         }
       },[fetchedProduct,error,isLoading]
     );
+
+    const [products, setProducts] = useState<any[]>([]);
+
+    useEffect(() => {
+        if (service?.linkProducts?.length) {
+            fetchProductDetails(service.linkProducts)
+                .then((productDetails) => {
+                    setProducts(productDetails);
+                })
+                .catch((error) => console.error('Error fetching product details:', error));
+        }
+    }, [service?.linkProducts]);
 
     return <>
         <div className="w-full h-full relative  rounded-[20px] pr-[16px] pl-[16px] z-1">
@@ -208,7 +255,7 @@ function useServicefetch (id: string | null,branchId:number|null) {
                             <div className='flex text-textGrey2 text-base font-medium px-6 w-1/7'>Stock Level</div>
                         </div>
                     
-                        {service?.linkProducts?.map((item: any) => (
+                        {/* {service?.linkProducts?.map((item: any) => (
                         <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
                             <div className='w-1/12 px-6 flex items-center text-textGrey2 text-base font-medium'>{item.name} </div>
                             <div className='w-1/12 px-6 flex items-center text-textGrey2 text-base font-medium'>{item?.totalQuantity}</div>
@@ -218,7 +265,18 @@ function useServicefetch (id: string | null,branchId:number|null) {
                             <div className='w-1/12 px-6 flex items-center text-textGrey2 text-base font-medium'>{item.sellingPrice}</div>
                             <div className='w-1/12 px-6 flex items-center text-textGrey2 text-base font-medium'>₹399</div>                            
                         </div>
-                        ))}
+                        ))} */}
+                        {products.map((item: any) => (
+                        <div key={item.id} className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
+                            <div className='w-1/12 px-6 flex items-center text-textGrey2 text-base font-medium'>{item.itemName}</div>
+                            <div className='w-1/12 px-6 flex items-center text-textGrey2 text-base font-medium'>{item.totalQuantity}</div>
+                            <div className='w-1/12 px-6 flex items-center text-textGrey2 text-base font-medium'>{item.batchNumber}</div>
+                            <div className='w-1/12 px-6 flex items-center text-textGrey2 text-base font-medium'>{formatDateAndTime(item.expiry).formattedDate}</div>
+                            <div className='w-1/12 px-6 flex items-center text-textGrey2 text-base font-medium'>{item.costPrice}</div>
+                            <div className='w-1/12 px-6 flex items-center text-textGrey2 text-base font-medium'>{item.sellingPrice}</div>
+                            <div className='w-1/12 px-6 flex items-center text-textGrey2 text-base font-medium'>₹{item.stockLevel}</div>
+                        </div>
+                    ))}
                     </div>
                 </div>
             </div>

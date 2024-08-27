@@ -92,14 +92,15 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
         // const isFormValid =updatedFormData.patientName !== '' && updatedFormData.clientId !== '' ;
         // setIsSaveDisabled(!isFormValid);
         const isPatientNameValid = updatedFormData.patientName !== '';
-        const isClientNameValid = updatedFormData.clientName !== undefined && updatedFormData.clientName.value !== '';
+        const isClientNameValid = updatedFormData.clientName !== undefined;
 
         const newErrors: { patientName?: string; clientName?: string } = {};
         if (!isPatientNameValid) newErrors.patientName = 'Patient name is required';
         if (!isClientNameValid) newErrors.clientName = 'Client name is required';
 
         setErrors(newErrors);
-        setIsSaveDisabled(!(isPatientNameValid && isClientNameValid));
+        setIsSaveDisabled(!isPatientNameValid || !isClientNameValid);
+
         return updatedFormData;
         
         });
@@ -178,26 +179,22 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 </div>
 
                 <div className="flex items-center gap-[48px]">
-                    <div className="w-[8rem] text-gray-500 text-base font-medium">Client Name<span className="text-[red]">*</span></div>
+                    <div className="  w-[8rem] text-gray-500 text-base font-medium ">Client Name</div>
                     <div>
-                        {clientData === undefined ? (
-                            <>
-                                <Select
-                                    className="text-textGrey2 text-base font-medium w-[25rem] border-0 boxShadow-0"
-                                    classNamePrefix="select"
-                                    isClearable={false}
-                                    isSearchable={true}
-                                    name="clientName"
-                                    options={clients}
-                                    onChange={(selectedClient: any) => handleChange("clientName", selectedClient)}
-                                />
-                                {errors.clientName && (
-                                    <div className="text-[red]">{errors.clientName}</div>
-                                )}
-                            </>
-                        ) : (
-                            <div>{clientData.name}</div>
+                        {clientData===undefined?(
+                            <Select
+                            className="text-textGrey2 text-base font-medium  w-[25rem] border-0 boxShadow-0 "
+                            classNamePrefix="select"
+                            isClearable={false}
+                            isSearchable={true}
+                            name="clientName"
+                            options={clients}
+                            onChange={(selectedClient: any) => handleChange("clientName", selectedClient)}
+                            />
+                        ):(
+                          clientData.name
                         )}
+                       
                     </div>
                 </div>
                 <div className="flex items-center gap-[120px]">
