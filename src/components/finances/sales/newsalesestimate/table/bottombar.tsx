@@ -16,6 +16,7 @@ import { Button } from "@nextui-org/react"
 import {useRouter, useSearchParams} from "next/navigation"
 import { generatePdfForInvoice } from "@/utils/salesPdf"
 import { AppState } from "@/lib/features/appSlice"
+import { generatePdfForInvoiceAndUpload } from "@/utils/uploadPdf"
 
 
 
@@ -24,7 +25,7 @@ const NewsaleEstimateBottomBar = () => {
     const { headerData, tableData, totalAmountData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
     const router=useRouter();
-    const [financeType, setFinanceType] = useState(FinanceCreationType.Sales_Estimate);
+    
     const handleSubmit = async () => {
         if (!headerData.customer || tableData.length === 0) {
             alert('Customer is required');
@@ -125,14 +126,25 @@ const NewsaleEstimateBottomBar = () => {
   }, []);
 
   const handleShareClick = () => {
-    if (communicationMode === 'SMS') {
-      sendSMS();
-    } else if (communicationMode === 'Email') {
-      sendEmail();
-    // } else if (communicationMode === 'WhatsApp') {
-    //   sendWhatsapp();
+    const savedModes = localStorage.getItem('selectedCommunicationModes');
+    
+    if (savedModes) {
+      const communicationModes: string[] = JSON.parse(savedModes);
+  
+      if (communicationModes.includes('SMS')) {
+        sendSMS();
+      }
+      if (communicationModes.includes('Email')) {
+        sendEmail();
+      }
+      if (communicationModes.includes('WhatsApp')) {
+        sendWhatsapp();
+      }
+    } else {
+      alert('No communication modes selected. Please select a mode in the settings.');
     }
   };
+  
 
     const sendSMS = async () => {
         try {   
@@ -173,47 +185,64 @@ const NewsaleEstimateBottomBar = () => {
     //         console.error('Error while sending message', error);
     //     } 
     // };
-    const sendWhatsapp = async (phoneNumber: any, headerData: { [key: string]: any }, tableData: { [key: string]: any }[], totalAmountData: { [key: string]: any }, type: string, appState: AppState) => {
+    const sendWhatsapp = async () => {
+        const allData = { headerData, tableData, totalAmountData };
+        console.log("this is all data", allData)
+        const phoneNumber = allData.headerData.customer.value.contact;
+        let totalQty = 0;
+        tableData.forEach(data => {
+            totalQty += (data.quantity) || 0;
+        });
+        const items = tableData.map(data => ({
+            productId: data.productId,
+            productBatchId: data.id,
+            quantity: data.quantity,
+            sellingPrice: data.sellingPrice,
+            taxAmount: data.gst,
+            name: data.itemName,
+            discount:data.discount
+        }));
+        const data = {
+            customer:  allData.headerData.customer.value.clientName,
+            notes:  allData.headerData.notes,
+            subTotal: allData.totalAmountData.subTotal,
+            invoiceNo:allData.headerData.invoiceNo,
+            dueDate: allData.headerData.dueDate,
+            shipping: allData.totalAmountData.shipping,
+            adjustment: allData.totalAmountData.adjustment,
+            totalCost: allData.totalAmountData.totalCost,
+            contact:allData.headerData.customer.value.contact,
+            overallDiscount: `${allData.totalAmountData.gst*100}%`,
+            totalQty: totalQty,
+            status: "Pending",
+            type: FinanceCreationType.Sales_Estimate,
+            items: {
+                create: items
+            }
+        }
         try {
-          // Generate the PDF link
-          const pdfResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/pdf-link`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              headerData,
-              tableData,
-              totalAmountData,
-              type,
-              appState,
-            }),
-          });
-
-          if (!pdfResponse.ok) {
-            const errorText = await pdfResponse.text();
-            console.error('Failed to generate PDF link:', pdfResponse.status, errorText);
-            throw new Error(`Failed to generate PDF: ${pdfResponse.statusText}`);
-          }
-      
-          const pdfData = await pdfResponse.json();
-          const pdfUrl = pdfData.pdfUrl;
-      
-          // Send WhatsApp message with the PDF link
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/whatsapp`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              phone: `+91${phoneNumber}`,
-              message: `Hello from the team. Here is your invoice: ${pdfUrl}`,
-            }),
-          });
-      
-          console.log('WhatsApp message sent successfully:', response);
+            // Generate PDF and get the URL
+            const pdfUrl =  await generatePdfForInvoiceAndUpload(data, appState, items);
+            console.log('PDF URL:', pdfUrl);
+            const message = `Hello from the team. Here is your invoice: ${pdfUrl}`;
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/whatsapp`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    phone: `+91${phoneNumber}`,
+                    message: "Hi",
+                }),
+            });
+    
+            if (response.ok) {
+                console.log('WhatsApp message sent successfully:', response);
+            } else {
+                console.error('Failed to send WhatsApp message:', response.statusText);
+            }
         } catch (error) {
-          console.error('Error while sending message', error);
+            console.error('Error while sending WhatsApp message:', error);
         }
     };
       
@@ -264,7 +293,7 @@ const NewsaleEstimateBottomBar = () => {
                     </Button>
                     <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={shareicon} alt="share"></Image>
-                        <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all" onClick={() => sendWhatsapp(phone, headerData, tableData, totalAmountData, financeType,appState)}>Share via Whatsapp</div>
+                        <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all" onClick={sendWhatsapp}>Share via Whatsapp</div>
                     </Button>
                     <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={shareicon} alt="share"></Image>

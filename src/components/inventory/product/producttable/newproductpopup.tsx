@@ -23,17 +23,7 @@ type PopupProps = {
     onClose: () => void;
 }
 
-const productSchema = z.object({
-    itemName: z.string().min(2,'Provide Item Name'),
-    providers: z.string().min(2,'Select a Distributor').optional(),
-    unit: z.string().min(2,'Mention the units').optional(),
-    hsnCode: z.string().length(6,'Invalid HSN Code.It should be of 6 digits').optional(),
-    // tax: z.number().min(2,'Select a tax %'),
-    category: z.string().min(1,'Select a category').optional(),
-    description: z.string().min(1,'Provide description').optional(),
-    minStock: z.string().min(1,'Enter Min. Stock'),
-    maxStock: z.string().min(1,'Enter Max. Stock')
-})
+
 
 var stepFields = [
     ["itemName","providers","unit","hsnCode","tax","category","state","description"],
@@ -66,24 +56,14 @@ function useProductfetch (id: number | null) {
    }
 }
 const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
-    const initialData ={
-        itemName: '',
-        providers: '',
-        unit: '',
-        hsnCode: '',
-        tax: '',
-        category: '',
-        description: '',
-        minStock: '',
-        maxStock: ''
-    }
-
+    
     const [lastStep, setLastStep] = useState(false);
-    const [formData, setFormData] = useState<any>(initialData);
-    const [buttonDisabled, setButtonDisabled] = useState(false);
+    const [formData, setFormData] = useState<any>({});
+    //const [buttonDisabled, setButtonDisabled] = useState(false);
     const [distributor, setDistributor] = useState<any[]>([]);
     const [isSaveDisabled, setIsSaveDisabled] = useState(true)
     const [activeTab, setActiveTab] = useState(0);
+    const [errors, setErrors] =  useState<any>({});
 
     const [categories, setCategories] = useState<any[]>([
         { value: "Pet food", label: "Pet food" },
@@ -93,10 +73,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
         { value: "Equipments", label: "Equipments" },
     ]);
 
-    //const [data, setData] = useState(initialData);
-    const [validationErrors, setValidationErrors] = useState(formData);
-    console.log(validationErrors);
-
+   
     const appState = useAppSelector((state) => state.app);
     const {fetchedProducts,isLoading,error}=useProductfetch(appState.currentBranchId);
     
@@ -135,20 +112,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     }, []);
 
     function handleContinue(){
-        try{
-            productSchema.parse(formData);
-            setLastStep(true);
-            setActiveTab(prev => prev + 1);
-        }
-        catch(err : any){
-            if (err instanceof z.ZodError) {
-            console.log(err.flatten());
-            if(!setValidationErrorsForForm(err,setValidationErrors,activeTab,stepFields)){
-                setLastStep(true);
-                setActiveTab(prev => prev + 1);
-            }
-            }
-        }
+        setLastStep(true);
+        setActiveTab(prev => prev + 1);
     }
   
     // Assuming you're using Zod for validation
@@ -156,10 +121,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     const handleSaveClick = async () => {
         console.log("Submit button");
         try {
-            
-            setButtonDisabled(true);
-            productSchema.parse(formData);
-
+           
             let selectedProviders = [formData.providers];
     
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/create?branchId=${appState.currentBranchId}`, {
@@ -199,48 +161,33 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
 
     // };
     const handleChange = (field: string, value: any) => {
-        console.log("this is providers",value,field)
-        try{
-            console.log(field,value)
-            setFormData((prevData:any) => ({
-              ...prevData,
-              [field]: value,
-            }));
-            console.log("inside handle change 1");
-            productSchema.parse({...formData,[field]: value});
-            console.log("inside handle change 2");
-            setValidationErrors((prevErrors:any) => {
-              console.log("here");
-              let newErrors = prevErrors;
-              newErrors[field as keyof typeof prevErrors] = '';
-              return newErrors;
-            });
-          }
-          catch(err : any){
-            if (err instanceof z.ZodError) {
-              console.log(err.flatten());
-              let fieldErrors = err.flatten().fieldErrors;
-              console.log(fieldErrors);
-              let fields: string[] = Object.keys(fieldErrors);
-              console.log(field);
-              console.log(fields);
-              if(fields.includes(field)){
-                setValidationErrors((prevErrors: any) => {
-                  let newErrors = prevErrors;
-                  newErrors[field as keyof typeof prevErrors] = fieldErrors[field]!.length > 0 ? fieldErrors[field]![0] : '';
-                  return newErrors;
-                });
-              }
-              else{
-                setValidationErrors((prevErrors: any) => {
-                  console.log("here");
-                  let newErrors = prevErrors;
-                  newErrors[field as keyof typeof prevErrors] = '';
-                  return newErrors;
-                });
-              }
+        console.log("this is providers", value, field);
+    
+        setFormData((prevFormData: any) => {
+            const updatedFormData = { ...prevFormData, [field]: value };
+
+            const isProductNameValid = updatedFormData.itemName !== '';
+            const isTaxValid = updatedFormData.tax !== undefined;
+
+        // Update the errors state directly
+        const updatedErrors = { ...errors };
+            if (!isProductNameValid) {
+                updatedErrors.itemName = 'Patient name is required';
+            } else {
+                delete updatedErrors.itemName;
             }
-        }
+
+            if (!isTaxValid) {
+                updatedErrors.tax = 'Tax is required';
+            } else {
+                delete updatedErrors.tax;
+            }
+
+            setErrors(updatedErrors);
+            setIsSaveDisabled(!isProductNameValid || !isTaxValid);
+
+            return updatedFormData;
+        });
     };
       
 
@@ -274,8 +221,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                             <div className="text-gray-500 text-base font-medium">Name*</div>
                             <div>
                                 <input className="w-[440px] h-9 rounded-md text-gray-400 text-base font-medium p-2 outline-none border border-solid border-gray-300" type="text" name="name" onChange={(e) => handleChange("itemName", e.target.value)} />
-                                {validationErrors.itemName && (
-                                    <div className="text-[red] error">{validationErrors.itemName}</div>
+                                {errors.itemName && (
+                                    <div className="text-[red] error">{errors.itemName}</div>
                                 )}
                                 
                             </div>
@@ -293,9 +240,6 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                     name="providers"
                                     onChange={(e) => handleChange("providers", e?.label)}
                                 />
-                                {validationErrors.providers && (
-                                    <div className="text-[red] error">{validationErrors.providers}</div>
-                                )}
                                 
                             </div>
                         </div>
@@ -312,9 +256,6 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                     name="unit"
                                     onChange={(e) => handleChange("unit",e?.label)}
                                 />
-                                {validationErrors.unit && (
-                                    <div className="text-[red] error">{validationErrors.unit}</div>
-                                )}
                                 
                             </div>
                         </div>
@@ -322,9 +263,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                             <div className="text-gray-500 text-base font-medium w-[5rem]">HSN Code</div>
                             <div>
                                 <input className="w-[440px] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2 outline-none border border-solid border-gray-300" type="text" name="hsnCode" onChange={(e) => handleChange("hsnCode", e.target.value)} />
-                                {validationErrors.hsnCode && (
-                                    <div className="text-[red] error">{validationErrors.hsnCode}</div>
-                                )}
+                                
                                 
                             </div>
                         </div>
@@ -342,8 +281,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                     onChange={(e) => handleChange("tax", e?.value)}
                                     
                                 />
-                                {validationErrors.tax && (
-                                    <div className="text-[red] error">{validationErrors.tax}</div>
+                                {errors.tax && (
+                                    <div className="text-[red] error">{errors.tax}</div>
                                 )}
                                 
                             </div>
@@ -363,24 +302,23 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                     onChange={(e) => handleChange("category", e?.label)}
                                    
                                 />
-                                {validationErrors.category && (
-                                    <div className="text-[red] error">{validationErrors.category}</div>
-                                )}
-                                
+                               
                             </div>
                         </div>
                         <div className="flex-col">
                             <div className="text-gray-500 text-base font-medium">Description</div>
                             <textarea className="text-gray-400 text-base font-medium mt-[8px] px-2 py-2 outline-none border border-solid border-gray-300 rounded-md" placeholder="Provide details of the service" rows={5} cols={68} onChange={(e) => handleChange("description", e.target.value)}></textarea>
-                            {validationErrors.description && (
-                                    <div className="text-[red] error">{validationErrors.description}</div>
-                                )}
                             
                         </div>
                         <div className="self-end items-start gap-6 flex">
-                            <button onClick={handleContinue} className="px-4 py-2.5 bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer">
-                                <div className="text-neutral-400 text-base font-bold">Continue</div>
-                                <Image src={arrowicon} alt="arrow"></Image>
+                            <button 
+                                onClick={handleContinue} 
+                                className={`px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer 
+                                    ${isSaveDisabled ? 'bg-gray-200' : 'bg-zinc-200'}`} 
+                                disabled={isSaveDisabled}
+                            >
+                                <div className={`text-base font-bold ${isSaveDisabled ? 'text-neutral-400' : 'text-neutral-900'}`}>Continue</div>
+                                <Image src={arrowicon} alt="arrow" />
                             </button>
                         </div>
                     </div>
@@ -403,9 +341,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                             <div className="justify-start items-center gap-4 flex">
                                 <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-2 flex">
                                     <input className="p-2 rounded-md border-0 focus:border-0 focus:outline-none w-[263px] h-11 text-neutral-400 text-base font-medium" type="number" name="minStock" onChange={(e) => handleChange("minStock", e.target.value)} />
-                                    {validationErrors.minStock && (
-                                    <div className="text-[red] error">{validationErrors.maxStock}</div>
-                                )}
+                                    
                                 
                                 </div>
                                 <div className="text-right text-gray-500 text-base font-medium"> </div>
@@ -423,9 +359,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                             <div className="justify-start items-center gap-4 flex">
                                 <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-2 flex">
                                     <input className="p-2 rounded-md border-0 focus:border-0 focus:outline-none w-[263px] h-11 text-neutral-400 text-base font-medium" type="number" name="maxStock" onChange={(e) => handleChange("maxStock", e.target.value)} />
-                                    {validationErrors.maxStock && (
-                                    <div className="text-[red] error">{validationErrors.maxStock}</div>
-                                )}
+                                    
                                 
                                 </div>
                             </div>
@@ -438,7 +372,6 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                     <div className="w-[545px] flex justify-end mt-[5px] cursor-pointer">
                     <Button 
                     onClick={handleSaveClick} 
-                    disabled={buttonDisabled} 
                     className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none"
                     >
                         <div className="w-6 h-6">
