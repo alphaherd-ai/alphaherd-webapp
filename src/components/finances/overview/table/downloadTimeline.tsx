@@ -266,7 +266,7 @@ const DownloadPopup = ({ onClose, timeline }:any) => {
             filename={`sales_report_${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'}_to_${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}.csv`}
             className="no-underline flex items-center mr-4"
             headers={[
-              { label: 'Date', key: 'sale.date' },
+              { label: 'Date', key: 'sal  e.date' },
               { label: 'Type', key: 'sale.type' },
               { label: 'Customer', key: 'sale.customer' },
               { label: 'Ref. No.', key: 'sale.invoiceNo' },

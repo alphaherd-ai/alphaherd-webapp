@@ -17,7 +17,7 @@ import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 import Loading2 from '@/app/loading2';
 
 
-const ExistingsalesTotalAmout = ({otherData, isLoading}: any) => {
+const ExistingsalesTotalAmout = ({otherData, isLoading, loading}: any) => {
     
 
     const [showPopup, setShowPopup] = React.useState(false);
@@ -61,6 +61,8 @@ const ExistingsalesTotalAmout = ({otherData, isLoading}: any) => {
       }
     }, [count, showPopup]);
 
+    console.log("otherData", otherData)
+
     return (
         <>
 
@@ -71,42 +73,42 @@ const ExistingsalesTotalAmout = ({otherData, isLoading}: any) => {
                 <div className="w-full  px-6 py-4 bg-white rounded-tl-md rounded-tr-md justify-between items-center gap-6 flex border-0 border-b border-solid border-borderGrey">
                         <div className="text-gray-500 text-xl font-medium ">Payments</div>
                        
-                                    <Button 
-                                        onClick={togglePopup}
-                                        variant="solid"
-                                        className="capitalize flex h-9 py-2.5 border-none text-base bg-black text-white rounded-lg cursor-pointer">
-                                        <div className='flex'><Image src={Rupee} alt='Rupee' className='w-6 h-6 ' /></div>
-                                        Record Payment
-                                    </Button>
+                        <Button 
+                            onClick={togglePopup}
+                            variant="solid"
+                            className="capitalize flex h-9 py-2.5 border-none text-base bg-black text-white rounded-lg cursor-pointer">
+                            <div className='flex'><Image src={Rupee} alt='Rupee' className='w-6 h-6 ' /></div>
+                            Record Payment
+                        </Button>
                                 
                     </div>
                     <div className="w-full  bg-white  justify-between items-center  flex">
                         <div className='w-full h-[9.6rem] flex flex-col overflow-auto container'>
-                        {isLoading && <Loading2 />}
+                        {(isLoading) && <Loading2 />}
                         {otherData && otherData.recordTransaction && otherData.recordTransaction.map((transaction: any, index: any) => (
                             transaction.isAdvancePayment &&
                             (<div key={index} className='w-full px-6 flex border-0 border-b border-solid border-borderGrey'>
                             <div  className="text-textGrey2  text-base font-bold  w-1/3 py-4">Advance Paid</div>
-                            <div className="text-textGrey1 text-base font-medium  w-1/3 py-4 flex  items-center">  
+                            <div className="text-textGrey2 text-base font-medium  w-1/3 py-4 flex  items-center">  
                                 <div className='flex pr-2'>
                                     <Image src={Cash} alt='Cash' className='w-4 h-4 ' />
                                 </div>
                                 {transaction.mode}
                             </div>
-                            <div className="text-textGrey1 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid)?.toFixed(2)}</div>
+                            <div className="text-textGrey2 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid)?.toFixed(2)}</div>
                             </div>)
                         ))}
                         {otherData && otherData.recordTransaction && otherData.recordTransaction.map((transaction: any, index: any) => (
                             !transaction.isAdvancePayment &&
                             (<div key={index} className='w-full px-6 flex border-0 border-b border-solid border-borderGrey'>
-                            <div  className="text-textGrey1 text-base font-medium  w-1/3 py-4">{formatDateAndTime(transaction.date).formattedDate}</div>
-                            <div className="text-textGrey1 text-base font-medium  w-1/3 py-4 flex  items-center">  
+                            <div  className="text-textGrey2 text-base font-medium  w-1/3 py-4">{formatDateAndTime(transaction.date).formattedDate}</div>
+                            <div className="text-textGrey2 text-base font-medium  w-1/3 py-4 flex  items-center">  
                                 <div className='flex pr-2'>
                                     <Image src={Cash} alt='Cash' className='w-4 h-4 ' />
                                 </div>
                                 {transaction.mode}
                             </div>
-                            <div className="text-textGrey1 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid)?.toFixed(2)}
+                            <div className="text-textGrey2 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid)?.toFixed(2)}
                                 {transaction.moneyChange === 'Out' && <span className="px-2 py-1 rounded-md bg-[#FFEAEA] text-[#FF3030] text-sm font-medium ml-[5px]">Out</span>}
                                 {transaction.moneyChange === 'In' && <span className="px-2 py-1 rounded-md bg-[#E7F5EE] text-[#0F9D58] text-sm font-medium ml-[5px]">In</span>}
                             </div>
@@ -137,17 +139,17 @@ const ExistingsalesTotalAmout = ({otherData, isLoading}: any) => {
                                 <div className="w-full flex px-4 py-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
                                     <div className="text-gray-500 text-base font-bold ">Overall Discount</div>
                                     <div className="flex items-center">
-                                        <div className="text-right text-textGrey1 text-base  ">{otherData.overallDiscount*100 || 0}%</div>
+                                        <div className="text-right text-textGrey2 text-base  ">{otherData.overallDiscount*100 || 0}%</div>
                                      
                                     </div>
                                 </div>
                                 <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5   ">
                                     <div className="text-gray-500 text-base font-bold ">Shipping</div>
-                                    <div className="text-right text-textGrey1 text-base ">₹ {otherData.shipping || 0}</div>
+                                    <div className="text-right text-textGrey2 text-base ">₹ {otherData.shipping || 0}</div>
                                 </div>
                                 <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5  ">
                                     <div className="text-gray-500 text-base font-bold ">Adjustment</div>
-                                    <div className="text-right text-textGrey1 text-base ">₹{otherData.adjustment || 0}</div>
+                                    <div className="text-right text-textGrey2 text-base ">₹{otherData.adjustment || 0}</div>
                                 </div>
                                 <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 rounded-b-md justify-between items-center gap-2.5    ">
                                     <div className="text-textGreen text-base font-bold">Grand total</div>
@@ -156,7 +158,7 @@ const ExistingsalesTotalAmout = ({otherData, isLoading}: any) => {
                             </div>
             </div>
 
-            {showPopup && <Popup headerdata={otherData} onClose={togglePopup} initialInvoiceNo={initialInvoiceNo}  />}
+            {showPopup && <Popup headerdata={otherData} onClose={togglePopup} initialInvoiceNo={initialInvoiceNo} balanceDue={balanceDue}  />}
 
         </>
 

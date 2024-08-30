@@ -186,7 +186,7 @@ const ExsistingPurcaseReturnTotalAmount = ({otherData, isLoading}:any) => {
             </div>
 
 
-            {showPopup && <Popup headerdata={otherData} onClose={togglePopup} initialInvoiceNo={initialInvoiceNo}  />}
+            {showPopup && <Popup headerdata={otherData} onClose={togglePopup} initialInvoiceNo={initialInvoiceNo} balanceDue={balanceDue} />}
 
         </>
   )

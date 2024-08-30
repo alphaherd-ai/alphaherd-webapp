@@ -110,17 +110,11 @@ const FinancesTransactionSheet = () => {
 
 
                 {activeTab === 'All transactions' && 
-                <div className="flex">
+                <div className="flex overflow-x-auto">
 
                         {isLoading ? <Loading /> : paymentMethod.map((item:any) => {
                             return (
-                                <div key={item.id} className="w-1/4 border-0 border-r border-l border-solid border-borderGrey bg-gray-100 pb-2">
-                                <div className="items-center justify-center flex text-gray-500 text-xl font-bold  py-4 border-borderGrey bg-white mb-2">
-                                    <span className="mr-2">
-                                        <Image src={cash} alt='cash' className='w-6 h-6 mt-1' />
-                                    </span>
-                                    {item.name}
-                                </div>
+                                <div key={item.id}>
                                 <TransactionsBlanceSheetCashItem mode={item.name} />
                                 </div>
                             );

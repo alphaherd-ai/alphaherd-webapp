@@ -1,6 +1,6 @@
 "use client";
 import Image from 'next/image';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import RadioButton from "../../../../../assets/icons/finance/radio_button.svg"
 import RadioButtonSelec from "../../../../../assets/icons/finance/radio_button (1).svg"
 import DatePicker from 'react-datepicker';
@@ -17,21 +17,29 @@ import Select from 'react-select';
 import { Button } from '@nextui-org/react';
 import { useAppSelector } from '@/lib/hooks';
 import { useSearchParams } from 'next/navigation';
+import Loading2 from '@/app/loading2';
+import useSWR from 'swr';
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
+
 
 type PopupProps = {
     onClose: () => void;
     headerdata: any;
     initialInvoiceNo: any;
+    balanceDue: any;
 }
 
 
-const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initialInvoiceNo}) => {
+const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initialInvoiceNo, balanceDue}) => {
     const url = useSearchParams();
     const id = url.get('id');
     const dispatch = useDispatch();
 
-
-    const [formData, setFormData] = useState<any>({});
+    const [isSaving,setSaving]=useState(false);
+    const [formData, setFormData] = useState<any>({
+        amountPaid: "",
+    });
     const appState = useAppSelector((state) => state.app)
     const [isAdvancePayment, setIsAdvancePayment] = useState(false);
 
@@ -43,6 +51,25 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
         {value: "Net Banking", label: "Net Banking"},
     ]
 
+    const [selectedMode, setSelectedMode] = useState([]);
+    const [modeOptions, setModeOptions] = useState<any>([]);
+
+    const {data:modes,error:modesError,isLoading:modesLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
+
+
+    useEffect(() => {
+        if(modes&&!modesError&&!modesLoading){
+            const options3 = modes.map((mode: any) => ({
+                value: mode?.id,
+                label: mode?.name,
+            }))
+            setModeOptions(options3)
+        }
+    }, [modes, modesError, modesLoading])
+
+    const handleModeSelect = (selectedOptions: any) => {
+        setSelectedMode(selectedOptions?.label);
+    }
     
     
 
@@ -67,6 +94,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
     };
 
     const handleSaveClick = async () => {
+        setSaving(true);
         try {
             const response = await fetch(`http://localhost:3000/alphaherd/api/finance/transactions/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
@@ -77,9 +105,9 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
                     partyName: headerdata?.customer,
                     invoiceLink: headerdata?.invoiceNo,
                     receiptNo: initialInvoiceNo,
-                    date: formData.date,
-                    amountPaid: parseInt(formData.amountPaid, 10),
-                    mode: formData.mode?.value,
+                    date: formData.date || new Date(),
+                    amountPaid: parseInt(formData.amountPaid, 10) || balanceDue,
+                    mode: selectedMode,
                     moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
                 })
             });
@@ -93,17 +121,17 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
         } catch (error) {
             console.error('Error while saving data:', error)
         } finally {
-
+            
         }
 
-        // dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: formData.mode?.value, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+        // dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10) || balanceDue, mode: selectedMode, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
 
 
         const newTransaction = {
-            amountPaid: parseInt(formData.amountPaid, 10),
-            date: formData.date,
+            amountPaid: parseInt(formData.amountPaid, 10) || balanceDue,
+            date: formData.date || new Date(),
             isAdvancePayment: isAdvancePayment,
-            mode: formData.mode?.value,
+            mode: selectedMode,
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
         };
 
@@ -132,17 +160,66 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
        } catch (error) {
             console.log("Error while put request",error)
        }finally {
-
-       }
+        setSaving(false);
+        }
 
 
     };
+
+    useEffect(() => {
+        if (balanceDue !== undefined) {
+            setFormData((prevData:any) => ({
+                ...prevData,
+                amountPaid: balanceDue,
+            }));
+        }
+    }, [balanceDue]);
 
     const handleChange = (field: string, value: any) => {
         setFormData({ ...formData, [field]: value });
     }
 
-    
+    const customStyles = {
+        control: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          border: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4',
+          '&:hover': {
+            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            },
+          boxShadow: state.isFocused ? 'none' : 'none',
+        }),
+        valueContainer: (provided: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        singleValue: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+        }),
+        menu: (provided: any) => ({
+          ...provided,
+          backgroundColor: 'white',
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        option: (provided: any, state: any) => ({
+          ...provided,
+          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+          color: state.isFocused ? 'white' : '#6B7E7D',
+          '&:hover': {
+            backgroundColor: '#35BEB1',
+            color: 'white',
+          },
+        }),
+        menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
+      };
+
+
 
 
 
@@ -196,8 +273,16 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
             
             
             <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Amount Paid</span></div>
-                    <div><input className="w-[440px] h-9 rounded-[5px] text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="number" name="amountPaid" onChange={(e) => handleChange("amountPaid", e.target.value)} /></div>
+                    <div><span className='text-gray-500 text-base font-medium '>Amount</span></div>
+                    <div>
+                    <input
+                        className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2 outline-none border border-solid border-gray-300 focus:border-teal-500"
+                        type="number"
+                        name="amountPaid"
+                        value={formData.amountPaid}
+                        onChange={(e) => handleChange("amountPaid", e.target.value)}
+                    />
+                    </div>
             </div>
             <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Receipt No.</span></div>
@@ -208,14 +293,14 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
                         <div className='relative'>
                         <DatePicker
                                         className="w-[10rem] "
-                                        selected={startDate}
+                                        selected={startDate || new Date()}
                                         onChange={handleDateChange}
                                         calendarClassName="react-datepicker-custom"
                                         customInput={
                                             <div className='relative'>
                                                 <input
                                                     className="w-[10rem] border border-solid border-borderGrey h-9 text-textGrey1 text-base font-medium px-2 rounded   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={startDate.toLocaleDateString()}
+                                                    value={startDate.toLocaleDateString() || new Date().toLocaleDateString()}
                                                     readOnly
                                                 />
                                                 <Image
@@ -235,7 +320,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
             <div className='w-full flex justify-between items-center'>
             <div><span className='text-gray-500 text-base font-medium '>Mode</span></div>
                     <div className='w-[440px] flex justify-between items-center'>
-                        <Select
+                        {/* <Select
                             className="text-neutral-400 text-base font-medium w-full"
                             placeholder="Mode"
                             isClearable={false}
@@ -244,7 +329,23 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
                             isMulti={false}
                             name="mode"
                             onChange={(value) => handleChange("mode", value)}
+                        /> */}
+                        {/* {modesLoading && <Loading2 />} */}
+                        {!modesLoading && modeOptions ? (
+                        <Select
+                            className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
+                            placeholder=""
+                            isClearable={true}
+                            isSearchable={true}
+                            options={modeOptions}
+                            isMulti={false}
+                            name="mode"
+                            onChange={(value) => handleModeSelect(value)}
+                            styles={customStyles}
                         />
+                    ) : (
+                        <Loading2/>
+                    )}
                     </div>
 
             </div>
@@ -255,7 +356,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
                 </div>
                     <Button className="px-2 py-2.5 bg-navBar rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer"  onClick={handleSaveClick}>
                         <Image src={check} alt='check' /> 
-                        <span className='text-white text-base font-medium pr-2'>Save Transaction</span>
+                        <span className='text-white text-base font-medium pr-2'>{isSaving ? "Saving..." : "Save Payment"}</span>
                     </Button>
             </div>
             

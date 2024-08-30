@@ -14,8 +14,8 @@ type PopupProps = {
 const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     const [lastStep, setLastStep] = useState(false);
     const [formData, setFormData] = useState<any>({});
-  const appState = useAppSelector((state) => state.app)
-  const [buttonDisabled, setButtonDisabled] = useState(false);
+    const appState = useAppSelector((state) => state.app)
+    const [buttonDisabled, setButtonDisabled] = useState(false);
     const [Providers,setProviders] = useState([]);
     const [LinkProducts,setLinkProducts] = useState([]);
     const [nameError, setNameError] = useState<string>("");

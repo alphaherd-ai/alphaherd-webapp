@@ -156,7 +156,7 @@ const ExistingsalesReturnTotalAmout = ({otherData, isLoading}:any) => {
                             </div>
                         </div>
             
-                        {showPopup && <Popup headerdata={otherData} onClose={togglePopup} initialInvoiceNo={initialInvoiceNo}  />}
+                        {showPopup && <Popup headerdata={otherData} onClose={togglePopup} initialInvoiceNo={initialInvoiceNo} balanceDue={balanceDue} />}
 
 
         </>

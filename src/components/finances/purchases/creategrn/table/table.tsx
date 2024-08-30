@@ -383,7 +383,7 @@ const handleAddItem= useCallback(() => {
                     <div className="flex">
                     <div className="w-full overflow-x-auto overflow-y-hidden">
                         <div className='flex w-[180%] justify-evenly items-center box-border bg-gray-100 h-12  text-gray-500 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey'>
-                            <div className=' flex text-gray-500 text-base font-medium   w-[5rem]'>No.</div>
+                            <div className=' flex text-gray-500 text-base font-medium pl-2  w-[5rem]'>No.</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[18rem]'>Name</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Batch No.</div>
 
@@ -404,7 +404,7 @@ const handleAddItem= useCallback(() => {
                         
                         {items.map((item:any,index:number) => (
                             <div key={index+1} className='flex justify-evenly items-center w-[180%] box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-gray-200 text-gray-400 h-12'>
-                                <div className=' flex text-textGrey2 text-base font-medium w-[5rem]'>{index+1}.</div>
+                                <div className=' flex text-textGrey2 text-base font-medium pl-2 w-[5rem]'>{index+1}.</div>
                                     <div className=' flex text-textGrey2 text-base font-medium w-[18rem] '>
                                     {id === null ? (
                                     <Select
@@ -455,7 +455,7 @@ const handleAddItem= useCallback(() => {
                                         customInput={
                                             <div className='relative'>
                                                 <input
-                                                    className="w-full h-8 text-textGrey1 text-base font-medium px-2 rounded border border-solid border-borderGrey   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                                    className="w-full h-8 text-textGrey2 text-base font-medium px-2 rounded border border-solid border-borderGrey   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
                                                     value={(item.expiry)?.toLocaleDateString()}
                                                     readOnly
                                                 />
@@ -546,10 +546,10 @@ const handleAddItem= useCallback(() => {
 
                                     />
                             </div>
-                            <div className='w-[12rem] flex items-center text-neutral-400 text-base font-medium'>
+                            <div className='w-[12rem] flex items-center text-textGrey2 text-base font-medium'>
                                         {/* { id==null?(
                                         <Select
-                                            className="text-neutral-400 text-base font-medium"
+                                            className="text-textGrey2 text-base font-medium"
                                             defaultValue={[]}
                                             isClearable={false}
                                             isSearchable={true}
@@ -598,12 +598,12 @@ const handleAddItem= useCallback(() => {
                                        name={`discountAmount-${index+1}`}
                                     />
                             </div>
-                                <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
-                                    <button className="border-0">
-                                        <Image src={sellicon} alt="sell" ></Image>
+                                <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[20px] justify-end pr-4'>
+                                    <button className="border-0 bg-transparent cursor-pointer">
+                                        <Image className='w-5 h-5' src={sellicon} alt="sell" ></Image>
                                     </button>
-                                    <button className="border-0" onClick={() => handleDeleteRow(index)}>
-                                        <Image src={delicon} alt="delete" ></Image>
+                                    <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
+                                        <Image className='w-5 h-5' src={delicon} alt="delete" ></Image>
                                     </button>
                                 </div>
                             </div>
