@@ -18,42 +18,34 @@ type PopupProps = {
     onClose: () => void;
 }
 
-const clientSchema = z.object({
-  clientName: z.string().min(1,'Provide Client Name'),
-  email: z.string().email('Invalid email address').optional(),
-  contact: z.string().length(10,'Invalid Phone number format'),
-  address: z.string().min(1,'Provide Address').optional(),
-  city: z.string().min(1,"Select City to continue").optional(),
-  pinCode: z.string().length(5,'Pin code must be exactly 5 digits').optional(),
-});
+// const clientSchema = z.object({
+//   clientName: z.string().min(1,'Provide Client Name'),
+//   email: z.string().email('Invalid email address').optional(),
+//   contact: z.string().length(10,'Invalid Phone number format'),
+//   address: z.string().min(1,'Provide Address').optional(),
+//   city: z.string().min(1,"Select City to continue").optional(),
+//   pinCode: z.string().length(5,'Pin code must be exactly 5 digits').optional(),
+// });
 
 
 
 const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
-    var initialData = {
-        clientName: '',
-        email : '',
-        contact: '',
-        address: '',
-        city: '',
-        pincode: '',
-    }
-    const [formData, setFormData] = useState<any>(initialData);
+    const [formData, setFormData] = useState<any>({});
     const [showPopup, setShowPopup] = React.useState(false);
     const appState = useAppSelector((state) => state.app)
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [isSaveDisabled, setIsSaveDisabled] = useState(true)
     const togglePopup = () => {
         setShowPopup(!showPopup);
     }
 
-    const [validationErrors, setValidationErrors] = useState(formData);
-    console.log(validationErrors);
+  
 
     const handleSaveClick = async () => {
         console.log("Save button");
         try {
             
-          clientSchema.parse(formData);
+        //   clientSchema.parse(formData);
           console.log("Form data is valid:", formData);
           const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/create?branchId=${appState.currentBranchId}`, {
             method: "POST",
@@ -78,48 +70,33 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
             }
         } 
         catch (error) {
-            if (error instanceof ZodError) {
-              console.error('Validation Error:', error.errors);
-              error.errors.forEach(err => {
-                console.error(`Error in parameter '${err.path.join('.')}' - ${err.message}`);
-              });
-            } else {
-              console.error('Unexpected error while saving data', error);
-            }
+            console.error('Error while saving data:', error);
         }
     };
       
     
     const handleChange = (field: string, value: any) => {
-        setFormData((prevData: any) => ({
-          ...prevData,
-          [field]: value,
-        }));
-        setIsSaveDisabled(false);
-        try {
-          clientSchema.parse({ ...formData, [field]: value });
-          setValidationErrors((prevErrors: any) => ({
-            ...prevErrors,
-            [field]: '',
-          }));
-        } catch (err: any) {
-          if (err instanceof z.ZodError) {
-            let fieldErrors = err.flatten().fieldErrors;
-            if (field in fieldErrors) {
-              setValidationErrors((prevErrors: any) => ({
-                ...prevErrors,
-                [field]: fieldErrors[field]?.[0] ?? '',
-              }));
-            } else {
-              setValidationErrors((prevErrors: any) => ({
-                ...prevErrors,
-                [field]: '',
-              }));
-            }
-          }
+        setFormData((prevFormData: any) => {
+            const updatedFormData = { ...prevFormData, [field]: value };
+    
+            // Validate fields to enable or disable the Save button
+            const isFormValid =
+                updatedFormData.clientName !== '' &&
+                updatedFormData.contact &&
+                updatedFormData.contact.length === 10;
+    
+            setIsSaveDisabled(!isFormValid);
+    
+            return updatedFormData;
+        });
+
+        // Optional: Handle errors for specific fields
+        if (field === 'contact' && value.length > 10) {
+            setErrors((prevErrors) => ({ ...prevErrors, contact: 'Phone number must be exactly 10 digits' }));
+        } else {
+            setErrors((prevErrors) => ({ ...prevErrors, [field]: '' }));
         }
     };
-        
 
     console.log(formData)
 
@@ -151,8 +128,8 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                     <div className="text-gray-500 text-base font-medium  w-[8rem]">Client Name<span className="text-[red]">*</span></div>
                     <div>
                         <input className="w-[447px] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="clientName" onChange={(e) => handleChange("clientName", e.target.value)} required/>
-                        {validationErrors.clientName && (
-                            <div className="text-[red] error">{validationErrors.clientName}</div>
+                        {errors.clientName && (
+                            <div className="text-[red] error">{errors.clientName}</div>
                         )}
                         </div>
                 </div>
@@ -161,9 +138,9 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                     <div className="text-gray-500 text-base font-medium ">Email</div>
                     <div>
                         <input className="w-[448px] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="email" onChange={(e) => handleChange("email", e.target.value)} />
-                        {validationErrors.email && (
+                        {/* {validationErrors.email && (
                             <div className="text-[red] error">{validationErrors.email}</div>
-                        )}
+                        )} */}
                         </div>
                     
                 </div>
@@ -172,8 +149,8 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                     <div className="flex w-10/12">
                     <div className="flex-1 ml-1">
                         <input className="h-9 w-full text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="contact" onChange={(e) => handleChange("contact", e.target.value)} required/>
-                        {validationErrors.contact && (
-                            <div className="text-[red] error">{validationErrors.contact}</div>
+                        {errors.contact && (
+                            <div className="text-[red] error">{errors.contact}</div>
                         )}
                     </div>
                     </div>
@@ -184,9 +161,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                   
                     <div className="flex-1 ml-1">
                         <input className="w-full h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" placeholder="Enter address or Google Maps link" type="text" name="address" onChange={(e) => handleChange("address", e.target.value)} />
-                        {validationErrors.address && (
-                            <div className="text-[red] error">{validationErrors.address}</div>
-                        )}
+                        
                     </div>
                     {/* <div className=" ml-1  w-9 h-9 ">
                     <button  className="w-full h-full rounded-[5px] justify-center text-2xl items-center gap-2 flex border-borderText border border-solid bg-white outline-none">
@@ -243,7 +218,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                     {/* <button className="px-4 py-2 bg-black rounded-[5px] justify-start items-center gap-2 flex" onClick={handleSaveClick}>
                         <div className="text-white border-none text-base font-bold ">Save</div>
                     </button>  */}
-                    {!isSaveDisabled ? (<div className="h-11 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer"  onClick={handleSaveClick} >
+                    {/* {!isSaveDisabled ? (<div className="h-11 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer"  onClick={handleSaveClick} >
                         <div className="w-6 h-6 relative">
                             <div className="w-6 h-6 left-0 top-0 absolute" >
                                 <Image src={Check} alt="Check" />
@@ -253,7 +228,22 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                         </div>) : (<button className="px-4 py-2.5 bg-gray-200 rounded-[5px]  justify-start items-center gap-2 flex border-0 outline-none cursor-not-allowed">
                         <div className="text-textGrey1 text-base font-bold ">Save</div>
                         <Image src={arrowicon} alt="arrow"></Image>
-                    </button>)}
+                    </button>)} */}
+                    <div
+                      className={`h-11 px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer ${
+                          isSaveDisabled ? 'bg-gray-500 cursor-not-allowed' : 'bg-zinc-900'
+                      }`}
+                      onClick={isSaveDisabled ? undefined : handleSaveClick}
+                  >
+                      {!isSaveDisabled && (
+                          <div className="w-6 h-6 relative">
+                              <div className="w-6 h-6 left-0 top-0 absolute">
+                                  <Image src={Check} alt="Check" />
+                              </div>
+                          </div>
+                      )}
+                      <div className="text-gray-100 text-base font-bold">Save</div>
+                  </div>
                 </div>
             </div>
         </div>
