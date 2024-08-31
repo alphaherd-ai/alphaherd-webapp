@@ -310,7 +310,7 @@ model Services {
   tax                Float?
   category           String?
   providers          String[]
-  linkProducts       String[]
+  linkProducts       Json?
   serviceCost        Int?
   serviceCharge      Int?
   inventoryEntries   Inventory[]
