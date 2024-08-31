@@ -22,6 +22,8 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { response } from "express"
 import { useAppSelector } from "@/lib/hooks"
 import useSWR from "swr"
+import Loading2 from "@/app/loading2"
+import { set } from "date-fns"
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
@@ -112,6 +114,7 @@ function useServicefetch (id: string | null,branchId:number|null) {
     console.log("service", service);
 
     const [productDetails, setProductDetails] = useState<any>([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const productIds = service?.linkProducts.map((product:any) => (
@@ -120,6 +123,7 @@ function useServicefetch (id: string | null,branchId:number|null) {
         ));
         
         const fetchProductDetails = async () => {
+            setLoading(true);
             try {
                 const promises = productIds.map((id:any) =>
                     fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${id}?branchId=${appState.currentBranchId}`)
@@ -130,6 +134,7 @@ function useServicefetch (id: string | null,branchId:number|null) {
             } catch (error) {
                 console.error('Failed to fetch product details:', error);
             }
+            setLoading(false);
         };
     
         if (productIds?.length > 0) {
@@ -153,7 +158,7 @@ function useServicefetch (id: string | null,branchId:number|null) {
 
                     </div>
                     <div className="text-textGrey2 text-[28px] font-bold p-2">
-                        {service?.name}
+                        {isLoading ? <Loading2/> : service?.name}
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -198,12 +203,12 @@ function useServicefetch (id: string | null,branchId:number|null) {
                 </div>
                 <div className="w-full px-6 justify-start items-center gap-8 flex">
                     <div className="w-full rounded-[10px] flex items-center text-textGrey2">
-                        {service?.description}
+                        {isLoading ? <Loading2/> : service?.description}
                     </div>
                 </div>
                 <div className="w-full justify-start items-start flex rounded-[10px]">
                     <div className="w-3/12 p-6 bg-white border-t border-solid border-0  border-r border-borderGrey flex-col justify-center items-start rounded-b-xl gap-4 flex ">
-                        <div className="text-textGrey2 text-[28px] font-bold ">₹{service?.serviceCharge}</div>
+                        <div className="text-textGrey2 text-[28px] font-bold ">₹{isLoading ? <Loading2/> : service?.serviceCharge}</div>
                         <div className="text-textGrey2 text-base font-medium ">Service Charge</div>
                     </div>
                     <div className="w-3/12 p-6 bg-white border-t border-solid border-0 border-r border-borderGrey flex-col justify-center items-start gap-4 flex">
@@ -225,20 +230,20 @@ function useServicefetch (id: string | null,branchId:number|null) {
                     <div className="w-full border-b border-solid border-0 border-borderGrey">
                         <div className="w-full flex gap-2 items-center p-6 h-3/12">
                             <div className="text-textGrey2 text-base font-medium ">SAC Code: </div>
-                            <div className="text-textGrey2 text-base font-medium ">{service?.sacCode}</div>
+                            <div className="text-textGrey2 text-base font-medium ">{isLoading ? <Loading2/> : service?.sacCode}</div>
                         </div>
                     </div>
                     <div className="w-full border-b border-solid border-0 border-borderGrey flex  gap-8">
                         <div className="w-6/12 p-6 border-r border-solid border-0 flex border-borderGrey items-center justify-between">
                             <div className="text-textGrey2 text-base font-medium ">Categories</div>
                             <div className=" h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">
-                                <div className="text-green-600 text-sm font-medium ">{service?.category}</div>
+                                <div className="text-green-600 text-sm font-medium ">{isLoading ? <Loading2/> : service?.category}</div>
                             </div>
                         </div>
                         <div className="w-6/12 p-6 flex items-center justify-between">
                             <div className="text-textGrey2 text-base font-medium ">Dispensing Fee</div>
                             <div className="w-[66px] h-7 px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center items-center gap-2 flex">
-                                <div className="text-orange-500 text-sm font-medium ">{service?.sellingPrice}</div>
+                                <div className="text-orange-500 text-sm font-medium ">{isLoading ? <Loading2/> : service?.sellingPrice}</div>
                             </div>
                         </div>
                     </div>
@@ -246,7 +251,7 @@ function useServicefetch (id: string | null,branchId:number|null) {
                         <div className="w-full flex gap-2 items-center p-6 h-3/12">
                             <div className="text-textGrey2 text-base font-medium ">Tax Rate:</div>
                             <div className="px-2 py-1.5 bg-gray-100 rounded-[5px] justify-center items-center gap-2 flex">
-                                <div className="text-textGrey2 text-base font-medium ">{service?.tax} %</div>
+                                <div className="text-textGrey2 text-base font-medium ">{isLoading ? <Loading2/> : service?.tax} %</div>
                             </div>
                         </div>
                     </div>
@@ -254,7 +259,7 @@ function useServicefetch (id: string | null,branchId:number|null) {
                         <div className="w-full flex gap-2 items-center p-6 h-3/12">
                             <div className="text-textGrey2 text-base font-medium ">Providers:</div>
                             <div className="px-2 py-1.5 bg-gray-100 rounded-[5px] justify-center items-center gap-2 flex">
-                                <div className="text-textGrey2 text-base font-medium ">{service?.providers}</div>
+                                <div className="text-textGrey2 text-base font-medium ">{isLoading ? <Loading2/> : service?.providers}</div>
                             </div>
 
                         </div>
@@ -296,7 +301,7 @@ function useServicefetch (id: string | null,branchId:number|null) {
                             <div className='flex text-textGrey2 text-base font-medium  w-[10rem]'>Selling Price</div>
                             <div className='flex text-textGrey2 text-base font-medium  w-[10rem]'>Stock Level</div>
                         </div>
-
+                        {loading && <Loading2/>}   
                         {productDetails?.map((item: any) => (
                             item?.productBatches?.map((batch: any) => (
                                 <div key={batch?.id} className='flex items-center justify-evenly w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
