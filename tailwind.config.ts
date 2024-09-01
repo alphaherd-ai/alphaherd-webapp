@@ -9,7 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       backgroundImage: {
-        'backgroundImg': "url('/assets/icons/loginsignup/First time.svg')",
+        'backgroundImg': "url('/alphaherd/Firstback.svg')",
       },
       height: {
         '7p': '7%',

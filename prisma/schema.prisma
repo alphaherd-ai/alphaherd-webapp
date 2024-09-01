@@ -356,8 +356,10 @@ model RecordTransaction {
   salesId          Int?
   purchases        Purchases? @relation(fields: [purchasesId], references: [id])
   purchasesId      Int?
+  expenses         Expenses?  @relation(fields: [expensesId], references: [id])
+  expensesId       Int?
 
-  @@index([salesId, purchasesId])
+  @@index([salesId, purchasesId, expensesId])
 }
 
 model Purchases {
@@ -405,6 +407,7 @@ model Expenses {
   notes               String?
   status              String?
   type                String?
+  recordTransaction   RecordTransaction[]
   items               Items[]
   financeTimeline     FinanceTimeline[]
   FinanceSection      FinanceSection?   @relation(fields: [financeSectionId], references: [id])

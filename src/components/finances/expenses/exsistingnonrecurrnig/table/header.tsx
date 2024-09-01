@@ -2,8 +2,9 @@
 import formatDateAndTime from '@/utils/formateDateTime';
 import React, { useEffect, useRef, useState } from 'react'
 import editicon from "../../../../../assets/icons/finance/1. Icons-25.svg"
+import Loading2 from '@/app/loading2';
 
-const ExsistingNonRecurringHeader = ({otherData}:any) => {
+const ExsistingNonRecurringHeader = ({otherData, isLoading}:any) => {
   
 
 
@@ -50,14 +51,14 @@ const ExsistingNonRecurringHeader = ({otherData}:any) => {
                 <div className="px-6  bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold ">Customer:</div>
-                       {otherData.party}
+                        <div className={`text-textGrey2 text-base font-medium  border-0 bg-inherit`}>{!isLoading ? otherData.party : <Loading2/>}</div>
                     </div>
                 </div>
                 <div className="px-6 py-1  bg-white rounded-[10px] justify-start items-center flex w-full ">
                     <div className="flex w-full justify-start">
                         <div className="text-gray-500 text-base font-bold  pr-[8px] w-3/12 py-3">Reference Number:</div>
                         <div className="flex items-center justify-between w-[29.4rem]">
-                            <input
+                            {/* <input
                                 ref={inputRef}
                                 className={`w-[25rem] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border-0 rounded-[5px] focus:border focus:border-solid focus:border-[#35BEB1] bg-inherit`}
                                 value={otherData.invoiceNo}
@@ -68,14 +69,17 @@ const ExsistingNonRecurringHeader = ({otherData}:any) => {
                                 onClick={handleEditButtonClick} className="border-0"
                             >
                                 {/* <Image src={editicon} alt="edit" ></Image> */}
-                            </button>
+                            {/* </button> */} 
+                            <div
+                                className={`text-textGrey2 text-base font-medium  border-0 bg-inherit`}
+                                > {!isLoading ? otherData.invoiceNo : <Loading2 />} </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div className="flex justify-between w-full pb-[16px]">
-                <div className="px-6 py-2 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
-                    <div className="flex gap-[0.8rem] items-center w-full">
+                <div className="px-6 py-4 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
+                    <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold  w-1/8">Date:</div>
                         {/* <DatePicker
                             className={"text-gray-500 text-base font-medium  w-full"}
@@ -97,15 +101,16 @@ const ExsistingNonRecurringHeader = ({otherData}:any) => {
                             )}
                         /> */}
 
-<div className="customDatePickerWidth">
-                                    {formatDateAndTime(otherData.date).formattedDate}
-                                    </div>
+                        <div
+                            className={"text-textGrey2 text-base font-medium  w-full"}>
+                            {!isLoading ? formatDateAndTime(otherData.date).formattedDate : <Loading2 />}
+                        </div>
 
 
                     </div>
                 </div>
-                <div className="px-6 py-2 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full ">
-                    <div className="flex gap-[0.2rem] items-center w-full">
+                <div className="px-6 py-4 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full ">
+                    <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold  w-[12rem]">Delivery Due Date:</div>
                         {/* <DatePicker
                             className={"text-gray-500 text-base font-medium  w-10/12 border-0 boxShadow-0"}
@@ -123,9 +128,9 @@ const ExsistingNonRecurringHeader = ({otherData}:any) => {
                                 <Image src={calicon} alt="Calendar Icon" width={20} height={20} />
                             )}
                         /> */}
-                        <div className="customDatePickerWidth">
-                        {formatDateAndTime(otherData.dueDate).formattedDate}
-                                    </div>
+                        <div className={"text-textGrey2 text-base font-medium  w-full"}>
+                             {!isLoading ? formatDateAndTime(otherData.dueDate).formattedDate : <Loading2 />}
+                        </div>
 
 
 
@@ -136,7 +141,7 @@ const ExsistingNonRecurringHeader = ({otherData}:any) => {
                 <div className="px-6 py-1  bg-white rounded-[10px] justify-between items-center gap-4 flex w-full ">
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold py-3">Notes:</div>
-                        {otherData.notes}              
+                        <div className='w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0 outline-none'>{!isLoading ? otherData.notes : <Loading2 />}</div>              
                         </div>
                 </div>
             </div>

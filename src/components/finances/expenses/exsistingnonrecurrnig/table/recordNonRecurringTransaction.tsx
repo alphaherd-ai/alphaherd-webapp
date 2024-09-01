@@ -6,8 +6,9 @@ import RadioButtonSelec from "../../../../../assets/icons/finance/radio_button (
 import DatePicker from 'react-datepicker';
 import check from "../../../../../assets/icons/finance/check.svg"
 import { useDispatch } from 'react-redux';
-import 'react-datepicker/dist/react-datepicker.css';
 import { addAmount } from '@/lib/features/transactionAmount/transactionAmountSlice';
+
+import 'react-datepicker/dist/react-datepicker.css';
 
 import calicon from "../../../../../assets/icons/finance/calendar_today.svg";
 
@@ -15,7 +16,7 @@ import closeicon from "../../../../../assets/icons/inventory/closeIcon.svg";
 import Select from 'react-select';
 import { Button } from '@nextui-org/react';
 import { useAppSelector } from '@/lib/hooks';
-
+import { useSearchParams } from 'next/navigation';
 import Loading2 from '@/app/loading2';
 import useSWR from 'swr';
 //@ts-ignore
@@ -25,23 +26,23 @@ const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 type PopupProps = {
     onClose: () => void;
     headerdata: any;
-    transactionsData: any;
-    setTransactionsData: any;
     initialInvoiceNo: any;
-    totalAmount: any;
     balanceDue: any;
 }
 
 
-const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, transactionsData, setTransactionsData, initialInvoiceNo, totalAmount, balanceDue}) => {
-
+const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initialInvoiceNo, balanceDue}) => {
+    const url = useSearchParams();
+    const id = url.get('id');
     const dispatch = useDispatch();
+
     const [isSaving,setSaving]=useState(false);
     const [formData, setFormData] = useState<any>({
         amountPaid: "",
     });
     const appState = useAppSelector((state) => state.app)
     const [isAdvancePayment, setIsAdvancePayment] = useState(false);
+
 
     const Mode = [
         {value: "Cash", label: "Cash"},
@@ -69,7 +70,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
     const handleModeSelect = (selectedOptions: any) => {
         setSelectedMode(selectedOptions?.label);
     }
-
+    
     
 
     const Party =[
@@ -92,8 +93,6 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
         setTransactionType(type);
     };
 
-
-
     const handleSaveClick = async () => {
         setSaving(true);
         try {
@@ -103,9 +102,9 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
                     'Content-Type' : 'application/json', 
                 },
                 body: JSON.stringify({
-                    partyName: headerdata?.customer?.value,
-                    invoiceLink: headerdata.invoiceNo,
-                    receiptNo: formData.receiptNo,
+                    partyName: headerdata?.party,
+                    invoiceLink: headerdata?.invoiceNo,
+                    receiptNo: initialInvoiceNo,
                     date: formData.date || new Date(),
                     amountPaid: parseInt(formData.amountPaid, 10) || balanceDue,
                     mode: selectedMode,
@@ -114,7 +113,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
             });
             if (response.ok) {
                 console.log('Data saved Sucessfully')
-                onClose();
+                
                 window.dispatchEvent(new FocusEvent('focus'))
             } else {
                 console.error('Failed to save data')
@@ -122,8 +121,11 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
         } catch (error) {
             console.error('Error while saving data:', error)
         } finally {
-
+            
         }
+
+        // dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10) || balanceDue, mode: selectedMode, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+
 
         const newTransaction = {
             amountPaid: parseInt(formData.amountPaid, 10) || balanceDue,
@@ -133,9 +135,34 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
         };
 
-        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10 || balanceDue), mode: selectedMode, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+        dispatch(addAmount(newTransaction))
 
-        setTransactionsData((prevTransactions:any) => [...prevTransactions, newTransaction]);
+        
+
+       try {
+        const putResponse = await fetch(`http://localhost:3000/alphaherd/api/finance/expenses/${id}/?branchId=${appState.currentBranchId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type' : 'application/json', 
+            },
+            body: JSON.stringify({
+                recordTransaction: [newTransaction]
+            })
+            
+        })
+        if (putResponse.ok) {
+            console.log('Data saved Sucessfully2')
+            onClose()
+            window.dispatchEvent(new FocusEvent('focus'))
+        } else {
+            console.error('Failed to save data')
+        }
+       } catch (error) {
+            console.log("Error while put request",error)
+       }finally {
+        setSaving(false);
+        }
+
 
     };
 
@@ -151,9 +178,6 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
     const handleChange = (field: string, value: any) => {
         setFormData({ ...formData, [field]: value });
     }
-
-
-
 
     const customStyles = {
         control: (provided: any, state: any) => ({
@@ -196,7 +220,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
       };
 
 
-    console.log(formData)
+console.log("headerdata",headerdata)
 
 
   return (
@@ -243,7 +267,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
             </div>
             <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Party Name</span></div>
-                    <div><div className="w-[440px] h-9 rounded-[5px] text-textGrey2 bg-white text-base font-medium p-2  outline-none border border-solid border-gray-300 ">{headerdata?.customer?.value}</div></div>
+                    <div><div className="w-[440px] h-9 rounded-[5px] text-textGrey2 bg-white text-base font-medium p-2  outline-none border border-solid border-gray-300 ">{headerdata?.party}</div></div>
                
             </div>
             
@@ -306,7 +330,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
                             name="mode"
                             onChange={(value) => handleChange("mode", value)}
                         /> */}
-                        {modeOptions ? (
+                        {/* {modesLoading && <Loading2 />} */}
+                        {!modesLoading && modeOptions ? (
                         <Select
                             className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
                             placeholder=""
@@ -319,19 +344,19 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
                             styles={customStyles}
                         />
                     ) : (
-                        <div className="text-neutral-400 text-base font-medium w-full"><Loading2/></div>
+                        <Loading2/>
                     )}
                     </div>
 
             </div>
             <div className='w-full flex justify-between items-center'>
-            <div className='flex items-center gap-1'>
-                        <input type="checkbox" name="advancePayment" id="advancePayment" checked={isAdvancePayment} onChange={(e) => setIsAdvancePayment(e.target.checked)} />
-                        <span className='text-textGrey2 text-base font-medium'>Mark as advance payment</span>
-                    </div>
+                <div className='flex items-center gap-1'>
+                    <input type="checkbox" name="" id=""  />
+                    <span className='text-textGrey2 text-base font-medium'>Mark as advance payment</span>
+                </div>
                     <Button className="px-2 py-2.5 bg-navBar rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer"  onClick={handleSaveClick}>
                         <Image src={check} alt='check' /> 
-                        <span className='text-white text-base font-medium pr-2'>Save Transaction</span>
+                        <span className='text-white text-base font-medium pr-2'>{isSaving ? "Saving..." : "Save Payment"}</span>
                     </Button>
             </div>
             

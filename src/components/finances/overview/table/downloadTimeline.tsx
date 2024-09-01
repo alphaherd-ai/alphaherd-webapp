@@ -10,7 +10,7 @@ import download from "../../../../assets/icons/finance/downloadGreen.svg";
 import { Button } from '@nextui-org/react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import logo from "../../../../assets/icons/finance/pfpimg.png";
+// import logo from "../../../../assets/icons/finance/pfpimg.png";
 import { useAppSelector } from '@/lib/hooks';
 import formatDateAndTime from '@/utils/formateDateTime';
 
@@ -57,8 +57,12 @@ const DownloadPopup = ({ onClose, timeline }:any) => {
     xhr.send();
   };
 
+  const logo = appState?.currentOrg?.orgImgUrl;
+
+  
+
   const downloadPDF = () => {
-    convertImageToBase64(logo.src, (base64Image:any) => {
+    convertImageToBase64(logo, (base64Image:any) => {
     const doc = new jsPDF('landscape');
     const tableColumn = ["Date", "Type", "Party", "Ref. No..", "Total Cost", "Total Qty", "Due Date", "Status"];
     const tableRows:any = [];

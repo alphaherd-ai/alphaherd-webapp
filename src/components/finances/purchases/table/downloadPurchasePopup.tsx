@@ -58,8 +58,10 @@ const DownloadPopup = ({ onClose, purchases, type }:any) => {
     xhr.send();
   };
 
+  const logo = appState?.currentOrg?.orgImgUrl;
+
   const downloadPDF = () => {
-    convertImageToBase64(logo.src, (base64Image:any) => {
+    convertImageToBase64(logo, (base64Image:any) => {
     const doc = new jsPDF('landscape');
     const tableColumn = ["Date", "Type", "Distributor", "Ref. No..", "Total Cost", "Total Qty", "Due Date", "Status"];
     const tableRows:any = [];

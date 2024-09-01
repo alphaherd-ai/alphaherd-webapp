@@ -148,7 +148,7 @@ function useServicefetch (id: string | null,branchId:number|null) {
     return <>
         <div className="w-full h-full relative  rounded-[20px] pr-[16px] pl-[16px] z-1">
             <div className="w-full flex items-center justify-between">
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center">
                     <div className="w-11 h-11  rounded-[5px] border border-neutral-400 flex justify-center items-center">
                         <div className='no-underline h-full cursor-pointer' onClick={() => router.back()}>
                             <div className='flex items-center border border-solid border-gray-300 bg-white rounded-lg p-3  '>
