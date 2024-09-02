@@ -59,7 +59,7 @@ const fetcher = (...args:any[]) => fetch(...args).then(res => res.json());
         setClickedIndex(index);
     };
     return <>
-        <div className="w-full h-full relative bg-gray-200 rounded-[20px] pr-[16px] pl-[16px] z-1">
+        <div className="w-full h-full relative rounded-[20px] pr-[16px] pl-[16px] z-1">
             <div className="flex items-center justify-between">
                 <div className="flex gap-8">
                     <div className="w-11 h-11  rounded-[5px] border border-neutral-400 flex justify-center items-center ">
