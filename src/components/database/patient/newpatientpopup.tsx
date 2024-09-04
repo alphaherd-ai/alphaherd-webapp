@@ -26,11 +26,22 @@ type PopupProps = {
 const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
     const [formData, setFormData] = useState<any>({});
     const [clients, setClients] = useState<{ value: string; label: string }[]>([]);
-    const [startDate, setStartDate] = useState(new Date());
+    //const [startDate, setStartDate] = useState(new Date());
     const [selectedGender, setSelectedGender] = useState('');
     const appState = useAppSelector((state) => state.app)
     const [isSaveDisabled, setIsSaveDisabled] = useState(true);
     const [errors, setErrors] =  useState<{ patientName?: string; clientName?: string }>({});
+    const [startDate, setStartDate] = useState<Date | null>(null);
+    const [age, setAge] = useState<{ years: number; months: number; days: number }>({ years: 0, months: 0, days: 0 });
+
+    const handleDateChange = (date: Date) => {
+        setStartDate(date);
+        const calculatedAge = calculateAge(date);
+        setAge(calculatedAge);
+        handleChange("years", calculatedAge.years);
+        handleChange("months", calculatedAge.months);
+        handleChange("days", calculatedAge.days);
+    };
 
     
 
@@ -63,8 +74,8 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                     clientId: clientData===undefined?formData.clientName.value:null,
                     species: formData.species,
                     breed: formData.breed ? formData.breed[0].value : undefined,
-                    dateOfBirth: formData.dateOfBirth,
-                    age: calculateAge(formData.years, formData.months, formData.days),
+                    dateOfBirth: formData.dateOfBirth, 
+                    age: calculateAgeFromDOB(formData.years, formData.months, formData.days) ,
                     gender: selectedGender,
                     inPatient: formData.inPatient,
                     clientData:clientData?clientData:null
@@ -88,9 +99,6 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
         setFormData((prevFormData: any) => {
         const updatedFormData = { ...prevFormData, [field]: value };
 
-        // Validate fields to enable or disable the Save button
-        // const isFormValid =updatedFormData.patientName !== '' && updatedFormData.clientId !== '' ;
-        // setIsSaveDisabled(!isFormValid);
         const isPatientNameValid = updatedFormData.patientName !== '';
         const isClientNameValid = updatedFormData.clientName !== undefined;
 
@@ -106,15 +114,43 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
         });
     };
 
-    const calculateAge = (years: number, months: number, days: number): string => {
+    const calculateAgeFromDOB = (years: number, months: number, days: number): string => {
         const currentDate = new Date();
-        const birthDate = new Date(currentDate.getFullYear() - years, currentDate.getMonth() - months, currentDate.getDate() - days);
+        const birthDate = new Date(currentDate.getFullYear() - (years || 0), currentDate.getMonth() - (months || 0), currentDate.getDate() - (days || 0));
         const ageDate = new Date(currentDate.getTime() - birthDate.getTime());
-        const ageYears = Math.abs(ageDate.getUTCFullYear() - 1970);
-        const ageMonths = ageDate.getUTCMonth();
-        const ageDays = ageDate.getUTCDate() - 1; 
-        return `${ageYears} years, ${ageMonths} months, ${ageDays} days`;
+        const ageYears = Math.abs(ageDate.getUTCFullYear() - 1970) || 0;
+        const ageMonths = ageDate.getUTCMonth() || 0;
+        const ageDays = ageDate.getUTCDate() - 1 || 0;
+
+        // Build the age string conditionally
+        const ageParts = [];
+        if (ageYears > 0) ageParts.push(`${ageYears} years`);
+        if (ageMonths > 0) ageParts.push(`${ageMonths} months`);
+        if (ageDays > 0) ageParts.push(`${ageDays} days`);
+
+        // Return the formatted string or an empty string if age is not provided
+        return ageParts.length > 0 ? ageParts.join(', ') : '';
     };
+    
+    const calculateAge = (birthDate: Date): { years: number; months: number; days: number } => {
+        const currentDate = new Date();
+        let years = currentDate.getFullYear() - birthDate.getFullYear();
+        let months = currentDate.getMonth() - birthDate.getMonth();
+        let days = currentDate.getDate() - birthDate.getDate();
+    
+        if (days < 0) {
+            months--;
+            days += new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate();
+        }
+    
+        if (months < 0) {
+            years--;
+            months += 12;
+        }
+    
+        return { years, months, days };
+    };
+    
 
     const handleSelectChange = (value: MultiValue<{ value: string; label: string }>) => {
         // Flatten the Breed array to get all options in a single array
@@ -231,13 +267,14 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                                 dropdownMode="select"
                                 className="w-[25rem]"
                                 selected={startDate}
-                                onChange={(date:any) => setStartDate(date as Date)}
+                               // onChange={(date:any) => setStartDate(date as Date)}
+                               onChange={handleDateChange}
                                 calendarClassName="react-datepicker-custom"
                                 customInput={
                                     <div className="relative">
                                         <input
                                             className="w-[25rem] h-9 text-textGrey2 text-base font-medium px-2 rounded border border-solid border-borderGrey focus:border focus:border-textGreen outline-none"
-                                            value={startDate.toLocaleDateString()}
+                                            value={startDate ? startDate.toLocaleDateString() : ''}
                                             readOnly
                                         />
                                         <Image
@@ -258,12 +295,12 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                         <div className="flex justify-start items-center gap-1">
                             <div className="w-12 h-9 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
                                 <input
-                                    className="w-full h-full text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
+                                    className="w-full h-full text-textGrey2 text-base font-medium px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
                                     type="text"
                                     min="0"
                                     name="years"
-                                    placeholder="0"
-                                    onChange={(e) => handleChange("years", parseInt(e.target.value))}
+                                    value={age.years}
+                                    readOnly
                                 />
                             </div>
                             <div className="text-gray-500 text-base font-medium ">Years</div>
@@ -271,25 +308,25 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                         <div className="flex justify-start items-center gap-1">
                             <div className="w-12 h-9 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
                                 <input
-                                    className="w-full h-full text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
+                                    className="w-full h-full text-textGrey2 text-base font-medium px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
                                     type="text"
                                     min="0"
                                     name="months"
-                                    placeholder="0"
-                                    onChange={(e) => handleChange("months", parseInt(e.target.value))}
+                                    value={age.months}
+                                    readOnly
                                 />
                             </div>
                             <div className="text-gray-500 text-base font-medium ">Months</div>
                         </div>
                         <div className="flex justify-start items-center gap-1">
                             <div className="w-12 h-9 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
-                                <input
-                                    className="w-full h-full text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
+                               <input
+                                    className="w-full h-full text-textGrey2 text-base font-medium px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
                                     type="text"
                                     min="0"
                                     name="days"
-                                    placeholder="0"
-                                    onChange={(e) => handleChange("days", parseInt(e.target.value))}
+                                    value={age.days}
+                                    readOnly
                                 />
                             </div>
                             <div className="text-gray-500 text-base font-medium ">Days</div>

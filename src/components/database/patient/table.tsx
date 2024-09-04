@@ -81,6 +81,7 @@ const DatabasePatientTable = () => {
                 <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>Sex</div>
             
             </div>
+            
 <DatabasePatientTableItem patients={patients} clients={clients} isPatientLoading={isPatientLoading}  />
 <DatabasePatientBottombar/>
      
