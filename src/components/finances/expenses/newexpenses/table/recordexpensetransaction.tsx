@@ -97,7 +97,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
     const handleSaveClick = async () => {
         setSaving(true);
         try {
-            const response = await fetch(`http://localhost:3000/alphaherd/api/finance/transactions/create?branchId=${appState.currentBranchId}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type' : 'application/json', 
