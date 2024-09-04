@@ -99,7 +99,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
     const handleSaveClick = async () => {
         setSaving(true);
         try {
-            const response = await fetch(`http://localhost:3000/alphaherd/api/finance/transactions/create?branchId=${appState.currentBranchId}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type' : 'application/json', 
@@ -141,7 +141,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
 
         try {
             if (Array.isArray(selectedInvoiceLink) && selectedInvoiceLink[0].startsWith("P")) {
-                const putResponse = await fetch(`http://localhost:3000/alphaherd/api/finance/purchases/${selectedInvoiceLinkID}/?branchId=${appState.currentBranchId}`, {
+                const putResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/${selectedInvoiceLinkID}/?branchId=${appState.currentBranchId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type' : 'application/json', 
@@ -151,7 +151,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
                     })
                 });
             } else {
-                const putResponse = await fetch(`http://localhost:3000/alphaherd/api/finance/sales/${selectedInvoiceLinkID}/?branchId=${appState.currentBranchId}`, {
+                const putResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/${selectedInvoiceLinkID}/?branchId=${appState.currentBranchId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type' : 'application/json', 
