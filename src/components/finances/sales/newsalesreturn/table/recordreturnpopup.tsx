@@ -29,14 +29,15 @@ type PopupProps = {
     setTransactionsData: any;
     initialInvoiceNo: any;
     totalAmount: any;
+    balanceDue: any;
 }
 
 
-const RecordReturnTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, transactionsData, setTransactionsData, initialInvoiceNo, totalAmount}) => {
+const RecordReturnTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, transactionsData, setTransactionsData, initialInvoiceNo, totalAmount, balanceDue}) => {
 
     const dispatch = useDispatch();
 
-
+    const [isSaving,setSaving]=useState(false);
     const [formData, setFormData] = useState<any>({
         amountPaid: "",
     });
@@ -94,6 +95,7 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata
     };
 
     const handleSaveClick = async () => {
+        setSaving(true);
         try {
             const response = await fetch(`http://localhost:3000/alphaherd/api/finance/transactions/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
@@ -105,7 +107,7 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata
                     invoiceLink: headerdata.invoiceNo,
                     receiptNo: initialInvoiceNo,
                     date: formData.date || new Date(),
-                    amountPaid: parseInt(formData.amountPaid, 10),
+                    amountPaid: parseInt(formData.amountPaid, 10) || balanceDue,
                     mode: selectedMode,
                     moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
                 })
@@ -124,26 +126,26 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata
         }
 
         const newTransaction = {
-            amountPaid: parseInt(formData.amountPaid, 10),
+            amountPaid: parseInt(formData.amountPaid, 10) || balanceDue,
             date: formData.date || new Date(),
             isAdvancePayment: isAdvancePayment,
             mode: selectedMode,
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
         };
 
-        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: selectedMode, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10) || balanceDue, mode: selectedMode, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
 
         setTransactionsData((prevTransactions:any) => [...prevTransactions, newTransaction]);
 
     };
     useEffect(() => {
-        if (totalAmount?.totalCost !== undefined) {
+        if (balanceDue !== undefined) {
             setFormData((prevData:any) => ({
                 ...prevData,
-                amountPaid: totalAmount.totalCost,
+                amountPaid: balanceDue,
             }));
         }
-    }, [totalAmount]);
+    }, [balanceDue]);
 
     const handleChange = (field: string, value: any) => {
         setFormData({ ...formData, [field]: value });
@@ -267,7 +269,7 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata
                                             <div className='relative'>
                                                 <input
                                                     className="w-[10rem] border border-solid border-borderGrey h-9 text-textGrey1 text-base font-medium px-2 rounded   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={startDate?.toLocaleDateString() || new Date().toLocaleDateString()} // Set current date if startDate is not defined
+                                                    value={startDate?.toLocaleDateString() || new Date().toLocaleDateString()}
                                                     readOnly
                                                 />
                                                 <Image
@@ -297,7 +299,7 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata
                             name="mode"
                             onChange={(value) => handleChange("mode", value)}
                         /> */}
-                        {!modesError ? 
+                        {!modesLoading && modeOptions ? (
                         <Select
                             className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
                             placeholder=""
@@ -309,9 +311,9 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata
                             onChange={(value) => handleModeSelect(value)}
                             styles={customStyles}
                         />
-                     : 
-                        <Loading2 />
-                    }
+                    ) : (
+                        <Loading2/>
+                    )}
                     </div>
 
             </div>
@@ -322,7 +324,7 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata
                     </div>
                     <Button className="px-2 py-2.5 bg-navBar rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer"  onClick={handleSaveClick}>
                         <Image src={check} alt='check' /> 
-                        <span className='text-white text-base font-medium pr-2'>Save Transaction</span>
+                        <span className='text-white text-base font-medium pr-2'>{isSaving ? <Loading2 /> : "Save Payment"}</span>
                     </Button>
             </div>
             

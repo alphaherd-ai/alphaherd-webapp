@@ -474,12 +474,12 @@ const handleAddItem= useCallback(() => {
                                        name={`discountAmount-${index+1}`}
                                     />
                             </div>
-                                <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[12px] justify-center'>
+                                <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[20px] justify-end pr-6'>
                                     {/* <button className="border-0 bg-transparent w-4 h-4">
                                         <Image src={sellicon} alt="sell" className="w-4 h-4"></Image>
                                     </button> */}
-                                    <button className="border-0 bg-transparent w-4 h-4" onClick={() => handleDeleteRow(index)}>
-                                        <Image src={delicon} alt="delete" className="w-4 h-4" ></Image>
+                                    <button className="border-0 bg-transparent w-5 h-5 cursor-pointer" onClick={() => handleDeleteRow(index)}>
+                                        <Image src={delicon} alt="delete" className="w-5 h-5" ></Image>
                                     </button>
                                 </div>
                             </div>

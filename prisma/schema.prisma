@@ -184,6 +184,7 @@ model FinanceSection {
   purchase     Purchases[]
   items        Items[]
   timeline     FinanceTimeline[]
+  paymentMethod PaymentMethod[]
 
   @@index([branchId])
 }
@@ -309,7 +310,7 @@ model Services {
   tax                Float?
   category           String?
   providers          String[]
-  linkProducts       String[]
+  linkProducts       Json?
   serviceCost        Int?
   serviceCharge      Int?
   inventoryEntries   Inventory[]
@@ -355,8 +356,10 @@ model RecordTransaction {
   salesId          Int?
   purchases        Purchases? @relation(fields: [purchasesId], references: [id])
   purchasesId      Int?
+  expenses         Expenses?  @relation(fields: [expensesId], references: [id])
+  expensesId       Int?
 
-  @@index([salesId, purchasesId])
+  @@index([salesId, purchasesId, expensesId])
 }
 
 model Purchases {
@@ -404,6 +407,7 @@ model Expenses {
   notes               String?
   status              String?
   type                String?
+  recordTransaction   RecordTransaction[]
   items               Items[]
   financeTimeline     FinanceTimeline[]
   FinanceSection      FinanceSection?   @relation(fields: [financeSectionId], references: [id])
@@ -428,6 +432,13 @@ model Transactions {
   financeSectionId Int?
 
   @@index([financeSectionId])
+}
+
+model PaymentMethod{
+  id Int @id @default(autoincrement())
+  name String?
+  FinanceSection   FinanceSection? @relation(fields: [financeSectionId], references: [id])
+  financeSectionId Int?
 }
 
 model Items {
@@ -457,11 +468,6 @@ model Items {
   financeSectionId Int?
 
   @@index([salesId, purchasesId, expensesId, financeSectionId])
-}
-
-model PaymentMethod{
-  id Int @id @default(autoincrement())
-  name String?
 }
 
 model InventoryTimeline {

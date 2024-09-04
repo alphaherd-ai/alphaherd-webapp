@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import prismaClient from "../../../../../prisma";
+import { fetchFinanceId } from "@/utils/fetchBranchDetails";
 
 export const POST = async(req: NextRequest) => {
         if (req.method !== 'POST') {
@@ -7,9 +8,14 @@ export const POST = async(req: NextRequest) => {
         }
         try {
         const body = await req.json();
+        const financeId = await fetchFinanceId(req);
+
         const paymentMethod = await prismaClient.paymentMethod.create({
             data: {
             ...body,
+            FinanceSection: {
+                connect: { id: financeId },
+              },
             },
         });
         return new Response(JSON.stringify(paymentMethod), {

@@ -57,7 +57,7 @@ const OrgDetailsSetup = (props: any) => {
     const appState= useAppSelector((state)=>state.app);
     
     return (
-        <div className="w-[1016px] h-[759px] p-10 bg-gray-100 rounded-[30px] border border-stone-300 backdrop-blur-[190.90px] justify-center items-center inline-flex">
+        <div className="w-[1016px] h-[759px] p-10 rounded-[30px] border border-stone-300 backdrop-blur-[190.90px] justify-center items-center inline-flex">
         <div className="grow shrink basis-0 self-stretch flex-col justify-start items-end gap-10 inline-flex">
             <div className="flex-col justify-start items-start gap-6 flex">
                 <div className="w-[940px] justify-start items-start gap-6 inline-flex">

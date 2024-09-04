@@ -6,6 +6,7 @@ import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { useAppSelector } from '@/lib/hooks';
 import Arrow from "../../../../assets/icons/inventory/arrow.svg"
+import Loading2 from "@/app/loading2";
 
 type PopupProps = {
     onClose: () => void;
@@ -21,6 +22,9 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     const [nameError, setNameError] = useState('');
     const [serviceCostError, setServiceCostError] = useState('');
     const [taxError, setTaxError] = useState('');
+
+    const [selectedProducts, setSelectedProducts] = useState<any>([]);
+    const [productOptions, setProductOptions] = useState([]);
 
 const gstOptions = [
     { value: 0, label: 'GST@0%.' },
@@ -69,20 +73,28 @@ const [categories, setCategories] = useState<any[]>([
         });
         let staffJson = await staffResponse.json();
         console.log(staffJson);
-        setLinkProducts(productsJson.products.map((product:any) => {return {label : product.itemName,value : product.id}}));
-        setProviders(staffJson.staff.map((user:any) => {return {label : user.name,value : user.id}}));
+        console.log(productsJson.products);
+        setProductOptions(productsJson.products.map((product:any) => {return {label : product.itemName, value : product.id}}));
+        setProviders(staffJson.staff.map((user:any) => {return {label : user.name, value : user.id}}));
     }
 
+    const handleProductSelect = (selectedOptions: any) => {
+        setSelectedProducts(selectedOptions);
+    };
+    
+    const handleProductRemove = (productId: any) => {
+        setSelectedProducts(selectedProducts?.filter((product:any) => product.value !== productId));
+    };
 
     const handleSaveClick = async () => {
         console.log("Save Button");
-        if (!formData.name || !formData.serviceCost || !formData.tax) {
+        if (!formData.name  || !formData.tax) {
             if (!formData.name) {
                 setNameError('Service name is required');
             }
-            if (!formData.serviceCost) {
-                setServiceCostError('Service cost is required');
-            }
+            // if (!formData.serviceCost) {
+            //     setServiceCostError('Service cost is required');
+            // }
             if (!formData.tax) {
                 setTaxError('Tax is required');
             }
@@ -96,9 +108,9 @@ const [categories, setCategories] = useState<any[]>([
             const selectedProviders = Array.isArray(formData.providers) 
             ? formData.providers.map((provider: any) => provider.label) 
             : [];
-        const selectedProducts = Array.isArray(formData.linkProducts) 
-            ? formData.linkProducts.map((product: any) => product.label) 
-            : [];
+        // const selectedProducts1 = Array.isArray(formData.selectedProducts) 
+        //     ? formData.selectedProducts.map((product: any) => product.label) 
+        //     : [];
 
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
@@ -110,7 +122,7 @@ const [categories, setCategories] = useState<any[]>([
                     providers: selectedProviders,
                     sellingPrice: parseInt(formData.sellingPrice),
                     sacCode: formData.sacCode,
-                    linkProducts:selectedProducts,
+                    linkProducts:(selectedProducts),
                     serviceCost: parseInt(formData.serviceCost),
                     serviceCharge: parseInt(formData.serviceCharge),
                     tax: formData.tax ? formData.tax.value : undefined,
@@ -155,12 +167,54 @@ const [categories, setCategories] = useState<any[]>([
             return updatedFormData;
         });
     };
+
+
+    const customStyles = {
+        control: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          border: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4',
+          '&:hover': {
+            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            },
+          boxShadow: state.isFocused ? 'none' : 'none',
+        }),
+        valueContainer: (provided: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        singleValue: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+        }),
+        menu: (provided: any) => ({
+          ...provided,
+          backgroundColor: 'white',
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        option: (provided: any, state: any) => ({
+          ...provided,
+          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+          color: state.isFocused ? 'white' : '#6B7E7D',
+          '&:hover': {
+            backgroundColor: '#35BEB1',
+            color: 'white',
+          },
+        }),
+        menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
+      };
+
     
 
     return <>
         {!lastStep &&
             <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
-                <div className=" min-h-[500px] px-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
+                <div className=" min-h-[500px] px-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex ">
                     <div className="self-end items-start gap-6 flex py-2">
                         <button onClick={onClose} className="border-0 outline-none cursor-pointer">
                             <Image src={closeicon} alt="close"></Image>
@@ -218,7 +272,7 @@ const [categories, setCategories] = useState<any[]>([
         }
         {lastStep &&
             <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
-                <div className="w-[640px] h-[543px]  p-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
+                <div className="w-[640px] h-[543px]  p-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex overflow-auto container">
                     
                         <button className="self-end items-center gap-6 flex border-0 rounded outline-none cursor-pointer hover:shadow transition" onClick={onClose}>
                             <Image src={closeicon} alt="close"></Image>
@@ -227,7 +281,7 @@ const [categories, setCategories] = useState<any[]>([
                     <div className="text-gray-500 text-xl font-medium ">New Service</div>
                     <div className="text-neutral-400 text-base font-medium ">Configure your service</div>
                     <div className="flex justify-between items-center  w-full">
-                        <div className="flex gap-[35px] items-center">
+                        <div className="flex gap-[52px] items-center">
                             <div className="text-gray-500 text-base font-medium ">Service Cost</div>
                             
                                 <input className="w-[157px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="number" name="serviceCharge" onChange={(e) => handleChange("serviceCharge", e.target.value)}/>
@@ -239,14 +293,15 @@ const [categories, setCategories] = useState<any[]>([
                             <div className="text-gray-500 text-base font-medium ">Tax</div>
                             
                                 <Select
-                                    className="w-[157px] text-neutral-400 text-base font-medium focus:outline-none  rounded-[5px] focus:border focus:border-[#35BEB1]"
+                                    className="w-[157px] text-neutral-400 text-base font-medium border border-solid border-borderGrey rounded-[5px]"
                                     // defaultValue={gstOptions[0]}
                                     isClearable={false}
                                     isSearchable={true}
                                     options={gstOptions}
                                     isMulti={false}
                                     name="tax"
-                            onChange={(value) => handleChange("tax", value)}
+                                    onChange={(value) => handleChange("tax", value)}
+                                    styles={customStyles}
                                 />
                             {taxError && (
                                 <div className="text-red-500 text-sm mt-1">{taxError}</div>
@@ -266,7 +321,7 @@ const [categories, setCategories] = useState<any[]>([
                             onChange={(value) => handleChange("category", value)}
                             /> */}
                            <Select
-                                    className="text-neutral-400 text-base font-medium w-full"
+                                    className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
                                     placeholder="Select Category"
                                     isClearable={false}
                                     isSearchable={true}
@@ -274,6 +329,7 @@ const [categories, setCategories] = useState<any[]>([
                                     isMulti={true}
                                     name="category"
                                     onChange={(value) => handleChange("category", value)}
+                                    styles={customStyles}
                                 />
                         </div>
                     </div>
@@ -281,7 +337,7 @@ const [categories, setCategories] = useState<any[]>([
                         <div className="text-gray-500 text-base font-medium ">Providers</div>
                         <div className="w-4/5">
                             <Select
-                                className=" text-neutral-400 text-base font-medium focus:outline-none  rounded-[5px] focus:border focus:border-[#35BEB1] w-full"
+                                className=" text-neutral-400 text-base font-medium border border-solid border-borderGrey rounded-[5px] w-full"
                                 placeholder="Select clinic staff"
                                 isClearable={false}
                                 isSearchable={true}
@@ -289,27 +345,73 @@ const [categories, setCategories] = useState<any[]>([
                                 isMulti={true}
                                 name="providers"
                             onChange={(value) => handleChange("providers", value)}
+                            styles={customStyles}
                             />
                         </div>
                     </div>
                     <div className="flex items-center gap-[22px] w-full ">
                         <div className="text-gray-500 text-base font-medium w-[8rem]">Link Product(s)</div>
                         <div className="w-4/5">
-                            <Select
-                                className="text-neutral-400 text-base font-medium focus:outline-none  rounded-[5px] focus:border focus:border-[#35BEB1] w-full"
+                            {/* <Select
+                                className="text-neutral-400 text-base font-medium border border-solid border-borderGrey rounded-[5px] w-full"
                                 isClearable={false}
                                 isSearchable={true}
                                 options={LinkProducts}
                                 isMulti={true}
                                 name="linkProducts"
-                            onChange={(value) => handleChange("linkProducts", value)}
-                            />
+                                onChange={(value) => handleChange("linkProducts", value)}
+                                styles={customStyles}
+                            /> */}
+                            {productOptions ? (
+                        <Select
+                            className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
+                            placeholder="Select Product"
+                            isClearable={true}
+                            isSearchable={true}
+                            options={productOptions}
+                            isMulti={true}
+                            name="linkProduct"
+                            onChange={(value) => handleProductSelect(value)}
+                            styles={customStyles}
+                        />
+                        ) : (
+                        <div className="text-neutral-400 text-base font-medium w-full"><Loading2/></div>
+                        )}
                         </div>
                     </div>
+                    <div className='w-full bg-white rounded-[5px] flex flex-col border border-solid border-borderGrey '>
+                <div className='w-full h-9 bg-[#F4F5F7] flex justify-evenly items-center text-textGrey2 rounded-tl-[5px] rounded-tr-[5px] border-0 border-b border-solid border-borderGrey'>
+                <div className='w-[10rem] text-textGrey2 font-medium text-base'>Name</div>
+                {/* <div className='w-[8rem] text-textGrey2 font-medium text-base'>Selling Price</div> */}
+                <div className='w-[10rem] text-textGrey2 font-medium text-base'>Quantity</div>
+                {/* <div className='w-[3rem] text-textGrey2 font-medium text-base'></div> */}
+                </div>
+                <div className='w-full h-[5rem] overflow-y-auto container'>
+                {selectedProducts.map((product:any) => (
+                    <div
+                        key={product.value}
+                        className="w-full h-9 flex justify-evenly items-center text-textGrey2 border-0 border-b border-solid border-borderGrey"
+                    >
+                        <div className="w-[10rem] text-textGrey2 font-medium text-base">{product.label}</div>
+                        {/* <div className="w-[8rem] text-textGrey2 font-medium text-base">₹ {product.price}</div> */}
+                        <div className="w-[10rem] text-textGrey2 font-medium text-base">1</div>
+                        {/* <div
+                        className="w-[3rem] text-textGrey2 font-medium text-base flex justify-center items-center cursor-pointer"
+                        onClick={() => handleProductRemove(product.value)}
+                        >
+                        <Image className="w-4 h-4" src={closeicon} alt="Delete" />
+                        </div> */}
+                    </div>
+                    ))}
+
+                   
+                </div>
+                
+            </div>
                     <div className="self-end items-start gap-6 flex">
                     <button
                         onClick={handleSaveClick}
-                        disabled={buttonDisabled}
+                        // disabled={buttonDisabled}
                         className={`px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${
                             buttonDisabled ? 'bg-grey-500' : 'bg-zinc-900'
                         }`}

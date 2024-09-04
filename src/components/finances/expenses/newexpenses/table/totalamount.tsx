@@ -221,7 +221,7 @@ const NewExpensesTotalAmout = () => {
                             </div>
                         </div>
     
-                        {showPopup && <Popup headerdata={headerData} onClose={togglePopup} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} />}
+                        {showPopup && <Popup headerdata={headerData} onClose={togglePopup} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} balanceDue={balanceDue} />}
         </>
 
     )

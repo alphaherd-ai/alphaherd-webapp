@@ -29,13 +29,14 @@ type PopupProps = {
     setTransactionsData: any;
     initialInvoiceNo: any;
     totalAmount: any;
+    balanceDue: any;
 }
 
 
-const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, transactionsData, setTransactionsData, initialInvoiceNo, totalAmount}) => {
+const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, transactionsData, setTransactionsData, initialInvoiceNo, totalAmount, balanceDue}) => {
 
     const dispatch = useDispatch();
-
+    const [isSaving,setSaving]=useState(false);
     const [formData, setFormData] = useState<any>({
         amountPaid: "",
     });
@@ -94,6 +95,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
 
 
     const handleSaveClick = async () => {
+        setSaving(true);
         try {
             const response = await fetch(`http://localhost:3000/alphaherd/api/finance/transactions/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
@@ -105,7 +107,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
                     invoiceLink: headerdata.invoiceNo,
                     receiptNo: formData.receiptNo,
                     date: formData.date || new Date(),
-                    amountPaid: parseInt(formData.amountPaid, 10) || totalAmount?.totalCost,
+                    amountPaid: parseInt(formData.amountPaid, 10) || balanceDue,
                     mode: selectedMode,
                     moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
                 })
@@ -124,27 +126,27 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
         }
 
         const newTransaction = {
-            amountPaid: parseInt(formData.amountPaid, 10) || totalAmount?.totalCost,
+            amountPaid: parseInt(formData.amountPaid, 10) || balanceDue,
             date: formData.date || new Date(),
             isAdvancePayment: isAdvancePayment,
             mode: selectedMode,
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
         };
 
-        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10 || totalAmount?.totalCost), mode: selectedMode, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10 || balanceDue), mode: selectedMode, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
 
         setTransactionsData((prevTransactions:any) => [...prevTransactions, newTransaction]);
 
     };
 
     useEffect(() => {
-        if (totalAmount?.totalCost !== undefined) {
+        if (balanceDue !== undefined) {
             setFormData((prevData:any) => ({
                 ...prevData,
-                amountPaid: totalAmount.totalCost,
+                amountPaid: balanceDue,
             }));
         }
-    }, [totalAmount]);
+    }, [balanceDue]);
 
     const handleChange = (field: string, value: any) => {
         setFormData({ ...formData, [field]: value });
@@ -255,7 +257,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
                         name="amountPaid"
                         value={formData.amountPaid}
                         onChange={(e) => handleChange("amountPaid", e.target.value)}
-                        />
+                    />
                     </div>
             </div>
             <div className='w-full flex justify-between items-center'>

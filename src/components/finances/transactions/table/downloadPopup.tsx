@@ -57,8 +57,10 @@ const DownloadPopup = ({ onClose, transactions, type }:any) => {
     xhr.send();
   };
 
+  const logo = appState?.currentOrg?.orgImgUrl;
+
   const downloadPDF = () => {
-    convertImageToBase64(logo.src, (base64Image:any) => {
+    convertImageToBase64(logo, (base64Image:any) => {
     const doc = new jsPDF('landscape');
     const tableColumn = ["Date", "Party", "Receipt No.", "Subject", "Link Invoice", "Amount", "Mode", ""];
     const tableRows:any = [];
@@ -262,9 +264,30 @@ const DownloadPopup = ({ onClose, transactions, type }:any) => {
             <div className="text-white text-base font-medium">Download as PDF</div>
         </Button>
         <CSVLink
-            data={data}
+            data={data.map((item:any) => ({
+              ...item,
+              products: Array.isArray(item?.products) 
+                  ? item.products.map((product:any) => product.label).join(', ') 
+                  : '',
+              services: Array.isArray(item?.services) 
+                  ? item.services.map((service:any) => service.label).join(', ') 
+                  : '' 
+          }))}
             filename={`sales_report_${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'}_to_${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}.csv`}
             className="no-underline flex items-center mr-4"
+            headers={[
+              { label: 'Date', key: 'date' },
+              { label: 'Party Name', key: 'partyName' },
+              { label: 'Receipt No.', key: 'receiptNo' },
+              { label: 'Subject', key: 'subject' },
+              { label: 'Invoice Link', key: 'invoiceLink' },
+              { label: 'Amount Paid', key: 'amountPaid' },
+              { label: 'Mode', key: 'mode' },
+              { label: 'Money Change', key: 'moneyChange' },
+              {label: 'Products', key: 'products' },
+              {label: 'Services', key: 'services' },
+            ]}
+            
         >
         <Button className="cursor-pointer outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
         

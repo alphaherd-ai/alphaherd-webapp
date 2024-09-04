@@ -36,7 +36,6 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
     const id = url.get('id');
     const dispatch = useDispatch();
 
-
     const [isSaving,setSaving]=useState(false);
     const [formData, setFormData] = useState<any>({
         amountPaid: "",
@@ -71,7 +70,6 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
     const handleModeSelect = (selectedOptions: any) => {
         setSelectedMode(selectedOptions?.label);
     }
-
     
     
 
@@ -104,8 +102,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
                     'Content-Type' : 'application/json', 
                 },
                 body: JSON.stringify({
-                    partyName: headerdata?.distributor,
-                    invoiceLink: headerdata.invoiceNo,
+                    partyName: headerdata?.party,
+                    invoiceLink: headerdata?.invoiceNo,
                     receiptNo: initialInvoiceNo,
                     date: formData.date || new Date(),
                     amountPaid: parseInt(formData.amountPaid, 10) || balanceDue,
@@ -123,10 +121,10 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
         } catch (error) {
             console.error('Error while saving data:', error)
         } finally {
-
+            
         }
 
-        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10) || balanceDue, mode: selectedMode, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+        // dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10) || balanceDue, mode: selectedMode, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
 
 
         const newTransaction = {
@@ -136,10 +134,13 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
             mode: selectedMode,
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
         };
+
+        dispatch(addAmount(newTransaction))
+
         
 
        try {
-        const putResponse = await fetch(`http://localhost:3000/alphaherd/api/finance/purchases/${id}/?branchId=${appState.currentBranchId}`, {
+        const putResponse = await fetch(`http://localhost:3000/alphaherd/api/finance/expenses/${id}/?branchId=${appState.currentBranchId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type' : 'application/json', 
@@ -160,7 +161,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
             console.log("Error while put request",error)
        }finally {
         setSaving(false);
-       }
+        }
 
 
     };
@@ -178,7 +179,6 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
         setFormData({ ...formData, [field]: value });
     }
 
-    
     const customStyles = {
         control: (provided: any, state: any) => ({
           ...provided,
@@ -219,6 +219,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
         menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
       };
 
+
+console.log("headerdata",headerdata)
 
 
   return (
@@ -265,8 +267,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
             </div>
             <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Party Name</span></div>
-                    <div><div className="w-[440px] h-9 rounded-[5px] text-textGrey2 bg-white text-base font-medium p-2  outline-none border border-solid border-gray-300 ">{headerdata?.distributor}</div></div>
-              
+                    <div><div className="w-[440px] h-9 rounded-[5px] text-textGrey2 bg-white text-base font-medium p-2  outline-none border border-solid border-gray-300 ">{headerdata?.party}</div></div>
+               
             </div>
             
             
@@ -279,7 +281,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
                         name="amountPaid"
                         value={formData.amountPaid}
                         onChange={(e) => handleChange("amountPaid", e.target.value)}
-                    />  
+                    />
                     </div>
             </div>
             <div className='w-full flex justify-between items-center'>
@@ -328,6 +330,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
                             name="mode"
                             onChange={(value) => handleChange("mode", value)}
                         /> */}
+                        {/* {modesLoading && <Loading2 />} */}
                         {!modesLoading && modeOptions ? (
                         <Select
                             className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"

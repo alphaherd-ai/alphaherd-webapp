@@ -16,6 +16,11 @@ import closeicon from "../../../../../assets/icons/inventory/closeIcon.svg";
 import Select from 'react-select';
 import { Button } from '@nextui-org/react';
 import { useAppSelector } from '@/lib/hooks';
+import Loading2 from '@/app/loading2';
+import useSWR from 'swr';
+//@ts-ignore
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
+
 
 type PopupProps = {
     onClose: () => void;
@@ -24,14 +29,15 @@ type PopupProps = {
     setTransactionsData: any;
     initialInvoiceNo: any;
     totalAmount: any;
+    balanceDue: any;
 }
 
 
-const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, transactionsData, setTransactionsData, initialInvoiceNo, totalAmount}) => {
+const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, transactionsData, setTransactionsData, initialInvoiceNo, totalAmount, balanceDue}) => {
 
     const dispatch = useDispatch();
 
-
+    const [isSaving,setSaving]=useState(false);
     const [formData, setFormData] = useState<any>({
         amountPaid: "",
     });
@@ -45,7 +51,25 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
         {value: "Net Banking", label: "Net Banking"},
     ]
 
-    
+    const [selectedMode, setSelectedMode] = useState([]);
+    const [modeOptions, setModeOptions] = useState<any>([]);
+
+    const {data:modes,error:modesError,isLoading:modesLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
+
+
+    useEffect(() => {
+        if(modes&&!modesError&&!modesLoading){
+            const options3 = modes.map((mode: any) => ({
+                value: mode?.id,
+                label: mode?.name,
+            }))
+            setModeOptions(options3)
+        }
+    }, [modes, modesError, modesLoading])
+
+    const handleModeSelect = (selectedOptions: any) => {
+        setSelectedMode(selectedOptions?.label);
+    }
     
 
     const Party =[
@@ -68,9 +92,9 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
         setTransactionType(type);
     };
 
-    console.log("headerdata", headerdata);
-    console.log("totalAmountDatatotalAmountData", totalAmount);
+    
     const handleSaveClick = async () => {
+        setSaving(true);
         try {
             const response = await fetch(`http://localhost:3000/alphaherd/api/finance/transactions/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
@@ -82,8 +106,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
                     invoiceLink: headerdata.invoiceNo,
                     receiptNo: initialInvoiceNo,
                     date: formData.date || new Date(),
-                    amountPaid: parseInt(formData.amountPaid, 10) || totalAmount?.totalCost,
-                    mode: formData.mode?.value,
+                    amountPaid: parseInt(formData.amountPaid, 10) || balanceDue,
+                    mode: selectedMode,
                     moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
                 })
             });
@@ -97,18 +121,18 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
         } catch (error) {
             console.error('Error while saving data:', error)
         } finally {
-
+            setSaving(false);
         }
 
         const newTransaction = {
-            amountPaid: parseInt(formData.amountPaid, 10) || totalAmount?.totalCost,
+            amountPaid: parseInt(formData.amountPaid, 10) || balanceDue,
             date: formData.date || new Date(),
             isAdvancePayment: isAdvancePayment,
-            mode: formData.mode?.value,
+            mode: selectedMode,
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
         };
 
-        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10) || totalAmount?.totalCost, mode: formData.mode?.value, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10) || balanceDue, mode: selectedMode, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
 
         // setTransactionsData([{amountPaid:parseInt(formData.amountPaid, 10), date:formData.date, isAdvancePayment:isAdvancePayment}]);
 
@@ -116,17 +140,57 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
     };
 
     useEffect(() => {
-        if (totalAmount?.totalCost !== undefined) {
+        if (balanceDue !== undefined) {
             setFormData((prevData:any) => ({
                 ...prevData,
-                amountPaid: totalAmount.totalCost,
+                amountPaid: balanceDue,
             }));
         }
-    }, [totalAmount]);
+    }, [balanceDue]);
 
     const handleChange = (field: string, value: any) => {
         setFormData({ ...formData, [field]: value });
     }
+
+    const customStyles = {
+        control: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          border: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4',
+          '&:hover': {
+            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            },
+          boxShadow: state.isFocused ? 'none' : 'none',
+        }),
+        valueContainer: (provided: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        singleValue: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+        }),
+        menu: (provided: any) => ({
+          ...provided,
+          backgroundColor: 'white',
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        option: (provided: any, state: any) => ({
+          ...provided,
+          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+          color: state.isFocused ? 'white' : '#6B7E7D',
+          '&:hover': {
+            backgroundColor: '#35BEB1',
+            color: 'white',
+          },
+        }),
+        menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
+      };
 
 
 
@@ -220,7 +284,7 @@ return (
             <div className='w-full flex justify-between items-center'>
                 <div><span className='text-gray-500 text-base font-medium '>Mode</span></div>
                 <div className='w-[440px] flex justify-between items-center'>
-                    <Select
+                    {/* <Select
                         className="text-neutral-400 text-base font-medium w-full"
                         placeholder="Mode"
                         isClearable={false}
@@ -229,7 +293,22 @@ return (
                         isMulti={false}
                         name="mode"
                         onChange={(value) => handleChange("mode", value)}
-                    />
+                    /> */}
+                    {!modesLoading && modeOptions ? (
+                        <Select
+                            className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
+                            placeholder=""
+                            isClearable={true}
+                            isSearchable={true}
+                            options={modeOptions}
+                            isMulti={false}
+                            name="mode"
+                            onChange={(value) => handleModeSelect(value)}
+                            styles={customStyles}
+                        />
+                    ) : (
+                        <Loading2/>
+                    )}
                 </div>
             </div>
             <div className='w-full flex justify-between items-center'>
@@ -245,7 +324,7 @@ return (
                 </div>
                 <Button className="px-2 py-2.5 bg-navBar rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer"  onClick={handleSaveClick}>
                     <Image src={check} alt='check' /> 
-                    <span className='text-white text-base font-medium pr-2'>Save Transaction</span>
+                    <span className='text-white text-base font-medium pr-2'>{isSaving ? <Loading2 /> : "Save Payment"}</span>
                 </Button>
             </div>
         </div>

@@ -81,6 +81,12 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
     const [selectedInvoiceLink, setSelectedInvoiceLink] = useState<string | string[]>([]);
     const [selectedInvoiceLinkID, setSelectedInvoiceLinkID] = useState([]);
     const [selectedMode, setSelectedMode] = useState([]);
+    const [linkInvoice, setLinkInvoice] = useState<any>([]);
+    const [modeOptions, setModeOptions] = useState<any>([]);
+    const [clientsOptions, setClientsOptions] = useState<any>([]);
+    const [selectedClient, setSelectedClient] = useState<any>([]);
+    const [distributorOptions, setDistributorOptions] = useState<any>([]);
+    const [selectedDistributor, setSelectedDistributor] = useState<any>([]);
     const handleDateChange = (date:any) => {
         setStartDate(date);
         setFormData({ ...formData, date});
@@ -99,16 +105,16 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
                     'Content-Type' : 'application/json', 
                 },
                 body: JSON.stringify({
-                    partyName: formData.partyName?.value,
+                    partyName: selectedClient || selectedDistributor || "Direct",
                     subject: formData.subject,
                     invoiceLink: (selectedInvoiceLink) || "Direct",
                     receiptNo: initialInvoiceNo,
-                    date: formData.date,
+                    date: formData.date || new Date(),
                     amountPaid: parseInt(formData.amountPaid, 10),
                     mode: (selectedMode),
                     moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
-                    products: JSON.stringify(selectedProducts),
-                    services: JSON.stringify(selectedServices),
+                    products: (selectedProducts),
+                    services: (selectedServices),
                 })
             });
             if (response.ok) {
@@ -121,12 +127,12 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
         } catch (error) {
             console.error('Error while saving data:', error)
         } finally {
-            setSaving(false);
+            
         }
 
         const newTransaction = {
             amountPaid: parseInt(formData.amountPaid, 10),
-            date: formData.date,
+            date: formData.date || new Date(),
             mode: (selectedMode),
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
         };
@@ -158,7 +164,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
            } catch (error) {
                 console.log("Error while put request",error)
            }finally {
-    
+            setSaving(false);
            }
     };
 
@@ -169,21 +175,22 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
     }
 
 
-    const [linkInvoice, setLinkInvoice] = useState<any>([]);
-    const [modeOptions, setModeOptions] = useState<any>([]);
-
     const {data:products,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll/?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
     const {data:service, error:serviceError, isLoading:serviceLoading} = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true})
     const {data:invoice,error:invoiceError,isLoading:invoiceLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
     const {data:modes,error:modesError,isLoading:modesLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
-
+    const {data:clients, error:clientsError,isLoading:clientsLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
+    const {data:distributors, error:distributorsError,isLoading:distributorsLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
     
-    invoice && console.log(invoice)
+    // invoice && console.log(invoice)
     // service && console.log(service)
-    // products && console.log(products)
+    // products && console.log("pprprprprp",products)
+    clients && console.log("clients",clients)
+    distributors && console.log("distributors",distributors)
 
 
     useEffect(() => {
+
         if (products&&!error&&!isLoading) {
             const options = products.map((product: any) => ({
                 value: product?.id,
@@ -218,9 +225,25 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
             setModeOptions(options3)
         }
 
-    }, [products, service, error,isLoading,serviceError,serviceLoading, invoice,invoiceError,invoiceLoading, modes, modesError, modesLoading]);
+        if(clients&&!clientsError&&!clientsLoading){
+            const options = clients.map((client: any) => ({
+                value: client?.id,
+                label: client?.clientName,
+            }));
+            setClientsOptions(options);
+        }
 
-    console.log(linkInvoice)
+        if(distributors&&!distributorsError&&!distributorsLoading){
+            const options = distributors.map((distributor: any) => ({
+                value: distributor?.id,
+                label: distributor?.distributorName,
+            }));
+            setDistributorOptions(options);
+        }
+
+    }, [products, service, error,isLoading,serviceError,serviceLoading, invoice,invoiceError,invoiceLoading, modes, modesError, modesLoading, clients, clientsError, clientsLoading, distributors, distributorsError, distributorsLoading]);
+
+    // console.log(linkInvoice)
 
     const handleLinkInvoice = (selectedOptions: any) => {
         setSelectedInvoiceLinkID(selectedOptions?.value);
@@ -248,9 +271,16 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
         setSelectedServices(selectedServices?.filter(service => service.value !== serviceId));
     };
 
+    const handleClientSelect = (selectedOptions: any) => {
+        setSelectedClient(selectedOptions?.label);
+    };
+
+    const handleDistributorSelect = (selectedOptions: any) => {
+        setSelectedDistributor(selectedOptions?.label);
+    };
+
     
-    
-      console.log("Hererererererer",JSON.stringify(selectedProducts),selectedProducts)
+    //   console.log("Hererererererer",JSON.stringify(selectedProducts[0]?.label),selectedProducts[0]?.label)
 
       useEffect(() => {
         const totalProductAmount = selectedProducts.reduce((sum, product) => sum + product.price, 0);
@@ -346,7 +376,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
             <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Party</span></div>
                     <div className='w-[440px]'>
-                    <Select
+                    {/* <Select
                         className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
                         placeholder="Select Category"
                         isClearable={false}
@@ -356,7 +386,22 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
                         name="partyName"
                         onChange={(value) => handleChange("partyName", value)}
                         styles={customStyles}
-                        />
+                        /> */}
+                        {!clientsLoading  && !distributorsLoading ? (
+                           <Select
+                           className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
+                           placeholder="Select Category"
+                           isClearable={false}
+                           isSearchable={true}
+                           options={clientsOptions.concat(distributorOptions)}
+                           isMulti={false}
+                           name="partyName"
+                           onChange={(value) => handleClientSelect(value)}
+                           styles={customStyles}
+                           /> 
+                        ) : (
+                            <Loading2/>
+                        )}
                     </div>                
             </div>
             <div className='w-full flex justify-between items-center'>
@@ -392,7 +437,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
                         <Select
                             className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
                             placeholder="Select Service"
-                            isClearable={true}
+                            isClearable={false}
                             isSearchable={true}
                             options={serviceOptions}
                             isMulti={true}
@@ -494,7 +539,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
                             onChange={(value) => handleChange("mode", value)}
                             styles={customStyles}
                         /> */}
-                        {modeOptions ? (
+                        {!modesLoading && modeOptions ? (
                         <Select
                             className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
                             placeholder=""
@@ -507,7 +552,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
                             styles={customStyles}
                         />
                     ) : (
-                        <div className="text-neutral-400 text-base font-medium w-full"><Loading2/></div>
+                        <Loading2/>
                     )}
                     </div>
                     </div>
@@ -522,14 +567,14 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
                         <div className='relative'>
                         <DatePicker
                             className="w-[10rem]"
-                            selected={startDate}
+                            selected={startDate || new Date()}
                             onChange={handleDateChange}
                             calendarClassName="react-datepicker-custom"
                             customInput={
                                 <div className='relative'>
                                     <input
                                         className="w-[10rem] h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                        value={startDate.toLocaleDateString()}
+                                        value={startDate.toLocaleDateString() || new Date().toLocaleDateString()}
                                         readOnly
                                     />
                                     <Image
