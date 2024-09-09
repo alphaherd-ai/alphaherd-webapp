@@ -22,5 +22,6 @@ export const config = {
   '/api/finance/:path*',
   '/api/inventory/:path*',
   '/api/settings/:path*',
-  '/((?!api|_next/static|_next/image|favicon.ico).*)','/'],
+  '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  '/'],
 };

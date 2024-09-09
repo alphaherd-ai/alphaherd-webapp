@@ -37,7 +37,7 @@ const ExistingsalesHeader = ({otherData, isLoading}:any) => {
                 <div className="px-6  bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold ">Client:</div>
-                        <div className={`text-gray-500 text-base font-medium  border-0 bg-inherit`}>{!isLoading ? otherData.customer : <Loading2 />} </div>
+                        <div className={`text-textGrey2 text-base font-medium  border-0 bg-inherit`}>{!isLoading ? otherData.customer : <Loading2 />} </div>
 
                     </div>
                 </div>
@@ -46,7 +46,7 @@ const ExistingsalesHeader = ({otherData, isLoading}:any) => {
                         <div className="text-gray-500 text-base font-bold  pr-[16px] w-3/12">Invoice Number:</div>
                         <div className="flex items-center justify-between w-9/12">
                             <div
-                                className={`text-gray-500 text-base font-medium  border-0 bg-inherit`}
+                                className={`text-textGrey2 text-base font-medium  border-0 bg-inherit`}
                                 > {!isLoading ? otherData.invoiceNo : <Loading2 />} </div>
                             
                         </div>
@@ -58,7 +58,7 @@ const ExistingsalesHeader = ({otherData, isLoading}:any) => {
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold  w-1/8">Date:</div>
                         <div
-                            className={"text-gray-500 text-base font-medium  w-full"}>
+                            className={"text-textGrey2 text-base font-medium  w-full"}>
                             {!isLoading ? formatDateAndTime(otherData.date).formattedDate : <Loading2 />}
                         </div>
                     </div>
@@ -67,7 +67,7 @@ const ExistingsalesHeader = ({otherData, isLoading}:any) => {
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold  w-2/12">Due Date:</div>
                         <div
-                            className={"text-gray-500 text-base font-medium  w-full"}>
+                            className={"text-textGrey2 text-base font-medium  w-full"}>
                              {!isLoading ? formatDateAndTime(otherData.dueDate).formattedDate : <Loading2 />}
                         </div>
                     </div>
@@ -78,7 +78,7 @@ const ExistingsalesHeader = ({otherData, isLoading}:any) => {
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold ">Notes:</div>
                         {/* <input type="text" className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0 outline-none" defaultValue={otherData.notes} disabled/> */}
-                        <div className='w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0 outline-none'>{!isLoading ? otherData.notes : <Loading2 />}</div>
+                        <div className='w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0 outline-none'>{!isLoading ? otherData.notes : <Loading2 />}</div>
                     </div>
                 </div>
             </div>

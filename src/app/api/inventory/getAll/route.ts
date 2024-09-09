@@ -17,7 +17,7 @@ export const GET=async(req: NextRequest)=> {
         const inventory = await prismaClient.inventoryTimeline.findMany({
              where:{
                inventorySectionId:inventoryId,
-               isApproved:true
+               isApproved:false
              },
             include: {
                 productBatch: {

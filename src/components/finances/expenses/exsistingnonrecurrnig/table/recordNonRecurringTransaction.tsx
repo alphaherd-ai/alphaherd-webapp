@@ -102,7 +102,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
                     'Content-Type' : 'application/json', 
                 },
                 body: JSON.stringify({
-                    partyName: headerdata?.customer,
+                    partyName: headerdata?.party,
                     invoiceLink: headerdata?.invoiceNo,
                     receiptNo: initialInvoiceNo,
                     date: formData.date || new Date(),
@@ -140,7 +140,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
         
 
        try {
-        const putResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/${id}/?branchId=${appState.currentBranchId}`, {
+        const putResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/${id}/?branchId=${appState.currentBranchId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type' : 'application/json', 
@@ -220,7 +220,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
       };
 
 
-
+console.log("headerdata",headerdata)
 
 
   return (
@@ -267,7 +267,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
             </div>
             <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Party Name</span></div>
-                    <div><div className="w-[440px] h-9 rounded-[5px] text-textGrey2 bg-white text-base font-medium p-2  outline-none border border-solid border-gray-300 ">{headerdata?.customer}</div></div>
+                    <div><div className="w-[440px] h-9 rounded-[5px] text-textGrey2 bg-white text-base font-medium p-2  outline-none border border-solid border-gray-300 ">{headerdata?.party}</div></div>
                
             </div>
             

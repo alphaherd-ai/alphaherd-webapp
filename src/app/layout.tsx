@@ -6,6 +6,7 @@ import { getSession, logout } from "../../auth";
 import Navbar from '@/components/navbar/navbar';
 import { PersistGate } from 'redux-persist/integration/react'
 import ToastProvider from '@/components/Toast/ToastProvider';
+import Head from 'next/head';
 
 const inter = Inter({ subsets: ['latin'] })
 

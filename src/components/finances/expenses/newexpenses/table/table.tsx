@@ -299,7 +299,7 @@ useEffect(() => {
                                     <div className="pr-[4px]">
                                         <input value="test" type="checkbox" className="border-0" onChange={handleCheckBoxChange} />
                                     </div>
-                                    <div className="text-neutral-400 text-base font-bold ">Price Range</div>
+                                    <div className="text-textGrey2 text-base font-bold ">Price Range</div>
                                 </div> */}
                                 <Button onClick={handleAddItem} className='cursor-pointer text-white flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-md border-0 outline-none'>
                                     <div className='w-4 h-4 mb-3 mr-2'>
@@ -328,29 +328,29 @@ useEffect(() => {
                         </div>
                         {items.map((item:any,index:number) => (
                             <div key={index+1} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400 py-2'>
-                                <div className='w-[3rem] flex items-center text-neutral-400 text-base font-medium'>{index+1}</div>
-                                <input className='w-[15rem] flex items-center text-neutral-400 text-base font-medium border-none outline-none'
+                                <div className='w-[3rem] flex items-center text-textGrey2 text-base font-medium'>{index+1}</div>
+                                <input className='w-[15rem] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2'
                                  value={item.itemName} 
                                  placeholder='Enter Item Name'
                                  onChange={(event) => handleItemName(event, index)}
                                   />
-                                <div className='w-[12rem] flex items-center text-neutral-400 text-base font-medium gap-5'>
-                                <input className="w-3/12 flex items-center text-neutral-400 text-base font-medium border-none outline-none" 
+                                <div className='w-[12rem] flex items-center text-textGrey2 text-base font-medium gap-1'>
+                                ₹<input className="w-[70%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2" 
                                     value={item.sellingPrice} 
                                     onChange={(event) => handleSellingPrice(event, index)}/>
-                                    <Select
-                                        className="text-neutral-400 text-sm font-medium "
+                                    {/* <Select
+                                        className="text-textGrey2 text-sm font-medium "
                                         defaultValue={taxOptions[0]}
                                         isClearable={false}
                                         isSearchable={true}
                                         options={taxOptions}
                                         styles={customStyles}
-                                    />
+                                    /> */}
                                 </div>
-                                <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
+                                <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium'>
                                     { id==null?(
                                     <Select
-                                        className="text-neutral-400 text-base font-medium"
+                                        className="text-textGrey2 text-base font-medium"
                                         defaultValue={[]}
                                         isClearable={false}
                                         isSearchable={true}
@@ -358,19 +358,19 @@ useEffect(() => {
                                         styles={customStyles}
                                         onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
                                     />):(
-                                       ` ${item.gst*100}%`
+                                       isNaN(item.gst) ? 0 : ` ${item.gst*100}%`
                                     )}
                                 </div>
 
-                                <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
+                                <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium gap-[12px]'>
 
-                                    <div>{(item.sellingPrice*item.gst).toFixed(2)||0}</div>
+                                    <div>{isNaN(item.sellingPrice) || isNaN(item.gst) ? 0 : (item.sellingPrice * item.gst).toFixed(2)}</div>
 
                                 </div>
 
-                                <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>{`₹${(item.sellingPrice * item.gst+item.sellingPrice).toFixed(2)}`}</div>
+                                <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium'>{`₹${isNaN(item.sellingPrice) || isNaN(item.gst) ? 0 : (item.sellingPrice * item.gst+item.sellingPrice).toFixed(2)}`}</div>
 
-                                <div className='w-[10rem] flex-col items-center text-neutral-400 text-base font-medium'>
+                                <div className='w-[10rem] flex-col items-center text-textGrey2 text-base font-medium'>
                                     <Select
                                         defaultValue={category}
                                         isClearable={false}
@@ -381,12 +381,12 @@ useEffect(() => {
 
                                     />
                                 </div>
-                                <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
-                                    <button className="border-0">
-                                        <Image src={sellicon} alt="sell" ></Image>
+                                <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[20px] justify-end'>
+                                    <button className="border-0 bg-transparent cursor-pointer">
+                                        <Image className='w-5 h-5' src={sellicon} alt="sell" ></Image>
                                     </button>
-                                    <button className="border-0" onClick={() => handleDeleteRow(index)}>
-                                        <Image src={delicon} alt="delete" ></Image>
+                                    <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
+                                        <Image className='w-5 h-5' src={delicon} alt="delete" ></Image>
                                     </button>
                                 </div>
                             </div>
@@ -398,17 +398,17 @@ useEffect(() => {
 
 
                             <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>
-                                <Select
+                                {/* <Select
                                     defaultValue={gstOptions}
                                     isClearable={false}
                                     isSearchable={true}
                                     options={gstOptions}
                                     styles={customStyles}
-                                />
+                                /> */}
                             </div>
 
-                            <div className=' flex text-textGrey2 text-base font-bold w-[10rem]'>{`₹${items.reduce((acc, item) => acc + item.sellingPrice * item.gst, 0).toFixed(2)}`}</div>
-                            <div className=' flex text-textGreen text-base font-bold w-[10rem]'>{`₹${items.reduce((acc, item) => acc + item.sellingPrice * item.gst+item.sellingPrice, 0).toFixed(2)}`}</div>
+                            <div className=' flex text-textGrey2 text-base font-bold w-[10rem]'>{`₹${isNaN(items.reduce((acc, item) => acc + item.sellingPrice * item.gst, 0)) ? 0 : items.reduce((acc, item) => acc + item.sellingPrice * item.gst, 0).toFixed(2)}`}</div>
+                            <div className=' flex text-textGreen text-base font-bold w-[10rem]'>{`₹${isNaN(items.reduce((acc, item) => acc + item.sellingPrice * item.gst+item.sellingPrice, 0)) ? 0 : items.reduce((acc, item) => acc + item.sellingPrice * item.gst+item.sellingPrice, 0).toFixed(2)}`}</div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'></div>
                             <div className=' flex text-textGrey2 text-base font-medium w-1/12'></div>
                         </div>

@@ -15,6 +15,7 @@ import { useAppSelector } from '@/lib/hooks';
 import useSWR from 'swr';
 import formatDateAndTime from '@/utils/formateDateTime';
 import Loading2 from '@/app/loading2';
+import { set } from 'date-fns';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
@@ -23,8 +24,7 @@ const ExistingsalesTable = () => {
     const id = url.get('id');
     const appState = useAppSelector((state) => state.app);
     const [otherData, setOtherData] = useState({});
-    
-      
+        
     
         const initialItems: any[] | (() => any[])=[];
         const [items, setItems] = useState(initialItems);

@@ -607,12 +607,12 @@ const customStyles = {
                     </>
                 )}
             </div>
-            <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
-                <button className="border-0">
-                                <Image src={sellicon} alt="sell" onClick={() => handleAddDiscount(index)}></Image>
+            <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[20px] justify-end'>
+            <button className="border-0 bg-transparent cursor-pointer">
+            <Image className='w-5 h-5' src={sellicon} alt="sell" onClick={() => handleAddDiscount(index)}></Image>
                 </button>
-                <button className="border-0" onClick={() => handleDeleteRow(index)}>
-                    <Image src={delicon} alt="delete"></Image>
+                <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
+                    <Image className='w-5 h-5' src={delicon} alt="delete"></Image>
                 </button>
             </div>
         </div>

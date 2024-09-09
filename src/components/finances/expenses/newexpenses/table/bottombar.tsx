@@ -19,13 +19,13 @@ import { Button } from "@nextui-org/react"
 
 
 const NewExpensesBottomBar = ({expenseData}:any) => {
-    const { headerData, tableData, totalAmountData,recurringData } = useContext(DataContext);
+    const { headerData, tableData, totalAmountData,recurringData,transactionsData } = useContext(DataContext);
     const router=useRouter();
     const url = useSearchParams();
     const id = url.get('id');
     const appState = useAppSelector((state) => state.app);
     const handleSubmit = async () => {
-        const allData = {headerData, tableData, totalAmountData,recurringData};
+        const allData = {headerData, tableData, totalAmountData,recurringData, transactionsData};
         console.log("this is all data",allData)
         let totalQty=0;
         tableData.forEach(data => {
@@ -48,6 +48,9 @@ const NewExpensesBottomBar = ({expenseData}:any) => {
             totalCost: allData.totalAmountData.totalCost,
             overallDiscount: allData.totalAmountData.gst.value,
             totalQty:totalQty,
+            recordTransaction: {
+                create: allData.transactionsData
+            },
             recurringStartedOn: allData.recurringData.startDate ,
             recurringRepeatType: allData.recurringData?.repeatType?.value,
             recurringEndson:     allData.recurringData.endDate,

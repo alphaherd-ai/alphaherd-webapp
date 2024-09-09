@@ -140,9 +140,9 @@ const Login = () => {
     <>
       <ToastContainer />
       <div className="w-full h-full flex justify-center items-center  rounded-[20px]">
-        <div className="flex items-center w-[1016px] h-full relative bg-white bg-opacity-50 rounded-[30px] border border-stone-300 ">
+        <div className="flex items-center w-[1016px] h-full relative  bg-opacity-50 rounded-[30px] border border-stone-300 ">
           <Image src={placeicon} alt="img" className="w-full h-full" />
-          <div className="h-full pr-[84px] pl-[63px] bg-white bg-opacity-50 rounded-[30px] items-start flex flex-col">
+          <div className="h-full pr-[84px] pl-[63px] bg-opacity-50 rounded-[30px] items-start flex flex-col">
             <div className="w-[328px] mt-[146px] text-neutral-500 text-[28px] font-bold ">
               Sign in to continue
             </div>
