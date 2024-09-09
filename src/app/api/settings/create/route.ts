@@ -24,4 +24,4 @@ export const POST = async(req: NextRequest) => {
         } finally {
         await prismaClient.$disconnect();
         }
-    }
+}

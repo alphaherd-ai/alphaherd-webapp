@@ -122,13 +122,11 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
         const ageMonths = ageDate.getUTCMonth() || 0;
         const ageDays = ageDate.getUTCDate() - 1 || 0;
 
-        // Build the age string conditionally
         const ageParts = [];
         if (ageYears > 0) ageParts.push(`${ageYears} years`);
         if (ageMonths > 0) ageParts.push(`${ageMonths} months`);
         if (ageDays > 0) ageParts.push(`${ageDays} days`);
 
-        // Return the formatted string or an empty string if age is not provided
         return ageParts.length > 0 ? ageParts.join(', ') : '';
     };
     

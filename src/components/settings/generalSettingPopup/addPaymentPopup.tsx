@@ -11,7 +11,7 @@ import axios from 'axios';
 import { useAppSelector } from '@/lib/hooks';
 
 const AddPaymentPopup = ({ onClose }: any) => {
-    const appState = useAppSelector((state) => state.app)
+    const appState = useAppSelector((state) => state.app);
 
     const [formData, setFormData] = useState<any>("");
 
