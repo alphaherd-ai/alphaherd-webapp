@@ -129,7 +129,7 @@ const DatabaseClientHeader = ({clients}:any) => {
                 <Button
                     variant="solid"
                     className="capitalize px-4 py-2.5 flex border-none bg-black text-white rounded-lg "  onClick={togglePopup}>
-                        <div className='flex'><Image src={Add} alt='Add' className='w-3 h-3 ' /></div>Add Clients
+                        <div className='flex'><Image src={Add} alt='Add' className='w-3 h-3 ' /></div>Add Client
                 </Button>
             
         

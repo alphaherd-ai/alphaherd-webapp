@@ -27,7 +27,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
     const [formData, setFormData] = useState<any>({});
     const [clients, setClients] = useState<{ value: string; label: string }[]>([]);
     //const [startDate, setStartDate] = useState(new Date());
-    const [selectedGender, setSelectedGender] = useState('');
+    const [selectedGender, setSelectedGender] = useState('unspecified');
     const appState = useAppSelector((state) => state.app)
     const [isSaveDisabled, setIsSaveDisabled] = useState(true);
     const [errors, setErrors] =  useState<{ patientName?: string; clientName?: string }>({});
@@ -149,6 +149,44 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
         return { years, months, days };
     };
     
+    const calculateDOB = (age: { years: number; months: number; days: number }) => {
+        const currentDate = new Date();
+        const birthDate = new Date(currentDate.getFullYear() - age.years, currentDate.getMonth() - age.months, currentDate.getDate() - age.days);
+        setStartDate(birthDate);
+    };
+    const calculateDateOfBirth = (value: number, field: string): Date => {
+        const currentDate = new Date();
+        let yearAdjustment = 0;
+        let monthAdjustment = 0;
+        let dayAdjustment = 0;
+
+        switch (field) {
+            case 'years':
+                yearAdjustment = -value;
+                break;
+            case 'months':
+                monthAdjustment = -value;
+                break;
+            case 'days':
+                dayAdjustment = -value;
+                break;
+        }
+
+        let dateOfBirth = new Date(currentDate);
+        dateOfBirth.setFullYear(dateOfBirth.getFullYear() + yearAdjustment);
+        dateOfBirth.setMonth(dateOfBirth.getMonth() + monthAdjustment);
+        dateOfBirth.setDate(dateOfBirth.getDate() + dayAdjustment);
+
+        return dateOfBirth;
+    };
+    const handleAgeChange = (field: string, value: number) => {
+        // Update age state based on user input
+        setAge(prevAge => ({ ...prevAge, [field]: value }));
+        // Calculate and set the new date of birth
+        const newDateOfBirth = calculateDateOfBirth(value, field);
+        setStartDate(newDateOfBirth);
+    };
+    
 
     const handleSelectChange = (value: MultiValue<{ value: string; label: string }>) => {
         // Flatten the Breed array to get all options in a single array
@@ -205,7 +243,8 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                     <div>
                         <input className="w-[25rem] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" 
                         type="text" name="patientName" 
-                        onChange={(e) => handleChange("patientName", e.target.value)} />
+                        onChange={(e) => handleChange("patientName", e.target.value.replace(/\b\w/g, (char) => char.toUpperCase()))} 
+                        />
                         {errors.patientName && (
                             <div className="text-[red] error">{errors.patientName}</div>
                         )}
@@ -243,7 +282,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                     <div className="flex w-10/12 h-11">
 
                         <Select
-                            className="text-textGrey2 text-base font-medium w-[25rem]"
+                            className="text-textGrey2 text-base font-medium w-[25rem] "
                             placeholder=""
                             isClearable={false}
                             isSearchable={true}
@@ -294,11 +333,11 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                             <div className="w-12 h-9 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
                                 <input
                                     className="w-full h-full text-textGrey2 text-base font-medium px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
-                                    type="text"
-                                    min="0"
+                                    type="number"
+                                    //min="0"
                                     name="years"
-                                    value={age.years}
-                                    readOnly
+                                    value={age.years === 0 ? '' : age.years} // Show empty string when 0
+                                    onChange={(e) => handleAgeChange('years', parseInt(e.target.value.replace(/^0+/, '')))} // Remove leading 0s
                                 />
                             </div>
                             <div className="text-gray-500 text-base font-medium ">Years</div>
@@ -307,11 +346,11 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                             <div className="w-12 h-9 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
                                 <input
                                     className="w-full h-full text-textGrey2 text-base font-medium px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
-                                    type="text"
-                                    min="0"
+                                    type="number"
+                                    //min="0"
                                     name="months"
-                                    value={age.months}
-                                    readOnly
+                                    value={age.months === 0 ? '' : age.months}
+                                    onChange={(e) => handleAgeChange('months', parseInt(e.target.value.replace(/^0+/, '')))} // Remove leading 0s
                                 />
                             </div>
                             <div className="text-gray-500 text-base font-medium ">Months</div>
@@ -320,11 +359,11 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                             <div className="w-12 h-9 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
                                <input
                                     className="w-full h-full text-textGrey2 text-base font-medium px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
-                                    type="text"
+                                    type="number"
                                     min="0"
                                     name="days"
-                                    value={age.days}
-                                    readOnly
+                                    value={age.days === 0 ? '' : age.days}
+                                    onChange={(e) => handleAgeChange('days', parseInt(e.target.value.replace(/^0+/, '')))} // Remove leading 0s
                                 />
                             </div>
                             <div className="text-gray-500 text-base font-medium ">Days</div>
@@ -342,8 +381,8 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                                     ? 'bg-teal-400 text-white border-transparent'
                                     : 'bg-white text-textGrey2 border-borderGrey'
                                     } cursor-pointer flex justify-center items-center`}
-                                onClick={() => handleGenderChange(gender)}
-                            >
+                                    onClick={() => handleGenderChange(gender)} 
+                                    >
                                 <div className="text-base font-medium ">
                                     {gender.charAt(0).toUpperCase() + gender.slice(1)}
                                 </div>
@@ -366,7 +405,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                     </div>
                     <div
                         className={`h-11 px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer ${
-                            isSaveDisabled ? 'bg-gray-500 cursor-not-allowed' : 'bg-zinc-900'
+                            isSaveDisabled ? 'bg-[#17181A] cursor-not-allowed' : 'bg-zinc-900'
                         }`}
                         onClick={isSaveDisabled ? undefined : handleSaveClick}
                     >

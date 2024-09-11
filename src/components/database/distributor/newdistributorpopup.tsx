@@ -103,35 +103,81 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     
 
     const handleChange = (field: string, value: any) => {
-      
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
+        const onlyDigitsPattern = /^\d+$/; 
       setFormData((prevFormData: any) => {
         const updatedFormData = { ...prevFormData, [field]: value };
 
-        // Validate fields to enable or disable the Save button
+        
         const isFormValid =
             updatedFormData.distributorName !== '' &&
             updatedFormData.contact &&
             updatedFormData.contact.length === 10;
 
         setIsSaveDisabled(!isFormValid);
-        if (field === 'gstinNo' && value.length > 0 && value.length !== 15) {
-          setErrors((prevErrors) => ({
-              ...prevErrors,
-              gstinNo: 'GSTIN must be 15 digits',
-          }));
-        } else if (field === 'panNo' && value.length > 0 && value.length !== 10) {
+        if (field === 'email' && value.length > 0 && !emailPattern.test(value)) {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                email: 'Invalid email',
+            }));
+        }
+        
+        else if (field === 'contact') {
+            if (value.length > 0 && !onlyDigitsPattern.test(value)) {
+                
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    contact: 'Invalid format', 
+                }));
+            } else if (value.length > 10) {
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    contact: 'Phone number must be of 10 digits', 
+                }));
+            } else if (value.length > 0 && value.length < 10) {
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    contact: 'Phone number must be of 10 digits',
+                }));
+            } else {
+                setErrors((prevErrors) => ({ ...prevErrors, contact: '' })); 
+            }
+        }
+        // Validate GSTIN
+        else if (field === 'gstinNo') {
+            if (value.length > 0 && !onlyDigitsPattern.test(value)) {
+                // If non-digit characters are entered
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    gstinNo: 'Invalid format', 
+                }));
+            } else if (value.length > 15) {
+                // If GSTIN exceeds 15 digits
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    gstinNo: 'GSTIN should be 15 digits', 
+                }));
+            } else if (value.length > 0 && value.length < 15) {
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    gstinNo: 'GSTIN should be 15 digits', 
+                }));
+            } else {
+                setErrors((prevErrors) => ({ ...prevErrors, gstinNo: '' }));
+            }
+        }
+        // Handle PAN validation
+        else if (field === 'panNo' && value.length > 0 && value.length !== 10) {
             setErrors((prevErrors) => ({
                 ...prevErrors,
                 panNo: 'PAN must be 10 characters',
             }));
-        } else if (field === 'contact' && value.length > 0 && value.length !== 10) {
-            setErrors((prevErrors) => ({
-                ...prevErrors,
-                contact: 'Phone number must be 10 digits',
-            }));
-        } else {
+        }
+        // Clear errors if valid
+        else {
             setErrors((prevErrors) => ({ ...prevErrors, [field]: '' }));
         }
+
         return updatedFormData;
     });
 
@@ -168,11 +214,14 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     ];
 
     const City = [
+        {value:'Bangalore', label:'Bangalore'},
         { value: 'Delhi', label: 'Delhi' },
+        { value: 'Noida', label: 'Noida' },
+        {value:'Gurgaon', label:'Gurgaon'},
+        {value:'Faridabad', label:'Faridabad'},
         { value: 'Mumbai', label: 'Mumbai' },
         {value:'Chennai', label:'Chennai'},
-        {value:'Bangalore', label:'Bangalore'},
-        {value:'Gurgaon', label:'Gurgaon'}
+        
 ]
 
     return <>
@@ -190,7 +239,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                     <div className="text-gray-500 text-base font-medium ">Name*</div>
                     <div>
                     <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" 
-                    type="text" name="distributorName" onChange={(e) => handleChange("distributorName", e.target.value)} />
+                    type="text" name="distributorName" onChange={(e) => handleChange("distributorName", e.target.value.replace(/\b\w/g, (char) => char.toUpperCase()))} 
+                    />
                     {errors.distributorName && <div className="text-red-500 text-sm">{errors.distributorName}</div>}
                     </div>
                 </div>
@@ -266,6 +316,17 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                             isMulti={true}
                             name="city"
                             onChange={(value) => handleChange("city", value)}
+                            styles={{
+                                control: (base, state) => ({
+                                    ...base,
+                                    borderColor: state.isFocused ? '#35BEB1' : '#D1D5DB', 
+                                    borderWidth: '0.2px',
+                                    '&:hover': {
+                                        borderColor: '#35BEB1',
+                                    },
+                                    boxShadow: state.isFocused ? '0 0 0 1px #35BEB1' : base.boxShadow, 
+                                }),
+                            }}
                         />
          
               
@@ -304,7 +365,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                     </div> */}
                     <div
                         className={`h-11 px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer ${
-                            isSaveDisabled ? 'bg-gray-500 cursor-not-allowed' : 'bg-zinc-900'
+                            isSaveDisabled ? 'bg-[#17181A] cursor-not-allowed' : 'bg-zinc-900'
                         }`}
                         onClick={isSaveDisabled ? undefined : handleSaveClick}
                     >
