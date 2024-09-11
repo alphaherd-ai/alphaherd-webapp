@@ -506,22 +506,38 @@ model FinanceTimeline {
   @@index([salesId, createdAt, expensesId, financeSectionId])
 }
 
-model Settings {
-  id                Int     @id @default(autoincrement())
-  paymentMethods    String[] @default([])
-  species           String[]
-  breeds            Breed[]
-  itemCategories    String[]
-  itemUnits         String[]
-  serviceCategories String[]
-  reasons           String[]
-  communicationType String[]
+model CommunicationMode {
+  id                 Int    @id @default(autoincrement())
+  communicationType  String @unique
 }
 
-model Breed {
-  id          Int       @id @default(autoincrement())
-  name        String
-  species     String
-  settingsId  Int
-  settings    Settings  @relation(fields: [settingsId], references: [id])
+
+
+model TaxType {
+  id         Int    @id @default(autoincrement())
+  tax        String @unique
+  percentage Float
+}
+
+model AnimalSpecies {
+  id        Int           @id @default(autoincrement())
+  species   String        @unique
+  breeds    AnimalBreed[] 
+}
+
+model AnimalBreed {
+  id         Int           @id @default(autoincrement())
+  breed      String        @unique
+  species    AnimalSpecies @relation(fields: [speciesId], references: [id])
+  speciesId  Int
+}
+
+model ItemType {
+  id       Int    @id @default(autoincrement())
+  itemName String @unique
+}
+
+model Unit {
+  id           Int    @id @default(autoincrement())
+  unit         String? @unique
 }
