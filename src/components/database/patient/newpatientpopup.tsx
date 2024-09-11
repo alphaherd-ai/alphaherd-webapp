@@ -16,6 +16,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useAppSelector } from "@/lib/hooks";
 import { useRouter } from "next/navigation";
 import {z,ZodError} from "zod"
+import Creatable from "react-select/creatable";
 
 type PopupProps = {
     onClose: () => void;
@@ -33,6 +34,8 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
     const [errors, setErrors] =  useState<{ patientName?: string; clientName?: string }>({});
     const [startDate, setStartDate] = useState<Date | null>(null);
     const [age, setAge] = useState<{ years: number; months: number; days: number }>({ years: 0, months: 0, days: 0 });
+    const [selectedSpecies, setSelectedSpecies] = useState<any>(null);
+    const [filteredBreeds, setFilteredBreeds] = useState<any[]>([]);
 
     const handleDateChange = (date: Date) => {
         setStartDate(date);
@@ -204,6 +207,14 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
         return selectedLabels;
     };
 
+    const Species = [
+        {value:'Dog', label:'Dog'},
+        { value: 'Cat', label: 'Cat' },
+        { value: 'Turtle', label: 'Turtle' },
+        {value:'Horse', label:'Horse'},
+        {value:'Cow', label:'Cow'},
+    ]
+
     const Breed = [
         {
             label: "Dog",
@@ -223,6 +234,17 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
             ],
           },
     ];
+
+    const handleSpeciesChange = (selectedOption: any) => {
+        setSelectedSpecies(selectedOption);
+        const filtered = Breed.find(breed => breed.label === selectedOption?.value)?.options || [];
+        setFilteredBreeds(filtered);
+    };
+
+    const handleBreedChange = (selectedOption: any) => {
+        console.log('Selected breed:', selectedOption);
+    };
+
 
     const handleGenderChange = (gender: any) => {
         setSelectedGender(gender);
@@ -263,6 +285,17 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                             name="clientName"
                             options={clients}
                             onChange={(selectedClient: any) => handleChange("clientName", selectedClient)}
+                            styles={{
+                                control: (base, state) => ({
+                                    ...base,
+                                    borderColor: state.isFocused ? '#35BEB1' : '#D1D5DB', 
+                                    borderWidth: '0.2px',
+                                    '&:hover': {
+                                        borderColor: '#35BEB1',
+                                    },
+                                    boxShadow: state.isFocused ? '0 0 0 1px #35BEB1' : base.boxShadow, 
+                                }),
+                            }}
                             />
                         ):(
                           clientData.name
@@ -273,23 +306,57 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 <div className="flex items-center gap-[120px]">
                     <div className="text-gray-500 text-base font-medium ">Species</div>
                     <div>
-                        <input className="w-[25rem] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" 
-                        type="text" name="species" onChange={(e) => handleChange("species", e.target.value)} />
+                        {/* <input className="w-[25rem] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" 
+                        type="text" name="species" onChange={(e) => handleChange("species", e.target.value)} /> */}
+                        <div>
+                            <Creatable
+                                className="text-textGrey2 text-base font-medium w-[25rem] "
+                                placeholder=""
+                                isClearable={false}
+                                isSearchable={true}
+                                options={Species}
+                                isMulti={false}
+                                name="species"
+                                onChange={handleSpeciesChange}
+                                styles={{
+                                    control: (base, state) => ({
+                                        ...base,
+                                        borderColor: state.isFocused ? '#35BEB1' : '#D1D5DB', 
+                                        borderWidth: '0.2px',
+                                        '&:hover': {
+                                            borderColor: '#35BEB1',
+                                        },
+                                        boxShadow: state.isFocused ? '0 0 0 1px #35BEB1' : base.boxShadow, 
+                                    }),
+                                }}
+                            />
+                        </div>
                     </div>
                 </div>
                 <div className="flex items-center gap-[95px] w-full">
                     <div className="text-gray-500 text-base font-medium  w-2/12">Breed</div>
                     <div className="flex w-10/12 h-11">
 
-                        <Select
+                        <Creatable
                             className="text-textGrey2 text-base font-medium w-[25rem] "
                             placeholder=""
                             isClearable={false}
                             isSearchable={true}
-                            options={Breed}
+                            options={filteredBreeds}
                             isMulti={false}
                             name="breed"
-                            onChange={(value) => handleChange("breed", value?.options)}
+                            onChange={handleBreedChange}
+                            styles={{
+                                control: (base, state) => ({
+                                    ...base,
+                                    borderColor: state.isFocused ? '#35BEB1' : '#D1D5DB', 
+                                    borderWidth: '0.2px',
+                                    '&:hover': {
+                                        borderColor: '#35BEB1',
+                                    },
+                                    boxShadow: state.isFocused ? '0 0 0 1px #35BEB1' : base.boxShadow, 
+                                }),
+                            }}
                             
                         />
                     </div>
@@ -394,7 +461,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                     <div className="grow shrink basis-0 self-stretch justify-start items-center gap-2 flex">
                          <input className="mt-1 accent-teal-500 text-4xl" type="checkbox" />
                         <div className=" text-teal-400 text-base font-medium ">Mark as inpatient</div>
-                    </div>
+                   </div>
                 </div>
 
                 <div className=" justify-end items-start gap-6 flex w-full">
