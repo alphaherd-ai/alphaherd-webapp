@@ -137,7 +137,12 @@ const DatabaseDistributorHeader = ({ distributors }:any) => {
                             <PopoverTrigger> */}
                                 <Button 
                                     variant="solid"
-                                    className="cursor-pointer capitalize flex px-4 py-2.5 border-none bg-black text-white rounded-lg " onClick={togglePopup}>  New Distributors
+                                    className="cursor-pointer capitalize flex px-4 py-2.5 border-none bg-black text-white rounded-lg " 
+                                    onClick={togglePopup}> 
+                                    <div className='flex'>
+                                        <Image src={Add} alt='Add' className='w-3 h-3 ' />
+                                    </div> 
+                                    New Distributor
                              </Button>
                             {/* </PopoverTrigger>
                       
