@@ -37,6 +37,35 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
     const [selectedSpecies, setSelectedSpecies] = useState<any>(null);
     const [filteredBreeds, setFilteredBreeds] = useState<any[]>([]);
 
+    const calculateAge = (dob: Date) => {
+        const today = new Date();
+        let years = today.getFullYear() - dob.getFullYear();
+        let months = today.getMonth() - dob.getMonth();
+        let days = today.getDate() - dob.getDate();
+        if (days < 0) {
+            months -= 1;
+            days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+        }
+        if (months < 0) {
+            years -= 1;
+            months += 12;
+        }
+        return { years, months, days };
+    };
+    
+    const calculateDateOfBirth = (value: number, field: string) => {
+        const today = new Date();
+        let years = age.years;
+        let months = age.months;
+        let days = age.days;
+
+        if (field === "years") years = value;
+        if (field === "months") months = value;
+        if (field === "days") days = value;
+    
+        const newDate = new Date(today.getFullYear() - years, today.getMonth() - months, today.getDate() - days);
+        return newDate;
+    };
     const handleDateChange = (date: Date) => {
         setStartDate(date);
         const calculatedAge = calculateAge(date);
@@ -45,6 +74,31 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
         handleChange("months", calculatedAge.months);
         handleChange("days", calculatedAge.days);
     };
+    
+    const handleAgeChange = (field: string, value: number) => {
+        setAge((prevAge) => ({ ...prevAge, [field]: value }));
+        
+        const newDateOfBirth = calculateDateOfBirth(value, field);
+        setStartDate(newDateOfBirth);
+        handleChange("dateOfBirth", newDateOfBirth);
+    };
+    
+    const formatAgeString = (age: { years: number; months: number; days: number }) => {
+        const { years, months, days } = age;
+        let ageString = '';
+        if (years > 0) ageString += `${years} years`;
+        if (months > 0) {
+            if (ageString.length > 0) ageString += ', ';
+            ageString += `${months} months`;
+        }
+        if (days > 0) {
+            if (ageString.length > 0) ageString += ', ';
+            ageString += `${days} days`;
+        }
+    
+        return ageString;
+    };
+    
 
     
 
@@ -65,7 +119,6 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
 
     const handleSaveClick = async () => {
         try {
-           
             console.log("Form data is valid", formData);
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/patients/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
@@ -75,10 +128,12 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 body: JSON.stringify({
                     patientName: formData.patientName,
                     clientId: clientData===undefined?formData.clientName.value:null,
-                    species: formData.species,
-                    breed: formData.breed ? formData.breed[0].value : undefined,
+                    // species: formData.species,
+                    // breed: formData.breed ? formData.breed[0].value : undefined,
+                    species: formData.species ? formData.species.value : undefined, 
+                    breed: formData.breed ? formData.breed.value : undefined, 
                     dateOfBirth: formData.dateOfBirth, 
-                    age: calculateAgeFromDOB(formData.years, formData.months, formData.days) ,
+                    age: formatAgeString(age),
                     gender: selectedGender,
                     inPatient: formData.inPatient,
                     clientData:clientData?clientData:null
@@ -117,96 +172,6 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
         });
     };
 
-    const calculateAgeFromDOB = (years: number, months: number, days: number): string => {
-        const currentDate = new Date();
-        const birthDate = new Date(currentDate.getFullYear() - (years || 0), currentDate.getMonth() - (months || 0), currentDate.getDate() - (days || 0));
-        const ageDate = new Date(currentDate.getTime() - birthDate.getTime());
-        const ageYears = Math.abs(ageDate.getUTCFullYear() - 1970) || 0;
-        const ageMonths = ageDate.getUTCMonth() || 0;
-        const ageDays = ageDate.getUTCDate() - 1 || 0;
-
-        const ageParts = [];
-        if (ageYears > 0) ageParts.push(`${ageYears} years`);
-        if (ageMonths > 0) ageParts.push(`${ageMonths} months`);
-        if (ageDays > 0) ageParts.push(`${ageDays} days`);
-
-        return ageParts.length > 0 ? ageParts.join(', ') : '';
-    };
-    
-    const calculateAge = (birthDate: Date): { years: number; months: number; days: number } => {
-        const currentDate = new Date();
-        let years = currentDate.getFullYear() - birthDate.getFullYear();
-        let months = currentDate.getMonth() - birthDate.getMonth();
-        let days = currentDate.getDate() - birthDate.getDate();
-    
-        if (days < 0) {
-            months--;
-            days += new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate();
-        }
-    
-        if (months < 0) {
-            years--;
-            months += 12;
-        }
-    
-        return { years, months, days };
-    };
-    
-    const calculateDOB = (age: { years: number; months: number; days: number }) => {
-        const currentDate = new Date();
-        const birthDate = new Date(currentDate.getFullYear() - age.years, currentDate.getMonth() - age.months, currentDate.getDate() - age.days);
-        setStartDate(birthDate);
-    };
-    const calculateDateOfBirth = (value: number, field: string): Date => {
-        const currentDate = new Date();
-        let yearAdjustment = 0;
-        let monthAdjustment = 0;
-        let dayAdjustment = 0;
-
-        switch (field) {
-            case 'years':
-                yearAdjustment = -value;
-                break;
-            case 'months':
-                monthAdjustment = -value;
-                break;
-            case 'days':
-                dayAdjustment = -value;
-                break;
-        }
-
-        let dateOfBirth = new Date(currentDate);
-        dateOfBirth.setFullYear(dateOfBirth.getFullYear() + yearAdjustment);
-        dateOfBirth.setMonth(dateOfBirth.getMonth() + monthAdjustment);
-        dateOfBirth.setDate(dateOfBirth.getDate() + dayAdjustment);
-
-        return dateOfBirth;
-    };
-    const handleAgeChange = (field: string, value: number) => {
-        // Update age state based on user input
-        setAge(prevAge => ({ ...prevAge, [field]: value }));
-        // Calculate and set the new date of birth
-        const newDateOfBirth = calculateDateOfBirth(value, field);
-        setStartDate(newDateOfBirth);
-    };
-    
-
-    const handleSelectChange = (value: MultiValue<{ value: string; label: string }>) => {
-        // Flatten the Breed array to get all options in a single array
-        const allOptions = Breed.flatMap(group => group.options);
-    
-        // Extract the labels from the selected values
-        const selectedLabels = Array.isArray(value)
-            ? value.map(val => {
-                const selectedOption = allOptions.find(option => option.value === val.value);
-                return selectedOption ? selectedOption.label : null;
-            })
-            : [];
-    
-        console.log("Selected Labels: ", selectedLabels);
-        return selectedLabels;
-    };
-
     const Species = [
         {value:'Dog', label:'Dog'},
         { value: 'Cat', label: 'Cat' },
@@ -235,15 +200,45 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
           },
     ];
 
-    const handleSpeciesChange = (selectedOption: any) => {
-        setSelectedSpecies(selectedOption);
-        const filtered = Breed.find(breed => breed.label === selectedOption?.value)?.options || [];
-        setFilteredBreeds(filtered);
-    };
+    // const handleSpeciesChange = (selectedOption: any) => {
+    //     setSelectedSpecies(selectedOption);
+    //     const filtered = Breed.find(breed => breed.label === selectedOption?.value)?.options || [];
+    //     setFilteredBreeds(filtered);
+    // };
 
-    const handleBreedChange = (selectedOption: any) => {
-        console.log('Selected breed:', selectedOption);
-    };
+    // const handleBreedChange = (selectedOption: any) => {
+    //     console.log('Selected breed:', selectedOption);
+    // };
+    // Handles changes when a species is selected
+const handleSpeciesChange = (selectedOption: any) => {
+    // Update the selected species in the state (for displaying the selected option)
+    setSelectedSpecies(selectedOption);
+    
+    // Find the corresponding breed options for the selected species
+    const filtered = Breed.find(breed => breed.label === selectedOption?.value)?.options || [];
+    
+    // Update the list of breed options based on the selected species
+    setFilteredBreeds(filtered);
+
+    // Update the formData to store the selected species (used for submission)
+    setFormData((prevData: any) => ({
+        ...prevData,
+        species: selectedOption // Store the full selected option object
+    }));
+};
+
+// Handles changes when a breed is selected
+const handleBreedChange = (selectedOption: any) => {
+    // Log the selected breed for debugging
+    console.log('Selected breed:', selectedOption);
+    
+    // Update the formData to store the selected breed (used for submission)
+    setFormData((prevData: any) => ({
+        ...prevData,
+        breed: selectedOption // Store the full selected option object
+    }));
+};
+
 
 
     const handleGenderChange = (gender: any) => {
