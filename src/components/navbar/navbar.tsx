@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import FinancesIcon from './icons/financesIcon';
 import notification from '../../assets/icons/navbar/notification.svg';
@@ -24,12 +24,12 @@ import zIndex from '@mui/material/styles/zIndex';
 import useSWR from "swr";
 import { boolean } from 'zod';
 //@ts-ignore
-const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
+const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 const Navbar = () => {
   const router = useRouter() as any;
   const [isCardOpen, setIsCardOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
   const user = useAppSelector((state) => state.user);
   const appState = useAppSelector((state) => state.app);
 
@@ -37,21 +37,39 @@ const Navbar = () => {
     setIsCardOpen(!isCardOpen);
   };
 
+  //closing of notification when clicked anywhere at the screen
+  const notifyRef = useRef<HTMLDivElement>(null)
+
+  const handleCloseNotification = (e: MouseEvent) => {
+    if (isCardOpen && notifyRef.current && !notifyRef.current.contains(e.target as Node)) {
+      setIsCardOpen(false);
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleCloseNotification);
+    console.log(isCardOpen)
+    return () => {
+      document.removeEventListener('mousedown', handleCloseNotification);
+    };
+  }, [isCardOpen]);
+
+
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
   const currentRoute = usePathname();
   const [newNotificationIndicator, setNewNotificationIndicator] = useState<boolean>(false);
-  const [notifs,setNotifs]=useState<any[]>([]);
-  const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/getAll?orgId=${appState.currentOrgId}`,fetcher,{refreshInterval:60000})
+  const [notifs, setNotifs] = useState<any[]>([]);
+  const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/getAll?orgId=${appState.currentOrgId}`, fetcher, { refreshInterval: 60000 })
   useEffect(() => {
-   if (!isLoading && !error && data) {
-     setNotifs(data.allNotifs);
-     const hasNewNotifications = data.newNotifs?.length > 0;
-     setNewNotificationIndicator(hasNewNotifications);
-   }
- }, [data,error,isLoading]); 
- if (user.name === "" || currentRoute.startsWith("/auth"))return null;
+    if (!isLoading && !error && data) {
+      setNotifs(data.allNotifs);
+      const hasNewNotifications = data.newNotifs?.length > 0;
+      setNewNotificationIndicator(hasNewNotifications);
+    }
+  }, [data, error, isLoading]);
+  if (user.name === "" || currentRoute.startsWith("/auth")) return null;
 
   return (
     <div className='h-16 shadow-md min-w-screen box-border flex items-center justify-between text-textGrey1 bg-navBar z-100'>
@@ -81,44 +99,44 @@ const Navbar = () => {
           </div>
         </Link>
       </div>
-      <div className='flex flex-row h-full'>
+      <div className='flex flex-row h-full' ref={notifyRef} >
         <div className="h-full flex items-center pr-8 border-0 border-r-2 border-solid border-gray-800">
-            <Popover placement="bottom-end" showArrow offset={0}>
-              <PopoverTrigger>
-            <div
-              className='py-2 px-4 bg- border-none text-white rounded cursor-pointer transition-all flex items-center'
-              onClick={toggleDropdown}
-            >
-              {appState.currentOrg.orgName}/{appState.currentBranch.branchName}
-              <DropdownIcon fill="#fff"/>
-            </div>
+          <Popover placement="bottom-end" showArrow offset={0}>
+            <PopoverTrigger>
+              <div
+                className='py-2 px-4 bg- border-none text-white rounded cursor-pointer transition-all flex items-center'
+                onClick={toggleDropdown}
+              >
+                {appState.currentOrg.orgName}/{appState.currentBranch.branchName}
+                <DropdownIcon fill="#fff" />
+              </div>
             </PopoverTrigger>
             <PopoverContent>
-            <DropdownMenu/>
+              <DropdownMenu />
 
             </PopoverContent>
-            </Popover>
-            {/* {isDropdownOpen && (
+          </Popover>
+          {/* {isDropdownOpen && (
             )} */}
           <Link className='no-underline flex pl-6' href='#'>
-          <div className="flex items-center justify-center" onClick={handleClick}>
-            <div className="relative rounded-full ">  {/* Container styles */}
-            {newNotificationIndicator && (  
-        <svg width="20" height="20" viewBox="0 0 10 8" className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-          <circle cx="7" cy="1" r="2" fill="red" />
-        </svg>
-      )}
-      <Image src={notification} alt="notification" className="w-full h-full object-cover" />
+            <div className="flex items-center justify-center" onClick={handleClick}>
+              <div className="relative rounded-full">  {/* Container styles */}
+                {newNotificationIndicator && (
+                  <svg width="20" height="20" viewBox="0 0 10 8" className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                    <circle cx="7" cy="1" r="2" fill="red" />
+                  </svg>
+                )}
+                <Image src={notification} alt="notification" className="w-full h-full object-cover" />
+              </div>
             </div>
-          </div>
 
           </Link>
           <Link className='no-underline flex pl-6' href='/profile'>
             <div className='text-sm flex items-center justify-center rounded-full overflow-hidden border border-solid border-gray-300'>
-              {user.imageUrl?<Image className='w-7 h-7 relative rounded-full border border-neutral-400' src={String(user?.imageUrl)} width={80} height={80} alt='profilePic' />:
-              <Image className='w-7 h-7 relative rounded-full border border-neutral-400' src={ProfileIcon} width={80} height={80} alt='profilePic' />
+              {user.imageUrl ? <Image className='w-7 h-7 relative rounded-full border border-neutral-400' src={String(user?.imageUrl)} width={80} height={80} alt='profilePic' /> :
+                <Image className='w-7 h-7 relative rounded-full border border-neutral-400' src={ProfileIcon} width={80} height={80} alt='profilePic' />
               }
-              
+
             </div>
           </Link>
         </div>
@@ -128,16 +146,15 @@ const Navbar = () => {
           </div>
         </Link>
         {isCardOpen && (
-  <div className="absolute top-[4rem] flex flex-col right-[5rem] w-[443px] max-h-[35rem] pt-6 pb-5 bg-zinc-800 shadow justify-center items-start gap-[5px] rounded-[20px] z-[100]">
-    <div className="text-gray-100 text-xl font-medium mb-2 px-6">
-      Notifications
-    </div>
-    <div className="notification-list-container overflow-auto h-[calc(50rem - 8.5rem)]"> {/* Adjust height as needed */}
-      <NotificationList  notifs={notifs} isLoading={isLoading}  />
-    </div>
-  </div>
-)}
-
+          <div className="absolute top-[4rem] flex flex-col right-[5rem] w-[443px] max-h-[35rem] pt-6 pb-5 bg-zinc-800 shadow justify-center items-start gap-[5px] rounded-[20px] z-[100]">
+            <div className="text-gray-100 text-xl font-medium mb-2 px-6">
+              Notifications
+            </div>
+            <div className="notification-list-container overflow-auto h-[calc(50rem - 8.5rem)]"> {/* Adjust height as needed */}
+              <NotificationList notifs={notifs} isLoading={isLoading} />
+            </div>
+          </div>
+        )}
 
       </div>
     </div>

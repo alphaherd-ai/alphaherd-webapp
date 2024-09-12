@@ -12,14 +12,23 @@ import { useSearchParams } from 'next/navigation';
 // @ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
-const FinancesExpensesTableItem = ({ onCountsChange }: any) => {
+const FinancesExpensesTableItem = ({ onCountsChange,currentPageNumber,setCurrentPageNumber,setStartInd,setEndInd,setTotalLen,pagevalue }: {onCountsChange:any,currentPageNumber:number,setCurrentPageNumber:React.Dispatch<React.SetStateAction<number>>,setStartInd:React.Dispatch<React.SetStateAction<number>>,setEndInd:React.Dispatch<React.SetStateAction<number>>,setTotalLen:React.Dispatch<React.SetStateAction<number>>,pagevalue:number}) => {
   const [expenses, setExpenses] = useState<any[]>([]);
+  const [tableData,setTableData]=useState<any[]>([]);
   const appState = useAppSelector((state) => state.app);
   const urlSearchParams = useSearchParams();
   const startDate = useMemo(() => urlSearchParams.get('startDate') ? new Date(urlSearchParams.get('startDate')!) : null, [urlSearchParams]);
   const endDate = useMemo(() => urlSearchParams.get('endDate') ? new Date(urlSearchParams.get('endDate')!) : null, [urlSearchParams]);
   const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
   const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
+  //Pagination in the table
+  useEffect(()=>{
+    const start=(currentPageNumber-1)*pagevalue;
+    const end=currentPageNumber*pagevalue;
+    setStartInd(start);
+    setEndInd(end);
+    setExpenses(tableData.slice(start, end));
+  },[currentPageNumber])
 
   useEffect(() => {
     if (!isLoading && data && !error) {
@@ -58,8 +67,9 @@ const FinancesExpensesTableItem = ({ onCountsChange }: any) => {
           }
         }
       });
-      
-      setExpenses(allExpenses);
+      setTotalLen(allExpenses.length);
+      setTableData(allExpenses);
+      setExpenses(allExpenses.slice(0,pagevalue));
     }
   }, [data, error, isLoading, setExpenses, startDate, endDate, selectedParties]);
 

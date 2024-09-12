@@ -93,7 +93,7 @@ const FilterDropdwonCard = () => {
   };
 
   return (
-    <div className="w-[420px] h-[441px] px-4 py-6 bg-white rounded-[10px] flex-col justify-start items-start gap-4 inline-flex shadow-lg">
+    <div className="w-[420px] h-[441px] px-4 py-4 bg-white rounded-[10px] flex-col justify-start items-start gap-2 inline-flex shadow-lg">
       <div className="items-start flex border border-solid border-borderGrey rounded-[5px] cursor-pointer">
         <div
           className={`px-2 py-1 ${
@@ -301,7 +301,7 @@ const FilterDropdwonCard = () => {
         </div>
       )}
       {activeTab === "status" && <div className="w-full h-full"></div>}
-      <div className="w-full flex justify-between items-center">
+      <div className="w-full h-fit flex justify-between items-center">
         <div className="flex items-center gap-2">
           <input type="checkbox" name="" id="" />
           <div className="text-textGrey2 font-medium text-base">Select All</div>
