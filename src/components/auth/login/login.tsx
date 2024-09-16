@@ -129,6 +129,13 @@ const Login = () => {
       });
     }
   }
+  
+
+  const handleKeyDown=(e:any)=>{
+    if(e.key === 'Enter'){
+      formSubmit();
+    }
+  }
 
   const [showPassword, setShowPassword] = useState(false);
   const togglePasswordVisibility = () => {
@@ -148,7 +155,7 @@ const Login = () => {
             </div>
             <div className="flex flex-col items-start mt-[52px]">
               <div className="w-[120px] text-gray-500 text-base font-medium ">Email*</div>
-              <input className="w-[353px] h-11 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="email" onChange={handleChange}></input>
+              <input className="w-[353px] h-11 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="email" onChange={handleChange} onKeyDown={handleKeyDown}></input>
             </div>
             <div className="flex flex-col items-start mt-[16px]">
               <div className="w-[120px] text-gray-500 text-base font-medium ">Password*</div>
@@ -159,6 +166,7 @@ const Login = () => {
                   name="password"
                   value={data.password}
                   onChange={handleChange}
+                  onKeyDown={handleKeyDown}
                 />
                 {showPassword ? (<Image
                   src={eyeicon1}
@@ -177,7 +185,7 @@ const Login = () => {
               <input type="checkbox" />
               <div className="text-gray-500 text-base font-medium ">Stay signed in</div>
             </div>
-            <button className="w-[69px] h-[42px] px-4 py-2 bg-[#35BEB1] hover:bg-teal-500 transition-all rounded-[5px] justify-start items-center gap-2 flex text-white text-sm font-bold  mt-[24px] border-0 outline-none hover:cursor-pointer hover:shadow-md" onClick={formSubmit}>
+            <button className="w-[69px] h-[42px] px-4 py-2 bg-[#35BEB1] hover:bg-teal-500 transition-all rounded-[5px] justify-start items-center gap-2 flex text-white text-sm font-bold  mt-[24px] border-0 outline-none hover:cursor-pointer hover:shadow-md" onClick={formSubmit} >
               Login
             </button>
           </div>

@@ -238,8 +238,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                 <div className="flex items-center gap-[88px]">
                     <div className="text-gray-500 text-base font-medium ">Name*</div>
                     <div>
-                    <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" 
-                    type="text" name="distributorName" onChange={(e) => handleChange("distributorName", e.target.value.replace(/\b\w/g, (char) => char.toUpperCase()))} 
+                    <input className="w-[447px] h-9 uppercase text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" 
+                    type="text" name="distributorName" onChange={(e) => handleChange("distributorName", e.target.value.toUpperCase().replace(/\b\w/g, (char) => char.toUpperCase()))} 
                     />
                     {errors.distributorName && <div className="text-red-500 text-sm">{errors.distributorName}</div>}
                     </div>

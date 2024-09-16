@@ -128,7 +128,7 @@ const handleItemName=(event:any,index:any)=>{
     const updatedItems=[...tableData];
     updatedItems[index]={
         ...updatedItems[index],
-        itemName:event.target.value
+        itemName:event.target.value.toUpperCase()
     };
     setItems(updatedItems);
     setTableData(updatedItems);
@@ -329,7 +329,7 @@ useEffect(() => {
                         {items.map((item:any,index:number) => (
                             <div key={index+1} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400 py-2'>
                                 <div className='w-[3rem] flex items-center text-textGrey2 text-base font-medium'>{index+1}</div>
-                                <input className='w-[15rem] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2'
+                                <input className='w-[15rem] uppercase border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2'
                                  value={item.itemName} 
                                  placeholder='Enter Item Name'
                                  onChange={(event) => handleItemName(event, index)}
@@ -419,7 +419,6 @@ useEffect(() => {
             </div>
             <NewExpensesBottomBar expenseData={expenseData}/>
         </div>
-
     {showPopup && <Popup onClose={togglePopup} />}
        
 

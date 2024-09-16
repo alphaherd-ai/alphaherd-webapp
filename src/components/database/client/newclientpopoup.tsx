@@ -150,7 +150,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                 <div className="flex items-center">
                     <div className="text-gray-500 text-base font-medium  w-[8rem]">Client Name<span className="text-[red]">*</span></div>
                     <div>
-                        <input className="w-[447px] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="clientName" onChange={(e) => handleChange("clientName", e.target.value)} required/>
+                        <input className="w-[447px] h-9 text-textGrey2 text-base uppercase font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="clientName" onChange={(e) => handleChange("clientName", e.target.value.toUpperCase())} required/>
                         {errors.clientName && (
                             <div className="text-[red] error">{errors.clientName}</div>
                         )}

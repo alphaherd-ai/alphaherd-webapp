@@ -225,7 +225,7 @@ const [categories, setCategories] = useState<any[]>([
                     <div className="flex items-center gap-[88px]">
                         <div className="text-gray-500 text-base font-medium ">Name*</div>
                         <div>
-                            <input className="w-[440px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="name" onChange={(e) => handleChange("name", e.target.value)}/>
+                            <input className="w-[440px] h-9 uppercase text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="name" onChange={(e) => handleChange("name", e.target.value.toUpperCase())}/>
                             {nameError && (
                                 <div className="text-red-500 text-sm mt-1">{nameError}</div>
                             )}
