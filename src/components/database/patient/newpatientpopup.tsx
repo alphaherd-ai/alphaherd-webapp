@@ -263,9 +263,13 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 <div className="flex items-center gap-[48px] ">
                     <div className="w-[8rem] text-gray-500 text-base font-medium ">Patient Name<span className="text-[red]">*</span></div>
                     <div>
-                        <input className="w-[25rem] h-9 uppercase text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" 
+                        <input className="w-[25rem] h-9  text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" 
                         type="text" name="patientName" 
-                        onChange={(e) => handleChange("patientName", e.target.value.toUpperCase().replace(/\b\w/g, (char) => char.toUpperCase()))} 
+                        onChange={(e) =>{
+                            const value = e.target.value;
+                        e.target.value = value.charAt(0).toUpperCase() + value.slice(1);
+    handleChange("patientName", e.target.value);
+                        }} 
                         />
                         {errors.patientName && (
                             <div className="text-[red] error">{errors.patientName}</div>

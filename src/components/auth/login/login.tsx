@@ -69,19 +69,20 @@ const Login = () => {
     try {
 
       const user = await userDetailsLoginSubmit();
-      const currentBranchUserRole = user.userRoles[0];
-      const currentBranch = await fetchBranchDetailsById(currentBranchUserRole.orgBranchId);
+      console.log(user);
+      //const currentBranchUserRole = user.userRoles[0];
+      const currentBranch = await fetchBranchDetailsById(user?.orgBranchId);
       const currentOrgId = currentBranch.orgId;
       const currentBranchId = currentBranch.id;
       const isCurrentOrgAdmin = isAdminOfOrg(currentOrgId,user as UserState);
       const isCurrentBranchManager = isManagerOfBranch(currentBranchId,user as UserState);
 
-      console.log(currentBranchUserRole);
-      console.log(currentBranch);
-      console.log(currentOrgId);
-      console.log(currentBranchId);
-      console.log(isCurrentOrgAdmin);
-      console.log(isCurrentBranchManager);
+      //console.log(currentBranchUserRole);
+      //console.log(currentBranch);
+      //console.log(currentOrgId);
+      //console.log(currentBranchId);
+      //console.log(isCurrentOrgAdmin);
+      //console.log(isCurrentBranchManager);
 
       //   const initialState : AppState = {
       //     currentOrgId : null,

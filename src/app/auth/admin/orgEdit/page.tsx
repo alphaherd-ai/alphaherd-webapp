@@ -12,7 +12,7 @@ import { setValidationErrorsForForm } from "@/utils/setValidationErrorForForm";
 import { useAppSelector } from "@/lib/hooks";
 
 const formSchema = z.object({
-    orgName: z.string().min(4, 'Org Name must be at least 4 characters').toUpperCase(),
+    orgName: z.string().min(4, 'Org Name must be at least 4 characters'),
     orgEmail: z.string().email('Invalid Email Address'),
     gstNo: z.string().length(15, 'Invalid GST No.'),
     phoneNo: z.string().length(10, 'Invalid Phone No.'),

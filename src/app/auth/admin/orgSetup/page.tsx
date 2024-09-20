@@ -13,10 +13,11 @@ import { Bounce, ToastContainer, toast } from 'react-toastify';
 import { z } from 'zod';
 import { setValidationErrorsForForm } from '@/utils/setValidationErrorForForm';
 import { useAppSelector } from '@/lib/hooks';
-
+import capitalizeFirst from '@/utils/capitiliseFirst';
 const formSchema = z.object({
-  orgName: z.string().min(4, 'Organization Name must be at least 4 characters').toUpperCase(),
-  orgEmail: z.string().email('Invalid Email Address'),
+  orgName: z.string()
+    .min(4, 'Organization Name must be at least 4 characters')
+    .transform((value) => capitalizeFirst(value)),
   gstNo: z.string().length(15, 'Invalid GST no. - must be 15 digits'),
   phoneNo: z.string().length(10, 'Invalid Phone No.'),
   address: z.string().min(1, "Enter Company Address to continue"),
@@ -131,7 +132,7 @@ const OrgSetup = () => {
     }
     else if (e?.target.name === 'orgName') {
       name = "orgName",
-        value = e.target.value.toUpperCase();
+        value =e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1);
     }
     else {
       name = e.target.name;

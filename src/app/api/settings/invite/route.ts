@@ -8,7 +8,7 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
 
     // redirect method throws an error so it should be called outside the try catch block
 
-    let redirectURL = process.env.CUSTOMCONNSTR_NEXT_PUBLIC_API_BASE_PATH!;
+    let redirectURL = process.env.NEXT_PUBLIC_API_BASE_PATH!;
 
     console.log(req.method);
 
@@ -34,34 +34,36 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
 
         const user = await prismaClient.user.findUnique({
             where: {
-                email
+                email: email
             }
         });
 
-        const orgBranch = await prismaClient.orgBranch.findUnique({
-            where: {
-                id: branchId
-            }
-        });
+        // const orgBranch = await prismaClient.orgBranch.findUnique({
+        //     where: {
+        //         id: branchId
+        //     }
+        // });
 
-        console.log(user)
+        //  console.log(user)
 
         if (!user) {
             console.log("here")
-            redirectURL+=`/auth/user/register?userInviteString=${userInviteString}`;
+            redirectURL += `/auth/user/register?userInviteString=${userInviteString}`;
         }
-        else{
-            redirectURL+=`/auth/login?userInviteString=${userInviteString}`
-            // await prismaClient.orgBranchUserRole.create({
-            //     data: {
-            //         orgBranchId: Number(orgBranch?.orgId),
-            //         userId: user!.id,
-            //         role: role
-            //     }
-            // });
+        else {
+            console.log(branchId);
+            await prismaClient.orgBranchUserRole.create({
+                data: {
+                    orgBranchId: Number(branchId),
+                    userId: user!.id,
+                    role: role
+                }
+            });
+            redirectURL += `/auth/login?userInviteString=${userInviteString}`
+
         }
     }
-    catch (error : any) {
+    catch (error: any) {
         console.log(error);
         console.log(typeof (error))
         return new Response(JSON.stringify({ "message": error.message }), {
@@ -71,7 +73,7 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
             },
         });
     }
-    finally{
+    finally {
         console.log(redirectURL);
         redirect(redirectURL)
     }

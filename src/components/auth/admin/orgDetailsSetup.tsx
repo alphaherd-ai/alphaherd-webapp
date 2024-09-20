@@ -6,7 +6,7 @@ import upload from "../../../assets/icons/loginsignup/upload.svg"
 import { Textarea } from "@nextui-org/react";
 import Select from 'react-select';
 import { CldUploadButton } from "next-cloudinary";
-
+import customStyles from '@/utils/customStyle';
 
 const OrgDetailsSetup = (props: any) => {
 
@@ -106,7 +106,7 @@ const OrgDetailsSetup = (props: any) => {
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium ">Name*</div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-start gap-2 inline-flex">
-                                <input type="text" className="text-textGrey2 uppercase text-base font-medium  h-full w-full px-2 border focus:outline-none border-solid border-borderGrey  focus:border focus:border-[#35BEB1] rounded-[5px]" id="orgName" name="orgName" value={props.data.orgName} onChange={props.handleChange} />
+                                <input type="text" className="text-textGrey2  text-base font-medium  h-full w-full px-2 border focus:outline-none border-solid border-borderGrey  focus:border focus:border-[#35BEB1] rounded-[5px]" id="orgName" name="orgName" value={props.data.orgName} onChange={props.handleChange} />
                             </div>
                         </div>
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
@@ -196,16 +196,16 @@ const OrgDetailsSetup = (props: any) => {
                         <div className="grow shrink basis-0  justify-start items-center gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium">Select State*</div>
 
-                            <Select
-                                className="react-select-container"
-                                classNamePrefix="react-select"
-                                isClearable={false}
-                                isMulti={false}
-                                isSearchable={true}
-                                name="state"
-                                options={stateOptions}
-                                onChange={props.handleChange}
-                                value={stateOptions.find(option => option.value === props.data.state)}
+                            <Select 
+                            className="text-textGrey2 text-base font-medium  w-full border-0 boxShadow-0 p-0 grow shrink basis-0"
+                            styles={customStyles}
+                            isClearable={false}
+                            isMulti={false}
+                            isSearchable={true}
+                            name="state"
+                            options={stateOptions}
+                            onChange={props.handleChange}
+                            value={stateOptions.find(option => option.value === props.data.state)}
                             />
 
 
