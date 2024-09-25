@@ -7,7 +7,7 @@ import nodemailer from 'nodemailer';
 
 function htmlTemplate(userInviteString : String){
 
-    let inviteLink = process.env.NEXT_PUBLIC_API_BASE_PATH + "/api/settings/invite?userInviteString=" + userInviteString;
+    let inviteLink = process.env.CUSTOMCONNSTR_NEXT_PUBLIC_API_BASE_PATH + "/api/settings/invite?userInviteString=" + userInviteString;
 
     return `<!DOCTYPE html>
     <html lang="en">
@@ -134,8 +134,8 @@ export const POST = async (req: NextRequest) => {
     const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-            user: process.env.AUTOMATED_GMAIL,
-            pass: process.env.AUTOMATED_GMAIL_APP_PASSWORD,
+            user: process.env.CUSTOMCONNSTR_AUTOMATED_GMAIL,
+            pass: process.env.CUSTOMCONNSTR_AUTOMATED_GMAIL_APP_PASSWORD,
         },
     });
 

@@ -19,107 +19,131 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { Notif_Source } from "@prisma/client";
 import { useAppSelector } from "@/lib/hooks";
 import useSWR from 'swr';
+import { ConversationContextImpl } from "twilio/lib/rest/conversations/v1/conversation";
 
 
 //@ts-ignore
-const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
+const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 type PopupProps = {
     onClose: () => void;
+    individualSelectedProduct?: Products
 }
-interface Distributors{
-    id:string,
-    distributorName:string
+interface Distributors {
+    id: string,
+    distributorName: string
 }
-interface Products{
-    id :string,
-    itemName:string,
-    productBatch:ProductBatch[],
-    hsnCode:string,
-    quantity:number
+interface Products {
+    id: string,
+    itemName: string,
+    productBatch: ProductBatch[],
+    hsnCode: string,
+    quantity: number
 }
 interface ProductBatch {
     id: number;
     date: string;
     time: string;
     quantity: number;
-    batchNumber:string;
-    expiry:string;
-    costPrice:number;
-    sellingPrice :number;
-    hsnCode:string;
-    category :string;
-    distributors:string[];
-    productId:number;
-    location:Location;
-    totalCost:number;
-    maxRetailPrice:number;
+    batchNumber: string;
+    expiry: string;
+    costPrice: number;
+    sellingPrice: number;
+    hsnCode: string;
+    category: string;
+    distributors: string[];
+    productId: number;
+    location: Location;
+    totalCost: number;
+    maxRetailPrice: number;
 }
-function useProductfetch (id: number | null) {
-    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`,fetcher);
-   return {
-    fetchedProducts:data,
-    isLoading,
-    error
-   }
-}
-function useProductBatchfetch(id:number|null){
-    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll/?branchId=${id}`,fetcher);
+function useProductfetch(id: number | null) {
+    const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`, fetcher);
     return {
-        fetchedBathces:data,
-        isBatchLoading:isLoading,
-        batchError:error
+        fetchedProducts: data,
+        isLoading,
+        error
     }
 }
-const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
+function useProductBatchfetch(id: number | null) {
+    const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll/?branchId=${id}`, fetcher);
+    return {
+        fetchedBathces: data,
+        isBatchLoading: isLoading,
+        batchError: error
+    }
+}
+const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: any) => {
     const [selectedOption, setSelectedOption] = useState<string>(Stock.StockIN);
-    const [selectedProductDetails,setSelectedProduct]= useState<Products>()
+    const [selectedProductDetails, setSelectedProduct] = useState<Products>()
     const [isChecked, setChecked] = useState(false);
     const [products, setProducts] = useState<any[]>([]);
-    const [batches,setBatches] = useState<any[]>([]);
-    const [filteredBatches,setFilteredBatches]=useState<any[]>([]);
+    const [batches, setBatches] = useState<any[]>([]);
+    const [filteredBatches, setFilteredBatches] = useState<any[]>([]);
     const [inventory, setInventory] = useState<any[]>([]);
     const [formData, setFormData] = useState<any>({});
     const appState = useAppSelector((state) => state.app)
     const [distributor, setDistributor] = useState<any[]>([]);
 
-    const {fetchedProducts,isLoading,error}=useProductfetch(appState.currentBranchId);
-    const {fetchedBathces,isBatchLoading,batchError}=useProductBatchfetch(appState.currentBranchId);
-    useEffect(()=>{
-     if(!isLoading&&products&&!error){
-         const formattedProducts = fetchedProducts.map((product: Products) => ({
-             value:{
-                id: product.id,
-                quantity:product.quantity,
-                itemName:product.itemName,
-                hsnCode:product.hsnCode
-            },
-             label: product.itemName,
-         }));
-         console.log(formattedProducts)
-         setProducts(formattedProducts);
-     }
-     if(!batchError&&!isBatchLoading&&fetchedBathces){
-        const formattedProductBatches=fetchedBathces.map((product:ProductBatch)=>({
-            value:{
-                id:product.id,
-                productId:product.productId,
-                quantity: product.quantity ,
-                batchNumber: product.batchNumber,
-                expiry:  product.expiry,
-                sellingPrice:  product.sellingPrice,
-                costPrice:product.costPrice,
-                location:product.location,
-                distributors:product.distributors,
-                totalCost:product.totalCost,
-                maxQuantity:product.quantity,
-                maxRetailPrice:product.maxRetailPrice
-            },
-            label:product.batchNumber
-        }));
-        console.log("lajsdlfjlkj",formattedProductBatches)
-        setBatches(formattedProductBatches)
-    }
-    },[fetchedProducts,fetchedBathces,batchError,error,isBatchLoading,isLoading])
+    const { fetchedProducts, isLoading, error } = useProductfetch(appState.currentBranchId);
+    const { fetchedBathces, isBatchLoading, batchError } = useProductBatchfetch(appState.currentBranchId);
+    useEffect(() => {
+            if (individualSelectedProduct && products.length>0) {
+                 console.log(individualSelectedProduct)
+                const fillItemName=()=>{
+                    // console.log(inventory);
+                    console.log(fetchedProducts,products)
+                    const object = {
+                        label: individualSelectedProduct.itemName,
+                        value: {
+                            id: individualSelectedProduct.id
+                        }
+                    };
+                    setInventory((prevInventory)=>{
+                        const updatedInventory=[...prevInventory, { itemName: individualSelectedProduct.itemName }];
+                        handleProductSelect(object, updatedInventory.length - 1);
+                        return updatedInventory;
+                    });
+
+                }
+                fillItemName()
+            }
+    }, [individualSelectedProduct,products])
+    useEffect(() => {
+        if (!isLoading && products && !error) {
+            const formattedProducts = fetchedProducts.map((product: Products) => ({
+                value: {
+                    id: product.id,
+                    quantity: product.quantity,
+                    itemName: product.itemName,
+                    hsnCode: product.hsnCode
+                },
+                label: product.itemName,
+            }));
+            // console.log(formattedProducts)
+            setProducts(formattedProducts);
+        }
+        if (!batchError && !isBatchLoading && fetchedBathces) {
+            const formattedProductBatches = fetchedBathces.map((product: ProductBatch) => ({
+                value: {
+                    id: product.id,
+                    productId: product.productId,
+                    quantity: product.quantity,
+                    batchNumber: product.batchNumber,
+                    expiry: product.expiry,
+                    sellingPrice: product.sellingPrice,
+                    costPrice: product.costPrice,
+                    location: product.location,
+                    distributors: product.distributors,
+                    totalCost: product.totalCost,
+                    maxQuantity: product.quantity,
+                    maxRetailPrice: product.maxRetailPrice
+                },
+                label: product.batchNumber
+            }));
+            // console.log("lajsdlfjlkj", formattedProductBatches)
+            setBatches(formattedProductBatches)
+        }
+    }, [fetchedProducts, fetchedBathces, batchError, error, isBatchLoading, isLoading])
 
     //Handlers
     const handleRadioChange = useCallback((value: string) => {
@@ -128,10 +152,10 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
             ...item,
             quantity: value === Stock.StockIN ? 0 : item.quantity,
             expiry: value === Stock.StockIN ? "" : item.expiry,
-            batchNumber:value===Stock.StockIN?"":item.batchNumber,
-            totalCost:value===Stock.StockIN?0:item.totalCost,
-            costPrice:value===Stock.StockIN?0:item.costPrice,
-            sellingPrice:value===Stock.StockIN?0:item.sellingPrice,
+            batchNumber: value === Stock.StockIN ? "" : item.batchNumber,
+            totalCost: value === Stock.StockIN ? 0 : item.totalCost,
+            costPrice: value === Stock.StockIN ? 0 : item.costPrice,
+            sellingPrice: value === Stock.StockIN ? 0 : item.sellingPrice,
         }));
         setInventory(updatedInventory);
     }, [inventory]);
@@ -145,26 +169,26 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
         updatedInventory.splice(index, 1);
         setInventory(updatedInventory);
     }, [inventory]);
-    
+
     const handleQuantityDecClick = useCallback((index: number) => {
         const updatedInventory = [...inventory];
         updatedInventory[index].quantity = Math.max(updatedInventory[index].quantity - 1, 0);
         setInventory(updatedInventory);
-    },[inventory]);
+    }, [inventory]);
 
     const handleQuantityIncClick = useCallback((index: number) => {
         const updatedInventory = [...inventory];
-        if(selectedOption===Stock.StockOUT){
-            if(updatedInventory[index].quantity<updatedInventory[index].maxQuantity){
+        if (selectedOption === Stock.StockOUT) {
+            if (updatedInventory[index].quantity < updatedInventory[index].maxQuantity) {
                 updatedInventory[index].quantity += 1;
-            }  
-        }else{
+            }
+        } else {
             updatedInventory[index].quantity += 1;
         }
-        
+
         setInventory(updatedInventory);
-    },[inventory]);
-      
+    }, [inventory]);
+
     const handleInputChange = useCallback((index: number, field: string, value: string | number) => {
         const updatedInventory = [...inventory];
         updatedInventory[index][field] = value;
@@ -174,60 +198,64 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
 
     const handleCheckBoxChange = useCallback(() => {
         setChecked(!isChecked);
-    },[inventory]);
+    }, [inventory]);
 
     const handleAddItemClick = useCallback(() => {
         setInventory([...inventory, {}]);
     }, [inventory]);
 
     const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
-        console.log(selectedProduct)
+         console.log(selectedProduct)
         if (selectedProduct.value) {
             try {
                 const data = products.find((product) => product.value.id === selectedProduct.value.id);
-                setSelectedProduct(data); 
+                // console.log(data);
+                setSelectedProduct(data);
                 const updatedInventory = [...inventory];
                 updatedInventory[index] = {
                     ...updatedInventory[index],
                     quantity: selectedOption === Stock.StockIN ? 0 : data.value.quantity,
-                    productId:data.value.id,
-                    hsnCode:data.value.hsnCode
+                    productId: data.value.id,
+                    hsnCode: data.value.hsnCode
                 };
-                setInventory(updatedInventory);   
+                setInventory(updatedInventory);
                 const productBatches = batches?.filter((batch) => batch.value.productId === selectedProduct.value.id).sort((a, b) => a.value.id - b.value.id);
                 setFilteredBatches(productBatches);
-                if(selectedOption===Stock.StockOUT){
+                if (selectedOption === Stock.StockOUT) {
                     const defaultBatch = productBatches?.[0];
                     setInventory((prevItems) =>
-                      prevItems.map((item, itemIndex) =>
-                        itemIndex === index ? { ...item, id: defaultBatch?.value?.id,
-                            quantity: defaultBatch?.value?.quantity ,
-                            batchNumber: defaultBatch?.value?.batchNumber,
-                            expiry:  defaultBatch?.value?.expiry,
-                            sellingPrice:  defaultBatch?.value?.sellingPrice,
-                            costPrice: defaultBatch?.value?.costPrice,
-                            location:defaultBatch?.value?.location,
-                            distributors:defaultBatch?.value?.distributors,
-                            totalCost:defaultBatch?.value?.totalCost,
-                            maxQuantity:defaultBatch?.value?.quantity,
-                            maxRetailPrice:defaultBatch?.value?.maxRetailPrice,
-                            productId:defaultBatch?.value?.productId } :
-                             item,  
-                      )
+                        prevItems.map((item, itemIndex) =>
+                            itemIndex === index ? {
+                                ...item, id: defaultBatch?.value?.id,
+                                quantity: defaultBatch?.value?.quantity,
+                                batchNumber: defaultBatch?.value?.batchNumber,
+                                expiry: defaultBatch?.value?.expiry,
+                                sellingPrice: defaultBatch?.value?.sellingPrice,
+                                costPrice: defaultBatch?.value?.costPrice,
+                                location: defaultBatch?.value?.location,
+                                distributors: defaultBatch?.value?.distributors,
+                                totalCost: defaultBatch?.value?.totalCost,
+                                maxQuantity: defaultBatch?.value?.quantity,
+                                maxRetailPrice: defaultBatch?.value?.maxRetailPrice,
+                                productId: defaultBatch?.value?.productId
+                            } :
+                                item,
+                        )
                     );
 
                 }
-                
+
             } catch (error) {
                 console.error("Error fetching product details from API:", error);
             }
         }
     }, [inventory, products, selectedOption]);
     const handleBatchSelect = useCallback(async (selectedProduct: any, index: number) => {
+        // console.log(selectedProduct);
         if (selectedProduct.value) {
             try {
-                const data = filteredBatches.find((batch)=>batch.value.id==selectedProduct.value.id);
-                console.log(data)
+                const data = filteredBatches.find((batch) => batch.value.id == selectedProduct.value.id);
+                console.log(selectedProduct,data)
                 const updatedInventory = [...inventory];
                 updatedInventory[index] = {
                     ...updatedInventory[index],
@@ -235,18 +263,18 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
                     date: data?.value?.date,
                     time: data?.value?.time,
                     quantity: selectedOption === Stock.StockIN ? 0 : data?.value?.quantity,
-                    maxQuantity: Math.max(data?.value?.quantity,data?.value?.maxQuantity),
+                    maxQuantity: Math.max(data?.value?.quantity, data?.value?.maxQuantity),
                     batchNumber: selectedOption === Stock.StockIN ? "" : data?.value?.batchNumber,
                     expiry: selectedOption === Stock.StockIN ? "" : data?.value?.expiry,
                     costPrice: selectedOption === Stock.StockIN ? "" : data?.value?.costPrice,
                     sellingPrice: selectedOption === Stock.StockIN ? "" : data?.value?.sellingPrice,
                     totalCost: selectedOption === Stock.StockIN ? "" : data?.value?.totalCost,
                     hsnCode: selectedProductDetails?.hsnCode,
-                    location:selectedOption===Stock.StockIN?"":data?.value?.location,
+                    location: selectedOption === Stock.StockIN ? "" : data?.value?.location,
                     distributors: data?.value?.category,
                     providers: data?.value?.distributors,
-                    maxRetailPrice:data?.value?.maxRetailPrice,
-                    productId:data?.value?.productId,
+                    maxRetailPrice: data?.value?.maxRetailPrice,
+                    productId: data?.value?.productId,
                 };
                 setInventory(updatedInventory);
                 // if (selectedOption === Stock.StockOUT) {
@@ -261,20 +289,20 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
     const handleUpdateInventory = useCallback(async () => {
         try {
             for (const item of inventory) {
-                const { id, date, quantity, batchNumber, distributors,productId,maxRetailPrice, isApproved} = item;
-                const invoiceType="Manual";
-                let {expiry,costPrice,sellingPrice}=item;
-                console.log("here is the product",productId)
+                const { id, date, quantity, batchNumber, distributors, productId, maxRetailPrice, isApproved } = item;
+                const invoiceType = "Manual";
+                let { expiry, costPrice, sellingPrice } = item;
+                // console.log("here is the product", productId)
                 expiry = expiry || null;
-                costPrice = costPrice ||null;
+                costPrice = costPrice || null;
                 sellingPrice = sellingPrice || null;
-                if(expiry){
-                let datetime = new Date(expiry);
-                let isoString = datetime.toISOString(); 
-                expiry = isoString.substring(0, 23) + "+00:00";
+                if (expiry) {
+                    let datetime = new Date(expiry);
+                    let isoString = datetime.toISOString();
+                    expiry = isoString.substring(0, 23) + "+00:00";
                 }
-                 
-                const stockStatus=selectedOption;
+
+                const stockStatus = selectedOption;
                 const body = {
                     invoiceType,
                     stockStatus,
@@ -287,97 +315,97 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
                     sellingPrice,
                     distributors,
                     productId,
-                    isApproved:appState.isCurrentOrgAdmin?true:false
+                    isApproved: appState.isCurrentOrgAdmin ? true : false
                 };
 
-                if(selectedOption===Stock.StockOUT){
-                    if(appState.isCurrentOrgAdmin){
-                        const responsePromise =  axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${id}?branchId=${appState.currentBranchId}`, body);
-                        const notifData={
-                            totalItems:body.quantity,
-                            source:Notif_Source.Inventory_Timeline_Removed,
+                if (selectedOption === Stock.StockOUT) {
+                    if (appState.isCurrentOrgAdmin) {
+                        const responsePromise = axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${id}?branchId=${appState.currentBranchId}`, body);
+                        const notifData = {
+                            totalItems: body.quantity,
+                            source: Notif_Source.Inventory_Timeline_Removed,
                             url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/timeline`,
-                            orgId:appState.currentOrgId
+                            orgId: appState.currentOrgId
                         }
-                        const notifPromise= axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`,notifData)
-                        setTimeout(()=>{
+                        const notifPromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
+                        setTimeout(() => {
                             onClose();
-                        },2000)
-                       const [response,notif]= await Promise.all([responsePromise,notifPromise]);
-                        
-                        console.log('Updated inventory item:', response.data);
+                        }, 2000)
+                        const [response, notif] = await Promise.all([responsePromise, notifPromise]);
+
+                        // console.log('Updated inventory item:', response.data);
                     }
                     else {
-                        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/create?branchId=${appState.currentBranchId}`,body);
-                        console.log("here's the response", response);
-                        const notifData={
-                            source:Notif_Source.Inventory_Update_Approval_Request,
-                            orgId:appState.currentOrgId,
-                            data:{
-                             newBatchId:response.data.productBatch.id,
-                             oldBatchId:id,
-                             productId:response.data.productBatch.productId,
-                             inventoryId:response.data.inventory.id,
-                             branchId:appState.currentBranchId
+                        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/create?branchId=${appState.currentBranchId}`, body);
+                        // console.log("here's the response", response);
+                        const notifData = {
+                            source: Notif_Source.Inventory_Update_Approval_Request,
+                            orgId: appState.currentOrgId,
+                            data: {
+                                newBatchId: response.data.productBatch.id,
+                                oldBatchId: id,
+                                productId: response.data.productBatch.productId,
+                                inventoryId: response.data.inventory.id,
+                                branchId: appState.currentBranchId
                             }
                         }
-                        const notif= await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`,notifData)
-                      
-                        console.log('Updated inventory item:', response.data);
+                        const notif = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
+
+                        // console.log('Updated inventory item:', response.data);
                     }
-                   
-                }else if(selectedOption===Stock.StockIN){
-                    console.log("saving new batch")
-                    const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/create?branchId=${appState.currentBranchId}`,body);
-                   setTimeout(()=>{
-                    onClose();
-                   },2000);
-                   const response= await responsePromise;
-                    const notifData={
-                        totalItems:body.quantity,
-                        source:Notif_Source.Inventory_Timeline_Added,
+
+                } else if (selectedOption === Stock.StockIN) {
+                    // console.log("saving new batch")
+                    const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/create?branchId=${appState.currentBranchId}`, body);
+                    setTimeout(() => {
+                        onClose();
+                    }, 2000);
+                    const response = await responsePromise;
+                    const notifData = {
+                        totalItems: body.quantity,
+                        source: Notif_Source.Inventory_Timeline_Added,
                         url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/timeline`,
-                        orgId:appState.currentOrgId
+                        orgId: appState.currentOrgId
                     }
-                    const notif= await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`,notifData)
-                    console.log('Created New Batch Item:', response.data);
+                    const notif = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
+                    // console.log('Created New Batch Item:', response.data);
                 }
-                
+
             }
-            
+
         } catch (error) {
             console.error("Error updating inventory:", error);
             alert('Error updating inventory. Please try again.');
         }
-    },[inventory]);
+    }, [inventory]);
 
     //Distributors
     useEffect(() => {
 
-        const fetchDistributors = async()=>{
-            try{
+        const fetchDistributors = async () => {
+            try {
                 const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll?branchId=${appState.currentBranchId}`);
-                const distributors = response.data.map((distributor:Distributors)=>({
+                const distributors = response.data.map((distributor: Distributors) => ({
                     value: distributor.id,
                     label: distributor.distributorName
                 }));
-                console.log(distributors);
+                // console.log(distributors);
                 setDistributor(distributors);
-            }catch(error){
-                console.log("Error fetching distributors",error);
+            } catch (error) {
+                // console.log("Error fetching distributors", error);
             }
         }
-          fetchDistributors();
+        fetchDistributors();
     }, []);
 
     const Reasons = [
-        {value: "Damaged", label: "Damaged"},
-        {value: "Expired", label: "Expired"},
-        {value: "Quality Issues", label: "Quality Issues"},
-        {value: "Wrong Item", label: "Wrong Item"},
-        {value: "Other(mention reason)", label: "Other(mention reason)"},
+        { value: "Damaged", label: "Damaged" },
+        { value: "Expired", label: "Expired" },
+        { value: "Quality Issues", label: "Quality Issues" },
+        { value: "Wrong Item", label: "Wrong Item" },
+        { value: "Other(mention reason)", label: "Other(mention reason)" },
     ]
-    
+
 
     return (
         <>
@@ -428,7 +456,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
                             <div className=' flex text-gray-500 text-base font-medium  w-[8rem]'>Distributor</div>
                             <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>Total Cost</div>
                             <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>MRP</div>
-                            <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>Selling Price</div>                        
+                            <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>Selling Price</div>
                             <div className=' flex text-gray-500 text-base font-medium  w-[2rem]'></div>
                         </div>
                         {inventory.map((item, index) => (
@@ -469,124 +497,125 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
                                         />
                                     </div>
                                 )}
-                                
+
                                 <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>
-                                    { selectedOption===Stock.StockIN ?(
-                                    <input
-                                    type="text"
-                                    value={item.batchNumber}
-                                    onChange={(e) => handleInputChange(index,'batchNumber', e.target.value)}
-                                    className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
-                                    name={`batchNumber-${index}`}
-                                    />
-                                    ):
-                                    (
-                                      <Select
-                                      className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
-                                      classNamePrefix="select"
-                                      value={batches.find((prod) => prod.value.id === item.id)}
-                                      isClearable={false}
-                                      isSearchable={true}
-                                      name={`batchNumber=${index}`}
-                                      options={filteredBatches}
-                                      onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
-                                  />  
-                                    )}
-           
-        </div>
-        <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium'>
-        <DatePicker
-            // showIcon
-            className="w-full rounded-[5px] border border-solid border-borderGrey outline-none  focus:border focus:border-textGreen px-1 py-2"
-            selected={item.expiry}
-            placeholderText="MM/DD/YYYY"
-            onChange={(date:any) =>{ 
-                handleInputChange(index,"expiry",date)}}
-            calendarClassName="react-datepicker-custom"
-            // value={startDate.toLocaleDateString()}
-            // customInput={
-            //     // <div className="relative">
-            //     //     <input
-            //     //         className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border border-solid border-borderText focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-            //     //         value={startDate.toLocaleDateString()}
-                        
-            //     //     />
-                    
-            //     // </div>
-            // }
-        />
-    {item.expiry && selectedOption !== Stock.StockIN && (
-        <div>{formatDateAndTime(item.expiry).formattedDate}</div>
-    )}
-</div>
+                                    {selectedOption === Stock.StockIN ? (
+                                        <input
+                                            type="text"
+                                            value={item.batchNumber}
+                                            onChange={(e) => handleInputChange(index, 'batchNumber', e.target.value)}
+                                            className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
+                                            name={`batchNumber-${index}`}
+                                        />
+                                    ) :
+                                        (
+                                            <Select
+                                                className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
+                                                classNamePrefix="select"
+                                                value={batches.find((prod) => prod.value.id === item.id)}
+                                                isClearable={false}
+                                                isSearchable={true}
+                                                name={`batchNumber=${index}`}
+                                                options={filteredBatches}
+                                                onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
+                                            />
+                                        )}
 
-        <div className='w-[5rem] flex items-center text-neutral-400 text-base font-medium'>
-            <input
-                type="text"
-                value={item.hsnCode}
-                onChange={(e) => handleInputChange(index, 'hsnCode' ,e.target.value)}
-                className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded "
-            name={`hsnCode-${index}`}
-            />
-        </div>
-        <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>
-            <input
-                type="text"
-                value={item.category}
-                onChange={(e) => handleInputChange(index,'category' ,e.target.value)}
-                className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
-            name={`category-${index}`}
-            />
-        </div>
-        <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium '>
-        <Select
-            className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
-            placeholder="Select Distributor"
-            isClearable={false}
-            isSearchable={true}
-            options={distributor}
-            isMulti={false}
-            name={`providers-${index}`}
-            onChange={(e) => handleInputChange(index,'providers', e?.label)}
-        />
-        </div>
-        <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>₹ 
-            <input
-                type="number"
-                value={item.costPrice}
-                onChange={(e) => handleInputChange(index, 'costPrice',parseFloat(e.target.value))}
-                className="w-full rounded-[5px] border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium"
-                name={`costPrice-${index}`}
-            />
-        </div>
-        <div className='w-[6rem] rounded-[5px] flex items-center text-neutral-400 text-base font-medium'>₹
-            <input
-                type="number"
-                value={item.maxRetailPrice}
-                onChange={(e) =>  handleInputChange(index, 'maxRetailPrice',parseFloat(e.target.value))}
-                className="w-full rounded-[5px] border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium"
-                name={`maxRetailPrice-${index}`}
-            />
-        </div>
-
-        <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>₹
-            <input
-                type="number"
-                value={item.sellingPrice}
-                onChange={(e) =>  handleInputChange(index, 'sellingPrice',parseFloat(e.target.value))}
-                className="w-full rounded-[5px] border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium"
-                name={`sellingPrice-${index}`}
-            />
-        </div>
-        <div className="w-[2rem]">
-        <button onClick={() => handleDeleteRow(index)} className=" border-0 flex-col justify-start items-end gap-2.5 flex">
-                                <div className="h-6 px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
-                                    <Image className="w-4 h-4 relative" src={deleteicon} alt="delete" />
                                 </div>
-        </button>
-        </div>
-    </div>
-))}
+                                <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium'>
+                                    <DatePicker
+                                        // showIcon
+                                        className="w-full rounded-[5px] border border-solid border-borderGrey outline-none  focus:border focus:border-textGreen px-1 py-2"
+                                        selected={item.expiry}
+                                        placeholderText="MM/DD/YYYY"
+                                        onChange={(date: any) => {
+                                            handleInputChange(index, "expiry", date)
+                                        }}
+                                        calendarClassName="react-datepicker-custom"
+                                    // value={startDate.toLocaleDateString()}
+                                    // customInput={
+                                    //     // <div className="relative">
+                                    //     //     <input
+                                    //     //         className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border border-solid border-borderText focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                    //     //         value={startDate.toLocaleDateString()}
+
+                                    //     //     />
+
+                                    //     // </div>
+                                    // }
+                                    />
+                                    {item.expiry && selectedOption !== Stock.StockIN && (
+                                        <div>{formatDateAndTime(item.expiry).formattedDate}</div>
+                                    )}
+                                </div>
+
+                                <div className='w-[5rem] flex items-center text-neutral-400 text-base font-medium'>
+                                    <input
+                                        type="text"
+                                        value={item.hsnCode}
+                                        onChange={(e) => handleInputChange(index, 'hsnCode', e.target.value)}
+                                        className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded "
+                                        name={`hsnCode-${index}`}
+                                    />
+                                </div>
+                                <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>
+                                    <input
+                                        type="text"
+                                        value={item.category}
+                                        onChange={(e) => handleInputChange(index, 'category', e.target.value)}
+                                        className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
+                                        name={`category-${index}`}
+                                    />
+                                </div>
+                                <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium '>
+                                    <Select
+                                        className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
+                                        placeholder="Select Distributor"
+                                        isClearable={false}
+                                        isSearchable={true}
+                                        options={distributor}
+                                        isMulti={false}
+                                        name={`providers-${index}`}
+                                        onChange={(e) => handleInputChange(index, 'providers', e?.label)}
+                                    />
+                                </div>
+                                <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>₹
+                                    <input
+                                        type="number"
+                                        value={item.costPrice}
+                                        onChange={(e) => handleInputChange(index, 'costPrice', parseFloat(e.target.value))}
+                                        className="w-full rounded-[5px] border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium"
+                                        name={`costPrice-${index}`}
+                                    />
+                                </div>
+                                <div className='w-[6rem] rounded-[5px] flex items-center text-neutral-400 text-base font-medium'>₹
+                                    <input
+                                        type="number"
+                                        value={item.maxRetailPrice}
+                                        onChange={(e) => handleInputChange(index, 'maxRetailPrice', parseFloat(e.target.value))}
+                                        className="w-full rounded-[5px] border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium"
+                                        name={`maxRetailPrice-${index}`}
+                                    />
+                                </div>
+
+                                <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>₹
+                                    <input
+                                        type="number"
+                                        value={item.sellingPrice}
+                                        onChange={(e) => handleInputChange(index, 'sellingPrice', parseFloat(e.target.value))}
+                                        className="w-full rounded-[5px] border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium"
+                                        name={`sellingPrice-${index}`}
+                                    />
+                                </div>
+                                <div className="w-[2rem]">
+                                    <button onClick={() => handleDeleteRow(index)} className=" border-0 flex-col justify-start items-end gap-2.5 flex">
+                                        <div className="h-6 px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
+                                            <Image className="w-4 h-4 relative" src={deleteicon} alt="delete" />
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                     <div>
                         <div className="flex justify-between items-center">

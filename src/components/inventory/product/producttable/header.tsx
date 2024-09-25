@@ -22,6 +22,7 @@ import FilterDropdownProductsCard from './FilterDropDownProductsCard';
 
 import { DataContext } from './DataContext';
 import DownloadPopup from './downloadProductPopup';
+import { Products } from '@prisma/client';
 
 
 
