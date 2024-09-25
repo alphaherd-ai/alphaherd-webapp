@@ -10,6 +10,7 @@ import Attachment from "../../../assets/icons/finance/attachment.svg"
 import Check from "../../../assets/icons/database/check.svg"
 import { useAppSelector } from "@/lib/hooks";
 import {z} from "zod"
+import capitalizeFirst from "@/utils/capitiliseFirst";
 
 type PopupProps = {
     onClose: () => void;
@@ -238,8 +239,12 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                 <div className="flex items-center gap-[88px]">
                     <div className="text-gray-500 text-base font-medium ">Name*</div>
                     <div>
-                    <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" 
-                    type="text" name="distributorName" onChange={(e) => handleChange("distributorName", e.target.value.replace(/\b\w/g, (char) => char.toUpperCase()))} 
+                    <input className="w-[447px] h-9  text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" 
+                    type="text" name="distributorName" onChange={(e) => {
+                        const value = e.target.value;
+                        e.target.value = value.charAt(0).toUpperCase() + value.slice(1);
+    handleChange("distributorName", e.target.value);
+                    }} 
                     />
                     {errors.distributorName && <div className="text-red-500 text-sm">{errors.distributorName}</div>}
                     </div>
