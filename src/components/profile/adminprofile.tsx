@@ -165,23 +165,23 @@ const AdminProfile = () => {
                             <div className="w-full justify-start items-start gap-4 flex ">
                                 <div className="w-full px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                     <div className="text-gray-500 text-base font-bold ">Phone No.:</div>
-                                    <input className="w-[25rem] h-full border-0 p-1" type="number" name="" id="" defaultValue={String(userState.phoneNo)} />
+                                    <input className="w-[25rem] h-full border-0 p-1 text-gray-500 text-base font-medium " type="number" name="" id="" defaultValue={String(userState.phoneNo)} />
                                 </div>
                                 <div className="w-full px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                     <div className="text-gray-500 text-base font-bold ">Alternate Phone No.</div>
-                                    <input className="w-[21rem] h-full border-0 p-1" type="number" name="" id="" defaultValue={String(userState.altPhoneNo) } />
+                                    <input className="w-[21rem] h-full border-0 p-1 text-gray-500 text-base font-medium" type="number" name="" id="" defaultValue={String(userState.altPhoneNo) } />
                                 </div>
                             </div>
                             <div className="w-full justify-start items-start gap-4 flex ">
                                 <div className="w-full px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                     <div className="text-gray-500 text-base font-bold ">Email:</div>
-                                    <input className="w-[60rem] h-8 border-0 p-1 ml-[2rem]" type="text" name="" id="" defaultValue={String(userState.email)} />
+                                    <input className="w-[60rem] h-8 border-0 p-1 ml-[2rem] text-gray-500 text-base font-medium" type="text" name="" id="" defaultValue={String(userState.email)} />
                                 </div>
                             </div>
                             <div className="w-full justify-start items-start gap-4 flex ">
                                 <div className="w-full px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                     <div className="text-gray-500 text-base font-bold ">Address:</div>
-                                    <input className="w-[60rem] h-8 border-0 p-1 ml-[2rem]" type="text" name="" id="" defaultValue={String(address[0])} />
+                                    <input className="w-[60rem] h-8 border-0 p-1 ml-[2rem] text-gray-500 text-base font-medium" type="text" name="" id="" defaultValue={String(address[0])} />
                                     {/* <div className="text-gray-500 text-base font-medium ">47/38, 14th Cross, Addagalapura, Bangalore </div> */}
                                 </div>
                             </div>

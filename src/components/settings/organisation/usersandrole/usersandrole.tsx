@@ -19,11 +19,11 @@ const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 export default function UsersAndRolesSettings() {
     const appState = useAppSelector((state) => state.app);
     const [branchUsers,setBranchUsers]=useState<any[]>([]);
-    console.log(appState.isCurrentOrgAdmin)
+    console.log("is admin :",appState.isCurrentOrgAdmin)
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true})
     useEffect(()=>{
         if (data && !error && !isLoading) {
-               console.log(data)
+               console.log("user data is :",data)
             const usersWithRoles = data.map((user:any) => {
                 return {
                     ...user,
