@@ -64,7 +64,7 @@ const OrgAdminSetup = (props: any, { handleFileUpload }: any) => {
                                 multiple: false,
                                 maxFiles: 1
                             }}
-                            uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+                            uploadPreset={process.env.CUSTOMCONNSTR_NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
                             onSuccess={(result, { widget }) => {
                                 //@ts-ignore
                                 setResource(result?.info.secure_url);
