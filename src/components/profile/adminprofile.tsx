@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { useRouter } from 'next/navigation';
 import { CldUploadButton } from 'next-cloudinary';
 import axios from 'axios';
+import useSWR from 'swr';
 import { updateUser,UserState } from '@/lib/features/userSlice';
 //@ts-ignore
 /*
@@ -25,7 +26,7 @@ import { updateUser,UserState } from '@/lib/features/userSlice';
     const orgId = adminOrganizations.map((org) => org.id);
   
     console.log("User Email:", userState.email);  // Log email
-    console.log("Branch ID:", userState.orgBranchId);  // Log branch ID
+    console.log("Branch ID:", appState.currentBranchId);  // Log branch ID
   
 
     const handleRoleChange = async (newRole: string) => {
@@ -33,7 +34,7 @@ import { updateUser,UserState } from '@/lib/features/userSlice';
       console.log("new role is :" , newRole);
        console.log('Updating role for:', {
             email: userState.email,
-            branchId: userState.orgBranchId,
+            branchId: appState.currentBranchId,
             newRole,
           });
   
@@ -49,13 +50,13 @@ import { updateUser,UserState } from '@/lib/features/userSlice';
           body: JSON.stringify({
             
             email: userState.email,
-            branchId: userState.orgBranchId,
+            branchId: appState.currentBranchId,
             newRole,
           }),
         });
         console.log('Updating role for:', {
             email: userState.email,
-            branchId: userState.orgBranchId,
+            branchId: appState.currentBranchId,
             newRole,
           });
   
@@ -122,19 +123,33 @@ const AdminProfile = () => {
     console.log("address",address);
     //@ts-ignore
     console.log("User Email:", userState.email);  // Log email
-    console.log("Branch ID:", userState.orgBranchId);  // Log branch ID
+    console.log("Branch ID:", appState.currentBranchId);  // Log branch ID
     const [activeRole, setActiveRole] = useState<string>(userRoles[0]?.role || '');
    
-  
+    // const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/getAll?branchId=${appState.currentBranchId}`)
+    // useEffect(()=>{
+    //     if (data && !error && !isLoading) {
+    //            console.log("user data is :",data)
+    //            console.log("user is :",data.user);
+    //         const usersWithRoles = data.map((user:any) => {
+    //             return {
+    //                 ...user,
+    //                 role:user.role
+    //             };
+    //         });
+    //         console.log("usersWithRoles data :",usersWithRoles);
+    //         //setBranchUsers(usersWithRoles);
+    //     }
+    // }, [data, error, isLoading]);
     console.log("User Email:", userState.email);  // Log email
-    console.log("Branch ID:", userState.orgBranchId);  // Log branch ID
+    console.log("Branch ID:", appState.currentBranchId);  // Log branch ID
     const router=useRouter();
     const handleRoleChange = async (newRole: string) => {
         setActiveRole(newRole);
         console.log("new role is :" , newRole);
          console.log('Updating role for:', {
               email: userState.email,
-              branchId: userState.orgBranchId,
+              branchId: appState.currentBranchId,
               newRole,
             });
     
@@ -150,13 +165,13 @@ const AdminProfile = () => {
             body: JSON.stringify({
               
               email: userState.email,
-              branchId: userState.orgBranchId,
+              branchId: appState.currentBranchId,
               newRole,
             }),
           });
           console.log('Updating role for:', {
               email: userState.email,
-              branchId: userState.orgBranchId,
+              branchId: appState.currentBranchId,
               newRole,
             });
     
