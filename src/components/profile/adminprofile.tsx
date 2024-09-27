@@ -12,7 +12,75 @@ import { CldUploadButton } from 'next-cloudinary';
 import axios from 'axios';
 import { updateUser,UserState } from '@/lib/features/userSlice';
 //@ts-ignore
-const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
+/*
+
+  
+    // State for active role
+    const [activeRole, setActiveRole] = useState<string>(userRoles[0]?.role || '');
+  
+    const handleEditClick = () => setEditable(true);
+    const handleSaveClick = () => setEditable(false);
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value);
+  
+    const orgId = adminOrganizations.map((org) => org.id);
+  
+    console.log("User Email:", userState.email);  // Log email
+    console.log("Branch ID:", userState.orgBranchId);  // Log branch ID
+  
+
+    const handleRoleChange = async (newRole: string) => {
+      setActiveRole(newRole);
+      console.log("new role is :" , newRole);
+       console.log('Updating role for:', {
+            email: userState.email,
+            branchId: userState.orgBranchId,
+            newRole,
+          });
+  
+         
+      try {
+        console.log("api called" );
+        console.log(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/updateRole`)
+        
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/updateRole`, {
+            
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            
+            email: userState.email,
+            branchId: userState.orgBranchId,
+            newRole,
+          }),
+        });
+        console.log('Updating role for:', {
+            email: userState.email,
+            branchId: userState.orgBranchId,
+            newRole,
+          });
+  
+        const data = await res.json();
+        if (res.ok) {
+          console.log('Role updated successfully:', data.message);
+        } else {
+          console.error('Failed to update role:', data.message);
+        }
+      } catch (error) {
+        console.error('Error updating role:', error);
+      }
+    };
+*/
+import router from 'next/router';
+//@ts-ignore
+interface UserRole {
+    role: string;
+  }
+  
+  interface AdminOrganization {
+    id: number;
+    address: string;
+  }
+//const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 const AdminProfile = () => {
     const userState= useAppSelector((state)=>state.user)
     const appState=useAppSelector((state)=>state.app)
@@ -47,16 +115,61 @@ const AdminProfile = () => {
       setValue(e.target.value);
     };
     const roles = userState.userRoles.filter((e:any) => e.orgBranchId==appState.currentBranchId);
-
+    const userRoles: UserRole[] = userState.userRoles || [];
     const address= userState.adminOrganizations.map((e:any)=>e.address);
     const orgId=userState.adminOrganizations.map((e:any)=>e.id);
-    //@ts-ignore
-    const [activeTab, setActiveTab] = useState(roles[0].role);
-    const router=useRouter();
-    const handleTabClick = (tab:string) => {
-        setActiveTab(tab);
-    };
 
+    console.log("address",address);
+    //@ts-ignore
+    console.log("User Email:", userState.email);  // Log email
+    console.log("Branch ID:", userState.orgBranchId);  // Log branch ID
+    const [activeRole, setActiveRole] = useState<string>(userRoles[0]?.role || '');
+   
+  
+    console.log("User Email:", userState.email);  // Log email
+    console.log("Branch ID:", userState.orgBranchId);  // Log branch ID
+    const router=useRouter();
+    const handleRoleChange = async (newRole: string) => {
+        setActiveRole(newRole);
+        console.log("new role is :" , newRole);
+         console.log('Updating role for:', {
+              email: userState.email,
+              branchId: userState.orgBranchId,
+              newRole,
+            });
+    
+           
+        try {
+          console.log("api called" );
+          console.log(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/updateRole`)
+          
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/updateRole`, {
+              
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              
+              email: userState.email,
+              branchId: userState.orgBranchId,
+              newRole,
+            }),
+          });
+          console.log('Updating role for:', {
+              email: userState.email,
+              branchId: userState.orgBranchId,
+              newRole,
+            });
+    
+          const data = await res.json();
+          if (res.ok) {
+            console.log('Role updated successfully:', data.message);
+          } else {
+            console.error('Failed to update role:', data.message);
+          }
+        } catch (error) {
+          console.error('Error updating role:', error);
+        }
+      };
     console.log("userState",userState)
 
     return (
@@ -143,19 +256,19 @@ const AdminProfile = () => {
                                     <div className='flex  text-gray-500 items-center cursor-default'>
 
 
-<div className={activeTab === 'Staff' 
+<div className={activeRole === 'Staff' 
     ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white rounded-tl-md rounded-bl-md"
-    : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500 rounded-tl-md rounded-bl-md"} onClick={() => handleTabClick('Staff')}>Staff</div>
+    : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500 rounded-tl-md rounded-bl-md"} onClick={() => handleRoleChange('Staff')}>Staff</div>
 
 
-<div className={activeTab === 'Manager' 
+<div className={activeRole === 'Manager' 
     ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white"
-    : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"} onClick={() => handleTabClick('Manager')}>Manager</div>
+    : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"} onClick={() => handleRoleChange('Manager')}>Manager</div>
 
 
-<div className={activeTab === 'Veterinarian' 
+<div className={activeRole === 'Veterinarian' 
     ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white  rounded-tr-md rounded-br-md"
-    : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500  rounded-tr-md rounded-br-md"} onClick={() => handleTabClick('Veterinarian')}>Veterinarian</div>
+    : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500  rounded-tr-md rounded-br-md"} onClick={() => handleRoleChange('Veterinarian')}>Veterinarian</div>
 
     </div>
 

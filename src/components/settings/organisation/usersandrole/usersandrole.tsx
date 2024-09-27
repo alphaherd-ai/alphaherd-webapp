@@ -17,7 +17,9 @@ import Loading from "@/app/loading";
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 export default function UsersAndRolesSettings() {
+
     const appState = useAppSelector((state) => state.app);
+    console.log("appstate is :",appState);
     const [branchUsers,setBranchUsers]=useState<any[]>([]);
     console.log("is admin :",appState.isCurrentOrgAdmin)
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true})
@@ -30,7 +32,7 @@ export default function UsersAndRolesSettings() {
                     role:user.role
                 };
             });
-            console.log(usersWithRoles)
+            console.log("usersWithRoles data :",usersWithRoles);
             setBranchUsers(usersWithRoles);
         }
     }, [data, error, isLoading]);

@@ -20,81 +20,70 @@ import { generatePdfForInvoice } from "@/utils/salesPdf"
 
 const ExistingsalesBottomBar = ({existingSalesData}:any) => {
     const appState = useAppSelector((state) => state.app);
+    const [email, setEmail] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const downloadPdf = async () => {
     // const allData = existingSalesData;
         const data = existingSalesData;
 
-    //   const pdfUrl=await generatePdfForInvoiceAndUpload(data, appState, items);
-    //   console.log("this is pdfUrl",pdfUrl)
-    //   const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/sms`, {
-    //     method: 'POST',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //         phone: "+919336402936",
-    //         url:pdfUrl
-
-    //     }),
-    // });
-    // console.log('SMS sent successfully:', response);
     generatePdfForInvoice(data, appState, existingSalesData.items);
     };
+    const shareInvoiceViaEmail = async () => {
+        try {
+          const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/email`, {
+            email: email,
+            invoiceData: existingSalesData,
+          });
+          if (response.status === 200) {
+            alert("Invoice sent successfully");
+            
+           
+            setIsModalOpen(false); // Close the modal after successful send
+            setEmail(""); // Clear email after successful send
+          }
+        } catch (error) {
+          console.error("Error sending invoice:", error);
+          alert("Failed to send invoice");
+        }
+      };
 
-//  console.log("This is existing",existingSalesData)
-//  const appState = useAppSelector((state) => state.app);
-//  const router=useRouter();
-//  const handleRepeatOrder= async () => {
-//     const items = existingSalesData.items.map((data:any )=> ({
-//         productId: data.productId,
-//         productBatchId: data.productBatchId,
-//         quantity: data.quantity,
-//         sellingPrice: data.sellingPrice,
-//         taxAmount: data.gst,
-//         name: data.itemName,
-//         discount:data.discount
-//     }));
-//     const data = {
-//         customer:  existingSalesData.customer,
-//         notes: existingSalesData.notes,
-//         subTotal: existingSalesData.subTotal,
-//         invoiceNo: existingSalesData.invoiceNo,
-//         dueDate: existingSalesData.dueDate,
-//         shipping: existingSalesData.shipping,
-//         adjustment: existingSalesData.adjustment,
-//         totalCost: existingSalesData.totalCost,
-//         overallDiscount: existingSalesData.gst,
-//         totalQty: existingSalesData.totalQty,
-//         status: "Pending",
-//         type: FinanceCreationType.Sales_Invoice,
-//         items: {
-//             create: items
-//         }
-
-//     }
-//     const notifData = {
-//         source: Notif_Source.Sales_Invoice,
-//         totalCost: data.totalCost,
-//         dueDate: data.dueDate,
-//         orgId: appState.currentOrgId,
-//         orgBranch: appState.currentOrg.orgName
-//     }
-//     console.log(JSON.stringify(data))
-//     console.log("this is notif data", notifData)
-//     try {
-//         const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Invoice}?branchId=${appState.currentBranchId}`, data)
-//         if (!response.data) {
-//             throw new Error('Network response was not ok');
-//         }
-//         router.back();
-//         const notif = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
-//     } catch (error) {
-//         console.error('Error:', error);
-//     }
-//  }
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setEmail(""); // Optional: Clear the email input on cancel
+      };
 
     return (
         <>
+        {/* Share Email Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-600 bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-lg mb-4">Share Invoice via Email</h2>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-md mb-4"
+              placeholder="Enter recipient's email"
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-4 py-2 bg-gray-400 text-white rounded-md"
+                onClick={closeModal}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                onClick={shareInvoiceViaEmail}
+              >
+                Send
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
 
 <div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
@@ -107,7 +96,7 @@ const ExistingsalesBottomBar = ({existingSalesData}:any) => {
                                     <Image src={downloadicon} alt="download"></Image>
                                     <div>Download</div>
                                 </div>
-                                <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
+                                <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer "  onClick={openModal}>
                                     <Image src={shareicon} alt="share"></Image>
                                     <div>Share</div>
                                 </div>
@@ -127,7 +116,8 @@ const ExistingsalesBottomBar = ({existingSalesData}:any) => {
                                 </Link>
                             </div>
                         </div>
-    
+                         {/* Add an input field for the email */}
+           
           
         </>
 

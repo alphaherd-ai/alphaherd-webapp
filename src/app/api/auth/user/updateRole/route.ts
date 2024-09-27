@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prismaClient from '../../../../../../prisma';
 
-
 export const POST = async (req: NextRequest) => {
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
@@ -30,12 +29,16 @@ export const POST = async (req: NextRequest) => {
     }
 
     // Step 3: Update the role in OrgBranchUserRole table
-    await prismaClient.orgBranchUserRole.update({
+    const updatedUserRole = await prismaClient.orgBranchUserRole.update({
       where: { id: userRole.id },
       data: { role: newRole }, // Set the new role
+      include: { user: true }, // Return updated user data
     });
 
-    return new Response(JSON.stringify({ message: 'User role updated successfully' }), {
+    return new Response(JSON.stringify({
+      message: 'User role updated successfully',
+      updatedUserRole: updatedUserRole
+    }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
