@@ -47,6 +47,7 @@ const OrgDetailsSetup = (props: any) => {
         { value: 'Puducherry', label: 'Puducherry' }
       ];
       console.log("this is props",props.data.state)
+      console.log("user data received :",props.data);
       const [resource, setResource] = useState<any>();
     const [focused, setFocused] = useState(false);
     const [focused1, setFocused1] = useState(false);
@@ -117,7 +118,7 @@ const OrgDetailsSetup = (props: any) => {
                     <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
                         <div className="w-[136px] text-gray-500 text-base font-medium ">Branch Name</div>
                         <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-start gap-2 inline-flex">
-                        <input type="text" className="text-neutral-400 text-base font-medium  h-full w-full px-2 border-1 border-solid border-[#A2A3A3]  rounded-[5px]" id="branch" name="branch" disabled={true} value={appState.currentBranch.branchName}/>
+                        <input type="text" className="text-neutral-400 text-base font-medium  h-full w-full px-2 border-1 border-solid border-[#A2A3A3]  rounded-[5px]" id="branch" name="branch" disabled={true} value={props.data.branchName} />
                         </div>
                     </div>
                 </div>

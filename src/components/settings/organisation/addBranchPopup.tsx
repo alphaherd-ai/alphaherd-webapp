@@ -6,11 +6,11 @@ import Link from 'next/link';
 import closeicon from "../../../assets/icons/inventory/closeIcon.svg";
 import { useAppSelector } from "@/lib/hooks";
 import { Bounce, ToastContainer, toast } from 'react-toastify';
-
+import { useRouter } from 'next/navigation';
 const AddBranchPopup = ({ onClose }:any) => {
 
     const appState = useAppSelector((state) => state.app);
-
+    const router = useRouter();
     const [branchNameInput, setBranchNameInput] = useState<string>('');
 
     const handleInputChange = (event: any) => {
@@ -62,6 +62,10 @@ const AddBranchPopup = ({ onClose }:any) => {
                 transition: Bounce,
               });
         }
+        setTimeout(() => {
+            onClose();
+            router.push(`/auth/admin/branchSetup?branchName=${branchNameInput.trim()}`);
+        }, 4000);
     };
 
     return <>

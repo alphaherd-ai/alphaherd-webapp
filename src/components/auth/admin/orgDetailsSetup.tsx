@@ -9,6 +9,7 @@ import { CldUploadButton } from "next-cloudinary";
 
 
 const OrgDetailsSetup = (props: any) => {
+   
     const stateOptions = [
         { value: 'Andhra Pradesh', label: 'Andhra Pradesh' },
         { value: 'Arunachal Pradesh', label: 'Arunachal Pradesh' },
@@ -45,7 +46,8 @@ const OrgDetailsSetup = (props: any) => {
         { value: 'Lakshadweep', label: 'Lakshadweep' },
         { value: 'Puducherry', label: 'Puducherry' }
       ];
-      console.log("this is props",props.data.state)
+   //   console.log("this is props",props.data.state)
+      console.log("user data received :",props.data);
       const [resource, setResource] = useState<any>();
 
     return (
