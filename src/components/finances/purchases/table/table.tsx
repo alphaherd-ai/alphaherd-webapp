@@ -15,6 +15,28 @@ const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 
 const FinancesPurchasesTable = () => {
+  //Pagination
+  const [currentPageNumber, setCurrentPageNumber] = useState(1);
+  const [startInd, setStartInd] = useState(0);
+  const [endInd, setEndInd] = useState(0);
+  const [totalLen, setTotalLen] = useState(0);
+  const [tableData,setTableData]=useState<any[]>([]);
+  const TOTAL_VALUES_PER_PAGE = 50;
+  const goOnPrevPage = () => {
+    if (currentPageNumber === 1) return;
+    setCurrentPageNumber((prev) => prev - 1);
+  };
+  const goOnNextPage = () => {
+    if (currentPageNumber === data.length / TOTAL_VALUES_PER_PAGE) return;
+    setCurrentPageNumber((prev) => prev + 1);
+  };
+  useEffect(()=>{
+    const start=(currentPageNumber-1)*TOTAL_VALUES_PER_PAGE;
+    const end=currentPageNumber*TOTAL_VALUES_PER_PAGE;
+    setStartInd(start)
+    setEndInd(end);
+    setPurchases(tableData.slice(start, end));
+  },[currentPageNumber])
 
   const appState = useAppSelector((state) => state.app);
   const [purchases,setPurchases]=useState<any[]>([]);
@@ -50,7 +72,9 @@ useEffect(()=>{
         selectedParties.includes(item.distributor)
       );
     }
-    setPurchases(filteredData?.reverse());
+    setTotalLen(filteredData.length);
+    setTableData(filteredData)
+    setPurchases(filteredData?.reverse().slice(0,TOTAL_VALUES_PER_PAGE));
   }
 },[data,error,isLoading,setPurchases,startDate, endDate, selectedParties])
 
@@ -81,7 +105,12 @@ useEffect(()=>{
                 <div className=' flex  text-base font-medium  w-[3rem]'></div>
             </div>
           <FinancesPurchasesTableItem onCountsChange={handleCountsChange} purchases={purchases} data={data} isLoading={isLoading}/>
-          <FinancesPurchasesTableBottombar/>
+          <FinancesPurchasesTableBottombar
+          goOnPrevPage={goOnPrevPage}
+          goOnNextPage={goOnNextPage}
+          startInd={startInd}
+          endInd={endInd}
+          totalLen={totalLen}/>
         </div>
    
   )

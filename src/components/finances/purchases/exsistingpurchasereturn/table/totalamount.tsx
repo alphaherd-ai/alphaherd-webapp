@@ -142,7 +142,7 @@ const ExsistingPurcaseReturnTotalAmount = ({otherData, isLoading}:any) => {
                         </div>
 
                     </div>
-                    <div className="w-full  px-6 bg-white rounded-bl-md rounded-br-md justify-between items-center flex shadow-top ">
+                    <div className="w-full  px-6 bg-white rounded-bl-md rounded-br-md justify-between items-center flex border border-t-0 border-solid border-borderGrey">
                     <div className="text-gray-500 text-base font-bold  w-1/3 py-4">Balance Due</div>
                         <div className="text-gray-500 text-lg font-medium  w-1/3 py-4 flex  items-center"></div>
                         <div className="text-gray-500 text-base font-bold  w-1/3 py-4 ">₹ {balanceDue < 0 ? -1*(balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2) }

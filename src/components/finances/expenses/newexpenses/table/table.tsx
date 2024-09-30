@@ -26,6 +26,7 @@ import { Tax } from '@prisma/client';
 import formatDateAndTime from '@/utils/formateDateTime';
 import { useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
+import capitalizeFirst from '@/utils/capitiliseFirst';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 function DataFromExpense(id:number|null,branchId:number|null){
@@ -128,7 +129,7 @@ const handleItemName=(event:any,index:any)=>{
     const updatedItems=[...tableData];
     updatedItems[index]={
         ...updatedItems[index],
-        itemName:event.target.value
+        itemName:event.target.value.charAt(0).toUpperCase() + event.target.value.slice(1)
     };
     setItems(updatedItems);
     setTableData(updatedItems);
@@ -329,10 +330,14 @@ useEffect(() => {
                         {items.map((item:any,index:number) => (
                             <div key={index+1} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400 py-2'>
                                 <div className='w-[3rem] flex items-center text-textGrey2 text-base font-medium'>{index+1}</div>
-                                <input className='w-[15rem] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2'
+                                <input className='w-[15rem]  border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2'
                                  value={item.itemName} 
                                  placeholder='Enter Item Name'
-                                 onChange={(event) => handleItemName(event, index)}
+                                 onChange={(event) => {
+                                    const value = event.target.value;
+                                     event.target.value = value.charAt(0).toUpperCase() + value.slice(1);
+                                     handleItemName(event, index)
+                                 }}
                                   />
                                 <div className='w-[12rem] flex items-center text-textGrey2 text-base font-medium gap-1'>
                                 ₹<input className="w-[70%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2" 
@@ -419,7 +424,6 @@ useEffect(() => {
             </div>
             <NewExpensesBottomBar expenseData={expenseData}/>
         </div>
-
     {showPopup && <Popup onClose={togglePopup} />}
        
 

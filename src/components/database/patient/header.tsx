@@ -143,7 +143,7 @@ const DatabasePatientHeader = ({ patients, clients }:any) => {
                             <Image src={Add} alt='Add' className='w-3 h-3 ' />
                         </div>
                         
-                        Add Patients
+                        Add Patient
                     </Button>
             
 

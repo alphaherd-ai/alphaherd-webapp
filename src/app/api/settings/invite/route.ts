@@ -34,15 +34,15 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
 
         const user = await prismaClient.user.findUnique({
             where: {
-                email
+                email: email
             }
         });
 
-        const orgBranch = await prismaClient.orgBranch.findUnique({
-            where: {
-                id: branchId
-            }
-        });
+        // const orgBranch = await prismaClient.orgBranch.findUnique({
+        //     where: {
+        //         id: branchId
+        //     }
+        // });
 
         // console.log(user)
 
@@ -50,15 +50,17 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
             // console.log("here")
             redirectURL+=`/auth/user/register?userInviteString=${userInviteString}`;
         }
-        else{
-            redirectURL+=`/auth/login?userInviteString=${userInviteString}`
-            // await prismaClient.orgBranchUserRole.create({
-            //     data: {
-            //         orgBranchId: Number(orgBranch?.orgId),
-            //         userId: user!.id,
-            //         role: role
-            //     }
-            // });
+        else {
+            console.log(branchId);
+            await prismaClient.orgBranchUserRole.create({
+                data: {
+                    orgBranchId: Number(branchId),
+                    userId: user!.id,
+                    role: role
+                }
+            });
+            redirectURL += `/auth/login?userInviteString=${userInviteString}`
+
         }
     }
     catch (error : any) {

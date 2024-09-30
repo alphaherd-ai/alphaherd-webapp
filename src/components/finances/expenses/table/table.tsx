@@ -20,6 +20,21 @@ const FinancesExpensesTable = () => {
     setRecurringCount(counts.nonrecurringCount);
     setNonRecurringCount(counts.recurringCount);
   };
+  //PAGINATION
+  const [currentPageNumber, setCurrentPageNumber] = useState(1);
+  const [startInd, setStartInd] = useState(0);
+  const [endInd, setEndInd] = useState(0);
+  const [totalLen, setTotalLen] = useState(0);
+  const TOTAL_VALUES_PER_PAGE = 50;
+  const goOnPrevPage = () => {
+    if (currentPageNumber === 1) return;
+    setCurrentPageNumber((prev) => prev - 1);
+  };
+  const goOnNextPage = () => {
+    if (currentPageNumber === totalLen / TOTAL_VALUES_PER_PAGE) return;
+    setCurrentPageNumber((prev) => prev + 1);
+  };
+
   return (
    
       <div className='flex flex-col w-full box-border border border-solid border-borderGrey rounded-lg mt-6 mb-6'>
@@ -37,8 +52,19 @@ const FinancesExpensesTable = () => {
                 <div className=' flex text-gray-500 text-base font-medium  w-[12rem] '>Status</div>
             </div>
 
-<FinancesExpensesTableItem onCountsChange={handleCountsChange}/>
-<FinancesExpensesTableBottombar/>
+<FinancesExpensesTableItem onCountsChange={handleCountsChange}
+ currentPageNumber={currentPageNumber}
+ setCurrentPageNumber={setCurrentPageNumber}
+ setStartInd={setStartInd}
+ setEndInd={setEndInd}
+ setTotalLen={setTotalLen}
+ pagevalue={TOTAL_VALUES_PER_PAGE}/>
+<FinancesExpensesTableBottombar
+goOnPrevPage={goOnPrevPage}
+goOnNextPage={goOnNextPage}
+startInd={startInd}
+endInd={endInd}
+totalLen={totalLen}/>
      
         </div>
    

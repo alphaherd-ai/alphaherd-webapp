@@ -32,7 +32,7 @@ function htmlTemplate(userInviteString : String){
                 display: inline-block;
                 padding: 10px 20px;
                 background-color: #007bff;
-                color: #fff;
+                color: #fff !important;
                 text-decoration: none;
                 border-radius: 5px;
             }
@@ -155,7 +155,5 @@ export const POST = async (req: NextRequest) => {
             console.info('Email sent: ' + info.response);
         }
     });
-
     return new Response(JSON.stringify({"message" : "success"}),{status: 200});
-
 }

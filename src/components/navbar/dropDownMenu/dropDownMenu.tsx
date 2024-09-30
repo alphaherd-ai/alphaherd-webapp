@@ -5,9 +5,10 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { isAdminOfOrg, isManagerOfBranch } from '@/utils/stateChecks';
 import React, { useEffect, useState } from 'react';
 import useSWR from 'swr';
+import check from '@/assets/icons/navbar/check.svg'
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
-const DropdownMenu = () => {
+const DropdownMenu = ({currBranch}:{currBranch:string}) => {
 
   const [selectedOrg,setSelectedOrg] = useState(null);
 
@@ -25,7 +26,9 @@ const DropdownMenu = () => {
     if(data&&!error&&!isLoading){
       
       const orgs=data.filter((org:any)=>org.id===appState.currentOrgId);
+
      setOrgAndBranchMapping(orgs);
+    
     }
    }, [data,error,isLoading]);
 
@@ -48,12 +51,14 @@ const DropdownMenu = () => {
     window.location.reload();
 
   }
-
   
 
-
   return (
-      <div className="w-48 h-[4rem] bg-zinc-900 rounded-lg shadow-lg">
+    <>
+      <div className="w-fit min-w-60 px-6 py-2 h-fit bg-zinc-900 rounded-xl shadow-lg">
+        
+        <p className='text-[#545556] text-sm'>Select Branch</p>
+        <hr className='text-[#545556] mt-2 mb-2'></hr>
         {
           orgAndBranchMapping.map((mapping: any, index) => {
             return (
@@ -62,7 +67,7 @@ const DropdownMenu = () => {
                 let org = mapping;
                 delete org.allowedBranches;
                 setSelectedOrg(org);
-              }} className="px-4 py-1 text-white font-bold text-lg hover:bg-[#262626ad]  hover:cursor-pointer focus:outline-none border-l-0 border-r-0 border-t-0 border-b border-solid border-borderGrey">
+              }} className="mt-2 py-1 w-full  text-white font-bold text-sm hover:bg-[#262626ad]  hover:cursor-pointer focus:outline-none">
                 {mapping.orgName}
               </div>
             )
@@ -71,14 +76,18 @@ const DropdownMenu = () => {
         {
           secondLevelItems?.map((orgBranch: any, index) => {
             return (
-              <div key={index} className="w-48 bg-zinc-900 rounded-lg shadow-lg px-4 py-2 text-white cursor-pointer" onClick={() => handleOrgBranchSelect(orgBranch)}>
+              <div key={index} className="w-full flex items-center justify-between bg-zinc-900 rounded-lg shadow-lg px-2 py-2 text-white cursor-pointer" onClick={() => handleOrgBranchSelect(orgBranch)}>
                 {orgBranch.branchName}
+                {currBranch===orgBranch.branchName ? <img src={check.src} className='justify-end'></img>:""}
               </div>
             )
             
           })
         }
+
       </div>
+      </>
+
   );
 };
 

@@ -39,6 +39,7 @@ const Popup = ({ onClose }:any) => {
         try{
             if (emailInput.trim() !== '') {
                 setLoading(true);
+                console.log('Currently invite sent with orgId:'+ appState.currentBranchId)
                 let resp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/invite/create?branchId=${appState.currentBranchId}`, {
                     method: 'POST',
                     headers: {

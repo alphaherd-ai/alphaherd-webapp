@@ -24,7 +24,17 @@ interface Patients {
 }
 
 const DatabasePatientTableItem = ({ patients, clients, isPatientLoading }:any) => {
-    
+
+    const formatSpeciesAndBreed = (species: string | null, breed: string | null): string => {
+        if (!species && !breed) {
+          return ''; // Both are null
+        }
+        if (species && breed) {
+          return `${species} & ${breed}`; // Both are present
+        }
+        return species || breed || ''; // Only one is present or both are null
+      };
+      
 if(isPatientLoading)return (<Loading/>)
 
     // console.log(patients)
@@ -42,7 +52,7 @@ if(isPatientLoading)return (<Loading/>)
                         {clients[patient.clientId] || <Loading2 />}
                     </div>
                     <div className='w-1/6 flex  items-center  px-6  text-base font-medium'>
-                        {patient.species} & {patient.breed}
+                    {formatSpeciesAndBreed(patient.species, patient.breed)}
                     </div>
                     <div className='w-1/6 flex  items-center  px-6  text-base font-medium'>
                         {patient.age}

@@ -3,6 +3,7 @@ import DownArrow from '../../../../../assets/icons/finance/downArrow.svg';
 import subicon from "../../../../../assets/icons/finance/1. Icons-26.svg"
 import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
 import Subtract from "../../../../../assets/icons/finance/Subtract.svg"
+import ClientPopup from '@/components/database/client/newclientpopoup';
 import Add from "../../../../../assets/icons/finance/add (2).svg"
 import addicon from "../../../../../assets/icons/finance/add.svg"
 import add1icon from "../../../../../assets/icons/finance/add1.svg"
@@ -368,6 +369,11 @@ const customStyles = {
     }),
     menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
   };
+  const [showPopup, setShowPopup] = React.useState(false);
+
+const togglePopup = () => {
+    setShowPopup(!showPopup);
+}
 
 
     return (
@@ -384,9 +390,15 @@ const customStyles = {
                         {/* <Popover placement="bottom-end" showArrow offset={10}>
                             <PopoverTrigger> */}
                                 <Button
-                                    variant="solid"
-                                    className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer">
-                                    <div className='flex pr-2'><Image src={addicon} alt='addicon' className='w-6 h-6 ' /></div>New Client</Button>
+                        onClick={togglePopup}
+                        variant="solid"
+                        className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer">
+                        <div className='flex pr-2'>
+                            <Image src={addicon} alt='addicon' className='w-6 h-6 ' />
+                        </div>
+                        New Client
+                    </Button>
+                    {showPopup && <ClientPopup onClose={togglePopup} />}
                             {/* </PopoverTrigger>
                             <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
                                 <div className="flex flex-col ">

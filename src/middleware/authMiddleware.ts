@@ -8,7 +8,7 @@ export const nonApiMiddleware: NextMiddleware = async (request: NextRequest) => 
     const session = request.cookies.get("session")?.value;
     
     
-    // console.log("session: ", session);
+    // //console.log("session: ", session);
     if (!session) {
       // return new Response(JSON.stringify({ "message": 'Not Authorized' }), { status: 401 });
       return NextResponse.redirect(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/auth/login`);

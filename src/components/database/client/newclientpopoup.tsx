@@ -13,7 +13,7 @@ import PatientPopup from '../patient/newpatientpopup'
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 import { useAppSelector } from '@/lib/hooks';
 import { Bounce, ToastContainer, toast } from 'react-toastify';
-
+import capitalizeFirst from "@/utils/capitiliseFirst";
 type PopupProps = {
     onClose: () => void;
 }
@@ -34,12 +34,11 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
     const [showPopup, setShowPopup] = React.useState(false);
     const appState = useAppSelector((state) => state.app)
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
-    const [isSaveDisabled, setIsSaveDisabled] = useState(true)
+    const [isSaveDisabled, setIsSaveDisabled] = useState(true);
     const togglePopup = () => {
         setShowPopup(!showPopup);
     }
 
-  
 
     const handleSaveClick = async () => {
         // console.log("Save button");
@@ -83,7 +82,8 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
             const isFormValid =
                 updatedFormData.clientName !== '' &&
                 updatedFormData.contact &&
-                updatedFormData.contact.length === 10;
+                updatedFormData.contact.length === 10&&
+                /^[0-9]+$/.test(updatedFormData.contact);
     
             setIsSaveDisabled(!isFormValid);
     
@@ -91,8 +91,28 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
         });
 
         // Optional: Handle errors for specific fields
-        if (field === 'contact' && value.length > 10) {
-            setErrors((prevErrors) => ({ ...prevErrors, contact: 'Phone number must be exactly 10 digits' }));
+        if (field === 'contact' ) {
+            if (value.length > 10) {
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    contact: 'Phone number must be exactly 10 digits',
+                }));
+            } else if (!/^[0-9]+$/.test(value)) {
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    contact: 'Phone number must contain only digits',
+                }));
+            } else if (value.length === 10) {
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    contact: '',
+                }));
+            }
+        } else if (field === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                email: 'This is an invalid email',
+            }));
         } else {
             setErrors((prevErrors) => ({ ...prevErrors, [field]: '' }));
         }
@@ -106,11 +126,14 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
     ];
 
     const City = [
+            {value:'Bangalore', label:'Bangalore'},
             { value: 'Delhi', label: 'Delhi' },
+            { value: 'Noida', label: 'Noida' },
+            {value:'Gurgaon', label:'Gurgaon'},
+            {value:'Faridabad', label:'Faridabad'},
             { value: 'Mumbai', label: 'Mumbai' },
             {value:'Chennai', label:'Chennai'},
-            {value:'Bangalore', label:'Bangalore'},
-            {value:'Gurgaon', label:'Gurgaon'}
+            
     ]
 
     return <>
@@ -127,7 +150,11 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                 <div className="flex items-center">
                     <div className="text-gray-500 text-base font-medium  w-[8rem]">Client Name<span className="text-[red]">*</span></div>
                     <div>
-                        <input className="w-[447px] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="clientName" onChange={(e) => handleChange("clientName", e.target.value)} required/>
+                        <input className="w-[447px] h-9 text-textGrey2 text-base  font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="clientName" onChange={(e) => {
+                            const value = e.target.value;
+                            e.target.value = value.charAt(0).toUpperCase() + value.slice(1);
+        handleChange("clientName", e.target.value);
+                        }} required/>
                         {errors.clientName && (
                             <div className="text-[red] error">{errors.clientName}</div>
                         )}
@@ -138,9 +165,9 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                     <div className="text-gray-500 text-base font-medium ">Email</div>
                     <div>
                         <input className="w-[448px] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="email" onChange={(e) => handleChange("email", e.target.value)} />
-                        {/* {validationErrors.email && (
-                            <div className="text-[red] error">{validationErrors.email}</div>
-                        )} */}
+                        {errors.email && (
+                            <div className="text-red-500 text-sm mt-1">{errors.email}</div>
+                        )}
                         </div>
                     
                 </div>
@@ -160,7 +187,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                     <div className="flex w-10/12">
                   
                     <div className="flex-1 ml-1">
-                        <input className="w-full h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" placeholder="Enter address or Google Maps link" type="text" name="address" onChange={(e) => handleChange("address", e.target.value)} />
+                        <input className="w-full h-9 text-textGrey2 text-base font-medium   focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" placeholder="  Enter address or Google Maps link" type="text" name="address" onChange={(e) => handleChange("address", e.target.value)} />
                         
                     </div>
                     {/* <div className=" ml-1  w-9 h-9 ">
@@ -186,6 +213,17 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                             isMulti={false}
                             name="city"
                             onChange={(value) => handleChange("city", value?.label)}
+                            styles={{
+                                control: (base, state) => ({
+                                    ...base,
+                                    borderColor: state.isFocused ? '#35BEB1' : '#D1D5DB', 
+                                    borderWidth: '0.2px',
+                                    '&:hover': {
+                                        borderColor: '#35BEB1',
+                                    },
+                                    boxShadow: state.isFocused ? '0 0 0 1px #35BEB1' : base.boxShadow, 
+                                }),
+                            }}
                         />
          
               
@@ -231,7 +269,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                     </button>)} */}
                     <div
                       className={`h-11 px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer ${
-                          isSaveDisabled ? 'bg-gray-500 cursor-not-allowed' : 'bg-zinc-900'
+                          isSaveDisabled ? 'bg-[#17181A] cursor-not-allowed' : 'bg-zinc-900'
                       }`}
                       onClick={isSaveDisabled ? undefined : handleSaveClick}
                   >

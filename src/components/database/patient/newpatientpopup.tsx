@@ -16,6 +16,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useAppSelector } from "@/lib/hooks";
 import { useRouter } from "next/navigation";
 import {z,ZodError} from "zod"
+import Creatable from "react-select/creatable";
 
 type PopupProps = {
     onClose: () => void;
@@ -26,11 +27,78 @@ type PopupProps = {
 const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
     const [formData, setFormData] = useState<any>({});
     const [clients, setClients] = useState<{ value: string; label: string }[]>([]);
-    const [startDate, setStartDate] = useState(new Date());
-    const [selectedGender, setSelectedGender] = useState('');
+    //const [startDate, setStartDate] = useState(new Date());
+    const [selectedGender, setSelectedGender] = useState('unspecified');
     const appState = useAppSelector((state) => state.app)
     const [isSaveDisabled, setIsSaveDisabled] = useState(true);
     const [errors, setErrors] =  useState<{ patientName?: string; clientName?: string }>({});
+    const [startDate, setStartDate] = useState<Date | null>(null);
+    const [age, setAge] = useState<{ years: number; months: number; days: number }>({ years: 0, months: 0, days: 0 });
+    const [selectedSpecies, setSelectedSpecies] = useState<any>(null);
+    const [filteredBreeds, setFilteredBreeds] = useState<any[]>([]);
+
+    const calculateAge = (dob: Date) => {
+        const today = new Date();
+        let years = today.getFullYear() - dob.getFullYear();
+        let months = today.getMonth() - dob.getMonth();
+        let days = today.getDate() - dob.getDate();
+        if (days < 0) {
+            months -= 1;
+            days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+        }
+        if (months < 0) {
+            years -= 1;
+            months += 12;
+        }
+        return { years, months, days };
+    };
+    
+    const calculateDateOfBirth = (value: number, field: string) => {
+        const today = new Date();
+        let years = age.years;
+        let months = age.months;
+        let days = age.days;
+
+        if (field === "years") years = value;
+        if (field === "months") months = value;
+        if (field === "days") days = value;
+    
+        const newDate = new Date(today.getFullYear() - years, today.getMonth() - months, today.getDate() - days);
+        return newDate;
+    };
+    const handleDateChange = (date: Date) => {
+        setStartDate(date);
+        const calculatedAge = calculateAge(date);
+        setAge(calculatedAge);
+        handleChange("years", calculatedAge.years);
+        handleChange("months", calculatedAge.months);
+        handleChange("days", calculatedAge.days);
+    };
+    
+    const handleAgeChange = (field: string, value: number) => {
+        setAge((prevAge) => ({ ...prevAge, [field]: value }));
+        
+        const newDateOfBirth = calculateDateOfBirth(value, field);
+        setStartDate(newDateOfBirth);
+        handleChange("dateOfBirth", newDateOfBirth);
+    };
+    
+    const formatAgeString = (age: { years: number; months: number; days: number }) => {
+        const { years, months, days } = age;
+        let ageString = '';
+        if (years > 0) ageString += `${years} years`;
+        if (months > 0) {
+            if (ageString.length > 0) ageString += ', ';
+            ageString += `${months} months`;
+        }
+        if (days > 0) {
+            if (ageString.length > 0) ageString += ', ';
+            ageString += `${days} days`;
+        }
+    
+        return ageString;
+    };
+    
 
     
 
@@ -61,10 +129,12 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 body: JSON.stringify({
                     patientName: formData.patientName,
                     clientId: clientData===undefined?formData.clientName.value:null,
-                    species: formData.species,
-                    breed: formData.breed ? formData.breed[0].value : undefined,
-                    dateOfBirth: formData.dateOfBirth,
-                    age: calculateAge(formData.years, formData.months, formData.days),
+                    // species: formData.species,
+                    // breed: formData.breed ? formData.breed[0].value : undefined,
+                    species: formData.species ? formData.species.value : undefined, 
+                    breed: formData.breed ? formData.breed.value : undefined, 
+                    dateOfBirth: formData.dateOfBirth, 
+                    age: formatAgeString(age),
                     gender: selectedGender,
                     inPatient: formData.inPatient,
                     clientData:clientData?clientData:null
@@ -88,9 +158,6 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
         setFormData((prevFormData: any) => {
         const updatedFormData = { ...prevFormData, [field]: value };
 
-        // Validate fields to enable or disable the Save button
-        // const isFormValid =updatedFormData.patientName !== '' && updatedFormData.clientId !== '' ;
-        // setIsSaveDisabled(!isFormValid);
         const isPatientNameValid = updatedFormData.patientName !== '';
         const isClientNameValid = updatedFormData.clientName !== undefined;
 
@@ -106,31 +173,13 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
         });
     };
 
-    const calculateAge = (years: number, months: number, days: number): string => {
-        const currentDate = new Date();
-        const birthDate = new Date(currentDate.getFullYear() - years, currentDate.getMonth() - months, currentDate.getDate() - days);
-        const ageDate = new Date(currentDate.getTime() - birthDate.getTime());
-        const ageYears = Math.abs(ageDate.getUTCFullYear() - 1970);
-        const ageMonths = ageDate.getUTCMonth();
-        const ageDays = ageDate.getUTCDate() - 1; 
-        return `${ageYears} years, ${ageMonths} months, ${ageDays} days`;
-    };
-
-    const handleSelectChange = (value: MultiValue<{ value: string; label: string }>) => {
-        // Flatten the Breed array to get all options in a single array
-        const allOptions = Breed.flatMap(group => group.options);
-    
-        // Extract the labels from the selected values
-        const selectedLabels = Array.isArray(value)
-            ? value.map(val => {
-                const selectedOption = allOptions.find(option => option.value === val.value);
-                return selectedOption ? selectedOption.label : null;
-            })
-            : [];
-    
-        // console.log("Selected Labels: ", selectedLabels);
-        return selectedLabels;
-    };
+    const Species = [
+        {value:'Dog', label:'Dog'},
+        { value: 'Cat', label: 'Cat' },
+        { value: 'Turtle', label: 'Turtle' },
+        {value:'Horse', label:'Horse'},
+        {value:'Cow', label:'Cow'},
+    ]
 
     const Breed = [
         {
@@ -152,6 +201,47 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
           },
     ];
 
+    // const handleSpeciesChange = (selectedOption: any) => {
+    //     setSelectedSpecies(selectedOption);
+    //     const filtered = Breed.find(breed => breed.label === selectedOption?.value)?.options || [];
+    //     setFilteredBreeds(filtered);
+    // };
+
+    // const handleBreedChange = (selectedOption: any) => {
+    //     console.log('Selected breed:', selectedOption);
+    // };
+    // Handles changes when a species is selected
+const handleSpeciesChange = (selectedOption: any) => {
+    // Update the selected species in the state (for displaying the selected option)
+    setSelectedSpecies(selectedOption);
+    
+    // Find the corresponding breed options for the selected species
+    const filtered = Breed.find(breed => breed.label === selectedOption?.value)?.options || [];
+    
+    // Update the list of breed options based on the selected species
+    setFilteredBreeds(filtered);
+
+    // Update the formData to store the selected species (used for submission)
+    setFormData((prevData: any) => ({
+        ...prevData,
+        species: selectedOption // Store the full selected option object
+    }));
+};
+
+// Handles changes when a breed is selected
+const handleBreedChange = (selectedOption: any) => {
+    // Log the selected breed for debugging
+    console.log('Selected breed:', selectedOption);
+    
+    // Update the formData to store the selected breed (used for submission)
+    setFormData((prevData: any) => ({
+        ...prevData,
+        breed: selectedOption // Store the full selected option object
+    }));
+};
+
+
+
     const handleGenderChange = (gender: any) => {
         setSelectedGender(gender);
     };  
@@ -169,9 +259,14 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 <div className="flex items-center gap-[48px] ">
                     <div className="w-[8rem] text-gray-500 text-base font-medium ">Patient Name<span className="text-[red]">*</span></div>
                     <div>
-                        <input className="w-[25rem] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" 
+                        <input className="w-[25rem] h-9  text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" 
                         type="text" name="patientName" 
-                        onChange={(e) => handleChange("patientName", e.target.value)} />
+                        onChange={(e) =>{
+                            const value = e.target.value;
+                        e.target.value = value.charAt(0).toUpperCase() + value.slice(1);
+    handleChange("patientName", e.target.value);
+                        }} 
+                        />
                         {errors.patientName && (
                             <div className="text-[red] error">{errors.patientName}</div>
                         )}
@@ -190,6 +285,17 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                             name="clientName"
                             options={clients}
                             onChange={(selectedClient: any) => handleChange("clientName", selectedClient)}
+                            styles={{
+                                control: (base, state) => ({
+                                    ...base,
+                                    borderColor: state.isFocused ? '#35BEB1' : '#D1D5DB', 
+                                    borderWidth: '0.2px',
+                                    '&:hover': {
+                                        borderColor: '#35BEB1',
+                                    },
+                                    boxShadow: state.isFocused ? '0 0 0 1px #35BEB1' : base.boxShadow, 
+                                }),
+                            }}
                             />
                         ):(
                           clientData.name
@@ -200,23 +306,57 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 <div className="flex items-center gap-[120px]">
                     <div className="text-gray-500 text-base font-medium ">Species</div>
                     <div>
-                        <input className="w-[25rem] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" 
-                        type="text" name="species" onChange={(e) => handleChange("species", e.target.value)} />
+                        {/* <input className="w-[25rem] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" 
+                        type="text" name="species" onChange={(e) => handleChange("species", e.target.value)} /> */}
+                        <div>
+                            <Creatable
+                                className="text-textGrey2 text-base font-medium w-[25rem] "
+                                placeholder=""
+                                isClearable={false}
+                                isSearchable={true}
+                                options={Species}
+                                isMulti={false}
+                                name="species"
+                                onChange={handleSpeciesChange}
+                                styles={{
+                                    control: (base, state) => ({
+                                        ...base,
+                                        borderColor: state.isFocused ? '#35BEB1' : '#D1D5DB', 
+                                        borderWidth: '0.2px',
+                                        '&:hover': {
+                                            borderColor: '#35BEB1',
+                                        },
+                                        boxShadow: state.isFocused ? '0 0 0 1px #35BEB1' : base.boxShadow, 
+                                    }),
+                                }}
+                            />
+                        </div>
                     </div>
                 </div>
                 <div className="flex items-center gap-[95px] w-full">
                     <div className="text-gray-500 text-base font-medium  w-2/12">Breed</div>
                     <div className="flex w-10/12 h-11">
 
-                        <Select
-                            className="text-textGrey2 text-base font-medium w-[25rem]"
+                        <Creatable
+                            className="text-textGrey2 text-base font-medium w-[25rem] "
                             placeholder=""
                             isClearable={false}
                             isSearchable={true}
-                            options={Breed}
+                            options={filteredBreeds}
                             isMulti={false}
                             name="breed"
-                            onChange={(value) => handleChange("breed", value?.options)}
+                            onChange={handleBreedChange}
+                            styles={{
+                                control: (base, state) => ({
+                                    ...base,
+                                    borderColor: state.isFocused ? '#35BEB1' : '#D1D5DB', 
+                                    borderWidth: '0.2px',
+                                    '&:hover': {
+                                        borderColor: '#35BEB1',
+                                    },
+                                    boxShadow: state.isFocused ? '0 0 0 1px #35BEB1' : base.boxShadow, 
+                                }),
+                            }}
                             
                         />
                     </div>
@@ -231,13 +371,14 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                                 dropdownMode="select"
                                 className="w-[25rem]"
                                 selected={startDate}
-                                onChange={(date:any) => setStartDate(date as Date)}
+                               // onChange={(date:any) => setStartDate(date as Date)}
+                               onChange={handleDateChange}
                                 calendarClassName="react-datepicker-custom"
                                 customInput={
                                     <div className="relative">
                                         <input
                                             className="w-[25rem] h-9 text-textGrey2 text-base font-medium px-2 rounded border border-solid border-borderGrey focus:border focus:border-textGreen outline-none"
-                                            value={startDate.toLocaleDateString()}
+                                            value={startDate ? startDate.toLocaleDateString() : ''}
                                             readOnly
                                         />
                                         <Image
@@ -258,12 +399,12 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                         <div className="flex justify-start items-center gap-1">
                             <div className="w-12 h-9 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
                                 <input
-                                    className="w-full h-full text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
-                                    type="text"
-                                    min="0"
+                                    className="w-full h-full text-textGrey2 text-base font-medium px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
+                                    type="number"
+                                    //min="0"
                                     name="years"
-                                    placeholder="0"
-                                    onChange={(e) => handleChange("years", parseInt(e.target.value))}
+                                    value={age.years === 0 ? '' : age.years} // Show empty string when 0
+                                    onChange={(e) => handleAgeChange('years', parseInt(e.target.value.replace(/^0+/, '')))} // Remove leading 0s
                                 />
                             </div>
                             <div className="text-gray-500 text-base font-medium ">Years</div>
@@ -271,25 +412,25 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                         <div className="flex justify-start items-center gap-1">
                             <div className="w-12 h-9 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
                                 <input
-                                    className="w-full h-full text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
-                                    type="text"
-                                    min="0"
+                                    className="w-full h-full text-textGrey2 text-base font-medium px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
+                                    type="number"
+                                    //min="0"
                                     name="months"
-                                    placeholder="0"
-                                    onChange={(e) => handleChange("months", parseInt(e.target.value))}
+                                    value={age.months === 0 ? '' : age.months}
+                                    onChange={(e) => handleAgeChange('months', parseInt(e.target.value.replace(/^0+/, '')))} // Remove leading 0s
                                 />
                             </div>
                             <div className="text-gray-500 text-base font-medium ">Months</div>
                         </div>
                         <div className="flex justify-start items-center gap-1">
                             <div className="w-12 h-9 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
-                                <input
-                                    className="w-full h-full text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
-                                    type="text"
+                               <input
+                                    className="w-full h-full text-textGrey2 text-base font-medium px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
+                                    type="number"
                                     min="0"
                                     name="days"
-                                    placeholder="0"
-                                    onChange={(e) => handleChange("days", parseInt(e.target.value))}
+                                    value={age.days === 0 ? '' : age.days}
+                                    onChange={(e) => handleAgeChange('days', parseInt(e.target.value.replace(/^0+/, '')))} // Remove leading 0s
                                 />
                             </div>
                             <div className="text-gray-500 text-base font-medium ">Days</div>
@@ -307,8 +448,8 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                                     ? 'bg-teal-400 text-white border-transparent'
                                     : 'bg-white text-textGrey2 border-borderGrey'
                                     } cursor-pointer flex justify-center items-center`}
-                                onClick={() => handleGenderChange(gender)}
-                            >
+                                    onClick={() => handleGenderChange(gender)} 
+                                    >
                                 <div className="text-base font-medium ">
                                     {gender.charAt(0).toUpperCase() + gender.slice(1)}
                                 </div>
@@ -320,7 +461,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                     <div className="grow shrink basis-0 self-stretch justify-start items-center gap-2 flex">
                          <input className="mt-1 accent-teal-500 text-4xl" type="checkbox" />
                         <div className=" text-teal-400 text-base font-medium ">Mark as inpatient</div>
-                    </div>
+                   </div>
                 </div>
 
                 <div className=" justify-end items-start gap-6 flex w-full">
@@ -331,7 +472,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                     </div>
                     <div
                         className={`h-11 px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer ${
-                            isSaveDisabled ? 'bg-gray-500 cursor-not-allowed' : 'bg-zinc-900'
+                            isSaveDisabled ? 'bg-[#17181A] cursor-not-allowed' : 'bg-zinc-900'
                         }`}
                         onClick={isSaveDisabled ? undefined : handleSaveClick}
                     >

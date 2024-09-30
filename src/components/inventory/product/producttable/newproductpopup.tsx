@@ -16,7 +16,7 @@ import Distributors from "@/app/database/distributor/page";
 import { z } from 'zod';
 import { ZodError } from 'zod'; 
 import { setValidationErrorsForForm } from '@/utils/setValidationErrorForForm';
-
+import capitalizeFirst from "@/utils/capitiliseFirst";
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 type PopupProps = {
@@ -220,7 +220,11 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                         <div className="flex items-center gap-[87px]">
                             <div className="text-gray-500 text-base font-medium">Name*</div>
                             <div>
-                                <input className="w-[440px] h-9 rounded-md text-gray-400 text-base font-medium p-2 outline-none border border-solid border-gray-300" type="text" name="name" onChange={(e) => handleChange("itemName", e.target.value)} />
+                                <input className="w-[440px] h-9 rounded-md  text-gray-400 text-base font-medium p-2 outline-none border border-solid border-gray-300" type="text" name="itemName" onChange={(e) => {
+                                     const value = e.target.value;
+                                     e.target.value = value.charAt(0).toUpperCase() + value.slice(1);
+                 handleChange("itemName", e.target.value);
+                                }} />
                                 {errors.itemName && (
                                     <div className="text-[red] error">{errors.itemName}</div>
                                 )}

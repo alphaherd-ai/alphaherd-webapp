@@ -6,9 +6,10 @@ import upload from "../../../assets/icons/loginsignup/upload.svg"
 import { Textarea } from "@nextui-org/react";
 import Select from 'react-select';
 import { CldUploadButton } from "next-cloudinary";
-
+import customStyles from '@/utils/customStyle';
 
 const OrgDetailsSetup = (props: any) => {
+
     const stateOptions = [
         { value: 'Andhra Pradesh', label: 'Andhra Pradesh' },
         { value: 'Arunachal Pradesh', label: 'Arunachal Pradesh' },
@@ -49,7 +50,7 @@ const OrgDetailsSetup = (props: any) => {
       const [resource, setResource] = useState<any>();
 
     return (
-        <div className="w-[1016px] h-[759px] p-10 rounded-[30px] border border-stone-300 backdrop-blur-[190.90px] justify-center items-center inline-flex">
+        <div className="w-[1016px] h-fit px-10 py-8 rounded-[30px] border border-stone-300  justify-center  inline-flex">
             <div className="grow shrink basis-0 self-stretch flex-col justify-start items-end gap-10 inline-flex">
                 <div className="flex-col justify-start items-start gap-6 flex">
                     <div className="w-[940px] justify-start items-start gap-6 inline-flex">
@@ -96,7 +97,7 @@ const OrgDetailsSetup = (props: any) => {
     </CldUploadButton>
 </div>
 
-                       
+
                         <div className="text-textGrey2 text-base font-medium ">Enter your organisation details</div>
                     </div>
                 </div>
@@ -105,7 +106,7 @@ const OrgDetailsSetup = (props: any) => {
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium ">Name*</div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-start gap-2 inline-flex">
-                                <input type="text" className="text-textGrey2 text-base font-medium  h-full w-full px-2 border border-solid border-borderGrey  rounded-[5px]" id="orgName" name="orgName"  value={props.data.orgName} onChange={props.handleChange} />
+                                <input type="text" className="text-textGrey2  text-base font-medium  h-full w-full px-2 border focus:outline-none border-solid border-borderGrey  focus:border focus:border-[#35BEB1] rounded-[5px]" id="orgName" name="orgName" value={props.data.orgName} onChange={props.handleChange} />
                             </div>
                         </div>
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
@@ -194,10 +195,10 @@ const OrgDetailsSetup = (props: any) => {
                     <div className="self-stretch justify-start items-start gap-10 inline-flex">
                         <div className="grow shrink basis-0  justify-start items-center gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium">Select State*</div>
-                            
+
                             <Select 
                             className="text-textGrey2 text-base font-medium  w-full border-0 boxShadow-0 p-0 grow shrink basis-0"
-                            classNamePrefix="select"
+                            styles={customStyles}
                             isClearable={false}
                             isMulti={false}
                             isSearchable={true}
@@ -207,8 +208,8 @@ const OrgDetailsSetup = (props: any) => {
                             value={stateOptions.find(option => option.value === props.data.state)}
                             />
 
-                               
-                                {/* <input
+
+                            {/* <input
                                     type="text"
                                     className="text-textGrey2 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
                                     id="state"
@@ -216,10 +217,10 @@ const OrgDetailsSetup = (props: any) => {
                                     onChange={props.handleChange}
                                     value={props.data.state}
                                 /> */}
-                                {props.validationErrors.state && (
-                                    <div className="text-[red] error">{props.validationErrors.state}</div>
-                                )}
-                            
+                            {props.validationErrors.state && (
+                                <div className="text-[red] error">{props.validationErrors.state}</div>
+                            )}
+
                         </div>
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium">Pincode*</div>
@@ -245,7 +246,7 @@ const OrgDetailsSetup = (props: any) => {
                         </div>
                     </div>
                 </div>
-                
+
             </div>
         </div>
     );
