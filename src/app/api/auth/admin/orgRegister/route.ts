@@ -12,7 +12,7 @@ export const POST = async (req: NextRequest) => {
     const url = new URL(req.url);
     const { orgDetails, adminUserDetails, branchName } = await req.json();
     const hashedPassword = await bcrypt.hash(adminUserDetails.password, 10);
-    console.log("here here");
+    // console.log("here here");
     let duplicateOrg = await prismaClient.organization.findUnique({
       where: {
         orgName: orgDetails.orgName
@@ -21,7 +21,7 @@ export const POST = async (req: NextRequest) => {
     });
 
     if (duplicateOrg != null) {
-      console.log(duplicateOrg)
+      // console.log(duplicateOrg)
       return new Response(JSON.stringify({ "message": "Organization name must be unique" }), {
         status: 400,
         headers: {
@@ -63,7 +63,7 @@ export const POST = async (req: NextRequest) => {
       }
     })
 
-    console.log(orgNewBranch)
+    // console.log(orgNewBranch)
 
     adminUserDetails.orgBranchId = orgNewBranch.id;
 
@@ -71,7 +71,7 @@ export const POST = async (req: NextRequest) => {
       data: adminUserDetails
     });
 
-    console.log(newOrg,newUser);
+    // console.log(newOrg,newUser);
 
     const orgBranchUserRole = await prismaClient.orgBranchUserRole.create({
       data: {
@@ -81,9 +81,9 @@ export const POST = async (req: NextRequest) => {
       }
   });
 
-  console.log(orgBranchUserRole)
+  // console.log(orgBranchUserRole)
 
-  console.log(orgBranchUserRole);
+  // console.log(orgBranchUserRole);
 
     await prismaClient.organization.update({
       where: {
@@ -105,7 +105,7 @@ export const POST = async (req: NextRequest) => {
       include: { adminUsers: true },
     });
 
-    console.log(dop?.adminUsers.length);
+    // console.log(dop?.adminUsers.length);
 
     return new Response(JSON.stringify({ "message" : "Organization & Admin user successfully created."}), {
       status: 201,
@@ -115,8 +115,8 @@ export const POST = async (req: NextRequest) => {
     });
 
   } catch (error : any) {
-    console.log(error);
-    console.log(typeof(error))
+    // console.log(error);
+    // console.log(typeof(error))
     return new Response(JSON.stringify({"message" : error.message}), {
       status: 500,
       headers: {

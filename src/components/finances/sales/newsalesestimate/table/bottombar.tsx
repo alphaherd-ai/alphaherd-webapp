@@ -32,7 +32,7 @@ const NewsaleEstimateBottomBar = () => {
             return;
         }
         const allData = {headerData, tableData, totalAmountData};
-        console.log(allData)
+        // console.log(allData)
         let totalQty=0;
         tableData.forEach(data => {
             totalQty+=(data.quantity)||0;
@@ -66,7 +66,7 @@ const NewsaleEstimateBottomBar = () => {
             }
             
         }
-        console.log(JSON.stringify(data))
+        // console.log(JSON.stringify(data))
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Estimate}?branchId=${appState.currentBranchId}`,data)
             if (!response.data) {
@@ -80,7 +80,7 @@ const NewsaleEstimateBottomBar = () => {
     };
     const downloadPdf = async () => {
         const allData = { headerData, tableData, totalAmountData };
-        console.log("this is all data", allData)
+        // console.log("this is all data", allData)
         let totalQty = 0;
         tableData.forEach(data => {
             totalQty += (data.quantity) || 0;
@@ -158,7 +158,7 @@ const NewsaleEstimateBottomBar = () => {
 
                 }),
             });
-            console.log('SMS sent successfully', response);
+            // console.log('SMS sent successfully', response);
         } catch (error) {
             console.error('Error while sending message', error);
         } 
@@ -187,7 +187,7 @@ const NewsaleEstimateBottomBar = () => {
     // };
     const sendWhatsapp = async () => {
         const allData = { headerData, tableData, totalAmountData };
-        console.log("this is all data", allData)
+        // console.log("this is all data", allData)
         const phoneNumber = allData.headerData.customer.value.contact;
         let totalQty = 0;
         tableData.forEach(data => {
@@ -223,7 +223,7 @@ const NewsaleEstimateBottomBar = () => {
         try {
             // Generate PDF and get the URL
             const pdfUrl =  await generatePdfForInvoiceAndUpload(data, appState, items);
-            console.log('PDF URL:', pdfUrl);
+            // console.log('PDF URL:', pdfUrl);
             const message = `Hello from the team. Here is your invoice: ${pdfUrl}`;
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/whatsapp`, {
                 method: 'POST',
@@ -237,7 +237,7 @@ const NewsaleEstimateBottomBar = () => {
             });
     
             if (response.ok) {
-                console.log('WhatsApp message sent successfully:', response);
+                // console.log('WhatsApp message sent successfully:', response);
             } else {
                 console.error('Failed to send WhatsApp message:', response.statusText);
             }
@@ -257,7 +257,7 @@ const NewsaleEstimateBottomBar = () => {
                     email:'hembramshristi07@gmail.com'
                 })
             });
-            console.log('Email sent successfully:', response);
+            // console.log('Email sent successfully:', response);
         } catch (error) {
             console.error('Error while saving data:', error);
         } 

@@ -10,7 +10,7 @@ import React, { useState, useEffect } from 'react';
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 const UserProfile = () => {
     const userState= useAppSelector((state)=>state.user)
-    console.log("this is user from appstate",userState)
+    // console.log("this is user from appstate",userState)
     const [editable, setEditable] = useState(false);
     const [value, setValue] = useState('Geet');
   

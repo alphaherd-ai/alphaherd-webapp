@@ -14,7 +14,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
     const {clientId,...body}: any = await req.json();
     const inventoryId = await fetchInventoryId(req);
     const financeId = await fetchFinanceId(req);
-    console.log(financeId);
+    // console.log(financeId);
     console.log("Here's the client id",clientId)
     const [sales, items,client] = await prismaClient.$transaction([
       prismaClient.sales.create({
@@ -42,7 +42,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
         }
       })
     ]);
- console.log("sales done",sales)
+//  console.log("sales done",sales)
     const finance = await prismaClient.financeTimeline.create({
       data: {
         type: params.type,

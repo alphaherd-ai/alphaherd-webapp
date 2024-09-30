@@ -104,7 +104,7 @@ const InvoiceReturnTable = () => {
               }));
               setItems(itemData);
 
-              console.log("These are the items",items)
+            //   console.log("These are the items",items)
               
             }
           }, [invoiceData]); 
@@ -183,7 +183,7 @@ const InvoiceReturnTable = () => {
         const updatedItems = [...items];
         updatedItems[index][field] = value;
         setItems(updatedItems);
-        console.log(items)
+        // console.log(items)
     }, [items]);
 
     

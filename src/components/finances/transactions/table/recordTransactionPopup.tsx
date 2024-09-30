@@ -118,7 +118,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
                 })
             });
             if (response.ok) {
-                console.log('Data saved Sucessfully')
+                // console.log('Data saved Sucessfully')
                 onClose();
                 window.dispatchEvent(new FocusEvent('focus'))
             } else {
@@ -162,13 +162,13 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
                 });
             }
            } catch (error) {
-                console.log("Error while put request",error)
+                // console.log("Error while put request",error)
            }finally {
             setSaving(false);
            }
     };
 
-    console.log(formData)
+    // console.log(formData)
 
     const handleChange = (field: string, value: any) => {
         setFormData({ ...formData, [field]: value });

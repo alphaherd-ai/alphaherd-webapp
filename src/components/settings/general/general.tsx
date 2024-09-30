@@ -32,6 +32,7 @@ const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
   
 const GeneralSettings = () => {
     
+
     
     const [showPopup, setShowPopup] = useState(false);
     const [showPopup1, setShowPopup1] = useState(false);
@@ -220,7 +221,7 @@ const GeneralSettings = () => {
                                     <div className="text-gray-500 text-base font-bold ">Payment methods</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your payment methods</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex" onClick={togglePopup1}>
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer" onClick={togglePopup1}>
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
                                     <div className="text-white text-base font-medium ">Add Payment Method</div>
                                 </div>

@@ -27,7 +27,7 @@ const DatabaseDistributorTable = () => {
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll?branchId=${appState.currentBranchId}`,fetcher,{ revalidateOnFocus : true});
     useEffect(() => {
         const handleWindowFocus = () => {
-          console.log('Window focused');
+          // console.log('Window focused');
         };
         window.addEventListener('focus', handleWindowFocus);
         return () => window.removeEventListener('focus', handleWindowFocus);

@@ -8,7 +8,7 @@ import Search from '../../../assets/icons/finance/Search.svg';
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import SettingsIcon from './icons/settingsIcon';
 import OrganisationIcon from './icons/organisationIcon';
 import lefticon from "../../../assets/icons/settings/left_icon.svg"
@@ -18,13 +18,14 @@ import lefticon from "../../../assets/icons/settings/left_icon.svg"
 const SettingsNavbar = () => {
 
     const currentRoute = usePathname();
+    const router= useRouter();
 
     return (
 
         <>
             <div className='flex h-12  w-full box-border justify-between rounded-tl-lg rounded-tr-lg'>
                 <div className='flex w-8/12 h-full '>
-                <div className="flex items-center justify-center w-11 h-11 bg-gray-100 rounded-[5px] border border-neutral-400">
+                <div className="flex items-center justify-center w-11 h-11 bg-gray-100 rounded-[5px] border border-neutral-400 cursor-pointer" onClick={()=>router.back()}>
                     <Image src={lefticon} alt="left" />
                 </div>
                     <Link className='no-underline ml-3' href='/settings/organisation/myorg'>

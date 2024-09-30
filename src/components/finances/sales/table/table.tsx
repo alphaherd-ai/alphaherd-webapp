@@ -74,7 +74,7 @@ const FinancesSalesTable = () => {
       if (startDate || endDate) {
         filteredData = filteredData.filter((item: any) => {
           const itemDate = new Date(item.date);
-          console.log(itemDate)
+          // console.log(itemDate)
           if (startDate && itemDate < startDate) return false;
           if (endDate && itemDate > endDate) return false;
           return true;
@@ -103,7 +103,7 @@ const FinancesSalesTable = () => {
     setEstimateCount(counts.estimateCount);
     setReturnCount(counts.returnCount);
   };
-  console.log(invoiceCount, estimateCount, returnCount)
+  // console.log(invoiceCount, estimateCount, returnCount)
 
 
 

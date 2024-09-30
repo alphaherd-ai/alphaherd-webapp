@@ -10,7 +10,7 @@ export default async function HomePage(){
   const user = session?.user;
 
 
-  console.log(user)
+  // console.log(user)
 
     return <><h1>fsadd</h1></>
 }

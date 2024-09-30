@@ -35,7 +35,7 @@ const handleChange = (field: string, value: any) => {
                 }),
             });
             if (response.ok) {
-                console.log('Data saved successfully');
+                // console.log('Data saved successfully');
                 onClose();
                 window.dispatchEvent(new FocusEvent('focus'));
             } else {

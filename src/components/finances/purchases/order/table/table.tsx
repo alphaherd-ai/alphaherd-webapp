@@ -171,7 +171,7 @@ const NewPurchasesTable = () => {
 
 const handleGstSelect = (selectedGst: any, index: number) => {
     const updatedItems = [...tableData];
-    console.log(selectedGst)
+    // console.log(selectedGst)
     updatedItems[index] = {
         ...updatedItems[index],
         gst: selectedGst.value
@@ -224,11 +224,11 @@ const handleAddItem= useCallback(() => {
         const updatedItems = [...items];
         updatedItems[index][field] = value;
         setItems(updatedItems);
-        console.log(items)
+        // console.log(items)
     }, [items]);
 
     const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
-        console.log(selectedProduct);
+        // console.log(selectedProduct);
         if (selectedProduct.value) {
           try {
             const data = products.find((product) => product.value.id === selectedProduct.value.id);
@@ -243,7 +243,7 @@ const handleAddItem= useCallback(() => {
             };
             setItems(updatedItems);
     
-           console.log("this is the item",items)
+        //    console.log("this is the item",items)
           } catch (error) {
             console.error("Error fetching product details from API:", error);
           }

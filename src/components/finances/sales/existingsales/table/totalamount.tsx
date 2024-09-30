@@ -61,7 +61,7 @@ const ExistingsalesTotalAmout = ({otherData, isLoading, loading}: any) => {
       }
     }, [count, showPopup]);
 
-    console.log("otherData", otherData)
+    // console.log("otherData", otherData)
 
     return (
         <>

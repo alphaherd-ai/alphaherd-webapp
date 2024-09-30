@@ -38,8 +38,8 @@ const FinacesOverviewTableItem = ({currentPageNumber,setCurrentPageNumber,setSta
 
       if (startDate || endDate) {
         filteredData = filteredData.filter((item: any) => {
-          const itemDate = new Date(item.sale?.date || item.purchases?.date || item.expenses?.date);
-          console.log(itemDate)
+          const itemDate = new Date(item.sale?.date||item.purchases?.date||item.expenses?.date);
+          // console.log(itemDate)
           if (startDate && itemDate < startDate) return false;
           if (endDate && itemDate > endDate) return false;
           return true;

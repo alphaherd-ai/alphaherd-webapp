@@ -119,7 +119,8 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
 
     const handleSaveClick = async () => {
         try {
-            console.log("Form data is valid", formData);
+           
+            // console.log("Form data is valid", formData);
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/patients/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
@@ -140,7 +141,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 }),
             });
             if (response.ok) {
-                console.log('Data saved successfully');
+                // console.log('Data saved successfully');
                 onClose();
                 window.dispatchEvent(new FocusEvent('focus'));
             } else {
@@ -151,7 +152,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
         }
     };
 
-    console.log(formData);
+    // console.log(formData);
 
     const handleChange = (field: string, value: any) => {
         setFormData((prevFormData: any) => {

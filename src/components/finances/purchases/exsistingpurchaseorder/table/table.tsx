@@ -54,7 +54,7 @@ const ExsistingPurchasesTable = () => {
             }
           }, [data,error,isLoading]); 
           
-    console.log(items)
+    // console.log(items)
 
 
     const [disableButton, setDisableButton] = useState(true);

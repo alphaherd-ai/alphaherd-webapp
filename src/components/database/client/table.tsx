@@ -33,7 +33,7 @@ const DatabaseClientTable = () => {
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`,fetcher, { revalidateOnFocus : true});
     useEffect(() => {
         const handleWindowFocus = () => {
-          console.log('Window focused');
+          // console.log('Window focused');
         };
         window.addEventListener('focus', handleWindowFocus);
         return () => window.removeEventListener('focus', handleWindowFocus);
@@ -45,7 +45,7 @@ const DatabaseClientTable = () => {
     },[data,error,isLoading]);
    
 
-    console.log(clients)
+    // console.log(clients)
 
   return (
   <div className='flex flex-col w-full box-border mb-6 mt-6 border border-solid border-borderGrey rounded-lg cursor-default'>

@@ -6,18 +6,19 @@ import prismaClient from "../../prisma";
 export async function checkIfOrgAdmin(request: NextRequest) {
     try {
         const token = request.cookies.get('session')?.value;
-        console.log("token", token)
+        // console.log("token", token)
         if (!token) {
-            return new Response(JSON.stringify({ "message": 'Not Authorized' }), { status: 401 });
+            // return new Response(JSON.stringify({ "message": 'Not Authorized' }), { status: 401 });
+            return NextResponse.redirect(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/auth/login`);
         }
         let tokenPayload = await decrypt(token!);
-        console.log(tokenPayload);
+        // console.log(tokenPayload);
         const url = request.nextUrl;
         const userId = tokenPayload.id;
-        console.log("this is the frontend url", url.href);
+        // console.log("this is the frontend url", url.href);
         const { searchParams } = new URL(url);
         const orgId = searchParams.get("orgId")!;
-        console.log("here in orgVerify", userId, orgId);
+        // console.log("here in orgVerify", userId, orgId);
         const requestHeaders = new Headers(request.headers);
         requestHeaders.set("userId", String(userId));
         const user = await prismaClient.user.findUnique({
@@ -27,7 +28,7 @@ export async function checkIfOrgAdmin(request: NextRequest) {
             }
         });
         const isAdmin = user?.adminOrganizations.find((org) => org.id === Number(orgId));
-        console.log(requestHeaders);
+        // console.log(requestHeaders);
 
         if(isAdmin){
             return NextResponse.next({
@@ -37,7 +38,8 @@ export async function checkIfOrgAdmin(request: NextRequest) {
             });
         }
         else{
-            return new Response(JSON.stringify({ "message": 'Not Authorized' }), { status: 401 });
+            // return new Response(JSON.stringify({ "message": 'Not Authorized' }), { status: 401 });
+            return NextResponse.redirect(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/auth/login`);
         }
     } catch (error) {
         console.error(error);

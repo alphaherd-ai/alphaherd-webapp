@@ -46,7 +46,7 @@ const [otherData, setOtherData] = useState({});
             
             const {items,...otherData}=data;
             setOtherData(otherData)
-            console.log(items)
+            // console.log(items)
           const shallowDataCopy = [...items]; 
           const itemData = shallowDataCopy.map((item: any) => ({
             id: item.productBatch.productId,
@@ -61,7 +61,7 @@ const [otherData, setOtherData] = useState({});
         }
       }, [data,error,isLoading]); 
       
-console.log(items)
+// console.log(items)
 
 
     const [disableButton, setDisableButton] = useState(true);

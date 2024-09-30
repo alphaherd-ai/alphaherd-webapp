@@ -103,7 +103,7 @@ const NewPurchaseReturnTable = () => {
               }));
               setItems(itemData);
 
-              console.log("These are the items",items)
+            //   console.log("These are the items",items)
               
             }
           }, [grnData]); 
@@ -182,7 +182,7 @@ const NewPurchaseReturnTable = () => {
         const updatedItems = [...items];
         updatedItems[index][field] = value;
         setItems(updatedItems);
-        console.log(items)
+        // console.log(items)
     }, [items]);
 
     

@@ -65,7 +65,7 @@ export const POST = async (req: NextRequest) => {
         return new Response('Method not allowed', { status: 405 });
     }
 
-    console.log("inside API")
+    // console.log("inside API")
 
     const { branchId, role, email} = await req.json();
 
@@ -73,7 +73,7 @@ export const POST = async (req: NextRequest) => {
 
     let userId = Number(requestHeaders.get("userId"));
 
-    console.log(userId);
+    // console.log(userId);
 
     let orgBranch = await prismaClient.orgBranch.findUnique({
         where: {
@@ -81,7 +81,7 @@ export const POST = async (req: NextRequest) => {
         }
     });
 
-    console.log(orgBranch);
+    // console.log(orgBranch);
 
     let adminUser = await prismaClient.user.findUnique({
         where: {
@@ -116,7 +116,7 @@ export const POST = async (req: NextRequest) => {
             }
         });
     
-        console.log(orgBranchUserRole)
+        // console.log(orgBranchUserRole)
     
         if(orgBranchUserRole){
             return new Response(JSON.stringify({ "message": "User is already part of the branch" }), {

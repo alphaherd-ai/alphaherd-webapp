@@ -5,7 +5,7 @@ import { BlobServiceClient } from "@azure/storage-blob";
 
 export async function generatePdfForInvoiceAndUpload(data: any, appState: any, items: any): Promise<string> {
   return new Promise((resolve, reject) => {
-    console.log(JSON.stringify(data));
+    // console.log(JSON.stringify(data));
     const doc = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
@@ -199,8 +199,8 @@ async function uploadToAzureBlob(pdfBlob: Blob, fileName: string): Promise<strin
     await blockBlobClient.uploadData(pdfBlob, {
       blobHTTPHeaders: { blobContentType: "application/pdf" }
     });
-    console.log(blockBlobClient.url)
-    console.log(`PDF uploaded to Azure Blob Storage as ${fileName}`);
+    // console.log(blockBlobClient.url)
+    // console.log(`PDF uploaded to Azure Blob Storage as ${fileName}`);
     const pdfUrl= blockBlobClient.url;
     return pdfUrl;
 

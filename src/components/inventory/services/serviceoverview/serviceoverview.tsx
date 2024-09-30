@@ -111,14 +111,14 @@ function useServicefetch (id: string | null,branchId:number|null) {
       },[fetchedService,error,isLoading]
     );
 
-    console.log("service", service);
+    // console.log("service", service);
 
     const [productDetails, setProductDetails] = useState<any>([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const productIds = service?.linkProducts.map((product:any) => (
-            console.log("product",product),
+            // console.log("product",product),
             product.value
         ));
         
@@ -142,7 +142,7 @@ function useServicefetch (id: string | null,branchId:number|null) {
         }
     }, [service?.linkProducts, appState.currentBranchId]);
 
-    console.log("productDetails", productDetails);
+    // console.log("productDetails", productDetails);
 
 
     return <>

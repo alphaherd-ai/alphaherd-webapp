@@ -95,7 +95,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
             },
              label: product.itemName,
          }));
-         console.log(formattedProducts)
+        //  console.log(formattedProducts)
          setProducts(formattedProducts);
      }
      if(!batchError&&!isBatchLoading&&fetchedBathces){
@@ -116,7 +116,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
             },
             label:product.batchNumber
         }));
-        console.log("lajsdlfjlkj",formattedProductBatches)
+        // console.log("lajsdlfjlkj",formattedProductBatches)
         setBatches(formattedProductBatches)
     }
     },[fetchedProducts,fetchedBathces,batchError,error,isBatchLoading,isLoading])
@@ -181,7 +181,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
     }, [inventory]);
 
     const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
-        console.log(selectedProduct)
+        // console.log(selectedProduct)
         if (selectedProduct.value) {
             try {
                 const data = products.find((product) => product.value.id === selectedProduct.value.id);
@@ -227,7 +227,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
         if (selectedProduct.value) {
             try {
                 const data = filteredBatches.find((batch)=>batch.value.id==selectedProduct.value.id);
-                console.log(data)
+                // console.log(data)
                 const updatedInventory = [...inventory];
                 updatedInventory[index] = {
                     ...updatedInventory[index],
@@ -264,7 +264,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
                 const { id, date, quantity, batchNumber, distributors,productId,maxRetailPrice, isApproved} = item;
                 const invoiceType="Manual";
                 let {expiry,costPrice,sellingPrice}=item;
-                console.log("here is the product",productId)
+                // console.log("here is the product",productId)
                 expiry = expiry || null;
                 costPrice = costPrice ||null;
                 sellingPrice = sellingPrice || null;
@@ -305,11 +305,11 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
                         },2000)
                        const [response,notif]= await Promise.all([responsePromise,notifPromise]);
                         
-                        console.log('Updated inventory item:', response.data);
+                        // console.log('Updated inventory item:', response.data);
                     }
                     else {
                         const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/create?branchId=${appState.currentBranchId}`,body);
-                        console.log("here's the response", response);
+                        // console.log("here's the response", response);
                         const notifData={
                             source:Notif_Source.Inventory_Update_Approval_Request,
                             orgId:appState.currentOrgId,
@@ -323,11 +323,11 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
                         }
                         const notif= await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`,notifData)
                       
-                        console.log('Updated inventory item:', response.data);
+                        // console.log('Updated inventory item:', response.data);
                     }
                    
                 }else if(selectedOption===Stock.StockIN){
-                    console.log("saving new batch")
+                    // console.log("saving new batch")
                     const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/create?branchId=${appState.currentBranchId}`,body);
                    setTimeout(()=>{
                     onClose();
@@ -340,7 +340,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
                         orgId:appState.currentOrgId
                     }
                     const notif= await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`,notifData)
-                    console.log('Created New Batch Item:', response.data);
+                    // console.log('Created New Batch Item:', response.data);
                 }
                 
             }
@@ -361,10 +361,10 @@ const Popup2: React.FC<PopupProps> = ({ onClose }:any) => {
                     value: distributor.id,
                     label: distributor.distributorName
                 }));
-                console.log(distributors);
+                // console.log(distributors);
                 setDistributor(distributors);
             }catch(error){
-                console.log("Error fetching distributors",error);
+                // console.log("Error fetching distributors",error);
             }
         }
           fetchDistributors();

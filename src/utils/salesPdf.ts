@@ -2,7 +2,7 @@ import jsPDF from "jspdf";
 import formatDateAndTime from "./formateDateTime";
 
 export function generatePdfForInvoice(data: any, appState: any, items: any) {
-  console.log(JSON.stringify(data))
+  // console.log(JSON.stringify(data))
   var doc = new jsPDF({
     orientation: 'portrait',
     unit: 'mm',

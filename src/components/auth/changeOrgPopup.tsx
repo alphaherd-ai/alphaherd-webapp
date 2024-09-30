@@ -14,6 +14,7 @@ import useSWR from "swr";
 import { isAdminOfOrg, isManagerOfBranch } from "@/utils/stateChecks";
 import { updateApp } from "@/lib/features/appSlice";
 import { UserState } from '@/lib/features/userSlice';
+import Loading from "@/app/loading1";
 
 // @ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json());
@@ -41,7 +42,7 @@ const OrgPopup = ({ onClose }: any) => {
     }, [data, error, isLoading]);
 
     const handleChangeOrg = (selectedItem:any) => {
-    console.log(selectedItem)
+    // console.log(selectedItem)
     const isCurrentOrgAdmin = isAdminOfOrg((selectedItem as any).orgBranch.orgId,userState as UserState);
     const isCurrentBranchManager = isManagerOfBranch(selectedItem.branchId,userState as UserState);
     dispatch(updateApp({
@@ -53,10 +54,12 @@ const OrgPopup = ({ onClose }: any) => {
       isCurrentOrgAdmin : isCurrentOrgAdmin
     }));
         setSelectedOrg(selectedItem);
+        onClose();
     };
 
     return <>
         <ToastContainer />
+        {isLoading && <Loading />}
         <div className="w-full h-full flex justify-center items-center top-0 left-0 fixed inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
             <div className="w-[640px] p-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400/opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 inline-flex">
                 <div className="self-stretch justify-start items-start gap-6 inline-flex">
@@ -68,7 +71,7 @@ const OrgPopup = ({ onClose }: any) => {
                     </div>
                 </div>
                 <div className="flex-col justify-start items-start gap-2 flex">
-                    <div className="text-gray-500 text-xl">Select From Below Organizations</div>
+                    <div className="text-gray-500 text-xl">Select From Below Organisations</div>
                     <div className="flex flex-col gap-2">
                         {org.map((userOrg: any) => (
                             <label key={userOrg.id} className="flex items-center gap-2">

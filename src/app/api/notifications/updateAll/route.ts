@@ -11,7 +11,7 @@ export const PUT=async(req: NextRequest,res:Response)=> {
     try {
       const url= req.nextUrl
       const token = req.cookies.get('session')?.value;
-      console.log("token", token)
+      // console.log("token", token)
       let tokenPayload = await decrypt(token!);
       const userId = tokenPayload.id;
       const { searchParams } = new URL(url);

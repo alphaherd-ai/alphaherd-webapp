@@ -58,7 +58,7 @@ const NewPurchaseReturnHeader = ({existingHeaderData}:any) => {
     useEffect(()=>{
         if(id){
             setHeaderData(existingHeaderData)
-            console.log("this is header data",headerData)
+            // console.log("this is header data",headerData)
         }
      else{
         setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo}))}

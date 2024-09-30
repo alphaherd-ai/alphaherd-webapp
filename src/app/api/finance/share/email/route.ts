@@ -5,7 +5,7 @@ export const POST = async (req: NextRequest)=>{
     if(req.method!=='POST'){
         return NextResponse.json({ message: "Invalid method" }, { status: 500 });
     }
-    console.log('sending email..')
+    // console.log('sending email..')
     const {email} = await req.json();
     const requestHeaders = new Headers(req.headers);
     const {SMTP_EMAIL,SMTP_PASSWORD} = process.env;

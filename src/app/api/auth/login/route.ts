@@ -14,7 +14,7 @@ export const POST = async (req: NextRequest) => {
   const { searchParams } = new URL(req.url!);
   const userInviteString = searchParams.get("userInviteString");
 
-  console.log(userInviteString)
+  // console.log(userInviteString)
 
   try {
     const { email, password } = await req.json();
@@ -45,8 +45,8 @@ export const POST = async (req: NextRequest) => {
       }
     })
 
-    //console.log(organization);
-
+    // console.log(organization);
+    
     if (!user) {
       return new Response(JSON.stringify({ "message": 'User not found' }), { status: 404 });
     }
@@ -56,7 +56,7 @@ export const POST = async (req: NextRequest) => {
     if (!validPassword) {
       return new Response(JSON.stringify({ "message": 'Invalid password' }), { status: 401 });
     }
-    const session = await encrypt({ id: user.id }, "10h");
+    const session = await encrypt({ id: user.id }, "36500d");
 
     // Save the session in a cookie
     cookies().set("session", session, {
@@ -78,7 +78,7 @@ export const POST = async (req: NextRequest) => {
         }
       });
 
-      console.log(orgBranchUserRole)
+      // console.log(orgBranchUserRole)
 
       if (!orgBranchUserRole) {
         console.log("creating the role!");
@@ -87,8 +87,8 @@ export const POST = async (req: NextRequest) => {
             id: branchId
           }
         });
-
-        console.log(user);
+  
+        // console.log(user);
         await prismaClient.orgBranchUserRole.create({
           data: {
             orgBranchId: Number(orgBranch?.id),

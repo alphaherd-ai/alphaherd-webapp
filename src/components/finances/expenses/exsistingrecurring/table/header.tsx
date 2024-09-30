@@ -15,7 +15,7 @@ const ExsistingRecurringHeader = ({otherData}:any) => {
     const [isSearchable, setIsSearchable] = useState(true);
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
-     console.log("This is other data",otherData)
+    //  console.log("This is other data",otherData)
     useEffect(() => {
         if (!disableButton && inputRef.current) {
             inputRef.current.focus();

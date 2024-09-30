@@ -26,7 +26,7 @@ const NewsalesReturnTotalAmout = () => {
     const { totalAmountData, setTotalAmountData } = useContext(DataContext);
     const { transactionsData, setTransactionsData } = useContext(DataContext);
 
-    console.log(transactionsData)
+    // console.log(transactionsData)
 
     // const totalPaidAmount = transactionsData?.map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 

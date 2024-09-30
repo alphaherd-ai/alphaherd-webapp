@@ -25,6 +25,7 @@ export async function decrypt(input: string): Promise<any> {
 export async function logout() {
   // Destroy the session
   cookies().set("session", "", { expires: new Date(0) });
+  return NextResponse.redirect(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/auth/login`);
 }
 
 export async function getSession() {
