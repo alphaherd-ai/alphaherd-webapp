@@ -157,10 +157,10 @@ const NewsalesTotalAmout = () => {
         setShowPopup(!showPopup);
     }
    
-    console.log("transactionsData hererererere",transactionsData)
-    console.log("transactionsData hererererere 2",transactionsData?.map(item => item.isAdvancePayment))
-    console.log("transactionsData hererererere 2",transactionsData?.map(item => item.mode))
-    console.log("transactionsData hererererere 2",transactionsData?.map(item => item.moneyChange))
+    // console.log("transactionsData hererererere",transactionsData)
+    // console.log("transactionsData hererererere 2",transactionsData?.map(item => item.isAdvancePayment))
+    // console.log("transactionsData hererererere 2",transactionsData?.map(item => item.mode))
+    // console.log("transactionsData hererererere 2",transactionsData?.map(item => item.moneyChange))
 
     const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 

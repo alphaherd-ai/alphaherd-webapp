@@ -55,7 +55,7 @@ const ExsistingNonRecurringTotalAmount = ({otherData, isLoading}:any) => {
       }
     }, [count, showPopup]);
 
-    console.log("otherData", otherData)
+    // console.log("otherData", otherData)
 
   return (
     <>

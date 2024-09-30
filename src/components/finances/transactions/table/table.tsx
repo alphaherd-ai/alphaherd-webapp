@@ -33,7 +33,7 @@ const FinancesTransactionsTable = () => {
   const currentUrl=useSearchParams();
         useEffect(() => {
           const handleWindowFocus = () => {
-            console.log('Window focused');
+            // console.log('Window focused');
           };
           window.addEventListener('focus', handleWindowFocus);
           return () => window.removeEventListener('focus', handleWindowFocus);

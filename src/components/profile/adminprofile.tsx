@@ -11,12 +11,41 @@ import { useRouter } from 'next/navigation';
 import { CldUploadButton } from 'next-cloudinary';
 import axios from 'axios';
 import { updateUser,UserState } from '@/lib/features/userSlice';
+import { Button } from '@nextui-org/react';
+import logoutIcon from "../../assets/icons/profile/logout.svg"
+
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 const AdminProfile = () => {
+
+  const [loading, setLoading] = useState(false);
+
+  const handleLogout = async () => {
+    setLoading(true);
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/logout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (res.ok) {
+        router.push(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/auth/login`);
+      } else {
+        console.error("Logout failed");
+      }
+    } catch (error) {
+      console.error("An error occurred while logging out", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
     const userState= useAppSelector((state)=>state.user)
     const appState=useAppSelector((state)=>state.app)
-    console.log("this is user from appstate",userState)
+    // console.log("this is user from appstate",userState)
     const [resource, setResource] = useState<any>();
     const currentRoute = usePathname();
   const dispatch = useAppDispatch();
@@ -24,7 +53,7 @@ const AdminProfile = () => {
     const [value, setValue] = useState<string>(String(userState.name));
    const handleUpdatePic =async(imageInfo:any)=>{
     const response=await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/${userState.id}`, JSON.stringify(imageInfo.secure_url));
-    console.log("hello this is response",response)
+    // console.log("hello this is response",response)
     if (response.data) {
         const updatedUserState = {
           ...userState,
@@ -32,7 +61,7 @@ const AdminProfile = () => {
         };
       
         dispatch(updateUser(updatedUserState as UserState));
-        console.log("admin profile updated", response.data);
+        // console.log("admin profile updated", response.data);
       }
    }
     const handleEditClick = () => {
@@ -57,6 +86,7 @@ const AdminProfile = () => {
         setActiveTab(tab);
     };
 
+
     console.log("userState",userState)
 
     return (
@@ -74,7 +104,7 @@ const AdminProfile = () => {
                     </div>
                 </div>
                 <div className="w-full min-h-[80vh] flex-col justify-start items-start gap-px flex pt-4">
-                    <div className="w-full h-[83px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border border-neutral-400 justify-start items-center gap-2 flex">
+                    <div className="w-full h-[83px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border border-neutral-400 justify-between items-center gap-2 flex">
                         <div className="text-gray-500 text-xl font-bold ">
                            
                         
@@ -82,13 +112,21 @@ const AdminProfile = () => {
                                     
                      
                         </div>
-                        {orgId[0]!=null?<div className="w-[57px] h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 inline-flex"><div className="text-teal-400 text-sm font-medium ">Admin</div></div>:""}
+                        {/* {orgId[0]!=null?<div className="w-[57px] h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 inline-flex"><div className="text-teal-400 text-sm font-medium ">Admin</div></div>:""} */}
+                        <Button  disabled={loading}
+                                        variant="solid"
+                                        className="capitalize flex border-none bg-black text-white rounded-lg cursor-pointer" onClick={handleLogout}>
+                                    <Image  src={logoutIcon} alt="logo" w-4 h-4 />
+                                     
+                                       {loading ? "Logging out..." : "Logout"}
+
+                                </Button>
                         
                     </div>
                     <div className="w-full min-h-[30rem]  p-4 bg-gray-100 border border-neutral-400 justify-start items-start gap-6 flex">
                         <div className="w-[245px] h-[270px] relative bg-white rounded-[10px] border border-stone-300 flex justify-end">
                             {userState.imageUrl?
-                            <Image className="relative rounded-[10px]  border border-neutral-400" src={String(userState.imageUrl)} alt="photo" width={245} height={270}/>:
+                            <Image className="relative rounded-[10px]  border border-neutral-400 object-cover" src={String(userState.imageUrl)} alt="photo" width={245} height={270}/>:
                             <Image className="relative rounded-[10px]  border border-neutral-400" src={profilepic} alt="photo" width={245} height={270}/>
                             }
                     <CldUploadButton
@@ -102,7 +140,7 @@ const AdminProfile = () => {
                         onSuccess={(result, { widget }) => {
                             //@ts-ignore
                             setResource(result?.info.secure_url); 
-                            console.log(result) 
+                            // console.log(result) 
                             handleUpdatePic(result.info)
                             widget.close();
                         }}

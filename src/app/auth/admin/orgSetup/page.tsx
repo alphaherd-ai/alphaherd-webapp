@@ -73,24 +73,24 @@ const OrgSetup = () => {
 
   const [validationErrors, setValidationErrors] = useState(data);
 
-  console.log(validationErrors);
+  // console.log(validationErrors);
 
   const [activeTab, setActiveTab] = useState(0);
  
 const handlePicChange=(imageUrl:any,source:string)=>{
   let name=source,value=imageUrl.secure_url;
-  console.log(name,value)
+  // console.log(name,value)
   try{
-    console.log(name,value)
+    // console.log(name,value)
     setData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
-    console.log("inside handle change 1");
+    // console.log("inside handle change 1");
     formSchema.parse({...data,[name]: value});
-    console.log("inside handle change 2");
+    // console.log("inside handle change 2");
     setValidationErrors((prevErrors) => {
-      console.log("here");
+      // console.log("here");
       let newErrors = prevErrors;
       newErrors[name as keyof typeof prevErrors] = '';
       return newErrors;
@@ -98,12 +98,12 @@ const handlePicChange=(imageUrl:any,source:string)=>{
   }
   catch(err : any){
     if (err instanceof z.ZodError) {
-      console.log(err.flatten());
+      // console.log(err.flatten());
       let fieldErrors = err.flatten().fieldErrors;
-      console.log(fieldErrors);
+      // console.log(fieldErrors);
       let fields: string[] = Object.keys(fieldErrors);
-      console.log(name);
-      console.log(fields);
+      // console.log(name);
+      // console.log(fields);
       if(fields.includes(name)){
         setValidationErrors((prevErrors) => {
           let newErrors = prevErrors;
@@ -113,7 +113,7 @@ const handlePicChange=(imageUrl:any,source:string)=>{
       }
       else{
         setValidationErrors((prevErrors) => {
-          console.log("here");
+          // console.log("here");
           let newErrors = prevErrors;
           newErrors[name as keyof typeof prevErrors] = '';
           return newErrors;
@@ -134,16 +134,16 @@ const handlePicChange=(imageUrl:any,source:string)=>{
     }
     
     try{
-      console.log(name,value)
+      // console.log(name,value)
       setData((prevData) => ({
         ...prevData,
         [name]: value,
       }));
-      console.log("inside handle change 1");
+      // console.log("inside handle change 1");
       formSchema.parse({...data,[name]: value});
-      console.log("inside handle change 2");
+      // console.log("inside handle change 2");
       setValidationErrors((prevErrors) => {
-        console.log("here");
+        // console.log("here");
         let newErrors = prevErrors;
         newErrors[name as keyof typeof prevErrors] = '';
         return newErrors;
@@ -151,12 +151,12 @@ const handlePicChange=(imageUrl:any,source:string)=>{
     }
     catch(err : any){
       if (err instanceof z.ZodError) {
-        console.log(err.flatten());
+        // console.log(err.flatten());
         let fieldErrors = err.flatten().fieldErrors;
-        console.log(fieldErrors);
+        // console.log(fieldErrors);
         let fields: string[] = Object.keys(fieldErrors);
-        console.log(name);
-        console.log(fields);
+        // console.log(name);
+        // console.log(fields);
         if(fields.includes(name)){
           setValidationErrors((prevErrors) => {
             let newErrors = prevErrors;
@@ -166,7 +166,7 @@ const handlePicChange=(imageUrl:any,source:string)=>{
         }
         else{
           setValidationErrors((prevErrors) => {
-            console.log("here");
+            // console.log("here");
             let newErrors = prevErrors;
             newErrors[name as keyof typeof prevErrors] = '';
             return newErrors;
@@ -180,7 +180,7 @@ const handlePicChange=(imageUrl:any,source:string)=>{
 
     e.preventDefault();
 
-    console.log("form button")
+    // console.log("form button")
 
     try {
 
@@ -215,7 +215,7 @@ const handlePicChange=(imageUrl:any,source:string)=>{
           })
         }
       )
-      console.log(res);
+      // console.log(res);
       let json = await res.json();
       if (res.ok) {
         toast.success(json.message, {
@@ -236,10 +236,10 @@ const handlePicChange=(imageUrl:any,source:string)=>{
       }
     }
     catch (err : any) {
-      console.log(err.message);
-      console.log(typeof(err))
+      // console.log(err.message);
+      // console.log(typeof(err))
       if (err instanceof z.ZodError) {
-        console.log(err.flatten());
+        // console.log(err.flatten());
         setValidationErrorsForForm(err,setValidationErrors,activeTab,stepFields);
       } else {
         console.error('Error:', err);
@@ -265,7 +265,7 @@ const handlePicChange=(imageUrl:any,source:string)=>{
     }
     catch(err : any){
       if (err instanceof z.ZodError) {
-        console.log(err.flatten());
+        // console.log(err.flatten());
         if(!setValidationErrorsForForm(err,setValidationErrors,activeTab,stepFields)){
           setActiveTab(prev => prev + 1);
         }

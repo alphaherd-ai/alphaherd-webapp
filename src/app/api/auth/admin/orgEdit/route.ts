@@ -26,8 +26,8 @@ export const PATCH = async (req: NextRequest) => {
     });
 
   } catch (error : any) {
-    console.log(error);
-    console.log(typeof(error))
+    // console.log(error);
+    // console.log(typeof(error))
     return new Response(JSON.stringify({"message" : error.message}), {
       status: 500,
       headers: {

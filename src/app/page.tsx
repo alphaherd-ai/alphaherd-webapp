@@ -14,7 +14,7 @@ export default function Home() {
   const user= useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
 
-  console.log("user", user)
+  // console.log("user", user)
 
   return (
     <>

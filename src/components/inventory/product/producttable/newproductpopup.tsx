@@ -102,10 +102,10 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                     value: distributor.id,
                     label: distributor.distributorName
                 }));
-                console.log(distributors);
+                // console.log(distributors);
                 setDistributor(distributors);
             }catch(error){
-                console.log("Error fetching distributors",error);
+                // console.log("Error fetching distributors",error);
             }
         }
           fetchDistributors();
@@ -119,7 +119,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     // Assuming you're using Zod for validation
 
     const handleSaveClick = async () => {
-        console.log("Submit button");
+        // console.log("Submit button");
         try {
            
             let selectedProviders = [formData.providers];
@@ -144,7 +144,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
             });
     
             if (response.ok) {
-                console.log('Data saved successfully');
+                // console.log('Data saved successfully');
                 onClose();
                 window.dispatchEvent(new FocusEvent('focus'));
             } else {
@@ -161,7 +161,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
 
     // };
     const handleChange = (field: string, value: any) => {
-        console.log("this is providers", value, field);
+        // console.log("this is providers", value, field);
     
         setFormData((prevFormData: any) => {
             const updatedFormData = { ...prevFormData, [field]: value };

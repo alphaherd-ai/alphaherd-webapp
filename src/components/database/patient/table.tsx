@@ -47,7 +47,7 @@ const DatabasePatientTable = () => {
     const {fetchedPatients,isPatientError,isPatientLoading}= usePatientFetch(appState.currentBranchId);
     useEffect(() => {
         const handleWindowFocus = () => {
-          console.log('Window focused');
+          // console.log('Window focused');
         };
         window.addEventListener('focus', handleWindowFocus);
         return () => window.removeEventListener('focus', handleWindowFocus);

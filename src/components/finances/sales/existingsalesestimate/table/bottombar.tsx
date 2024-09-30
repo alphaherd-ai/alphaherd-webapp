@@ -33,7 +33,7 @@ const ExistingsaleEstimateBottomBar = ({existingSalesData}: any) => {
 
                 }),
             });
-            console.log('SMS sent successfully:', response);
+            // console.log('SMS sent successfully:', response);
         } catch (error) {
             console.error('Error while sending message', error);
         } 
@@ -51,7 +51,7 @@ const ExistingsaleEstimateBottomBar = ({existingSalesData}: any) => {
 
                 }),
             });
-            console.log('Whatsapp Message sent successfully:', response);
+            // console.log('Whatsapp Message sent successfully:', response);
         } catch (error) {
             console.error('Error while sending message', error);
         } 
@@ -68,7 +68,7 @@ const ExistingsaleEstimateBottomBar = ({existingSalesData}: any) => {
                     email:'hembramshristi07@gmail.com'
                 })
             });
-            console.log('Email sent successfully:', response);
+            // console.log('Email sent successfully:', response);
         } catch (error) {
             console.error('Error while saving data:', error);
         } 

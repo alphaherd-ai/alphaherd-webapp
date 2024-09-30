@@ -54,7 +54,7 @@ const OrgAdminSetup = (props: any,{handleFileUpload}:any) => {
                 onSuccess={(result, { widget }) => {
                     //@ts-ignore
                     setResource(result?.info.secure_url); 
-                    console.log(result) // { public_id, secure_url, etc }
+                    // console.log(result) // { public_id, secure_url, etc }
                     props.handlePicChange(result.info,"adminPicUrl")
                     widget.close();
                 }}

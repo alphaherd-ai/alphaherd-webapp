@@ -27,7 +27,7 @@ export default function UserAccountSetupPage() {
 
     const handleChange = (event: any) => {
 
-        console.log(data, event.target.value);
+        // console.log(data, event.target.value);
 
         const { name, value } = event.target;
         setData({
@@ -38,7 +38,7 @@ export default function UserAccountSetupPage() {
 
     const formSubmit = async () => {
 
-        console.log("form button")
+        // console.log("form button")
 
         try {
 
@@ -57,7 +57,7 @@ export default function UserAccountSetupPage() {
                     })
                 }
             )
-            console.log(res);
+            // console.log(res);
             let json = await res.json();
             if (res.ok) {
                 toast.success(json.message, {

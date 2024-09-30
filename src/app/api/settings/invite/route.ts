@@ -10,14 +10,14 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
 
     let redirectURL = process.env.CUSTOMCONNSTR_NEXT_PUBLIC_API_BASE_PATH!;
 
-    console.log(req.method);
+    // console.log(req.method);
 
     try {
         if (req.method !== 'GET') {
             return new Response('Method not allowed', { status: 405 });
         }
 
-        console.log("Inside settings/invite");
+        // console.log("Inside settings/invite");
 
         const { searchParams } = new URL(req.url!);
         const userInviteString = searchParams.get("userInviteString");
@@ -26,11 +26,11 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
             return new NextResponse(JSON.stringify({ "message": "No Invite String Found" }), { status: 200 });
         }
 
-        console.log("User invite string found");
+        // console.log("User invite string found");
 
         const { branchId, role, email } = await decrypt(userInviteString);
 
-        console.log(branchId, role, email);
+        // console.log(branchId, role, email);
 
         const user = await prismaClient.user.findUnique({
             where: {
@@ -44,10 +44,10 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
             }
         });
 
-        console.log(user)
+        // console.log(user)
 
         if (!user) {
-            console.log("here")
+            // console.log("here")
             redirectURL+=`/auth/user/register?userInviteString=${userInviteString}`;
         }
         else{
@@ -62,8 +62,8 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
         }
     }
     catch (error : any) {
-        console.log(error);
-        console.log(typeof (error))
+        // console.log(error);
+        // console.log(typeof (error))
         return new Response(JSON.stringify({ "message": error.message }), {
             status: 500,
             headers: {
@@ -72,7 +72,7 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
         });
     }
     finally{
-        console.log(redirectURL);
+        // console.log(redirectURL);
         redirect(redirectURL)
     }
 }

@@ -44,7 +44,7 @@ const ServicesTimelineItem = () => {
         }
       }, [data]);
 
-      console.log(services)
+    //   console.log(services)
     
       if (error) return <div>Error fetching services: {error.message}</div>;
       if (isLoading) return (<Loading />);

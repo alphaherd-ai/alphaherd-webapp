@@ -35,7 +35,7 @@ const ExistingsaleEstimateTable = () => {
                 
                 const {items,...otherData}=data;
                 setOtherData(otherData)
-                console.log(items)
+                // console.log(items)
               const shallowDataCopy = [...items]; 
               const itemData = shallowDataCopy.map((item: any) => ({
                 id: item.productBatch.productId,
@@ -53,7 +53,7 @@ const ExistingsaleEstimateTable = () => {
             }
           }, [data,error,isLoading]); 
           
-    console.log(items)
+    // console.log(items)
 
 
 

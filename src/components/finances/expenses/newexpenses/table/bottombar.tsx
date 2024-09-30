@@ -26,7 +26,7 @@ const NewExpensesBottomBar = ({expenseData}:any) => {
     const appState = useAppSelector((state) => state.app);
     const handleSubmit = async () => {
         const allData = {headerData, tableData, totalAmountData,recurringData, transactionsData};
-        console.log("this is all data",allData)
+        // console.log("this is all data",allData)
         let totalQty=0;
         tableData.forEach(data => {
             totalQty+=1||0;
@@ -60,7 +60,7 @@ const NewExpensesBottomBar = ({expenseData}:any) => {
             }
             
         }
-        console.log("here is the data",JSON.stringify(data))
+        // console.log("here is the data",JSON.stringify(data))
         const notifData={
             source:Notif_Source.Expense_Invoice,
             totalCost:data.totalCost,

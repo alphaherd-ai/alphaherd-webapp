@@ -42,11 +42,11 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
   
 
     const handleSaveClick = async () => {
-        console.log("Save button");
+        // console.log("Save button");
         try {
             
         //   clientSchema.parse(formData);
-          console.log("Form data is valid:", formData);
+        //   console.log("Form data is valid:", formData);
           const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/create?branchId=${appState.currentBranchId}`, {
             method: "POST",
             headers: {
@@ -62,7 +62,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
             }),
           });
           if (response.ok) {
-                console.log('Data saved successfully');
+                // console.log('Data saved successfully');
                 onClose();
                 window.dispatchEvent(new FocusEvent('focus'));
             } else {
@@ -98,7 +98,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
         }
     };
 
-    console.log(formData)
+    // console.log(formData)
 
     const countryCode = [
         { value: 'IN', label: '+91' },

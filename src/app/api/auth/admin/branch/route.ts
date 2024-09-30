@@ -18,12 +18,12 @@ export const POST = async (req: NextRequest) => {
     }
   });
 
-  console.log(orgNewBranch);
+  // console.log(orgNewBranch);
 
   const requestHeaders = new Headers(req.headers)
 
   let userId = Number(requestHeaders.get("userId"));
-  console.log(userId);
+  // console.log(userId);
 
   const orgBranchUserRole = await prismaClient.orgBranchUserRole.create({
     data: {
@@ -33,7 +33,7 @@ export const POST = async (req: NextRequest) => {
     }
   });
 
-  console.log(orgBranchUserRole);
+  // console.log(orgBranchUserRole);
 
   return new Response(JSON.stringify({ "message" : "Organization branch successfully created."}), {
     status: 201,

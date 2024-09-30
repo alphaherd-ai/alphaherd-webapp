@@ -46,7 +46,7 @@ const OrgDetailsSetup = (props: any) => {
         { value: 'Lakshadweep', label: 'Lakshadweep' },
         { value: 'Puducherry', label: 'Puducherry' }
       ];
-      console.log("this is props",props.data.state)
+    //   console.log("this is props",props.data.state)
       const [resource, setResource] = useState<any>();
     const [focused, setFocused] = useState(false);
     const [focused1, setFocused1] = useState(false);
@@ -76,7 +76,7 @@ const OrgDetailsSetup = (props: any) => {
                             onSuccess={(result, { widget }) => {
                                 //@ts-ignore
                                 setResource(result?.info.secure_url);
-                                console.log(result); // { public_id, secure_url, etc }
+                                // console.log(result); // { public_id, secure_url, etc }
                                 props.handlePicChange(result.info, "orgImgUrl");
                                 widget.close();
                             }}

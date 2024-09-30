@@ -46,7 +46,7 @@ const AddPaymentPopup = ({onClose}:any) => {
 
             if (response.ok) {
                 const result = await response.json();
-                console.log('Payment methods saved:', result);
+                // console.log('Payment methods saved:', result);
                 onClose(); 
             } else {
                 console.error('Failed to save payment methods:', response.statusText);

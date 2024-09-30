@@ -163,7 +163,7 @@ const NewsalesTable = () => {
             },
              label: product.itemName,
          }));
-         console.log(formattedProducts)
+        //  console.log(formattedProducts)
          setProducts(formattedProducts);
      }
      if(!batchError&&!isBatchLoading&&fetchedBathces){
@@ -178,7 +178,7 @@ const NewsalesTable = () => {
             },
             label:product.batchNumber
         }));
-        console.log(formattedProductBatches)
+        // console.log(formattedProductBatches)
         setBatches(formattedProductBatches)
     }
     },[fetchedProducts,fetchedBathces])
@@ -190,7 +190,7 @@ const NewsalesTable = () => {
 
 const handleGstSelect = (selectedGst: any, index: number) => {
     const updatedItems = [...tableData];
-    console.log(selectedGst)
+    // console.log(selectedGst)
     updatedItems[index] = {
         ...updatedItems[index],
         gst: selectedGst.value
@@ -199,7 +199,7 @@ const handleGstSelect = (selectedGst: any, index: number) => {
 };
 const handleDiscountSelect= (selectedDiscount:any,index:number)=>{
     const updatedItems=[...tableData];
-    console.log(selectedDiscount);
+    // console.log(selectedDiscount);
     updatedItems[index]={
         ...updatedItems[index],
         discount:selectedDiscount.value,
@@ -209,7 +209,7 @@ const handleDiscountSelect= (selectedDiscount:any,index:number)=>{
 }
 const handleDiscountChange= (discount:number,index:number)=>{
     const updatedItems=[...tableData];
-    console.log((discount/(updatedItems[index]['sellingPrice']*updatedItems[index]['quantity'])).toFixed(10))
+    // console.log((discount/(updatedItems[index]['sellingPrice']*updatedItems[index]['quantity'])).toFixed(10))
     updatedItems[index]={
         ...updatedItems[index],
         discountAmount:discount,
@@ -295,7 +295,7 @@ const handleInputChange = useCallback((index: number, value: any,field: string) 
 
 
 const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
-    console.log(selectedProduct);
+    // console.log(selectedProduct);
     if (selectedProduct.value) {
       try {
         const data = products.find((product) => product.value.id === selectedProduct.value.id);
@@ -334,7 +334,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
             try {
                 
                 const data = filteredBatches.find((batch)=>batch.value.id==selectedProduct.value.id);
-                console.log(data)
+                // console.log(data)
                 const updatedItems = [...items];
                 updatedItems[index] = {
                     ...updatedItems[index],
@@ -345,7 +345,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                     sellingPrice:  data.value.sellingPrice,
                     productId:data.value.productId
                 };
-                console.log("these are updated",updatedItems)
+                // console.log("these are updated",updatedItems)
                 setItems(updatedItems);
                 setTableData(updatedItems);
                     // const updatedProducts = products.filter((product) => product.value !== selectedProduct.value);

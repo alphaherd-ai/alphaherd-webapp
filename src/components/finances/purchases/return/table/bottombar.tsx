@@ -25,7 +25,7 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
     const handleSubmit = async () => {
         setSaving(true);
         const allData = {headerData, tableData, totalAmountData};
-        console.log(allData)
+        // console.log(allData)
         let totalQty=0;
         tableData.forEach(data => {
             totalQty+=(data.quantity)||0;
@@ -55,7 +55,7 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
             }
             
         }
-        console.log(JSON.stringify(data))
+        // console.log(JSON.stringify(data))
         try {
             const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Return}?branchId=${appState.currentBranchId}`,data)
             setTimeout(()=>{

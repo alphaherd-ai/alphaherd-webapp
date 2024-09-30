@@ -45,13 +45,13 @@ const FinancesExpensesTableItem = ({ onCountsChange }: any) => {
 
       recurringExpenses.forEach((expense: any) => {
         const repeatInterval = getRepeatInterval(expense.recurringRepeatType);
-        console.log("THIs is repeat type ", repeatInterval)
+        // console.log("THIs is repeat type ", repeatInterval)
         const frequency = calculateFrequency(expense.recurringStartedOn, expense.recurringEndson, repeatInterval);
-        console.log("this is frequency",frequency)
+        // console.log("this is frequency",frequency)
         for (let i = 0; i <= frequency; i++) {
           const recurrenceDate = new Date(expense.recurringStartedOn);
           recurrenceDate.setDate(recurrenceDate.getDate() + i * repeatInterval);
-          console.log("this is recurrence date", recurrenceDate)
+          // console.log("this is recurrence date", recurrenceDate)
           
           if ((!startDate || recurrenceDate >= startDate) && (!endDate || recurrenceDate <= endDate)) {
             allExpenses.push({ ...expense, date: recurrenceDate });
@@ -134,7 +134,7 @@ const getRepeatInterval = (repeatType: string) => {
 }
 
 const calculateFrequency = (startDate: Date, endDate: Date, interval: number) => {
-  console.log("this is start date", startDate,endDate)
+  // console.log("this is start date", startDate,endDate)
   endDate= new Date(endDate)
   startDate=new Date(startDate)
   if (!startDate || !endDate) return 0;
@@ -146,7 +146,7 @@ const calculateFrequency = (startDate: Date, endDate: Date, interval: number) =>
   else {
     diffTime = Math.abs(endDate.getTime() - startDate.getTime());
   }
-  console.log("this is diff time",diffTime)
+  // console.log("this is diff time",diffTime)
   return Math.floor(diffTime / (interval * 24 * 60 * 60 * 1000));
 }
 

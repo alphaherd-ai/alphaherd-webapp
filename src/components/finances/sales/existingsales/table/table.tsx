@@ -37,7 +37,7 @@ const ExistingsalesTable = () => {
                 
                 const {items,...otherData}=data;
                 setOtherData(otherData)
-                console.log(items)
+                // console.log(items)
               const shallowDataCopy = [...items]; 
               const itemData = shallowDataCopy.map((item: any) => ({
                 id: item.productBatch.productId,
@@ -53,7 +53,7 @@ const ExistingsalesTable = () => {
             }
           }, [data,error,isLoading]); 
           
-    console.log(items)
+    // console.log(items)
     const batchOptions = [
         { value: 'one', label: 'one' },
         { value: 'two', label: 'two' },

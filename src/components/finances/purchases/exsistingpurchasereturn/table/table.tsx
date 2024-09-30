@@ -55,7 +55,7 @@ const ExsistingPurcaseReturnTable = () => {
         if (!isLoading && data && !error) {
             const {items,...otherData}=data;
             setOtherData(otherData)
-            console.log(items)
+            // console.log(items)
           const shallowDataCopy = [...items]; 
           const itemData = shallowDataCopy.map((item: any) => ({
             id: item.productBatchId,
@@ -75,7 +75,7 @@ const ExsistingPurcaseReturnTable = () => {
         }
       }, [data,error,isLoading]); 
       
-console.log(items)
+// console.log(items)
 
 
 const [disableButton, setDisableButton] = useState(true);

@@ -61,7 +61,7 @@ const NewsalesReturnHeader = ({existingHeaderData}:any) => {
     const url=useSearchParams();
     const id=url.get('id');
     const count=url.get('count');
-    console.log(existingHeaderData)
+    // console.log(existingHeaderData)
     const initialInvoiceNo=generateInvoiceNumber(Number(count));
     const { headerData, setHeaderData } = useContext(DataContext);
     const [startDate, setStartDate] = useState(new Date());
@@ -112,7 +112,7 @@ const NewsalesReturnHeader = ({existingHeaderData}:any) => {
                            clientId:client.id},
                     label:`${client.clientName}\u00A0\u00A0\u00A0\u00A0\u00A0${client.contact}`
                 }))
-                console.log(clients)
+                // console.log(clients)
                 setCustomers(clients);
     
             }

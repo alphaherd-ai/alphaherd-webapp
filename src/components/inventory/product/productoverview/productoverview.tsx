@@ -304,12 +304,13 @@ const ProductDetails = () => {
                         </div>
                     </div>
                     <div>
-                        <div className='flex justify-evenly w-full  items-center box-border bg-gray-100  h-12 py-4 border-b border-borderGrey text-textGrey2'>
+                        <div className='flex justify-evenly w-full  items-center box-border bg-gray-100  h-12  border-b border-borderGrey text-textGrey2'>
+                            <div className='flex text-textGrey2 text-base font-medium w-[1rem]'></div>
                             <div className='flex text-textGrey2 text-base font-medium w-[10rem]'>Quantity</div>
                             <div className='flex text-textGrey2 text-base font-medium w-[10rem]'>Distributor</div>
                             <div className='flex text-textGrey2 text-base font-medium w-[10rem]'>Batch Number</div>
                             <div className='flex text-textGrey2 text-base font-medium w-[8rem]'>Expiry Date</div>
-                            <div className='flex text-textGrey2 text-base font-medium w-[8rem]'>Code</div>
+                            <div className='flex text-textGrey2 text-base font-medium w-[8rem]'>HSN Code</div>
                             <div className='flex text-textGrey2 text-base font-medium w-[8rem]'>Cost per item</div>
                             <div className='flex text-textGrey2 text-base font-medium w-[8rem]'>MRP</div>
                             <div className='flex text-textGrey2 text-base font-medium w-[8rem]'>Selling Price</div>
@@ -319,61 +320,20 @@ const ProductDetails = () => {
                         </div>
                     
                         {product?.productBatches?.map((item:any)=>(
-                            <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                            <div className='w-1/12 px-6 flex items-center text-borderGrey text-base font-medium'>{item.quantity} Strips</div>
-                            <div className='w-1/12 px-6 flex items-center text-borderGrey text-base font-medium'>providers</div>
-                            <div className='w-1/12 px-6 flex items-center text-borderGrey text-base font-medium'>{item.batchNumber}</div>
-                            <div className='w-1/12 px-6 flex items-center text-borderGrey text-base font-medium'>{formatDateAndTime(item.expiry).formattedDate}</div>
-                            <div className='w-1/12 px-6 flex items-center text-borderGrey text-base font-medium'>{item.hsnCode}</div>
-                            <div className='w-1/12 px-6 flex items-center text-borderGrey text-base font-medium'>{item.costPrice}</div>
-                            <div className='w-1/12 px-6 flex items-center text-borderGrey text-base font-medium'>₹399</div>
-                            <div className='w-1/12 px-6 flex items-center text-borderGrey text-base font-medium'>{item.sellingPrice}</div>
-                            <div className='w-1/12 px-6 flex items-center text-borderGrey text-base font-medium'>{(item.quantity/item.maxStock)*100}%</div>
-                            <div className="w-2/12 px-6 flex items-center gap-2">
-                                <div className="w-[80px] flex items-center text-orange-500 text-sm font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center ">{item.location}</div>
-                                <div className="w-[80px] flex items-center text-orange-500 text-sm font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center ">Shelf A2</div>
-                            </div>
-                            <div className="w-1/12 px-6 flex items-center gap-2">
-                                <div className='w-6 h-6 p-1 bg-gray-100 rounded-[5px] justify-start items-center flex '>
+                        <div key={item.id} className='flex items-center justify-evenly w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
+                            <div className='flex text-textGrey2 text-base font-medium w-[1rem]'></div>
+                            <div className='w-[10rem] flex text-textGrey1 text-base font-medium'>{item.quantity} Strips</div>
+                            <div className='w-[10rem] flex text-textGrey1 text-base font-medium'>{product.providers}</div>
+                            <div className='w-[10rem] flex text-textGrey1 text-base font-medium'>{item.batchNumber}</div>
+                            <div className='w-[8rem] flex text-textGrey1 text-base font-medium'>{formatDateAndTime(item.expiry).formattedDate}</div>
+                            <div className='w-[8rem] flex text-textGrey1 text-base font-medium'>{product.hsnCode}</div>
+                            <div className='w-[8rem] flex text-textGrey1 text-base font-medium'>{item.costPrice}</div>
+                            <div className='w-[8rem] flex text-textGrey1 text-base font-medium'>{item.costPrice}</div>
+                            <div className='w-[8rem] flex text-textGrey1 text-base font-medium'>{item.sellingPrice}</div>
+                            <div className='w-[8rem] flex text-textGrey1 text-base font-medium'>{(product.totalQuantity/product.maxStock)*100}%</div>
+                            <div className='w-[6rem] flex text-textGrey1 text-base font-medium'>{item.location}</div>
+                            <div className='flex text-textGrey1 text-base font-medium w-[1rem]'></div>
 
-                                    <Popover placement="left" showArrow offset={10}>
-                                        <PopoverTrigger>
-                                            <Button
-                                                variant="solid"
-                                                className="capitalize flex border-none  text-gray rounded-lg ">
-                                                <div className='w-4 h-4 px-[11px] py-2.5 bg-white rounded-[5px] border border-solid border-borderGrey justify-center items-center gap-2 flex'>   <Image src={optionicon} alt="option"></Image></div></Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="p-5 text-gray-500 bg-white text-sm p-2 font-medium flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
-
-                                            <div className="flex flex-col ">
-
-                                                <div className='flex flex-col'>
-
-                                                    <Link className='no-underline flex item-center' href='/finance/overview'>
-                                                        <div className='text-gray-500 text-sm p-3 font-medium flex '>
-                                                            gtr</div>
-                                                    </Link>
-                                                    <Link className='no-underline flex item-center' href='/finance/overview'>
-                                                        <div className='text-gray-500 text-sm p-3 font-medium flex '>
-                                                            grtt</div>
-                                                    </Link>
-                                                    <Link className='no-underline flex item-center' href='/finance/overview'>
-                                                        <div className='text-gray-500 text-sm p-3 font-medium flex '>
-                                                            gtrt</div>
-                                                    </Link>
-
-                                                </div>
-                                            </div>
-
-
-                                        </PopoverContent>
-                                    </Popover>
-
-
-
-                                </div>
-                              
-                            </div>
                         </div>
 
                             ))}

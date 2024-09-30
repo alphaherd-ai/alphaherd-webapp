@@ -25,7 +25,7 @@ export const POST = async (req : NextRequest) => {
 
         data.email = email; // someone can khowingly send other email in payload
 
-        console.log(data);
+        // console.log(data);
 
         const hashedPassword = await bcrypt.hash(data.password, 10);
 
@@ -37,7 +37,7 @@ export const POST = async (req : NextRequest) => {
             data: data
         });
 
-        console.log(user);
+        // console.log(user);
 
         const orgBranchUserRole = await prismaClient.orgBranchUserRole.create({
             data: {
@@ -56,7 +56,7 @@ export const POST = async (req : NextRequest) => {
             }
         });
 
-        console.log(orgBranchUserRole);
+        // console.log(orgBranchUserRole);
         return new Response(JSON.stringify({ user }), {
             status: 200,
             headers: {

@@ -53,7 +53,7 @@ const Popup = ({ onClose }:any) => {
                 });
                 let json = await resp.json();
                 if(!resp.ok){
-                    console.log(json);
+                    // console.log(json);
                     throw new Error(json.message);
                 }
                 toast.success(json.message, {

@@ -18,7 +18,7 @@ export const POST = async (req: NextRequest) => {
     const { phone }: PhoneNumber = await req.json();
 
     // Log the phone number to ensure it is in the correct format
-    console.log("Sending SMS to:", phone);
+    // console.log("Sending SMS to:", phone);
 
     const params: AWS.SNS.PublishInput = {
       Message: "This is a dummy SMS - AWS",
@@ -35,9 +35,9 @@ export const POST = async (req: NextRequest) => {
       },
     };
 
-    console.log(params)
+    // console.log(params)
     const result = await sns.publish(params).promise();
-    console.log("SMS publish result:", result);
+    // console.log("SMS publish result:", result);
 
     return NextResponse.json({ message: "success", result }, { status: 200 });
   } catch (error) {

@@ -8,7 +8,7 @@ type UploadResponse =
 
 export const uploadToCloudinary = (
   fileUri: string, fileName: string): Promise<UploadResponse> => {
-    console.log(fileUri,fileName)
+    // console.log(fileUri,fileName)
   return new Promise((resolve, reject) => {
     cloudinary.uploader
       .upload(fileUri, {
