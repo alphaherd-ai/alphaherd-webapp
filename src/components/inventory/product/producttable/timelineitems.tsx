@@ -64,7 +64,16 @@ const ProductAllItem = () => {
 if(isLoading) return (<Loading />) 
   return (
     <div>
-      {currentProducts?.map(product => (
+      {currentProducts
+       ?.sort((a, b) => {
+        const nameA = a?.itemName?.toLowerCase() || ''; 
+        const nameB = b?.itemName?.toLowerCase() || '';
+        
+        if (nameA < nameB) return -1;
+        if (nameA > nameB) return 1; 
+        return 0; 
+      })
+      .map(product => (
         <div
           key={product.id}
           className='flex  w-full  box-border h-16 justify-evenly items-center bg-white   border-0 border-b border-solid border-borderGrey  hover:bg-gray-200 text-textGrey1  hover:text-textGrey2  transition'

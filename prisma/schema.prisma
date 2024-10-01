@@ -159,15 +159,20 @@ model Permissions {
 }
 
 model InventorySection {
-  id           Int                 @id @default(autoincrement())
-  name         String
-  quantity     Int?
-  branch       OrgBranch           @relation(fields: [branchId], references: [id])
-  branchId     Int                 @unique
-  products     Products[]
-  productBatch ProductBatch[]
-  service      Services[]
-  timeline     InventoryTimeline[]
+  id                    Int                 @id @default(autoincrement())
+  name                  String
+  quantity              Int?
+  branch                OrgBranch           @relation(fields: [branchId], references: [id])
+  branchId              Int                 @unique
+  products              Products[]
+  productBatch          ProductBatch[]
+  service               Services[]
+  timeline              InventoryTimeline[]
+  itemCategory          ItemCategory[]
+  itemUnit              ItemUnit[]
+  serviceCategory       ServiceCategory[]
+  reason                Reason[]
+  taxType               TaxType[]
 
   @@index([branchId])
 }
@@ -198,7 +203,8 @@ model DatabaseSection {
   clients      Clients[]
   patients     Patients[]
   distributors Distributors[]
-
+  species      Species[]
+  breed        Breed[]
   @@index([branchId])
 }
 
@@ -446,8 +452,10 @@ model Items {
   taxPercent       Tax?
   taxAmount        Float?
   totalAmount      Float?
+  itemType         String?
+  serviceId        Int?
   reasons          String?
-  category         String?
+  category         String?  
   sellingPrice     Int?
   quantity         Int?
   lowQty           Int?
@@ -477,6 +485,7 @@ model InventoryTimeline {
   inventoryType      Inventory?        @default(None)
   stockChange        Stock?            @default(StockIN)
   invoiceType        String?
+  invoiceNo          String?
   quantityChange     Int?
   receiptNo          Int?
   party              String?
@@ -506,3 +515,54 @@ model FinanceTimeline {
   @@index([salesId, createdAt, expensesId, financeSectionId])
 }
 
+model ItemCategory{
+  id               Int       @id @default(autoincrement())
+  name             String[]
+  InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
+  inventorySectionId Int?
+}
+
+model ItemUnit{
+  id                      Int       @id @default(autoincrement())
+  name                    String[]
+  InventorySection        InventorySection? @relation(fields: [inventorySectionId], references: [id])
+  inventorySectionId      Int?
+}
+
+model ServiceCategory{
+  id                 Int       @id @default(autoincrement())
+  name               String[]
+  InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
+  inventorySectionId Int?
+}
+
+model Reason{
+  id                  Int       @id @default(autoincrement())
+  name                String[]
+  InventorySection    InventorySection? @relation(fields: [inventorySectionId], references: [id])
+  inventorySectionId  Int?
+}
+
+model Species {
+  id                   Int     @id @default(autoincrement())
+  name                 String  @unique
+  breed                Breed[] 
+  DatabaseSection      DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
+  databaseSectionId    Int?
+}
+
+model Breed {
+  id                    Int      @id @default(autoincrement())
+  name                  String
+  speciesId             Int      
+  species               Species  @relation(fields: [speciesId], references: [id])
+  DatabaseSection       DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
+  databaseSectionId     Int?
+}
+
+model TaxType{
+  id                       Int    @id @default(autoincrement())
+  name                     Float?
+  InventorySection         InventorySection? @relation(fields: [inventorySectionId], references: [id])
+  inventorySectionId       Int?
+}

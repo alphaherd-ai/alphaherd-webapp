@@ -37,6 +37,45 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
     const [selectedSpecies, setSelectedSpecies] = useState<any>(null);
     const [filteredBreeds, setFilteredBreeds] = useState<any[]>([]);
 
+    const customStyles = {
+        control: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          border: state.isFocused ? '1px solid #35BEB1' : 'none',
+          '&:hover': {
+            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            },
+          boxShadow: state.isFocused ? 'none' : 'none',
+        }),
+        valueContainer: (provided: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        singleValue: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+        }),
+        menu: (provided: any) => ({
+          ...provided,
+          backgroundColor: 'white',
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        option: (provided: any, state: any) => ({
+          ...provided,
+          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+          color: state.isFocused ? 'white' : '#6B7E7D',
+          '&:hover': {
+            backgroundColor: '#35BEB1',
+            color: 'white',
+          },
+        }),
+    };
+
     const calculateAge = (dob: Date) => {
         const today = new Date();
         let years = today.getFullYear() - dob.getFullYear();
@@ -128,8 +167,6 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 body: JSON.stringify({
                     patientName: formData.patientName,
                     clientId: clientData===undefined?formData.clientName.value:null,
-                    // species: formData.species,
-                    // breed: formData.breed ? formData.breed[0].value : undefined,
                     species: formData.species ? formData.species.value : undefined, 
                     breed: formData.breed ? formData.breed.value : undefined, 
                     dateOfBirth: formData.dateOfBirth, 
@@ -200,42 +237,23 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
           },
     ];
 
-    // const handleSpeciesChange = (selectedOption: any) => {
-    //     setSelectedSpecies(selectedOption);
-    //     const filtered = Breed.find(breed => breed.label === selectedOption?.value)?.options || [];
-    //     setFilteredBreeds(filtered);
-    // };
-
-    // const handleBreedChange = (selectedOption: any) => {
-    //     console.log('Selected breed:', selectedOption);
-    // };
-    // Handles changes when a species is selected
+    
 const handleSpeciesChange = (selectedOption: any) => {
-    // Update the selected species in the state (for displaying the selected option)
     setSelectedSpecies(selectedOption);
-    
-    // Find the corresponding breed options for the selected species
     const filtered = Breed.find(breed => breed.label === selectedOption?.value)?.options || [];
-    
-    // Update the list of breed options based on the selected species
     setFilteredBreeds(filtered);
-
-    // Update the formData to store the selected species (used for submission)
     setFormData((prevData: any) => ({
         ...prevData,
-        species: selectedOption // Store the full selected option object
+        species: selectedOption 
     }));
 };
 
 // Handles changes when a breed is selected
 const handleBreedChange = (selectedOption: any) => {
-    // Log the selected breed for debugging
     console.log('Selected breed:', selectedOption);
-    
-    // Update the formData to store the selected breed (used for submission)
     setFormData((prevData: any) => ({
         ...prevData,
-        breed: selectedOption // Store the full selected option object
+        breed: selectedOption 
     }));
 };
 
@@ -246,7 +264,7 @@ const handleBreedChange = (selectedOption: any) => {
     };  
 
     return <>
-        <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
+        <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50" onClick={onClose}>
             <div className="w-[640px]  px-8 py-4 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
                 <div className="self-end flex">
                     <button onClick={onClose} className="border-0 outline-none cursor-pointer">
@@ -280,20 +298,10 @@ const handleBreedChange = (selectedOption: any) => {
                             name="clientName"
                             options={clients}
                             onChange={(selectedClient: any) => handleChange("clientName", selectedClient)}
-                            styles={{
-                                control: (base, state) => ({
-                                    ...base,
-                                    borderColor: state.isFocused ? '#35BEB1' : '#D1D5DB', 
-                                    borderWidth: '0.2px',
-                                    '&:hover': {
-                                        borderColor: '#35BEB1',
-                                    },
-                                    boxShadow: state.isFocused ? '0 0 0 1px #35BEB1' : base.boxShadow, 
-                                }),
-                            }}
+                            styles={customStyles}
                             />
                         ):(
-                          clientData.name
+                          clientData.clientName
                         )}
                        
                     </div>
@@ -313,17 +321,7 @@ const handleBreedChange = (selectedOption: any) => {
                                 isMulti={false}
                                 name="species"
                                 onChange={handleSpeciesChange}
-                                styles={{
-                                    control: (base, state) => ({
-                                        ...base,
-                                        borderColor: state.isFocused ? '#35BEB1' : '#D1D5DB', 
-                                        borderWidth: '0.2px',
-                                        '&:hover': {
-                                            borderColor: '#35BEB1',
-                                        },
-                                        boxShadow: state.isFocused ? '0 0 0 1px #35BEB1' : base.boxShadow, 
-                                    }),
-                                }}
+                                styles={customStyles}
                             />
                         </div>
                     </div>
@@ -341,17 +339,7 @@ const handleBreedChange = (selectedOption: any) => {
                             isMulti={false}
                             name="breed"
                             onChange={handleBreedChange}
-                            styles={{
-                                control: (base, state) => ({
-                                    ...base,
-                                    borderColor: state.isFocused ? '#35BEB1' : '#D1D5DB', 
-                                    borderWidth: '0.2px',
-                                    '&:hover': {
-                                        borderColor: '#35BEB1',
-                                    },
-                                    boxShadow: state.isFocused ? '0 0 0 1px #35BEB1' : base.boxShadow, 
-                                }),
-                            }}
+                            styles={customStyles}
                             
                         />
                     </div>

@@ -118,11 +118,24 @@ const ProductAllItem = () => {
           </div>
           <div className='w-1/12 flex items-center px-6 text-neutral-400 text-base font-medium'>{inventory.quantityChange}</div>
           <div className='w-1/12 flex items-center px-6 text-neutral-400 text-base font-medium text-green-500'>
-            <span className='bg-green-100 px-1'>
+            {/* <span className='bg-green-100 px-1'>
               <Tooltip content="message" className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
                 <Button className='bg-transparent border-none'>{inventory.stockChange}</Button>
               </Tooltip>
-            </span>
+            </span> */} 
+            <span
+                className={`${
+                  inventory.stockChange === 'StockIn' ? 'bg-[#E7F5EE]' : 'bg-[#FFEAEA]'
+                } text-white px-1 rounded`}
+              >
+                <Tooltip className='bg-black text-white p-1 px-3 text-xs rounded-lg' style={{ pointerEvents: 'none' }}>
+                  <Button className='bg-transparent border-none' style={{
+                        color: inventory.stockChange === 'StockIn' ? '#0F9D58' : '#FF3030',
+                      }}>
+                    {inventory.stockChange === 'StockIn' ? 'In' : 'Out'}
+                  </Button>
+                </Tooltip>
+              </span>
           </div>
           <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium flex-col'>
             <div className='text-gray-500 text-xs'>{inventory.productBatch?.batchNumber}</div>
