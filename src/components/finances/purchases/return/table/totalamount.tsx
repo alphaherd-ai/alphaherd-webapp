@@ -29,20 +29,25 @@ const NewPurchaseReturnTotalAmount = () => {
     
 
     const [startDate,setDate]=useState(new Date());
-    const [shipping, setShipping] = useState(0);
-    const [adjustment, setAdjustment] = useState(0);
+    const [shipping, setShipping] = useState<string>('');
+    const [adjustment, setAdjustment] = useState<string>('');
     const [overAllDiscount,setDiscount]=useState(0); 
 
-    const handleShippingChange = (event:any) => {
-        const value = parseFloat(event.target.value) || 0; 
-        setShipping(value);
-        updateGrandTotal(); 
+    const handleShippingChange = (event: any) => {
+        //console.log(typeof event.target.value)
+        const value = event.target.value
+        if (/^\d*\.?\d*$/.test(value)) {
+            setShipping(value);
+            updateGrandTotal();
+        }
     };
 
-    const handleAdjustmentChange = (event:any) => {
-        const value = parseFloat(event.target.value) || 0; 
-        setAdjustment(value);
-        updateGrandTotal(); 
+    const handleAdjustmentChange = (event: any) => {
+        const value = event.target.value
+        if (/^\d*\.?\d*$/.test(value)) {
+            setAdjustment(value);
+            updateGrandTotal();
+        }
     };
     const [discountMethod,setDiscountMethod]=useState('amount');
     const handleSelectChange = (selectedOption: any) => {
@@ -75,15 +80,17 @@ const NewPurchaseReturnTotalAmount = () => {
     }
     const updateGrandTotal = () => {
         const discountedAmount = (totalAmount - totalAmount * overAllDiscount)||0;
-        const newGrandTotal = discountedAmount + shipping + adjustment;
+        const shippingValue = parseFloat(shipping) || 0;
+        const adjustmentValue = parseFloat(adjustment) || 0;
+        const newGrandTotal = discountedAmount + shippingValue + adjustmentValue;
         
         setGrandAmt(newGrandTotal);
         setTotalAmountData((prevData) => ({
             ...prevData,
             subTotal:totalAmount,
             totalCost: newGrandTotal, 
-            shipping:shipping,
-            adjustment:adjustment,
+            shipping:shippingValue,
+            adjustment:adjustmentValue,
             overAllDiscount:overAllDiscount
         }));
     };
@@ -236,7 +243,7 @@ const NewPurchaseReturnTotalAmount = () => {
                         <div className="flex items-center">
                             <div className="text-right text-textGrey1 text-base  "><input
                                             className="text-right text-textGrey1 text-base   border-none outline-none"
-                                            placeholder='₹______'
+                                            placeholder='0'
                                             value={shipping} 
                                             onChange={handleShippingChange} 
                                         /></div>
@@ -248,7 +255,7 @@ const NewPurchaseReturnTotalAmount = () => {
                         <div className="flex items-center">
                             <div className="text-right text-textGrey1 text-base  "><input
                                             className="text-right text-textGrey1 text-base   border-none outline-none"
-                                            placeholder='₹______'
+                                            placeholder='0'
                                             value={adjustment} 
                                             onChange={handleAdjustmentChange} 
                                         /></div>

@@ -8,7 +8,7 @@ import Link from 'next/link';
 
 
 
-const FinancesExpensesTableBottombar = () => {
+const FinancesExpensesTableBottombar = ({goOnPrevPage,goOnNextPage,startInd,endInd,totalLen}:{goOnPrevPage:()=>void,goOnNextPage:()=>void,startInd:number,endInd:number,totalLen:number}) => {
   return (
    
     <>
@@ -18,9 +18,9 @@ const FinancesExpensesTableBottombar = () => {
       <div className='flex h-full'>
 
         <div className='flex items-center   '>
-          <div className='flex  pl-2'><Link href="#"><Image src={LeftArrow} alt='LeftArrow' className='w-6 h-6 ' /></Link></div>
-          <div className='flex  pl-2'><Link href="#"><Image src={RightArrow} alt='RightArrow' className='w-6 h-6 ' /></Link></div>
-          <div className='text-sm   text-gray-500'>1 50 of 2189</div>
+        <div className='flex  pl-2'><Image src={LeftArrow} alt='LeftArrow' className='w-6 h-6 ' onClick={goOnPrevPage} /></div>
+            <div className='flex  pl-2'><Image src={RightArrow} alt='RightArrow' className='w-6 h-6 ' onClick={goOnNextPage}/></div>
+            <div className='text-sm   text-gray-500'>{startInd+1}-{endInd} of {totalLen}</div>
         </div>
       </div>
     </div >

@@ -10,7 +10,7 @@ export const getUserFromID=async(userId:number)=>{
                 id:userId
             }
         })
-        console.log(user)
+        //console.log(user)
         return user
     }catch(error){
         console.error("Error finding user: ",error);
@@ -28,7 +28,7 @@ export const getVerifyOrgandBranch= async(userId:number,branchId:number,request:
         const orgBranch= await prismaClient.orgBranch.findUnique({
             where:{id:branchId}
         });
-        console.log(orgBranch)
+        //console.log(orgBranch)
         const org=await prismaClient.organization.findUnique({
             where:{
                 id:orgBranch?.orgId
@@ -43,7 +43,7 @@ export const getVerifyOrgandBranch= async(userId:number,branchId:number,request:
                 orgBranchId: branchId
             }
         })
-        console.log(orgBranch,user,org,userOrgRole)
+        //console.log(orgBranch,user,org,userOrgRole)
         if(!(userOrgRole || org?.adminUsers.includes(user!))){
             return new Response(JSON.stringify("User not allowed for request"));
         }

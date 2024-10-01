@@ -13,7 +13,7 @@ import PatientPopup from '../patient/newpatientpopup'
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 import { useAppSelector } from '@/lib/hooks';
 import { Bounce, ToastContainer, toast } from 'react-toastify';
-
+import capitalizeFirst from "@/utils/capitiliseFirst";
 type PopupProps = {
     onClose: () => void;
 }
@@ -188,7 +188,11 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                 <div className="flex items-center">
                     <div className="text-gray-500 text-base font-medium  w-[8rem]">Client Name<span className="text-[red]">*</span></div>
                     <div>
-                        <input className="w-[447px] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="clientName" onChange={(e) => handleChange("clientName", e.target.value)} required/>
+                        <input className="w-[447px] h-9 text-textGrey2 text-base  font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="clientName" onChange={(e) => {
+                            const value = e.target.value;
+                            e.target.value = value.charAt(0).toUpperCase() + value.slice(1);
+        handleChange("clientName", e.target.value);
+                        }} required/>
                         {errors.clientName && (
                             <div className="text-[red] error">{errors.clientName}</div>
                         )}
