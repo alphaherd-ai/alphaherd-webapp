@@ -21,6 +21,7 @@ interface Patients {
   breed: string;
   age: number;
   gender: string;
+  date : string;
 }
 function useClientFetch (id: number | null) {
   const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${id}`,fetcher, { revalidateOnFocus : true});
@@ -71,9 +72,15 @@ const DatabasePatientTable = () => {
                 
             
     }, [fetchedClients,fetchedPatients,isClientError,isClientLoading,isPatientError,isPatientLoading]);
-    const [sortOrder, setSortOrder] = useState("asc"); // Default sort order
+    const [sortOrder, setSortOrder] = useState("asc"); 
     const [sortKey, setSortKey] = useState<keyof Patients | null>(null); // Sort key
-    const [distributors,setDistributor]=useState<Patients[]>([]);
+    const [patient,setPatient]=useState<Patients[]>([]);
+
+    useEffect(()=>{
+      if(!isLoading&&!error&&data){
+         setPatient(data);
+      }
+     },[data,error,isLoading]);
     const handleSortChange = (key: keyof Patients, order: 'asc' | 'desc') => {
       setSortKey(key);
       setSortOrder(order);
@@ -94,13 +101,13 @@ const DatabasePatientTable = () => {
       });
   
       
-      setDistributor(sortedData);
+      setPatient(sortedData);
       console.log(`Sorting by ${key} in ${order} order`, sortedData);
     }
 
   return (
     <div className='flex flex-col w-full box-border border border-solid border-borderGrey rounded-lg mt-6 mb-6'>
-            <DatabasePatientHeader patients={patients} clients={clients} />
+            <DatabasePatientHeader patients={patients} clients={clients} onSortChange={handleSortChange} />
             <div className='flex  w-full  box-border bg-gray-100  h-12 justify-evenly items-center border-0 border-b border-solid border-borderGrey text-textGrey2'>
             <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>Patient</div>
                 <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>Client</div>
@@ -110,7 +117,7 @@ const DatabasePatientTable = () => {
             
             </div>
             
-<DatabasePatientTableItem patients={patients} clients={clients} isPatientLoading={isPatientLoading}  />
+<DatabasePatientTableItem patients={patient} clients={clients} isPatientLoading={isPatientLoading}  />
 <DatabasePatientBottombar/>
      
         </div>

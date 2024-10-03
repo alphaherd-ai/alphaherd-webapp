@@ -71,6 +71,8 @@ const ProductAllItem = () => {
         });
       }
 
+      console.log("inventory data is",data);
+
    
       if (selectedParties.length > 0) {
         filteredData = filteredData.filter((item: any) =>

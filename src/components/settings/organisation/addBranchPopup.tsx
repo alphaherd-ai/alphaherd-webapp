@@ -10,13 +10,13 @@ import { useRouter } from 'next/navigation';
 const AddBranchPopup = ({ onClose }:any) => {
 
     const appState = useAppSelector((state) => state.app);
-    const router = useRouter();
+
     const [branchNameInput, setBranchNameInput] = useState<string>('');
 
     const handleInputChange = (event: any) => {
-        setBranchNameInput(event.target.value);
+        setBranchNameInput(event.target.value.charAt(0).toUpperCase() + event.target.value.slice(1));
     };
-
+    const router = useRouter();
     const handleAddBranch = async () => {
         try{
             if (branchNameInput.trim() !== '') {
@@ -61,11 +61,11 @@ const AddBranchPopup = ({ onClose }:any) => {
                 theme: "colored",
                 transition: Bounce,
               });
-        }
-        setTimeout(() => {
+        }setTimeout(() => {
             onClose();
-            router.push(`/auth/admin/branchSetup?branchName=${branchNameInput.trim()}`);
-        }, 4000);
+            console.log("router pushed");
+            router.push(`/auth/admin/orgEdit`);
+        }, 1000);
     };
 
     return <>
@@ -87,7 +87,7 @@ const AddBranchPopup = ({ onClose }:any) => {
                 <div className="self-stretch h-[147px] flex-col justify-start items-start gap-4 flex">
                     <div className="self-stretch justify-start items-center gap-2 inline-flex">
                         <div className="grow shrink basis-0 h-11 py-[13px] bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-4 flex">
-                            <input type="text" name="" id="" className="text-neutral-400 text-base  h-11 px-4 py-[13px] w-[100%] bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-4 flex" placeholder="Enter Branch" value={branchNameInput}
+                            <input type="text" name="" id="" className="text-neutral-400  text-base  h-11 px-4 py-[13px] w-[100%] bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-4 flex" placeholder="Enter Branch" value={branchNameInput}
                                 onChange={handleInputChange} />
                         </div>
                         <div className="w-[132px] self-stretch px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex" onClick={handleAddBranch}>
@@ -101,5 +101,4 @@ const AddBranchPopup = ({ onClose }:any) => {
 }
 
 export default AddBranchPopup;
-
 

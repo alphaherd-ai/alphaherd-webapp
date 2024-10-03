@@ -88,6 +88,15 @@ const AdminProfile = () => {
     console.log("this is user from appstate",userState)
     const [resource, setResource] = useState<any>();
     const currentRoute = usePathname();
+
+    //const [editable, setEditable] = useState(false);
+  //const [value, setValue] = useState<string>(String(userState.name));
+  const [phone, setPhone] = useState<string>(String(userState.phoneNo));
+  const [altPhone, setAltPhone] = useState<string>(String(userState.altPhoneNo));
+  const [email, setEmail] = useState<string>(String(userState.email));
+  const [address, setAddress] = useState<string>(String(userState.adminOrganizations.map((e: any) => e.address)[0]));
+  //const [activeRole, setActiveRole] = useState<string>(userState.userRoles[0]?.role || '');
+
   const dispatch = useAppDispatch();
     const [editable, setEditable] = useState(false);
     const [value, setValue] = useState<string>(String(userState.name));
@@ -104,12 +113,40 @@ const AdminProfile = () => {
         console.log("admin profile updated", response.data);
       }
    }
+   const handleUpdateProfile = async () => {
+    try {
+      const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/${userState.id}`, {
+        name: value,
+        phoneNo: phone,
+        altPhoneNo: altPhone,
+        email,
+        address,
+      });
+
+      if (response.data) {
+        const updatedUserState = {
+          ...userState,
+          name: value,
+          phoneNo: phone,
+          altPhoneNo: altPhone,
+          email,
+          address,
+        };
+
+        dispatch(updateUser(updatedUserState as UserState));
+        console.log("Profile updated successfully", response.data);
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
+  };
     const handleEditClick = () => {
-      setEditable(true);
+      setEditable(!editable);
     };
   
-    const handleSaveClick = () => {
-      setEditable(false);
+    const handleSaveClick = async () => {
+      setEditable(false); // Turn off editing mode
+      await handleUpdateProfile(); // Save updated profile
     };
   
     const handleChange = (e:any) => {
@@ -117,7 +154,7 @@ const AdminProfile = () => {
     };
     const roles = userState.userRoles.filter((e:any) => e.orgBranchId==appState.currentBranchId);
     const userRoles: UserRole[] = userState.userRoles || [];
-    const address= userState.adminOrganizations.map((e:any)=>e.address);
+   // const address= userState.adminOrganizations.map((e:any)=>e.address);
     const orgId=userState.adminOrganizations.map((e:any)=>e.id);
 
     console.log("address",address);
@@ -126,21 +163,7 @@ const AdminProfile = () => {
     console.log("Branch ID:", appState.currentBranchId);  // Log branch ID
     const [activeRole, setActiveRole] = useState<string>(userRoles[0]?.role || '');
    
-    // const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/getAll?branchId=${appState.currentBranchId}`)
-    // useEffect(()=>{
-    //     if (data && !error && !isLoading) {
-    //            console.log("user data is :",data)
-    //            console.log("user is :",data.user);
-    //         const usersWithRoles = data.map((user:any) => {
-    //             return {
-    //                 ...user,
-    //                 role:user.role
-    //             };
-    //         });
-    //         console.log("usersWithRoles data :",usersWithRoles);
-    //         //setBranchUsers(usersWithRoles);
-    //     }
-    // }, [data, error, isLoading]);
+
     console.log("User Email:", userState.email);  // Log email
     console.log("Branch ID:", appState.currentBranchId);  // Log branch ID
     const router=useRouter();
@@ -199,8 +222,20 @@ const AdminProfile = () => {
                         <div className="text-gray-500 text-[28px] font-bold ">
                             User Profile
                         </div>
+                        <div>
+            {!editable ? (
+              <button className="text-sm bg-teal-500 text-white px-4 py-2 rounded-md border-neutral-400 " onClick={handleEditClick} >
+                Edit Profile
+              </button>
+            ) : (
+              <button className="text-sm bg-teal-500 text-white px-4 py-2 rounded-md border-neutral-400" onClick={handleSaveClick}>
+                Save
+              </button>
+            )}
+          </div>
                     </div>
                 </div>
+                
                 <div className="w-full min-h-[80vh] flex-col justify-start items-start gap-px flex pt-4">
                     <div className="w-full h-[83px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border border-neutral-400 justify-start items-center gap-2 flex">
                         <div className="text-gray-500 text-xl font-bold ">
@@ -244,26 +279,13 @@ const AdminProfile = () => {
                                     <div className="flex gap-4 justify-between items-center">
                                         <div className="text-gray-500 text-base font-bold ">Name:</div>
                                         <div className="text-gray-500 text-base font-medium ">   <div>
-                                {editable ? (
-                                    <input
-                                    className='rounded-lg px-3 py-2 h-full box-border text-base border border-solid border-gray-400 w-full text-gray-400'
-                                        type="text"
-                                        value={value}
-                                        onChange={handleChange}
-                                        autoFocus
-                                        onBlur={handleSaveClick}
-                                    />
-                                ) : (
-                                    <div>{value}</div>
-                                )}
+                                     
+                <input className="w-[25rem] h-full border-0 p-1 text-gray-500 text-base font-medium " type="text" name="" id="" defaultValue={String(userState.name)} onChange={(e) => setValue(e.target.value)} disabled={!editable} />
                                
                             </div>
                             </div>
                                     </div>
-                                    <div >
-                                    {!editable && <button className='outline-none border-0' onClick={handleEditClick}>  <Image src={editicon} alt="edit" /></button>}
-                                      
-                                    </div>
+                                    
                                 </div>
                                 <div className="w-full px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                     <div className="text-gray-500 text-base font-bold ">Role:</div>
@@ -293,23 +315,27 @@ const AdminProfile = () => {
                             <div className="w-full justify-start items-start gap-4 flex ">
                                 <div className="w-full px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                     <div className="text-gray-500 text-base font-bold ">Phone No.:</div>
-                                    <input className="w-[25rem] h-full border-0 p-1 text-gray-500 text-base font-medium " type="number" name="" id="" defaultValue={String(userState.phoneNo)} />
+                                   
+                                    <input className="w-[25rem] h-full border-0 p-1 text-gray-500 text-base font-medium " type="number" name="" id="" defaultValue={String(userState.phoneNo)} onChange={(e) => setPhone(e.target.value)} disabled={!editable} />
                                 </div>
                                 <div className="w-full px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                     <div className="text-gray-500 text-base font-bold ">Alternate Phone No.</div>
-                                    <input className="w-[21rem] h-full border-0 p-1 text-gray-500 text-base font-medium" type="number" name="" id="" defaultValue={String(userState.altPhoneNo) } />
+                                    <input className="w-[25rem] h-full border-0 p-1 text-gray-500 text-base font-medium " type="number" name="" id="" defaultValue={String(userState.altPhoneNo)} onChange={(e) => setPhone(e.target.value)} disabled={!editable} />
+                                 
                                 </div>
                             </div>
                             <div className="w-full justify-start items-start gap-4 flex ">
                                 <div className="w-full px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                     <div className="text-gray-500 text-base font-bold ">Email:</div>
-                                    <input className="w-[60rem] h-8 border-0 p-1 ml-[2rem] text-gray-500 text-base font-medium" type="text" name="" id="" defaultValue={String(userState.email)} />
+                                    <input className="w-[25rem] h-full border-0 p-1 text-gray-500 text-base font-medium " type="text" name="" id="" defaultValue={String(userState.email)} onChange={(e) => setEmail(e.target.value)} disabled={!editable} />
+
                                 </div>
                             </div>
                             <div className="w-full justify-start items-start gap-4 flex ">
                                 <div className="w-full px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                     <div className="text-gray-500 text-base font-bold ">Address:</div>
-                                    <input className="w-[60rem] h-8 border-0 p-1 ml-[2rem] text-gray-500 text-base font-medium" type="text" name="" id="" defaultValue={String(address[0])} />
+                                    <input className="w-[60rem] h-full border-0 p-1 ml-[2rem] text-gray-500 text-base font-medium " type="text" name="" id="" defaultValue={String(userState.address)} onChange={(e) => setAddress(e.target.value)} disabled={!editable} />
+                                  
                                     {/* <div className="text-gray-500 text-base font-medium ">47/38, 14th Cross, Addagalapura, Bangalore </div> */}
                                 </div>
                             </div>

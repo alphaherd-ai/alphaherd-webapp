@@ -34,7 +34,7 @@ const DatabaseDistributorHeader = ({ distributors, onSortChange }: any) => {
 
     const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
    // const [selectedSort, setselectedSort] = React.useState(new Set(["Category: text"]));
-    const [selectedSort, setSelectedSort] = React.useState("name");
+    const [selectedSort, setSelectedSort] = React.useState("distributorName");
     const [sortOrder, setSortOrder] = React.useState("asc");
 
 
@@ -42,10 +42,10 @@ const DatabaseDistributorHeader = ({ distributors, onSortChange }: any) => {
         () => Array.from(selectedCategory).join(", ").replaceAll("_", " "),
         [selectedCategory]
     );
-    const selectedSortValue = React.useMemo(
-        () => Array.from(selectedSort).join(", ").replaceAll("_", " "),
-        [selectedSort]
-    );
+    // const selectedSortValue = React.useMemo(
+    //     () => Array.from(selectedSort).join(", ").replaceAll("_", " "),
+    //     [selectedSort]
+    // );
     const handleSortChange = (key: string) => {
         if (key === selectedSort) {
             setSortOrder(sortOrder === "asc" ? "desc" : "asc");
@@ -108,7 +108,7 @@ const DatabaseDistributorHeader = ({ distributors, onSortChange }: any) => {
                                 
                                 <DropdownItem
                                     className="p-2 text-base"
-                                    key="city"
+                                    key="date"
                                     onClick={() => handleSortChange("date")}
                                 >
                                     Date

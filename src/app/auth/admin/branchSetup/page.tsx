@@ -26,6 +26,7 @@ const formSchema = z.object({
 const OrgEdit = () => {
 
     const appState = useAppSelector((state) => state.app);
+    console.log("appstate is :",appState)
     const searchParams = useSearchParams();
     const router = useRouter();
 

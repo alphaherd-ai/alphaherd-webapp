@@ -41,7 +41,7 @@ const DatabasePatientHeader = ({ patients, clients, onSortChange }:any) => {
         [selectedCategory]
     );
     
-    const [selectedSort, setSelectedSort] = React.useState("name");
+    const [selectedSort, setSelectedSort] = React.useState("patientName");
     const [sortOrder, setSortOrder] = React.useState("asc");
     const handleSortChange = (key: string) => {
         if (key === selectedSort) {
@@ -97,7 +97,7 @@ const DatabasePatientHeader = ({ patients, clients, onSortChange }:any) => {
                             >
                                <DropdownItem
                                     className="p-2 text-base"
-                                    key="name"
+                                    key="patientName"
                                     onClick={() => handleSortChange("patientName")}
                                 >
                                      Name
@@ -105,14 +105,14 @@ const DatabasePatientHeader = ({ patients, clients, onSortChange }:any) => {
                                 
                                 <DropdownItem
                                     className="p-2 text-base"
-                                    key="city"
+                                    key="date"
                                     onClick={() => handleSortChange("date")}
                                 >
                                     Date
                                 </DropdownItem>
                                 <DropdownItem
                                     className="p-2 text-base"
-                                    key="city"
+                                    key="age"
                                     onClick={() => handleSortChange("age")}
                                 >
                                     Age
