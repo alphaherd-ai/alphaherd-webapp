@@ -36,7 +36,7 @@ function useProductfetch(id: string | null, branchId: number | null) {
 }
 
 function useProductbatches(id: string | null, branchId: number | null) {
-    const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/timeline/${id}?branchId=${branchId}`, fetcher, { revalidateOnFocus: true });
+    const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/timeline/product/${id}?branchId=${branchId}`, fetcher, { revalidateOnFocus: true });
     return {
         fetchedProductBatches: data,
     }
@@ -64,7 +64,7 @@ const ProductDetails = () => {
             setProduct(fetchedProduct);
         }
         if (!error && !isLoading && fetchedProductBatches) {
-           // console.log(fetchedProductBatches[0].productBatches);
+            console.log(fetchedProductBatches[0]);
             const timelines = fetchedProductBatches[0].productBatches.map((batch: { inventoryTimeline: any }) => batch.inventoryTimeline);
             const combinedTimeline = [].concat(...timelines);
             console.log(combinedTimeline);
@@ -287,39 +287,39 @@ const ProductDetails = () => {
 
                     </div>
                     <div className="w-full max-h-[400px] overflow-y-auto">
-                   
-                        {inventoryTimeline?.map((item: { id: React.Key | null | undefined; createdAt: string; quantityChange: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; stockChange: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; batchNumber: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; party: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; invoiceType: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined }) => (
+
+                        {inventoryTimeline?.map((item: any) => (
                             <div key={item.id} className="w-full border-b border-solid border-0 border-borderGrey flex items-start justify-between">
                                 <div className="w-full flex p-2">
-                                    <div className="w-full flex items-center">
-                                        <div className="text-borderGrey text-base font-medium w-1/12 mr-10">
+                                    <div className="w-full flex items-center justify-between">
+                                        <div className="text-borderGrey text-base font-medium w-fit mr-4">
                                             {formatDateAndTime(item.createdAt).formattedDate}
                                         </div>
                                         <div className=" text-borderGrey text-base font-medium w-[5rem]">
                                             {formatDateAndTime(item.createdAt).formattedTime}
                                         </div>
-                                        <div className="text-gray-500 text-base font-medium w-2/12 flex justify-center">
+                                        <div className="text-gray-500 text-base font-medium w-2/12 flex ">
                                             {item.quantityChange} Strips
                                         </div>
-                                        <div className="h-7 px-2 py-1.5    items-center gap-2 flex w-2/12 ">
-                                            {item.stockChange === "StockOUT" ? 
-                                            <div className="text-[#FF3030] bg-[#FFEAEA] rounded-[5px] px-4 text-sm font-medium "> 
-                                                 Out
-                                            </div> :
-                                                <div className="text-[#0F9D58] bg-[#E7F5EE] rounded-[5px] px-4  text-sm font-medium ">
+                                        <div className="h-7  py-1.5    items-center gap-2 flex w-1/12 ">
+                                            {item.stockChange === "StockOUT" ?
+                                                <div className="text-[#FF3030] bg-[#FFEAEA] rounded-[5px] px-1 text-sm font-medium ">
+                                                    Out
+                                                </div> :
+                                                <div className="text-[#0F9D58] bg-[#E7F5EE] rounded-[5px] px-1  text-sm font-medium ">
                                                     In
                                                 </div>
                                             }
 
                                         </div>
-                                        <div className="text-borderGrey text-base font-medium w-1/12 ml-10">
-                                            {item.batchNumber}
+                                        <div className="text-borderGrey text-base font-medium w-1/12 overflow-hidden text-ellipsis whitespace-nowrap">
+                                            {item.productBatch.batchNumber}
                                         </div>
-                                        <div className="text-borderGrey text-base font-medium w-1/12">
+                                        <div className="text-borderGrey text-base font-medium w-2/12 overflow-hidden text-ellipsis whitespace-nowrap">
                                             {item.party}
                                         </div>
-                                        <div className="text-teal-400 text-base font-medium  underline w-2/12">
-                                            {item.invoiceType}
+                                        <div className="text-teal-400 text-sm font-medium  w-2/12">
+                                            {item.invoiceNo ? item.invoiceNo : "Manual"}
                                         </div>
                                     </div>
                                 </div>

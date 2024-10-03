@@ -61,7 +61,13 @@ const NewExpensesTotalAmout = () => {
             updateGrandTotal();
         }
     };
-
+    useEffect(()=>{
+        if(totalAmountData.subTotal==0) {
+            setShipping('');
+            setAdjustment('');
+        }
+      },[totalAmountData])
+      
     const updateGrandTotal = () => {
         const discountedAmount = (totalAmount - totalAmount * selectedDiscount) || 0;
         const shippingValue = parseFloat(shipping) || 0;

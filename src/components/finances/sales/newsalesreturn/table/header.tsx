@@ -14,66 +14,66 @@ import { useAppSelector } from '@/lib/hooks';
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 import Loading2 from '@/app/loading2';
 //@ts-ignore
-const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
+const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
-const NewsalesReturnHeader = ({existingHeaderData}:any) => {
+const NewsalesReturnHeader = ({ existingHeaderData }: any) => {
 
     const customStyles = {
         control: (provided: any, state: any) => ({
-          ...provided,
-          width: '100%',
-          maxWidth: '100%',
-          border: state.isFocused ? '1px solid #35BEB1' : 'none',
-          '&:hover': {
-            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
+            border: state.isFocused ? '1px solid #35BEB1' : 'none',
+            '&:hover': {
+                borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4',
             },
-          boxShadow: state.isFocused ? 'none' : 'none',
+            boxShadow: state.isFocused ? 'none' : 'none',
         }),
         valueContainer: (provided: any) => ({
-          ...provided,
-          width: '100%',
-          maxWidth: '100%',
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
         }),
         singleValue: (provided: any, state: any) => ({
-          ...provided,
-          width: '100%',
-          maxWidth: '100%',
-          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
+            color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
         }),
         menu: (provided: any) => ({
-          ...provided,
-          backgroundColor: 'white',
-          width: '100%',
-          maxWidth: '100%',
+            ...provided,
+            backgroundColor: 'white',
+            width: '100%',
+            maxWidth: '100%',
         }),
         option: (provided: any, state: any) => ({
-          ...provided,
-          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
-          color: state.isFocused ? 'white' : '#6B7E7D',
-          '&:hover': {
-            backgroundColor: '#35BEB1',
-            color: 'white',
-          },
+            ...provided,
+            backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+            color: state.isFocused ? 'white' : '#6B7E7D',
+            '&:hover': {
+                backgroundColor: '#35BEB1',
+                color: 'white',
+            },
         }),
-      };
-      
+    };
 
-    const url=useSearchParams();
-    const id=url.get('id');
-    const count=url.get('count');
-    console.log(existingHeaderData)
-    const initialInvoiceNo=generateInvoiceNumber(Number(count));
+
+    const url = useSearchParams();
+    const id = url.get('id');
+    const count = url.get('count');
+    //console.log(existingHeaderData)
+    const initialInvoiceNo = generateInvoiceNumber(Number(count));
     const { headerData, setHeaderData } = useContext(DataContext);
     const [startDate, setStartDate] = useState(new Date());
     const [isClearable, setIsClearable] = useState(true);
     const [isSearchable, setIsSearchable] = useState(true);
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
-    const [customers,setCustomers]=useState<any[]>([]);
+    const [customers, setCustomers] = useState<any[]>([]);
     const appState = useAppSelector((state) => state.app)
-    const [invoiceOptions,setInvoiceOptions]=useState<any[]>([]);
+    const [invoiceOptions, setInvoiceOptions] = useState<any[]>([]);
     const [dueDate, setDueDate] = useState(new Date());
-    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
+    const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
     useEffect(() => {
         if (!disableButton && inputRef.current) {
             inputRef.current.focus();
@@ -84,207 +84,206 @@ const NewsalesReturnHeader = ({existingHeaderData}:any) => {
         setDisableButton(!disableButton);
     };
 
-    const handleDateChange = (date:any) => {
+    const handleDateChange = (date: any) => {
         setStartDate(date);
         setHeaderData((prevData) => ({ ...prevData, date }));
     };
-    const handleDueDateChange= (date:any)=>{
+    const handleDueDateChange = (date: any) => {
         setDueDate(date);
-        setHeaderData((prevData)=>({...prevData,dueDate:date}))
+        setHeaderData((prevData) => ({ ...prevData, dueDate: date }))
     }
-    
-        useEffect(()=>{
-            if(id){
-                setHeaderData(existingHeaderData)
-            }
-         else{
-            
-            setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo}))}
-        },[])
-    
-        useEffect(()=>{
-            if(!isLoading&&!error&&data){
-                
-                  const  clients=data.map((client:any)=>({
-                    value:{clientName:client.clientName,
-                           contact:client.contact,
-                           invoiceNo:client.invoiceNo,
-                           clientId:client.id},
-                    label:`${client.clientName}\u00A0\u00A0\u00A0\u00A0\u00A0${client.contact}`
-                }))
-                console.log(clients)
-                setCustomers(clients);
-    
-            }
-            if(headerData.customer){
-                 const invoices= headerData.customer.value.invoiceNo.map((client:any)=>({
-                    value:client,
-                    label:client
-                }))
-                setInvoiceOptions(invoices);
-            }
-            
-        },[data,headerData])
+
+    useEffect(() => {
+        if (id) {
+            setHeaderData(existingHeaderData)
+        }
+        else {
+
+            setHeaderData((prevData) => ({ ...prevData, invoiceNo: invoiceNo }))
+        }
+    }, [])
+
+    useEffect(() => {
+        if (!isLoading && !error && data) {
+
+            const clients = data.map((client: any) => ({
+                value: {
+                    clientName: client.clientName,
+                    contact: client.contact,
+                    invoiceNo: client.invoiceNo,
+                    clientId: client.id
+                },
+                label: `${client.clientName}\u00A0\u00A0\u00A0\u00A0\u00A0${client.contact}`
+            }))
+            console.log(clients)
+            setCustomers(clients);
+
+        }
+        if (headerData.customer) {
+            const invoices = headerData.customer.value.invoiceNo.map((client: any) => ({
+                value: client,
+                label: client
+            }))
+            setInvoiceOptions(invoices);
+        }
+
+    }, [data, headerData])
+
+    useEffect(() => {
+        //console.log("Updated headerData:", headerData,existingHeaderData);
+        setHeaderData(headerData);
+    }, [headerData]);
 
 
     return (
         <>
-
-
-<div className="flex justify-between w-full pb-[16px]">
-                <div className="px-6 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
-                    <div className="flex gap-[16px] items-center w-full">
-                        <div className="text-gray-500 text-base font-bold ">Client:</div>
-                        { id===null?(
-                            isLoading?<div className='text-textGrey2 text-base font-medium'><Loading2/></div>:(
-                                <Select
-                                className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
-                                classNamePrefix="select"
-                                isClearable={isClearable}
-                                isSearchable={isSearchable}
-                                name="color"
-                                options={customers}
-                                styles={customStyles}
-                                onChange={(selectedOption) => setHeaderData((prevData) => ({ ...prevData, customer: selectedOption }))}
-                                />
-                        )):(
-                            existingHeaderData.customer
+        <div className="flex justify-between w-full pb-[16px]">
+            <div className="px-6 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
+                <div className="flex gap-[16px] items-center w-full">
+                    <div className="text-gray-500 text-base font-bold ">Client:</div>
+                    
+                    { id===null?(
+                        isLoading?<div className='text-textGrey2 text-base font-medium'><Loading2/></div>:(
+                            <Select
+                            className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
+                            classNamePrefix="select"
+                            isClearable={isClearable}
+                            isSearchable={isSearchable}
+                            name="color"
+                            value={headerData.customer}
+                            options={customers}
+                            styles={customStyles}
+                            onChange={(selectedOption) => setHeaderData((prevData) => ({ ...prevData, customer: selectedOption }))}
+                            />
+                    )):(
+                        existingHeaderData.customer
+                    )}
+                   
+                </div>
+            </div>
+            <div className="px-6 py-1 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full">
+                <div className="flex w-full">
+                    <div className="text-gray-500 text-base font-bold w-[12rem] py-3">Invoice Number:</div>
+                    <div className="flex items-center justify-between w-full ">
+                     {id===null?   (
+                     <input
+                            ref={inputRef}
+                            className={`w-[90%] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border-0 rounded-[5px] focus:border focus:border-solid focus:border-[#35BEB1] bg-inherit`}
+                            value={invoiceNo!}
+                            disabled={disableButton}
+                            autoFocus={!disableButton}
+                            onChange={(e) => setHeaderData((prevData) => ({ ...prevData, invoiceNo: e.target.value }))}
+                        />
+                    ):(
+                            existingHeaderData.invoiceNo
                         )}
+                        {/* <button onClick={handleEditButtonClick} className="border-0 mr-5">
+                            <Image src={editicon} alt="edit" />
+                        </button> */}
                     </div>
                 </div>
-                <div className="px-6 py-1 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full">
-                    <div className="flex w-full">
-                        <div className="text-gray-500 text-base font-bold  w-[12rem] py-3">Invoice Number:</div>
-                        <div className="flex items-center justify-between w-full">
-                        { id===null?(
-                            isLoading?<div><Loading2/></div>:(
-                                <Select
-                                className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
-                                classNamePrefix="select"
-                                isClearable={isClearable}
-                                isSearchable={isSearchable}
-                                name="invoiceNo"
-                                options={invoiceOptions}
-                                styles={{
-                                    control: (provided, state) => ({
-                                        ...provided,
-                                        border: state.isFocused ? 'none' : 'none',
-                                    }),
-                                }}
-                                onChange={(selectedOption) => setHeaderData((prevData) => ({ ...prevData, invoiceNo: selectedOption.value }))}
+            </div>
+        </div>
+        <div className="flex justify-between w-full pb-[16px]">
+            <div className="px-6 py-2 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
+                <div className="flex gap-[0.8rem] items-center w-full">
+                    <div className="text-gray-500 text-base font-bold  w-1/8">Date:</div>
+                    {id===null?(
+                    // <DatePicker
+                    //     className={"text-gray-500 text-base font-medium  w-full"}
+                    //     value={startDate}
+                    //     onChange={handleDateChange}
+                    //     clearIcon={() => null}
+                    //     calendarIcon={() => (
+                    //         <Image src={calicon} alt="Calendar Icon" width={20} height={20} />
+                    //     )}
+                    // />
+                    // <div className='w-full relative'>
+                    
+                    <div className="customDatePickerWidth">
+                    <DatePicker
+                                    className="w-full"
+                                    selected={startDate}
+                                    onChange={handleDateChange}
+                                    calendarClassName="react-datepicker-custom"
+                                    customInput={
+                                        <div className='relative '>
+                                            <input
+                            className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                            value={startDate.toLocaleDateString()}
+                                                readOnly
+                                            />
+                                            <Image
+                                                src={calicon}
+                                                alt="Calendar Icon"
+                                                className="absolute right-2 top-2 cursor-pointer"
+                                                width={50}
+                                                height={20}
+                                            />
+                                        </div>
+                                    }
                                 />
-                        )):(
-                            existingHeaderData.customer
-                        )}
-                            {/* <button onClick={handleEditButtonClick} className="mr-5 border-0">
-                                <Image src={editicon} alt="edit" />
-                            </button> */} 
+                                </div>
+                                // </div>
+                ):(
+                        formatDateAndTime(existingHeaderData.date).formattedDate
+                    )}
+                </div>
+            </div>
+            <div className="px-6 py-2 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full">
+                <div className="flex gap-[0.2rem] items-center w-full">
+                    <div className="text-gray-500 text-base font-bold w-[6rem]">Due Date:</div>
+                    {id === null ? (
+                        <div className="customDatePickerWidth">
+                    <DatePicker
+                        className="w-full"
+                        selected={dueDate} 
+                        onChange={handleDueDateChange} 
+                        calendarClassName="react-datepicker-custom"
+                        customInput={
+                        <div className='relative'>
+                            <input
+                            className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                            value={headerData?.dueDate?.toLocaleDateString() || new Date().toLocaleDateString()}
+                            readOnly
+                            />
+                            <Image
+                            src={calicon}
+                            alt="Calendar Icon"
+                            className="absolute right-2 top-2 cursor-pointer"
+                            width={50}
+                            height={20}
+                            />
                         </div>
+                        }
+                    />
                     </div>
+                    ) : (
+                    formatDateAndTime(existingHeaderData.dueDate).formattedDate
+                    )}
                 </div>
             </div>
-            <div className="flex justify-between w-full pb-[16px]">
-                <div className="px-6 py-2 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
-                    <div className="flex gap-[0.8rem] items-center w-full">
-                        <div className="text-gray-500 text-base font-bold  w-1/8">Date:</div>
-                        {id===null?(
-                        // <DatePicker
-                        //     className={"text-gray-500 text-base font-medium  w-full"}
-                        //     value={startDate}
-                        //     onChange={handleDateChange}
-                        //     clearIcon={() => null}
-                        //     calendarIcon={() => (
-                        //         <Image src={calicon} alt="Calendar Icon" width={20} height={20} />
-                        //     )}
-                        // />
-                        <div className='customDatePickerWidth'>
-                        <DatePicker
-                                        className="w-full"
-                                        selected={startDate}
-                                        onChange={handleDateChange}
-                                        calendarClassName="react-datepicker-custom"
-                                        customInput={
-                                            <div className='relative'>
-                                                <input
-                                                    className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={startDate.toLocaleDateString()}
-                                                    readOnly
-                                                />
-                                                <Image
-                                                    src={calicon}
-                                                    alt="Calendar Icon"
-                                                    className="absolute right-2 top-2 cursor-pointer"
-                                                    width={50}
-                                                    height={20}
-                                                />
-                                            </div>
-                                        }
-                                    />
-                                    </div>
-                    ):(
-                            formatDateAndTime(existingHeaderData.date).formattedDate
-                        )}
-                    </div>
-                </div>
-                <div className="px-6 py-2 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full">
-                    <div className="flex gap-[16px] items-center w-full">
-                        <div className="text-gray-500 text-base font-bold  w-2/12">Due Date:</div>
-                        {id===null?(
-                        // <DatePicker
-                        //     className={"text-gray-500 text-base font-medium  w-full"}
-                        //     value={startDate}
-                        //     onChange={handleDateChange}
-                        //     clearIcon={() => null}
-                        //     calendarIcon={() => (
-                        //         <Image src={calicon} alt="Calendar Icon" width={20} height={20} />
-                        //     )}
-                        // />
-                        <div className='customDatePickerWidth'>
-                         <DatePicker
-                            className="w-full"
-                            selected={dueDate} 
-                            onChange={handleDueDateChange} 
-                            calendarClassName="react-datepicker-custom"
-                            customInput={
-                            <div className='relative'>
-                                <input
-                                className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                value={dueDate.toLocaleDateString()}
-                                readOnly
-                                />
-                                <Image
-                                src={calicon}
-                                alt="Calendar Icon"
-                                className="absolute right-2 top-2 cursor-pointer"
-                                width={50}
-                                height={20}
-                                />
-                                            </div>
-                                        }
-                                    />
-                                    </div>
-                    ):(
-                            formatDateAndTime(existingHeaderData.date).formattedDate
-                        )}
-                    </div>
+        </div>
+        <div className="flex justify-between w-full pb-[16px]">
+            <div className="px-6 py-1 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full">
+                <div className="flex gap-[16px] items-center w-full">
+                    <div className="text-gray-500 text-base font-bold py-3">Notes:</div>
+                    {id===null?(
+                    <textarea
+                        rows={4}
+                        cols={100}
+                        className=" w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                        placeholder="..."
+                        value={headerData.notes}
+                        onChange={(e) => setHeaderData((prevData) => ({ ...prevData, notes: e.target.value }))}
+                    />
+                ):(
+                        existingHeaderData.notes
+                    )}
                 </div>
             </div>
-            <div className="flex justify-between w-full pb-[16px]">
-                <div className="px-6 py-1 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full">
-                    <div className="flex gap-[16px] items-center w-full">
-                        <div className="text-gray-500 text-base font-bold py-3">Notes:</div>
-                        {id===null?(<input
-                            type="text"
-                            className=" w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                            placeholder="..."
-                            onChange={(e) => setHeaderData((prevData) => ({ ...prevData, notes: e.target.value }))}
-                        />):(
-                            existingHeaderData.notes
-                        )}
-                    </div>
-                </div>
-            </div>
-        </>
+        </div>
+    </>
     );
 };
 

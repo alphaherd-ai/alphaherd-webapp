@@ -7,7 +7,6 @@ datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
-  
 }
 
 enum Tax {
@@ -130,7 +129,7 @@ model User {
   phoneNo            String
   altPhoneNo         String?
   hashedPassword     String
-  adminOrganizations Organization[] 
+  adminOrganizations Organization[]
   orgBranchId        Int?
   lastUsedBranch     OrgBranch?          @relation(fields: [orgBranchId], references: [id])
   userRoles          OrgBranchUserRole[]
@@ -174,17 +173,17 @@ model InventorySection {
 }
 
 model FinanceSection {
-  id           Int               @id @default(autoincrement())
-  name         String
-  amount       Float
-  branch       OrgBranch         @relation(fields: [branchId], references: [id])
-  branchId     Int               @unique
-  expenses     Expenses[]
-  transactions Transactions[]
-  sales        Sales[]
-  purchase     Purchases[]
-  items        Items[]
-  timeline     FinanceTimeline[]
+  id            Int               @id @default(autoincrement())
+  name          String
+  amount        Float
+  branch        OrgBranch         @relation(fields: [branchId], references: [id])
+  branchId      Int               @unique
+  expenses      Expenses[]
+  transactions  Transactions[]
+  sales         Sales[]
+  purchase      Purchases[]
+  items         Items[]
+  timeline      FinanceTimeline[]
   paymentMethod PaymentMethod[]
 
   @@index([branchId])
@@ -314,6 +313,7 @@ model Services {
   linkProducts       Json?
   serviceCost        Int?
   serviceCharge      Int?
+  items              Items[]
   inventoryEntries   Inventory[]
   inventoryTimeline  InventoryTimeline[] // Add the opposite relation
   InventorySection   InventorySection?   @relation(fields: [inventorySectionId], references: [id])
@@ -391,9 +391,9 @@ model Purchases {
 }
 
 model Expenses {
-  id                  Int               @id @default(autoincrement())
+  id                  Int                 @id @default(autoincrement())
   party               String?
-  date                DateTime?         @default(now())
+  date                DateTime?           @default(now())
   invoiceNo           String?
   subTotal            Float?
   overallDiscount     Float?
@@ -411,7 +411,7 @@ model Expenses {
   recordTransaction   RecordTransaction[]
   items               Items[]
   financeTimeline     FinanceTimeline[]
-  FinanceSection      FinanceSection?   @relation(fields: [financeSectionId], references: [id])
+  FinanceSection      FinanceSection?     @relation(fields: [financeSectionId], references: [id])
   financeSectionId    Int?
 
   @@index([financeSectionId])
@@ -435,9 +435,9 @@ model Transactions {
   @@index([financeSectionId])
 }
 
-model PaymentMethod{
-  id Int @id @default(autoincrement())
-  name String?
+model PaymentMethod {
+  id               Int             @id @default(autoincrement())
+  name             String?
   FinanceSection   FinanceSection? @relation(fields: [financeSectionId], references: [id])
   financeSectionId Int?
 }
@@ -455,7 +455,10 @@ model Items {
   highQty          Int?
   discount         Float?
   name             String?
+  itemType         String?
   productId        Int?
+  serviceId        Int?
+  services         Services?       @relation(fields: [serviceId], references: [id])
   products         Products?       @relation(fields: [productId], references: [id])
   salesId          Int?
   sale             Sales?          @relation(fields: [salesId], references: [id])
@@ -478,6 +481,7 @@ model InventoryTimeline {
   inventoryType      Inventory?        @default(None)
   stockChange        Stock?            @default(StockIN)
   invoiceType        String?
+  invoiceNo          String?
   quantityChange     Int?
   receiptNo          Int?
   party              String?
@@ -508,11 +512,9 @@ model FinanceTimeline {
 }
 
 model CommunicationMode {
-  id                 Int    @id @default(autoincrement())
-  communicationType  String @unique
+  id                Int    @id @default(autoincrement())
+  communicationType String @unique
 }
-
-
 
 model TaxType {
   id         Int    @id @default(autoincrement())
@@ -521,16 +523,16 @@ model TaxType {
 }
 
 model AnimalSpecies {
-  id        Int           @id @default(autoincrement())
-  species   String        @unique
-  breeds    AnimalBreed[] 
+  id      Int           @id @default(autoincrement())
+  species String        @unique
+  breeds  AnimalBreed[]
 }
 
 model AnimalBreed {
-  id         Int           @id @default(autoincrement())
-  breed      String        @unique
-  species    AnimalSpecies @relation(fields: [speciesId], references: [id])
-  speciesId  Int
+  id        Int           @id @default(autoincrement())
+  breed     String        @unique
+  species   AnimalSpecies @relation(fields: [speciesId], references: [id])
+  speciesId Int
 }
 
 model ItemType {
@@ -539,6 +541,6 @@ model ItemType {
 }
 
 model Unit {
-  id           Int    @id @default(autoincrement())
-  unit         String? @unique
+  id   Int     @id @default(autoincrement())
+  unit String? @unique
 }

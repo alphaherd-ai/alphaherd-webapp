@@ -1,4 +1,4 @@
-import prismaClient from '../../../../../../prisma/index';
+import prismaClient from '../../../../../../../prisma/index';
 import { fetchInventoryId } from '@/utils/fetchBranchDetails';
 import { NextRequest } from 'next/server';
 
@@ -19,7 +19,18 @@ export const GET = async (req: NextRequest,{params}:{params:{id:Number}}) => {
                 productBatches:{
                     include:{
                         items:true,
-                        inventoryTimeline:true
+                        inventoryTimeline: {
+                            include:{
+                                productBatch:{
+                                    select:{
+                                        batchNumber:true
+                                    }
+                                }
+                            },
+                            orderBy:{
+                                createdAt:'desc'
+                            }
+                        }
                     }
                 }
 
