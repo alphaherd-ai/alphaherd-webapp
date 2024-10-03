@@ -7,8 +7,8 @@ export const POST = async(req: NextRequest)=>{
         return new Response('Method not allowed', {status: 405});
     }
     try {
+        const inventoryId = await fetchInventoryId(req);
         const body = await req.json();
-        const inventoryId = fetchInventoryId(req);
         const itemCategory = await prismaClient.reason
         .create({
             data: {

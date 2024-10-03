@@ -31,6 +31,11 @@ interface Distributors{
     id:string,
     distributorName:string
 }
+
+interface Reasons{
+    id:string,
+    reasonName:string
+}
 interface Products{
     id :string,
     itemName:string,
@@ -82,6 +87,45 @@ const Popup2: React.FC<PopupProps> = ({ onClose,productData }) => {
     const [formData, setFormData] = useState<any>({});
     const appState = useAppSelector((state) => state.app)
     const [distributor, setDistributor] = useState<any[]>([]);
+
+    const customStyles = {
+        control: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          border: state.isFocused ? '1px solid #35BEB1' : 'none',
+          '&:hover': {
+            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            },
+          boxShadow: state.isFocused ? 'none' : 'none',
+        }),
+        valueContainer: (provided: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        singleValue: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+        }),
+        menu: (provided: any) => ({
+          ...provided,
+          backgroundColor: 'white',
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        option: (provided: any, state: any) => ({
+          ...provided,
+          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+          color: state.isFocused ? 'white' : '#6B7E7D',
+          '&:hover': {
+            backgroundColor: '#35BEB1',
+            color: 'white',
+          },
+        }),
+    };
 
     const {fetchedProducts,isLoading,error}=useProductfetch(appState.currentBranchId);
     const {fetchedBathces,isBatchLoading,batchError}=useProductBatchfetch(appState.currentBranchId);
@@ -371,6 +415,26 @@ const Popup2: React.FC<PopupProps> = ({ onClose,productData }) => {
           fetchDistributors();
     }, []);
 
+    //reasons
+    const [reason, setReason] = useState<any[]>([]);
+    useEffect(() => {
+
+        const fetchReasons = async()=>{
+            try{
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/settings/reason/getAll?branchId=${appState.currentBranchId}`);
+                const reasons = response.data.map((reason:Reasons)=>({
+                    value: reason.id,
+                    label: reason.reasonName
+                }));
+                console.log(reasons);
+                setReason(reasons);
+            }catch(error){
+                console.log("Error fetching reasons",error);
+            }
+        }
+          fetchReasons();
+    }, []);
+
     const Reasons = [
         {value: "Damaged", label: "Damaged"},
         {value: "Expired", label: "Expired"},
@@ -441,11 +505,11 @@ const Popup2: React.FC<PopupProps> = ({ onClose,productData }) => {
                         </div>
                         
                         {inventory.map((item, index) => (
-                            <div key={index} className='flex justify-evenly items-center w-full  py-2 box-border bg-white text-gray-400 border-t-0.5  '>
+                            <div key={index} className='flex justify-evenly items-center w-full  py-2  bg-white text-gray-400  '>
                                 <div className='w-[3rem] flex items-center text-neutral-400 text-base font-medium'>{index + 1}</div>
                                 <div className='w-[12rem] flex items-center text-neutral-400 text-base font-medium'>
                                     <Select
-                                        className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
+                                        className="text-gray-500 text-base font-medium w-[90%] "
                                         classNamePrefix="select"
                                         value={products.find((prod) => prod.value.id === item.productId)}
                                         isClearable={false}
@@ -453,10 +517,11 @@ const Popup2: React.FC<PopupProps> = ({ onClose,productData }) => {
                                         name="itemName"
                                         options={products}
                                         onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
+                                        styles={customStyles}
                                     />
                                 </div>
                                 <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
-                                    <button className="bg-white rounded-[5px] border-2 border-solid border-borderGrey" onClick={() => handleQuantityDecClick(index)}>
+                                    <button className="bg-white rounded-[5px] " onClick={() => handleQuantityDecClick(index)}>
                                         <Image className="w-4 h-2" src={subicon} alt="-" />
                                     </button>
                                     <input
@@ -464,7 +529,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose,productData }) => {
                                         value={item.quantity} 
                                         onChange={(e) => handleInputChange(index, 'quantity', parseInt(e.target.value, 10))}
                                         className="bg-white text-center text-neutral-400 text-base font-medium w-[40px] border-2 border-solid border-borderGrey rounded-[5px]" 
-                                        min="0" 
+                                        
                                     />
                                     <button className="bg-white rounded-[5px] border-2 border-solid border-borderGrey" onClick={() => handleQuantityIncClick(index)}>
                                         <Image className="w-4 h-2" src={add1icon} alt="+" />
@@ -481,6 +546,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose,productData }) => {
                                             isMulti={true}
                                             name="Reasons"
                                             onChange={(value) => handleChange("reasons", value)}
+                                            styles={customStyles}
                                         />
                                     </div>
                                 )}
@@ -491,7 +557,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose,productData }) => {
                                     type="text"
                                     value={item.batchNumber}
                                     onChange={(e) => handleInputChange(index,'batchNumber', e.target.value)}
-                                    className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
+                                    className="w-full border border-solid border-white focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
                                     name={`batchNumber-${index}`}
                                     />
                                     ):
@@ -505,6 +571,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose,productData }) => {
                                       name={`batchNumber=${index}`}
                                       options={filteredBatches}
                                       onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
+                                      styles = {customStyles}
                                   />  
                                     )}
            
@@ -540,7 +607,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose,productData }) => {
                                 type="text"
                                 value={item.hsnCode}
                                 onChange={(e) => handleInputChange(index, 'hsnCode' ,e.target.value)}
-                                className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded "
+                                className="w-full border border-solid border-white focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded "
                             name={`hsnCode-${index}`}
                             />
                         </div>
@@ -549,7 +616,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose,productData }) => {
                                 type="text"
                                 value={item.category}
                                 onChange={(e) => handleInputChange(index,'category' ,e.target.value)}
-                                className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
+                                className="w-full border border-solid border-white focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
                             name={`category-${index}`}
                             />
                         </div>
@@ -563,6 +630,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose,productData }) => {
                             isMulti={false}
                             name={`providers-${index}`}
                             onChange={(e) => handleInputChange(index,'providers', e?.label)}
+                            styles={customStyles}
                         />
                         
                         </div>
@@ -571,7 +639,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose,productData }) => {
                                 type="number"
                                 value={item.costPrice}
                                 onChange={(e) => handleInputChange(index, 'costPrice',parseFloat(e.target.value))}
-                                className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
+                                className="w-full border border-solid border-white focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
                                 name={`costPrice-${index}`}
                             />
                         </div>
@@ -580,7 +648,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose,productData }) => {
                                 type="number"
                                 value={item.maxRetailPrice}
                                 onChange={(e) =>  handleInputChange(index, 'maxRetailPrice',parseFloat(e.target.value))}
-                                className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
+                                className="w-full border border-solid border-white focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
                                 name={`maxRetailPrice-${index}`}
                             />
                         </div>
@@ -588,9 +656,9 @@ const Popup2: React.FC<PopupProps> = ({ onClose,productData }) => {
                         <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>₹
                             <input
                                 type="number"
-                                value={item.sellingPrice}
+                                value={item.costPrice*item.quantity}
                                 onChange={(e) =>  handleInputChange(index, 'sellingPrice',parseFloat(e.target.value))}
-                                className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
+                                className="w-full border border-solid border-white focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
                                 name={`sellingPrice-${index}`}
                             />
                         </div>

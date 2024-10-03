@@ -30,6 +30,7 @@ import AddReasons from "../generalSettingPopup/addReason";
 import AddTaxType from "../generalSettingPopup/addTaxTypePopup";
 import AddServiceCategory from "../generalSettingPopup/addServiceCategory";
 import AddItemUnit from "../generalSettingPopup/addUnitPopup";
+import AddBreed from "../generalSettingPopup/addBreedPopup";
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
@@ -45,6 +46,7 @@ const GeneralSettings = () => {
     const [showPopup4, setShowPopup4] = useState(false);
     const [showPopup5, setShowPopup5] = useState(false);
     const [showPopup6, setShowPopup6] = useState(false);
+    const [showPopup7, setShowPopup7] = useState(false);
 
     const togglePopup = () => {
         setShowPopup(!showPopup);
@@ -70,6 +72,10 @@ const GeneralSettings = () => {
 
     const togglePopup6 = () => {
         setShowPopup6(!showPopup6);
+    }
+
+    const togglePopup7 = () =>{
+        setShowPopup7(!showPopup7);
     }
 
     const reminder = [
@@ -224,7 +230,7 @@ const GeneralSettings = () => {
     //tax type
     const [taxType, settaxType] = useState([]);
     const {data: taxTypeData, error: taxTypeError, isLoading: isLoadingtaxType} = useSWR(
-        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/serviceCategory/getAll?branchId=${appState.currentBranchId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/taxType/getAll?branchId=${appState.currentBranchId}`,
         fetcher,
         { revalidateOnFocus: true } 
     );
@@ -250,7 +256,7 @@ const GeneralSettings = () => {
     //species
     const [species, setspecies] = useState([]);
     const {data: speciesData, error: speciesError, isLoading: isLoadingspecies} = useSWR(
-        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/serviceCategory/getAll?branchId=${appState.currentBranchId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`,
         fetcher,
         { revalidateOnFocus: true } 
     );
@@ -259,6 +265,7 @@ const GeneralSettings = () => {
             setspecies(speciesData); 
         }
     }, [speciesData, speciesError, isLoadingspecies]);
+    console.log('item categories: ', itemCategories);
 
 
 
@@ -321,7 +328,7 @@ const GeneralSettings = () => {
                                     <div className="text-gray-500 text-base font-bold ">Payment methods</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your payment methods</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex" onClick={togglePopup1}>
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer" onClick={togglePopup1}>
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
                                     <div className="text-white text-base font-medium ">Add Payment Method</div>
                                 </div>
@@ -356,9 +363,13 @@ const GeneralSettings = () => {
                                     <div className="text-gray-500 text-base font-bold ">Species & Breeds</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add your species & breed database</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                    <div className="text-white text-base font-medium cursor-pointer" onClick={togglePopup}>Add Species</div>
+                                    <div className="text-white text-base font-medium " onClick={togglePopup7}>Add Breed</div>
+                                </div>
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
+                                    <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
+                                    <div className="text-white text-base font-medium " onClick={togglePopup}>Add Species</div>
                                 </div>
                             </div>
                             <div className="w-full h-full">
@@ -392,7 +403,7 @@ const GeneralSettings = () => {
                                     <div className="text-gray-500 text-base font-bold ">Item Categories</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your item categories</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
                                     <div className="text-white text-base font-medium " onClick={togglePopup2}>Add Category</div>
                                 </div>
@@ -425,7 +436,7 @@ const GeneralSettings = () => {
                                     <div className="text-gray-500 text-base font-bold ">Item Units</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your inventory item units</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
                                     <div className="text-white text-base font-medium " onClick={togglePopup3}>Add Unit</div>
                                 </div>
@@ -460,7 +471,7 @@ const GeneralSettings = () => {
                                     <div className="text-gray-500 text-base font-bold ">Service Categories</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your service categories</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
                                     <div className="text-white text-base font-medium " onClick={togglePopup4}>Add Category</div>
                                 </div>
@@ -494,7 +505,7 @@ const GeneralSettings = () => {
                                     <div className="text-gray-500 text-base font-bold ">Tax Types</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your tax types</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
                                     <div className="text-white text-base font-medium " onClick={togglePopup5}>Add Tax</div>
                                 </div>
@@ -530,7 +541,7 @@ const GeneralSettings = () => {
                                     <div className="text-gray-500 text-base font-bold ">Update Inventory - Stock out Reasons</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your stock out reasons</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
                                     <div className="text-white text-base font-medium " onClick={togglePopup6}>Add Reason</div>
                                 </div>
@@ -573,6 +584,7 @@ const GeneralSettings = () => {
         {showPopup4 && <AddServiceCategory onClose={togglePopup4} />}
         {showPopup5 && <AddTaxType onClose={togglePopup5} />}
         {showPopup6 && <AddReasons onClose={togglePopup6} />}
+        {showPopup7 && <AddBreed onClose={togglePopup7}/>}
     </>
     )
 }

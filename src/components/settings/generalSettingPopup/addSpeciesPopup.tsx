@@ -90,7 +90,7 @@ const AddSpeciesPopup = ({onClose}:any) => {
                 <div className="w-full flex justify-between mt-[5px] cursor-pointer">
                 <div className="text-white text-base font-normal bg-black p-2 rounded-md py-2.5" onClick={handleAddInput}>Add another</div>
 
-                        <button className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none" onClick={handleSaveClick}>
+                        <button className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer" onClick={handleSaveClick}>
                             <div className="text-white text-base font-bold ">Save</div>
                         </button>
                 </div>

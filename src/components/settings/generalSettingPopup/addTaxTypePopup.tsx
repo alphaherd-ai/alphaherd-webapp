@@ -74,7 +74,7 @@ const AddTaxType = ({onClose}:any) => {
                                 <div className="text-gray-500 text-base font-medium w-[12rem]">Tax Type</div>
                                 <input
                                     className="ml-[5rem] w-[80%] border border-solid border-borderGrey outline-none h-11 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    type="text"
+                                    type="float"
                                     value={input}
                                     onChange={(e) => handleChangeInput(index, e.target.value)}
                                 />
@@ -92,7 +92,7 @@ const AddTaxType = ({onClose}:any) => {
                 <div className="w-full flex justify-between mt-[5px] cursor-pointer">
                 <div className="text-white text-base font-normal bg-black p-2 rounded-md py-2.5" onClick={handleAddInput}>Add another</div>
 
-                    <button className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none" onClick={handleSave}>
+                    <button className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer" onClick={handleSave}>
                         <div className="text-white text-base font-bold ">Save</div>
                     </button>
                 </div>

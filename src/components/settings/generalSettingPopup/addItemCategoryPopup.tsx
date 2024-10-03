@@ -44,7 +44,7 @@ const AddItemCategoryPopup = ({onClose}:any) => {
                 }),
             });
             if (response.ok) {
-                console.log('Data saved successfully');
+                console.log('Data saved successfully',response);
                 onClose();
                 window.dispatchEvent(new FocusEvent('focus'));
             } else {
@@ -53,6 +53,7 @@ const AddItemCategoryPopup = ({onClose}:any) => {
         } catch (error) {
             console.error('Error while saving data:', error);
         }
+        console.log(inputs);
     }
     return (
         <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
@@ -92,7 +93,7 @@ const AddItemCategoryPopup = ({onClose}:any) => {
                 <div className="w-full flex justify-between mt-[5px] cursor-pointer">
                 <div className="text-white text-base font-normal bg-black p-2 rounded-md py-2.5" onClick={handleAddInput}>Add another</div>
 
-                        <button className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none" onClick={handleSaveClick}>
+                        <button className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer" onClick={handleSaveClick}>
                             <div className="text-white text-base font-bold ">Save</div>
                         </button>
                 </div>

@@ -108,20 +108,6 @@ const InventoryNavbar = () => {
     const togglePopup2 = () => {
         setShowPopup2(!showPopup2);
     }
-    const popupRef = useRef<HTMLDivElement | null>(null);
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-          if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
-            setShowPopup(false); 
-          }
-        };
-        if (showPopup) {
-          document.addEventListener('mousedown', handleClickOutside);
-        }
-        return () => {
-          document.removeEventListener('mousedown', handleClickOutside);
-        };
-      }, [showPopup]);
 
     return (
 
