@@ -20,6 +20,7 @@ import { generatePdfForInvoice } from "@/utils/salesPdf"
 
 const ExistingsalesBottomBar = ({existingSalesData}:any) => {
     const appState = useAppSelector((state) => state.app);
+    console.log("app state is in existingsales :" , appState);
     const [email, setEmail] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const downloadPdf = async () => {

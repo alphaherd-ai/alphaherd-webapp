@@ -30,14 +30,17 @@ const ExistingsalesTable = () => {
         const [items, setItems] = useState(initialItems);
     
         const {data,error,isLoading} =useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/${id}/?branchId=${appState.currentBranchId}`,fetcher)
-        
+        console.log("data in existing sale is :",data);
+        console.log("isloading in existing sale is :",isLoading);
         
         useEffect(() => {
             if (!isLoading && data && !error) {
                 
                 const {items,...otherData}=data;
+                console.log("other data in existing sale is :",otherData);
+
                 setOtherData(otherData)
-                console.log(items)
+                console.log("items is :",items);
               const shallowDataCopy = [...items]; 
               const itemData = shallowDataCopy.map((item: any) => ({
                 id: item.productBatch.productId,

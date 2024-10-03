@@ -16,6 +16,7 @@ import axios from "axios"
 
 const ExistingsaleEstimateBottomBar = ({existingSalesData}: any) => {
     const appState = useAppSelector((state) => state.app);
+    console.log("app state is :" , appState);
     const downloadPdf = async () => {
     // const allData = existingSalesData;
         const data = existingSalesData;

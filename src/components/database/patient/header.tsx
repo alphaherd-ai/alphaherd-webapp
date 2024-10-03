@@ -19,7 +19,7 @@ import Popup from './newpatientpopup';
 import DownloadPopup from './downloadPatientPopup';
 
 
-const DatabasePatientHeader = ({ patients, clients }:any) => {
+const DatabasePatientHeader = ({ patients, clients, onSortChange }:any) => {
     const currentRoute = usePathname();
     const [showPopup, setShowPopup] = React.useState(false);
 
@@ -33,17 +33,26 @@ const DatabasePatientHeader = ({ patients, clients }:any) => {
     }
 
     const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
-    const [selectedSort, setselectedSort] = React.useState(new Set(["Category: text"]));
+    
 
 
     const selectedCategoryValue = React.useMemo(
         () => Array.from(selectedCategory).join(", ").replaceAll("_", " "),
         [selectedCategory]
     );
-    const selectedSortValue = React.useMemo(
-        () => Array.from(selectedSort).join(", ").replaceAll("_", " "),
-        [selectedSort]
-    );
+    
+    const [selectedSort, setSelectedSort] = React.useState("name");
+    const [sortOrder, setSortOrder] = React.useState("asc");
+    const handleSortChange = (key: string) => {
+        if (key === selectedSort) {
+            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+        } else {
+            setSelectedSort(key);
+            setSortOrder("asc");
+        }
+
+        onSortChange(key, sortOrder);
+    };
 
     return (
 
@@ -70,34 +79,46 @@ const DatabasePatientHeader = ({ patients, clients }:any) => {
         <div className='flex '><Image src={Sort} alt='Sort' className='w-3 h-3 mr-2' /></div>
 
         <Dropdown>
-            <DropdownTrigger className='z-0'>
-                <Button
-                
-                    // color="gray-400"
-                    variant="solid"
-                    className="capitalize border-none  bg-transparent rounded-lg"
-                >
-                    {selectedSortValue}
-                </Button>
-            </DropdownTrigger>
-            <DropdownMenu
-                aria-label="Single selection example"
-                // color="gray-500"
-                className=" text-base  text-gray-500 bg-gray-200 rounded-lg"
-                variant="solid"
-                disallowEmptySelection
-                selectionMode="single"
-                selectedKeys={selectedSort}
-                // onSelectionChange={setselectedSort}
-            >
-                <DropdownItem
-                    className=" p-2 text-base" key="Category:text">Sort:Recently Used</DropdownItem>
-                <DropdownItem
-                    className=" p-2 text-base" key="Category:number">Sort:Recently Used</DropdownItem>
-                <DropdownItem
-                    className=" p-2 text-base" key="Category:date">Date</DropdownItem>
-            </DropdownMenu>
-        </Dropdown>
+                            <DropdownTrigger className='z-0'>
+                            <Button variant="solid" className="capitalize border-none bg-transparent rounded-lg">
+                                    <div className="flex text-gray-500 items-center">
+                                        <div className="text-base">Sort By</div>
+                                    </div>
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                                aria-label="Single selection example"
+                                className=" text-base  text-gray-500 bg-gray-200 rounded-lg"
+                                variant="solid"
+                                disallowEmptySelection
+                                selectionMode="single"
+                                selectedKeys={new Set([selectedSort])}
+                                // onSelectionChange={setselectedSort}
+                            >
+                               <DropdownItem
+                                    className="p-2 text-base"
+                                    key="name"
+                                    onClick={() => handleSortChange("patientName")}
+                                >
+                                     Name
+                                </DropdownItem>
+                                
+                                <DropdownItem
+                                    className="p-2 text-base"
+                                    key="city"
+                                    onClick={() => handleSortChange("date")}
+                                >
+                                    Date
+                                </DropdownItem>
+                                <DropdownItem
+                                    className="p-2 text-base"
+                                    key="city"
+                                    onClick={() => handleSortChange("age")}
+                                >
+                                    Age
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
     </div>
     <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg '>
         <div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>

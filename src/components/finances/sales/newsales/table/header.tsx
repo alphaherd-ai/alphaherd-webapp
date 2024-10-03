@@ -104,13 +104,17 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
     
     useEffect(()=>{
         if(!isLoading&&!error&&data){
+            
               const  clients=data.map((client:any)=>({
                 value:{clientName:client.clientName,
                        contact:client.contact,
-                       clientId:client.id},
+                       clientId:client.id,
+                    email:client.email},
                 label:`${client.clientName}\u00A0\u00A0\u00A0\u00A0\u00A0${client.contact}`
             }))
             setCustomers(clients);
+
+            console.log("client data in creating new client is:", clients);
 
         }
     },[data])

@@ -43,6 +43,8 @@ const DatabasePatientTable = () => {
   const [patients, setPatients] = useState<Patients[]>([]);
     const [clients, setClients] = useState<{ [key: string]: string }>({});
     const appState = useAppSelector((state) => state.app)
+    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/patients/getAll?branchId=${appState.currentBranchId}`,fetcher, { revalidateOnFocus :true});
+    console.log("data is :", data);
     const {fetchedClients,isClientError,isClientLoading}= useClientFetch(appState.currentBranchId);
     const {fetchedPatients,isPatientError,isPatientLoading}= usePatientFetch(appState.currentBranchId);
     useEffect(() => {
@@ -69,6 +71,32 @@ const DatabasePatientTable = () => {
                 
             
     }, [fetchedClients,fetchedPatients,isClientError,isClientLoading,isPatientError,isPatientLoading]);
+    const [sortOrder, setSortOrder] = useState("asc"); // Default sort order
+    const [sortKey, setSortKey] = useState<keyof Patients | null>(null); // Sort key
+    const [distributors,setDistributor]=useState<Patients[]>([]);
+    const handleSortChange = (key: keyof Patients, order: 'asc' | 'desc') => {
+      setSortKey(key);
+      setSortOrder(order);
+  
+      const sortedData = [...patients].sort((a, b) => {
+        const valueA = a[key];
+        const valueB = b[key];
+  
+        if (typeof valueA === 'string' && typeof valueB === 'string') {
+          return order === 'asc' ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
+        }
+  
+        if (typeof valueA === 'number' && typeof valueB === 'number') {
+          return order === 'asc' ? valueA - valueB : valueB - valueA;
+        }
+  
+        return 0;
+      });
+  
+      
+      setDistributor(sortedData);
+      console.log(`Sorting by ${key} in ${order} order`, sortedData);
+    }
 
   return (
     <div className='flex flex-col w-full box-border border border-solid border-borderGrey rounded-lg mt-6 mb-6'>

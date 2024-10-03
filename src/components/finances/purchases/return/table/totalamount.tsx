@@ -12,15 +12,16 @@ import Select from 'react-select';
 
 
 const NewPurchaseReturnTotalAmount = () => {
-    const { tableData } = useContext(DataContext);
-    console.log("Here is the tableData",tableData)
+    const { tableData, totalAmountData, setTotalAmountData } = useContext(DataContext);
     let totalAmount = 0;
-    tableData.forEach(data => {
-      
-            totalAmount += (data.quantity * Number(data.unitPrice) + data.quantity * data.tax*Number(data.unitPrice)-(data.quantity*data.discount*Number(data.unitPrice)||0))||0;    
-    });
 
-    const { totalAmountData, setTotalAmountData } = useContext(DataContext);
+    tableData.forEach((data) => {
+        totalAmount +=
+            (data.quantity * Number(data.unitPrice) +
+                data.quantity * data.tax * Number(data.unitPrice) -
+                (data.quantity * data.discount * Number(data.unitPrice) || 0)) || 0;
+    });
+    //const { totalAmountData, setTotalAmountData } = useContext(DataContext);
     const [grandAmt, setGrandAmt] = useState(totalAmount);
     const gstOptions = [
         { value: 'percent', label: '₹ in Percent' },
@@ -34,8 +35,7 @@ const NewPurchaseReturnTotalAmount = () => {
     const [overAllDiscount,setDiscount]=useState(0); 
 
     const handleShippingChange = (event: any) => {
-        //console.log(typeof event.target.value)
-        const value = event.target.value
+        const value = event.target.value;
         if (/^\d*\.?\d*$/.test(value)) {
             setShipping(value);
             updateGrandTotal();
@@ -43,7 +43,7 @@ const NewPurchaseReturnTotalAmount = () => {
     };
 
     const handleAdjustmentChange = (event: any) => {
-        const value = event.target.value
+        const value = event.target.value;
         if (/^\d*\.?\d*$/.test(value)) {
             setAdjustment(value);
             updateGrandTotal();
@@ -54,23 +54,21 @@ const NewPurchaseReturnTotalAmount = () => {
         setDiscountMethod(selectedOption.value);
     };
     const [discountInput,setDiscountInput]=useState(0);
-    const handleDiscountChange =(discount:number)=>{
-        if(discountMethod==='amount'){
+    const handleDiscountChange = (discount: number) => {
+        if (discountMethod === 'amount') {
             setDiscountInput(discount);
-            let discountedAmount=grandAmt-discount;
-            let discountPercent=Number(discount/totalAmount).toFixed(10)
-            setDiscount(Number(discountPercent))
+            const discountedAmount = grandAmt - discount;
+            setDiscount(discount / totalAmount);
             setGrandAmt(discountedAmount);
-            setTotalAmountData((prevData)=>({...prevData,gst:Number(discountPercent)}))
-        }
-        else if(discountMethod==='percent'){
+            setTotalAmountData((prevData) => ({ ...prevData, gst: discount / totalAmount }));
+        } else if (discountMethod === 'percent') {
             setDiscountInput(discount);
-            let discountedAmount=grandAmt-grandAmt*(discount/100);
-            setDiscount(Number(discount/100));
+            const discountedAmount = grandAmt - grandAmt * (discount / 100);
+            setDiscount(discount / 100);
             setGrandAmt(discountedAmount);
-            setTotalAmountData((prevData)=>({...prevData,gst:Number(discount/100)}))
+            setTotalAmountData((prevData) => ({ ...prevData, gst: discount / 100 }));
         }
-    }
+    };
     const handleDateChange= (date:any)=>{
         setDate(date);
         setTotalAmountData((prevData)=>({
@@ -79,20 +77,20 @@ const NewPurchaseReturnTotalAmount = () => {
         }))
     }
     const updateGrandTotal = () => {
-        const discountedAmount = (totalAmount - totalAmount * overAllDiscount)||0;
+        const discountedAmount = totalAmount - totalAmount * overAllDiscount;
         const shippingValue = parseFloat(shipping) || 0;
         const adjustmentValue = parseFloat(adjustment) || 0;
         const newGrandTotal = discountedAmount + shippingValue + adjustmentValue;
-        
+
         setGrandAmt(newGrandTotal);
-        setTotalAmountData((prevData) => ({
-            ...prevData,
-            subTotal:totalAmount,
-            totalCost: newGrandTotal, 
-            shipping:shippingValue,
-            adjustment:adjustmentValue,
-            overAllDiscount:overAllDiscount
-        }));
+        setTotalAmountData({
+            ...totalAmountData,
+            subTotal: totalAmount,
+            totalCost: newGrandTotal,
+            shipping: shippingValue,
+            adjustment: adjustmentValue,
+            overAllDiscount: overAllDiscount,
+        });
     };
 
     useEffect(() => {

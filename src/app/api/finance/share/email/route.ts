@@ -16,8 +16,13 @@ export const POST = async (req: NextRequest)=>{
             user: AUTOMATED_GMAIL,
             pass: AUTOMATED_GMAIL_APP_PASSWORD
         },
+        
+
     });
+    console.log("transport is :",transport);
     let emailMessage="This is you invoice"
+    console.log("emailMessage is :", emailMessage);
+    console.log("email is :", email);
     const result = {
         from: AUTOMATED_GMAIL,
         to: email,

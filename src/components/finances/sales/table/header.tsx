@@ -98,7 +98,7 @@ const FinancesSalesTableHeader = ({invoiceCount,estimateCount,returnCount, sales
         variant="solid"
         className="capitalize border-none  bg-transparent rounded-lg"
     >
-        {selectedSortValue}
+        Sort
     </Button>
 </DropdownTrigger>
 <DropdownMenu

@@ -390,7 +390,7 @@ const NewPurchaseReturnTable = () => {
                 </div>
             ))}
                     
-                        <div className='flex  w-[180%] justify-evenly items-center box-border bg-gray-100 h-12 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey py-5  text-textGrey2 '>
+                        {/* <div className='flex  w-[180%] justify-evenly items-center box-border bg-gray-100 h-12 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey py-5  text-textGrey2 '>
                         <div className=' flex text-gray-500 text-base font-bold px-[10px] w-[5rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold px-[10px] w-[5rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[18rem]'>Total</div>
@@ -411,8 +411,8 @@ const NewPurchaseReturnTable = () => {
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => checkedItems[item.id] ? acc + (item.discount)*(item.quantity*Number(item.unitPrice)) :acc , 0).toFixed(2) ||
                                                 0}</div>
-                            <div className=' flex text-gray-500 text-base font-bold w-1/12'></div>
-                        </div>
+                            <div className=' flex text-gray-500 text-base font-bold w-1/12'></div> */}
+                        
                     </div>
                     <div className="flex-col shadow-left">
                     <div className="flex items-center justify-center  w-[15rem] h-12 text-gray-500 border-t-0 border-r-0 border-l border-b border-solid border-borderGrey">
