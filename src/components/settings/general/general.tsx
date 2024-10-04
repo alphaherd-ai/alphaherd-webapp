@@ -25,6 +25,12 @@ import AddPaymentPopup from "../generalSettingPopup/addPaymentPopup";
 import Loading from "@/app/loading1";
 import { useAppSelector } from "@/lib/hooks";
 import useSWR from "swr";
+import AddItemCategoryPopup from "../generalSettingPopup/addItemCategoryPopup";
+import AddReasons from "../generalSettingPopup/addReason";
+import AddTaxType from "../generalSettingPopup/addTaxTypePopup";
+import AddServiceCategory from "../generalSettingPopup/addServiceCategory";
+import AddItemUnit from "../generalSettingPopup/addUnitPopup";
+import AddBreed from "../generalSettingPopup/addBreedPopup";
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
@@ -36,6 +42,11 @@ const GeneralSettings = () => {
     const [showPopup, setShowPopup] = useState(false);
     const [showPopup1, setShowPopup1] = useState(false);
     const [showPopup2, setShowPopup2] = useState(false);
+    const [showPopup3, setShowPopup3] = useState(false);
+    const [showPopup4, setShowPopup4] = useState(false);
+    const [showPopup5, setShowPopup5] = useState(false);
+    const [showPopup6, setShowPopup6] = useState(false);
+    const [showPopup7, setShowPopup7] = useState(false);
 
     const togglePopup = () => {
         setShowPopup(!showPopup);
@@ -47,6 +58,25 @@ const GeneralSettings = () => {
         setShowPopup2(!showPopup2);
     }
 
+    const togglePopup3 = () => {
+        setShowPopup3(!showPopup3);
+    }
+
+    const togglePopup4 = () => {
+        setShowPopup4(!showPopup4);
+    }
+
+    const togglePopup5 = () => {
+        setShowPopup5(!showPopup5);
+    }
+
+    const togglePopup6 = () => {
+        setShowPopup6(!showPopup6);
+    }
+
+    const togglePopup7 = () =>{
+        setShowPopup7(!showPopup7);
+    }
 
     const reminder = [
         { value: 'Everyday', label: 'Everyday' },
@@ -158,6 +188,84 @@ const GeneralSettings = () => {
         }
     }, [data,error,isLoading]);
 
+    //item categories
+    const [itemCategories, setItemCategories] = useState([]);
+    const {data: itemCategoryData, error: itemCategoryError, isLoading: isLoadingItemCategories} = useSWR(
+        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemCategory/getAll?branchId=${appState.currentBranchId}`,
+        fetcher,
+        { revalidateOnFocus: true } 
+    );
+    useEffect(() => {
+        if (!isLoadingItemCategories && !itemCategoryError && itemCategoryData) {
+            setItemCategories(itemCategoryData); 
+        }
+    }, [itemCategoryData, itemCategoryError, isLoadingItemCategories]);
+
+    //item Units
+    const [itemUnits, setItemUnits] = useState([]);
+    const {data: itemUnitsData, error: itemUnitsError, isLoading: isLoadingItemUnits} = useSWR(
+        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemUnit/getAll?branchId=${appState.currentBranchId}`,
+        fetcher,
+        { revalidateOnFocus: true } 
+    );
+    useEffect(() => {
+        if (!isLoadingItemUnits && !itemUnitsError && itemUnitsData) {
+            setItemUnits(itemUnitsData); 
+        }
+    }, [itemUnitsData, itemUnitsError, isLoadingItemUnits]);
+
+    //Reasons
+    const [reasons, setReasons] = useState([]);
+    const {data: reasonsData, error: reasonsError, isLoading: isLoadingreasons} = useSWR(
+        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/reason/getAll?branchId=${appState.currentBranchId}`,
+        fetcher,
+        { revalidateOnFocus: true } 
+    );
+    useEffect(() => {
+        if (!isLoadingreasons && !reasonsError && reasonsData) {
+            setReasons(reasonsData); 
+        }
+    }, [reasonsData, reasonsError, isLoadingreasons]);
+
+    //tax type
+    const [taxType, settaxType] = useState([]);
+    const {data: taxTypeData, error: taxTypeError, isLoading: isLoadingtaxType} = useSWR(
+        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/taxType/getAll?branchId=${appState.currentBranchId}`,
+        fetcher,
+        { revalidateOnFocus: true } 
+    );
+    useEffect(() => {
+        if (!isLoadingtaxType && !taxTypeError && taxTypeData) {
+            settaxType(taxTypeData); 
+        }
+    }, [taxTypeData, taxTypeError, isLoadingtaxType]);
+
+    //serviceCategory
+    const [serviceCategory, setserviceCategory] = useState([]);
+    const {data: serviceCategoryData, error: serviceCategoryError, isLoading: isLoadingserviceCategory} = useSWR(
+        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/serviceCategory/getAll?branchId=${appState.currentBranchId}`,
+        fetcher,
+        { revalidateOnFocus: true } 
+    );
+    useEffect(() => {
+        if (!isLoadingserviceCategory && !serviceCategoryError && serviceCategoryData) {
+            setserviceCategory(serviceCategoryData); 
+        }
+    }, [serviceCategoryData, serviceCategoryError, isLoadingserviceCategory]);
+
+    //species
+    const [species, setspecies] = useState([]);
+    const {data: speciesData, error: speciesError, isLoading: isLoadingspecies} = useSWR(
+        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`,
+        fetcher,
+        { revalidateOnFocus: true } 
+    );
+    useEffect(() => {
+        if (!isLoadingspecies && !speciesError && speciesData) {
+            setspecies(speciesData); 
+        }
+    }, [speciesData, speciesError, isLoadingspecies]);
+    console.log('item categories: ', itemCategories);
 
 
 
@@ -220,7 +328,7 @@ const GeneralSettings = () => {
                                     <div className="text-gray-500 text-base font-bold ">Payment methods</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your payment methods</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex" onClick={togglePopup1}>
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer" onClick={togglePopup1}>
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
                                     <div className="text-white text-base font-medium ">Add Payment Method</div>
                                 </div>
@@ -255,9 +363,13 @@ const GeneralSettings = () => {
                                     <div className="text-gray-500 text-base font-bold ">Species & Breeds</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add your species & breed database</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                    <div className="text-white text-base font-medium cursor-pointer" onClick={togglePopup}>Add Species</div>
+                                    <div className="text-white text-base font-medium " onClick={togglePopup7}>Add Breed</div>
+                                </div>
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
+                                    <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
+                                    <div className="text-white text-base font-medium " onClick={togglePopup}>Add Species</div>
                                 </div>
                             </div>
                             <div className="w-full h-full">
@@ -266,34 +378,20 @@ const GeneralSettings = () => {
                                         <div className='flex text-gray-500 text-base font-medium px-6 w-5/12'>Species</div>
                                         
                                     </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                    
+                                    <div className="w-full  max-h-[15rem] overflow-y-auto">
+                                    {isLoadingspecies && <Loading />}
+                                    {species.map((item:any) => (
+                                        <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                                        <div  className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
                                             <Image className="w-[22px] h-[22px] relative" src={cashicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">Cash</div>
+                                            <div className="text-gray-500 text-base font-medium ">{item.name}</div>
                                         </div>
                                         
                                     </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={cardicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">Card</div>
-                                        </div>
-                                        
-                                    </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={netbankingicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">Net Banking</div>
-                                        </div>
-                                        
-                                    </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={upiicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">UPI</div>
-                                        </div>
-                                        
-                                    </div>
+                                    ))
+                                    } 
+                                    </div>  
                                 </div>
                             </div>
                         </div>
@@ -305,9 +403,9 @@ const GeneralSettings = () => {
                                     <div className="text-gray-500 text-base font-bold ">Item Categories</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your item categories</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                    <div className="text-white text-base font-medium ">Add Category</div>
+                                    <div className="text-white text-base font-medium " onClick={togglePopup2}>Add Category</div>
                                 </div>
                             </div>
                             <div className="w-full h-full">
@@ -316,34 +414,19 @@ const GeneralSettings = () => {
                                         <div className='flex text-gray-500 text-base font-medium px-6 w-5/12'>Item Category</div>
                                         
                                     </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={cashicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">Cash</div>
+                                    {isLoadingItemCategories && <Loading />}
+                                    <div className="w-full  max-h-[15rem] overflow-y-auto">
+                                    {itemCategories.map((item: any) =>(
+                                        <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                                        <div  className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                            
+                                            <div className="text-gray-500 text-base font-medium ">{item.name}</div>
                                         </div>
                                         
                                     </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={cardicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">Card</div>
-                                        </div>
-                                        
-                                    </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={netbankingicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">Net Banking</div>
-                                        </div>
-                                        
-                                    </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={upiicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">UPI</div>
-                                        </div>
-                                        
-                                    </div>
+                                    ))
+                                    } 
+                                    </div>   
                                 </div>
                             </div>
                         </div>
@@ -353,9 +436,9 @@ const GeneralSettings = () => {
                                     <div className="text-gray-500 text-base font-bold ">Item Units</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your inventory item units</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                    <div className="text-white text-base font-medium ">Add Unit</div>
+                                    <div className="text-white text-base font-medium " onClick={togglePopup3}>Add Unit</div>
                                 </div>
                             </div>
                             <div className="w-full h-full">
@@ -364,34 +447,19 @@ const GeneralSettings = () => {
                                         <div className='flex text-gray-500 text-base font-medium px-6 w-5/12'>Unit</div>
                                         
                                     </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={cashicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">Cash</div>
+                                    {isLoadingItemUnits && <Loading />}
+                                    <div className="w-full  max-h-[15rem] overflow-y-auto">
+                                    {itemUnits.map((item:any) => (
+                                        <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                                        <div  className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                            
+                                            <div className="text-gray-500 text-base font-medium ">{item.name}</div>
                                         </div>
                                         
                                     </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={cardicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">Card</div>
-                                        </div>
-                                        
-                                    </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={netbankingicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">Net Banking</div>
-                                        </div>
-                                        
-                                    </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={upiicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">UPI</div>
-                                        </div>
-                                        
-                                    </div>
+                                    ))
+                                    } 
+                                    </div>   
                                 </div>
                             </div>
                         </div>
@@ -403,9 +471,9 @@ const GeneralSettings = () => {
                                     <div className="text-gray-500 text-base font-bold ">Service Categories</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your service categories</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                    <div className="text-white text-base font-medium ">Add Category</div>
+                                    <div className="text-white text-base font-medium " onClick={togglePopup4}>Add Category</div>
                                 </div>
                             </div>
                             <div className="w-full h-full">
@@ -414,34 +482,20 @@ const GeneralSettings = () => {
                                         <div className='flex text-gray-500 text-base font-medium px-6 w-5/12'>Service Category</div>
                                         
                                     </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={cashicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">Cash</div>
+                                    {isLoadingserviceCategory && <Loading />}
+                                    <div className="w-full  max-h-[15rem] overflow-y-auto">
+                                    {serviceCategory.map((item:any) => (
+                                        <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                                        <div  className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                            
+                                            <div className="text-gray-500 text-base font-medium ">{item.name}</div>
                                         </div>
                                         
                                     </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={cardicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">Card</div>
-                                        </div>
-                                        
-                                    </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={netbankingicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">Net Banking</div>
-                                        </div>
-                                        
-                                    </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={upiicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">UPI</div>
-                                        </div>
-                                        
-                                    </div>
+                                    ))
+                                    } 
+                                    </div>   
+                                    
                                 </div>
                             </div>
                         </div>
@@ -451,9 +505,9 @@ const GeneralSettings = () => {
                                     <div className="text-gray-500 text-base font-bold ">Tax Types</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your tax types</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                    <div className="text-white text-base font-medium ">Add Tax</div>
+                                    <div className="text-white text-base font-medium " onClick={togglePopup5}>Add Tax</div>
                                 </div>
                             </div>
                             <div className="w-full h-full">
@@ -462,34 +516,20 @@ const GeneralSettings = () => {
                                         <div className='flex text-gray-500 text-base font-medium px-6 w-5/12'>Tax Type</div>
                                         
                                     </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={cashicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">Cash</div>
+                                    {isLoading && <Loading />}
+                                    <div className="w-full  max-h-[15rem] overflow-y-auto">
+                                    {taxType.map((item:any) => (
+                                        <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                                        <div  className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                            
+                                            <div className="text-gray-500 text-base font-medium ">{item.name} % GST </div>
                                         </div>
                                         
                                     </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={cardicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">Card</div>
-                                        </div>
-                                        
-                                    </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={netbankingicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">Net Banking</div>
-                                        </div>
-                                        
-                                    </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={upiicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">UPI</div>
-                                        </div>
-                                        
-                                    </div>
+                                    ))
+                                    } 
+                                    </div>   
+                                    
                                 </div>
                             </div>
                         </div>
@@ -498,48 +538,34 @@ const GeneralSettings = () => {
                         <div className="w-[43.5rem] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                             <div className="w-full flex justify-between items-start">
                                 <div>
-                                    <div className="text-gray-500 text-base font-bold ">Item Categories</div>
-                                    <div className="text-neutral-400 text-base font-medium ">Add and configure your item categories</div>
+                                    <div className="text-gray-500 text-base font-bold ">Update Inventory - Stock out Reasons</div>
+                                    <div className="text-neutral-400 text-base font-medium ">Add and configure your stock out reasons</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                    <div className="text-white text-base font-medium ">Add Category</div>
+                                    <div className="text-white text-base font-medium " onClick={togglePopup6}>Add Reason</div>
                                 </div>
                             </div>
                             <div className="w-full h-full">
                                 <div className="w-full h-full rounded-[10px] border border-stone-300 justify-start items-start flex flex-col">
                                     <div className='flex  w-full  items-center box-border bg-gray-100  h-12 py-4 border-b border-neutral-400 text-gray-500'>
-                                        <div className='flex text-gray-500 text-base font-medium px-6 w-5/12'>Item Category</div>
+                                        <div className='flex text-gray-500 text-base font-medium px-6 w-5/12'>Stock Out Reasons</div>
                                         
                                     </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={cashicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">Cash</div>
+                                    {isLoadingreasons && <Loading />}
+                                    <div className="w-full  max-h-[15rem] overflow-y-auto">
+                                    {reasons.map((item:any) => (
+                                        <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                                        <div  className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                            
+                                            <div className="text-gray-500 text-base font-medium ">{item.name}</div>
                                         </div>
                                         
                                     </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={cardicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">Card</div>
-                                        </div>
-                                        
-                                    </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={netbankingicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">Net Banking</div>
-                                        </div>
-                                        
-                                    </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white   border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={upiicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">UPI</div>
-                                        </div>
-                                        
-                                    </div>
+                                    ))
+                                    } 
+                                    </div>   
+                                    
                                 </div>
                             </div>
                         </div>
@@ -553,6 +579,12 @@ const GeneralSettings = () => {
 
         {showPopup && <AddSpeciesPopup onClose={togglePopup} />}
         {showPopup1 && <AddPaymentPopup onClose={togglePopup1} />}
+        {showPopup2 && <AddItemCategoryPopup onClose={togglePopup2} />}
+        {showPopup3 && <AddItemUnit onClose={togglePopup3} />}
+        {showPopup4 && <AddServiceCategory onClose={togglePopup4} />}
+        {showPopup5 && <AddTaxType onClose={togglePopup5} />}
+        {showPopup6 && <AddReasons onClose={togglePopup6} />}
+        {showPopup7 && <AddBreed onClose={togglePopup7}/>}
     </>
     )
 }

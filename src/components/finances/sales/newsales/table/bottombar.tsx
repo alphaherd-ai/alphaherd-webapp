@@ -165,6 +165,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
+
                     phone: "+917637834918",
 
                 }),

@@ -28,9 +28,7 @@ const InventoryServicesTableHeader = () => {
     const togglePopup = () => {
         setShowPopup(!showPopup);
     }
-    const togglePopup2 = () => {
-        setShowPopup2(!showPopup2);
-    }
+    
 
     const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
     const [selectedSort, setselectedSort] = React.useState(new Set(["Category: text"]));
@@ -142,7 +140,7 @@ const InventoryServicesTableHeader = () => {
 
                     <div className='flex items-center  justify-between rounded-lg '>
 
-                        <Dropdown>
+                        {/* <Dropdown>
                             <DropdownTrigger className='z-0'>
                                 <Button
                                     // color="gray-400"
@@ -163,7 +161,15 @@ const InventoryServicesTableHeader = () => {
 
 
                             </DropdownMenu>
-                        </Dropdown>
+                        </Dropdown> */}
+                        <div className='mr-1' /> <div className='flex items-center text-base p-4 bg-black text-white rounded-lg cursor-pointer py-2 w-[156px] h-[44px]' onClick={togglePopup}>
+                            <div className='flex pr-2'>
+                                <Image src={Add} alt='Add' className='w-5 h-5' />
+                            </div>
+                            <button className='bg-transparent border-0 text-white text-base cursor-pointer'>
+                                New Service
+                            </button>
+                        </div>
 
 
 
@@ -171,7 +177,7 @@ const InventoryServicesTableHeader = () => {
                 </div>
             </div >
             {showPopup && <Popup onClose={togglePopup} />}
-            {showPopup2 && <Popup2 onClose={togglePopup2} />}
+            
         </>
     )
 }

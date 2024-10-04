@@ -17,6 +17,7 @@ import { z } from 'zod';
 import { ZodError } from 'zod'; 
 import { setValidationErrorsForForm } from '@/utils/setValidationErrorForForm';
 import capitalizeFirst from "@/utils/capitiliseFirst";
+import Popup2 from "./updateinventorypopup";
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 type PopupProps = {
@@ -59,11 +60,52 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     
     const [lastStep, setLastStep] = useState(false);
     const [formData, setFormData] = useState<any>({});
+    const [showPopup2, setShowPopup2] = React.useState(false);
+    const [productData, setProductData] = useState<any>(null);
     //const [buttonDisabled, setButtonDisabled] = useState(false);
     const [distributor, setDistributor] = useState<any[]>([]);
     const [isSaveDisabled, setIsSaveDisabled] = useState(true)
     const [activeTab, setActiveTab] = useState(0);
     const [errors, setErrors] =  useState<any>({});
+
+    const customStyles = {
+        control: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          border: state.isFocused ? '1px solid #35BEB1' : 'none',
+          '&:hover': {
+            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            },
+          boxShadow: state.isFocused ? 'none' : 'none',
+        }),
+        valueContainer: (provided: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        singleValue: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+        }),
+        menu: (provided: any) => ({
+          ...provided,
+          backgroundColor: 'white',
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        option: (provided: any, state: any) => ({
+          ...provided,
+          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+          color: state.isFocused ? 'white' : '#6B7E7D',
+          '&:hover': {
+            backgroundColor: '#35BEB1',
+            color: 'white',
+          },
+        }),
+    };
 
     const [categories, setCategories] = useState<any[]>([
         { value: "Pet food", label: "Pet food" },
@@ -145,8 +187,13 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     
             if (response.ok) {
                 console.log('Data saved successfully');
-                onClose();
-                window.dispatchEvent(new FocusEvent('focus'));
+                setProductData({
+                    itemName: formData.itemName,
+                    providers: selectedProviders,
+                });
+                //onClose();
+                //window.dispatchEvent(new FocusEvent('focus'));
+                setShowPopup2(true);
             } else {
                 console.error('Failed to save data:', response.statusText);
             }
@@ -210,7 +257,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     return (
         <>
             {!lastStep && (
-                <div className="w-full h-full overflow-auto flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
+                <div className="w-full h-full overflow-auto flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50" onClick={onClose}>
                     <div className="w-[640px] h-[787px] px-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
                         <div className="self-end items-start gap-6 flex mt-[0.6rem] cursor-pointer" onClick={onClose}>
                             <Image src={closeicon} alt="close"></Image>
@@ -243,6 +290,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                     isMulti={false}
                                     name="providers"
                                     onChange={(e) => handleChange("providers", e?.label)}
+                                    styles={customStyles}
                                 />
                                 
                             </div>
@@ -258,7 +306,9 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                     options={unitOptions}
                                     isMulti={false}
                                     name="unit"
+                                    defaultValue={unitOptions.find(option => option.value === 'Units')} 
                                     onChange={(e) => handleChange("unit",e?.label)}
+                                    styles={customStyles}
                                 />
                                 
                             </div>
@@ -283,6 +333,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                     isMulti={false}
                                     name="tax"
                                     onChange={(e) => handleChange("tax", e?.value)}
+                                    styles={customStyles}
                                     
                                 />
                                 {errors.tax && (
@@ -352,7 +403,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                             </div>
                             <div className="grow shrink basis-0 h-11 px-4 py-[13px] bg-white rounded-[5px] justify-start items-center flex">
                                 <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-2 flex">
-                                    <div className="text-neutral-400 text-base font-medium">{formData.unit}</div>
+                                    <div className="text-neutral-400 text-base font-medium">{formData.unit || 'Units'}</div>
                                 </div>
                             </div>
                         </div>
@@ -369,7 +420,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                             </div>
                             <div className="grow shrink basis-0 h-11 px-4 py-[13px] bg-white rounded-[5px] justify-start items-center flex ml-[1.4rem]">
                                 <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-2 flex">
-                                    <div className="text-neutral-400 text-base font-medium">{formData.unit}</div>
+                                    <div className="text-neutral-400 text-base font-medium">{formData.unit || 'Units'}</div>
                                 </div>
                             </div>
                         </div>
@@ -387,7 +438,15 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                     </div>
                    
                 </div>
+                
             )}
+             {/* {showPopup2 && (
+                <Popup2
+                onClose={() => setShowPopup2(false)}
+                productData={productData}
+                />
+            )} */}
+            
         </>
     );
 }

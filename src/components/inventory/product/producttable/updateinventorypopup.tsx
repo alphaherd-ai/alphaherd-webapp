@@ -32,12 +32,12 @@ interface Distributors {
     id: string,
     distributorName: string
 }
-interface Products {
-    id: string,
-    itemName: string,
-    productBatch: ProductBatch[],
-    hsnCode: string,
-    quantity: number
+interface Products{
+    id :string,
+    itemName:string,
+    productBatch:ProductBatch[],
+    hsnCode:string,
+    quantity:number
 }
 interface ProductBatch {
     id: number;
@@ -72,7 +72,7 @@ function useProductBatchfetch(id: number | null) {
         batchError: error
     }
 }
-const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: any) => {
+const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any) => {
     const [selectedOption, setSelectedOption] = useState<string>(Stock.StockIN);
     const [selectedProductDetails, setSelectedProduct] = useState<Products>()
     const [isChecked, setChecked] = useState(false);
@@ -83,6 +83,45 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
     const [formData, setFormData] = useState<any>({});
     const appState = useAppSelector((state) => state.app)
     const [distributor, setDistributor] = useState<any[]>([]);
+
+    const customStyles = {
+        control: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          border: state.isFocused ? '1px solid #35BEB1' : 'none',
+          '&:hover': {
+            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            },
+          boxShadow: state.isFocused ? 'none' : 'none',
+        }),
+        valueContainer: (provided: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        singleValue: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+        }),
+        menu: (provided: any) => ({
+          ...provided,
+          backgroundColor: 'white',
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        option: (provided: any, state: any) => ({
+          ...provided,
+          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+          color: state.isFocused ? 'white' : '#6B7E7D',
+          '&:hover': {
+            backgroundColor: '#35BEB1',
+            color: 'white',
+          },
+        }),
+    };
 
     const { fetchedProducts, isLoading, error } = useProductfetch(appState.currentBranchId);
     const { fetchedBathces, isBatchLoading, batchError } = useProductBatchfetch(appState.currentBranchId);
@@ -398,6 +437,26 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
         fetchDistributors();
     }, []);
 
+    //reasons
+    // const [reason, setReason] = useState<any[]>([]);
+    // useEffect(() => {
+
+    //     const fetchReasons = async()=>{
+    //         try{
+    //             const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/settings/reason/getAll?branchId=${appState.currentBranchId}`);
+    //             const reasons = response.data.map((reason:Reasons)=>({
+    //                 value: reason.id,
+    //                 label: reason.reasonName
+    //             }));
+    //             console.log(reasons);
+    //             setReason(reasons);
+    //         }catch(error){
+    //             console.log("Error fetching reasons",error);
+    //         }
+    //     }
+    //       fetchReasons();
+    // }, []);
+
     const Reasons = [
         { value: "Damaged", label: "Damaged" },
         { value: "Expired", label: "Expired" },
@@ -405,15 +464,21 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
         { value: "Wrong Item", label: "Wrong Item" },
         { value: "Other(mention reason)", label: "Other(mention reason)" },
     ]
-
+    
 
     return (
         <>
-            <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-100 bg-opacity-50 z-50">
-                <div className="w-[1392px] min-h-[481px] flex-col p-8 bg-gray-200 gap-6 rounded-md">
-                    <div className="flex justify-end p-8 gap-4">
-                        {/* <button className="border-0 outline-0 cursor-pointer"><Image src={minicon} alt="minimize" /></button> */}
+            <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-[#F4F5F7] bg-opacity-50 z-50">
+                <div className="w-[1392px] min-h-[481px] flex-col p-8 bg-[#F4F5F7] gap-6 rounded-[20px]">
+                    {/* <div className="flex justify-end p-8 gap-4">
+                        
                         <button className="border-0 outline-0 cursor-pointer" onClick={onClose}><Image src={closeicon} alt="minimize" /></button>
+                    </div> */}
+                    <div className="flex justify-end gap-4">
+                        <div className="flex-grow"></div> {/* Added flex-grow to push the close icon to the right */}
+                        <button className="w-[24px] h-[24px] border-0 outline-0 cursor-pointer" onClick={onClose}>
+                            <Image src={closeicon} alt="close" />
+                        </button>
                     </div>
                     <div className="text-gray-500 text-xl font-medium ">Update Inventory</div>
                     <div className="text-neutral-400 text-base font-medium ">Add or subtract quantity from inventory</div>
@@ -442,12 +507,12 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                         </div>
                     </div>
                     <div className="pb-6">
-                        <div className='flex  w-full justify-evenly items-center box-border bg-gray-100  h-12  border-b border-neutral-400 text-gray-500'>
-                            <div className=' flex text-gray-500 text-base font-medium  w-[3rem]'>No.</div>
-                            <div className=' flex text-gray-500 text-base font-medium  w-[12rem]'>Product</div>
-                            <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>Quantity</div>
+                        <div className='flex w-full justify-between items-center box-border bg-gray-100 h-12 border-b border-neutral-400 text-gray-500'>
+                            <div className='flex text-gray-500 text-base font-medium w-[5rem]'>No.</div>
+                            <div className='flex text-gray-500 text-base font-medium w-[15rem]'>Product</div> 
+                            <div className='flex text-gray-500 text-base font-medium w-[8rem]'>Quantity</div> 
                             {selectedOption === Stock.StockOUT && (
-                                <div className=' flex text-gray-500 text-base font-medium  w-[8rem]'>Reason</div>
+                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>Reason</div> 
                             )}
                             <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>Batch No.</div>
                             <div className=' flex text-gray-500 text-base font-medium  w-[8rem]'>Expiry</div>
@@ -456,15 +521,16 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                             <div className=' flex text-gray-500 text-base font-medium  w-[8rem]'>Distributor</div>
                             <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>Total Cost</div>
                             <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>MRP</div>
-                            <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>Selling Price</div>
+                            <div className=' flex text-gray-500 text-base font-medium  w-[6rem]'>Selling Price</div>                        
                             <div className=' flex text-gray-500 text-base font-medium  w-[2rem]'></div>
                         </div>
+                        
                         {inventory.map((item, index) => (
-                            <div key={index} className='flex justify-evenly items-center w-full  py-2 box-border bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                            <div key={index} className='flex justify-evenly items-center w-full  py-2  bg-white text-gray-400  '>
                                 <div className='w-[3rem] flex items-center text-neutral-400 text-base font-medium'>{index + 1}</div>
                                 <div className='w-[12rem] flex items-center text-neutral-400 text-base font-medium'>
                                     <Select
-                                        className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
+                                        className="text-gray-500 text-base font-medium w-[90%] "
                                         classNamePrefix="select"
                                         value={products.find((prod) => prod.value.id === item.productId)}
                                         isClearable={false}
@@ -472,13 +538,20 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                                         name="itemName"
                                         options={products}
                                         onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
+                                        styles={customStyles}
                                     />
                                 </div>
                                 <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
-                                    <button className="bg-white rounded-[5px] border-2 border-solid border-borderGrey" onClick={() => handleQuantityDecClick(index)}>
+                                    <button className="bg-white rounded-[5px] " onClick={() => handleQuantityDecClick(index)}>
                                         <Image className="w-4 h-2" src={subicon} alt="-" />
                                     </button>
-                                    <div>{item.quantity}</div>
+                                    <input
+                                        type="number" 
+                                        value={item.quantity} 
+                                        onChange={(e) => handleInputChange(index, 'quantity', parseInt(e.target.value, 10))}
+                                        className="bg-white text-center text-neutral-400 text-base font-medium w-[40px] border-2 border-solid border-borderGrey rounded-[5px]" 
+                                        
+                                    />
                                     <button className="bg-white rounded-[5px] border-2 border-solid border-borderGrey" onClick={() => handleQuantityIncClick(index)}>
                                         <Image className="w-4 h-2" src={add1icon} alt="+" />
                                     </button>
@@ -486,154 +559,147 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                                 {selectedOption === Stock.StockOUT && (
                                     <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
                                         <Select
-                                            className=" text-neutral-400 text-base font-medium focus:outline-none  rounded-[5px] focus:border focus:border-[#35BEB1] w-full"
-                                            placeholder="Select clinic staff"
+                                            className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
+                                            placeholder="Select Reason"
                                             isClearable={false}
                                             isSearchable={true}
                                             options={Reasons}
                                             isMulti={true}
                                             name="Reasons"
                                             onChange={(value) => handleChange("reasons", value)}
+                                            styles={customStyles}
                                         />
                                     </div>
                                 )}
 
                                 <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>
-                                    {selectedOption === Stock.StockIN ? (
-                                        <input
-                                            type="text"
-                                            value={item.batchNumber}
-                                            onChange={(e) => handleInputChange(index, 'batchNumber', e.target.value)}
-                                            className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
-                                            name={`batchNumber-${index}`}
-                                        />
-                                    ) :
-                                        (
-                                            <Select
-                                                className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
-                                                classNamePrefix="select"
-                                                value={batches.find((prod) => prod.value.id === item.id)}
-                                                isClearable={false}
-                                                isSearchable={true}
-                                                name={`batchNumber=${index}`}
-                                                options={filteredBatches}
-                                                onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
-                                            />
-                                        )}
-
-                                </div>
-                                <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium'>
-                                    <DatePicker
-                                        // showIcon
-                                        className="w-full rounded-[5px] border border-solid border-borderGrey outline-none  focus:border focus:border-textGreen px-1 py-2"
-                                        selected={item.expiry}
-                                        placeholderText="MM/DD/YYYY"
-                                        onChange={(date: any) => {
-                                            handleInputChange(index, "expiry", date)
-                                        }}
-                                        calendarClassName="react-datepicker-custom"
-                                    // value={startDate.toLocaleDateString()}
-                                    // customInput={
-                                    //     // <div className="relative">
-                                    //     //     <input
-                                    //     //         className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border border-solid border-borderText focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                    //     //         value={startDate.toLocaleDateString()}
-
-                                    //     //     />
-
-                                    //     // </div>
-                                    // }
+                                    { selectedOption===Stock.StockIN ?(
+                                    <input
+                                    type="text"
+                                    value={item.batchNumber}
+                                    onChange={(e) => handleInputChange(index,'batchNumber', e.target.value)}
+                                    className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
+                                    name={`batchNumber-${index}`}
                                     />
-                                    {item.expiry && selectedOption !== Stock.StockIN && (
-                                        <div>{formatDateAndTime(item.expiry).formattedDate}</div>
+                                    ):
+                                    (
+                                      <Select
+                                      className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
+                                      classNamePrefix="select"
+                                      value={batches.find((prod) => prod.value.id === item.id)}
+                                      isClearable={false}
+                                      isSearchable={true}
+                                      name={`batchNumber=${index}`}
+                                      options={filteredBatches}
+                                      onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
+                                  />  
                                     )}
-                                </div>
+           
+        </div>
+        <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium'>
+        <DatePicker
+            // showIcon
+            className="w-full rounded-[5px] border border-solid border-borderGrey outline-none  focus:border focus:border-textGreen px-1 py-2"
+            selected={item.expiry}
+            placeholderText="MM/DD/YYYY"
+            onChange={(date:any) =>{ 
+                handleInputChange(index,"expiry",date)}}
+            calendarClassName="react-datepicker-custom"
+            // value={startDate.toLocaleDateString()}
+            // customInput={
+            //     // <div className="relative">
+            //     //     <input
+            //     //         className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border border-solid border-borderText focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+            //     //         value={startDate.toLocaleDateString()}
+                        
+            //     //     />
+                    
+            //     // </div>
+            // }
+        />
+    {item.expiry && selectedOption !== Stock.StockIN && (
+        <div>{formatDateAndTime(item.expiry).formattedDate}</div>
+    )}
+</div>
 
-                                <div className='w-[5rem] flex items-center text-neutral-400 text-base font-medium'>
-                                    <input
-                                        type="text"
-                                        value={item.hsnCode}
-                                        onChange={(e) => handleInputChange(index, 'hsnCode', e.target.value)}
-                                        className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded "
-                                        name={`hsnCode-${index}`}
-                                    />
-                                </div>
-                                <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>
-                                    <input
-                                        type="text"
-                                        value={item.category}
-                                        onChange={(e) => handleInputChange(index, 'category', e.target.value)}
-                                        className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
-                                        name={`category-${index}`}
-                                    />
-                                </div>
-                                <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium '>
-                                    <Select
-                                        className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
-                                        placeholder="Select Distributor"
-                                        isClearable={false}
-                                        isSearchable={true}
-                                        options={distributor}
-                                        isMulti={false}
-                                        name={`providers-${index}`}
-                                        onChange={(e) => handleInputChange(index, 'providers', e?.label)}
-                                    />
-                                </div>
-                                <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>₹
-                                    <input
-                                        type="number"
-                                        value={item.costPrice}
-                                        onChange={(e) => handleInputChange(index, 'costPrice', parseFloat(e.target.value))}
-                                        className="w-full rounded-[5px] border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium"
-                                        name={`costPrice-${index}`}
-                                    />
-                                </div>
-                                <div className='w-[6rem] rounded-[5px] flex items-center text-neutral-400 text-base font-medium'>₹
-                                    <input
-                                        type="number"
-                                        value={item.maxRetailPrice}
-                                        onChange={(e) => handleInputChange(index, 'maxRetailPrice', parseFloat(e.target.value))}
-                                        className="w-full rounded-[5px] border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium"
-                                        name={`maxRetailPrice-${index}`}
-                                    />
-                                </div>
+        <div className='w-[5rem] flex items-center text-neutral-400 text-base font-medium'>
+            <input
+                type="text"
+                value={item.hsnCode}
+                onChange={(e) => handleInputChange(index, 'hsnCode' ,e.target.value)}
+                className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded "
+            name={`hsnCode-${index}`}
+            />
+        </div>
+        <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>
+            <input
+                type="text"
+                value={item.category}
+                onChange={(e) => handleInputChange(index,'category' ,e.target.value)}
+                className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
+            name={`category-${index}`}
+            />
+        </div>
+        <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium '>
+        <Select
+            className="w-full border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
+            placeholder="Select Distributor"
+            isClearable={false}
+            isSearchable={true}
+            options={distributor}
+            isMulti={false}
+            name={`providers-${index}`}
+            onChange={(e) => handleInputChange(index,'providers', e?.label)}
+        />
+        </div>
+        <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>₹ 
+            <input
+                type="number"
+                value={item.costPrice}
+                onChange={(e) => handleInputChange(index, 'costPrice',parseFloat(e.target.value))}
+                className="w-full rounded-[5px] border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium"
+                name={`costPrice-${index}`}
+            />
+        </div>
+        <div className='w-[6rem] rounded-[5px] flex items-center text-neutral-400 text-base font-medium'>₹
+            <input
+                type="number"
+                value={item.maxRetailPrice}
+                onChange={(e) =>  handleInputChange(index, 'maxRetailPrice',parseFloat(e.target.value))}
+                className="w-full rounded-[5px] border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium"
+                name={`maxRetailPrice-${index}`}
+            />
+        </div>
 
-                                <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>₹
-                                    <input
-                                        type="number"
-                                        value={item.sellingPrice}
-                                        onChange={(e) => handleInputChange(index, 'sellingPrice', parseFloat(e.target.value))}
-                                        className="w-full rounded-[5px] border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium"
-                                        name={`sellingPrice-${index}`}
-                                    />
+        <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>₹
+            <input
+                type="number"
+                value={item.sellingPrice}
+                onChange={(e) =>  handleInputChange(index, 'sellingPrice',parseFloat(e.target.value))}
+                className="w-full rounded-[5px] border border-solid border-borderGrey focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium"
+                name={`sellingPrice-${index}`}
+            />
+        </div>
+        <div className="w-[2rem]">
+        <button onClick={() => handleDeleteRow(index)} className=" border-0 flex-col justify-start items-end gap-2.5 flex">
+                                <div className="h-6 px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
+                                    <Image className="w-4 h-4 relative" src={deleteicon} alt="delete" />
                                 </div>
-                                <div className="w-[2rem]">
-                                    <button onClick={() => handleDeleteRow(index)} className=" border-0 flex-col justify-start items-end gap-2.5 flex">
-                                        <div className="h-6 px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
-                                            <Image className="w-4 h-4 relative" src={deleteicon} alt="delete" />
-                                        </div>
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
+        </button>
+        </div>
+    </div>
+))}
                     </div>
                     <div>
-                        <div className="flex justify-between items-center">
-                            <div className="flex items-center">
-                                <div className="pr-[4px]">
-                                    <input type="checkbox" onChange={handleCheckBoxChange} />
-                                </div>
-                                <div className="text-teal-400 text-base font-medium ">
-                                    Update total cost as Expense
-                                </div>
-                            </div>
-                            <div className="bg-black px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
-                                <Image src={checkicon} alt="add" />
-                                <button className="text-white text-base font-bold  bg-transparent border-0 cursor-pointer" onClick={handleUpdateInventory}>
-                                    Update Inventory
-                                </button>
-                            </div>
+                    <div className="flex items-center">
+                       <div className="flex-grow"></div>
+                       <div className="bg-black px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
+                            <Image src={checkicon} alt="add" />
+                            <button className="text-white text-base font-bold bg-transparent border-0 cursor-pointer" onClick={handleUpdateInventory}>
+                                Update Inventory
+                            </button>
                         </div>
+                    </div>
                     </div>
                 </div>
             </div>
