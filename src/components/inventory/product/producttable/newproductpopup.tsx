@@ -440,12 +440,12 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                 </div>
                 
             )}
-             {showPopup2 && (
+             {/* {showPopup2 && (
                 <Popup2
                 onClose={() => setShowPopup2(false)}
                 productData={productData}
                 />
-            )}
+            )} */}
             
         </>
     );

@@ -463,9 +463,7 @@ model Items {
   highQty          Int?
   discount         Float?
   name             String?
-  itemType         String?
   productId        Int?
-  serviceId        Int?
   services         Services?       @relation(fields: [serviceId], references: [id])
   products         Products?       @relation(fields: [productId], references: [id])
   salesId          Int?
@@ -489,7 +487,6 @@ model InventoryTimeline {
   inventoryType      Inventory?        @default(None)
   stockChange        Stock?            @default(StockIN)
   invoiceType        String?
-  invoiceNo          String?
   invoiceNo          String?
   quantityChange     Int?
   receiptNo          Int?
