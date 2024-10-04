@@ -105,7 +105,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
             color: 'white',
           },
         }),
-      };
+    };
 
     const [categories, setCategories] = useState<any[]>([
         { value: "Pet food", label: "Pet food" },

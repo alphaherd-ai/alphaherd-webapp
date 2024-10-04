@@ -36,6 +36,15 @@ function useServicefetch (id: string | null,branchId:number|null) {
    }
 }
 
+function useServiceTimeLine (id:string | null, branchId:number|null){
+    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/timeline/service/${id}?branchId=${branchId}`,fetcher,{revalidateOnFocus:true});
+    return{
+        fetchedServiceTimeLine:data,
+        serviceLoading:isLoading,
+        serviceError:error
+    }
+}
+
 // async function fetchProductDetails(productNames: string[]) {
 //     const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/products`, {
 //         method: 'POST',
@@ -94,12 +103,14 @@ function useServicefetch (id: string | null,branchId:number|null) {
     const router=useRouter();
 
     const [service, setService] = useState<any | null>(null);
+    const [inventoryTimeline, setInventoryTimeline] = useState<any | null>(null);
     const url = useSearchParams();
     const id = url.get('id');
     const appState = useAppSelector((state) => state.app)
     const{fetchedService,isLoading,error}=useServicefetch(id,appState.currentBranchId);
     const [value, setValue] = useState(30);
 
+    const {fetchedServiceTimeLine,serviceLoading,serviceError}=useServiceTimeLine(id,appState.currentBranchId)
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue(event.target.value === '' ? 0 : Number(event.target.value));
     };
@@ -108,7 +119,12 @@ function useServicefetch (id: string | null,branchId:number|null) {
         if(!error&&!isLoading&&fetchedService){
           setService(fetchedService);
         }
-      },[fetchedService,error,isLoading]
+        if(!serviceError && !serviceLoading && fetchedServiceTimeLine){
+            console.log(fetchedServiceTimeLine[0]?.inventoryTimeline);
+            setInventoryTimeline(fetchedServiceTimeLine[0]?.inventoryTimeline)
+        }
+
+      },[fetchedService,error,isLoading,fetchedServiceTimeLine,serviceError,serviceLoading]
     );
 
     console.log("service", service);
@@ -282,6 +298,34 @@ function useServicefetch (id: string | null,branchId:number|null) {
                     <div className="w-full">
 
                     </div>
+                    <div className="w-full max-h-[400px] overflow-y-auto">
+
+                        {inventoryTimeline?.map((item: {
+                            invoiceNo: any; id: React.Key | null | undefined; createdAt: string; quantityChange: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; stockChange: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; batchNumber: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; party: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; invoiceType: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined
+
+                        }) => (
+                            <div key={item.id} className="w-full border-b border-solid border-0 border-borderGrey flex items-start justify-between">
+                                <div className="w-full flex p-2">
+                                    <div className="w-full flex items-center">
+                                        <div className="text-borderGrey text-base font-medium w-1/12 mr-10">
+                                            {formatDateAndTime(item.createdAt).formattedDate}
+                                        </div>
+                                        <div className=" text-borderGrey text-base font-medium w-[5rem]">
+                                            {formatDateAndTime(item.createdAt).formattedTime}
+                                        </div>
+                            
+                                        <div className="text-borderGrey text-base font-medium w-3/12">
+                                            {item.party}
+                                        </div>
+                                        <div className="text-teal-400 text-sm font-medium  w-2/12">
+                                            {item.invoiceNo ? item.invoiceNo : "Manual"}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
                 </div>
             </div>
             <div className="rounded-md">

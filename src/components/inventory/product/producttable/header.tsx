@@ -20,6 +20,7 @@ import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/reac
 import FilterDropdwonCard from './FilterDropDownCard';
 import FilterDropdownProductsCard from './FilterDropDownProductsCard';
 import DownloadPopup from './downloadProductPopup';
+import { Products } from '@prisma/client';
 
 
 

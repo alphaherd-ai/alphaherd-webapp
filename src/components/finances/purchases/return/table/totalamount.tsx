@@ -49,6 +49,15 @@ const NewPurchaseReturnTotalAmount = () => {
             updateGrandTotal();
         }
     };
+
+    useEffect(()=>{
+        if(totalAmountData.subTotal==0) {
+            setShipping('');
+            setAdjustment('');
+        }
+      },[totalAmountData])
+
+      
     const [discountMethod,setDiscountMethod]=useState('amount');
     const handleSelectChange = (selectedOption: any) => {
         setDiscountMethod(selectedOption.value);

@@ -18,6 +18,7 @@ import Loading2 from '@/app/loading2';
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 const NewsalesHeader = ({existingHeaderData}: any) => {
+    
 
     const customStyles = {
         control: (provided: any, state: any) => ({
@@ -84,6 +85,9 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
         setDisableButton(!disableButton);
     };
 
+    
+    
+
     const handleDateChange = (date:any) => {
         setStartDate(date);
         console.log(date);
@@ -94,12 +98,13 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
         setHeaderData((prevData)=>({...prevData,dueDate:date}))
     }
     useEffect(()=>{
+        console.log("headerData:",headerData);
         if(id){
             setHeaderData(existingHeaderData)
         }
      else{
         setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo}))}
-    },[])
+    },[setHeaderData])
     
     
     useEffect(()=>{
@@ -114,6 +119,11 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
 
         }
     },[data])
+
+    useEffect(() => {
+        //console.log("Updated headerData:", headerData,existingHeaderData);
+        setHeaderData(headerData);
+    }, [headerData]);
     
 
     return (
@@ -131,6 +141,7 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
                                 isClearable={isClearable}
                                 isSearchable={isSearchable}
                                 name="color"
+                                value={headerData.customer}
                                 options={customers}
                                 styles={customStyles}
                                 onChange={(selectedOption) => setHeaderData((prevData) => ({ ...prevData, customer: selectedOption }))}
@@ -179,7 +190,7 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
                         //     )}
                         // />
                         // <div className='w-full relative'>
-                        
+
                         <div className="customDatePickerWidth">
                         <DatePicker
                                         className="w-full"
@@ -190,7 +201,7 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
                                             <div className='relative '>
                                                 <input
                                 className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                value={startDate.toLocaleDateString()}
+                                value={  startDate.toLocaleDateString()}
                                                     readOnly
                                                 />
                                                 <Image
@@ -224,7 +235,7 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
                             <div className='relative'>
                                 <input
                                 className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                value={dueDate.toLocaleDateString()}
+                                value={startDate.toLocaleDateString()}
                                 readOnly
                                 />
                                 <Image
@@ -254,6 +265,7 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
                             cols={100}
                             className=" w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
                             placeholder="..."
+                            value={headerData.notes}
                             onChange={(e) => setHeaderData((prevData) => ({ ...prevData, notes: e.target.value }))}
                         />
                     ):(

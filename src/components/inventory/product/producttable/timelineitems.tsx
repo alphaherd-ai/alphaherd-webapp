@@ -85,9 +85,9 @@ if(isLoading) return (<Loading />)
           </div>
           <div className='w-1/4 flex items-center px-6 text-base font-medium text-red-500'>{product.totalQuantity}</div>
           <div className='w-1/4 flex items-center px-6 text-base font-medium'>{product.providers}</div>
-          <div className='w-1/4 flex  items-center  text-base font-medium'>
+          <div className='w-1/4 flex  items-center  text-base font-medium px-6'>
           <Tooltip content={product.category} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
-            <div className='bg-[#E7F5EE] rounded-md px-2 py-2' >
+            <div className='bg-[#E7F5EE] rounded-md  px-2 py-2' >
                 <span className="text-[#0F9D58]  text-sm font-medium ">{product.category}</span>
             </div>
           </Tooltip>
