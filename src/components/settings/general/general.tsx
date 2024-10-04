@@ -20,7 +20,7 @@ import upiicon from "../../../assets/icons/settings/upiicon.svg"
 import editicon from "../../../assets/icons/settings/editicon.svg"
 import deleteicon from "../../../assets/icons/settings/deleteicon.svg"
 import React, { useState, useEffect } from 'react';
-import AddSpeciesPopup from "../generalSettingPopup/addSpeciesPopup";
+import AddSpeciesPopup from "../generalSettingPopup/addItemCategoryPopup";
 import AddPaymentPopup from "../generalSettingPopup/addPaymentPopup";
 import Loading from "@/app/loading1";
 import { useAppSelector } from "@/lib/hooks";
@@ -160,6 +160,19 @@ const GeneralSettings = () => {
     }, [data,error,isLoading]);
 
 
+    const [itemCategories, setItemCategories] = useState([]);
+    const {data: itemCategoryData, error: itemCategoryError, isLoading: isLoadingItemCategories} = useSWR(
+        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemCategory/getAll?branchId=${appState.currentBranchId}`,
+        fetcher,
+        { revalidateOnFocus: true } 
+    );
+    useEffect(() => {
+        if (!isLoadingItemCategories && !itemCategoryError && itemCategoryData) {
+            setItemCategories(itemCategoryData); 
+        }
+    }, [itemCategoryData, itemCategoryError, isLoadingItemCategories]);
+
+    console.log(itemCategories);
 
 
     return (
@@ -306,9 +319,9 @@ const GeneralSettings = () => {
                                     <div className="text-gray-500 text-base font-bold ">Item Categories</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your item categories</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex" onClick={togglePopup2}>
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                    <div className="text-white text-base font-medium ">Add Category</div>
+                                    <div className="text-white text-base font-medium " >Add Category</div>
                                 </div>
                             </div>
                             <div className="w-full h-full">
@@ -552,7 +565,7 @@ const GeneralSettings = () => {
         </div >
 
 
-        {showPopup && <AddSpeciesPopup onClose={togglePopup} />}
+        {showPopup2 && <AddSpeciesPopup onClose={togglePopup2} />}
         {showPopup1 && <AddPaymentPopup onClose={togglePopup1} />}
     </>
     )

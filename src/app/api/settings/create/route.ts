@@ -8,6 +8,7 @@ export const POST = async(req: NextRequest) => {
         }
         try {
         const body = await req.json();
+        // console.log("Here's the finance id",req);
         const financeId = await fetchFinanceId(req);
 
         const paymentMethod = await prismaClient.paymentMethod.create({

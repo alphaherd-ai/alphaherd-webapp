@@ -22,10 +22,10 @@ export const fetchBranchDetailsById = async (branchId: Number) => {
 export const fetchInventoryId = async (request:NextRequest) => {
     const url = request.nextUrl;
     const { searchParams } = new URL(url);
-    // console.log(searchParams);
+    console.log(searchParams);
     const branchId = searchParams.get("branchId")!;  
     
-    // console.log("here's the final branchID",branchId)
+    console.log("here's the final branchID",branchId)
     if (!branchId) {
         throw new Error("Branch ID not found in request");
     }
@@ -35,7 +35,7 @@ export const fetchInventoryId = async (request:NextRequest) => {
         },
         cacheStrategy:{ttl:30}
     });
-    // console.log(orgBranch)
+    console.log(orgBranch)
     let inventorySection = await prismaClient.inventorySection.findUnique({
         where: {
             branchId: Number(branchId),
@@ -43,7 +43,7 @@ export const fetchInventoryId = async (request:NextRequest) => {
         cacheStrategy: { ttl: 60 },
     });
     if (!inventorySection && orgBranch) {
-        // console.log("here");
+        console.log("here");
        inventorySection= await prismaClient.inventorySection.create({
             data: {
                 name: "Inventory-" + orgBranch.branchName,
@@ -52,7 +52,7 @@ export const fetchInventoryId = async (request:NextRequest) => {
             }
         })
     }
-
+    console.log(inventorySection?.id, "hererer")
     return inventorySection?.id;
 }
 

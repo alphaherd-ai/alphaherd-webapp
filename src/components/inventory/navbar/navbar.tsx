@@ -139,10 +139,10 @@ const InventoryNavbar = () => {
                     </div>
 
                   
-                    <Link className='no-underline h-full  ml-4' href='/finance/overview'>
+                    {/* <Link className='no-underline h-full  ml-4' href='/finance/overview'>
                         <div className='flex items-center border border-solid border-gray-300 bg-white rounded-lg px-3 h-[2.8rem]  '>
                             <Image src={Settings} alt='Setting' className='w-5  h-5' /></div>
-                    </Link>
+                    </Link> */}
                 </div>
             </div >
         </>
