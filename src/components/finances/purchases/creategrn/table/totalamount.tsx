@@ -52,6 +52,14 @@ const CreateGrnTotalAmount = () => {
         }
     };
 
+    useEffect(()=>{
+        if(totalAmountData.subTotal==0) {
+            setShipping('');
+            setAdjustment('');
+        }
+      },[totalAmountData])
+      
+
     const [discountMethod,setDiscountMethod]=useState('amount');
     const handleSelectChange = (selectedOption: any) => {
         setDiscountMethod(selectedOption.value);
@@ -280,7 +288,7 @@ const CreateGrnTotalAmount = () => {
                                         <input
                                         type='number'
                                         className="text-right  text-base  w-[50%] border-none outline-none"
-                                        value={discountInput}
+                                        value={totalAmountData.subTotal?discountInput:0}
                                         onChange={(e)=>handleDiscountChange(Number(e.target.value))}
                                         /></div>
                                         <div className=' flex text-gray-500 text-base font-medium pl-6'>

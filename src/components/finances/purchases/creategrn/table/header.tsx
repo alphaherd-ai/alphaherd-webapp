@@ -145,6 +145,7 @@ const CreateGrnHeader = ({existingHeaderData}:any) => {
                             isSearchable={isSearchable}
                             name="color"
                             options={distributor}
+                            value={headerData.distributor}
                             styles={customStyles}
                             onChange={(selectedOption) => setHeaderData((prevData) => ({ ...prevData, distributor: selectedOption }))}
                         /> )):(
@@ -252,7 +253,7 @@ const CreateGrnHeader = ({existingHeaderData}:any) => {
                                             <div className='relative'>
                                                 <input
                                                     className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={dueDate.toLocaleDateString()}
+                                                    value={headerData?.dueDate?.toLocaleDateString() || new Date().toLocaleDateString()}
                                                     readOnly
                                                 />
                                                 <Image
@@ -281,6 +282,7 @@ const CreateGrnHeader = ({existingHeaderData}:any) => {
                         {id===null?(
                         <input
                             type="text"
+                            value={headerData.notes}
                             className=" w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
                             placeholder="..."
                             onChange={(e) => setHeaderData((prevData) => ({ ...prevData, notes: e.target.value }))}
