@@ -188,10 +188,7 @@ const InventoryNavbar = () => {
                 </div>
             </div >
             {showPopup && <Popup onClose={togglePopup} />}
-            {/* {showPopup2 && <Popup2 onClose={togglePopup2} productData={{
-                itemName: '',
-                providers: []
-            }} />} */}
+            {showPopup2 && <Popup2 onClose={togglePopup2} />}
 
            
         </>
