@@ -49,16 +49,6 @@ const ExsistingGrnHeader = ({otherData, isLoading}:any) => {
         setDisableButton(!disableButton);
     };
 
-
-
-
-
-
-
-
-
-
-
   return (
     <>
 

@@ -52,6 +52,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
         const data = {
             customer: (id === null) ? allData.headerData.customer.value.clientName : estimateData.customer,
             clientId:(id==null)?allData.headerData.customer.value.clientId:"",
+            email:(id=== null)?allData.headerData.customer.value.email:"",
             notes: (id === null) ?allData.headerData.notes:estimateData.notes,
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo: (id === null) ?allData.headerData.invoiceNo:estimateData.invoiceNo,
@@ -202,7 +203,8 @@ const NewsalesBottomBar = ({estimateData}:any) => {
                     'Content-type':'application/json',
                 },
                 body: JSON.stringify({
-                    email:'hembramshristi07@gmail.com'
+                    email: headerData.customer.value.email,
+
                 })
             });
             console.log('Email sent successfully:', response);

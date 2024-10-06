@@ -37,6 +37,7 @@ const FinancesSalesTableItem = ({onCountsChange, data, sales, isLoading}:any) =>
       setEstimateCount(data.filter((sale:any) => sale.type === FinanceCreationType.Sales_Estimate).length);
       setReturnCount(data.filter((sale:any) => sale.type === FinanceCreationType.Sales_Return).length);
     }
+    console.log("data is :",data);
   }, [data]);
  
 
@@ -53,6 +54,9 @@ const FinancesSalesTableItem = ({onCountsChange, data, sales, isLoading}:any) =>
   useEffect(() => {
     handleCounts(); 
   }, [sales]);
+  console.log("invoice count is :", invoiceCount);
+  console.log("estimate count is :", estimateCount);
+  console.log("return count is :", returnCount);
  
 if(isLoading&&!data)return (<Loading/>)
 

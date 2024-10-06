@@ -331,6 +331,7 @@ model Services {
 model Sales {
   id                Int                  @id @default(autoincrement())
   customer          String?
+  email             String?
   date              DateTime?            @default(now())
   notes             String?
   subTotal          Float?
@@ -372,6 +373,7 @@ model RecordTransaction {
 model Purchases {
   id                   Int                 @id @default(autoincrement())
   distributor          String?
+  email                String?
   date                 DateTime?           @default(now())
   dueDate              DateTime
   returnLastDate       DateTime?
@@ -567,4 +569,7 @@ model TaxType{
   name                     Float?
   InventorySection         InventorySection? @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId       Int?
+
 }
+
+

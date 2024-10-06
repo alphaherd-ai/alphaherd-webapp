@@ -37,6 +37,8 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
         });
         const items = tableData.map(data => ({
             productId: data.productId,
+
+     
             serviceId: data.serviceId,
             productBatchId: data.productId ? data.id : null,
             quantity: data.quantity,
@@ -45,10 +47,11 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
             name: data.itemName,
             itemType: data.itemType
         }));
-        const data = {
-            customer: (id === null) ? allData.headerData.customer.value.clientName : invoiceData.customer,
-            clientId: (id === null) ? allData.headerData.customer.value.clientId : "",
-            notes: (id === null) ? allData.headerData.notes : invoiceData.notes,
+        const data={
+            customer: (id===null)?allData.headerData.customer.value.clientName :invoiceData.customer,
+            clientId: (id===null)?allData.headerData.customer.value.clientId :"",
+            email:(id=== null)?allData.headerData.customer.value.email:"",
+            notes: (id===null)?allData.headerData.notes:invoiceData.notes,
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo: (id === null) ? allData.headerData.invoiceNo : invoiceData.invoiceNo,
             dueDate: (id === null) ? allData.headerData.dueDate : invoiceData.dueDate,
@@ -102,8 +105,11 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
             discount: data.discount
         }));
         const data = {
-            customer: (id === null) ? allData.headerData.customer.value.clientName : invoiceData.customer,
-            notes: (id === null) ? allData.headerData.notes : invoiceData.notes,
+
+            customer: (id===null)?allData.headerData.customer.value.clientName :invoiceData.customer,
+            email:(id=== null)?allData.headerData.customer.value.email:"",
+            notes: (id===null)?allData.headerData.notes:invoiceData.notes,
+
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo: (id === null) ? allData.headerData.invoiceNo : invoiceData.invoiceNo,
             dueDate: (id === null) ? allData.headerData.dueDate : invoiceData.dueDate,
@@ -168,7 +174,9 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
                     'Content-type': 'application/json',
                 },
                 body: JSON.stringify({
-                    email: 'hembramshristi07@gmail.com'
+
+                    email:headerData.customer.value.email,
+
                 })
             });
             console.log('Email sent successfully:', response);

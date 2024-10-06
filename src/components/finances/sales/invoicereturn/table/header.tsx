@@ -62,6 +62,7 @@ const InvoiceReturnHeader = ({existingHeaderData}:any) => {
         if(!isLoading&&!error&&data){
               const  clients=data.map((client:any)=>({
                 value:client.clientName,
+                email:client.email,
                 label:`${client.clientName}\u00A0\u00A0\u00A0\u00A0\u00A0${client.contact}`
             }))
             setCustomers(clients);

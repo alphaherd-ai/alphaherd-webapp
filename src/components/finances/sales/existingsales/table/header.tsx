@@ -10,7 +10,7 @@ import Loading2 from '@/app/loading2';
 
 const ExistingsalesHeader = ({otherData, isLoading}:any) => {
 
-
+    console.log("other data in existingsalesheader :",otherData);
 
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);

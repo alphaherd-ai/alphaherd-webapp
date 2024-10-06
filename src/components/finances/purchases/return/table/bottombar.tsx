@@ -17,6 +17,7 @@ import { FinanceCreationType } from "@prisma/client"
 import axios from "axios"
 const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
     const { headerData, tableData, totalAmountData } = useContext(DataContext);
+    console.log("invoice data is :",invoiceData);
     const appState = useAppSelector((state) => state.app);
     const url = useSearchParams();
     const id = url.get('id');
@@ -47,7 +48,8 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
             shipping: (id === null) ?allData.totalAmountData.shipping:invoiceData.shipping,
             adjustment: (id === null) ?allData.totalAmountData.adjustment:invoiceData.adjustment,
             totalCost: (id === null) ?allData.totalAmountData.totalCost:invoiceData.totalCost,
-            totalQty: (id === null) ?totalQty:invoiceData.totalQty,
+            overallDiscount: allData.totalAmountData.overAllDiscount,
+            totalQty:totalQty,
             status: "Pending",
             type: FinanceCreationType.Purchase_Return,
             items:{

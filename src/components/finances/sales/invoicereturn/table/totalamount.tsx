@@ -52,8 +52,8 @@ const InvoiceReturnTotalAmount = () => {
         }
     }
 
-    const [shipping, setShipping] = useState<string>('');
-    const [adjustment, setAdjustment] = useState<string>('');
+    const [shipping, setShipping] = useState<number>(0);
+    const [adjustment, setAdjustment] = useState<number>(0);
 
     const handleShippingChange = (event: any) => {
         //console.log(typeof event.target.value)
@@ -74,8 +74,8 @@ const InvoiceReturnTotalAmount = () => {
 
     const updateGrandTotal = () => {
         const discountedAmount = (totalAmount - totalAmount * selectedDiscount)||0;
-        const shippingValue = parseFloat(shipping) || 0;
-        const adjustmentValue = parseFloat(adjustment) || 0;
+        const shippingValue = (shipping) || 0;
+        const adjustmentValue = (adjustment) || 0;
         const newGrandTotal = discountedAmount + shippingValue + adjustmentValue;
         setGrandAmt(newGrandTotal);
         setTotalAmountData((prevData) => ({

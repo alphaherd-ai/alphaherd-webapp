@@ -39,17 +39,20 @@ const NewsaleEstimateBottomBar = () => {
         });
         const items = tableData.map(data => ({
             productId: data.productId,
-            productBatchId: data.id,
-            quantity: data.quantity,
-            sellingPrice: data.sellingPrice,
-            taxAmount: data.gst,
-            name: data.itemName,
-            lowQty: data.lowQty,
-            highQty: data.highQty,
-            discount: data.discount
-        }));
-        const data = {
-            customer: allData.headerData.customer.value.clientName,
+
+            productBatchId:data.id, 
+            quantity: data.quantity,  
+            sellingPrice:data.sellingPrice,
+            taxAmount:data.gst,
+            name:data.itemName,
+            lowQty:data.lowQty,
+            highQty:data.highQty,
+            discount:data.discount
+    }));
+        const data={
+            customer: allData.headerData.customer.value.clientName ,
+            email:allData.headerData.customer.value.email,
+
             notes: allData.headerData.notes,
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo: allData.headerData.invoiceNo,
@@ -254,7 +257,9 @@ const NewsaleEstimateBottomBar = () => {
                     'Content-type': 'application/json',
                 },
                 body: JSON.stringify({
-                    email: 'hembramshristi07@gmail.com'
+
+                    email:headerData.customer.value.email,
+
                 })
             });
             console.log('Email sent successfully:', response);

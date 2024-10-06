@@ -19,7 +19,7 @@ import DownloadPopup from './downloadDistributorPopup';
 import Popup from './newdistributorpopup';
 
 
-const DatabaseDistributorHeader = ({ distributors }:any) => {
+const DatabaseDistributorHeader = ({ distributors, onSortChange }: any) => {
     const currentRoute = usePathname();
     const [showPopup, setShowPopup] = React.useState(false);
 
@@ -33,17 +33,29 @@ const DatabaseDistributorHeader = ({ distributors }:any) => {
     }
 
     const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
-    const [selectedSort, setselectedSort] = React.useState(new Set(["Category: text"]));
+   // const [selectedSort, setselectedSort] = React.useState(new Set(["Category: text"]));
+    const [selectedSort, setSelectedSort] = React.useState("distributorName");
+    const [sortOrder, setSortOrder] = React.useState("asc");
 
 
     const selectedCategoryValue = React.useMemo(
         () => Array.from(selectedCategory).join(", ").replaceAll("_", " "),
         [selectedCategory]
     );
-    const selectedSortValue = React.useMemo(
-        () => Array.from(selectedSort).join(", ").replaceAll("_", " "),
-        [selectedSort]
-    );
+    // const selectedSortValue = React.useMemo(
+    //     () => Array.from(selectedSort).join(", ").replaceAll("_", " "),
+    //     [selectedSort]
+    // );
+    const handleSortChange = (key: string) => {
+        if (key === selectedSort) {
+            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+        } else {
+            setSelectedSort(key);
+            setSortOrder("asc");
+        }
+
+        onSortChange(key, sortOrder);
+    };
 
     return (
 
@@ -71,12 +83,10 @@ const DatabaseDistributorHeader = ({ distributors }:any) => {
 
                         <Dropdown>
                             <DropdownTrigger className='z-0'>
-                                <Button
-                                    
-                                    variant="solid"
-                                    className="capitalize border-none  bg-transparent rounded-lg"
-                                >
-                                    {selectedSortValue}
+                            <Button variant="solid" className="capitalize border-none bg-transparent rounded-lg">
+                                    <div className="flex text-gray-500 items-center">
+                                        <div className="text-base">Sort By</div>
+                                    </div>
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu
@@ -85,18 +95,28 @@ const DatabaseDistributorHeader = ({ distributors }:any) => {
                                 variant="solid"
                                 disallowEmptySelection
                                 selectionMode="single"
-                                selectedKeys={selectedSort}
+                                selectedKeys={new Set([selectedSort])}
                                 // onSelectionChange={setselectedSort}
                             >
+                               <DropdownItem
+                                    className="p-2 text-base"
+                                    key="name"
+                                    onClick={() => handleSortChange("distributorName")}
+                                >
+                                    Distributor Name
+                                </DropdownItem>
+                                
                                 <DropdownItem
-                                    className=" p-2 text-base" key="Category:text">Sort:Recently Used</DropdownItem>
-                                <DropdownItem
-                                    className=" p-2 text-base" key="Category:number">Sort:Recently Used</DropdownItem>
-                                <DropdownItem
-                                    className=" p-2 text-base" key="Category:date">Date</DropdownItem>
+                                    className="p-2 text-base"
+                                    key="date"
+                                    onClick={() => handleSortChange("date")}
+                                >
+                                    Date
+                                </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
+                   
                     <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg '>
                         <div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>
 

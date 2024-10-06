@@ -23,6 +23,7 @@ const NewPurchasesBottomBar = ({orderData}:any) => {
     const url =useSearchParams();
     const id= url.get('id');
     const [isSaving,setSaving]=useState(false);
+    var userEmail ="";
     const handleSubmit = async () => {
         setSaving(true);
         const allData = {headerData, tableData, totalAmountData};
@@ -41,6 +42,7 @@ const NewPurchasesBottomBar = ({orderData}:any) => {
     }));
         const data={
             distributor: (id === null) ?allData.headerData.distributor.value:orderData.distributor,
+            email:(id=== null)?allData.headerData.distributor.email:"",
             notes: (id === null) ?allData.headerData.notes:orderData.notes,
             invoiceNo: allData.headerData.invoiceNo,
             dueDate: (id === null) ?allData.headerData.dueDate:orderData.dueDate,
@@ -54,8 +56,11 @@ const NewPurchasesBottomBar = ({orderData}:any) => {
             items:{
                 create:items
             }
+           
             
         }
+        userEmail = data.email;
+        console.log("email is :",data.email);
         console.log(JSON.stringify(data))
         try {
             const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Order}?branchId=${appState.currentBranchId}`,data)
@@ -75,6 +80,27 @@ const NewPurchasesBottomBar = ({orderData}:any) => {
             setSaving(false);
         }
     };
+
+    console.log("email is :",userEmail);
+  
+    const sendEmail = ()=>{
+        try {   
+            const response = fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/email`, {
+                method: 'POST',
+                headers:{
+                    'Content-type':'application/json',
+                },
+                body: JSON.stringify({
+                    email: userEmail,
+
+                })
+            });
+            console.log('Email sent successfully:', response);
+        } catch (error) {
+            console.error('Error while saving data:', error);
+        } 
+    };
+
     const isDisabled = !headerData.distributor || tableData.length === 0 || tableData.some(data => !data.itemName);
   return (
     <>
@@ -92,7 +118,7 @@ const NewPurchasesBottomBar = ({orderData}:any) => {
                                 </div>
                                 <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                                     <Image src={shareicon} alt="share"></Image>
-                                    <div>Share editable sheet</div>
+                                    <div onClick={sendEmail} className="text-textGrey1 text-sm hover:text-textGrey2 transition-all">Share via Email</div>
                                 </div>
                             </div>
                             <div className="flex justify-between items-center gap-4 pr-4">
