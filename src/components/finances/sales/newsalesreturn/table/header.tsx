@@ -109,7 +109,8 @@ const NewsalesReturnHeader = ({existingHeaderData}:any) => {
                     value:{clientName:client.clientName,
                            contact:client.contact,
                            invoiceNo:client.invoiceNo,
-                           clientId:client.id},
+                           clientId:client.id,
+                           email:client.email},
                     label:`${client.clientName}\u00A0\u00A0\u00A0\u00A0\u00A0${client.contact}`
                 }))
                 console.log(clients)

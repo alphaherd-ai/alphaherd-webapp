@@ -46,6 +46,7 @@ const NewsalesReturnBottomBar = ({invoiceData}:any) => {
      const data={
             customer: (id===null)?allData.headerData.customer.value.clientName :invoiceData.customer,
             clientId: (id===null)?allData.headerData.customer.value.clientId :"",
+            email:(id=== null)?allData.headerData.customer.value.email:"",
             notes: (id===null)?allData.headerData.notes:invoiceData.notes,
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo:(id===null)?allData.headerData.invoiceNo:invoiceData.invoiceNo,
@@ -101,6 +102,7 @@ const NewsalesReturnBottomBar = ({invoiceData}:any) => {
         }));
         const data = {
             customer: (id===null)?allData.headerData.customer.value.clientName :invoiceData.customer,
+            email:(id=== null)?allData.headerData.customer.value.email:"",
             notes: (id===null)?allData.headerData.notes:invoiceData.notes,
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo:(id===null)?allData.headerData.invoiceNo:invoiceData.invoiceNo,
@@ -166,7 +168,7 @@ const NewsalesReturnBottomBar = ({invoiceData}:any) => {
                     'Content-type':'application/json',
                 },
                 body: JSON.stringify({
-                    email:'hembramshristi07@gmail.com'
+                    email:headerData.customer.value.email,
                 })
             });
             console.log('Email sent successfully:', response);

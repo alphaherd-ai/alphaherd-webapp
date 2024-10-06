@@ -41,6 +41,7 @@ const InvoiceReturnBottomBar = ({invoiceData}:any) => {
     }));
      const data={
             customer: (id===null)?allData.headerData.customer.value:invoiceData.customer,
+            email:(id=== null)?allData.headerData.customer.value.email:"",
             notes: (id===null)?allData.headerData.notes:invoiceData.notes,
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo:(id===null)?allData.headerData.invoiceNo:invoiceData.invoiceNo,

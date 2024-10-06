@@ -9,6 +9,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { DataContext } from './DataContext';
 import { Tax } from '@prisma/client';
 import Select from 'react-select';
+import { dark } from '@mui/material/styles/createPalette';
 
 
 const NewPurchaseReturnTotalAmount = () => {
@@ -22,6 +23,8 @@ const NewPurchaseReturnTotalAmount = () => {
                 (data.quantity * data.discount * Number(data.unitPrice) || 0)) || 0;
     });
     //const { totalAmountData, setTotalAmountData } = useContext(DataContext);
+  
+    console.log("Total amount is :", totalAmount);
     const [grandAmt, setGrandAmt] = useState(totalAmount);
     const gstOptions = [
         { value: 'percent', label: '₹ in Percent' },
@@ -58,17 +61,20 @@ const NewPurchaseReturnTotalAmount = () => {
         if (discountMethod === 'amount') {
             setDiscountInput(discount);
             const discountedAmount = grandAmt - discount;
-            setDiscount(discount / totalAmount);
+            let discountPercent=Number(discount/totalAmount).toFixed(4)
+            setDiscount(Number(discountPercent))
             setGrandAmt(discountedAmount);
-            setTotalAmountData((prevData) => ({ ...prevData, gst: discount / totalAmount }));
+            setTotalAmountData((prevData) => ({ ...prevData, gst:Number(discountPercent) }));
         } else if (discountMethod === 'percent') {
             setDiscountInput(discount);
             const discountedAmount = grandAmt - grandAmt * (discount / 100);
-            setDiscount(discount / 100);
+            setDiscount(Number(discount/100));
             setGrandAmt(discountedAmount);
-            setTotalAmountData((prevData) => ({ ...prevData, gst: discount / 100 }));
+            setTotalAmountData((prevData) => ({ ...prevData, gst:Number(discount/100) }));
         }
     };
+
+   
     const handleDateChange= (date:any)=>{
         setDate(date);
         setTotalAmountData((prevData)=>({
@@ -83,19 +89,20 @@ const NewPurchaseReturnTotalAmount = () => {
         const newGrandTotal = discountedAmount + shippingValue + adjustmentValue;
 
         setGrandAmt(newGrandTotal);
-        setTotalAmountData({
+        setTotalAmountData((totalAmountData) => ({
             ...totalAmountData,
             subTotal: totalAmount,
             totalCost: newGrandTotal,
             shipping: shippingValue,
             adjustment: adjustmentValue,
             overAllDiscount: overAllDiscount,
-        });
+        }));
     };
 
     useEffect(() => {
         updateGrandTotal(); 
     }, [totalAmount, overAllDiscount, shipping, adjustment]);
+    console.log("total amount data is :",totalAmountData);
 
 
     const customStyles = {

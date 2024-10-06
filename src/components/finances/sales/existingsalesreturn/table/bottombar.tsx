@@ -27,15 +27,14 @@ const ExistingsalesReturnBottomBar = ({existingSalesData}:any) => {
     const shareInvoiceViaEmail = async () => {
         try {
           const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/email`, {
-            email: email,
+            email:existingSalesData.email,
             invoiceData: existingSalesData,
           });
           if (response.status === 200) {
             alert("Invoice sent successfully");
             
            
-            setIsModalOpen(false); // Close the modal after successful send
-            setEmail(""); // Clear email after successful send
+           
           }
         } catch (error) {
           console.error("Error sending invoice:", error);
@@ -43,11 +42,7 @@ const ExistingsalesReturnBottomBar = ({existingSalesData}:any) => {
         }
       };
 
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => {
-        setIsModalOpen(false);
-        setEmail(""); // Optional: Clear the email input on cancel
-      };
+    
    
     const sendSMS = async () => {
         try {   
@@ -95,34 +90,7 @@ const ExistingsalesReturnBottomBar = ({existingSalesData}:any) => {
 
     return (
         <>
- {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-600 bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-lg mb-4">Share Invoice via Email</h2>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md mb-4"
-              placeholder="Enter recipient's email"
-            />
-            <div className="flex justify-end gap-2">
-              <button
-                className="px-4 py-2 bg-gray-400 text-white rounded-md"
-                onClick={closeModal}
-              >
-                Cancel
-              </button>
-              <button
-                className="px-4 py-2 bg-blue-500 text-white rounded-md"
-                onClick={shareInvoiceViaEmail}
-              >
-                Send
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+ 
 
 <div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
 <div className="flex justify-between items-center gap-4 pl-4">
@@ -140,7 +108,7 @@ const ExistingsalesReturnBottomBar = ({existingSalesData}:any) => {
                                 </Button>
                                 <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                                     <Image src={shareicon} alt="share"></Image>
-                                    <div onClick={openModal}>Share via Email</div>
+                                    <div onClick={shareInvoiceViaEmail}>Share via Email</div>
                                 </Button>
                                 <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                                     <Image src={shareicon} alt="share"></Image>

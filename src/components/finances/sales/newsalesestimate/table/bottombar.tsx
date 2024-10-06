@@ -50,6 +50,7 @@ const NewsaleEstimateBottomBar = () => {
     }));
         const data={
             customer: allData.headerData.customer.value.clientName ,
+            email:allData.headerData.customer.value.email,
             notes: allData.headerData.notes,
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo: allData.headerData.invoiceNo,
@@ -254,7 +255,7 @@ const NewsaleEstimateBottomBar = () => {
                     'Content-type':'application/json',
                 },
                 body: JSON.stringify({
-                    email:'hembramshristi07@gmail.com'
+                    email:headerData.customer.value.email,
                 })
             });
             console.log('Email sent successfully:', response);

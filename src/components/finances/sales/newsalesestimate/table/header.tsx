@@ -108,7 +108,8 @@ const NewsaleEstimateHeader = () => {
               const  clients=data.map((client:any)=>({
                 value:{clientName:client.clientName,
                        contact:client.contact,
-                       clientId:client.id},
+                       clientId:client.id,
+                       email:client.email},
                 label:`${client.clientName}\u00A0\u00A0\u00A0\u00A0\u00A0${client.contact}`
             }))
             setCustomers(clients);
