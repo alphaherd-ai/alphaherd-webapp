@@ -569,4 +569,7 @@ model TaxType{
   name                     Float?
   InventorySection         InventorySection? @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId       Int?
+
 }
+
+

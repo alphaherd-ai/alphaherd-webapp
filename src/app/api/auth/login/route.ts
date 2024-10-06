@@ -30,7 +30,7 @@ export const POST = async (req: NextRequest) => {
           select: {
             id: true,
             orgName: true,
-            address:true
+            address: true
           }
         },
         userRoles: {}
@@ -45,8 +45,8 @@ export const POST = async (req: NextRequest) => {
       }
     })
 
-    console.log(organization);
-    
+    //console.log(organization);
+
     if (!user) {
       return new Response(JSON.stringify({ "message": 'User not found' }), { status: 404 });
     }
@@ -67,10 +67,11 @@ export const POST = async (req: NextRequest) => {
       path: '/', // Cookie is accessible from all paths in the domain
     });
     if (userInviteString) {
+      console.log("Inside the invite String");
       const { branchId, role, email } = await decrypt(userInviteString);
 
-    
-         const orgBranchUserRole = await prismaClient.orgBranchUserRole.findFirst({
+      console.log(branchId, role, email);
+      const orgBranchUserRole = await prismaClient.orgBranchUserRole.findFirst({
         where: {
           userId: user.id,
           orgBranchId: branchId
@@ -80,12 +81,13 @@ export const POST = async (req: NextRequest) => {
       console.log(orgBranchUserRole)
 
       if (!orgBranchUserRole) {
+        console.log("creating the role!");
         const orgBranch = await prismaClient.orgBranch.findUnique({
           where: {
             id: branchId
           }
         });
-  
+
         console.log(user);
         await prismaClient.orgBranchUserRole.create({
           data: {
@@ -95,48 +97,62 @@ export const POST = async (req: NextRequest) => {
           }
         });
 
-    //     await prismaClient.orgBranch.update({
-    //       where: {
-    //         id: Number(orgBranch?.id),
-    //       },
-    //       data: {
-    //         assignedUsers: {
-    //           connect: {
-    //             id: Number(user.id),  
-    //           },
-    //         },
-    //       },
-    //     });
-        
+        await prismaClient.user.update({
+          where: {
+            email
+          },
+          data: {
+            orgBranchId: Number(branchId)
+          }
+        });
 
-    //   await prismaClient.user.update({
-    //     where: {
-    //         email
-    //     },
-    //     data: {
-    //         orgBranchId : Number(branchId)
-    //     }
-    // });
-    
+        await prismaClient.orgBranch.update({
+          where: {
+            id: Number(orgBranch?.id),
+          },
+          data: {
+            assignedUsers: {
+              connect: {
+                id: Number(user.id),
+              },
+            },
+          },
+        });
+
+
+
+
       }
 
-      console.log(branchId, role, email);
+      await prismaClient.user.update({
+        where: {
+          id: user?.id
+        },
+        data: {
+          orgBranchId: Number(branchId)
+        }
+      });
+
 
       user = await prismaClient.user.findUnique({
-        where: { email },
+        where: { email: email },
         include: {
           adminOrganizations: {
             select: {
               id: true,
               orgName: true,
-              address:true
+              address: true
             }
           },
           userRoles: {}
         }
       });
-    }
 
+
+
+
+    }
+    console.log(user);
     return new Response(JSON.stringify({ user }), {
       status: 200,
       headers: {
@@ -148,4 +164,4 @@ export const POST = async (req: NextRequest) => {
     console.error('Error:', error);
     return new Response(JSON.stringify({ "message": error.message }), { status: 500 });
   }
-};
+};  

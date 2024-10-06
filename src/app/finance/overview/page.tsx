@@ -9,7 +9,7 @@ const Overview = () => {
     <>
     <div className='w-full min-h-screen bg-[#EDEDED] p-8 px-10'>
         <FinancesNavbar/>
-        <FinancesOverviewSheet/>
+        {/* <FinancesOverviewSheet/> */}
      <FinancesOverviewTable/>
     </div>
     </>

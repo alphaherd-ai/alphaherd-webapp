@@ -32,7 +32,6 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const user = useAppSelector((state) => state.user);
   const appState = useAppSelector((state) => state.app);
-
   const handleClick = () => {
     setIsCardOpen(!isCardOpen);
   };
@@ -112,7 +111,7 @@ const Navbar = () => {
               </div>
             </PopoverTrigger>
             <PopoverContent>
-              <DropdownMenu />
+              <DropdownMenu currBranch={appState.currentBranch.branchName}/>
 
             </PopoverContent>
           </Popover>

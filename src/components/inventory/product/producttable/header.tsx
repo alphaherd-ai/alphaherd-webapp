@@ -8,8 +8,8 @@ import Download from '../../../../assets/icons/finance/download.svg';
 import DownArrow from '../../../../assets/icons/finance/downArrow.svg';
 import Popup from '../../../inventory/product/producttable/newproductpopup';
 
-import Update from '../../../../assets/icons/inventory/update.svg';
-import Add from '../../../../assets/icons/inventory/add.svg';
+
+import { DataContext } from './DataContext';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -19,9 +19,9 @@ import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 import FilterDropdwonCard from './FilterDropDownCard';
 import FilterDropdownProductsCard from './FilterDropDownProductsCard';
-
-import { DataContext } from './DataContext';
 import DownloadPopup from './downloadProductPopup';
+import { Products } from '@prisma/client';
+
 
 
 
@@ -34,18 +34,11 @@ const InventoryProductTableHeader = ({ onSortChange }: any) => {
         setShowPopup1(!showPopup1);
     }
 
+
+
     const currentRoute = usePathname();
-    const [showPopup, setShowPopup] = React.useState(false);
-    const [showPopup2, setShowPopup2] = React.useState(false);
-
-    const togglePopup = () => {
-        setShowPopup(!showPopup);
-    }
-    const togglePopup2 = () => {
-        setShowPopup2(!showPopup2);
-    }
-
     const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
+
     //const [selectedSort, setselectedSort] = React.useState(new Set(["Category: text"]));
     const [selectedSort, setSelectedSort] = React.useState("distributorName");
     const [sortOrder, setSortOrder] = React.useState("asc");
@@ -62,6 +55,8 @@ const InventoryProductTableHeader = ({ onSortChange }: any) => {
     };
 
 
+
+   
     const selectedCategoryValue = React.useMemo(
         () => Array.from(selectedCategory).join(", ").replaceAll("_", " "),
         [selectedCategory]
@@ -70,6 +65,11 @@ const InventoryProductTableHeader = ({ onSortChange }: any) => {
         () => Array.from(selectedSort).join(", ").replaceAll("_", " "),
         [selectedSort]
     );
+    const [showPopup1, setShowPopup1] = React.useState(false);
+    const togglePopup1 = () => {
+        setShowPopup1(!showPopup1);
+    }
+    const { allData } = useContext(DataContext);
 
     return (
 
@@ -163,30 +163,10 @@ const InventoryProductTableHeader = ({ onSortChange }: any) => {
                             <button className='bg-transparent border-0 text-white text-base cursor-pointer' >Update Inventory</button>
                         </div>
                     </div> */}
-                    <div className='flex items-center space-x-4'>
-                        <div className='flex items-center text-base p-4 bg-black text-white rounded-lg cursor-pointer py-2 w-[156px] h-[44px]' onClick={togglePopup}>
-                            <div className='flex pr-2'>
-                                <Image src={Add} alt='Add' className='w-5 h-5' />
-                            </div>
-                            <button className='bg-transparent border-0 text-white text-base cursor-pointer'>
-                                New Product
-                            </button>
-                        </div>
-                        <div className='flex items-center justify-center capitalize border-none bg-black text-white rounded-lg cursor-pointer py-2 w-[168px] h-[44px]' onClick={togglePopup2}>
-                            <div className='flex items-center'>
-                                <Image src={Update} alt='Update' className='w-5 h-5 mr-2' />
-                                <button className='bg-transparent border-0 text-white text-base'>
-                                    Update Inventory
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    
 
                 </div>
             </div >
-            {showPopup && <Popup onClose={togglePopup} />}
-            {showPopup2 && <Popup2 onClose={togglePopup2} />}
-
             {showPopup1 && <DownloadPopup onClose={togglePopup1}  products={allData} />}
 
         </>

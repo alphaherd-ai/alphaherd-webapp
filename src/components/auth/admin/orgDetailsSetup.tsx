@@ -6,7 +6,7 @@ import upload from "../../../assets/icons/loginsignup/upload.svg"
 import { Textarea } from "@nextui-org/react";
 import Select from 'react-select';
 import { CldUploadButton } from "next-cloudinary";
-
+import customStyles from '@/utils/customStyle';
 
 const OrgDetailsSetup = (props: any) => {
 
@@ -198,7 +198,9 @@ const OrgDetailsSetup = (props: any) => {
 
                             <Select 
                             className="text-textGrey2 text-base font-medium  w-full border-0 boxShadow-0 p-0 grow shrink basis-0"
-                           
+
+                            styles={customStyles}
+
                             isClearable={false}
                             isMulti={false}
                             isSearchable={true}

@@ -13,7 +13,7 @@ import { FinanceCreationType } from '@prisma/client'
 import axios from "axios"
 import { useAppSelector } from '@/lib/hooks';
 import { Button } from "@nextui-org/react"
-import {useRouter, useSearchParams} from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { generatePdfForInvoice } from "@/utils/salesPdf"
 import { AppState } from "@/lib/features/appSlice"
 import { generatePdfForInvoiceAndUpload } from "@/utils/uploadPdf"
@@ -21,24 +21,25 @@ import { generatePdfForInvoiceAndUpload } from "@/utils/uploadPdf"
 
 
 const NewsaleEstimateBottomBar = () => {
-  
+
     const { headerData, tableData, totalAmountData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
-    const router=useRouter();
-    
+    const router = useRouter();
+
     const handleSubmit = async () => {
         if (!headerData.customer || tableData.length === 0) {
             alert('Customer is required');
             return;
         }
-        const allData = {headerData, tableData, totalAmountData};
+        const allData = { headerData, tableData, totalAmountData };
         console.log(allData)
-        let totalQty=0;
+        let totalQty = 0;
         tableData.forEach(data => {
-            totalQty+=(data.quantity)||0;
+            totalQty += (data.quantity) || 0;
         });
         const items = tableData.map(data => ({
             productId: data.productId,
+
             productBatchId:data.id, 
             quantity: data.quantity,  
             sellingPrice:data.sellingPrice,
@@ -51,6 +52,7 @@ const NewsaleEstimateBottomBar = () => {
         const data={
             customer: allData.headerData.customer.value.clientName ,
             email:allData.headerData.customer.value.email,
+
             notes: allData.headerData.notes,
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo: allData.headerData.invoiceNo,
@@ -62,19 +64,19 @@ const NewsaleEstimateBottomBar = () => {
             totalQty: totalQty,
             status: "Pending",
             type: FinanceCreationType.Sales_Estimate,
-            items:{
-                create:items
+            items: {
+                create: items
             }
-            
+
         }
         console.log(JSON.stringify(data))
         try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Estimate}?branchId=${appState.currentBranchId}`,data)
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Estimate}?branchId=${appState.currentBranchId}`, data)
             if (!response.data) {
                 throw new Error('Network response was not ok');
             }
             router.back();
-    
+
         } catch (error) {
             console.error('Error:', error);
         }
@@ -93,19 +95,19 @@ const NewsaleEstimateBottomBar = () => {
             sellingPrice: data.sellingPrice,
             taxAmount: data.gst,
             name: data.itemName,
-            discount:data.discount
+            discount: data.discount
         }));
         const data = {
-            customer:  allData.headerData.customer.value.clientName,
-            notes:  allData.headerData.notes,
+            customer: allData.headerData.customer.value.clientName,
+            notes: allData.headerData.notes,
             subTotal: allData.totalAmountData.subTotal,
-            invoiceNo:allData.headerData.invoiceNo,
+            invoiceNo: allData.headerData.invoiceNo,
             dueDate: allData.headerData.dueDate,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
             totalCost: allData.totalAmountData.totalCost,
-            contact:allData.headerData.customer.value.contact,
-            overallDiscount: `${allData.totalAmountData.gst*100}%`,
+            contact: allData.headerData.customer.value.contact,
+            overallDiscount: `${allData.totalAmountData.gst * 100}%`,
             totalQty: totalQty,
             status: "Pending",
             type: FinanceCreationType.Sales_Estimate,
@@ -118,37 +120,37 @@ const NewsaleEstimateBottomBar = () => {
         generatePdfForInvoice(data, appState, items);
 
     }
-    
+
     const [communicationMode, setCommunicationMode] = useState<string | null>(null);
 
-  useEffect(() => {
-    const selectedMode = localStorage.getItem('selectedCommunicationMode');
-    setCommunicationMode(selectedMode);
-  }, []);
+    useEffect(() => {
+        const selectedMode = localStorage.getItem('selectedCommunicationMode');
+        setCommunicationMode(selectedMode);
+    }, []);
 
-  const handleShareClick = () => {
-    const savedModes = localStorage.getItem('selectedCommunicationModes');
-    
-    if (savedModes) {
-      const communicationModes: string[] = JSON.parse(savedModes);
-  
-      if (communicationModes.includes('SMS')) {
-        sendSMS();
-      }
-      if (communicationModes.includes('Email')) {
-        sendEmail();
-      }
-      if (communicationModes.includes('WhatsApp')) {
-        sendWhatsapp();
-      }
-    } else {
-      alert('No communication modes selected. Please select a mode in the settings.');
-    }
-  };
-  
+    const handleShareClick = () => {
+        const savedModes = localStorage.getItem('selectedCommunicationModes');
+
+        if (savedModes) {
+            const communicationModes: string[] = JSON.parse(savedModes);
+
+            if (communicationModes.includes('SMS')) {
+                sendSMS();
+            }
+            if (communicationModes.includes('Email')) {
+                sendEmail();
+            }
+            if (communicationModes.includes('WhatsApp')) {
+                sendWhatsapp();
+            }
+        } else {
+            alert('No communication modes selected. Please select a mode in the settings.');
+        }
+    };
+
 
     const sendSMS = async () => {
-        try {   
+        try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/sms`, {
                 method: 'POST',
                 headers: {
@@ -162,9 +164,9 @@ const NewsaleEstimateBottomBar = () => {
             console.log('SMS sent successfully', response);
         } catch (error) {
             console.error('Error while sending message', error);
-        } 
+        }
     };
-    
+
     // const sendWhatsapp = async (phoneNumber: any, headerData: { [key: string]: any }, tableData: { [key: string]: any }[], totalAmountData: { [key: string]: any }, type: string, appState: AppState) => {
     //     try {   
     //         const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/whatsapp`, {
@@ -201,19 +203,19 @@ const NewsaleEstimateBottomBar = () => {
             sellingPrice: data.sellingPrice,
             taxAmount: data.gst,
             name: data.itemName,
-            discount:data.discount
+            discount: data.discount
         }));
         const data = {
-            customer:  allData.headerData.customer.value.clientName,
-            notes:  allData.headerData.notes,
+            customer: allData.headerData.customer.value.clientName,
+            notes: allData.headerData.notes,
             subTotal: allData.totalAmountData.subTotal,
-            invoiceNo:allData.headerData.invoiceNo,
+            invoiceNo: allData.headerData.invoiceNo,
             dueDate: allData.headerData.dueDate,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
             totalCost: allData.totalAmountData.totalCost,
-            contact:allData.headerData.customer.value.contact,
-            overallDiscount: `${allData.totalAmountData.gst*100}%`,
+            contact: allData.headerData.customer.value.contact,
+            overallDiscount: `${allData.totalAmountData.gst * 100}%`,
             totalQty: totalQty,
             status: "Pending",
             type: FinanceCreationType.Sales_Estimate,
@@ -223,7 +225,7 @@ const NewsaleEstimateBottomBar = () => {
         }
         try {
             // Generate PDF and get the URL
-            const pdfUrl =  await generatePdfForInvoiceAndUpload(data, appState, items);
+            const pdfUrl = await generatePdfForInvoiceAndUpload(data, appState, items);
             console.log('PDF URL:', pdfUrl);
             const message = `Hello from the team. Here is your invoice: ${pdfUrl}`;
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/whatsapp`, {
@@ -236,7 +238,7 @@ const NewsaleEstimateBottomBar = () => {
                     message: "Hi",
                 }),
             });
-    
+
             if (response.ok) {
                 console.log('WhatsApp message sent successfully:', response);
             } else {
@@ -246,22 +248,24 @@ const NewsaleEstimateBottomBar = () => {
             console.error('Error while sending WhatsApp message:', error);
         }
     };
-      
-    const sendEmail = ()=>{
-        try {   
+
+    const sendEmail = () => {
+        try {
             const response = fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/email`, {
                 method: 'POST',
-                headers:{
-                    'Content-type':'application/json',
+                headers: {
+                    'Content-type': 'application/json',
                 },
                 body: JSON.stringify({
+
                     email:headerData.customer.value.email,
+
                 })
             });
             console.log('Email sent successfully:', response);
         } catch (error) {
             console.error('Error while saving data:', error);
-        } 
+        }
     };
     const [phone, setPhone] = useState('');
 
@@ -276,17 +280,17 @@ const NewsaleEstimateBottomBar = () => {
         <>
 
 
-<div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
-<div className="flex justify-between items-center gap-4 pl-4">
-<Button className="p-2 bg-white rounded-md border border-solid  border-borderGrey  justify-start items-center gap-2 flex cursor-pointer">
+            <div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
+                {/* <div className="flex justify-between items-center gap-4 pl-4">
+                    <Button className="p-2 bg-white rounded-md border border-solid  border-borderGrey  justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={printicon} alt="print"></Image>
                         <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all">Print</div>
                     </Button>
                     <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer" onClick={downloadPdf}>
-                        
-                            <Image src={downloadicon} alt="download" />
-                            <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all">Download</div>
-                        
+
+                        <Image src={downloadicon} alt="download" />
+                        <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all">Download</div>
+
                     </Button>
                     <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={shareicon} alt="share"></Image>
@@ -304,23 +308,22 @@ const NewsaleEstimateBottomBar = () => {
                         <Image src={shareicon} alt="share"></Image>
                         <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all" onClick={handleShareClick}>Share</div>
                     </Button>
-                    </div>
-                    <div className="flex justify-between items-center gap-4 pr-4">
-                        <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
-                            <Image src={drafticon} alt="draft"></Image>
-                            <div>Save as Draft</div>
-                        </Button>
-                        <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${
-                            isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
+                </div> */}
+                <div className="flex justify-between items-center gap-4 pr-4">
+                    <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
+                        <Image src={drafticon} alt="draft"></Image>
+                        <div>Save as Draft</div>
+                    </Button>
+                    <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
                         }`}
                         onClick={handleSubmit} disabled={isDisabled}>
-                            <Image src={checkicon} alt="check"></Image>
-                            <div>Save</div>
-                        </Button>
-                    </div>
+                        <Image src={checkicon} alt="check"></Image>
+                        <div>Save</div>
+                    </Button>
                 </div>
-    
-          
+            </div>
+
+
         </>
 
     )

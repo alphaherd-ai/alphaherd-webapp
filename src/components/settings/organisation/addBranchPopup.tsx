@@ -6,7 +6,11 @@ import Link from 'next/link';
 import closeicon from "../../../assets/icons/inventory/closeIcon.svg";
 import { useAppSelector } from "@/lib/hooks";
 import { Bounce, ToastContainer, toast } from 'react-toastify';
+
 import { useRouter } from 'next/navigation';
+
+import capitalizeFirst from "@/utils/capitiliseFirst";
+
 const AddBranchPopup = ({ onClose }:any) => {
 
     const appState = useAppSelector((state) => state.app);

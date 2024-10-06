@@ -13,7 +13,7 @@ import PatientPopup from '../patient/newpatientpopup'
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 import { useAppSelector } from '@/lib/hooks';
 import { Bounce, ToastContainer, toast } from 'react-toastify';
-
+import capitalizeFirst from "@/utils/capitiliseFirst";
 type PopupProps = {
     onClose: () => void;
 }
@@ -39,6 +39,44 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
         setShowPopup(!showPopup);
     }
 
+    const customStyles = {
+        control: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          border: state.isFocused ? '1px solid #35BEB1' : 'none',
+          '&:hover': {
+            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            },
+          boxShadow: state.isFocused ? 'none' : 'none',
+        }),
+        valueContainer: (provided: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        singleValue: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+        }),
+        menu: (provided: any) => ({
+          ...provided,
+          backgroundColor: 'white',
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        option: (provided: any, state: any) => ({
+          ...provided,
+          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+          color: state.isFocused ? 'white' : '#6B7E7D',
+          '&:hover': {
+            backgroundColor: '#35BEB1',
+            color: 'white',
+          },
+        }),
+      };
 
     const handleSaveClick = async () => {
         console.log("Save button");
@@ -138,7 +176,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
 
     return <>
         
-       <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0  inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
+       <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0  inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50" onClick={onClose}>
             <div className="w-[640px] h-[575px]  px-8 py-4 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
                 <div className="self-end items-start gap-6 flex">
                     <button className="border-0 outline-none cursor-pointer" onClick={onClose}>
@@ -150,7 +188,11 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                 <div className="flex items-center">
                     <div className="text-gray-500 text-base font-medium  w-[8rem]">Client Name<span className="text-[red]">*</span></div>
                     <div>
-                        <input className="w-[447px] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="clientName" onChange={(e) => handleChange("clientName", e.target.value)} required/>
+                        <input className="w-[447px] h-9 text-textGrey2 text-base  font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="clientName" onChange={(e) => {
+                            const value = e.target.value;
+                            e.target.value = value.charAt(0).toUpperCase() + value.slice(1);
+        handleChange("clientName", e.target.value);
+                        }} required/>
                         {errors.clientName && (
                             <div className="text-[red] error">{errors.clientName}</div>
                         )}
@@ -209,17 +251,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                             isMulti={false}
                             name="city"
                             onChange={(value) => handleChange("city", value?.label)}
-                            styles={{
-                                control: (base, state) => ({
-                                    ...base,
-                                    borderColor: state.isFocused ? '#35BEB1' : '#D1D5DB', 
-                                    borderWidth: '0.2px',
-                                    '&:hover': {
-                                        borderColor: '#35BEB1',
-                                    },
-                                    boxShadow: state.isFocused ? '0 0 0 1px #35BEB1' : base.boxShadow, 
-                                }),
-                            }}
+                            styles={customStyles}
                         />
          
               

@@ -11,7 +11,7 @@ import { useAppSelector } from '@/lib/hooks';
 
 
 
-const AddPaymentPopup = ({onClose}:any) => {
+const AddReasons = ({onClose}:any) => {
     const [inputs, setInputs] = useState<string[]>(['']);
     const appState = useAppSelector((state) => state.app)
 
@@ -33,28 +33,27 @@ const AddPaymentPopup = ({onClose}:any) => {
 
     const handleSave = async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/generalSettings/create`, { 
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/reason/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    type: 'taxType',
-                    data: inputs.map(input => ({ name: input }))
+                    name:inputs,
                 }),
             });
-
             if (response.ok) {
-                const result = await response.json();
-                console.log('Payment methods saved:', result);
-                onClose(); 
+                console.log('Data saved successfully');
+                onClose();
+                window.dispatchEvent(new FocusEvent('focus'));
             } else {
-                console.error('Failed to save payment methods:', response.statusText);
+                console.error('Failed to save data:', response.statusText);
             }
         } catch (error) {
-            console.error('Error saving payment methods:', error);
+            console.error('Error while saving data:', error);
         }
-    };
+    }
+       
 
     return (
         <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
@@ -94,7 +93,7 @@ const AddPaymentPopup = ({onClose}:any) => {
                 <div className="w-full flex justify-between mt-[5px] cursor-pointer">
                 <div className="text-white text-base font-normal bg-black p-2 rounded-md py-2.5" onClick={handleAddInput}>Add another</div>
 
-                    <button className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none" onClick={handleSave}>
+                    <button className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer" onClick={handleSave}>
                         <div className="text-white text-base font-bold ">Save</div>
                     </button>
                 </div>
@@ -104,4 +103,4 @@ const AddPaymentPopup = ({onClose}:any) => {
 }
 
 
-export default AddPaymentPopup
+export default AddReasons

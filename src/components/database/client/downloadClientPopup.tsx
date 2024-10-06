@@ -81,7 +81,7 @@ const DownloadPopup = ({ onClose, clients }:any) => {
       doc.setFontSize(20);
       doc.text(appState.currentOrg.orgName, 30, 10);
       
-      doc.setFontSize(12);
+      doc.setFontSize(10);
       const text = `${appState.currentOrg.address} ${appState.currentOrg.state}-${appState.currentOrg.pincode}`;
       const maxWidth = 85;
       const lines = doc.splitTextToSize(text, maxWidth);
