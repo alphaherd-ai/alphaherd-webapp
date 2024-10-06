@@ -542,7 +542,7 @@ const ExsistingPurcaseReturnTable = () => {
                         <div className=' flex text-base'>{index+1}</div>
                     </div>
                     ))}
-                    <div className=' flex text-textGreen text-base font-bold w-[15rem] h-12 items-center justify-center'>{otherData?.totalCost}</div>
+                    <div className=' flex text-textGreen text-base font-bold w-[15rem] h-12 items-center justify-center'>2221</div>
                     </div>
                     </div>
                     
