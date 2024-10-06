@@ -109,10 +109,7 @@ const OrgDetailsSetup = (props: any) => {
                         <div className="text-neutral-400 text-base font-medium ">Enter your organisation details</div>
                     </div>
 
-<!--                     <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
-                        <div className="w-[136px] text-gray-500 text-base font-medium ">Branch Name</div>
-                        <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-start gap-2 inline-flex">
-                        <input type="text" className="text-neutral-400 text-base font-medium  h-full w-full px-2 border-1 border-solid border-[#A2A3A3]  rounded-[5px]" id="branch" name="branch" disabled={true} value={props.data.branchName} /> -->
+
 
                 </div>
                 <div className="self-stretch h-[432px] flex-col justify-start items-start gap-6 flex">

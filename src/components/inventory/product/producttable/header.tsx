@@ -27,13 +27,6 @@ import { Products } from '@prisma/client';
 
 const InventoryProductTableHeader = ({ onSortChange }: any) => {
 
-    const { allData } = useContext(DataContext);
-
-    const [showPopup1, setShowPopup1] = React.useState(false);
-    const togglePopup1 = () => {
-        setShowPopup1(!showPopup1);
-    }
-
 
 
     const currentRoute = usePathname();
@@ -51,7 +44,7 @@ const InventoryProductTableHeader = ({ onSortChange }: any) => {
             setSortOrder("asc");
         }
 
-        onSortChange(key, sortOrder);
+       
     };
 
 
@@ -70,6 +63,7 @@ const InventoryProductTableHeader = ({ onSortChange }: any) => {
         setShowPopup1(!showPopup1);
     }
     const { allData } = useContext(DataContext);
+
 
     return (
 

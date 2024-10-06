@@ -28,8 +28,7 @@ const OrgNameSetup = (props: any) => {
                 </div>
                 <div className="w-[353px] h-11 ">
 
-<!--                     <input readOnly={true} className="w-full  h-full text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="orgName" value={props.data.orgName} onChange={props.handleChange} />
-======= -->
+
                     <input readOnly={true} className="w-full  h-full text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="orgName" value={props.data.orgName} onChange={props.handleChange} />
 
                     {props.validationErrors.orgName && (
