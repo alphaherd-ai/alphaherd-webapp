@@ -13,7 +13,7 @@ import { useContext } from "react";
 const CreateGrnNavbar = () => {
     const { headerData, tableData, totalAmountData,transactionsData,setTableData,setHeaderData,setTotalAmountData,setTransactionsData } = useContext(DataContext);
     const router = useRouter();
-
+    
     const handleCancelTransaction=()=>{
         console.log(headerData)
         
@@ -21,7 +21,8 @@ const CreateGrnNavbar = () => {
             distributor:null,
             date:new Date(),
             dueDate:new Date(),
-            notes:""  
+            notes:""  ,
+            invoiceNo:headerData.invoiceNo 
         }
         const resetTotalAmountData={
             adjustment:0,

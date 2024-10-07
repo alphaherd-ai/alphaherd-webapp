@@ -128,10 +128,7 @@ const NewsalesReturnHeader = ({ existingHeaderData }: any) => {
             
         },[data,headerData])
 
-    useEffect(() => {
-        //console.log("Updated headerData:", headerData,existingHeaderData);
-        setHeaderData(headerData);
-    }, [headerData]);
+    
 
 
     return (
