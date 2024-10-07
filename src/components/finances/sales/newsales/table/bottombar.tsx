@@ -34,7 +34,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
         }
         
         const allData = { headerData, tableData, totalAmountData, transactionsData };
-        console.log("this is all data", allData)
+        console.log("this is all data", allData,headerData)
         let totalQty = 0;
         tableData.forEach(data => {
             totalQty += (data.quantity) || 0;
