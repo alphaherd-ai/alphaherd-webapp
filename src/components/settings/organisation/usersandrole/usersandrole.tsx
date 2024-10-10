@@ -136,7 +136,7 @@ export default function UsersAndRolesSettings() {
                             
                         </div>
                     </div>
-                    <div className="w-full p-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
+                    {/* <div className="w-full p-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                         <div className="w-full">
                             <div className="text-gray-500 text-base font-bold ">Roles and Permissions</div>
                             <div className="text-neutral-400 text-sm font-medium ">Note: These permissions do not apply to the admin account. Admins have access to all features of Alphaherd.</div>
@@ -303,7 +303,7 @@ export default function UsersAndRolesSettings() {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div >
         </div >

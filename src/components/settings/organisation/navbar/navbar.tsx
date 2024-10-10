@@ -40,7 +40,7 @@ const OrganisationNavbar = () => {
                     <Link className='no-underline ' href='/settings/organisation/usersandrole'>
                         <div className={currentRoute.startsWith("/settings/organisation/usersandrole")
                             ? "px-2 py-1 bg-zinc-900 rounded-tr-[5px] rounded-br-[5px] border border-white justify-start items-center gap-1 flex text-white text-sm font-bold "
-                            : " px-2 py-1 bg-gray-100 rounded-tl-[5px] rounded-bl-[5px] border border-neutral-400 justify-start items-center gap-1 flex text-neutral-400 text-sm font-bold "}>
+                            : " px-2 py-1 bg-gray-100 rounded-tr-[5px] rounded-br-[5px] border border-neutral-400 justify-start items-center gap-1 flex text-neutral-400 text-sm font-bold "}>
                             Users and Roles
                         </div>
                     </Link>
