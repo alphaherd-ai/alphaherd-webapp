@@ -1,6 +1,6 @@
 "use client";
 import OrgNameSetup from "@/components/auth/admin/orgNameSetup";
-import OrgDetailsSetup from "@/components/auth/orgDetailsSetup";
+import OrgDetailsSetup from "@/components/auth/orgBranchSetup";
 import Image from "next/image";
 import React, { useState } from "react";
 import { Bounce, ToastContainer, toast } from 'react-toastify';
@@ -181,7 +181,7 @@ const OrgEdit = () => {
     }
 
     const formElements = [
-      <OrgNameSetup key="orgName" data={data} handleChange={handleChange} validationErrors={validationErrors} readOnly={true} />,
+      
       <OrgDetailsSetup key="orgDetails" data={data} handleChange={handleChange}  validationErrors={validationErrors} handlePicChange={handlePicChange} />,
     ];
 
@@ -232,7 +232,7 @@ const OrgEdit = () => {
                   theme: "colored",
                   transition: Bounce,
               });
-              router.push(`/auth/login`);
+              router.push(`/settings/organisation/myorg`);
           } else {
               throw new Error(json.message);
           }

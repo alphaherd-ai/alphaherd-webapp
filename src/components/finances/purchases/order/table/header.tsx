@@ -36,7 +36,7 @@ const NewPurchasesHeader = ({existingHeaderData}:any) => {
     const appState = useAppSelector((state) => state.app)
     const [dueDate, setDueDate] = useState(new Date());
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
-  
+    console.log("data in purchase order data is :", data);
    const id= url.get('id');
     useEffect(() => {
         if (!disableButton && inputRef.current) {
