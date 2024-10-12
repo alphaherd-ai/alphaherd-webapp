@@ -41,6 +41,7 @@ const NewPurchaseReturnNewBottomBar = ({invoiceData}:any) => {
     }));
         const data={
             distributor: (id === null) ?allData.headerData.distributor.value:invoiceData.distributor,
+            email:(id=== null)?allData.headerData.distributor.email:"",
             notes: (id === null) ?allData.headerData.notes:invoiceData.notes,
             invoiceNo: (id === null) ?allData.headerData.invoiceNo:invoiceData.invoiceNo,
             dueDate: (id === null) ?allData.headerData.dueDate:invoiceData.dueDate,
@@ -59,6 +60,8 @@ const NewPurchaseReturnNewBottomBar = ({invoiceData}:any) => {
             }
             
         }
+        console.log("email is (inside) :",data.email);
+        console.log("header data in bottom bar is : ",headerData);
         console.log(JSON.stringify(data))
         try {
             const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Return}?branchId=${appState.currentBranchId}`,data)

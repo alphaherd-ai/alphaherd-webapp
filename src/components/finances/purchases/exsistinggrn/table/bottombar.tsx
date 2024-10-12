@@ -6,12 +6,36 @@ import drafticon from "../../../../../assets/icons/finance/draft.svg"
 import checkicon from "../../../../../assets/icons/finance/check.svg"
 import React, { useState, useEffect } from 'react';
 import downloadicon from "../../../../../assets/icons/finance/download.svg"
-
+import axios from "axios"
+import { useAppSelector } from "@/lib/hooks"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from '@nextui-org/react'
 
 const ExsistingGrnBottomBar = ({existingPurchaseData}: any) => {
+
+    const appState = useAppSelector((state) => state.app);
+    console.log("app state is in existingsales bottom :" , appState);
+    const [email, setEmail] = useState("");
+    console.log("data in bottom bar is :", existingPurchaseData);
+
+    const data = existingPurchaseData;
+    const shareInvoiceViaEmail = async () => {
+        try {
+          const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/email`, {
+            email: existingPurchaseData.email,
+            invoiceData: existingPurchaseData,
+          });
+          if (response.status === 200) {
+            alert("Invoice sent successfully");
+            
+           
+          }
+        } catch (error) {
+          console.error("Error sending invoice:", error);
+          alert("Failed to send invoice");
+        }
+      };
   return (
     <>
 
@@ -26,7 +50,7 @@ const ExsistingGrnBottomBar = ({existingPurchaseData}: any) => {
                                     <Image src={downloadicon} alt="download"></Image>
                                     <div>Export</div>
                                 </div>
-                                <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
+                                <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer" onClick={shareInvoiceViaEmail}>
                                     <Image src={shareicon} alt="share"></Image>
                                     <div>Share</div>
                                 </div>
