@@ -243,9 +243,9 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
         setChecked(!isChecked);
     }, [inventory]);
 
-    const handleAddItemClick = useCallback(() => {
-        setInventory([...inventory, {}]);
-    }, [inventory]);
+    // const handleAddItemClick = useCallback(() => {
+    //     setInventory([...inventory, {}]);
+    // }, [inventory]);
 
     const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
          console.log(selectedProduct)
@@ -501,14 +501,14 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
                                 onChange={handleRadioChange}
                             />
                         </div>
-                        <div className="relative">
+                        {/* <div className="relative">
                             <button className="cursor-pointer h-11 px-4 py-2.5 bg-zinc-900 rounded-[5px] border-0 justify-start items-center gap-2 flex" onClick={handleAddItemClick}>
                                 <Image src={addicon} alt="add" />
                                 <div className="text-white text-base font-bold  bg-transparent border-0" >
                                     Add Item
                                 </div>
                             </button>
-                        </div>
+                        </div> */}
                     </div>
                     <div className="pb-6">
                     <div className='flex w-full justify-between items-center box-border bg-gray-100 h-12 border-b border-neutral-400 text-gray-500'>
@@ -530,7 +530,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
                         </div>
                         
                         {inventory.map((item, index) => (
-                            <div key={index} className='flex justify-evenly items-center w-full  py-2  bg-white text-gray-400  '>
+                            <div key={index+1} className='flex justify-evenly items-center w-full  py-2  bg-white text-gray-400  '>
                                 <div className='w-[3rem] flex items-center text-neutral-400 text-base font-medium'>{index + 1}</div>
                                 <div className='w-[12rem] flex items-center text-neutral-400 text-base font-medium'>
                                     <Select

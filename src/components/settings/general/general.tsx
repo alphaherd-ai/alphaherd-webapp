@@ -266,6 +266,8 @@ const GeneralSettings = () => {
         }
     }, [speciesData, speciesError, isLoadingspecies]);
     console.log('item categories: ', itemCategories);
+    console.log('Tax Type',taxType);
+    console.log('Species: ', species);
 
 
 
@@ -353,7 +355,6 @@ const GeneralSettings = () => {
                                     } 
                                     </div>      
                                         
-            
                                 </div>
                             </div>
                         </div>
@@ -381,7 +382,16 @@ const GeneralSettings = () => {
                                     
                                     <div className="w-full  max-h-[15rem] overflow-y-auto">
                                     {isLoadingspecies && <Loading />}
-                                    {species.map((item:any) => (
+                                    {species.map((item: any) =>(
+                                        // <div key={index} className='w-full'>
+                                        //     {Array.isArray(item.name) && item.name.map((nameItem: string, nameIndex: number) => (
+                                        //         <div key={nameIndex} className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
+                                        //             <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                        //             <div className="text-gray-500 text-base font-medium">{nameItem}</div>
+                                        //             </div>
+                                        //         </div>
+                                        //     ))}
+                                        // </div>
                                         <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
                                         <div  className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
                                             <Image className="w-[22px] h-[22px] relative" src={cashicon} alt="cash" />
@@ -416,14 +426,16 @@ const GeneralSettings = () => {
                                     </div>
                                     {isLoadingItemCategories && <Loading />}
                                     <div className="w-full  max-h-[15rem] overflow-y-auto">
-                                    {itemCategories.map((item: any) =>(
-                                        <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div  className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            
-                                            <div className="text-gray-500 text-base font-medium ">{item.name}</div>
+                                    {itemCategories.map((item: any,index: any) =>(
+                                        <div key={index} className='w-full'>
+                                            {Array.isArray(item.name) && item.name.map((nameItem: string, nameIndex: number) => (
+                                                <div key={nameIndex} className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
+                                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                                    <div className="text-gray-500 text-base font-medium">{nameItem}</div>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
-                                        
-                                    </div>
                                     ))
                                     } 
                                     </div>   
@@ -449,14 +461,16 @@ const GeneralSettings = () => {
                                     </div>
                                     {isLoadingItemUnits && <Loading />}
                                     <div className="w-full  max-h-[15rem] overflow-y-auto">
-                                    {itemUnits.map((item:any) => (
-                                        <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div  className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            
-                                            <div className="text-gray-500 text-base font-medium ">{item.name}</div>
+                                    {itemUnits.map((item: any,index: any) =>(
+                                        <div key={index} className='w-full'>
+                                            {Array.isArray(item.name) && item.name.map((nameItem: string, nameIndex: number) => (
+                                                <div key={nameIndex} className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
+                                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                                    <div className="text-gray-500 text-base font-medium">{nameItem}</div>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
-                                        
-                                    </div>
                                     ))
                                     } 
                                     </div>   
@@ -484,14 +498,16 @@ const GeneralSettings = () => {
                                     </div>
                                     {isLoadingserviceCategory && <Loading />}
                                     <div className="w-full  max-h-[15rem] overflow-y-auto">
-                                    {serviceCategory.map((item:any) => (
-                                        <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div  className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            
-                                            <div className="text-gray-500 text-base font-medium ">{item.name}</div>
+                                    {serviceCategory.map((item: any,index: any) =>(
+                                        <div key={index} className='w-full'>
+                                            {Array.isArray(item.name) && item.name.map((nameItem: string, nameIndex: number) => (
+                                                <div key={nameIndex} className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
+                                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                                    <div className="text-gray-500 text-base font-medium">{nameItem}</div>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
-                                        
-                                    </div>
                                     ))
                                     } 
                                     </div>   
@@ -554,14 +570,16 @@ const GeneralSettings = () => {
                                     </div>
                                     {isLoadingreasons && <Loading />}
                                     <div className="w-full  max-h-[15rem] overflow-y-auto">
-                                    {reasons.map((item:any) => (
-                                        <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div  className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            
-                                            <div className="text-gray-500 text-base font-medium ">{item.name}</div>
+                                    {reasons.map((item: any,index: any) =>(
+                                        <div key={index} className='w-full'>
+                                            {Array.isArray(item.name) && item.name.map((nameItem: string, nameIndex: number) => (
+                                                <div key={nameIndex} className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
+                                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                                    <div className="text-gray-500 text-base font-medium">{nameItem}</div>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
-                                        
-                                    </div>
                                     ))
                                     } 
                                     </div>   
