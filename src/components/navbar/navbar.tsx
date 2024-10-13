@@ -25,6 +25,12 @@ import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
 import zIndex from '@mui/material/styles/zIndex';
 import useSWR from "swr";
 import { boolean } from 'zod';
+import Invoice from '../../assets/icons/finance/invoice.svg';
+
+import Estimate from "../../assets/icons/finance/list_alt.svg"
+
+import Return from '../../assets/icons/finance/Return.svg';
+
 
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -51,31 +57,87 @@ const Navbar = () => {
     setOpen(newOpen);
   };
 
+  const [invoiceCount, setInvoiceCount] = useState(0);
+  const [estimateCount, setEstimateCount] = useState(0);
+  const [returnCount, setReturnCount] = useState(0);
+
+  const handleCountsChange = (counts: any) => {
+    setInvoiceCount(counts.invoiceCount);
+    setEstimateCount(counts.estimateCount);
+    setReturnCount(counts.returnCount);
+  };
+
   const DrawerList = (
-    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
+    <Box sx={{ width: 250 ,bgcolor: "black"}} role="presentation" onClick={toggleDrawer(false)}>
       <List>
-        {['Estimate', 'Invoice', 'Return'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+
+      <ListItem>
+        <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+            <div className='text-base p-4  text-white flex '>
+            <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Sales Invoice</div>
+        </Link>
+      </ListItem>
+      <ListItem>
+        <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+            <div className='text-base p-4  text-white flex '>
+            <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Sales Invoice</div>
+        </Link>
+      </ListItem>
+      <ListItem>
+        <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+            <div className='text-base p-4  text-white flex '>
+            <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Sales Invoice</div>
+        </Link>
+      </ListItem>
       </List>
       <Divider />
-      {/* <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List> */}
+      <List>
+
+<ListItem>
+  <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+      <div className='text-base p-4  text-white flex '>
+      <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Sales Invoice</div>
+  </Link>
+</ListItem>
+<ListItem>
+  <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+      <div className='text-base p-4  text-white flex '>
+      <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Sales Invoice</div>
+  </Link>
+</ListItem>
+<ListItem>
+  <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+      <div className='text-base p-4  text-white flex '>
+      <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Sales Invoice</div>
+  </Link>
+</ListItem>
+</List>
+<Divider />
+<List>
+
+<ListItem>
+  <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+      <div className='text-base p-4  text-white flex '>
+      <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Sales Invoice</div>
+  </Link>
+</ListItem>
+<ListItem>
+  <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+      <div className='text-base p-4  text-white flex '>
+      <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Sales Invoice</div>
+  </Link>
+</ListItem>
+<ListItem>
+  <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+      <div className='text-base p-4  text-white flex '>
+      <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Sales Invoice</div>
+  </Link>
+</ListItem>
+</List>
+<Divider />
+<List>
+</List>
+    
     </Box>
   );
 
@@ -114,7 +176,7 @@ const Navbar = () => {
             <Button onClick={toggleDrawer(true)} className='bg-greenButton w-[2rem] rounded-full'>
               <Image src={addIcon} alt='addIcon' className='w-3 h-3' />
             </Button>
-            <Drawer open={open} onClose={toggleDrawer(false)}>
+            <Drawer sx={{backgroundColor: "black"}} open={open} onClose={toggleDrawer(false)}>
               {DrawerList}
             </Drawer>
         </div>
