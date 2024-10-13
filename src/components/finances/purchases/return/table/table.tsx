@@ -220,13 +220,7 @@ const NewPurchaseReturnTable = () => {
             <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-end items-center gap-6 flex">
                     
                     
-                    
-
-                    {/* <Button
-                        variant="solid"
-                        className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer">
-                        <div className='flex'><Image src={addicon} alt='addicon' className='w-6 h-6 ' /></div>New Product 
-                    </Button> */}
+            
                     
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px] overflow-auto max-h-[40rem]">
@@ -241,14 +235,7 @@ const NewPurchaseReturnTable = () => {
 
                             <div className="flex items-center justify-center ">
                                
-                                {/* <Button onClick={handleAddItem} className='cursor-pointer text-white flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-md border-0 outline-none'>
-                                    <div className='w-4 h-4 mb-3 mr-2'>
-                                        <Image src={addicon} alt='addicon' />
-                                    </div>
-                                   
-                                        Add Item
-                                    
-                                </Button> */}
+                              
                             </div>
 
                     </div>
@@ -412,7 +399,8 @@ const NewPurchaseReturnTable = () => {
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => checkedItems[item.id] ? acc + (item.discount)*(item.quantity*Number(item.unitPrice)) :acc , 0).toFixed(2) ||
                                                 0}</div>
                             <div className=' flex text-gray-500 text-base font-bold w-1/12'></div>
-                        </div>
+                        
+                    </div>
                     </div>
                     <div className="flex-col shadow-left">
                     <div className="flex items-center justify-center  w-[15rem] h-12 text-gray-500 border-t-0 border-r-0 border-l border-b border-solid border-borderGrey">

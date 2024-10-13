@@ -38,7 +38,7 @@ const NewPurchaseReturnNewHeader = ({existingHeaderData}:any) => {
     const appState = useAppSelector((state) => state.app)
     const [dueDate, setDueDate] = useState(new Date());
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
-  
+    console.log("data in new purchase return header is :", data);
    
     useEffect(() => {
         if (!disableButton && inputRef.current) {
@@ -68,6 +68,7 @@ const NewPurchaseReturnNewHeader = ({existingHeaderData}:any) => {
         if(!isLoading&&!error&&data){
               const distributors=data?.map((distributor:any)=>({
                 value:distributor.distributorName,
+                email:distributor.email,
                 label:`${distributor.distributorName}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0${distributor.contact}` 
             }))
             setDistributors(distributors);
@@ -145,6 +146,7 @@ const NewPurchaseReturnNewHeader = ({existingHeaderData}:any) => {
                             isSearchable={isSearchable}
                             name="color"
                             options={distributor}
+                            value={headerData.distributor}
                             styles={customStyles}
                             onChange={(selectedOption) => setHeaderData((prevData) => ({ ...prevData, distributor: selectedOption }))}
                         /> )):(
@@ -252,7 +254,7 @@ const NewPurchaseReturnNewHeader = ({existingHeaderData}:any) => {
                                             <div className='relative'>
                                                 <input
                                                     className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={dueDate.toLocaleDateString()}
+                                                    value={headerData?.dueDate?.toLocaleDateString() || new Date().toLocaleDateString()}
                                                     readOnly
                                                 />
                                                 <Image
@@ -283,6 +285,7 @@ const NewPurchaseReturnNewHeader = ({existingHeaderData}:any) => {
                             type="text"
                             className=" w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
                             placeholder="..."
+                            value={headerData.notes}
                             onChange={(e) => setHeaderData((prevData) => ({ ...prevData, notes: e.target.value }))}
                         />    ):(
                             existingHeaderData.notes

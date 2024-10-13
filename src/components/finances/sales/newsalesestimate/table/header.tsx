@@ -108,7 +108,8 @@ const NewsaleEstimateHeader = () => {
               const  clients=data.map((client:any)=>({
                 value:{clientName:client.clientName,
                        contact:client.contact,
-                       clientId:client.id},
+                       clientId:client.id,
+                       email:client.email},
                 label:`${client.clientName}\u00A0\u00A0\u00A0\u00A0\u00A0${client.contact}`
             }))
             setCustomers(clients);
@@ -129,6 +130,7 @@ const NewsaleEstimateHeader = () => {
                                 classNamePrefix="select"
                                 isClearable={isClearable}
                                 isSearchable={isSearchable}
+                                value={headerData.customer}
                                 name="color"
                                 options={customers}
                                 styles={customStyles}
@@ -217,7 +219,7 @@ const NewsaleEstimateHeader = () => {
                             <div className='relative'>
                                 <input
                                 className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                value={dueDate.toLocaleDateString()}
+                                value={headerData?.dueDate?.toLocaleDateString() || new Date().toLocaleDateString()}
                                 readOnly
                                 />
                                 <Image
@@ -242,6 +244,7 @@ const NewsaleEstimateHeader = () => {
                             type="text"
                             className=" w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
                             placeholder="..."
+                            value={headerData.notes}
                             onChange={(e) => setHeaderData((prevData) => ({ ...prevData, notes: e.target.value }))}
                         />
                     </div>

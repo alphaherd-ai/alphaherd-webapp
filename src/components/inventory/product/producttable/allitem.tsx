@@ -39,6 +39,7 @@ interface InventoryTimeline{
   id:string;
   stockChange:string;
   invoiceType:string;
+  invoiceNo:string;
   quantityChange:number;
   party:string;
   productBatch:ProductBatch;
@@ -56,6 +57,7 @@ const ProductAllItem = () => {
   const endDate = useMemo(() => urlSearchParams.get('endDate') ? new Date(urlSearchParams.get('endDate')!) : null, [urlSearchParams]);
   const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
   const selectedInvoiceTypes = useMemo(() => urlSearchParams.getAll('selectedInvoiceTypes'), [urlSearchParams]);
+  const selectedInvoiceNo = useMemo(()=> urlSearchParams.getAll('selectedInvoiceTypes'), [urlSearchParams]);
   const selectedMoneyTypes = useMemo(() => urlSearchParams.getAll('selectedMoneyTypes'), [urlSearchParams]);
   const {data,error,isLoading}= useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/getAll?branchId=${appState.currentBranchId}`,fetcher)
   useEffect(()=>{
@@ -71,6 +73,8 @@ const ProductAllItem = () => {
         });
       }
 
+      console.log("inventory data is",data);
+
    
       if (selectedParties.length > 0) {
         filteredData = filteredData.filter((item: any) =>
@@ -84,6 +88,14 @@ const ProductAllItem = () => {
           selectedInvoiceTypes.includes(item.invoiceType)
         );
       }
+
+      if (selectedInvoiceNo.length>0) {
+        filteredData = filteredData.filter((item: any) =>
+          selectedInvoiceNo.includes(item.invoiceNo)
+        );
+      }
+      console.log('invoice no: ',selectedInvoiceNo);
+
       if (selectedMoneyTypes.length > 0) {
         filteredData = filteredData.filter((item: any) =>
           selectedMoneyTypes.includes(item.stockChange)
@@ -93,7 +105,7 @@ const ProductAllItem = () => {
       // console.log('Products Data:', filteredData); 
     }
     
-  },[data,error,isLoading,startDate,endDate,selectedInvoiceTypes,selectedParties,selectedMoneyTypes])
+  },[data,error,isLoading,startDate,endDate,selectedInvoiceTypes,selectedInvoiceNo,selectedParties,selectedMoneyTypes])
   
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
@@ -103,13 +115,15 @@ const ProductAllItem = () => {
     setCurrentPage(pageNumber);
   };
  if(isLoading)return (<Loading/>)
+
+  
   return (
     <>
     <div>
       {currentProducts?.map(inventory => (
       
         <div key={inventory.id} className='flex  w-full  box-border h-16 justify-evenly items-center bg-white   border-0 border-b border-solid border-borderGrey  hover:bg-gray-200 text-textGrey1  hover:text-textGrey2  transition'>
-          <div className='w-1/12 flex items-center px-6 text-neutral-400 text-base font-medium'>{formatDateAndTime(inventory.createdAt).formattedDate}</div>
+          <div className='w-1/12 flex items-center px-4 text-neutral-400 text-base font-medium'>{formatDateAndTime(inventory.createdAt).formattedDate}</div>
           <div className='w-1/12 flex items-center px-6 text-neutral-400 text-base font-medium'>{formatDateAndTime(inventory.createdAt).formattedTime}</div>
           <div className='w-2/12 flex items-center px-6 text-neutral-400 text-base font-medium'>
             <Link href={{pathname:'overview',query:{id:`${inventory.productBatch?.id}`}}} className='transition-colors duration-300 text-gray-400 no-underline hover:underline hover:text-teal-400'>
@@ -117,20 +131,33 @@ const ProductAllItem = () => {
             </Link>
           </div>
           <div className='w-1/12 flex items-center px-6 text-neutral-400 text-base font-medium'>{inventory.quantityChange}</div>
-          <div className='w-1/12 flex items-center px-6 text-neutral-400 text-base font-medium text-green-500'>
-            <span className='bg-green-100 px-1'>
-              <Tooltip content="message" className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
+          <div className='w-1/12 flex items-center justify-center px-6 text-neutral-400 text-base font-medium text-green-500'>
+            {/* <span className='bg-green-100 px-1'>
+              <Tooltip content="message" className='bg-black  text-white p-1 px-3 text-xs rounded-lg'>
                 <Button className='bg-transparent border-none'>{inventory.stockChange}</Button>
               </Tooltip>
-            </span>
+            </span>  */}
+            <span
+                className={`${
+                  inventory.stockChange === 'StockIN' ? 'bg-[#E7F5EE]' : 'bg-[#FFEAEA]'
+                } text-white px-1 rounded`}
+              >
+                <Tooltip className='bg-black text-white p-1 px-3 text-xs rounded-lg' style={{ pointerEvents: 'none' }}>
+                  <Button className='bg-transparent border-none' style={{
+                        color: inventory.stockChange === 'StockIN' ? '#0F9D58' : '#FF3030',
+                      }}>
+                    {inventory.stockChange === 'StockIN' ? 'In' : 'Out'}
+                  </Button>
+                </Tooltip>
+              </span>
           </div>
-          <div className='w-1/12 flex  items-center  px-6 text-neutral-400 text-base font-medium flex-col'>
+          <div className='w-1/12 flex  items-center  px-8 text-neutral-400 text-base font-medium flex-col'>
             <div className='text-gray-500 text-xs'>{inventory.productBatch?.batchNumber}</div>
             <div className='text-neutral-400 text-[13px] font-medium'>{formatDateAndTime(inventory.productBatch?.expiry).formattedDate}</div>
           </div>
           <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{inventory.productBatch?.product.providers[0]}</div>
-          <div className='w-1/12 flex  items-center justify-center text-gray-500 text-sm font-medium px-2 py-1.5 bg-gray-200 rounded-md'>{inventory.invoiceType}</div>
-          <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{inventory.productBatch?.product?.hsnCode}</div>
+          <div className='w-fit px-1 flex  items-center justify-center text-gray-500 text-[0.65rem] font-medium  py-1.5 bg-gray-200 rounded-md'>{inventory.invoiceType}</div>
+          <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{inventory.invoiceNo}</div>
         </div>
       ))}
        {/* Pagination controls */}

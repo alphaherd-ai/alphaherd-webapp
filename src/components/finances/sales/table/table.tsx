@@ -37,6 +37,10 @@ const FinancesSalesTable = () => {
   const endDate = useMemo(() => urlSearchParams.get('endDate') ? new Date(urlSearchParams.get('endDate')!) : null, [urlSearchParams]);
   const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
   const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true })
+
+  console.log("data is :" ,data);
+  console.log("is loading :",isLoading);
+  console.log("error is :",error);
   //Paginaton
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
     const [startInd, setStartInd] = useState(0);

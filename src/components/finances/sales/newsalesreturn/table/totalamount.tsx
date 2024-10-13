@@ -80,6 +80,13 @@ const NewsalesReturnTotalAmout = () => {
         }
     };
 
+    useEffect(()=>{
+        if(totalAmountData.subTotal==0) {
+            setShipping('');
+            setAdjustment('');
+        }
+      },[totalAmountData])
+
     const updateGrandTotal = () => {
         const discountedAmount = (totalAmount - totalAmount * selectedDiscount)||0;
         const shippingValue = parseFloat(shipping) || 0;
@@ -240,7 +247,7 @@ const NewsalesReturnTotalAmout = () => {
                                         <input
                                         type='number'
                                         className="text-right  text-base  w-[50%] border-none outline-none"
-                                        value={discountInput}
+                                        value={totalAmountData.subTotal?discountInput:0}
                                         onChange={(e)=>handleDiscountChange(Number(e.target.value))}
                                         /></div>
                                         <div className=' flex text-gray-500 text-base font-medium pl-6'>

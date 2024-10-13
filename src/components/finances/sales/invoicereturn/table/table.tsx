@@ -19,6 +19,7 @@ import useSWR from 'swr';
 import { DataContext } from "./DataContext"
 import { useSearchParams } from "next/navigation"
 //@ts-ignore
+
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 interface Products{

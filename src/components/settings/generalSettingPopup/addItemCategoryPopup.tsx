@@ -7,11 +7,14 @@ import delicon from "../../../assets/icons/settings/deleteicon.svg"
 import { z } from 'zod';
 import { ZodError } from 'zod'; 
 import { setValidationErrorsForForm } from '@/utils/setValidationErrorForForm';
+import { useAppSelector } from '@/lib/hooks';
 
 
 
 const AddItemCategoryPopup = ({onClose}:any) => {
     const [inputs, setInputs] = useState<string[]>(['']);
+    const appState = useAppSelector((state) => state.app);
+
 
     const handleAddInput = () => {
         setInputs([...inputs, '']);
@@ -29,6 +32,29 @@ const AddItemCategoryPopup = ({onClose}:any) => {
         setInputs(newInputs);
     };
 
+    const handleSaveClick = async () => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemCategory/create?branchId=${appState.currentBranchId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name:inputs,
+                }),
+            });
+            if (response.ok) {
+                console.log('Data saved successfully',response);
+                onClose();
+                window.dispatchEvent(new FocusEvent('focus'));
+            } else {
+                console.error('Failed to save data:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error while saving data:', error);
+        }
+        console.log(inputs);
+    }
     return (
         <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
             <div className="w-[640px] max-h-[450px] p-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex overflow-y-auto">
@@ -67,7 +93,7 @@ const AddItemCategoryPopup = ({onClose}:any) => {
                 <div className="w-full flex justify-between mt-[5px] cursor-pointer">
                 <div className="text-white text-base font-normal bg-black p-2 rounded-md py-2.5" onClick={handleAddInput}>Add another</div>
 
-                        <button className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none">
+                        <button className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer" onClick={handleSaveClick}>
                             <div className="text-white text-base font-bold ">Save</div>
                         </button>
                 </div>

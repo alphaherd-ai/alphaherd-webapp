@@ -41,16 +41,18 @@ const NewsalesBottomBar = ({estimateData}:any) => {
         });
         const items = tableData.map(data => ({
             productId: data.productId,
-            productBatchId: data.id,
+            serviceId: data.serviceId,
+            productBatchId: data.productId ? data.id : null,
             quantity: data.quantity,
             sellingPrice: data.sellingPrice,
             taxAmount: data.gst,
             name: data.itemName,
-            discount:data.discount
+            itemType: data.itemType
         }));
         const data = {
             customer: (id === null) ? allData.headerData.customer.value.clientName : estimateData.customer,
             clientId:(id==null)?allData.headerData.customer.value.clientId:"",
+            email:(id=== null)?allData.headerData.customer.value.email:"",
             notes: (id === null) ?allData.headerData.notes:estimateData.notes,
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo: (id === null) ?allData.headerData.invoiceNo:estimateData.invoiceNo,
@@ -164,6 +166,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
+
                     phone: "+917637834918",
 
                 }),
@@ -200,7 +203,8 @@ const NewsalesBottomBar = ({estimateData}:any) => {
                     'Content-type':'application/json',
                 },
                 body: JSON.stringify({
-                    email:'hembramshristi07@gmail.com'
+                    email: headerData.customer.value.email,
+
                 })
             });
             // console.log('Email sent successfully:', response);
@@ -209,14 +213,14 @@ const NewsalesBottomBar = ({estimateData}:any) => {
         } 
     };
 
-    const isDisabled = !headerData.customer || tableData.length === 0 || tableData.some(data => !data.itemName);
+    const isDisabled = !headerData?.customer || tableData.length === 0 || tableData.some(data => !data.itemName);
 
     return (
         <>
 
 
             <div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
-                <div className="flex justify-between items-center gap-4 pl-4">
+                {/* <div className="flex justify-between items-center gap-4 pl-4">
                     <Button className="p-2 bg-white rounded-md border border-solid  border-borderGrey  justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={printicon} alt="print"></Image>
                         <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all">Print</div>
@@ -239,7 +243,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
                         <Image src={shareicon} alt="share"></Image>
                         <div onClick={sendEmail} className="text-textGrey1 text-sm hover:text-textGrey2 transition-all">Share via Email</div>
                     </Button>
-                </div>
+                </div> */}
                 <div className="flex justify-between items-center gap-4 pr-4">
                     <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
                         <Image src={drafticon} alt="draft"></Image>

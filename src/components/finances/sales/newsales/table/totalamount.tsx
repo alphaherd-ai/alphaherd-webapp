@@ -76,6 +76,7 @@ const NewsalesTotalAmout = () => {
         }),
       };
       
+      
 
     const { tableData, headerData } = useContext(DataContext);
     const [selectedDiscount, setDiscount] = useState(0);
@@ -83,11 +84,12 @@ const NewsalesTotalAmout = () => {
     
     let totalAmount = 0;
     tableData.forEach(data => {
-        totalAmount += (data.quantity * data.sellingPrice + data.quantity * data.gst*data.sellingPrice-(data.quantity*data.discount*data.sellingPrice||0))||0;
+        totalAmount += (data.quantity * data.sellingPrice + data.quantity * data.gst*data.sellingPrice-(data.discountAmt||0))||0;
     });
 
     const { totalAmountData, setTotalAmountData } = useContext(DataContext);
     const { transactionsData, setTransactionsData } = useContext(DataContext);
+   
     const [grandAmt, setGrandAmt] = useState(totalAmount);
 
     const gstOptions = [
@@ -120,6 +122,13 @@ const NewsalesTotalAmout = () => {
     const [shipping, setShipping] = useState<string>('');
     const [adjustment, setAdjustment] = useState<string>('');
 
+    useEffect(()=>{
+        if(totalAmountData.subTotal==0) {
+            setShipping('');
+            setAdjustment('');
+        }
+      },[totalAmountData])
+
     const handleShippingChange = (event: any) => {
         //console.log(typeof event.target.value)
         const value = event.target.value
@@ -141,7 +150,7 @@ const NewsalesTotalAmout = () => {
         const discountedAmount = (totalAmount - totalAmount * selectedDiscount)||0;
         const shippingValue = parseFloat(shipping) || 0;
         const adjustmentValue = parseFloat(adjustment) || 0;
-        console.log(typeof adjustmentValue)
+       // console.log(typeof adjustmentValue)
         const newGrandTotal = discountedAmount + shippingValue + adjustmentValue;
         setGrandAmt(newGrandTotal);
         setTotalAmountData((prevData) => ({
@@ -239,7 +248,7 @@ const NewsalesTotalAmout = () => {
                     <div className="w-full  px-6 bg-white rounded-bl-md rounded-br-md justify-between items-center flex border border-t-0 border-solid border-borderGrey">
                         <div className="text-gray-500 text-base font-bold  w-1/3 py-4">Balance Due</div>
                         <div className="text-gray-500 text-lg font-medium  w-1/3 py-4 flex  items-center"></div>
-                        <div className="text-gray-500 text-base font-bold  w-1/3 py-4 ">₹{balanceDue < 0 ? -1*(balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2) }
+                        <div className="text-gray-500 text-base font-bold  w-1/3 py-4 ">₹{totalAmountData.subTotal?(balanceDue < 0 ? -1*(balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)):0 }
                         {balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
                             You owe
                         </span> : balanceDue === 0 ? "" : <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
@@ -252,7 +261,7 @@ const NewsalesTotalAmout = () => {
                 <div className="w-1/2 bg-white rounded-md">
                 <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">
                                     <div className="text-gray-500 text-base font-bold ">Subtotal</div>
-                                    <div className="text-right text-gray-500 text-base font-bold ">₹ {totalAmount.toFixed(2)}</div>
+                                    <div className="text-right text-gray-500 text-base font-bold ">₹ {(totalAmountData.subTotal)}</div>
                                 </div>
                                 <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
                                     <div className="text-gray-500 text-base font-bold ">Overall Discount</div>
@@ -261,7 +270,7 @@ const NewsalesTotalAmout = () => {
                                         ₹ <input
                                         type='number'
                                         className=" text-textGrey2 w-[4rem]  text-base  border-none outline-none"
-                                        value={discountInput}
+                                        value={totalAmountData.subTotal?discountInput:0}
                                         onChange={(e)=>handleDiscountChange(Number(e.target.value))}
                                         /></div>
                                         <div className=' flex text-gray-500 text-base font-medium pl-6'>
@@ -282,7 +291,7 @@ const NewsalesTotalAmout = () => {
                                         <input
                                             className="text-right text-textGrey2 text-base   border-none outline-none"
                                             placeholder='0'
-                                            value={shipping} 
+                                            value={totalAmountData.shipping} 
                                             onChange={handleShippingChange} 
                                         />
                                     </div>
@@ -291,13 +300,13 @@ const NewsalesTotalAmout = () => {
                                         <input
                                             className="text-right text-textGrey2 text-base   border-none outline-none"
                                             placeholder='0'
-                                            value={adjustment} 
+                                            value={totalAmountData.adjustment} 
                                             onChange={handleAdjustmentChange} 
                                         />
                                     </div>
                                 <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 rounded-b-md justify-between items-center gap-2.5    ">
                                     <div className="text-textGreen text-base font-bold ">Grand total</div>
-                                    <div className="text-right text-textGreen text-base font-bold">₹ {(grandAmt).toFixed(2)}</div>
+                                    <div className="text-right text-textGreen text-base font-bold">₹ {totalAmountData.subTotal?(grandAmt.toFixed(2)):0}</div>
                                 </div>
                             </div>
                         </div>

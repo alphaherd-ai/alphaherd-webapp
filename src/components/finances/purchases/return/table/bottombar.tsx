@@ -17,6 +17,7 @@ import { FinanceCreationType } from "@prisma/client"
 import axios from "axios"
 const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
     const { headerData, tableData, totalAmountData } = useContext(DataContext);
+    console.log("invoice data is :",invoiceData);
     const appState = useAppSelector((state) => state.app);
     const url = useSearchParams();
     const id = url.get('id');
@@ -41,13 +42,15 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
     }));
         const data={
             distributor: (id === null) ?allData.headerData.distributor.value:invoiceData.distributor,
+            email:(id=== null)?allData.headerData.distributor.email:"",
             notes: (id === null) ?allData.headerData.notes:invoiceData.notes,
             invoiceNo: (id === null) ?allData.headerData.invoiceNo:invoiceData.invoiceNo,
             dueDate: (id === null) ?allData.headerData.dueDate:invoiceData.dueDate,
             shipping: (id === null) ?allData.totalAmountData.shipping:invoiceData.shipping,
             adjustment: (id === null) ?allData.totalAmountData.adjustment:invoiceData.adjustment,
             totalCost: (id === null) ?allData.totalAmountData.totalCost:invoiceData.totalCost,
-            totalQty: (id === null) ?totalQty:invoiceData.totalQty,
+            overallDiscount: allData.totalAmountData.overAllDiscount,
+            totalQty:totalQty,
             status: "Pending",
             type: FinanceCreationType.Purchase_Return,
             items:{
@@ -55,6 +58,8 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
             }
             
         }
+        console.log("email is (inside) :",data.email);
+        console.log("header data in bottom bar is : ",headerData);
         // console.log(JSON.stringify(data))
         try {
             const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Return}?branchId=${appState.currentBranchId}`,data)

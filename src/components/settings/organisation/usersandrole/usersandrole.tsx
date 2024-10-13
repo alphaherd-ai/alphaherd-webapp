@@ -17,7 +17,9 @@ import Loading2 from "@/app/loading2";
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 export default function UsersAndRolesSettings() {
+
     const appState = useAppSelector((state) => state.app);
+    console.log("appstate is :",appState);
     const [branchUsers,setBranchUsers]=useState<any[]>([]);
     // console.log(appState.isCurrentOrgAdmin)
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true})

@@ -11,6 +11,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
 
   try {
     const body: any = await req.json();
+   // console.log(body);
     const itemData=body.items.create;
     const allItemsData=itemData.map((data:any) => ({
       productId: data.productId,
@@ -105,6 +106,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
                 stockChange:Stock.StockIN,
                 quantityChange: item.quantity,
                 invoiceType:FinanceCreationType.Purchase_Invoice,
+                invoiceNo:body?.invoiceNo,
                 inventoryType:Inventory.Product,
                 productBatch:{
                   connect:{
@@ -156,6 +158,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
                 stockChange:Stock.StockOUT,
                 quantityChange: item.quantity,
                 invoiceType:FinanceCreationType.Purchase_Return,
+                invoiceNo:body?.invoiceNo,
                 inventoryType:Inventory.Product,
                 productBatch:{
                   connect:{

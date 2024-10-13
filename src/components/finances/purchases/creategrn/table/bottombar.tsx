@@ -45,6 +45,7 @@ const CreateGrnBottomBar = ({orderData}:any) => {
     }));
         const data={
             distributor: (id === null) ?allData.headerData.distributor.value:orderData.distributor,
+            email:(id=== null)?allData.headerData.distributor.email:"",
             notes: (id === null) ?allData.headerData.notes:orderData.notes,
             invoiceNo: (id === null) ?allData.headerData.invoiceNo:orderData.invoiceNo,
             dueDate: (id === null) ?allData.headerData.dueDate:orderData.dueDate,
@@ -65,6 +66,7 @@ const CreateGrnBottomBar = ({orderData}:any) => {
         }
         // console.log(JSON.stringify(data))
         try {
+            
             const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Invoice}?branchId=${appState.currentBranchId}`,data)
             setTimeout(()=>{
                 router.back();
