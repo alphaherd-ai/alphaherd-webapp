@@ -20,7 +20,7 @@ import upiicon from "../../../assets/icons/settings/upiicon.svg"
 import editicon from "../../../assets/icons/settings/editicon.svg"
 import deleteicon from "../../../assets/icons/settings/deleteicon.svg"
 import React, { useState, useEffect } from 'react';
-import AddSpeciesPopup from "../generalSettingPopup/addItemCategoryPopup";
+import AddSpeciesPopup from "../generalSettingPopup/addSpeciesPopup";
 import AddPaymentPopup from "../generalSettingPopup/addPaymentPopup";
 import Loading from "@/app/loading1";
 import { useAppSelector } from "@/lib/hooks";
@@ -38,7 +38,6 @@ const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
   
 const GeneralSettings = () => {
     
-
     
     const [showPopup, setShowPopup] = useState(false);
     const [showPopup1, setShowPopup1] = useState(false);
@@ -189,7 +188,7 @@ const GeneralSettings = () => {
         }
     }, [data,error,isLoading]);
 
-
+    //item categories
     const [itemCategories, setItemCategories] = useState([]);
     const {data: itemCategoryData, error: itemCategoryError, isLoading: isLoadingItemCategories} = useSWR(
         `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemCategory/getAll?branchId=${appState.currentBranchId}`,
@@ -202,7 +201,74 @@ const GeneralSettings = () => {
         }
     }, [itemCategoryData, itemCategoryError, isLoadingItemCategories]);
 
-    console.log(itemCategories);
+    //item Units
+    const [itemUnits, setItemUnits] = useState([]);
+    const {data: itemUnitsData, error: itemUnitsError, isLoading: isLoadingItemUnits} = useSWR(
+        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemUnit/getAll?branchId=${appState.currentBranchId}`,
+        fetcher,
+        { revalidateOnFocus: true } 
+    );
+    useEffect(() => {
+        if (!isLoadingItemUnits && !itemUnitsError && itemUnitsData) {
+            setItemUnits(itemUnitsData); 
+        }
+    }, [itemUnitsData, itemUnitsError, isLoadingItemUnits]);
+
+    //Reasons
+    const [reasons, setReasons] = useState([]);
+    const {data: reasonsData, error: reasonsError, isLoading: isLoadingreasons} = useSWR(
+        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/reason/getAll?branchId=${appState.currentBranchId}`,
+        fetcher,
+        { revalidateOnFocus: true } 
+    );
+    useEffect(() => {
+        if (!isLoadingreasons && !reasonsError && reasonsData) {
+            setReasons(reasonsData); 
+        }
+    }, [reasonsData, reasonsError, isLoadingreasons]);
+
+    //tax type
+    const [taxType, settaxType] = useState([]);
+    const {data: taxTypeData, error: taxTypeError, isLoading: isLoadingtaxType} = useSWR(
+        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/taxType/getAll?branchId=${appState.currentBranchId}`,
+        fetcher,
+        { revalidateOnFocus: true } 
+    );
+    useEffect(() => {
+        if (!isLoadingtaxType && !taxTypeError && taxTypeData) {
+            settaxType(taxTypeData); 
+        }
+    }, [taxTypeData, taxTypeError, isLoadingtaxType]);
+
+    //serviceCategory
+    const [serviceCategory, setserviceCategory] = useState([]);
+    const {data: serviceCategoryData, error: serviceCategoryError, isLoading: isLoadingserviceCategory} = useSWR(
+        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/serviceCategory/getAll?branchId=${appState.currentBranchId}`,
+        fetcher,
+        { revalidateOnFocus: true } 
+    );
+    useEffect(() => {
+        if (!isLoadingserviceCategory && !serviceCategoryError && serviceCategoryData) {
+            setserviceCategory(serviceCategoryData); 
+        }
+    }, [serviceCategoryData, serviceCategoryError, isLoadingserviceCategory]);
+
+    //species
+    const [species, setspecies] = useState([]);
+    const {data: speciesData, error: speciesError, isLoading: isLoadingspecies} = useSWR(
+        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`,
+        fetcher,
+        { revalidateOnFocus: true } 
+    );
+    useEffect(() => {
+        if (!isLoadingspecies && !speciesError && speciesData) {
+            setspecies(speciesData); 
+        }
+    }, [speciesData, speciesError, isLoadingspecies]);
+    console.log('item categories: ', itemCategories);
+    console.log('Tax Type',taxType);
+    console.log('Species: ', species);
+
 
 
     return (
@@ -264,7 +330,7 @@ const GeneralSettings = () => {
                                     <div className="text-gray-500 text-base font-bold ">Payment methods</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your payment methods</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer cursor-pointer" onClick={togglePopup1}>
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer" onClick={togglePopup1}>
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
                                     <div className="text-white text-base font-medium ">Add Payment Method</div>
                                 </div>
@@ -529,7 +595,7 @@ const GeneralSettings = () => {
         </div >
 
 
-        {showPopup2 && <AddSpeciesPopup onClose={togglePopup2} />}
+        {showPopup && <AddSpeciesPopup onClose={togglePopup} />}
         {showPopup1 && <AddPaymentPopup onClose={togglePopup1} />}
         {showPopup2 && <AddItemCategoryPopup onClose={togglePopup2} />}
         {showPopup3 && <AddItemUnit onClose={togglePopup3} />}
