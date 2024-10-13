@@ -22,22 +22,22 @@ const ExistingsaleEstimateTable = () => {
     const id = url.get('id');
     const appState = useAppSelector((state) => state.app);
     const [otherData, setOtherData] = useState({});
-
-
-    const initialItems: any[] | (() => any[]) = [];
-    const [items, setItems] = useState(initialItems);
-
-    const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/${id}/?branchId=${appState.currentBranchId}`, fetcher)
-
-
-    useEffect(() => {
-        if (!isLoading && data && !error) {
-
-            const { items, ...otherData } = data;
-            setOtherData(otherData)
-            console.log(items)
-            const shallowDataCopy = [...items];
-            const itemData = shallowDataCopy.map((item: any) => ({
+      
+    
+        const initialItems: any[] | (() => any[])=[];
+        const [items, setItems] = useState(initialItems);
+    
+        const {data,error,isLoading} =useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/${id}/?branchId=${appState.currentBranchId}`,fetcher)
+        
+        
+        useEffect(() => {
+            if (!isLoading && data && !error) {
+                
+                const {items,...otherData}=data;
+                setOtherData(otherData)
+                // console.log(items)
+              const shallowDataCopy = [...items]; 
+              const itemData = shallowDataCopy.map((item: any) => ({
                 id: item.productBatch.productId,
                 itemName: item.name,
                 quantity: item.quantity,
@@ -53,7 +53,7 @@ const ExistingsaleEstimateTable = () => {
         }
     }, [data, error, isLoading]);
 
-    console.log(items)
+    // console.log(items)
 
 
 

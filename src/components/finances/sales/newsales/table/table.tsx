@@ -437,9 +437,9 @@ const NewsalesTable = () => {
     const handleBatchSelect = useCallback(async (selectedProduct: any, index: number) => {
         if (selectedProduct.value) {
             try {
-
-                const data = filteredBatches.find((batch) => batch.value.id == selectedProduct.value.id);
-                console.log(data)
+                
+                const data = filteredBatches.find((batch)=>batch.value.id==selectedProduct.value.id);
+                // console.log(data)
                 const updatedItems = [...items];
                 updatedItems[index] = {
                     ...updatedItems[index],
@@ -450,7 +450,7 @@ const NewsalesTable = () => {
                     sellingPrice: data.value.sellingPrice,
                     productId: data.value.productId
                 };
-                //console.log("these are updated", updatedItems)
+                // console.log("these are updated",updatedItems)
                 setItems(updatedItems);
                 setTableData(updatedItems);
                 // const updatedProducts = products.filter((product) => product.value !== selectedProduct.value);

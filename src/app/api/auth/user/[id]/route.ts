@@ -10,7 +10,7 @@ export const PUT=async (req: NextRequest,
         } 
         try {
             const imageUrl= await req.json();
-            console.log("this is imageUrl",imageUrl)
+            // console.log("this is imageUrl",imageUrl)
          const user =prismaClient.user.update({
             where:{
                 id:Number(params.id)

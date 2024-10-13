@@ -90,7 +90,7 @@ const NewsalesHeader = ({existingHeaderData}: any) => {
 
     const handleDateChange = (date:any) => {
         setStartDate(date);
-        console.log(date);
+        // console.log(date);
         setHeaderData((prevData) => ({ ...prevData, date }));
     };
     const handleDueDateChange= (date:any)=>{

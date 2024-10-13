@@ -34,7 +34,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
         }
         
         const allData = { headerData, tableData, totalAmountData, transactionsData };
-        console.log("this is all data", allData,headerData)
+        // console.log("this is all data", allData)
         let totalQty = 0;
         tableData.forEach(data => {
             totalQty += (data.quantity) || 0;
@@ -72,7 +72,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             }
 
         }
-        console.log(appState.currentBranch)
+        // console.log(appState.currentBranch)
         const notifData = {
             source: Notif_Source.Sales_Invoice,
             totalCost: data.totalCost,
@@ -80,8 +80,8 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             orgId: appState.currentOrgId,
             orgBranch: appState.currentOrg.orgName
         }
-        console.log(JSON.stringify(data))
-        console.log("this is notif data", notifData)
+        // console.log(JSON.stringify(data))
+        // console.log("this is notif data", notifData)
         try {
             const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Invoice}?branchId=${appState.currentBranchId}`, data)
             const notifPromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
@@ -107,7 +107,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
 
     const downloadPdf = async () => {
         const allData = { headerData, tableData, totalAmountData };
-        console.log("this is all data", allData)
+        // console.log("this is all data", allData)
         let totalQty = 0;
         tableData.forEach(data => {
             totalQty += (data.quantity) || 0;
@@ -171,7 +171,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
 
                 }),
             });
-            console.log('SMS sent successfully:', response);
+            // console.log('SMS sent successfully:', response);
         } catch (error) {
             console.error('Error while sending message', error);
         } 
@@ -189,7 +189,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
 
                 }),
             });
-            console.log('Whatsapp Message sent successfully:', response);
+            // console.log('Whatsapp Message sent successfully:', response);
         } catch (error) {
             console.error('Error while sending message', error);
         } 
@@ -207,7 +207,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
 
                 })
             });
-            console.log('Email sent successfully:', response);
+            // console.log('Email sent successfully:', response);
         } catch (error) {
             console.error('Error while saving data:', error);
         } 

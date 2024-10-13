@@ -12,6 +12,9 @@ import { CldUploadButton } from 'next-cloudinary';
 import axios from 'axios';
 import useSWR from 'swr';
 import { updateUser,UserState } from '@/lib/features/userSlice';
+import { Button } from '@nextui-org/react';
+import logoutIcon from "../../assets/icons/profile/logout.svg"
+
 //@ts-ignore
 /*
 
@@ -83,9 +86,35 @@ interface UserRole {
   }
 //const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 const AdminProfile = () => {
+
+  const [loading, setLoading] = useState(false);
+
+  const handleLogout = async () => {
+    setLoading(true);
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/logout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (res.ok) {
+        router.push(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/auth/login`);
+      } else {
+        console.error("Logout failed");
+      }
+    } catch (error) {
+      console.error("An error occurred while logging out", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
     const userState= useAppSelector((state)=>state.user)
     const appState=useAppSelector((state)=>state.app)
-    console.log("this is user from appstate",userState)
+    // console.log("this is user from appstate",userState)
     const [resource, setResource] = useState<any>();
     const currentRoute = usePathname();
 
@@ -102,7 +131,7 @@ const AdminProfile = () => {
     const [value, setValue] = useState<string>(String(userState.name));
    const handleUpdatePic =async(imageInfo:any)=>{
     const response=await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/${userState.id}`, JSON.stringify(imageInfo.secure_url));
-    console.log("hello this is response",response)
+    // console.log("hello this is response",response)
     if (response.data) {
         const updatedUserState = {
           ...userState,
@@ -110,7 +139,7 @@ const AdminProfile = () => {
         };
       
         dispatch(updateUser(updatedUserState as UserState));
-        console.log("admin profile updated", response.data);
+        // console.log("admin profile updated", response.data);
       }
    }
    const handleUpdateProfile = async () => {
@@ -301,7 +330,7 @@ const AdminProfile = () => {
                         onSuccess={(result, { widget }) => {
                             //@ts-ignore
                             setResource(result?.info.secure_url); 
-                            console.log(result) 
+                            // console.log(result) 
                             handleUpdatePic(result.info)
                             widget.close();
                         }}

@@ -34,7 +34,7 @@ const DropdownMenu = ({currBranch}:{currBranch:string}) => {
 
   function handleOrgBranchSelect(orgBranch : any){
 
-    console.log(orgBranch);
+    // console.log(orgBranch);
 
     const isCurrentOrgAdmin = isAdminOfOrg((selectedOrg as any).id,user as UserState);
     const isCurrentBranchManager = isManagerOfBranch(orgBranch.id,user as UserState);

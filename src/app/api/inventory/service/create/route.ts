@@ -12,9 +12,9 @@ export const POST=async(req: NextRequest)=> {
 } 
     try {
       const {source,...body}  = await req.json();
-      console.log(body)
+      // console.log(body)
       const validatedData = ServiceSchema.safeParse(body);
-       console.log(validatedData.error)
+      //  console.log(validatedData.error)
       if (!validatedData.success) {
         return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
           status: 422,
@@ -30,7 +30,7 @@ export const POST=async(req: NextRequest)=> {
               }},
       
         });
-        console.log(service);
+        // console.log(service);
         const inventory= await prismaClient.inventoryTimeline.create({
           data:{
             quantityChange:body.quantity,

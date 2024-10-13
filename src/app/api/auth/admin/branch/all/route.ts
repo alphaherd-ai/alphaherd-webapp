@@ -16,7 +16,7 @@ export const GET = async (req: NextRequest) => {
     }
   });
 
-  console.log(orgBranches);
+  // console.log(orgBranches);
 
   return new Response(JSON.stringify({ "branches" : orgBranches}), {
     status: 201,

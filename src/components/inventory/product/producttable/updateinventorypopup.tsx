@@ -297,8 +297,8 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
         // console.log(selectedProduct);
         if (selectedProduct.value) {
             try {
-                const data = filteredBatches.find((batch) => batch.value.id == selectedProduct.value.id);
-                console.log(selectedProduct,data)
+                const data = filteredBatches.find((batch)=>batch.value.id==selectedProduct.value.id);
+                // console.log(data)
                 const updatedInventory = [...inventory];
                 updatedInventory[index] = {
                     ...updatedInventory[index],
@@ -335,7 +335,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
                 const { id, date, quantity, batchNumber, distributors, productId, maxRetailPrice, isApproved } = item;
                 const invoiceType = "Manual";
                 let { expiry, costPrice, sellingPrice } = item;
-                // console.log("here is the product", productId)
+                // // console.log("here is the product", productId)
                 expiry = expiry || null;
                 costPrice = costPrice || null;
                 sellingPrice = sellingPrice || null;

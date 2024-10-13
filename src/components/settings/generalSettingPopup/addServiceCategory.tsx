@@ -43,9 +43,9 @@ const AddServiceCategory = ({onClose}:any) => {
                 }),
             });
             if (response.ok) {
-                console.log('Data saved successfully');
-                onClose();
-                window.dispatchEvent(new FocusEvent('focus'));
+                const result = await response.json();
+                // console.log('Payment methods saved:', result);
+                onClose(); 
             } else {
                 console.error('Failed to save data:', response.statusText);
             }

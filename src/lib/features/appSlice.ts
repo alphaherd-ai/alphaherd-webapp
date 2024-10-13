@@ -25,13 +25,13 @@ export const appSlice = createSlice({
   initialState,
   reducers: {
     updateApp: (state, action: PayloadAction<AppState>) => {
-      console.log("Inside Update App");
-      console.log(action.payload);
+      // console.log("Inside Update App");
+      // console.log(action.payload);
       const newState = { ...state, ...action.payload };
       return newState;
     },
     deleteApp: (state, action: PayloadAction<AppState>) => {
-      console.log("Inside Delete App");
+      // console.log("Inside Delete App");
       return initialState;
     }
   },

@@ -13,8 +13,8 @@ export const POST=async(req: NextRequest, { params }: { params: { type: string }
       const financeId = await fetchFinanceId(req);
 
 
-      console.log("here")
-        console.log(body)
+      // console.log("here")
+        // console.log(body)
         
         const transactions = await prismaClient.transactions.create({
           data: {
@@ -31,7 +31,7 @@ export const POST=async(req: NextRequest, { params }: { params: { type: string }
           },
       });
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       return new Response(JSON.stringify(error));
     } finally {
         await prismaClient.$disconnect();

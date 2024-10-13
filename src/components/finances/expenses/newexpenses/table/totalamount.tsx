@@ -18,7 +18,7 @@ import formatDateAndTime from '@/utils/formateDateTime';
 
 const NewExpensesTotalAmout = () => {
     const { tableData, headerData } = useContext(DataContext);
-    console.log("this is tableData", tableData)
+    // console.log("this is tableData",tableData)
     const [selectedDiscount, setDiscount] = useState(0);
     let totalAmount = 0;
     tableData.forEach(data => {
@@ -123,7 +123,7 @@ const NewExpensesTotalAmout = () => {
     }, [count, showPopup]);
 
 
-    console.log(headerData)
+    // console.log(headerData)
 
 
     return (

@@ -15,10 +15,10 @@ export const GET=async(req: NextRequest)=> {
         const { searchParams } = new URL(req.url!);
         const orgId = searchParams.get("orgId");
         const token = req.cookies.get('session')?.value;
-    console.log("token", token)
+    // console.log("token", token)
    
     let tokenPayload = await decrypt(token!);
-    console.log(tokenPayload);
+    // console.log(tokenPayload);
     const userId = tokenPayload.id;
         const user = await prismaClient.user.findUnique({
             where: {
@@ -39,11 +39,11 @@ export const GET=async(req: NextRequest)=> {
             }
         });
 
-        console.log(managerOrgBranchUserRoles);
+        // console.log(managerOrgBranchUserRoles);
 
         const managerOrgBranchIds = managerOrgBranchUserRoles.map((orgBranchUserRole) => orgBranchUserRole.orgBranchId);
 
-        console.log(managerOrgBranchIds);
+        // console.log(managerOrgBranchIds);
 
         const managerOrgsBranches = await prismaClient.orgBranch.findMany({
             where: {
@@ -54,11 +54,11 @@ export const GET=async(req: NextRequest)=> {
             }
         });
 
-        console.log(managerOrgsBranches);
+        // console.log(managerOrgsBranches);
 
         const managerOrgIds = managerOrgsBranches.map((orgBranch) => orgBranch.orgId);
 
-        console.log(managerOrgIds);
+        // console.log(managerOrgIds);
 
         const managerOrgs = await prismaClient.organization.findMany({
             where: {
@@ -66,7 +66,7 @@ export const GET=async(req: NextRequest)=> {
             }
         });
 
-        console.log(managerOrgs);
+        // console.log(managerOrgs);
 
         const managerOrgAndBranchMapping = managerOrgs.map((org) => {
             return {
@@ -75,7 +75,7 @@ export const GET=async(req: NextRequest)=> {
             }
         });
 
-        console.log(managerOrgAndBranchMapping);
+        // console.log(managerOrgAndBranchMapping);
 
         const adminOrgAndBranchMapping=[];
 
@@ -85,14 +85,14 @@ export const GET=async(req: NextRequest)=> {
                     orgId: org.id
                 }
             });
-            console.log("Org Branches",orgBranches);
+            // console.log("Org Branches",orgBranches);
             adminOrgAndBranchMapping.push({
                 ...org,
                 allowedBranches : orgBranches
             })
         }
 
-        console.log(adminOrgAndBranchMapping);
+        // console.log(adminOrgAndBranchMapping);
 
         const combinedMapping = [...adminOrgAndBranchMapping,...managerOrgAndBranchMapping.filter((mapping) => !user?.adminOrganizations.find((org) => org.id==mapping.id))];
 

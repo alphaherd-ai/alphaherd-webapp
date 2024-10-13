@@ -3,7 +3,7 @@ import {useSelector} from 'react-redux'
 const TransactionsBlanceSheetCashItemSales = ({mode}:any) => {
 
   const transactionAmount = useSelector((state:any) => state.transactionAmount)
-  console.log(transactionAmount)
+  // console.log(transactionAmount)
 
   const totalMoneyIn = transactionAmount
     .filter((transaction:any) => transaction.mode === mode && transaction.invoiceLink?.startsWith('S'))

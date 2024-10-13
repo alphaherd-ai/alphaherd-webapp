@@ -8,7 +8,7 @@ import Search from '../../../assets/icons/finance/Search.svg';
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import SettingsIcon from './icons/settingsIcon';
 import OrganisationIcon from './icons/organisationIcon';
 import lefticon from "../../../assets/icons/settings/left_icon.svg"
@@ -18,6 +18,7 @@ import lefticon from "../../../assets/icons/settings/left_icon.svg"
 const SettingsNavbar = () => {
 
     const currentRoute = usePathname();
+    const router= useRouter();
 
     return (
 

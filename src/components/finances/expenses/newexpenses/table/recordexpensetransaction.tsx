@@ -113,7 +113,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
                 })
             });
             if (response.ok) {
-                console.log('Data saved Sucessfully')
+                // console.log('Data saved Sucessfully')
                 onClose();
                 window.dispatchEvent(new FocusEvent('focus'))
             } else {
@@ -196,7 +196,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
       };
 
 
-    console.log(formData)
+    // console.log(formData)
 
 
   return (
