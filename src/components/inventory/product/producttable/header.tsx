@@ -25,10 +25,31 @@ import { Products } from '@prisma/client';
 
 
 
-const InventoryProductTableHeader = () => {
+const InventoryProductTableHeader = ({ onSortChange }: any) => {
+
+
+
     const currentRoute = usePathname();
     const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
-    const [selectedSort, setselectedSort] = React.useState(new Set(["Category: text"]));
+
+    //const [selectedSort, setselectedSort] = React.useState(new Set(["Category: text"]));
+    const [selectedSort, setSelectedSort] = React.useState("distributorName");
+    const [sortOrder, setSortOrder] = React.useState("asc");
+
+    const handleSortChange = (key: string) => {
+        if (key === selectedSort) {
+            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+        } else {
+            setSelectedSort(key);
+            setSortOrder("asc");
+        }
+
+       
+    };
+
+
+
+   
     const selectedCategoryValue = React.useMemo(
         () => Array.from(selectedCategory).join(", ").replaceAll("_", " "),
         [selectedCategory]
@@ -42,6 +63,7 @@ const InventoryProductTableHeader = () => {
         setShowPopup1(!showPopup1);
     }
     const { allData } = useContext(DataContext);
+
 
     return (
 
@@ -81,31 +103,28 @@ const InventoryProductTableHeader = () => {
 
                         <Dropdown>
                             <DropdownTrigger className='z-0'>
-                                <Button
-
-                                    // color="gray-400"
-                                    variant="solid"
-                                    className="capitalize border-none  bg-transparent rounded-lg"
-                                >
-                                    {selectedSortValue}
+                            <Button variant="solid" className="capitalize border-none bg-transparent rounded-lg">
+                                    <div className="flex text-gray-500 items-center">
+                                        <div className="text-base">Sort By</div>
+                                    </div>
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu
                                 aria-label="Single selection example"
-                                // color="gray-500"
                                 className=" text-base  text-gray-500 bg-gray-200 rounded-lg"
                                 variant="solid"
                                 disallowEmptySelection
                                 selectionMode="single"
-                                selectedKeys={selectedSort}
+                                selectedKeys={new Set([selectedSort])}
                                 // onSelectionChange={setselectedSort}
                             >
-                                <DropdownItem
-                                    className=" p-2 text-base" key="Category:text">Sort:Recently Used</DropdownItem>
-                                <DropdownItem
-                                    className=" p-2 text-base" key="Category:number">Sort:Recently Used</DropdownItem>
-                                <DropdownItem
-                                    className=" p-2 text-base" key="Category:date">Date</DropdownItem>
+                               <DropdownItem
+                                    className="p-2 text-base"
+                                    key="date"
+                                    onClick={() => handleSortChange("date")}
+                                >
+                                    Date
+                                </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>

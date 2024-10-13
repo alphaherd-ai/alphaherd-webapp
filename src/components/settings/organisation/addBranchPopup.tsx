@@ -6,7 +6,11 @@ import Link from 'next/link';
 import closeicon from "../../../assets/icons/inventory/closeIcon.svg";
 import { useAppSelector } from "@/lib/hooks";
 import { Bounce, ToastContainer, toast } from 'react-toastify';
+
+import { useRouter } from 'next/navigation';
+
 import capitalizeFirst from "@/utils/capitiliseFirst";
+
 const AddBranchPopup = ({ onClose }:any) => {
 
     const appState = useAppSelector((state) => state.app);
@@ -16,7 +20,7 @@ const AddBranchPopup = ({ onClose }:any) => {
     const handleInputChange = (event: any) => {
         setBranchNameInput(event.target.value.charAt(0).toUpperCase() + event.target.value.slice(1));
     };
-
+    const router = useRouter();
     const handleAddBranch = async () => {
         try{
             if (branchNameInput.trim() !== '') {
@@ -30,6 +34,7 @@ const AddBranchPopup = ({ onClose }:any) => {
                         "branchName": branchNameInput.trim()
                     })
                 });
+                appState.currentBranch.branchName = branchNameInput.trim();
                 let json = await resp.json();
                 if(!resp.ok){
                     console.log(json);
@@ -61,7 +66,11 @@ const AddBranchPopup = ({ onClose }:any) => {
                 theme: "colored",
                 transition: Bounce,
               });
-        }
+        }setTimeout(() => {
+            onClose();
+            console.log("router pushed");
+            router.push(`/auth/admin/branchSetup`);
+        }, 1000);
     };
 
     return <>
@@ -97,5 +106,4 @@ const AddBranchPopup = ({ onClose }:any) => {
 }
 
 export default AddBranchPopup;
-
 

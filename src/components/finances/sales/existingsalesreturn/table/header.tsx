@@ -13,6 +13,8 @@ import Loading2 from "@/app/loading2";
 
 const ExistingsalesReturnHeader = ({otherData, isLoading}:any) => {
 
+    console.log("client data is:",otherData);
+
 
 
 

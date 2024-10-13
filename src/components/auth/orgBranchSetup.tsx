@@ -47,9 +47,11 @@ const OrgDetailsSetup = (props: any) => {
         { value: 'Puducherry', label: 'Puducherry' }
 
       ];
-      console.log("this is props",props.data.state)
+      console.log("this is props",props.data)
       console.log("user data received :",props.data);
       const [resource, setResource] = useState<any>();
+
+
 
     const [focused, setFocused] = useState(false);
     const [focused1, setFocused1] = useState(false);
@@ -59,6 +61,8 @@ const OrgDetailsSetup = (props: any) => {
     const [focused5, setFocused5] = useState(false);
     const appState = useAppSelector((state) => state.app);
 
+    console.log("app state data is : ",appState);
+
     return (
         <div className="w-[1016px] h-[759px] p-10 rounded-[30px] border border-stone-300 backdrop-blur-[190.90px] justify-center items-center inline-flex">
             <div className="grow shrink basis-0 self-stretch flex-col justify-start items-end gap-10 inline-flex">
@@ -67,46 +71,10 @@ const OrgDetailsSetup = (props: any) => {
                     </div>
                     <div className="flex-col justify-start items-start gap-2 flex">
                         <div className="flex justify-around items-center">
-                            <div className="text-gray-500 text-xl font-medium mr-6">My Organisation</div>
-                            <CldUploadButton
-                                className="bg-none w-50 h-20 border-none"
-                                options={{
-                                    sources: ['local', 'url'],
-                                    multiple: false,
-                                    maxFiles: 1
-                                }}
-                                uploadPreset={process.env.CUSTOMCONNSTR_NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
-                                onSuccess={(result, { widget }) => {
-                                    //@ts-ignore
-                                    setResource(result?.info.secure_url);
-                                    console.log(result); // { public_id, secure_url, etc }
-                                    props.handlePicChange(result.info, "orgImgUrl");
-                                    widget.close();
-                                }}
-                            >
-                                <div className="self-stretch justify-start items-center gap-10 inline-flex">
-                                    <div className="grow shrink basis-0 h-11 justify-start items-start gap-2.5 flex">
-                                        <div className="px-6 py-2.5 border border-gray-500 justify-center items-center gap-4 flex border-dashed">
-                                            <div className="">
-                                                <div className="">
+                            <div className="text-gray-500 text-xl font-medium mr-6">New Branch</div>
 
-                                                    {!resource ?
-                                                        <Image src={updatelogo} alt="upload" />
-                                                        :
-                                                        <Image className="w-8 h-8 rounded-full" src={resource} alt="Uploaded image" width={150} height={150} />
-                                                    }
-
-                                                </div>
-                                            </div>
-                                            <div className="">
-                                                <div className="text-gray-500 text-base font-bold">Upload Logo</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </CldUploadButton>
                         </div>
-                        <div className="text-neutral-400 text-base font-medium ">Enter your organisation details</div>
+                        <div className="text-neutral-400 text-base font-medium ">Enter your branch details</div>
                     </div>
 
 
@@ -123,7 +91,15 @@ const OrgDetailsSetup = (props: any) => {
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium ">Branch Name</div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-start gap-2 inline-flex">
-                                <input type="text" className="text-neutral-400 text-base font-medium  h-full w-full px-2 border-1 border-solid border-[#A2A3A3]  rounded-[5px]" id="branch" name="branch" disabled={true} value={appState.currentBranch.branchName} />
+                                <input
+                                 type="text" 
+                                 className="text-neutral-400 text-base font-medium  h-full w-full px-2 border-1 border-solid border-[#A2A3A3]  rounded-[5px]" 
+                                 id="branch"
+                                  name="branch"
+                                  onChange={props.handleChange}
+                                  onFocus={() => setFocused(true)}
+                                   value={appState.currentBranch.branchName}
+                                    />
                             </div>
 
                         </div>
@@ -137,7 +113,7 @@ const OrgDetailsSetup = (props: any) => {
                                     className="text-neutral-400 text-base font-medium h-full w-full px-2 focus:outline-none border-1 border-solid border-[#A2A3A3] rounded-[5px] focus:border-1 focus:border-emerald-200"
                                     id="gstNo"
                                     name="gstNo"
-                                    onChange={props.handleChange}
+                                    
                                     onFocus={() => setFocused(true)}
                                     value={props.data.gstNo}
                                 />
@@ -160,8 +136,8 @@ const OrgDetailsSetup = (props: any) => {
                                     onFocus={() => setFocused1(true)}
                                     value={props.data.phoneNo}
                                 />
-                                {focused1 && props.data.phoneNo.length <= 1 && (
-                                    <div className="text-red-500 text-sm">Phone Number is required.</div>
+                                {focused1 && props.data.phoneNo.length == 9 && (
+                                    <div className="text-red-500 text-sm">Valid Phone Number is required.</div>
                                 )}
                             </div>
                         </div>
@@ -224,7 +200,7 @@ const OrgDetailsSetup = (props: any) => {
                         </div>
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium">Pincode*</div>
-                            <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
+                            <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border 1px border-neutral-400  ">
                                 <input
                                     type="number"
                                     className="text-neutral-400 text-base font-medium h-full w-full px-2 focus:outline-none border-1 border-solid border-[#A2A3A3] rounded-[5px] focus:border-1 focus:border-emerald-200"

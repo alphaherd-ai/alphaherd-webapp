@@ -374,6 +374,7 @@ model Purchases {
   id                   Int                 @id @default(autoincrement())
   distributor          String?
   email                String?
+  email                String?
   date                 DateTime?           @default(now())
   dueDate              DateTime
   returnLastDate       DateTime?
@@ -569,4 +570,7 @@ model TaxType{
   name                     Int[]
   InventorySection         InventorySection? @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId       Int?
+
 }
+
+

@@ -17,20 +17,22 @@ import Loading from "@/app/loading";
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 export default function UsersAndRolesSettings() {
+
     const appState = useAppSelector((state) => state.app);
+    console.log("appstate is :",appState);
     const [branchUsers,setBranchUsers]=useState<any[]>([]);
-    console.log(appState.isCurrentOrgAdmin)
+    console.log("is admin :",appState.isCurrentOrgAdmin)
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true})
     useEffect(()=>{
         if (data && !error && !isLoading) {
-               console.log(data)
+               console.log("user data is :",data)
             const usersWithRoles = data.map((user:any) => {
                 return {
                     ...user,
                     role:user.role
                 };
             });
-            console.log(usersWithRoles)
+            console.log("usersWithRoles data :",usersWithRoles);
             setBranchUsers(usersWithRoles);
         }
     }, [data, error, isLoading]);
@@ -134,7 +136,7 @@ export default function UsersAndRolesSettings() {
                             
                         </div>
                     </div>
-                    <div className="w-full p-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
+                    {/* <div className="w-full p-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                         <div className="w-full">
                             <div className="text-gray-500 text-base font-bold ">Roles and Permissions</div>
                             <div className="text-neutral-400 text-sm font-medium ">Note: These permissions do not apply to the admin account. Admins have access to all features of Alphaherd.</div>
@@ -301,7 +303,7 @@ export default function UsersAndRolesSettings() {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div >
         </div >

@@ -45,6 +45,7 @@ const CreateGrnBottomBar = ({orderData}:any) => {
     }));
         const data={
             distributor: (id === null) ?allData.headerData.distributor.value:orderData.distributor,
+            email:(id=== null)?allData.headerData.distributor.email:"",
             notes: (id === null) ?allData.headerData.notes:orderData.notes,
             invoiceNo: (id === null) ?allData.headerData.invoiceNo:orderData.invoiceNo,
             dueDate: (id === null) ?allData.headerData.dueDate:orderData.dueDate,

@@ -33,13 +33,16 @@ const url = useSearchParams();
 const id = url.get('id');
 const appState = useAppSelector((state) => state.app);
 const [otherData, setOtherData] = useState({});
-  
+console.log("app state is :" , appState.currentOrg
+);
 
     const initialItems: any[] | (() => any[])=[];
     const [items, setItems] = useState(initialItems);
 
     const {data,error,isLoading} =useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/${id}/?branchId=${appState.currentBranchId}`,fetcher)
-    
+    console.log("data is :" ,data);
+    console.log("is loading :",isLoading);
+    console.log("error is :",error);
     
     useEffect(() => {
         if (!isLoading && data && !error) {

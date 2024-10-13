@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import FinancesIcon from './icons/financesIcon';
 import notification from '../../assets/icons/navbar/notification.svg';
 import alphaherd from '../../assets/icons/navbar/alphaherdLogo.svg';
+import setting from '../../assets/icons/settings/settingicon.svg';
 import PatientlistIcon from './icons/patientlistIcon';
 import InventoryIcon from './icons/inventoryIcon';
 import HomeIcon from './icons/homeIcon';
@@ -141,7 +142,7 @@ const Navbar = () => {
         </div>
         <Link className='no-underline p-4 flex items-center justify-center h-full' href='/settings/organisation/myorg'>
           <div className='text-sm flex items-center justify-center rounded-full'>
-            <Image src={alphaherd} alt='alphaherd' className='w-7 h-7' />
+            <Image src={setting} alt='alphaherd' className='w-7 h-7' />
           </div>
         </Link>
         {isCardOpen && (

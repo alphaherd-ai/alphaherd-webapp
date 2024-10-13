@@ -93,41 +93,40 @@ const NewsalesReturnHeader = ({ existingHeaderData }: any) => {
         setHeaderData((prevData) => ({ ...prevData, dueDate: date }))
     }
 
-    useEffect(() => {
-        if (id) {
-            setHeaderData(existingHeaderData)
-        }
-        else {
-
-            setHeaderData((prevData) => ({ ...prevData, invoiceNo: invoiceNo }))
-        }
-    }, [])
-
-    useEffect(() => {
-        if (!isLoading && !error && data) {
-
-            const clients = data.map((client: any) => ({
-                value: {
-                    clientName: client.clientName,
-                    contact: client.contact,
-                    invoiceNo: client.invoiceNo,
-                    clientId: client.id
-                },
-                label: `${client.clientName}\u00A0\u00A0\u00A0\u00A0\u00A0${client.contact}`
-            }))
-            console.log(clients)
-            setCustomers(clients);
-
-        }
-        if (headerData.customer) {
-            const invoices = headerData.customer.value.invoiceNo.map((client: any) => ({
-                value: client,
-                label: client
-            }))
-            setInvoiceOptions(invoices);
-        }
-
-    }, [data, headerData])
+    
+        useEffect(()=>{
+            if(id){
+                setHeaderData(existingHeaderData)
+            }
+         else{
+            
+            setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo}))}
+        },[])
+    
+        useEffect(()=>{
+            if(!isLoading&&!error&&data){
+                
+                  const  clients=data.map((client:any)=>({
+                    value:{clientName:client.clientName,
+                           contact:client.contact,
+                           invoiceNo:client.invoiceNo,
+                           clientId:client.id,
+                           email:client.email},
+                    label:`${client.clientName}\u00A0\u00A0\u00A0\u00A0\u00A0${client.contact}`
+                }))
+                console.log(clients)
+                setCustomers(clients);
+    
+            }
+            if(headerData.customer){
+                 const invoices= headerData.customer.value.invoiceNo.map((client:any)=>({
+                    value:client,
+                    label:client
+                }))
+                setInvoiceOptions(invoices);
+            }
+            
+        },[data,headerData])
 
     useEffect(() => {
         //console.log("Updated headerData:", headerData,existingHeaderData);

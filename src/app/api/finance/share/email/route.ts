@@ -7,18 +7,24 @@ export const POST = async (req: NextRequest)=>{
     }
     console.log('sending email..')
     const {email} = await req.json();
+    console.log("email is :",email);
     const requestHeaders = new Headers(req.headers);
-    const {SMTP_EMAIL,SMTP_PASSWORD} = process.env;
+    const {AUTOMATED_GMAIL,AUTOMATED_GMAIL_APP_PASSWORD} = process.env;
     const transport = nodemailer.createTransport({
         service:"gmail",
         auth:{
-            user: SMTP_EMAIL,
-            pass: SMTP_PASSWORD
+            user: AUTOMATED_GMAIL,
+            pass: AUTOMATED_GMAIL_APP_PASSWORD
         },
+        
+
     });
+    console.log("transport is :",transport);
     let emailMessage="This is you invoice"
+    console.log("emailMessage is :", emailMessage);
+    console.log("email is :", email);
     const result = {
-        from: SMTP_EMAIL,
+        from: AUTOMATED_GMAIL,
         to: email,
         subject: 'Billing',
         message: emailMessage, 
