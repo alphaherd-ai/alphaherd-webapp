@@ -374,7 +374,6 @@ model Purchases {
   id                   Int                 @id @default(autoincrement())
   distributor          String?
   email                String?
-  email                String?
   date                 DateTime?           @default(now())
   dueDate              DateTime
   returnLastDate       DateTime?
