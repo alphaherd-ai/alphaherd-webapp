@@ -587,7 +587,9 @@ const NewsalesTable = () => {
                             </div>
                             {items.map((item: any, index: number) => (
                                 <div key={index + 1} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400 py-2'>
-                                    <div className='w-[3rem] flex items-center text-neutral-400 text-base font-medium '>{index + 1}.</div>
+                                    <div className='w-[3rem] flex items-center text-neutral-400 text-base font-medium '>{index + 1}.
+                                        
+                                    </div>
                                     <div className='w-[12rem] flex items-center text-neutral-400 text-base font-medium'>
                                         {id === null ? (
                                             <Select

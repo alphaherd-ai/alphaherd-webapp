@@ -1,15 +1,21 @@
 import { NextRequest } from "next/server";
 import prismaClient from "../../../../../../prisma";
+import { fetchDatabaseId } from "@/utils/fetchBranchDetails";
 
 export const POST = async(req: NextRequest)=>{
     if(req.method!=='POST'){
         return new Response('Method not allowed', {status: 400});
     }
     try{
+        const databaseId = await fetchDatabaseId(req);
         const body = await req.json();
-        const species = await prismaClient.species.create({
+        const species = await prismaClient.species
+        .create({
             data: {
-                ...body
+                ...body, 
+                DatabaseSection: {
+                    connect : {id: databaseId}
+                },
             },
         });
         return new Response(JSON.stringify(species),{
