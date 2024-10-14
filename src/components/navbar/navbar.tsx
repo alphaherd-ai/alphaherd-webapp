@@ -69,7 +69,7 @@ const Navbar = () => {
   };
 
   const DrawerList = (
-    <Box sx={{ width: 250 ,bgcolor: "black"}} role="presentation" onClick={toggleDrawer(false)}>
+    <Box sx={{ width: 250 ,bgcolor: "black"}} onClick={toggleDrawer(false)}>
       <List>
 
       <ListItem>
@@ -81,13 +81,13 @@ const Navbar = () => {
       <ListItem>
         <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
             <div className='text-base p-4  text-white flex '>
-            <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Sales Invoice</div>
+            <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Sales Estimate</div>
         </Link>
       </ListItem>
       <ListItem>
         <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
             <div className='text-base p-4  text-white flex '>
-            <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Sales Invoice</div>
+            <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Sales Return</div>
         </Link>
       </ListItem>
       </List>
@@ -97,19 +97,19 @@ const Navbar = () => {
 <ListItem>
   <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
       <div className='text-base p-4  text-white flex '>
-      <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Sales Invoice</div>
+      <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Purchase Order</div>
   </Link>
 </ListItem>
 <ListItem>
   <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
       <div className='text-base p-4  text-white flex '>
-      <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Sales Invoice</div>
+      <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Purchase Invoice</div>
   </Link>
 </ListItem>
 <ListItem>
   <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
       <div className='text-base p-4  text-white flex '>
-      <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Sales Invoice</div>
+      <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Purchase Retrun</div>
   </Link>
 </ListItem>
 </List>
@@ -177,7 +177,7 @@ const Navbar = () => {
             <Button onClick={toggleDrawer(true)} className='bg-greenButton w-[2rem] rounded-full'>
               <Image src={addIcon} alt='addIcon' className='w-3 h-3' />
             </Button>
-            <Drawer sx={{backgroundColor: "black"}} open={open} onClose={toggleDrawer(false)}>
+            <Drawer open={open} onClose={toggleDrawer(false)}>
               {DrawerList}
             </Drawer>
         </div>
