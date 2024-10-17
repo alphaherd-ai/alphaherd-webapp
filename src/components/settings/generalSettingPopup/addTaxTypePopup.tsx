@@ -43,9 +43,9 @@ const AddTaxType = ({onClose}:any) => {
                 }),
             });
             if (response.ok) {
-                const result = await response.json();
-                // console.log('Payment methods saved:', result);
-                onClose(); 
+                console.log('Tax Data saved successfully');
+                onClose();
+                window.dispatchEvent(new FocusEvent('focus'));
             } else {
                 console.error('Failed to save data:', response.statusText);
             }
@@ -74,7 +74,7 @@ const AddTaxType = ({onClose}:any) => {
                                 <div className="text-gray-500 text-base font-medium w-[12rem]">Tax Type</div>
                                 <input
                                     className="ml-[5rem] w-[80%] border border-solid border-borderGrey outline-none h-11 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    type="float"
+                                    type="number"
                                     value={input}
                                     onChange={(e) => handleChangeInput(index, e.target.value)}
                                 />

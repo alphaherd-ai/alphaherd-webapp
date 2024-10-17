@@ -8,8 +8,14 @@ import { useAppSelector } from '@/lib/hooks';
 import Arrow from "../../../../assets/icons/inventory/arrow.svg"
 import Loading2 from "@/app/loading2";
 import capitalizeFirst from "@/utils/capitiliseFirst";
+import axios from 'axios';
 type PopupProps = {
     onClose: () => void;
+}
+
+interface ServiceCategory{
+    id: string,
+    name: string | string[],
 }
 
 const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
@@ -34,15 +40,29 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
         { value: 28, label: 'GST@28%.' },
     ];
 
-    const [categories, setCategories] = useState<any[]>([
-        { value: "General Consultation", label: "General Consultation" },
-        { value: "Follow Up", label: "Follow Up" },
-        { value: "Surgery", label: "Surgery" },
-        { value: "Vaccination", label: "Vaccination" },
-        { value: "Grooming", label: "Grooming" },
-        { value: "Boarding", label: "Boarding" },
-        { value: "Rescue", label: "Rescue" },
-    ]);
+    const [categories, setCategories] = useState<any[]>([]);
+    useEffect(() => {
+        const fetchServiceCategory = async()=>{
+            try{
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/serviceCategory/getAll?branchId=${appState.currentBranchId}`);
+                const serviceCategoryList: any[] = response.data.reduce((acc: any[], serviceCategoryEntry: ServiceCategory) => {
+                    if (Array.isArray(serviceCategoryEntry.name)) {
+                        serviceCategoryEntry.name.forEach((name: string) => {
+                        acc.push({ value: serviceCategoryEntry.id, label: name });
+                      });
+                    } else {
+                      acc.push({ value: serviceCategoryEntry.id, label: serviceCategoryEntry.name });
+                    }
+                    return acc;
+                  }, []);
+                console.log(serviceCategoryList);
+                setCategories(serviceCategoryList);
+            }catch(error){
+                console.log("Error fetching species",error);
+            }
+        }
+        fetchServiceCategory();
+    }, [appState.currentBranchId]);
 
     useEffect(() => {
         fetchProductsAndProviders();
@@ -213,7 +233,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
 
     return <>
         {!lastStep &&
-            <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50" onClick={onClose}>
+            <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
                 <div className=" min-h-[500px] px-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex ">
                     <div className="self-end items-start gap-6 flex py-2">
                         <button onClick={onClose} className="border-0 outline-none cursor-pointer">
