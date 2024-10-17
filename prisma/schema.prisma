@@ -569,7 +569,6 @@ model TaxType{
   name                     Int[]
   InventorySection         InventorySection? @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId       Int?
-
 }
 
 

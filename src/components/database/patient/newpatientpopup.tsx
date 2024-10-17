@@ -15,12 +15,17 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useAppSelector } from "@/lib/hooks";
 import { useRouter } from "next/navigation";
-import {z,ZodError} from "zod"
+import axios from "axios";
 import Creatable from "react-select/creatable";
 
 type PopupProps = {
     onClose: () => void;
     clientData: any; 
+}
+
+interface Species{
+    id:string,
+    name:string | string[],
 }
 
 
@@ -217,6 +222,35 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
         {value:'Cow', label:'Cow'},
     ]
 
+    const [species, setSpecies] = useState<any[]>([]);
+    useEffect(() => {
+        const fetchSpecies = async () => {
+            try {
+              const response = await axios.get(
+                `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`
+              );
+      
+              const speciesList: any[] = response.data.reduce((acc: any[], speciesEntry: Species) => {
+                if (Array.isArray(speciesEntry.name)) {
+                  speciesEntry.name.forEach((name: string) => {
+                    acc.push({ value: speciesEntry.id, label: name });
+                  });
+                } else {
+                  acc.push({ value: speciesEntry.id, label: speciesEntry.name });
+                }
+                return acc;
+              }, []);
+      
+              console.log(speciesList);
+              setSpecies(speciesList);
+            } catch (error) {
+              console.log('Error fetching species', error);
+            }
+          };
+      
+          fetchSpecies();
+        }, [appState.currentBranchId]);
+
     const Breed = [
         {
             label: "Dog",
@@ -264,8 +298,8 @@ const handleBreedChange = (selectedOption: any) => {
     };  
 
     return <>
-        <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50" onClick={onClose}>
-            <div className="w-[640px]  px-8 py-4 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
+        <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50" >
+            <div className="w-[640px]  px-8 py-4 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex" >
                 <div className="self-end flex">
                     <button onClick={onClose} className="border-0 outline-none cursor-pointer">
                         <Image src={closeicon} alt="close" />
@@ -321,7 +355,7 @@ const handleBreedChange = (selectedOption: any) => {
                                 placeholder=""
                                 isClearable={false}
                                 isSearchable={true}
-                                options={Species}
+                                options={species}
                                 isMulti={false}
                                 name="species"
                                 onChange={handleSpeciesChange}

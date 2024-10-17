@@ -23,7 +23,15 @@ const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 type PopupProps = {
     onClose: () => void;
 }
+interface ItemUnit{
+    id:string,
+    name: string | string[],
+}
 
+interface ItemCategory{
+    id:string,
+    name: string | string[],
+}
 
 
 var stepFields = [
@@ -67,6 +75,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     const [isSaveDisabled, setIsSaveDisabled] = useState(true)
     const [activeTab, setActiveTab] = useState(0);
     const [errors, setErrors] =  useState<any>({});
+    const appState = useAppSelector((state) => state.app);
 
     const customStyles = {
         control: (provided: any, state: any) => ({
@@ -107,16 +116,32 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
         }),
     };
 
-    const [categories, setCategories] = useState<any[]>([
-        { value: "Pet food", label: "Pet food" },
-        { value: "Medicines", label: "Medicines" },
-        { value: "Supplements", label: "Supplements" },
-        { value: "Pet accessories", label: "Pet accessories" },
-        { value: "Equipments", label: "Equipments" },
-    ]);
+    
 
-   
-    const appState = useAppSelector((state) => state.app);
+    const [categories, setCategories] = useState<any[]>([]);
+    useEffect(() => {
+        const fetchCategory = async()=>{
+            try{
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemCategory/getAll?branchId=${appState.currentBranchId}`);
+                const itemCategoryList: any[] = response.data.reduce((acc: any[], categoryEntry: ItemCategory) => {
+                    if (Array.isArray(categoryEntry.name)) {
+                        categoryEntry.name.forEach((name: string) => {
+                        acc.push({ value: categoryEntry.id, label: name });
+                      });
+                    } else {
+                      acc.push({ value: categoryEntry.id, label: categoryEntry.name });
+                    }
+                    return acc;
+                  }, []);
+                console.log(itemCategoryList);
+                setCategories(itemCategoryList);
+            }catch(error){
+                console.log("Error fetching species",error);
+            }
+        }
+        fetchCategory();
+    }, [appState.currentBranchId]);
+    
     const {fetchedProducts,isLoading,error}=useProductfetch(appState.currentBranchId);
     
     useEffect(() => {
@@ -246,13 +271,36 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
         { value: 0.28, label: 'GST@28%' },
     ];
 
-    const unitOptions : OptionType[] =[
-        { value: 'Boxes', label: 'Boxes' },
-        { value: 'Pieces', label: 'Pieces' },
-        { value: 'Units', label: 'Units' },
-        { value: 'Vials', label: 'Vials' },
-        { value: 'Strips', label: 'Strips' },
-    ];
+    // const unitOptions : OptionType[] =[
+    //     { value: 'Boxes', label: 'Boxes' },
+    //     { value: 'Pieces', label: 'Pieces' },
+    //     { value: 'Units', label: 'Units' },
+    //     { value: 'Vials', label: 'Vials' },
+    //     { value: 'Strips', label: 'Strips' },
+    // ];
+    const [unitOptions, setUnitOptions] = useState<any[]>([]);
+    useEffect(() => {
+        const fetchUnits = async()=>{
+            try{
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemUnit/getAll?branchId=${appState.currentBranchId}`);
+                const unitOptionsList: any[] = response.data.reduce((acc: any[], unitEntry: ItemUnit) => {
+                    if (Array.isArray(unitEntry.name)) {
+                        unitEntry.name.forEach((name: string) => {
+                        acc.push({ value: unitEntry.id, label: name });
+                      });
+                    } else {
+                      acc.push({ value: unitEntry.id, label: unitEntry.name });
+                    }
+                    return acc;
+                  }, []);
+                console.log(unitOptionsList);
+                setUnitOptions(unitOptionsList);
+            }catch(error){
+                console.log("Error fetching species",error);
+            }
+        }
+        fetchUnits();
+    }, [appState.currentBranchId]);
 
     return (
         <>
@@ -352,7 +400,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                     isSearchable={true}
                                     options={categories}
                                     isMulti={false}
-                                    
+                                    styles={customStyles}
                                     name="category"
                                     onChange={(e) => handleChange("category", e?.label)}
                                    
