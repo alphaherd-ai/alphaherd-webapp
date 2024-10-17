@@ -39,6 +39,11 @@ interface Products{
     hsnCode:string,
     quantity:number
 }
+
+interface Reason{
+    id: string,
+    name: string | string[],
+}
 interface ProductBatch {
     id: number;
     date: string;
@@ -243,9 +248,9 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
         setChecked(!isChecked);
     }, [inventory]);
 
-    // const handleAddItemClick = useCallback(() => {
-    //     setInventory([...inventory, {}]);
-    // }, [inventory]);
+    const handleAddItemClick = useCallback(() => {
+        setInventory([...inventory, {}]);
+    }, [inventory]);
 
     const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
          console.log(selectedProduct)
@@ -441,33 +446,30 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
         fetchDistributors();
     }, []);
 
-    //reasons
-    // const [reason, setReason] = useState<any[]>([]);
-    // useEffect(() => {
+    const [reason, setReason] = useState<any[]>([]);
+    useEffect(() => {
+        const fetchReason = async()=>{
+            try{
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/reason/getAll?branchId=${appState.currentBranchId}`);
+                const reasonList: any[] = response.data.reduce((acc: any[], reasonEntry: Reason) => {
+                    if (Array.isArray(reasonEntry.name)) {
+                        reasonEntry.name.forEach((name: string) => {
+                        acc.push({ value: reasonEntry.id, label: name });
+                      });
+                    } else {
+                      acc.push({ value: reasonEntry.id, label: reasonEntry.name });
+                    }
+                    return acc;
+                  }, []);
+                console.log(reasonList);
+                setReason(reasonList);
+            }catch(error){
+                console.log("Error fetching species",error);
+            }
+        }
+        fetchReason();
+    }, [appState.currentBranchId]);
 
-    //     const fetchReasons = async()=>{
-    //         try{
-    //             const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/settings/reason/getAll?branchId=${appState.currentBranchId}`);
-    //             const reasons = response.data.map((reason:Reasons)=>({
-    //                 value: reason.id,
-    //                 label: reason.reasonName
-    //             }));
-    //             console.log(reasons);
-    //             setReason(reasons);
-    //         }catch(error){
-    //             console.log("Error fetching reasons",error);
-    //         }
-    //     }
-    //       fetchReasons();
-    // }, []);
-
-    const Reasons = [
-        { value: "Damaged", label: "Damaged" },
-        { value: "Expired", label: "Expired" },
-        { value: "Quality Issues", label: "Quality Issues" },
-        { value: "Wrong Item", label: "Wrong Item" },
-        { value: "Other(mention reason)", label: "Other(mention reason)" },
-    ]
     
 
     return (
@@ -501,14 +503,14 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
                                 onChange={handleRadioChange}
                             />
                         </div>
-                        {/* <div className="relative">
+                        <div className="relative">
                             <button className="cursor-pointer h-11 px-4 py-2.5 bg-zinc-900 rounded-[5px] border-0 justify-start items-center gap-2 flex" onClick={handleAddItemClick}>
                                 <Image src={addicon} alt="add" />
                                 <div className="text-white text-base font-bold  bg-transparent border-0" >
                                     Add Item
                                 </div>
                             </button>
-                        </div> */}
+                        </div>
                     </div>
                     <div className="pb-6">
                     <div className='flex w-full justify-between items-center box-border bg-gray-100 h-12 border-b border-neutral-400 text-gray-500'>
@@ -567,7 +569,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
                                             placeholder="Reason"
                                             isClearable={false}
                                             isSearchable={true}
-                                            options={Reasons}
+                                            options={reason}
                                             isMulti={true}
                                             name="Reasons"
                                             onChange={(value) => handleChange("reasons", value)}
