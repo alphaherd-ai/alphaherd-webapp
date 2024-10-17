@@ -79,11 +79,11 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
       };
 
     const handleSaveClick = async () => {
-        console.log("Save button");
+        // console.log("Save button");
         try {
             
         //   clientSchema.parse(formData);
-          console.log("Form data is valid:", formData);
+        //   console.log("Form data is valid:", formData);
           const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/create?branchId=${appState.currentBranchId}`, {
             method: "POST",
             headers: {
@@ -99,7 +99,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
             }),
           });
           if (response.ok) {
-                console.log('Data saved successfully');
+                // console.log('Data saved successfully');
                 onClose();
                 window.dispatchEvent(new FocusEvent('focus'));
             } else {
@@ -156,7 +156,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
         }
     };
 
-    console.log(formData)
+    // console.log(formData)
 
     const countryCode = [
         { value: 'IN', label: '+91' },
@@ -176,7 +176,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
 
     return <>
         
-       <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0  inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50" onClick={onClose}>
+       <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0  inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
             <div className="w-[640px] h-[575px]  px-8 py-4 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
                 <div className="self-end items-start gap-6 flex">
                     <button className="border-0 outline-none cursor-pointer" onClick={onClose}>
@@ -188,7 +188,8 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                 <div className="flex items-center">
                     <div className="text-gray-500 text-base font-medium  w-[8rem]">Client Name<span className="text-[red]">*</span></div>
                     <div>
-                        <input className="w-[447px] h-9 text-textGrey2 text-base  font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="clientName" onChange={(e) => {
+                        <input className="w-[447px] h-9 text-textGrey2 text-base  font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="clientName" 
+                        onChange={(e) => {
                             const value = e.target.value;
                             e.target.value = value.charAt(0).toUpperCase() + value.slice(1);
         handleChange("clientName", e.target.value);

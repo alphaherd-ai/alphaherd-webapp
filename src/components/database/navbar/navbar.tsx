@@ -6,7 +6,6 @@ import React, { useEffect, useState } from 'react'
 import Settings from '../../../assets/icons/finance/Settings.svg';
 import Search from '../../../assets/icons/finance/Search.svg';
 
-
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -171,10 +170,10 @@ const DatabaseNavbar = () => {
                     </div>
 
                   
-                    <Link className='no-underline h-full  ml-4' href='/finance/overview'>
+                    {/* <Link className='no-underline h-full  ml-4' href='/finance/overview'>
                         <div className='flex items-center border border-solid border-gray-300 bg-white rounded-lg px-3 h-[2.8rem]'>
                             <Image src={Settings} alt='Setting' className='w-5  h-5' /></div>
-                    </Link>
+                    </Link> */}
                 </div>
             </div >
         </>

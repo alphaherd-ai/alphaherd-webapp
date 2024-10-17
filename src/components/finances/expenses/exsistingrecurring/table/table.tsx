@@ -35,7 +35,7 @@ const ExsistingRecurringTable = () => {
             if (!isLoading && data && !error) {
                 const {items,...otherData}=data;
                 setOtherData(otherData)
-                console.log("this is all of the data",data)
+                // console.log("this is all of the data",data)
               const shallowDataCopy = [...items]; 
               const itemData = shallowDataCopy.map((item: any) => ({
                 id: item.id,
@@ -48,7 +48,7 @@ const ExsistingRecurringTable = () => {
             }
           }, [data,error,isLoading]); 
           
-    console.log(items)
+    // console.log(items)
     if(isLoading)return (<Loading/>)
     return (
         <>

@@ -47,7 +47,7 @@ const TableList: React.FC = () => {
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(phoneNumber).then(() => {
-      console.log("Tex Copied")
+      // console.log("Tex Copied")
     });
   };
 

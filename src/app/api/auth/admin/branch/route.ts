@@ -18,7 +18,7 @@ export const POST = async (req: NextRequest) => {
     }
   });
 
-  console.log(orgNewBranch);
+  // console.log(orgNewBranch);
 
   // const requestHeaders = new Headers(req.headers)
 
@@ -33,6 +33,7 @@ export const POST = async (req: NextRequest) => {
   //   }
   // });
 
+  // console.log(orgBranchUserRole);
   // console.log(orgBranchUserRole);
 
   return new Response(JSON.stringify({ "message" : "Organization branch successfully created."}), {

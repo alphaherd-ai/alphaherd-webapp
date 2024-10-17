@@ -39,13 +39,13 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     updateUser: (state, action: PayloadAction<UserState>) => {
-      console.log("Inside Update User");
-      console.log(action.payload);
+      // console.log("Inside Update User");
+      // console.log(action.payload);
       const newState = { ...state, ...action.payload };
       return newState;
     },
     deleteUser: (state, action: PayloadAction<UserState>) => {
-      console.log("Inside Delete User");
+      // console.log("Inside Delete User");
       return initialState;
     }
   },

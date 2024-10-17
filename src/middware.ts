@@ -6,13 +6,13 @@ import { getVerifyOrgandBranch } from './middleware/orgVerify';
 
 export async function middleware(request: NextRequest, event: NextFetchEvent) {
   const url = request.nextUrl;
-  console.log("INSIDE MIDDLEWARE");
-  console.log(request.url);
-  console.log(process.env.CUSTOMCONNSTR_NEXT_PUBLIC_API_BASE_PATH);
+  // console.log("INSIDE MIDDLEWARE");
+  // console.log(request.url);
+  // console.log(process.env.CUSTOMCONNSTR_NEXT_PUBLIC_API_BASE_PATH);
   if (!url.pathname.startsWith('/api')) {
     return nonApiMiddleware(request, event);
   }
-  console.log("Going to is authorized");
+  // console.log("Going to is authorized");
   return isAuthorized(request);
 }
 
@@ -22,6 +22,6 @@ export const config = {
   '/api/finance/:path*',
   '/api/inventory/:path*',
   '/api/settings/:path*',
-  '/((?!api|_next/static|_next/image|favicon.ico).*)',
-  '/'],
+  // '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  '/',],
 };

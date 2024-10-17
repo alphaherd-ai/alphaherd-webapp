@@ -17,7 +17,8 @@ const NewPurchaseOrderNavbar = () => {
             distributor:null,
             date:new Date(),
             dueDate:new Date(),
-            notes:""  
+            notes:""  ,
+            invoiceNo:headerData.invoiceNo 
         }
         const resetTotalAmountData={
             adjustment:0,

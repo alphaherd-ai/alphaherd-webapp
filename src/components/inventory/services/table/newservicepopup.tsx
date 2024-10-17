@@ -76,7 +76,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
     }
 
     const fetchProductsAndProviders = async () => {
-        console.log("inside fetch");
+        // console.log("inside fetch");
         const productsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/branch/products?branchId=${appState.currentBranchId}`, {
             method: 'GET',
             headers: {
@@ -84,7 +84,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
             }
         });
         let productsJson = await productsResponse.json();
-        console.log(productsJson);
+        // console.log(productsJson);
         const staffResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/branch/staff?branchId=${appState.currentBranchId}`, {
             method: 'GET',
             headers: {
@@ -92,8 +92,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
             }
         });
         let staffJson = await staffResponse.json();
-        console.log(staffJson);
-        console.log(productsJson.products);
+        // console.log(staffJson);
+        // console.log(productsJson.products);
         setProductOptions(productsJson.products.map((product: any) => { return { label: product.itemName, value: product.id } }));
         setProviders(staffJson.staff.map((user: any) => { return { label: user.name, value: user.id } }));
     }
@@ -107,7 +107,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
     };
 
     const handleSaveClick = async () => {
-        console.log("Save Button");
+        // console.log("Save Button");
         if (!formData.name || !formData.tax) {
             if (!formData.name) {
                 setNameError('Service name is required');
@@ -122,7 +122,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
         }
         try {
             // setButtonDisabled(true);
-            console.log("Form data is valid:", formData);
+            // console.log("Form data is valid:", formData);
             // const selectedProviders = formData.providers.map((provider:any) => provider.label);
             // const selectedProducts = formData.linkProducts.map((linkProducts:any) => linkProducts.label);
             const selectedProviders = Array.isArray(formData.providers)
@@ -153,7 +153,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
             });
 
             if (response.ok) {
-                console.log('Data saved successfully');
+                // console.log('Data saved successfully');
                 onClose();
                 window.dispatchEvent(new FocusEvent('focus'));
             } else {

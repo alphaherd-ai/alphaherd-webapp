@@ -75,81 +75,77 @@ const OrgSetup = () => {
 
   const [validationErrors, setValidationErrors] = useState(data);
 
-  console.log(validationErrors);
+  // console.log(validationErrors);
 
   const [activeTab, setActiveTab] = useState(0);
-
-  const handlePicChange = (imageUrl: any, source: string) => {
-    let name = source, value = imageUrl.secure_url;
-    console.log(name, value)
-    try {
-      console.log(name, value)
-      setData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-      console.log("inside handle change 1");
-      formSchema.parse({ ...data, [name]: value });
-      console.log("inside handle change 2");
-      setValidationErrors((prevErrors) => {
-        console.log("here");
-        let newErrors = prevErrors;
-        newErrors[name as keyof typeof prevErrors] = '';
-        return newErrors;
-      });
-    }
-    catch (err: any) {
-      if (err instanceof z.ZodError) {
-        console.log(err.flatten());
-        let fieldErrors = err.flatten().fieldErrors;
-        console.log(fieldErrors);
-        let fields: string[] = Object.keys(fieldErrors);
-        console.log(name);
-        console.log(fields);
-        if (fields.includes(name)) {
-          setValidationErrors((prevErrors) => {
-            let newErrors = prevErrors;
-            newErrors[name as keyof typeof prevErrors] = fieldErrors[name]!.length > 0 ? fieldErrors[name]![0] : '';
-            return newErrors;
-          });
-        }
-        else {
-          setValidationErrors((prevErrors) => {
-            console.log("here");
-            let newErrors = prevErrors;
-            newErrors[name as keyof typeof prevErrors] = '';
-            return newErrors;
-          });
-        }
+ 
+const handlePicChange=(imageUrl:any,source:string)=>{
+  let name=source,value=imageUrl.secure_url;
+  // console.log(name,value)
+  try{
+    // console.log(name,value)
+    setData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+    // console.log("inside handle change 1");
+    formSchema.parse({...data,[name]: value});
+    // console.log("inside handle change 2");
+    setValidationErrors((prevErrors) => {
+      // console.log("here");
+      let newErrors = prevErrors;
+      newErrors[name as keyof typeof prevErrors] = '';
+      return newErrors;
+    });
+  }
+  catch(err : any){
+    if (err instanceof z.ZodError) {
+      // console.log(err.flatten());
+      let fieldErrors = err.flatten().fieldErrors;
+      // console.log(fieldErrors);
+      let fields: string[] = Object.keys(fieldErrors);
+      // console.log(name);
+      // console.log(fields);
+      if(fields.includes(name)){
+        setValidationErrors((prevErrors) => {
+          let newErrors = prevErrors;
+          newErrors[name as keyof typeof prevErrors] = fieldErrors[name]!.length > 0 ? fieldErrors[name]![0] : '';
+          return newErrors;
+        });
+      }
+      else{
+        setValidationErrors((prevErrors) => {
+          // console.log("here");
+          let newErrors = prevErrors;
+          newErrors[name as keyof typeof prevErrors] = '';
+          return newErrors;
+        });
       }
     }
-  };
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | any) => {
-    let name: string, value: any;
-    if (e?.label) {
-      name = "state"
-      value = e.value
-    }
-    else if (e?.target.name === 'orgName') {
-      name = "orgName",
-        value =e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1);
+  }
+};
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>|any) => {
+    let name: string,value: any;
+    if(e?.label){
+       name="state"
+       value=e.value
     }
     else {
       name = e.target.name;
       value = e.target.value;
     }
-
-    try {
-      console.log(name, value)
+    
+    try{
+      // console.log(name,value)
       setData((prevData) => ({
         ...prevData,
         [name]: value,
       }));
-      console.log("inside handle change 1");
-      formSchema.parse({ ...data, [name]: value });
-      console.log("inside handle change 2");
+      // console.log("inside handle change 1");
+      formSchema.parse({...data,[name]: value});
+      // console.log("inside handle change 2");
       setValidationErrors((prevErrors) => {
-        console.log("here");
+        // console.log("here");
         let newErrors = prevErrors;
         newErrors[name as keyof typeof prevErrors] = '';
         return newErrors;
@@ -157,13 +153,13 @@ const OrgSetup = () => {
     }
     catch (err: any) {
       if (err instanceof z.ZodError) {
-        console.log(err.flatten());
+        // console.log(err.flatten());
         let fieldErrors = err.flatten().fieldErrors;
-        console.log(fieldErrors);
+        // console.log(fieldErrors);
         let fields: string[] = Object.keys(fieldErrors);
-        console.log(name);
-        console.log(fields);
-        if (fields.includes(name)) {
+        // console.log(name);
+        // console.log(fields);
+        if(fields.includes(name)){
           setValidationErrors((prevErrors) => {
             let newErrors = prevErrors;
             newErrors[name as keyof typeof prevErrors] = fieldErrors[name]!.length > 0 ? fieldErrors[name]![0] : '';
@@ -172,7 +168,7 @@ const OrgSetup = () => {
         }
         else {
           setValidationErrors((prevErrors) => {
-            console.log("here");
+            // console.log("here");
             let newErrors = prevErrors;
             newErrors[name as keyof typeof prevErrors] = '';
             return newErrors;
@@ -186,7 +182,7 @@ const OrgSetup = () => {
 
     e.preventDefault();
 
-    console.log("form button")
+    // console.log("form button")
 
     try {
 
@@ -221,7 +217,7 @@ const OrgSetup = () => {
           })
         }
       )
-      console.log(res);
+      // console.log(res);
       let json = await res.json();
       if (res.ok) {
         toast.success(json.message, {
@@ -241,12 +237,12 @@ const OrgSetup = () => {
         throw new Error(json.message);
       }
     }
-    catch (err: any) {
-      console.log(err.message);
-      console.log(typeof (err))
+    catch (err : any) {
+      // console.log(err.message);
+      // console.log(typeof(err))
       if (err instanceof z.ZodError) {
-        console.log(err.flatten());
-        setValidationErrorsForForm(err, setValidationErrors, activeTab, stepFields);
+        // console.log(err.flatten());
+        setValidationErrorsForForm(err,setValidationErrors,activeTab,stepFields);
       } else {
         console.error('Error:', err);
         toast.error(err.message, {
@@ -271,8 +267,8 @@ const OrgSetup = () => {
     }
     catch (err: any) {
       if (err instanceof z.ZodError) {
-        console.log(err.flatten());
-        if (!setValidationErrorsForForm(err, setValidationErrors, activeTab, stepFields)) {
+        // console.log(err.flatten());
+        if(!setValidationErrorsForForm(err,setValidationErrors,activeTab,stepFields)){
           setActiveTab(prev => prev + 1);
         }
       }

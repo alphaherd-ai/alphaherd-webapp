@@ -69,7 +69,7 @@ const FilterDropdownProductsCard = () => {
       }));
 
       const combinedOptions = [...clientOptions, ...distributorOptions];
-      console.log(combinedOptions);
+      // console.log(combinedOptions);
       setPartyInfo(combinedOptions);
     }
   }, [data, error, isLoading]);
@@ -86,7 +86,7 @@ const FilterDropdownProductsCard = () => {
     });
   };
   const handleCategorySelect = (category: any) => {
-    console.log("this is category",category)
+    // console.log("this is category",category)
     setSelectedCategories((prevSelectedCategories) => {
       if (prevSelectedCategories.includes(String(category))) {
         return prevSelectedCategories.filter((categoryName) => categoryName !== String(category));

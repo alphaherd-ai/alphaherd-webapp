@@ -66,7 +66,7 @@ const ProductAllItem = () => {
       if (startDate || endDate) {
         filteredData = filteredData.filter((item: any) => {
           const itemDate = new Date(item.createdAt);
-          console.log(itemDate)
+          // console.log(itemDate)
           if (startDate && itemDate < startDate) return false;
           if (endDate && itemDate > endDate) return false;
           return true;
@@ -102,7 +102,7 @@ const ProductAllItem = () => {
         );
       }
       setProducts(filteredData);
-      console.log('Products Data:', filteredData); 
+      // console.log('Products Data:', filteredData); 
     }
     
   },[data,error,isLoading,startDate,endDate,selectedInvoiceTypes,selectedInvoiceNo,selectedParties,selectedMoneyTypes])

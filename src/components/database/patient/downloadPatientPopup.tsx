@@ -151,7 +151,7 @@ const DownloadPopup = ({ onClose, patients, clients }:any) => {
                         Custom
                     </div>
                 </div>
-                <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Today' ? 'bg-textGreen' : 'bg-white'}`}
+                {/* <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Today' ? 'bg-textGreen' : 'bg-white'}`}
                     onClick={() => handleOptionClick('Today')}>
                     <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Today' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
                     Today
@@ -174,7 +174,7 @@ const DownloadPopup = ({ onClose, patients, clients }:any) => {
                     <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Year' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
                     Year
                     </div>
-                </div>
+                </div> */}
             </div>
         
         

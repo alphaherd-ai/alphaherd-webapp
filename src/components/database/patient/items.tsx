@@ -37,7 +37,7 @@ const DatabasePatientTableItem = ({ patients, clients, isPatientLoading }:any) =
       
 if(isPatientLoading)return (<Loading/>)
 
-    console.log(patients)
+    // console.log(patients)
 
     return (
         <>
