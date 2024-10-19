@@ -487,19 +487,19 @@ const GeneralSettings = () => {
 
                                                     
                                                     {expandedSpecies === item.id && (
-                        <div className="pl-10 pr-6 py-2">
-                            {item.breed && Array.isArray(item.breed) && item.breed.length > 0 ? (
-                                item.breed.map((breedItem: any, breedIndex: number) => (
-                                    <div key={breedIndex} className="text-gray-500 text-sm font-medium py-1">
-                                        {/* Display breed name (joined if multiple) */}
-                                        {Array.isArray(breedItem.name) ? breedItem.name.join(", ") : breedItem.name}
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="text-gray-400 text-sm italic">No breeds available</div>
-                            )}
-                        </div>
-                    )}
+                                                    <div className="pl-10 pr-6 py-2">
+                                                        {item.breed && Array.isArray(item.breed) && item.breed.length > 0 ? (
+                                                            item.breed.map((breedItem: any, breedIndex: number) => (
+                                                                <div key={breedIndex} className="text-gray-500 text-sm font-medium py-1">
+                                                                    {/* Display breed name (joined if multiple) */}
+                                                                    {Array.isArray(breedItem.name) ? breedItem.name.join(", ") : breedItem.name}
+                                                                </div>
+                                                            ))
+                                                        ) : (
+                                                            <div className="text-gray-400 text-sm italic">No breeds available</div>
+                                                        )}
+                                                    </div>
+                                                )}
                                                     </div>
                                                 ))}
                                             </div>

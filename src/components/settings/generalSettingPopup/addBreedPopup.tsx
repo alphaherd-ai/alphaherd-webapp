@@ -94,27 +94,32 @@ const AddBreed = ({ onClose }: any) => {
 
     const [species, setSpecies] = useState<any[]>([]);
     useEffect(() => {
-        const fetchSpecies = async()=>{
-            try{
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`);
-                const speciesList: any[] = response.data.reduce((acc: any[], speciesEntry: Species) => {
-                    if (Array.isArray(speciesEntry.name)) {
-                      speciesEntry.name.forEach((name: string) => {
-                        acc.push({ value: speciesEntry.id, label: name });
-                      });
-                    } else {
-                      acc.push({ value: speciesEntry.id, label: speciesEntry.name });
-                    }
-                    return acc;
-                  }, []);
-                console.log(speciesList);
-                setSpecies(speciesList);
-            }catch(error){
-                console.log("Error fetching species",error);
+        const fetchSpecies = async () => {
+            try {
+              const response = await axios.get(
+                `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`
+              );
+      
+              const speciesList: any[] = response.data.reduce((acc: any[], speciesEntry: Species) => {
+                if (Array.isArray(speciesEntry.name)) {
+                  speciesEntry.name.forEach((name: string) => {
+                    acc.push({ value: speciesEntry.id, label: name });
+                  });
+                } else {
+                  acc.push({ value: speciesEntry.id, label: speciesEntry.name });
+                }
+                return acc;
+              }, []);
+      
+              console.log(speciesList);
+              setSpecies(speciesList);
+            } catch (error) {
+              console.log('Error fetching species', error);
             }
-        }
-        fetchSpecies();
-    }, [appState.currentBranchId]);
+          };
+      
+          fetchSpecies();
+        }, [appState.currentBranchId]);
 
     return (
         <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
