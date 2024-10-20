@@ -1,8 +1,5 @@
 "use client";
 import React, { useEffect, useState } from 'react'
-
-
-
 import Settings from '../../../assets/icons/finance/Settings.svg';
 import Search from '../../../assets/icons/finance/Search.svg';
 import Add from '../../../assets/icons/inventory/add.svg';

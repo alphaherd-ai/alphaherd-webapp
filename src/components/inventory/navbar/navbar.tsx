@@ -16,6 +16,8 @@ import Select from 'react-select';
 import { FinanceCreationType } from '@prisma/client';
 import Popup from '../product/producttable/newproductpopup';
 import Popup2 from '../product/producttable/updateinventorypopup';
+import Popup3 from '../services/table/newservicepopup';
+
 
 
 
@@ -199,7 +201,7 @@ const InventoryNavbar = () => {
             </div >
             {showPopup && <Popup onClose={togglePopup} />}
             {showPopup2 && <Popup2 onClose={togglePopup2} />}
-            {showPopup3 && <Popup onClose={togglePopup3} />}
+            {showPopup3 && <Popup3 onClose={togglePopup3} />}
 
            
         </>
