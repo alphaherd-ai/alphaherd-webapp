@@ -22,14 +22,6 @@ import Popup2 from '../../product/producttable/updateinventorypopup';
 
 const InventoryServicesTableHeader = () => {
     const currentRoute = usePathname();
-    const [showPopup, setShowPopup] = React.useState(false);
-    const [showPopup2, setShowPopup2] = React.useState(false);
-
-    const togglePopup = () => {
-        setShowPopup(!showPopup);
-    }
-    
-
     const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
     const [selectedSort, setselectedSort] = React.useState(new Set(["Category: text"]));
 
@@ -162,21 +154,13 @@ const InventoryServicesTableHeader = () => {
 
                             </DropdownMenu>
                         </Dropdown> */}
-                        <div className='mr-1' /> <div className='flex items-center text-base p-4 bg-black text-white rounded-lg cursor-pointer py-2 w-[156px] h-[44px]' onClick={togglePopup}>
-                            <div className='flex pr-2'>
-                                <Image src={Add} alt='Add' className='w-5 h-5' />
-                            </div>
-                            <button className='bg-transparent border-0 text-white text-base cursor-pointer'>
-                                New Service
-                            </button>
-                        </div>
+                        
 
 
 
                     </div>
                 </div>
             </div >
-            {showPopup && <Popup onClose={togglePopup} />}
             
         </>
     )
