@@ -56,11 +56,18 @@ const AddBreed = ({ onClose }: any) => {
 
 
     const handleChange = (field: string, value: any) => {
-    setFormData((prevFormData: any) => ({
-        ...prevFormData,
-        [field]: value,
-    }));
-    }
+        setFormData((prevFormData: any) => ({
+            ...prevFormData,
+            [field]: value,
+        }));
+        if (field === 'species') {
+            setFormData((prevFormData: any) => ({
+                ...prevFormData,
+                breeds: [] 
+            }));
+        }
+    };
+    
     
     const handleDeleteInput = (index: number) => {
         const newInputs = [...formData];
@@ -70,14 +77,31 @@ const AddBreed = ({ onClose }: any) => {
 
     const handleSave = async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/create?branchId=${appState.currentBranchId}`, {
+            console.log('Form Data before saving:', formData);
+            
+
+                // Ensure we're using the correct species object which includes the id
+                const species = formData.species; // should be the selected species object
+
+                // Check if breeds is not empty
+                const breedsArray = Array.isArray(formData.breeds) ? formData.breeds : [formData.breeds];
+
+                // Ensure we have both species and breeds
+                if (!species || !breedsArray.length) {
+                    console.error('Species and breeds must be provided');
+                    return;
+                }
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/breed/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    species: formData.species,
-                    name: [formData.breeds],
+                    species: {
+                        connect: { id: species.value }, // Pass the species id
+                    },
+                    name: breedsArray, 
                 }),
             });
             if (response.ok) {
@@ -94,27 +118,33 @@ const AddBreed = ({ onClose }: any) => {
 
     const [species, setSpecies] = useState<any[]>([]);
     useEffect(() => {
-        const fetchSpecies = async()=>{
-            try{
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`);
+        const fetchSpecies = async () => {
+            try {
+                const response = await axios.get(
+                    `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`
+                );
+    
                 const speciesList: any[] = response.data.reduce((acc: any[], speciesEntry: Species) => {
                     if (Array.isArray(speciesEntry.name)) {
-                      speciesEntry.name.forEach((name: string) => {
-                        acc.push({ value: speciesEntry.id, label: name });
-                      });
+                        speciesEntry.name.forEach((name: string) => {
+                            acc.push({ value: speciesEntry.id, label: name });
+                        });
                     } else {
-                      acc.push({ value: speciesEntry.id, label: speciesEntry.name });
+                        acc.push({ value: speciesEntry.id, label: speciesEntry.name });
                     }
                     return acc;
-                  }, []);
+                }, []);
+    
                 console.log(speciesList);
                 setSpecies(speciesList);
-            }catch(error){
-                console.log("Error fetching species",error);
+            } catch (error) {
+                console.log('Error fetching species', error);
             }
-        }
+        };
+    
         fetchSpecies();
     }, [appState.currentBranchId]);
+    
 
     return (
         <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
@@ -133,12 +163,6 @@ const AddBreed = ({ onClose }: any) => {
 
                             <div  className="w-full flex  items-center">
                                 <div className="text-gray-500 text-base font-medium w-[12rem]">Species</div>
-                                {/* <input
-                                    className="ml-[5rem] w-[80%] border border-solid border-borderGrey outline-none h-11 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    type="text"
-                                    name="paymentMethod"
-                                    onChange={(e) => handleChange("paymentMethod", e.target.value)}
-                                /> */}
                                 <Select
                                     className="ml-[5rem] w-[80%] border border-solid border-borderGrey outline-none h-11 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                     placeholder="Select Species"
@@ -147,7 +171,7 @@ const AddBreed = ({ onClose }: any) => {
                                     options={species}
                                     isMulti={false}
                                     name="species"
-                                    onChange={(e) => handleChange("species",e?.label)}
+                                    onChange={(e) => handleChange("species", e)} 
                                     styles={customStyles}
                                 />
                                
@@ -163,7 +187,7 @@ const AddBreed = ({ onClose }: any) => {
                                     className="ml-[5rem] w-[80%] border border-solid border-borderGrey outline-none h-11 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                     type="text"
                                     name="breeds"
-                                    onChange={(e) => handleChange("breeds", e.target.value)}
+                                    onChange={(e) => handleChange("breeds", e.target.value.split(','))}
                                 />
                                 {/* <div className="ml-2 h-11 px-[0.6rem] rounded-[5px] justify-start items-center flex bg-black cursor-pointer" onClick={() => handleDeleteInput(index)}>
                                     <Image src={delicon} alt="delete"></Image>

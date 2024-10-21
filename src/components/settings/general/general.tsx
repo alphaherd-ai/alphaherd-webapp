@@ -487,19 +487,19 @@ const GeneralSettings = () => {
 
                                                     
                                                     {expandedSpecies === item.id && (
-                        <div className="pl-10 pr-6 py-2">
-                            {item.breed && Array.isArray(item.breed) && item.breed.length > 0 ? (
-                                item.breed.map((breedItem: any, breedIndex: number) => (
-                                    <div key={breedIndex} className="text-gray-500 text-sm font-medium py-1">
-                                        {/* Display breed name (joined if multiple) */}
-                                        {Array.isArray(breedItem.name) ? breedItem.name.join(", ") : breedItem.name}
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="text-gray-400 text-sm italic">No breeds available</div>
-                            )}
-                        </div>
-                    )}
+                                                    <div className="pl-10 pr-6 py-2">
+                                                        {item.breed && Array.isArray(item.breed) && item.breed.length > 0 ? (
+                                                            item.breed.map((breedItem: any, breedIndex: number) => (
+                                                                <div key={breedIndex} className="text-gray-500 text-sm font-medium py-1">
+                                                                    {/* Display breed name (joined if multiple) */}
+                                                                    {Array.isArray(breedItem.name) ? breedItem.name.join(", ") : breedItem.name}
+                                                                </div>
+                                                            ))
+                                                        ) : (
+                                                            <div className="text-gray-400 text-sm italic">No breeds available</div>
+                                                        )}
+                                                    </div>
+                                                )}
                                                     </div>
                                                 ))}
                                             </div>
@@ -638,16 +638,29 @@ const GeneralSettings = () => {
                                     </div>
                                     {isLoading && <Loading />}
                                     <div className="w-full  max-h-[15rem] overflow-y-auto">
-                                    {taxType.map((item:any) => (
-                                        <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div  className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            
-                                            <div className="text-gray-500 text-base font-medium ">{item.name} % GST </div>
+                                    {taxType.map((item: any, index: any) => (
+                                        <div key={index} className='w-full'>
+                                            {Array.isArray(item.name) && item.name.length > 0 ? (
+                                            item.name.map((taxValue: number, taxIndex: number) => (
+                                                <div key={taxIndex} className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
+                                                <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                                    <div className="text-gray-500 text-base font-medium">
+                                                    {`${taxValue}% GST`}
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            ))
+                                            ) : (
+                                            <div className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
+                                                <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                                <div className="text-gray-500 text-base font-medium">
+                                                    No tax types available 
+                                                </div>
+                                                </div>
+                                            </div>
+                                            )}
                                         </div>
-                                        
-                                    </div>
-                                    ))
-                                    } 
+                                    ))}
                                     </div>   
                                     
                                 </div>

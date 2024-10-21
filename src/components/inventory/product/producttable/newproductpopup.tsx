@@ -56,6 +56,11 @@ interface OptionType {
     label: string;
 }
 
+interface TaxType {
+    id: number;
+    name: number[];
+}
+
 function useProductfetch (id: number | null) {
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`,fetcher,{revalidateOnFocus:true});
    return {
@@ -160,6 +165,30 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
         }
     }, [isLoading, error, fetchedProducts]);
 
+    const [taxType, settaxType] = useState<any[]>([]);
+    useEffect(() => {
+        const fetchTax = async()=>{
+            try{
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/taxType/getAll?branchId=${appState.currentBranchId}`);
+                const taxTypeList: any[] = response.data.reduce((acc: any[], taxTypeEntry: TaxType) => {
+                    if (Array.isArray(taxTypeEntry.name)) {
+                      taxTypeEntry.name.forEach((taxValue: number) => {
+                        acc.push({
+                          value: taxValue * 0.01,
+                          label: `${taxValue}% GST` 
+                        });
+                      });
+                    }
+                    return acc;
+                  }, []);
+                console.log(taxTypeList);
+                settaxType(taxTypeList);
+            }catch(error){
+                console.log("Error fetching species",error);
+            }
+        }
+        fetchTax();
+    }, [appState.currentBranchId]);
     useEffect(() => {
 
         const fetchDistributors = async()=>{
@@ -263,13 +292,13 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     };
       
 
-    const gstOptions = [
-        { value: 0, label: 'GST@0%' },
-        { value: 0.05, label: 'GST@5%' },
-        { value: 0.12, label: 'GST@12%' },
-        { value: 0.18, label: 'GST@18%' },
-        { value: 0.28, label: 'GST@28%' },
-    ];
+    // const gstOptions = [
+    //     { value: 0, label: 'GST@0%' },
+    //     { value: 0.05, label: 'GST@5%' },
+    //     { value: 0.12, label: 'GST@12%' },
+    //     { value: 0.18, label: 'GST@18%' },
+    //     { value: 0.28, label: 'GST@28%' },
+    // ];
 
     // const unitOptions : OptionType[] =[
     //     { value: 'Boxes', label: 'Boxes' },
@@ -377,7 +406,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                     placeholder="Select Tax"
                                     isClearable={false}
                                     isSearchable={true}
-                                    options={gstOptions}
+                                    options={taxType}
                                     isMulti={false}
                                     name="tax"
                                     onChange={(e) => handleChange("tax", e?.value)}

@@ -17,7 +17,7 @@ type PopupProps = {
 }
 
 
-const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
+const DistributorPopup: React.FC<PopupProps> = ({ onClose }:any) => {
     const [formData, setFormData] = useState<any>({});
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [isSaveDisabled, setIsSaveDisabled] = useState(true);
@@ -377,6 +377,6 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     </>;
 }
 
-export default Popup;
+export default DistributorPopup;
 
 

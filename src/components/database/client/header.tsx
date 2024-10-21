@@ -20,12 +20,10 @@ import DownloadPopup from './downloadClientPopup';
 
 
 const DatabaseClientHeader = ({ clients, onSortChange }: any) => {
-    const [showPopup, setShowPopup] = React.useState(false);
     const [showPopup1, setShowPopup1] = React.useState(false);
     const [selectedSort, setSelectedSort] = React.useState("name");
     const [sortOrder, setSortOrder] = React.useState("asc");
 
-    const togglePopup = () => setShowPopup(!showPopup);
     const togglePopup1 = () => setShowPopup1(!showPopup1);
 
     const handleSortChange = (key: string) => {
@@ -98,20 +96,9 @@ const DatabaseClientHeader = ({ clients, onSortChange }: any) => {
                             </DropdownMenu>
                         </Dropdown>
                     </div>
-                    <Button
-                        variant="solid"
-                        className="capitalize px-4 py-2.5 flex border-none bg-black text-white rounded-lg"
-                        onClick={togglePopup}
-                    >
-                        <div className="flex">
-                            <Image src={Add} alt="Add" className="w-3 h-3" />
-                        </div>
-                        Add Client
-                    </Button>
+                    
                 </div>
             </div>
-
-            {showPopup && <ClientPopup onClose={togglePopup} />}
             {showPopup1 && <DownloadPopup onClose={togglePopup1} clients={clients} />}
         </>
     );

@@ -25,7 +25,7 @@ const AddTaxType = ({onClose}:any) => {
         setInputs(newInputs);
     };
 
-    const handleChangeInput = (index: number, value: string) => {
+    const handleChangeInput = (index: number, value: any) => {
         const newInputs = [...inputs];
         newInputs[index] = value;
         setInputs(newInputs);
@@ -33,13 +33,14 @@ const AddTaxType = ({onClose}:any) => {
 
     const handleSave = async () => {
         try {
+            const intInputs = inputs.map((input)=> parseInt(input,10));
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/taxType/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    name:inputs,
+                    name:intInputs,
                 }),
             });
             if (response.ok) {

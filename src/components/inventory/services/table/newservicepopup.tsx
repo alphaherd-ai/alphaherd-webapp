@@ -13,6 +13,11 @@ type PopupProps = {
     onClose: () => void;
 }
 
+interface TaxType {
+    id: number;
+    name: number[];
+}
+
 interface ServiceCategory{
     id: string,
     name: string | string[],
@@ -32,13 +37,30 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
     const [selectedProducts, setSelectedProducts] = useState<any>([]);
     const [productOptions, setProductOptions] = useState([]);
 
-    const gstOptions = [
-        { value: 0, label: 'GST@0%.' },
-        { value: 5, label: 'GST@5%.' },
-        { value: 12, label: 'GST@12%.' },
-        { value: 18, label: 'GST@18%.' },
-        { value: 28, label: 'GST@28%.' },
-    ];
+    const [taxType, settaxType] = useState<any[]>([]);
+    useEffect(() => {
+        const fetchTax = async()=>{
+            try{
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/taxType/getAll?branchId=${appState.currentBranchId}`);
+                const taxTypeList: any[] = response.data.reduce((acc: any[], taxTypeEntry: TaxType) => {
+                    if (Array.isArray(taxTypeEntry.name)) {
+                      taxTypeEntry.name.forEach((taxValue: number) => {
+                        acc.push({
+                          value: taxValue * 0.01,
+                          label: `${taxValue}% GST` 
+                        });
+                      });
+                    }
+                    return acc;
+                  }, []);
+                console.log(taxTypeList);
+                settaxType(taxTypeList);
+            }catch(error){
+                console.log("Error fetching species",error);
+            }
+        }
+        fetchTax();
+    }, [appState.currentBranchId]);
 
     const [categories, setCategories] = useState<any[]>([]);
     useEffect(() => {
@@ -320,7 +342,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
                                 // defaultValue={gstOptions[0]}
                                 isClearable={false}
                                 isSearchable={true}
-                                options={gstOptions}
+                                options={taxType}
                                 isMulti={false}
                                 name="tax"
                                 onChange={(value) => handleChange("tax", value)}

@@ -20,7 +20,7 @@ import { Tax } from '@prisma/client';
 import useSWR from 'swr';
 import { DataContext } from "./DataContext"
 import Popup from '../../../../inventory/product/producttable/newproductpopup';
-import Popup1 from "@/components/database/distributor/newdistributorpopup"
+import DistributorPopup from "@/components/database/distributor/newdistributorpopup"
 import { useSearchParams } from "next/navigation"
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
@@ -527,7 +527,7 @@ const handleAddItem= useCallback(() => {
             <NewPurchasesBottomBar orderData={orderData}/>
         </div>
         {showPopup && <Popup onClose={togglePopup} />}
-        {showDistributorPopup && <Popup1 onClose={togglePopup1} />}
+        {showDistributorPopup && <DistributorPopup onClose={togglePopup1} />}
         </>
     )
 
