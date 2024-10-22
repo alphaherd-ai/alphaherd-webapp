@@ -317,14 +317,14 @@ useEffect(()=>{
                                     </div>
                                     <div className="text-textGrey2 text-base font-bold ">Price Range</div>
                                 </div> */}
-                                <Button onClick={handleAddItem} className='cursor-pointer text-white flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-md border-0 outline-none'>
+                                {/* <Button onClick={handleAddItem} className='cursor-pointer text-white flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-md border-0 outline-none'>
                                     <div className='w-4 h-4 mb-3 mr-2'>
                                         <Image src={addicon} alt='addicon' />
                                     </div>
                                    
                                         Add Item
                                     
-                                </Button>
+                                </Button> */}
                             </div>
 
                     </div>
@@ -340,7 +340,7 @@ useEffect(()=>{
                             <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>Tax Amt.</div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>Total</div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>Category</div>
-                            <div className=' flex text-textGrey2 text-base font-medium w-1/12'></div>
+                          
                         </div>
                         {items.map((item:any,index:number) => (
                             <div key={index+1} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400 py-2'>
@@ -401,14 +401,14 @@ useEffect(()=>{
 
                                     />
                                 </div>
-                                <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[20px] justify-end'>
+                                {/* <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[20px] justify-end'>
                                     <button className="border-0 bg-transparent cursor-pointer">
                                         <Image className='w-5 h-5' src={sellicon} alt="sell" ></Image>
                                     </button>
                                     <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
                                         <Image className='w-5 h-5' src={delicon} alt="delete" ></Image>
                                     </button>
-                                </div>
+                                </div> */}
                             </div>
                         ))}
                         <div className='flex  w-full justify-evenly items-center box-border bg-gray-100 h-12 border border-solid border-gray-200 py-5  text-textGrey2'>
@@ -433,7 +433,7 @@ useEffect(()=>{
                             <div className=' flex text-textGreen text-base font-bold w-[10rem]'>₹{isNaN(items.reduce((acc, item) => (!item.itemName || isNaN(item.sellingPrice) || isNaN(item.gst)) ? acc : acc + (item.sellingPrice * item.gst + item.sellingPrice), 0)) ? '0.00' : items.reduce((acc, item) => (!item.itemName || isNaN(item.sellingPrice) || isNaN(item.gst)) ? acc : acc + (item.sellingPrice * item.gst + item.sellingPrice), 0).toFixed(2)}
                             </div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'></div>
-                            <div className=' flex text-textGrey2 text-base font-medium w-1/12'></div>
+
                         </div>
                     </div>
 

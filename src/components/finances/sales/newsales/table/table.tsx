@@ -438,9 +438,9 @@ const NewsalesTable = () => {
     const handleBatchSelect = useCallback(async (selectedProduct: any, index: number) => {
         if (selectedProduct.value) {
             try {
-
-                const data = filteredBatches.find((batch) => batch.value.id == selectedProduct.value.id);
-                console.log(data)
+                
+                const data = filteredBatches.find((batch)=>batch.value.id==selectedProduct.value.id);
+                // console.log(data)
                 const updatedItems = [...items];
                 updatedItems[index] = {
                     ...updatedItems[index],
@@ -451,7 +451,7 @@ const NewsalesTable = () => {
                     sellingPrice: data.value.sellingPrice,
                     productId: data.value.productId
                 };
-                //console.log("these are updated", updatedItems)
+                // console.log("these are updated",updatedItems)
                 setItems(updatedItems);
                 setTableData(updatedItems);
                 // const updatedProducts = products.filter((product) => product.value !== selectedProduct.value);
@@ -588,7 +588,9 @@ const NewsalesTable = () => {
                             </div>
                             {items.map((item: any, index: number) => (
                                 <div key={index + 1} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400 py-2'>
-                                    <div className='w-[3rem] flex items-center text-neutral-400 text-base font-medium '>{index + 1}.</div>
+                                    <div className='w-[3rem] flex items-center text-neutral-400 text-base font-medium '>{index + 1}.
+                                        
+                                    </div>
                                     <div className='w-[12rem] flex items-center text-neutral-400 text-base font-medium'>
                                         {id === null ? (
                                             <Select

@@ -15,7 +15,7 @@ import Popup from "./recordPurchaseRetrunTransaction"
 
 const NewPurchaseReturnNewTotalAmount = () => {
     const { tableData, headerData } = useContext(DataContext);
-    console.log("Here is the tableData", tableData)
+    // console.log("Here is the tableData",tableData)
     let totalAmount = 0;
     tableData.forEach(data => {
 

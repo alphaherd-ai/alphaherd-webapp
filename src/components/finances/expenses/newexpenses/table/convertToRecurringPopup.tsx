@@ -18,7 +18,7 @@ const ConvertToRecurringPopup: React.FC<PopupProps> = ({ onClose }:any) => {
     const { recurringData, setRecurringData } = useContext(DataContext);
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate]=useState(new Date());
-     const router=useRouter();
+    const router=useRouter();
     const handleStartDateChange = (date:any) => {
         setStartDate(date);
         setRecurringData((prevData)=>({...prevData,startDate:date}));

@@ -43,7 +43,7 @@ const FilterDropdwonCard = () => {
       }));
 
       const combinedOptions = [...clientOptions, ...distributorOptions];
-      console.log(combinedOptions);
+      // console.log(combinedOptions);
       setPartyInfo(combinedOptions);
     }
   }, [data, error, isLoading]);

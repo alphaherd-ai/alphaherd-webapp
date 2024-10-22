@@ -35,29 +35,28 @@ const ExistingsalesTable = () => {
 
     useEffect(() => {
         if (!isLoading && data && !error) {
-
+            console.log(data);
             const { items, ...otherData } = data;
             console.log("other data in existing sale is :", otherData);
 
-            setOtherData(otherData)
-            console.log("items is :", items);
-            const shallowDataCopy = [...items];
-            console.log(shallowDataCopy);
-            const itemData = shallowDataCopy.map((item: any) => ({
-                id: item.productBatch.productId,
-                itemName: item.name,
-                quantity: item.quantity,
-                sellingPrice: item.sellingPrice,
-                expiry: item.productBatch.expiry,
-                batchNumber: item.productBatch.batchNumber,
-                tax: item.taxAmount,
-                discount: item.discount
-            }));
-            setItems(itemData);
-        }
-    }, [data, error, isLoading]);
-
-    console.log(items)
+                setOtherData(otherData)
+                // console.log(items)
+              const shallowDataCopy = [...items]; 
+              const itemData = shallowDataCopy.map((item: any) => ({
+                id: item.itemType==='product' ? item.productBatch.productId: item.serviceId,
+                itemName:item.name,
+                quantity:item.quantity,
+                sellingPrice:item.sellingPrice,
+                expiry:item.itemType==='product' ? item.productBatch.expiry:"",
+                batchNumber:item.itemType==='product'?item.productBatch.batchNumber:"",
+                tax:item.taxAmount,
+                discount:item.discount
+              }));
+              setItems(itemData);
+            }
+          }, [data,error,isLoading]); 
+          
+    // console.log(items)
     const batchOptions = [
         { value: 'one', label: 'one' },
         { value: 'two', label: 'two' },
@@ -146,7 +145,7 @@ const ExistingsalesTable = () => {
                             <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12  text-gray-500 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey'>
                                 <div className=' flex text-gray-500 text-base font-medium w-[3rem]'>No.</div>
                                 <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Name</div>
-                                <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Batch No.</div>
+                                <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Batch No./Providers</div>
 
                                 <div className='flex text-gray-500 text-base font-medium  w-1/12'>Quantity</div>
                                 <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Selling Price</div>
@@ -165,7 +164,7 @@ const ExistingsalesTable = () => {
                                         <div className='w-[10rem] flex-col items-center text-[#6B7E7D] text-base font-medium'>
                                             <div className="text-[#6B7E7D] text-base  font-medium  "> {item.batchNumber}</div>
 
-                                            <div className="text-neutral-400 text-[13px] font-medium ">{formatDateAndTime(item.expiry).formattedDate}</div>
+                                            <div className="text-neutral-400 text-[13px] font-medium ">{item.itempType==='product' ? formatDateAndTime(item.expiry).formattedDate:"Provider"}</div>
                                         </div>
                                         <div className='w-1/12 flex items-center text-[#6B7E7D] text-base font-medium gap-[12px]'>
 

@@ -26,7 +26,7 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
     const handleSubmit = async () => {
         setSaving(true);
         const allData = {headerData, tableData, totalAmountData};
-        console.log(allData)
+        // console.log(allData)
         let totalQty=0;
         tableData.forEach(data => {
             totalQty+=(data.quantity)||0;
@@ -42,6 +42,7 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
     }));
         const data={
             distributor: (id === null) ?allData.headerData.distributor.value:invoiceData.distributor,
+            email:(id=== null)?allData.headerData.distributor.email:"",
             notes: (id === null) ?allData.headerData.notes:invoiceData.notes,
             invoiceNo: (id === null) ?allData.headerData.invoiceNo:invoiceData.invoiceNo,
             dueDate: (id === null) ?allData.headerData.dueDate:invoiceData.dueDate,
@@ -57,7 +58,9 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
             }
             
         }
-        console.log(JSON.stringify(data))
+        console.log("email is (inside) :",data.email);
+        console.log("header data in bottom bar is : ",headerData);
+        // console.log(JSON.stringify(data))
         try {
             const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Return}?branchId=${appState.currentBranchId}`,data)
             setTimeout(()=>{

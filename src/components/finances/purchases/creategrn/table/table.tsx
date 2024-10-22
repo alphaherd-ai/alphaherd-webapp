@@ -166,18 +166,18 @@ const CreateGrnTable = () => {
         setItems(updatedItems);
     }, [items]);
 
-    const handleGstSelect = (selectedGst: any, index: number) => {
-        const updatedItems = [...tableData];
-        console.log(selectedGst)
-        updatedItems[index] = {
-            ...updatedItems[index],
-            gst: selectedGst.value
-        };
-        setTableData(updatedItems);
+const handleGstSelect = (selectedGst: any, index: number) => {
+    const updatedItems = [...tableData];
+    // console.log(selectedGst)
+    updatedItems[index] = {
+        ...updatedItems[index],
+        gst: selectedGst.value
     };
-    const handleAddItem = useCallback(() => {
-        setItems([...items, {}]);
-    }, [items]);
+    setTableData(updatedItems);
+};
+const handleAddItem= useCallback(() => {
+    setItems([...items, {}]);
+}, [items]);
 
     const handleQuantityDecClick = (itemId: any) => {
         setItems((prevItems: any) =>
@@ -227,10 +227,10 @@ const CreateGrnTable = () => {
             })
         );
     };
-    const handleDiscountSelect = (selectedDiscount: number, index: number) => {
-        const updatedItems = [...tableData];
-        console.log(selectedDiscount);
-        updatedItems[index] = {
+    const handleDiscountSelect= (selectedDiscount:number,index:number)=>{
+        const updatedItems=[...tableData];
+        // console.log(selectedDiscount);
+        updatedItems[index]={
             ...updatedItems[index],
             discountPercent: selectedDiscount,
             discountAmount: Number(selectedDiscount / 100) * updatedItems[index]['unitPrice'] * updatedItems[index]['quantity']
@@ -268,11 +268,11 @@ const CreateGrnTable = () => {
         const updatedItems = [...items];
         updatedItems[index][field] = value;
         setItems(updatedItems);
-        console.log(items)
+        // console.log(items)
     }, [items]);
 
     const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
-        console.log(selectedProduct);
+        // console.log(selectedProduct);
         if (selectedProduct.value) {
             if (index === items.length - 1) {
                 items.push({
@@ -368,8 +368,8 @@ const CreateGrnTable = () => {
         }),
     };
 
-
-    console.log("otherdatatattatata", otherData)
+    
+    // console.log("otherdatatattatata", otherData)
 
     return (
         <>

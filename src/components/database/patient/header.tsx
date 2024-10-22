@@ -21,12 +21,6 @@ import DownloadPopup from './downloadPatientPopup';
 
 const DatabasePatientHeader = ({ patients, clients, onSortChange }: any) => {
     const currentRoute = usePathname();
-    const [showPopup, setShowPopup] = React.useState(false);
-
-    const togglePopup = () => {
-        setShowPopup(!showPopup);
-    }
-
     const [showPopup1, setShowPopup1] = React.useState(false);
     const togglePopup1 = () => {
         setShowPopup1(!showPopup1);
@@ -153,28 +147,8 @@ const DatabasePatientHeader = ({ patients, clients, onSortChange }: any) => {
                             </DropdownMenu>
                         </Dropdown>
                     </div>
-
-                    {/* <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '> */}
-
-
-                    <Button
-                        variant="solid"
-                        className="capitalize px-4 py-2.5 flex border-none bg-black text-white rounded-lg " onClick={togglePopup}>
-                        <div className='flex'>
-                            <Image src={Add} alt='Add' className='w-3 h-3 ' />
-                        </div>
-
-                        Add Patient
-                    </Button>
-
-
-
-
-                    {/* </div> */}
                 </div>
             </div >
-
-            {showPopup && <Popup onClose={togglePopup} clientData={undefined} />}
             {showPopup1 && <DownloadPopup onClose={togglePopup1} clients={clients} patients={patients} />}
 
         </>

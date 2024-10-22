@@ -83,6 +83,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }: any) => {
     };
 
     const handleSaveClick = async () => {
+        // console.log("Save button");
         console.log(addAnotherPatient);
         try {
             setIsSaveDisabled(true);
@@ -173,7 +174,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }: any) => {
         }
     };
 
-    console.log(formData)
+    // console.log(formData)
 
     const countryCode = [
         { value: 'IN', label: '+91' },
@@ -213,7 +214,8 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }: any) => {
                 <div className="flex items-center">
                     <div className="text-gray-500 text-base font-medium  w-[8rem]">Client Name<span className="text-[red]">*</span></div>
                     <div>
-                        <input className="w-[447px] h-9 text-textGrey2 text-base  font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="clientName" onChange={(e) => {
+                        <input className="w-[447px] h-9 text-textGrey2 text-base  font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="clientName" 
+                        onChange={(e) => {
                             const value = e.target.value;
                             e.target.value = value.charAt(0).toUpperCase() + value.slice(1);
                             handleChange("clientName", e.target.value);

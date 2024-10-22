@@ -15,12 +15,17 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useAppSelector } from "@/lib/hooks";
 import { useRouter } from "next/navigation";
-import { z, ZodError } from "zod"
+import axios from "axios";
 import Creatable from "react-select/creatable";
 import Loading2 from "@/app/loading2";
 type PopupProps = {
     onClose: () => void;
     clientData: any;
+}
+
+interface Species{
+    id:string,
+    name:string | string[],
 }
 
 
@@ -267,13 +272,42 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
         });
     };
 
-    const Species = [
-        { value: 'Dog', label: 'Dog' },
-        { value: 'Cat', label: 'Cat' },
-        { value: 'Turtle', label: 'Turtle' },
-        { value: 'Horse', label: 'Horse' },
-        { value: 'Cow', label: 'Cow' },
-    ]
+    // const Species = [
+    //     { value: 'Dog', label: 'Dog' },
+    //     { value: 'Cat', label: 'Cat' },
+    //     { value: 'Turtle', label: 'Turtle' },
+    //     { value: 'Horse', label: 'Horse' },
+    //     { value: 'Cow', label: 'Cow' },
+    // ]
+
+    const [species, setSpecies] = useState<any[]>([]);
+    useEffect(() => {
+        const fetchSpecies = async () => {
+            try {
+              const response = await axios.get(
+                `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`
+              );
+              
+              const speciesList: any[] = response.data.reduce((acc: any[], speciesEntry: Species) => {
+                if (Array.isArray(speciesEntry.name)) {
+                  speciesEntry.name.forEach((name: string) => {
+                    acc.push({ value: speciesEntry.id, label: name });
+                  });
+                } else {
+                  acc.push({ value: speciesEntry.id, label: speciesEntry.name });
+                }
+                return acc;
+              }, []);
+      
+             
+              setSpecies(speciesList);
+            } catch (error) {
+              console.log('Error fetching species', error);
+            }
+          };
+      
+          fetchSpecies();
+        }, [appState.currentBranchId]);
 
     const Breed = [
         {
@@ -320,7 +354,8 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
     const handleGenderChange = (gender: any) => {
         setSelectedGender(gender);
     };
-
+   
+    
   
 
     return <>
@@ -381,7 +416,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                                 placeholder=""
                                 isClearable={false}
                                 isSearchable={true}
-                                options={Species}
+                                options={species}
                                 isMulti={false}
                                 name="species"
                                 onChange={handleSpeciesChange}

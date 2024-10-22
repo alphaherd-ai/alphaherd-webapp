@@ -45,12 +45,9 @@ const OrgDetailsSetup = (props: any) => {
         { value: 'Delhi', label: 'Delhi' },
         { value: 'Lakshadweep', label: 'Lakshadweep' },
         { value: 'Puducherry', label: 'Puducherry' }
-
       ];
-      console.log("this is props",props.data.state)
-      console.log("user data received :",props.data);
+    //   console.log("this is props",props.data.state)
       const [resource, setResource] = useState<any>();
-
     const [focused, setFocused] = useState(false);
     const [focused1, setFocused1] = useState(false);
     const [focused2, setFocused2] = useState(false);

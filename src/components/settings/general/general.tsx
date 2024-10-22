@@ -179,12 +179,20 @@ const GeneralSettings = () => {
       
     
       
-    const [paymentMethod, setPaymentMethod] = useState([]);
+    const [paymentMethod, setPaymentMethod] = useState([
+        { id: 1, name: 'Cash', icon: cashicon },      
+        { id: 2, name: 'UPI', icon: upiicon },       
+        { id: 3, name: 'Netbanking', icon: netbankingicon },
+    ]);
     const appState  = useAppSelector((state) => state.app)
     const {data, error, isLoading} = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
     useEffect(() => {
-        if(!isLoading&&!error&&data){
-            setPaymentMethod(data)
+        if (!isLoading && !error && data) {
+            const additionalMethods = data.map((method: any) => ({
+                id: method.id,
+                name: method.name,
+            }));
+            setPaymentMethod((prevMethods) => [...prevMethods, ...additionalMethods]);
         }
     }, [data,error,isLoading]);
 
@@ -237,7 +245,9 @@ const GeneralSettings = () => {
     useEffect(() => {
         if (!isLoadingtaxType && !taxTypeError && taxTypeData) {
             settaxType(taxTypeData); 
-        }
+          } else if (taxTypeError) {
+            console.error('Error fetching tax types:', taxTypeError);
+          }
     }, [taxTypeData, taxTypeError, isLoadingtaxType]);
 
     //serviceCategory
@@ -254,18 +264,77 @@ const GeneralSettings = () => {
     }, [serviceCategoryData, serviceCategoryError, isLoadingserviceCategory]);
 
     //species
-    const [species, setspecies] = useState([]);
-    const {data: speciesData, error: speciesError, isLoading: isLoadingspecies} = useSWR(
+    // const [species, setspecies] = useState([]);
+    // const {data: speciesData, error: speciesError, isLoading: isLoadingspecies} = useSWR(
+    //     `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`,
+    //     fetcher,
+    //     { revalidateOnFocus: true } 
+    // );
+    // useEffect(() => {
+    //     if (!isLoadingspecies && !speciesError && speciesData) {
+    //         setspecies(speciesData); 
+    //     }
+    // }, [speciesData, speciesError, isLoadingspecies]);
+
+    // const [breeds, setBreeds] = useState([]);
+    // const { data: breedData, error: breedError, isLoading: isLoadingBreed } = useSWR(
+    //     `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/breed/getAll?branchId=${appState.currentBranchId}`,
+    //     fetcher,
+    //     { revalidateOnFocus: true }
+    // );
+    // useEffect(() => {
+    //     if (!isLoadingBreed && !breedError && breedData) {
+    //         const speciesWithBreeds = speciesData.map((specie: any) => ({
+    //         ...specie,
+    //         breed: breedData.filter((breed: any) => breed.speciesId === specie.id),
+    //         }));
+    //         setspecies(speciesWithBreeds);
+    //     }
+    // }, [breedData, breedError, isLoadingBreed, speciesData]);
+
+    // const [expandedSpecies, setExpandedSpecies] = useState<number | null>(null);
+    // const handleExpandSpecies = (speciesId: number) => {
+    //     if (expandedSpecies === speciesId) {
+    //         setExpandedSpecies(null);
+    //     } else {
+    //         setExpandedSpecies(speciesId); 
+    //     }
+    // };
+    const [species, setSpecies] = useState([]);
+    const [expandedSpecies, setExpandedSpecies] = useState<number | null>(null);
+
+    // Fetch species data
+    const { data: speciesData, error: speciesError, isLoading: isLoadingSpecies } = useSWR(
         `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`,
         fetcher,
-        { revalidateOnFocus: true } 
+        { revalidateOnFocus: true }
     );
+
+    // Fetch breed data
+    const { data: breedData, error: breedError, isLoading: isLoadingBreed } = useSWR(
+        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/breed/getAll?branchId=${appState.currentBranchId}`,
+        fetcher,
+        { revalidateOnFocus: true }
+    );
+
     useEffect(() => {
-        if (!isLoadingspecies && !speciesError && speciesData) {
-            setspecies(speciesData); 
+        if (!isLoadingSpecies && !speciesError && speciesData && !isLoadingBreed && !breedError && breedData) {
+        const speciesWithBreeds = speciesData.map((specie: any) => ({
+            ...specie,
+            breed: breedData.filter((breed: any) => breed.speciesId === specie.id), 
+        }));
+        setSpecies(speciesWithBreeds);
         }
-    }, [speciesData, speciesError, isLoadingspecies]);
+    }, [speciesData, breedData, speciesError, breedError, isLoadingSpecies, isLoadingBreed]);
+
+    // Toggle species expansion to show/hide breeds
+    const handleExpandSpecies = (speciesId: number) => {
+        setExpandedSpecies(expandedSpecies === speciesId ? null : speciesId);
+    };
     console.log('item categories: ', itemCategories);
+    console.log('Tax Type',taxType);
+    console.log('Species: ', species);
+    console.log('Breed',expandedSpecies);
 
 
 
@@ -353,7 +422,6 @@ const GeneralSettings = () => {
                                     } 
                                     </div>      
                                         
-            
                                 </div>
                             </div>
                         </div>
@@ -380,17 +448,63 @@ const GeneralSettings = () => {
                                     </div>
                                     
                                     <div className="w-full  max-h-[15rem] overflow-y-auto">
-                                    {isLoadingspecies && <Loading />}
-                                    {species.map((item:any) => (
-                                        <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div  className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={cashicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">{item.name}</div>
+                                    {/* {isLoadingspecies && <Loading />}
+                                    {species.map((item: any,index:any) =>(
+                                        <div key={index} className='w-full'>
+                                            {Array.isArray(item.name) && item.name.map((nameItem: string, nameIndex: number) => (
+                                                <div key={nameIndex} className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
+                                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                                    <div className="text-gray-500 text-base font-medium">{nameItem}</div>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
+                                        // <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                                        // <div  className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                        //     <Image className="w-[22px] h-[22px] relative" src={cashicon} alt="cash" />
+                                        //     <div className="text-gray-500 text-base font-medium ">{item.name}</div>
+                                        // </div>
                                         
-                                    </div>
+                                    
                                     ))
-                                    } 
+                                    }  */}
+                                    {isLoadingSpecies && <Loading />}
+                                        {species.map((item: any, index: number) => (
+                                            <div key={index} className="w-full">
+                                                {Array.isArray(item.name) &&
+                                                item.name.map((nameItem: string, nameIndex: number) => (
+                                                    <div
+                                                    key={nameIndex}
+                                                    className="flex flex-col w-full box-border bg-white border border-solid border-gray-300 text-gray-400"
+                                                    >
+                                                    <div
+                                                        className="flex items-center justify-between w-full py-4 px-6 text-neutral-400 text-base font-medium cursor-pointer"
+                                                        onClick={() => handleExpandSpecies(item.id)}
+                                                    >
+                                                        <div className="text-gray-500">{nameItem}</div>
+                                                        <div>{expandedSpecies === item.id ? "▲" : "▼"}</div>
+                                                    </div>
+
+                                                    
+                                                    {expandedSpecies === item.id && (
+                                                    <div className="pl-10 pr-6 py-2">
+                                                        {item.breed && Array.isArray(item.breed) && item.breed.length > 0 ? (
+                                                            item.breed.map((breedItem: any, breedIndex: number) => (
+                                                                <div key={breedIndex} className="text-gray-500 text-sm font-medium py-1">
+                                                                    {/* Display breed name (joined if multiple) */}
+                                                                    {Array.isArray(breedItem.name) ? breedItem.name.join(", ") : breedItem.name}
+                                                                </div>
+                                                            ))
+                                                        ) : (
+                                                            <div className="text-gray-400 text-sm italic">No breeds available</div>
+                                                        )}
+                                                    </div>
+                                                )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ))
+                                    }
                                     </div>  
                                 </div>
                             </div>
@@ -416,14 +530,16 @@ const GeneralSettings = () => {
                                     </div>
                                     {isLoadingItemCategories && <Loading />}
                                     <div className="w-full  max-h-[15rem] overflow-y-auto">
-                                    {itemCategories.map((item: any) =>(
-                                        <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div  className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            
-                                            <div className="text-gray-500 text-base font-medium ">{item.name}</div>
+                                    {itemCategories.map((item: any,index: any) =>(
+                                        <div key={index} className='w-full'>
+                                            {Array.isArray(item.name) && item.name.map((nameItem: string, nameIndex: number) => (
+                                                <div key={nameIndex} className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
+                                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                                    <div className="text-gray-500 text-base font-medium">{nameItem}</div>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
-                                        
-                                    </div>
                                     ))
                                     } 
                                     </div>   
@@ -449,14 +565,16 @@ const GeneralSettings = () => {
                                     </div>
                                     {isLoadingItemUnits && <Loading />}
                                     <div className="w-full  max-h-[15rem] overflow-y-auto">
-                                    {itemUnits.map((item:any) => (
-                                        <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div  className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            
-                                            <div className="text-gray-500 text-base font-medium ">{item.name}</div>
+                                    {itemUnits.map((item: any,index: any) =>(
+                                        <div key={index} className='w-full'>
+                                            {Array.isArray(item.name) && item.name.map((nameItem: string, nameIndex: number) => (
+                                                <div key={nameIndex} className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
+                                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                                    <div className="text-gray-500 text-base font-medium">{nameItem}</div>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
-                                        
-                                    </div>
                                     ))
                                     } 
                                     </div>   
@@ -484,14 +602,16 @@ const GeneralSettings = () => {
                                     </div>
                                     {isLoadingserviceCategory && <Loading />}
                                     <div className="w-full  max-h-[15rem] overflow-y-auto">
-                                    {serviceCategory.map((item:any) => (
-                                        <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div  className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            
-                                            <div className="text-gray-500 text-base font-medium ">{item.name}</div>
+                                    {serviceCategory.map((item: any,index: any) =>(
+                                        <div key={index} className='w-full'>
+                                            {Array.isArray(item.name) && item.name.map((nameItem: string, nameIndex: number) => (
+                                                <div key={nameIndex} className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
+                                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                                    <div className="text-gray-500 text-base font-medium">{nameItem}</div>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
-                                        
-                                    </div>
                                     ))
                                     } 
                                     </div>   
@@ -518,16 +638,29 @@ const GeneralSettings = () => {
                                     </div>
                                     {isLoading && <Loading />}
                                     <div className="w-full  max-h-[15rem] overflow-y-auto">
-                                    {taxType.map((item:any) => (
-                                        <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div  className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            
-                                            <div className="text-gray-500 text-base font-medium ">{item.name} % GST </div>
+                                    {taxType.map((item: any, index: any) => (
+                                        <div key={index} className='w-full'>
+                                            {Array.isArray(item.name) && item.name.length > 0 ? (
+                                            item.name.map((taxValue: number, taxIndex: number) => (
+                                                <div key={taxIndex} className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
+                                                <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                                    <div className="text-gray-500 text-base font-medium">
+                                                    {`${taxValue}% GST`}
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            ))
+                                            ) : (
+                                            <div className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
+                                                <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                                <div className="text-gray-500 text-base font-medium">
+                                                    No tax types available 
+                                                </div>
+                                                </div>
+                                            </div>
+                                            )}
                                         </div>
-                                        
-                                    </div>
-                                    ))
-                                    } 
+                                    ))}
                                     </div>   
                                     
                                 </div>
@@ -554,14 +687,16 @@ const GeneralSettings = () => {
                                     </div>
                                     {isLoadingreasons && <Loading />}
                                     <div className="w-full  max-h-[15rem] overflow-y-auto">
-                                    {reasons.map((item:any) => (
-                                        <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div  className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            
-                                            <div className="text-gray-500 text-base font-medium ">{item.name}</div>
+                                    {reasons.map((item: any,index: any) =>(
+                                        <div key={index} className='w-full'>
+                                            {Array.isArray(item.name) && item.name.map((nameItem: string, nameIndex: number) => (
+                                                <div key={nameIndex} className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
+                                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                                    <div className="text-gray-500 text-base font-medium">{nameItem}</div>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
-                                        
-                                    </div>
                                     ))
                                     } 
                                     </div>   

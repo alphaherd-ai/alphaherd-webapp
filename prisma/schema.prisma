@@ -520,8 +520,8 @@ model FinanceTimeline {
 }
 
 model ItemCategory{
-  id               Int       @id @default(autoincrement())
-  name             String[]
+  id                 Int       @id @default(autoincrement())
+  name               String[]
   InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId Int?
 }
@@ -549,7 +549,7 @@ model Reason{
 
 model Species {
   id                   Int     @id @default(autoincrement())
-  name                 String  @unique
+  name                 String[]  
   breed                Breed[] 
   DatabaseSection      DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
   databaseSectionId    Int?
@@ -557,7 +557,7 @@ model Species {
 
 model Breed {
   id                    Int      @id @default(autoincrement())
-  name                  String
+  name                  String[]
   speciesId             Int      
   species               Species  @relation(fields: [speciesId], references: [id])
   DatabaseSection       DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
@@ -566,10 +566,9 @@ model Breed {
 
 model TaxType{
   id                       Int    @id @default(autoincrement())
-  name                     Float?
+  name                     Int[]
   InventorySection         InventorySection? @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId       Int?
-
 }
 
 

@@ -113,8 +113,8 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({ onClose, headerdat
                 })
             });
             if (response.ok) {
-                console.log('Data saved Sucessfully')
-
+                // console.log('Data saved Sucessfully')
+                onClose();
                 window.dispatchEvent(new FocusEvent('focus'))
             } else {
                 console.error('Failed to save data')

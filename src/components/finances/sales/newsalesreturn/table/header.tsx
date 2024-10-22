@@ -114,7 +114,7 @@ const NewsalesReturnHeader = ({ existingHeaderData }: any) => {
                            email:client.email},
                     label:`${client.clientName}\u00A0\u00A0\u00A0\u00A0\u00A0${client.contact}`
                 }))
-                console.log(clients)
+                // console.log(clients)
                 setCustomers(clients);
     
             }

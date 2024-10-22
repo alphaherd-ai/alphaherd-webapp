@@ -92,7 +92,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
         setTransactionType(type);
     };
 
-
+    
 
     const handleSaveClick = async () => {
         setSaving(true);
@@ -113,8 +113,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
                 })
             });
             if (response.ok) {
-                console.log('Data saved Sucessfully')
-               
+                // console.log('Data saved Sucessfully')
+                onClose();
                 window.dispatchEvent(new FocusEvent('focus'))
             } else {
                 console.error('Failed to save data')
@@ -203,9 +203,9 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
       };
 
 
-    console.log(formData)
-    
+    // console.log(formData)
     const isDisabled = !(headerdata?.customer?.label) || !(formData.amountPaid) || !selectedMode
+      console.log(balanceDue)
 
   return (
     <div className="w-1/2 h-full flex  items-center  backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
@@ -257,7 +257,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
                                 {balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
                                     You owe ₹{totalAmount.subTotal ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
                                 </span> : balanceDue === 0 ? "" : <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
-                                    You’re owed ₹{totalAmount.subTotal ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
+                                    You’re owed ₹{totalAmount.subTotal ? (balanceDue > 0 ? 1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
                                 </span>}
                             </div>
                         </div>

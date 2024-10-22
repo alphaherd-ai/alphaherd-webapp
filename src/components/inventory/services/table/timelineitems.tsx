@@ -51,10 +51,10 @@ const ServicesTimelineItem = () => {
         }
     }, [data]);
 
-    console.log(services)
-
-    // if (error) return <div>Error fetching services: {error.message}</div>;
-    // if (isLoading) return (<Loading />);
+    //   console.log(services)
+    
+      if (error) return <div>Error fetching services: {error.message}</div>;
+      if (isLoading) return (<Loading />);
 
     const indexOfLastProduct = currentPage * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;

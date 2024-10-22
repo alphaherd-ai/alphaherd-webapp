@@ -112,8 +112,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ onClose, headerdata, ini
                 })
             });
             if (response.ok) {
-                console.log('Data saved Sucessfully')
-
+                // console.log('Data saved Sucessfully')
+                
                 window.dispatchEvent(new FocusEvent('focus'))
             } else {
                 console.error('Failed to save data')
@@ -139,28 +139,28 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ onClose, headerdata, ini
 
 
 
-        try {
-            const putResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/${id}/?branchId=${appState.currentBranchId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    recordTransaction: [newTransaction]
-                })
-
+       try {
+        const putResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/${id}/?branchId=${appState.currentBranchId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type' : 'application/json', 
+            },
+            body: JSON.stringify({
+                recordTransaction: [newTransaction]
             })
-            if (putResponse.ok) {
-                console.log('Data saved Sucessfully2')
-                onClose()
-                window.dispatchEvent(new FocusEvent('focus'))
-            } else {
-                console.error('Failed to save data')
-            }
-        } catch (error) {
-            console.log("Error while put request", error)
-        } finally {
-            setSaving(false);
+            
+        })
+        if (putResponse.ok) {
+            // console.log('Data saved Sucessfully2')
+            onClose()
+            window.dispatchEvent(new FocusEvent('focus'))
+        } else {
+            console.error('Failed to save data')
+        }
+       } catch (error) {
+            // console.log("Error while put request",error)
+       }finally {
+        setSaving(false);
         }
 
 

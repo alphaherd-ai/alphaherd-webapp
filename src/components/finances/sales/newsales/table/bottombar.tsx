@@ -35,9 +35,9 @@ const NewsalesBottomBar = ({estimateData}:any) => {
         }
         // Remove the last item from the item table as it will not create inventory timeline due to null constraints in prisma
         tableData.pop();
-
+        console.log(tableData);
         const allData = { headerData, tableData, totalAmountData, transactionsData };
-        console.log("this is all data", allData,headerData);
+        // console.log("this is all data", allData)
         let totalQty = 0;
         tableData.forEach(data => {
             totalQty += (data.quantity) || 0;
@@ -51,6 +51,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             taxAmount: data.gst,
             name: data.itemName,
             itemType: data.itemType
+            
         }));
         const data = {
             customer: (id === null) ? allData.headerData.customer.value.clientName : estimateData.customer,
@@ -75,7 +76,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             }
 
         }
-        console.log(appState.currentBranch)
+        // console.log(appState.currentBranch)
         const notifData = {
             source: Notif_Source.Sales_Invoice,
             totalCost: data.totalCost,
@@ -83,35 +84,35 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             orgId: appState.currentOrgId,
             orgBranch: appState.currentOrg.orgName
         }
-        console.log(JSON.stringify(data))
-        console.log("this is notif data", notifData)
-        try {
-            setSaving(true); 
-            const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Invoice}?branchId=${appState.currentBranchId}`, data)
-            const notifPromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
+        // console.log(JSON.stringify(data))
+        // console.log("this is notif data", notifData)
+        // try {
+        //     setSaving(true); 
+        //     const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Invoice}?branchId=${appState.currentBranchId}`, data)
+        //     const notifPromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
            
-            setTimeout(()=>{
-                router.back();
-            },2000);
+        //     setTimeout(()=>{
+        //         router.back();
+        //     },2000);
 
-            const [response,notif]=await Promise.all([responsePromise,notifPromise])
+        //     const [response,notif]=await Promise.all([responsePromise,notifPromise])
             
-            if (!response.data) {
-                throw new Error('Network response was not ok');
-            }
+        //     if (!response.data) {
+        //         throw new Error('Network response was not ok');
+        //     }
             
             
-        } catch (error) {
-            console.error('Error:', error);
-        }
-        finally{
-            setSaving(false)
-        }
+        // } catch (error) {
+        //     console.error('Error:', error);
+        // }
+        // finally{
+        //     setSaving(false)
+        // }
     };
 
     const downloadPdf = async () => {
         const allData = { headerData, tableData, totalAmountData };
-        console.log("this is all data", allData)
+        // console.log("this is all data", allData)
         let totalQty = 0;
         tableData.forEach(data => {
             totalQty += (data.quantity) || 0;
@@ -175,7 +176,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
 
                 }),
             });
-            console.log('SMS sent successfully:', response);
+            // console.log('SMS sent successfully:', response);
         } catch (error) {
             console.error('Error while sending message', error);
         } 
@@ -193,7 +194,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
 
                 }),
             });
-            console.log('Whatsapp Message sent successfully:', response);
+            // console.log('Whatsapp Message sent successfully:', response);
         } catch (error) {
             console.error('Error while sending message', error);
         } 
@@ -211,7 +212,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
 
                 })
             });
-            console.log('Email sent successfully:', response);
+            // console.log('Email sent successfully:', response);
         } catch (error) {
             console.error('Error while saving data:', error);
         } 

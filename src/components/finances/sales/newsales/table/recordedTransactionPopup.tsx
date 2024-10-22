@@ -92,6 +92,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ onClose, headerdata, tra
         setTransactionType(type);
     };
 
+    
 
     const handleSaveClick = async () => {
         setSaving(true);
@@ -112,7 +113,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ onClose, headerdata, tra
                 })
             });
             if (response.ok) {
-                console.log('Data saved Sucessfully')
+                // console.log('Data saved Sucessfully')
+                onClose();
                 window.dispatchEvent(new FocusEvent('focus'))
             } else {
                 console.error('Failed to save data')

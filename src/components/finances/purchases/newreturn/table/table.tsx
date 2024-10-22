@@ -152,7 +152,7 @@ const NewPurchaseReturnNewTable = () => {
             },
              label: product.itemName,
          }));
-         console.log(formattedProducts)
+        //  console.log(formattedProducts)
          setProducts(formattedProducts);
      }
      if(!batchError&&!isBatchLoading&&fetchedBathces){
@@ -167,7 +167,7 @@ const NewPurchaseReturnNewTable = () => {
             },
             label:product.batchNumber
         }));
-        console.log(formattedProductBatches)
+        // console.log(formattedProductBatches)
         setBatches(formattedProductBatches)
     }
     },[fetchedProducts,fetchedBathces])
@@ -179,7 +179,7 @@ const NewPurchaseReturnNewTable = () => {
 
 const handleGstSelect = (selectedGst: any, index: number) => {
     const updatedItems = [...tableData];
-    console.log(selectedGst)
+    // console.log(selectedGst)
     updatedItems[index] = {
         ...updatedItems[index],
         gst: selectedGst.value
@@ -250,7 +250,7 @@ const handleAddItem= useCallback(() => {
 }, [items]);
 
 const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
-    console.log(selectedProduct);
+    // console.log(selectedProduct);
     if (selectedProduct.value) {
         if (index === items.length - 1) {
             items.push({
@@ -297,7 +297,7 @@ const handleBatchSelect = useCallback(async (selectedProduct: any, index: number
         try {
             
             const data = filteredBatches.find((batch)=>batch.value.id==selectedProduct.value.id);
-            console.log(data)
+            // console.log(data)
             const updatedItems = [...items];
             updatedItems[index] = {
                 ...updatedItems[index],
@@ -308,7 +308,7 @@ const handleBatchSelect = useCallback(async (selectedProduct: any, index: number
                 sellingPrice:  data.value.sellingPrice,
                 productId:data.value.productId
             };
-            console.log("these are updated",updatedItems)
+            // console.log("these are updated",updatedItems)
             setItems(updatedItems);
             setTableData(updatedItems);
                 // const updatedProducts = products.filter((product) => product.value !== selectedProduct.value);

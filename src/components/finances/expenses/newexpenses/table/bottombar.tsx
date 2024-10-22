@@ -62,14 +62,15 @@ const NewExpensesBottomBar = ({ expenseData }: any) => {
             }
 
         }
-        console.log("here is the data", JSON.stringify(data))
-        const notifData = {
-            source: Notif_Source.Expense_Invoice,
-            totalCost: data.totalCost,
-            dueDate: data.dueDate,
-            orgId: appState.currentOrgId,
-            orgBranch: appState.currentOrg.orgName
+        console.log("here is the data",JSON.stringify(data))
+        const notifData={
+            source:Notif_Source.Expense_Invoice,
+            totalCost:data.totalCost,
+            dueDate:data.dueDate,
+            orgId:appState.currentOrgId,
+            orgBranch:appState.currentOrg.orgName
         }
+        console.log(recurringData);
         try {
             setSaving(true);
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/create/${data.type}?branchId=${appState.currentBranchId}`, data)

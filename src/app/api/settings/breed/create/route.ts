@@ -12,13 +12,14 @@ export const POST = async (req: NextRequest)=>{
             return new Response('Species ID is required',{status:400});
         }
         const breed = await prismaClient.breed.create({
-            data:{
+            data: {
                 ...body,
-                species:{
-                    connect: {id: body.speciesId},
+                species: {
+                    connect: { id: body.speciesId }, // Ensure this line is correctly formatted
                 },
             },
         });
+        
         return new Response(JSON.stringify(breed),{
             status: 201,
             headers:{

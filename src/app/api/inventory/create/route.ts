@@ -18,7 +18,7 @@ export const POST = async (req: NextRequest,res:Response) => {
     const inventoryId = await fetchInventoryId(req);
     await connectToDB();
     const {objectId,inventoryType, stockStatus,invoiceType,...restOfBody } = await req.json();
-    console.log(restOfBody);
+    // console.log(restOfBody);
 
     let createData: any = {
       ...restOfBody,
@@ -33,12 +33,12 @@ export const POST = async (req: NextRequest,res:Response) => {
         data: createData,
       });
 
-      console.log({
-        allProductsId:allProducts.id,
-        stockChange:stockStatus,
-        invoiceType:invoiceType,
-        quantityChange:createData.quantity
-      });
+      // console.log({
+      //   allProductsId:allProducts.id,
+      //   stockChange:stockStatus,
+      //   invoiceType:invoiceType,
+      //   quantityChange:createData.quantity
+      // });
       
       const inventory= await prismaClient.inventoryTimeline.create({
         data:{ 

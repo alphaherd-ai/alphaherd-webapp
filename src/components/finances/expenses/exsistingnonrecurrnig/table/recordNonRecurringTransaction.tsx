@@ -112,7 +112,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
                 })
             });
             if (response.ok) {
-                console.log('Data saved Sucessfully')
+                // console.log('Data saved Sucessfully')
                 
                 window.dispatchEvent(new FocusEvent('focus'))
             } else {
@@ -146,19 +146,20 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
                 'Content-Type' : 'application/json', 
             },
             body: JSON.stringify({
-                recordTransaction: [newTransaction]
+                recordTransaction: [newTransaction],
+                
             })
             
         })
         if (putResponse.ok) {
-            console.log('Data saved Sucessfully2')
+            // console.log('Data saved Sucessfully2')
             onClose()
             window.dispatchEvent(new FocusEvent('focus'))
         } else {
             console.error('Failed to save data')
         }
        } catch (error) {
-            console.log("Error while put request",error)
+            // console.log("Error while put request",error)
        }finally {
         setSaving(false);
         }
@@ -220,7 +221,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
       };
 
 
-console.log("headerdata",headerdata)
+// console.log("headerdata",headerdata)
 
     const isDisabled=!selectedMode || !(formData.amountPaid)
 
@@ -274,7 +275,7 @@ console.log("headerdata",headerdata)
                             {balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
                                 You owe ₹{formData.amountPaid ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) :0}
                             </span> : balanceDue === 0 ? "" : <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
-                                You’re owed ₹{formData.amountPaid ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) :0}
+                                You’re owed ₹{formData.amountPaid ? (balanceDue > 0 ? 1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) :0}
                             </span>}
                             </div>
                         </div>

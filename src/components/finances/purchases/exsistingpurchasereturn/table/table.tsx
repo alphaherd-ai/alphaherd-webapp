@@ -368,6 +368,8 @@ const ExsistingPurcaseReturnTable = () => {
     `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/${id}/?branchId=${appState.currentBranchId}`,
     fetcher
   );
+  console.log("data in purchase return is :",data);
+  console.log("isloading in purchase return is :",isLoading);
 
   useEffect(() => {
     if (!isLoading && data && !error) {
@@ -552,7 +554,7 @@ const ExsistingPurcaseReturnTable = () => {
 
                 <ExsistingPurcaseReturnTotalAmount otherData={data} isLoading={isLoading} />
             </div>
-            <ExsistingPurcaseReturnBottomBar />
+            <ExsistingPurcaseReturnBottomBar existingPurchaseData={data}  />
         </div>
        
         </>

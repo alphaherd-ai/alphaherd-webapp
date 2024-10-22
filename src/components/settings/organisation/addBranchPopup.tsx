@@ -34,9 +34,10 @@ const AddBranchPopup = ({ onClose }:any) => {
                         "branchName": branchNameInput.trim()
                     })
                 });
+                appState.currentBranch.branchName = branchNameInput.trim();
                 let json = await resp.json();
                 if(!resp.ok){
-                    console.log(json);
+                    // console.log(json);
                     throw new Error(json.message);
                 }
                 toast.success(json.message, {
@@ -68,7 +69,7 @@ const AddBranchPopup = ({ onClose }:any) => {
         }setTimeout(() => {
             onClose();
             console.log("router pushed");
-            router.push(`/auth/admin/orgEdit`);
+            router.push(`/auth/admin/branchSetup`);
         }, 1000);
     };
 

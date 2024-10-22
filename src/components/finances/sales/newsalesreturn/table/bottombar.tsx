@@ -73,7 +73,7 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
             }
 
         }
-        console.log(JSON.stringify(data))
+        // console.log(JSON.stringify(data))
         try {
             setSaving(true);
             const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Return}?branchId=${appState.currentBranchId}`, data)
@@ -94,7 +94,7 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
     };
     const downloadPdf = async () => {
         const allData = { headerData, tableData, totalAmountData };
-        console.log("this is all data", allData)
+        // console.log("this is all data", allData)
         let totalQty = 0;
         tableData.forEach(data => {
             totalQty += (data.quantity) || 0;
@@ -183,7 +183,7 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
 
                 })
             });
-            console.log('Email sent successfully:', response);
+            // console.log('Email sent successfully:', response);
         } catch (error) {
             console.error('Error while saving data:', error);
         }

@@ -60,7 +60,7 @@ const CreateGrnHeader = ({existingHeaderData}:any) => {
         
         if(id){
             setHeaderData(existingHeaderData)
-            console.log("this is header data",headerData)
+            // console.log("this is header data",headerData)
         }
      else{
         setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo}))}
@@ -69,6 +69,7 @@ const CreateGrnHeader = ({existingHeaderData}:any) => {
         if(!isLoading&&!error&&data){
               const distributors=data?.map((distributor:any)=>({
                 value:distributor.distributorName,
+                email:distributor.email,
                 label:`${distributor.distributorName}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0${distributor.contact}` 
             }))
             setDistributors(distributors);

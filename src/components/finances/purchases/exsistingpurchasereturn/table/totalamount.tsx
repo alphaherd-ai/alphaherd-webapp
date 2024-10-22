@@ -237,7 +237,7 @@ const ExsistingPurcaseReturnTotalAmount = ({ otherData, isLoading }: any) => {
         // setHeaderData((prevData) => ({ ...prevData, date }));
     };
 
-    console.log("otherData", otherData)
+    // console.log("otherData", otherData)
 
     const totalPaidAmount = otherData?.recordTransaction?.reduce((acc: any, transaction: any) => {
         if (transaction?.moneyChange === 'In' || transaction?.isAdvancePayment) {
@@ -259,7 +259,7 @@ const ExsistingPurcaseReturnTotalAmount = ({ otherData, isLoading }: any) => {
     const balanceDue = otherData?.totalCost - totalPaidAmount + totalAmountPay
 
 
-    console.log(totalPaidAmount)
+    // console.log(totalPaidAmount)
 
     const [count, setCount] = useState(0);
     const [initialInvoiceNo, setInitialInvoiceNo] = useState('');

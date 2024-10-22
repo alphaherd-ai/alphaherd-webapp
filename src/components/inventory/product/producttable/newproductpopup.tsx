@@ -23,7 +23,15 @@ const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 type PopupProps = {
     onClose: () => void;
 }
+interface ItemUnit{
+    id:string,
+    name: string | string[],
+}
 
+interface ItemCategory{
+    id:string,
+    name: string | string[],
+}
 
 
 var stepFields = [
@@ -48,6 +56,11 @@ interface OptionType {
     label: string;
 }
 
+interface TaxType {
+    id: number;
+    name: number[];
+}
+
 function useProductfetch (id: number | null) {
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`,fetcher,{revalidateOnFocus:true});
    return {
@@ -67,6 +80,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     const [isSaveDisabled, setIsSaveDisabled] = useState(true)
     const [activeTab, setActiveTab] = useState(0);
     const [errors, setErrors] =  useState<any>({});
+    const appState = useAppSelector((state) => state.app);
 
     const customStyles = {
         control: (provided: any, state: any) => ({
@@ -107,16 +121,32 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
         }),
     };
 
-    const [categories, setCategories] = useState<any[]>([
-        { value: "Pet food", label: "Pet food" },
-        { value: "Medicines", label: "Medicines" },
-        { value: "Supplements", label: "Supplements" },
-        { value: "Pet accessories", label: "Pet accessories" },
-        { value: "Equipments", label: "Equipments" },
-    ]);
+    
 
-   
-    const appState = useAppSelector((state) => state.app);
+    const [categories, setCategories] = useState<any[]>([]);
+    useEffect(() => {
+        const fetchCategory = async()=>{
+            try{
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemCategory/getAll?branchId=${appState.currentBranchId}`);
+                const itemCategoryList: any[] = response.data.reduce((acc: any[], categoryEntry: ItemCategory) => {
+                    if (Array.isArray(categoryEntry.name)) {
+                        categoryEntry.name.forEach((name: string) => {
+                        acc.push({ value: categoryEntry.id, label: name });
+                      });
+                    } else {
+                      acc.push({ value: categoryEntry.id, label: categoryEntry.name });
+                    }
+                    return acc;
+                  }, []);
+                console.log(itemCategoryList);
+                setCategories(itemCategoryList);
+            }catch(error){
+                console.log("Error fetching species",error);
+            }
+        }
+        fetchCategory();
+    }, [appState.currentBranchId]);
+    
     const {fetchedProducts,isLoading,error}=useProductfetch(appState.currentBranchId);
     
     useEffect(() => {
@@ -135,6 +165,30 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
         }
     }, [isLoading, error, fetchedProducts]);
 
+    const [taxType, settaxType] = useState<any[]>([]);
+    useEffect(() => {
+        const fetchTax = async()=>{
+            try{
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/taxType/getAll?branchId=${appState.currentBranchId}`);
+                const taxTypeList: any[] = response.data.reduce((acc: any[], taxTypeEntry: TaxType) => {
+                    if (Array.isArray(taxTypeEntry.name)) {
+                      taxTypeEntry.name.forEach((taxValue: number) => {
+                        acc.push({
+                          value: taxValue * 0.01,
+                          label: `${taxValue}% GST` 
+                        });
+                      });
+                    }
+                    return acc;
+                  }, []);
+                console.log(taxTypeList);
+                settaxType(taxTypeList);
+            }catch(error){
+                console.log("Error fetching species",error);
+            }
+        }
+        fetchTax();
+    }, [appState.currentBranchId]);
     useEffect(() => {
 
         const fetchDistributors = async()=>{
@@ -144,10 +198,10 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                     value: distributor.id,
                     label: distributor.distributorName
                 }));
-                console.log(distributors);
+                // console.log(distributors);
                 setDistributor(distributors);
             }catch(error){
-                console.log("Error fetching distributors",error);
+                // console.log("Error fetching distributors",error);
             }
         }
           fetchDistributors();
@@ -161,7 +215,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     // Assuming you're using Zod for validation
 
     const handleSaveClick = async () => {
-        console.log("Submit button");
+        // console.log("Submit button");
         try {
            
             let selectedProviders = [formData.providers];
@@ -186,7 +240,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
             });
     
             if (response.ok) {
-                console.log('Data saved successfully');
+                // console.log('Data saved successfully');
                 setProductData({
                     itemName: formData.itemName,
                     providers: selectedProviders,
@@ -208,7 +262,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
 
     // };
     const handleChange = (field: string, value: any) => {
-        console.log("this is providers", value, field);
+        // console.log("this is providers", value, field);
     
         setFormData((prevFormData: any) => {
             const updatedFormData = { ...prevFormData, [field]: value };
@@ -219,7 +273,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
         // Update the errors state directly
         const updatedErrors = { ...errors };
             if (!isProductNameValid) {
-                updatedErrors.itemName = 'Patient name is required';
+                updatedErrors.itemName = 'Product name is required';
             } else {
                 delete updatedErrors.itemName;
             }
@@ -238,26 +292,49 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     };
       
 
-    const gstOptions = [
-        { value: 0, label: 'GST@0%' },
-        { value: 0.05, label: 'GST@5%' },
-        { value: 0.12, label: 'GST@12%' },
-        { value: 0.18, label: 'GST@18%' },
-        { value: 0.28, label: 'GST@28%' },
-    ];
+    // const gstOptions = [
+    //     { value: 0, label: 'GST@0%' },
+    //     { value: 0.05, label: 'GST@5%' },
+    //     { value: 0.12, label: 'GST@12%' },
+    //     { value: 0.18, label: 'GST@18%' },
+    //     { value: 0.28, label: 'GST@28%' },
+    // ];
 
-    const unitOptions : OptionType[] =[
-        { value: 'Boxes', label: 'Boxes' },
-        { value: 'Pieces', label: 'Pieces' },
-        { value: 'Units', label: 'Units' },
-        { value: 'Vials', label: 'Vials' },
-        { value: 'Strips', label: 'Strips' },
-    ];
+    // const unitOptions : OptionType[] =[
+    //     { value: 'Boxes', label: 'Boxes' },
+    //     { value: 'Pieces', label: 'Pieces' },
+    //     { value: 'Units', label: 'Units' },
+    //     { value: 'Vials', label: 'Vials' },
+    //     { value: 'Strips', label: 'Strips' },
+    // ];
+    const [unitOptions, setUnitOptions] = useState<any[]>([]);
+    useEffect(() => {
+        const fetchUnits = async()=>{
+            try{
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemUnit/getAll?branchId=${appState.currentBranchId}`);
+                const unitOptionsList: any[] = response.data.reduce((acc: any[], unitEntry: ItemUnit) => {
+                    if (Array.isArray(unitEntry.name)) {
+                        unitEntry.name.forEach((name: string) => {
+                        acc.push({ value: unitEntry.id, label: name });
+                      });
+                    } else {
+                      acc.push({ value: unitEntry.id, label: unitEntry.name });
+                    }
+                    return acc;
+                  }, []);
+                console.log(unitOptionsList);
+                setUnitOptions(unitOptionsList);
+            }catch(error){
+                console.log("Error fetching species",error);
+            }
+        }
+        fetchUnits();
+    }, [appState.currentBranchId]);
 
     return (
         <>
             {!lastStep && (
-                <div className="w-full h-full overflow-auto flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50" onClick={onClose}>
+                <div className="w-full h-full overflow-auto flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50" >
                     <div className="w-[640px] h-[787px] px-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
                         <div className="self-end items-start gap-6 flex mt-[0.6rem] cursor-pointer" onClick={onClose}>
                             <Image src={closeicon} alt="close"></Image>
@@ -329,7 +406,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                     placeholder="Select Tax"
                                     isClearable={false}
                                     isSearchable={true}
-                                    options={gstOptions}
+                                    options={taxType}
                                     isMulti={false}
                                     name="tax"
                                     onChange={(e) => handleChange("tax", e?.value)}
@@ -352,7 +429,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                     isSearchable={true}
                                     options={categories}
                                     isMulti={false}
-                                    
+                                    styles={customStyles}
                                     name="category"
                                     onChange={(e) => handleChange("category", e?.label)}
                                    

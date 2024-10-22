@@ -13,7 +13,7 @@ import Loading2 from "@/app/loading2";
 
 
 const ExistingsaleEstimateHeader = ({otherData, isLoading}: any) => {
-console.log(otherData)
+// console.log(otherData)
 
  
  

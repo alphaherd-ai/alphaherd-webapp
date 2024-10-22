@@ -62,7 +62,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             }
 
         }
-        console.log(JSON.stringify(data))
+        // console.log(JSON.stringify(data))
         try {
             setSaving(true);
             const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Invoice}?branchId=${appState.currentBranchId}`, data)

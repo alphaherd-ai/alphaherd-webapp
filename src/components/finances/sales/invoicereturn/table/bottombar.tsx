@@ -26,7 +26,7 @@ const InvoiceReturnBottomBar = ({invoiceData}:any) => {
     const handleSubmit = async () => {
         setSaving(true);
         const allData = {headerData, tableData, totalAmountData};
-        console.log("this is all data",allData)
+        // console.log("this is all data",allData)
         let totalQty=0;
         tableData.forEach(data => {
             totalQty+=(data.quantity)||0;
@@ -58,7 +58,7 @@ const InvoiceReturnBottomBar = ({invoiceData}:any) => {
             }
             
         }
-        console.log(JSON.stringify(data))
+        // console.log(JSON.stringify(data))
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Return}?branchId=${appState.currentBranchId}`,data)
 

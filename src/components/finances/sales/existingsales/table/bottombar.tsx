@@ -41,8 +41,8 @@ const ExistingsalesBottomBar = ({existingSalesData}:any) => {
             alert("Invoice sent successfully");
             
            
-            setIsModalOpen(false); // Close the modal after successful send
-            setEmail(""); // Clear email after successful send
+          
+            
           }
         } catch (error) {
           console.error("Error sending invoice:", error);

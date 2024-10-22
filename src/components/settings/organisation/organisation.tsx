@@ -9,7 +9,7 @@ export default function OrganisationSettings() {
 
     const userState = useAppSelector((state) => state.user);
 
-    console.log(userState);
+    // console.log(userState);
 
     const tabs = ["My Organisation", "User and Roles"];
 

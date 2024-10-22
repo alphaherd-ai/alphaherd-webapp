@@ -172,7 +172,7 @@ export default function UserAccountSetupPage() {
                     })
                 }
             )
-            console.log(res);
+            // console.log(res);
             let json = await res.json();
             if (res.ok) {
                 toast.success(json.message, {

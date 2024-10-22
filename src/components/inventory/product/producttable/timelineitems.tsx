@@ -50,9 +50,9 @@ const ProductAllItem = () => {
     }
   }, [data, isLoading, error, selectedCategories, selectedParties]);
 
-
-  console.log("xcxcxcxcxc")
-  console.log("products", products);
+  
+  // console.log("xcxcxcxcxc")
+  // console.log("products", products);
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;

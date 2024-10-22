@@ -9,7 +9,7 @@ export const GET = async (req: NextRequest) => {
 try{
   const url = new URL(req.url);
   const branchId = url.searchParams.get('branchId');
-   console.log("branchId is : ",branchId)
+  //  console.log(branchId)
    const users=await prismaClient.orgBranchUserRole.findMany({
     where:{
       orgBranchId:Number(branchId)
@@ -18,7 +18,7 @@ try{
       user:true
     }
    })
-   console.log(users)
+  //  console.log(users)
 
   return new Response(JSON.stringify(users), {
     status: 201,

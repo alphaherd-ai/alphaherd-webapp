@@ -26,9 +26,9 @@ import DatabaseClientBottombar from './bottombar';
 // }
 
 const DatabaseClientTableItem = ({ clients, data, isLoading }: any) => {
-    if (isLoading) return (<Loading />)
-    const [currentPage, setCurrentPage] = useState(1);
-    const [productsPerPage] = useState(50);
+    
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [productsPerPage] = useState<number>(50);
     const paginate = (pageNumber: number) => {
         setCurrentPage(pageNumber);
     };
@@ -36,10 +36,15 @@ const DatabaseClientTableItem = ({ clients, data, isLoading }: any) => {
     const indexOfLastProduct = currentPage * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
     const currentClients = clients.slice(indexOfFirstProduct, indexOfLastProduct);
+
+
+
+
     return (
         <>
 
-            {currentClients.map((client: any) => (
+            { isLoading ? <Loading/>:
+            currentClients.map((client: any) => (
                 <div
                     key={client.id}
                     className="flex w-full box-border h-16 justify-evenly items-center bg-white border-0 border-b border-solid border-borderGrey hover:bg-gray-200 text-textGrey1 hover:text-textGrey2 transition"

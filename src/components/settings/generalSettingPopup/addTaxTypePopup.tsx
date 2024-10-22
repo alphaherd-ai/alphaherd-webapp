@@ -25,7 +25,7 @@ const AddTaxType = ({onClose}:any) => {
         setInputs(newInputs);
     };
 
-    const handleChangeInput = (index: number, value: string) => {
+    const handleChangeInput = (index: number, value: any) => {
         const newInputs = [...inputs];
         newInputs[index] = value;
         setInputs(newInputs);
@@ -33,17 +33,18 @@ const AddTaxType = ({onClose}:any) => {
 
     const handleSave = async () => {
         try {
+            const intInputs = inputs.map((input)=> parseInt(input,10));
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/taxType/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    name:inputs,
+                    name:intInputs,
                 }),
             });
             if (response.ok) {
-                console.log('Data saved successfully');
+                console.log('Tax Data saved successfully');
                 onClose();
                 window.dispatchEvent(new FocusEvent('focus'));
             } else {
@@ -74,7 +75,7 @@ const AddTaxType = ({onClose}:any) => {
                                 <div className="text-gray-500 text-base font-medium w-[12rem]">Tax Type</div>
                                 <input
                                     className="ml-[5rem] w-[80%] border border-solid border-borderGrey outline-none h-11 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    type="float"
+                                    type="number"
                                     value={input}
                                     onChange={(e) => handleChangeInput(index, e.target.value)}
                                 />

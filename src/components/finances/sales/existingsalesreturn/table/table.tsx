@@ -50,22 +50,22 @@ const ExistingsalesReturnTable = () => {
             const { items, ...otherData } = data;
             setOtherData(otherData)
             console.log(items)
-            const shallowDataCopy = [...items];
-            console.log(shallowDataCopy);
-            const itemData = shallowDataCopy.map((item: any) => ({
-                id: item.productBatch.productId,
-                itemName: item.name,
-                quantity: item.quantity,
-                sellingPrice: item.sellingPrice,
-                expiry: item.productBatch.expiry,
-                batchNumber: item.productBatch.batchNumber,
-                tax: item.taxAmount
-            }));
-            setItems(itemData);
+          const shallowDataCopy = [...items]; 
+          const itemData = shallowDataCopy.map((item: any) => ({
+            id: item.itemType==='product' ? item.productBatch.productId: item.serviceId,
+                itemName:item.name,
+                quantity:item.quantity,
+                sellingPrice:item.sellingPrice,
+                expiry:item.itemType==='product' ? item.productBatch.expiry:"",
+                batchNumber:item.itemType==='product'?item.productBatch.batchNumber:"",
+                tax:item.taxAmount,
+                provider:item.itempType==='product'?"":item.services.providers[0]
+          }));
+          setItems(itemData);
         }
-    }, [data, error, isLoading]);
-
-    console.log(items)
+      }, [data,error,isLoading]); 
+      
+// console.log(items)
 
 
     const [disableButton, setDisableButton] = useState(true);
@@ -149,8 +149,8 @@ const ExistingsalesReturnTable = () => {
                         <div>
                             <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12  text-gray-500 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey'>
                                 <div className=' flex text-gray-500 text-base font-medium w-[3rem]'>No.</div>
-                                <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Name</div>
-                                <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Batch No.</div>
+                                <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Name</div> 
+                                <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Batch No./Providers</div>
                                 <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Returned Quantity</div>
                                 <div className=' flex text-gray-500 text-base font-medium  w-[10rem]'>Return Reason</div>
 
@@ -166,7 +166,7 @@ const ExistingsalesReturnTable = () => {
                                         <div className='w-[3rem] flex items-center text-textGrey2 text-base font-medium '>{index + 1}</div>
                                         <div className='w-[12rem] flex items-center text-textGrey2 text-base font-medium '>{item.itemName}</div>
                                         <div className='w-[10rem] flex-col items-center text-textGrey2 text-base font-medium '>
-                                            <div className="text-textGrey2 text-base  font-medium  "> {item.batchNumber}</div>
+                                            <div className="text-textGrey2 text-base  font-medium  "> {item.itemType==='product' ? item.batchNumber:item.provider}</div>
 
                                             <div className="text-neutral-400 text-[13px] font-medium ">{formatDateAndTime(item.expiry).formattedDate}</div>
                                         </div>

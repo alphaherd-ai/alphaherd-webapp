@@ -16,16 +16,10 @@ import { usePathname } from 'next/navigation';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 import DownloadPopup from './downloadDistributorPopup';
-import Popup from './newdistributorpopup';
 
 
 const DatabaseDistributorHeader = ({ distributors, onSortChange }: any) => {
     const currentRoute = usePathname();
-    const [showPopup, setShowPopup] = React.useState(false);
-
-    const togglePopup = () => {
-        setShowPopup(!showPopup);
-    }
 
     const [showPopup1, setShowPopup1] = React.useState(false);
     const togglePopup1 = () => {
@@ -150,30 +144,9 @@ const DatabaseDistributorHeader = ({ distributors, onSortChange }: any) => {
                             </DropdownMenu>
                         </Dropdown>
                     </div>
-
-                    {/* <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '> */}
-
-                        {/* <Popover placement="bottom-end" showArrow offset={10}>
-                            <PopoverTrigger> */}
-                                <Button 
-                                    variant="solid"
-                                    className="cursor-pointer capitalize flex px-4 py-2.5 border-none bg-black text-white rounded-lg " 
-                                    onClick={togglePopup}> 
-                                    <div className='flex'>
-                                        <Image src={Add} alt='Add' className='w-3 h-3 ' />
-                                    </div> 
-                                    New Distributor
-                             </Button>
-                            {/* </PopoverTrigger>
-                      
-                        </Popover> */}
-
-
-
-                    {/* </div> */}
                 </div>
             </div >
-            {showPopup && <Popup onClose={togglePopup} />}
+            
             {showPopup1 && <DownloadPopup onClose={togglePopup1}  distributors={distributors} />}
 
 
