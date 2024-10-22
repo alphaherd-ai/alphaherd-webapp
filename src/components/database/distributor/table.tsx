@@ -80,7 +80,7 @@ const DatabaseDistributorTable = () => {
       </div>
       <DatabaseDistributorTableItem distributors={distributors} data={data} isLoading={isLoading} />
      
-      <DatabaseDistributorBottombar />
+      
 
     </div>
 

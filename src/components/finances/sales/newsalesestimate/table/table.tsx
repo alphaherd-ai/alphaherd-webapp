@@ -522,25 +522,25 @@ const NewsaleEstimateTable = () => {
                             <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12  text-gray-500 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey'>
                                 <div className={`flex text-gray-500 text-base font-medium w-[3rem]`}>No.</div>
                                 <div className={` flex  text-gray-500 text-base font-medium w-[12rem]`}>Name</div>
-                                <div className='flex text-gray-500 text-base font-medium w-[8rem]'>Batch No.</div>
+                                <div className='flex text-gray-500 text-base font-medium w-[8rem]'>Batch No./Provider</div>
                                 <div className='flex text-gray-500 text-base font-medium w-[7rem]'>Selling Price</div>
                                 {!isChecked && (
-                                    <div className='flex justify-center text-gray-500 text-base font-medium w-[10rem]'>Quantity</div>
+                                    <div className='flex justify-center text-gray-500 text-base font-medium w-[8rem]'>Quantity</div>
                                 )}
                                 {isChecked && (
-                                    <div className='flex text-gray-500 text-base font-medium w-[10rem]'>Low Quantity</div>
+                                    <div className='flex justify-center text-gray-500 text-base font-medium w-[8rem]'>Low Quantity</div>
                                 )}
                                 {isChecked && (
-                                    <div className='flex text-gray-500 text-base font-medium w-[10rem]'>High Quantity</div>
+                                    <div className='flex justify-center text-gray-500 text-base font-medium w-[8rem]'>High Quantity</div>
                                 )}
                                 <div className='flex justify-center text-gray-500 text-base font-medium w-[6rem]'>Tax %</div>
                                 <div className='flex justify-center text-gray-500 text-base font-medium w-[6rem]'>Discount %</div>
 
-                                <div className='flex justify-center text-gray-500 text-base font-medium w-[8rem]'>Tax Amt.</div>
+                                <div className='flex justify-center text-gray-500 text-base font-medium w-[10rem]'>Tax Amt.</div>
                                 <div className='flex justify-center text-gray-500 text-base font-medium  w-[8rem]'>Discount Amt.</div>
 
                                 <div className='flex justify-center text-gray-500 text-base font-medium w-1/12'>Total</div>
-                                <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
+                                
                             </div>
                             {items.map((item: any, index: number) => (
                                 <div key={index + 1} className='flex flex-col w-full'>
@@ -616,14 +616,14 @@ const NewsaleEstimateTable = () => {
                 /> */}
                                         </div>
                                         {!isChecked && (
-                                            <div className='w-[10rem] flex justify-center items-center text-neutral-400 text-base font-medium gap-[12px]'>
+                                            <div className='w-[8rem] flex justify-center items-center text-neutral-400 text-base font-medium gap-[12px]'>
                                                 <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
                                                     <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
                                                         <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
                                                     </button>
                                                     <input
                                                         type="number"
-                                                        value={item.length?item.quantity:1}
+                                                        value={item.quantity? item.quantity :0}
                                                         onChange={(e) => handleInputChange(index, e.target.value, 'quantity')}
                                                         className="w-[3rem] text-center border border-solid border-borderGrey h-8  rounded-md text-textGrey2 font-medium text-base"
                                                         name={`quantity-${index + 1}`}
@@ -638,14 +638,14 @@ const NewsaleEstimateTable = () => {
                                         )}
                                         {isChecked && (
                                             <>
-                                                <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
+                                                <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
                                                     <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
                                                         <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick1(item.id)}>
                                                             <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
                                                         </button>
                                                         <input
                                                             type="number"
-                                                            value={item.length?item.lowQty:1}
+                                                            value={item.lowQty?item.lowQty:0}
                                                             onChange={(e) => handleInputChange(index, e.target.value, 'quantity1')}
                                                             className="w-[3rem] text-center border border-solid border-borderGrey h-8  rounded-md text-textGrey2 font-medium text-base"
                                                             name={`quantity-${index + 1}`}
@@ -657,14 +657,14 @@ const NewsaleEstimateTable = () => {
                                                         </button>
                                                     </div>
                                                 </div>
-                                                <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
+                                                <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
                                                     <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
                                                         <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick2(item.id)}>
                                                             <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
                                                         </button>
                                                         <input
                                                             type="number"
-                                                            value={item.length?item.highQty:1}
+                                                            value={item.highQty?item.highQty:0}
                                                             onChange={(e) => handleInputChange(index, e.target.value, 'quantity2')}
                                                             className="w-[3rem] text-center border border-solid border-borderGrey h-8  rounded-md text-textGrey2 font-medium text-base"
                                                             name={`quantity-${index + 1}`}
@@ -699,9 +699,9 @@ const NewsaleEstimateTable = () => {
                                             {/* )} */}
                                         </div>
                                         <div className='w-[6rem] justify-center flex  items-center text-neutral-400 text-base font-medium'>
-                                            <input className='w-[2rem] outline-none border-none text-neutral-400 !important' type='number' value={item.discountPer} onChange={(e) => handleDiscountPercentChange(index, e.target.value)}></input>%
+                                            <input placeholder='0' className='w-[2rem]  outline-none border-none text-neutral-400 !important' type='number' value={item.discountPer} onChange={(e) => handleDiscountPercentChange(index, e.target.value)}></input>%
                                         </div>
-                                        <div className='w-[8rem] justify-center flex items-center text-neutral-400 text-base font-medium'>
+                                        <div className='w-[10rem] justify-center flex items-center text-neutral-400 text-base font-medium'>
                                             {isChecked ? (
                                                 '₹' +
                                                 ((item?.sellingPrice || 0 * item?.lowQty || 0 * (item?.gst || 0)).toFixed(2) +
@@ -713,7 +713,7 @@ const NewsaleEstimateTable = () => {
                                             )}
                                         </div>
 
-                                        <div className='w-[8rem] justify-center flex items-center text-neutral-400 text-base font-medium'>
+                                        <div className='w-[8rem] justify-center flex-wrap text-center flex items-center text-neutral-400 text-base font-medium'>
                                             {isChecked ? (
                                                 '₹' +
                                                 ((item?.sellingPrice * item?.lowQty * item?.discountPer / 100 || 0).toFixed(2) +
@@ -759,14 +759,14 @@ const NewsaleEstimateTable = () => {
                                                 </>
                                             )}
                                         </div>
-                                        <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[20px] justify-end'>
+                                        {/* <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[20px] justify-end'>
                                             <button className="border-0 bg-transparent cursor-pointer">
                                                 <Image className='w-5 h-5' src={sellicon} alt="sell" ></Image>
                                             </button>
                                             <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
                                                 <Image className='w-5 h-5' src={delicon} alt="delete"></Image>
                                             </button>
-                                        </div>
+                                        </div> */}
                                     </div>
 
                                     {/* {discountStates[index] && (
@@ -814,13 +814,13 @@ const NewsaleEstimateTable = () => {
                                 <div className=' flex  text-gray-500 text-base font-medium w-[12rem]'>Total</div>
                                 <div className='flex text-gray-500 text-base font-medium w-[8rem]'></div>
                                 <div className='flex text-gray-500 text-base font-medium w-[7rem]'></div>
-                                <div className='flex justify-center text-gray-500 text-base font-medium w-[10rem]'>{(items.reduce((acc: any, item: any) => acc + item.quantity, 0)) || 0} Items</div>
+                                <div className='flex justify-center text-gray-500 text-base font-medium w-[8rem]'>{(items.reduce((acc: any, item: any) => { if (!item.itemName) return acc; return acc + item.quantity }, 0)) || 0} Items</div>
 
                                 <div className='flex text-gray-500 text-base font-medium w-[6rem]'>
                                 </div>
                                 <div className='flex text-gray-500 text-base font-medium w-[6rem]'>
                                 </div>
-                                <div className='flex justify-center text-gray-500 text-base font-bold w-[8rem]'>
+                                <div className='flex justify-center text-gray-500 text-base font-bold w-[10rem]'>
                                     {isChecked ? (
 
                                         <>
@@ -937,7 +937,7 @@ const NewsaleEstimateTable = () => {
                                     )}
                                 </div>
 
-                                <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
+                                
                             </div>
                         </div>
                     </div>

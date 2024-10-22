@@ -49,7 +49,7 @@ interface InventoryTimeline{
 const ProductAllItem = () => {
   const [products, setProducts] = useState<InventoryTimeline[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [productsPerPage] = useState(10); 
+  const [productsPerPage] = useState(50); 
   const appState = useAppSelector((state) => state.app);
   const urlSearchParams = useSearchParams();
   const startDate = useMemo(() => urlSearchParams.get('startDate') ? new Date(urlSearchParams.get('startDate')!) : null, [urlSearchParams]);

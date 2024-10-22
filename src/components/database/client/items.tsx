@@ -2,11 +2,11 @@
 import React, { useEffect, useState } from 'react';
 import formatDateAndTime from '@/utils/formateDateTime';
 import { useAppSelector } from '@/lib/hooks';
-import { Spinner} from '@nextui-org/react';
+import { Spinner } from '@nextui-org/react';
 import useSWR from 'swr';
 import Loading from '@/app/loading';
 import Link from 'next/link';
-
+import DatabaseClientBottombar from './bottombar';
 // interface Clients {
 //     id: number;
 //     clientName: string;
@@ -25,12 +25,21 @@ import Link from 'next/link';
 //     breed:string;
 // }
 
-const DatabaseClientTableItem = ({clients, data, isLoading}:any) => {
-    if(isLoading)return (<Loading/>)
+const DatabaseClientTableItem = ({ clients, data, isLoading }: any) => {
+    if (isLoading) return (<Loading />)
+    const [currentPage, setCurrentPage] = useState(1);
+    const [productsPerPage] = useState(50);
+    const paginate = (pageNumber: number) => {
+        setCurrentPage(pageNumber);
+    };
+
+    const indexOfLastProduct = currentPage * productsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+    const currentClients = clients.slice(indexOfFirstProduct, indexOfLastProduct);
     return (
         <>
-            
-            {clients.map((client: any) => (
+
+            {currentClients.map((client: any) => (
                 <div
                     key={client.id}
                     className="flex w-full box-border h-16 justify-evenly items-center bg-white border-0 border-b border-solid border-borderGrey hover:bg-gray-200 text-textGrey1 hover:text-textGrey2 transition"
@@ -62,6 +71,14 @@ const DatabaseClientTableItem = ({clients, data, isLoading}:any) => {
                     </div>
                 </div>
             ))}
+
+            {clients.length > 0 && (
+                <DatabaseClientBottombar
+                    productsPerPage={productsPerPage}
+                    totalProducts={clients.length}
+                    paginate={paginate}
+                />
+            )}
 
         </>
     );

@@ -19,6 +19,7 @@ import { generatePdfForInvoice } from "@/utils/salesPdf"
 import { generatePdfForInvoiceAndUpload } from "@/utils/uploadPdf"
 import { useRouter } from "next/navigation"
 import { create } from "domain"
+import Loading2 from "@/app/loading2"
 
 const NewsalesBottomBar = ({estimateData}:any) => {
     const { headerData, tableData, totalAmountData, transactionsData } = useContext(DataContext);
@@ -32,9 +33,11 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             alert('Customer is required');
             return;
         }
-        
+        // Remove the last item from the item table as it will not create inventory timeline due to null constraints in prisma
+        tableData.pop();
+
         const allData = { headerData, tableData, totalAmountData, transactionsData };
-        console.log("this is all data", allData,headerData)
+        console.log("this is all data", allData,headerData);
         let totalQty = 0;
         tableData.forEach(data => {
             totalQty += (data.quantity) || 0;
@@ -83,6 +86,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
         console.log(JSON.stringify(data))
         console.log("this is notif data", notifData)
         try {
+            setSaving(true); 
             const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Invoice}?branchId=${appState.currentBranchId}`, data)
             const notifPromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
            
@@ -212,14 +216,14 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             console.error('Error while saving data:', error);
         } 
     };
-
-    const isDisabled = !headerData?.customer || tableData.length === 0 || tableData.some(data => !data.itemName);
+    
+    const isDisabled = !headerData?.customer || tableData.length === 1;
 
     return (
         <>
 
 
-            <div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
+            <div className="flex justify-end items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
                 {/* <div className="flex justify-between items-center gap-4 pl-4">
                     <Button className="p-2 bg-white rounded-md border border-solid  border-borderGrey  justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={printicon} alt="print"></Image>
@@ -252,14 +256,12 @@ const NewsalesBottomBar = ({estimateData}:any) => {
                     <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${
                         isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
                     }`}
-                    onClick={handleSubmit} disabled={isDisabled}>
+                    onClick={handleSubmit} disabled={isDisabled || isSaving}>
                         <Image src={checkicon} alt="check"></Image>
-                        <div>{isSaving?"Saving...":"Save"}</div>
+                        <div>{isSaving?<Loading2/>:"Save"}</div>
                     </Button>
                 </div>
             </div>
-
-
         </>
 
     )

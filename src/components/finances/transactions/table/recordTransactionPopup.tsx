@@ -80,7 +80,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
     const [serviceOptions, setServiceOptions] = useState([]);
     const [selectedInvoiceLink, setSelectedInvoiceLink] = useState<string | string[]>([]);
     const [selectedInvoiceLinkID, setSelectedInvoiceLinkID] = useState([]);
-    const [selectedMode, setSelectedMode] = useState([]);
+    const [selectedMode, setSelectedMode] = useState('');
     const [linkInvoice, setLinkInvoice] = useState<any>([]);
     const [modeOptions, setModeOptions] = useState<any>([]);
     const [clientsOptions, setClientsOptions] = useState<any>([]);
@@ -137,7 +137,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
         };
 
-        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: (selectedMode), invoiceLink: selectedInvoiceLink || "Direct", moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: (selectedMode), invoiceLink: selectedInvoiceLink || "Direct", moneyChange: transactionType === 'Money In' ? 'In' : 'Out',date: formData.date || new Date()}))
 
         try {
             if (Array.isArray(selectedInvoiceLink) && selectedInvoiceLink[0].startsWith("P")) {
@@ -330,6 +330,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
       };
 
       console.log("setSelectedInvoiceLinkID", selectedInvoiceLinkID)
+      const isDisabled= !(selectedClient || selectedDistributor) || !(formData?.subject) || !(formData?.amountPaid) || !selectedMode || !(selectedProducts || selectedServices)
 
   return (
     <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
@@ -592,7 +593,9 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
 
             </div>
             <div className='w-full flex justify-end'>
-                    <Button className="px-2 py-2.5 bg-navBar rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer"  onClick={handleSaveClick}>
+            <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${
+                        isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
+                    }`} onClick={handleSaveClick} disabled={isDisabled || isSaving}>
                         <Image src={check} alt='check' /> 
                         <span className='text-white text-base font-medium pr-2'>{isSaving ? "Saving..." : "Save Payment"}</span>
                     </Button>

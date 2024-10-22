@@ -126,7 +126,14 @@ const handleCategorySelect=(selectedCategory:any,index:number)=>{
     setTableData(updatedItems);
 }
 const handleItemName=(event:any,index:any)=>{
-    const updatedItems=[...tableData];
+    if(index === items.length - 1){
+        items.push({
+            itemName:""
+        })
+        setItems(items);
+    }
+
+    const updatedItems=[...tableData]; 
     updatedItems[index]={
         ...updatedItems[index],
         itemName:event.target.value.charAt(0).toUpperCase() + event.target.value.slice(1)
@@ -154,7 +161,15 @@ const handleAddItem= useCallback(() => {
 useEffect(() => {
     setItems(items);
     setTableData(items)
+    console.log(items);
 }, [items]);
+
+useEffect(()=>{
+    items.push({
+        itemName:""
+    })
+    setItems(items);
+},[])
 
     
     const [showPopup, setShowPopup] = React.useState(false);
@@ -412,8 +427,11 @@ useEffect(() => {
                                 /> */}
                             </div>
 
-                            <div className=' flex text-textGrey2 text-base font-bold w-[10rem]'>{`₹${isNaN(items.reduce((acc, item) => acc + item.sellingPrice * item.gst, 0)) ? 0 : items.reduce((acc, item) => acc + item.sellingPrice * item.gst, 0).toFixed(2)}`}</div>
-                            <div className=' flex text-textGreen text-base font-bold w-[10rem]'>{`₹${isNaN(items.reduce((acc, item) => acc + item.sellingPrice * item.gst+item.sellingPrice, 0)) ? 0 : items.reduce((acc, item) => acc + item.sellingPrice * item.gst+item.sellingPrice, 0).toFixed(2)}`}</div>
+                            <div className=' flex text-textGrey2 text-base font-bold w-[10rem]'>₹{isNaN(items.reduce((acc, item) => (!item.itemName || isNaN(item.sellingPrice) || isNaN(item.gst)) ? acc : acc + item.sellingPrice * item.gst, 0)) ? '0.00' : items.reduce((acc, item) => (!item.itemName || isNaN(item.sellingPrice) || isNaN(item.gst)) ? acc : acc + item.sellingPrice * item.gst, 0).toFixed(2)}
+
+                            </div>
+                            <div className=' flex text-textGreen text-base font-bold w-[10rem]'>₹{isNaN(items.reduce((acc, item) => (!item.itemName || isNaN(item.sellingPrice) || isNaN(item.gst)) ? acc : acc + (item.sellingPrice * item.gst + item.sellingPrice), 0)) ? '0.00' : items.reduce((acc, item) => (!item.itemName || isNaN(item.sellingPrice) || isNaN(item.gst)) ? acc : acc + (item.sellingPrice * item.gst + item.sellingPrice), 0).toFixed(2)}
+                            </div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'></div>
                             <div className=' flex text-textGrey2 text-base font-medium w-1/12'></div>
                         </div>
