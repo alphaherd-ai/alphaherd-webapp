@@ -223,7 +223,6 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
         setIsSaveDisabled(!isPatientNameValid || !isClientNameValid);
 
         return updatedFormData;
-        
         });
     };
 
@@ -302,8 +301,8 @@ useEffect(() => {
                         type="text" name="patientName" 
                         onChange={(e) =>{
                             const value = e.target.value;
-                        e.target.value = value.charAt(0).toUpperCase() + value.slice(1);
-    handleChange("patientName", e.target.value);
+                            e.target.value = value.charAt(0).toUpperCase() + value.slice(1);
+                            handleChange("patientName", e.target.value);
                         }} 
                         />
                         {errors.patientName && (
