@@ -15,6 +15,9 @@ export const GET = async (req: NextRequest) => {
     const transactions = await prismaClient.transactions.findMany({
       where: {
         financeSectionId: financeId
+      },
+      orderBy:{
+        date: 'desc',
       }
     });
     return new Response(JSON.stringify(transactions), {

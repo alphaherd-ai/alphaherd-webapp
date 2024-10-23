@@ -234,7 +234,7 @@ const NewPurchasesTotalAmount = () => {
                                         </div>
                                     </div>
                                 </div>
-                    <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
+                    <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
                         <div className="text-gray-500 text-base font-bold ">Shipping</div>
                         <div className="flex items-center">
                             <div className="text-right text-textGrey1 text-base  "><input
@@ -246,7 +246,7 @@ const NewPurchasesTotalAmount = () => {
                             
                         </div>
                     </div>
-                    <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
+                    <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
                         <div className="text-gray-500 text-base font-bold ">Adjustment</div>
                         <div className="flex items-center">
                             <div className="text-right text-textGrey1 text-base  "><input

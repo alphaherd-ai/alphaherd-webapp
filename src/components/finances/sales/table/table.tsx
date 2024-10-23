@@ -93,7 +93,7 @@ const FinancesSalesTable = () => {
       }
       setTotalLen(filteredData.length);
       setTableData(filteredData)
-      setSales(filteredData?.reverse().slice(0,TOTAL_VALUES_PER_PAGE));
+      setSales(filteredData?.slice(0,TOTAL_VALUES_PER_PAGE));
     }
   }, [data, error, isLoading, setSales, startDate, endDate, selectedParties])
 

@@ -181,114 +181,109 @@ const NewsalesReturnTotalAmout = () => {
         <>
 
 
-<div className="flex  pt-[20px] pb-[20px]">
-                <div className="w-1/2 mr-4 flex flex-col">
+ <div className="flex gap-4  pt-[20px] pb-[20px]">
 
-                <div className="w-full  p-6 bg-white rounded-tl-md rounded-tr-md border border-solid  border-borderGrey justify-between items-center gap-6 flex">
-                        <div className="text-gray-500 text-xl font-medium ">Payments</div>
-                        
-                                    <Button 
-                                        onClick={togglePopup}
-                                        variant="solid"
-                                        className="capitalize flex h-9 py-2.5 border-none text-base bg-black text-white rounded-lg cursor-pointer">
-                                        <div className='flex'><Image src={Rupee} alt='Rupee' className='w-6 h-6 ' /></div>
-                                        Record Payment
-                                    </Button>
-                               
-                    </div>
-                    {transactionsData && transactionsData.map((transaction, index) => (
-                        transaction.isAdvancePayment &&
-                    (<div  key={index} className="w-full  px-6 py-4 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
-                        <div className="text-gray-500 text-lg font-medium ">Advance Paid</div>
-                        <div className='flex items-center h-9 px-4 py-2.5 justify-between rounded-lg '>   
-                            <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
-                                ₹ {transaction.amountPaid}
-                            </div>       
-                        </div>
-                    </div>)
-                    ))
-                    }
+                <Popup headerdata={headerData} onClose={togglePopup} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} balanceDue={balanceDue} />
 
-                    {transactionsData && transactionsData.map((transaction, index) => (
-                    !transaction.isAdvancePayment &&
-                    (<div  key={index} className="w-full  px-6 py-4 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
-                        <div className="text-gray-500 text-lg font-medium ">{formatDateAndTime(transaction.date).formattedDate}</div>
-                        <div className='flex items-center h-9 px-4 py-2.5 justify-between rounded-lg '>   
-                            <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
-                                ₹ {transaction.amountPaid}
-                            </div>       
+                <div className="w-1/2  rounded-md">
+                    <div className='w-full bg-white'>
+                        <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">
+                            <div className="text-gray-500 text-base font-bold ">Subtotal</div>
+                            <div className="text-right text-gray-500 text-base font-bold ">₹ {(totalAmountData.subTotal)}</div>
                         </div>
-                    </div>)
-                    ))
-                    }       
-
-                    <div className="w-full  px-6 bg-white rounded-bl-md rounded-br-md justify-between items-center flex border border-t-0 border-solid border-borderGrey">
-                        <div className="text-gray-500 text-base font-bold  w-1/3 py-4">Balance Due</div>
-                        <div className="text-gray-500 text-lg font-medium  w-1/3 py-4 flex  items-center"></div>
-                        <div className="text-gray-500 text-base font-bold  w-1/3 py-4 ">₹{balanceDue < 0 ? -1*(balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2) }
-                        {balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
-                            You owe
-                        </span> : balanceDue === 0 ? "" : <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
-                            You’re owed
-                        </span>}
-                        </div>
-                       
-                    </div>
-                </div>
-                <div className="w-1/2 bg-white rounded-[10px]">
-                <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">
-                                    <div className="text-gray-500 text-base font-bold ">Subtotal</div>
-                                    <div className="text-right text-gray-500 text-base font-bold ">{totalAmount.toFixed(2)}</div>
-                                </div>
-                                <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
-                                    <div className="text-gray-500 text-base font-bold ">Overall Discount</div>
-                                    <div className="flex items-center">
-                                        <div className="text-right text-borderText text-base  ">
-                                        <input
+                        <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
+                            <div className="text-gray-500 text-base font-bold ">Overall Discount</div>
+                            <div className="flex items-center">
+                                <div className="text-right text-textGrey2 text-base">
+                                    ₹ <input
                                         type='number'
-                                        className="text-right  text-base  w-[50%] border-none outline-none"
-                                        value={totalAmountData.subTotal?discountInput:0}
-                                        onChange={(e)=>handleDiscountChange(Number(e.target.value))}
-                                        /></div>
-                                        <div className=' flex text-gray-500 text-base font-medium pl-6'>
-                                            <Select
-                                                className="text-neutral-400 text-base font-medium"
-                                                defaultValue={gstOptions[1]}
-                                                isClearable={false}
-                                                isSearchable={true}
-                                                options={gstOptions}
-                                                styles={customStyles}
-                                                onChange={handleSelectChange}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5   ">
-                                        <div className="text-gray-500 text-base font-bold ">Shipping</div>
-                                        <input
-                                            className="text-right text-textGrey1 text-base border-none outline-none"
-                                            placeholder='0'
-                                            value={shipping} 
-                                            onChange={handleShippingChange} 
-                                        />
-                                    </div>
-                                    <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5  ">
-                                        <div className="text-gray-500 text-base font-bold ">Adjustment</div>
-                                        <input
-                                            className="text-right text-textGrey1 text-base  border-none outline-none"
-                                            placeholder='0'
-                                            value={adjustment} 
-                                            onChange={handleAdjustmentChange} 
-                                        />
-                                    </div>
-                                    <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 rounded-b-md justify-between items-center gap-2.5    ">
-                                    <div className="text-textGreen text-base font-bold ">Grand total</div>
-                                    <div className="text-right text-textGreen text-base font-bold ">{(grandAmt).toFixed(2)}</div>
+                                        className=" text-textGrey2 w-[4rem]  text-base  border-none outline-none"
+                                        value={totalAmountData.subTotal ? discountInput : 0}
+                                        onChange={(e) => handleDiscountChange(Number(e.target.value))}
+                                    /></div>
+                                <div className=' flex text-gray-500 text-base font-medium pl-6'>
+                                    <Select
+                                        className="text-textGrey2 text-base font-medium"
+                                        defaultValue={gstOptions[1]}
+                                        isClearable={false}
+                                        isSearchable={true}
+                                        options={gstOptions}
+                                        styles={customStyles}
+                                        onChange={handleSelectChange}
+                                    />
                                 </div>
                             </div>
                         </div>
-                        {showPopup && <Popup headerdata={headerData} onClose={togglePopup} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} balanceDue={balanceDue} />}
+                        <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5   ">
+                            <div className="text-gray-500 text-base font-bold ">Shipping</div>
+                            <input
+                                className="text-right text-textGrey2 text-base   border-none outline-none"
+                                placeholder='0'
+                                value={totalAmountData.shipping}
+                                onChange={handleShippingChange}
+                            />
+                        </div>
+                        <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5  ">
+                            <div className="text-gray-500 text-base font-bold ">Adjustment</div>
+                            <input
+                                className="text-right text-textGrey2 text-base   border-none outline-none"
+                                placeholder='0'
+                                value={totalAmountData.adjustment}
+                                onChange={handleAdjustmentChange}
+                            />
+                        </div>
+                        <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 rounded-b-md justify-between items-center gap-2.5    ">
+                            <div className="text-textGreen text-base font-bold ">Grand total</div>
+                            <div className="text-right text-textGreen text-base font-bold">₹ {totalAmountData.subTotal ? (grandAmt.toFixed(2)) : 0}</div>
+                        </div>
+                    </div>
 
+                    <div className="w-full mr-4 flex flex-col mt-8">
+                        <div className="w-full  p-4 bg-white rounded-tl-md rounded-tr-md border border-solid  border-borderGrey justify-between items-center gap-6 flex">
+                            <div className="text-gray-500 text-xl font-medium ">Payments</div>
+                        </div>
+                        {transactionsData && transactionsData.map((transaction, index) => (
+                            transaction.isAdvancePayment &&
+                            (<div key={index} className="w-full  px-6 py-2 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
+                                <div className="text-gray-500 text-md font-medium ">Advance Paid on  {formatDateAndTime(transaction.date).formattedDate}</div>
+                                <div className='flex items-center h-9 px-4  justify-between rounded-lg '>
+                                    <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
+                                        ₹ {transaction.amountPaid}
+                                    </div>
+                                </div>
+                            </div>)
+                        ))
+                        }
+
+                        {transactionsData && transactionsData.map((transaction, index) => (
+                            !transaction.isAdvancePayment &&
+                            (<div key={index} className="w-full  px-6 py-2 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
+                                <div className="text-gray-500 text-md font-medium ">Paid on {formatDateAndTime(transaction.date).formattedDate}</div>
+                                <div className='flex items-center h-9 px-4  justify-between rounded-lg '>
+                                    <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
+                                        ₹ {transaction.amountPaid}
+                                    </div>
+                                </div>
+                            </div>)
+                        ))
+                        }
+
+                        <div className="w-full  px-6 bg-white rounded-bl-md rounded-br-md justify-between items-center flex border border-t-0 border-solid border-borderGrey">
+                            <div className="text-gray-500 text-base font-bold  w-1/3 py-4">Balance Due</div>
+                            <div className="text-gray-500 text-lg font-medium  w-1/3 py-4 flex  items-center"></div>
+                            <div className="text-gray-500 text-base font-bold  w-1/3 py-4 ">₹{totalAmountData.subTotal ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
+                                {balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                                    You owe
+                                </span> : balanceDue === 0 ? "" : <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                                    You’re owed
+                                </span>}
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
           
         </>
 

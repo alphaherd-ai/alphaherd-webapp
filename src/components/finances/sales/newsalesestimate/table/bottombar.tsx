@@ -17,6 +17,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { generatePdfForInvoice } from "@/utils/salesPdf"
 import { AppState } from "@/lib/features/appSlice"
 import { generatePdfForInvoiceAndUpload } from "@/utils/uploadPdf"
+import Loading2 from "@/app/loading2"
 
 
 
@@ -25,14 +26,17 @@ const NewsaleEstimateBottomBar = () => {
     const { headerData, tableData, totalAmountData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
     const router = useRouter();
-
+    const [isSaving,setSaving]=useState<any>(false);
     const handleSubmit = async () => {
         if (!headerData.customer || tableData.length === 0) {
             alert('Customer is required');
             return;
         }
+        //Removing last item from table data as it is null
+        tableData.pop();
         const allData = { headerData, tableData, totalAmountData };
-        // console.log(allData)
+
+        console.log(allData)
         let totalQty = 0;
         tableData.forEach(data => {
             totalQty += (data.quantity) || 0;
@@ -51,8 +55,8 @@ const NewsaleEstimateBottomBar = () => {
     }));
         const data={
             customer: allData.headerData.customer.value.clientName ,
+            clientId:allData.headerData.customer.value.clientId,
             email:allData.headerData.customer.value.email,
-
             notes: allData.headerData.notes,
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo: allData.headerData.invoiceNo,
@@ -71,6 +75,7 @@ const NewsaleEstimateBottomBar = () => {
         }
         // console.log(JSON.stringify(data))
         try {
+            setSaving(true);
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Estimate}?branchId=${appState.currentBranchId}`, data)
             if (!response.data) {
                 throw new Error('Network response was not ok');
@@ -79,6 +84,9 @@ const NewsaleEstimateBottomBar = () => {
 
         } catch (error) {
             console.error('Error:', error);
+        }
+        finally{
+            setSaving(false);
         }
     };
     const downloadPdf = async () => {
@@ -275,12 +283,12 @@ const NewsaleEstimateBottomBar = () => {
         }
     }, [headerData]);
 
-    const isDisabled = !headerData.customer || tableData.length === 0 || tableData.some(data => !data.itemName);
+    const isDisabled = !headerData.customer || tableData.length === 1 ;
     return (
         <>
 
 
-            <div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
+            <div className="flex justify-end items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
                 {/* <div className="flex justify-between items-center gap-4 pl-4">
                     <Button className="p-2 bg-white rounded-md border border-solid  border-borderGrey  justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={printicon} alt="print"></Image>
@@ -315,11 +323,11 @@ const NewsaleEstimateBottomBar = () => {
                         <div>Save as Draft</div>
                     </Button>
                     <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
-                        }`}
-                        onClick={handleSubmit} disabled={isDisabled}>
-                        <Image src={checkicon} alt="check"></Image>
-                        <div>Save</div>
-                    </Button>
+                    }`}
+                    onClick={handleSubmit} disabled={isDisabled || isSaving}>
+                    <Image src={checkicon} alt="check"></Image>
+                    <div>{isSaving ? <Loading2/> : "Save"}</div>
+                </Button>
                 </div>
             </div>
 

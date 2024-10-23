@@ -300,30 +300,30 @@ const GeneralSettings = () => {
     //         setExpandedSpecies(speciesId); 
     //     }
     // };
-    const [species, setSpecies] = useState<any[]>([]);
+    const [species, setSpecies] = useState([]);
     const [expandedSpecies, setExpandedSpecies] = useState<number | null>(null);
-    
+
     // Fetch species data
     const { data: speciesData, error: speciesError, isLoading: isLoadingSpecies } = useSWR(
         `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`,
         fetcher,
         { revalidateOnFocus: true }
     );
-    
+
     // Fetch breed data
     const { data: breedData, error: breedError, isLoading: isLoadingBreed } = useSWR(
         `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/breed/getAll?branchId=${appState.currentBranchId}`,
         fetcher,
         { revalidateOnFocus: true }
     );
-    
+
     useEffect(() => {
         if (!isLoadingSpecies && !speciesError && speciesData && !isLoadingBreed && !breedError && breedData) {
-            const speciesWithBreeds = speciesData.map((specie: any) => ({
-                ...specie,
-                breed: breedData.filter((breed: any) => breed.speciesId === specie.id), // Map breeds to species by speciesId
-            }));
-            setSpecies(speciesWithBreeds);
+        const speciesWithBreeds = speciesData.map((specie: any) => ({
+            ...specie,
+            breed: breedData.filter((breed: any) => breed.speciesId === specie.id), 
+        }));
+        setSpecies(speciesWithBreeds);
         }
     }, [speciesData, breedData, speciesError, breedError, isLoadingSpecies, isLoadingBreed]);
 
@@ -471,35 +471,40 @@ const GeneralSettings = () => {
                                     {isLoadingSpecies && <Loading />}
                                         {species.map((item: any, index: number) => (
                                             <div key={index} className="w-full">
-                                                {/* Display species name */}
-                                                <div
+                                                {Array.isArray(item.name) &&
+                                                item.name.map((nameItem: string, nameIndex: number) => (
+                                                    <div
+                                                    key={nameIndex}
                                                     className="flex flex-col w-full box-border bg-white border border-solid border-gray-300 text-gray-400"
-                                                >
+                                                    >
                                                     <div
                                                         className="flex items-center justify-between w-full py-4 px-6 text-neutral-400 text-base font-medium cursor-pointer"
                                                         onClick={() => handleExpandSpecies(item.id)}
                                                     >
-                                                        <div className="text-gray-500">{item.name}</div> {/* Species name is a string */}
+                                                        <div className="text-gray-500">{nameItem}</div>
                                                         <div>{expandedSpecies === item.id ? "▲" : "▼"}</div>
                                                     </div>
 
+                                                    
                                                     {expandedSpecies === item.id && (
-                                                        <div className="pl-10 pr-6 py-2">
-                                                            {item.breed && Array.isArray(item.breed) && item.breed.length > 0 ? (
-                                                                item.breed.map((breedItem: any, breedIndex: number) => (
-                                                                    <div key={breedIndex} className="text-gray-500 text-sm font-medium py-1">
-                                                                        {/* Display breed name */}
-                                                                        {breedItem.name}
-                                                                    </div>
-                                                                ))
-                                                            ) : (
-                                                                <div className="text-gray-400 text-sm italic">No breeds available</div>
-                                                            )}
-                                                        </div>
-                                                    )}
-                                                </div>
+                                                    <div className="pl-10 pr-6 py-2">
+                                                        {item.breed && Array.isArray(item.breed) && item.breed.length > 0 ? (
+                                                            item.breed.map((breedItem: any, breedIndex: number) => (
+                                                                <div key={breedIndex} className="text-gray-500 text-sm font-medium py-1">
+                                                                    {/* Display breed name (joined if multiple) */}
+                                                                    {Array.isArray(breedItem.name) ? breedItem.name.join(", ") : breedItem.name}
+                                                                </div>
+                                                            ))
+                                                        ) : (
+                                                            <div className="text-gray-400 text-sm italic">No breeds available</div>
+                                                        )}
+                                                    </div>
+                                                )}
+                                                    </div>
+                                                ))}
                                             </div>
-                                        ))}
+                                        ))
+                                    }
                                     </div>  
                                 </div>
                             </div>

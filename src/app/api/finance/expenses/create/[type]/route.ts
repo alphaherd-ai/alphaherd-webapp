@@ -42,7 +42,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
         },
       },
     });
-    // console.log(expense)
+    console.log(expense)
     if(expense.type==FinanceCreationType.Expense_Recurring){
       const nextDate = calculateNextOccurrence(expense.recurringStartedOn!, expense.recurringRepeatType!);
       if (nextDate <= new Date(expense.recurringEndson!)) {

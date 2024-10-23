@@ -7,6 +7,8 @@ import { Tooltip, Button } from "@nextui-org/react";
 import { useAppSelector } from '@/lib/hooks';
 import useSWR from 'swr';
 import Loading from '@/app/loading';
+import InventoryServicesTableBottombar from './bottombar'
+
 
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
@@ -43,12 +45,22 @@ const ServicesAllItem = () => {
     }
   }, [data]);
 
-  if (error) return <div>Error fetching services: {error.message}</div>;
-  if (isLoading) return (<Loading />);
+  // if (error) return <div>Error fetching services: {error.message}</div>;
+  // if (isLoading) return (<Loading />);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productsPerPage] = useState(50); 
+  const paginate = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentServices = services.slice(indexOfFirstProduct, indexOfLastProduct);
 
   return (
     <>
-    {services.map(service => (
+    {currentServices.map(service => (
     <div key={service.id} className='flex  w-full  box-border h-16 py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  hover:bg-gray-200 hover:text-gray-500 transition'>
       <div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>
           <Link href={{pathname:'overview',query:{id:`${service.id}`}}}className='transition-colors duration-300 text-gray-400 no-underline hover:underline hover:text-teal-400 ' >
@@ -77,6 +89,11 @@ const ServicesAllItem = () => {
     </div>
 
   ))}
+   <InventoryServicesTableBottombar
+        productsPerPage={productsPerPage}
+        totalProducts={services.length}
+        paginate={paginate}
+      />
   </>
   );
 }

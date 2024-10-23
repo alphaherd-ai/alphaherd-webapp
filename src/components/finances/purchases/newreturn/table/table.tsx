@@ -252,6 +252,14 @@ const handleAddItem= useCallback(() => {
 const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
     // console.log(selectedProduct);
     if (selectedProduct.value) {
+        if (index === items.length - 1) {
+            items.push({
+                productId: null,
+                serviceId: null,
+                itemName: "",
+            });
+            setItems(items);
+        }
       try {
         const data = products.find((product) => product.value.id === selectedProduct.value.id);
         setSelectedProduct(data);
@@ -319,6 +327,20 @@ useEffect(() => {
         setTableData(items);  
     }
 }, [id, items]);
+
+useEffect(() => {
+    items.push({
+        productId: null,
+        itemName: "",
+    });
+    setItems(items);
+}, [])
+
+useEffect(() => {
+    if (tableData.length === 0) {
+        setSelectedProduct(undefined);
+    }
+}, [tableData])
 
 
 const customStyles = {
@@ -421,14 +443,14 @@ const customStyles = {
                                     </div>
                                     <div className="text-textGrey2 text-base font-bold ">Price Range</div>
                                 </div> */}
-                                <Button onClick={handleAddItem} className='cursor-pointer text-white flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-md border-0 outline-none'>
+                                {/* <Button onClick={handleAddItem} className='cursor-pointer text-white flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-md border-0 outline-none'>
                                     <div className='w-4 h-4 mb-3 mr-2'>
                                         <Image src={addicon} alt='addicon' />
                                     </div>
                                    
                                         Add Item
                                     
-                                </Button>
+                                </Button> */}
                             </div>
                         </div>
                         <div>
@@ -444,7 +466,7 @@ const customStyles = {
                                 <div className='flex text-gray-500 text-base font-medium w-[10rem]'>Tax %</div>
                                 <div className='flex text-gray-500 text-base font-medium  w-[10rem]'>Tax Amt.</div>
                                 <div className='flex text-gray-500 text-base font-medium w-1/12'>Total</div>
-                                <div className='flex text-gray-500 text-base font-medium w-1/12 '></div>
+                                
                             </div>
                             {items.map((item:any,index:number) => (
                                 <div key={index+1} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400 py-2'>
@@ -532,7 +554,7 @@ const customStyles = {
                                     </div>
                                 <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium'>{`₹${((item?.sellingPrice*item?.quantity * item?.gst)||0).toFixed(2)}`}</div>
                                     <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium'>{`₹${((item?.quantity * item?.sellingPrice +item?.sellingPrice*item.quantity*item.gst)||0).toFixed(2)}`}</div>
-                                    <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[12px]'>
+                                    {/* <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[12px]'>
                                         <button className="border-0 bg-transparent cursor-pointer gap-[20px] justify-end">
                                             <Image className='w-5 h-5' src={sellicon} alt="sell" ></Image>
                                         </button>
@@ -540,7 +562,7 @@ const customStyles = {
                                         <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
                                             <Image className='w-5 h-5' src={delicon} alt="delete" ></Image>
                                         </button>
-                                    </div>
+                                    </div> */}
                                 </div>
                             ))}
                             <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12 border-b border-textGrey2 text-gray-500 rounded-b-md'>
@@ -548,7 +570,7 @@ const customStyles = {
                                 <div className='flex text-gray-500 text-base font-bold w-[15rem]'>Total</div>
                                 <div className='flex text-gray-500 text-base font-bold w-[10rem]'></div>
                                 <div className='flex text-gray-500 text-base font-bold w-[10rem]'></div>
-                                <div className='flex text-gray-500 text-base font-bold w-[10rem]'>{(items.reduce((acc:any, item:any) => acc + item.quantity, 0))||0} Items</div>
+                                <div className='flex text-gray-500 text-base font-bold w-[10rem]'>{(items.reduce((acc:any, item:any) => {if(!item.itemName) return acc ; return acc + item.quantity}, 0))||0} Items</div>
                                 
                                 <div className='flex text-gray-500 text-base font-bold w-[10rem]'>
                                         {/* <Select
@@ -565,9 +587,9 @@ const customStyles = {
                                             }}
                                         /> */}
                                 </div>
-                                <div className='flex text-gray-500 text-base font-bold w-[10rem]'>{`₹${(items.reduce((acc:any, item:any) => acc + item.quantity * item.gst*item.sellingPrice , 0)||0).toFixed(2)}`}</div>
-                                <div className='flex text-gray-500 text-base font-bold w-1/12' >{`₹${(items.reduce((acc:any, item:any) => acc + item.quantity * item.sellingPrice +item.quantity*item.gst*item.sellingPrice, 0)||0).toFixed(2)}`}</div>
-                                <div className='flex text-gray-500 text-base font-bold w-1/12'></div>
+                                <div className='flex text-gray-500 text-base font-bold w-[10rem]'>{`₹${(items.reduce((acc:any, item:any) => {if(!item.itemName) return acc;return acc + item.quantity * item.gst*item.sellingPrice} , 0)||0).toFixed(2)}`}</div>
+                                <div className='flex text-gray-500 text-base font-bold w-1/12' >{`₹${(items.reduce((acc:any, item:any) => {if(!item.itemName) return acc;return acc + item.quantity * item.sellingPrice +item.quantity*item.gst*item.sellingPrice}, 0)||0).toFixed(2)}`}</div>
+
                             </div>
                         </div>
                     </div>

@@ -50,7 +50,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
         {value: "Net Banking", label: "Net Banking"},
     ]
 
-    const [selectedMode, setSelectedMode] = useState([]);
+    const [selectedMode, setSelectedMode] = useState('');
     const [modeOptions, setModeOptions] = useState<any>([]);
 
     const {data:modes,error:modesError,isLoading:modesLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
@@ -124,7 +124,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
            
         }
 
-        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10) || balanceDue, mode: selectedMode, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10) || balanceDue, mode: selectedMode, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out', date: formData.date || new Date()}))
 
         const newTransaction = {
             amountPaid: parseInt(formData.amountPaid, 10) || balanceDue,
@@ -216,21 +216,21 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
       };
 
     
-
-
+      const isDisabled=!selectedMode;
+      console.log(isDisabled);
 
   return (
-    <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
-        <div className="w-[640px] py-2 pb-8  px-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
-            <div className="self-end items-start gap-6 flex mt-[0.6rem] cursor-pointer" onClick={onClose}>
+    <div className="w-1/2 h-full flex rounded-[20px] bg-white  items-center backdrop-blur-sm">
+        <div className="w-[640px] py-2 pb-8  px-8 bg-white rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
+            {/* <div className="self-end items-start gap-6 flex mt-[0.6rem] cursor-pointer" onClick={onClose}>
                 <Image src={closeicon} alt="close"></Image>
-            </div>
+            </div> */}
             <div className='w-full flex flex-col gap-1'>
 
-                <div className="text-gray-500 text-xl font-medium ">Record Payment</div>
-                <div className="text-neutral-400 text-base font-medium ">Note down the details of the transaction</div>
+                <div className="text-gray-500 text-xl font-medium pt-4">Record Payment</div>
+               
             </div>
-            <div className='w-full flex gap-36'>
+            <div className='w-full flex gap-8'>
                 <div className='flex gap-1'>
                     <div onClick={() => handleToggleRadioButton('Money In')}>
                             {transactionType !== 'Money In' ? (
@@ -263,7 +263,17 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
             </div>
             <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Party Name</span></div>
-                    <div><div className="w-[440px] h-9 rounded-[5px] text-textGrey2 bg-white text-base font-medium p-2  outline-none border border-solid border-gray-300 ">{headerdata?.customer}</div></div>
+                    <div>
+                    <div className="w-[440px] flex items-center h-9 rounded-[5px] text-textGrey2 bg-white text-base font-medium px-2 py-6  outline-none border border-solid border-gray-300 ">{headerdata ? headerdata?.customer : ""}
+                            <div >
+                            {balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                                You owe ₹{formData.amountPaid ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) :0}
+                            </span> : balanceDue === 0 ? "" : <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                                You’re owed ₹{formData.amountPaid ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) :0}
+                            </span>}
+                            </div>
+                        </div>
+                    </div>
                
             </div>
             
@@ -275,7 +285,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
                         className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2 outline-none border border-solid border-gray-300 focus:border-teal-500"
                         type="number"
                         name="amountPaid"
-                        value={formData.amountPaid}
+                        value={formData.amountPaid > 0 ? formData.amountPaid    : -1*formData.amountPaid}
                         onChange={(e) => handleChange("amountPaid", e.target.value)}
                     />
                     </div>
@@ -349,9 +359,11 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata,initi
                     <input type="checkbox" name="" id=""  />
                     <span className='text-textGrey2 text-base font-medium'>Mark as advance payment</span>
                 </div>
-                    <Button className="px-2 py-2.5 bg-navBar rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer"  onClick={handleSaveClick}>
+                <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${
+                        isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
+                    }`} onClick={handleSaveClick} disabled={isDisabled || isSaving}>
                         <Image src={check} alt='check' /> 
-                        <span className='text-white text-base font-medium pr-2'>{isSaving ? "Saving..." : "Save Payment"}</span>
+                        <span className='text-white text-base font-medium pr-2'>{isSaving ? <Loading2/>: "Save Payment"}</span>
                     </Button>
             </div>
             

@@ -19,7 +19,11 @@ export const GET = async (req: NextRequest) => {
         sale: true,
         expenses:true,
         purchases:true
+
       },
+      orderBy:{
+        createdAt: 'desc',
+      }
     });
 
     return new Response(JSON.stringify(financeTimeline), {
