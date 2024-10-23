@@ -173,9 +173,9 @@ const Navbar = () => {
     <div className='h-16 shadow-md min-w-screen box-border flex items-center justify-between text-textGrey1 bg-navBar z-100'>
         
       <div className='flex flex-row'>
-      <div className='no-underline py-5 px-5 border-0 border-r-2 border-solid border-gray-800' >
+      <div className='no-underline py-4 px-3 border-0 border-r-2 border-solid border-gray-800' >
             <Button onClick={toggleDrawer(true)} className='bg-greenButton w-[2rem] rounded-full'>
-              <Image src={addIcon} alt='addIcon' className='w-3 h-3' />
+              <Image src={addIcon} alt='addIcon' className='w-4 h-4' />
             </Button>
             <Drawer open={open} onClose={toggleDrawer(false)}>
               {DrawerList}
