@@ -123,15 +123,15 @@ const ProductAllItem = () => {
       {currentProducts?.map(inventory => (
       
         <div key={inventory.id} className='flex  w-full  box-border h-16 justify-evenly items-center bg-white   border-0 border-b border-solid border-borderGrey  hover:bg-gray-200 text-textGrey1  hover:text-textGrey2  transition'>
-          <div className='w-1/12 flex items-center px-4 text-neutral-400 text-base font-medium'>{formatDateAndTime(inventory.createdAt).formattedDate}</div>
-          <div className='w-1/12 flex items-center px-6 text-neutral-400 text-base font-medium'>{formatDateAndTime(inventory.createdAt).formattedTime}</div>
-          <div className='w-2/12 flex items-center px-6 text-neutral-400 text-base font-medium'>
+          <div className='w-[6rem] flex items-center  text-neutral-400 text-base font-medium'>{formatDateAndTime(inventory.createdAt).formattedDate}</div>
+          <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>{formatDateAndTime(inventory.createdAt).formattedTime}</div>
+          <div className='w-[12rem] flex items-center text-neutral-400 text-base font-medium'>
             <Link href={{pathname:'overview',query:{id:`${inventory.productBatch?.id}`}}} className='transition-colors duration-300 text-gray-400 no-underline hover:underline hover:text-teal-400'>
               {inventory.productBatch?.product?.itemName}
             </Link>
           </div>
-          <div className='w-1/12 flex items-center px-6 text-neutral-400 text-base font-medium'>{inventory.quantityChange}</div>
-          <div className='w-1/12 flex items-center justify-center px-6 text-neutral-400 text-base font-medium text-green-500'>
+          <div className='w-[5rem] flex items-center text-neutral-400 text-base font-medium'>{inventory.quantityChange}</div>
+          <div className='w-[3rem] flex items-center justify-center text-neutral-400 text-base font-medium text-green-500'>
             {/* <span className='bg-green-100 px-1'>
               <Tooltip content="message" className='bg-black  text-white p-1 px-3 text-xs rounded-lg'>
                 <Button className='bg-transparent border-none'>{inventory.stockChange}</Button>
@@ -151,13 +151,13 @@ const ProductAllItem = () => {
                 </Tooltip>
               </span>
           </div>
-          <div className='w-1/12 flex  items-center  px-8 text-neutral-400 text-base font-medium flex-col'>
+          <div className='w-[8rem] flex  items-center  text-neutral-400 text-base font-medium flex-col'>
             <div className='text-gray-500 text-xs'>{inventory.productBatch?.batchNumber}</div>
             <div className='text-neutral-400 text-[13px] font-medium'>{formatDateAndTime(inventory.productBatch?.expiry).formattedDate}</div>
           </div>
-          <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{inventory.productBatch?.product.providers[0]}</div>
-          <div className='w-fit px-1 flex  items-center justify-center text-gray-500 text-[0.65rem] font-medium  py-1.5 bg-gray-200 rounded-md'>{inventory.invoiceType}</div>
-          <div className='w-2/12 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{inventory.invoiceNo}</div>
+          <div className='w-[12rem] flex  items-center  text-neutral-400 text-base font-medium'>{inventory.productBatch?.product.providers[0]}</div>
+          <div className='w-[8rem] px-1 flex  items-center justify-center text-gray-500 text-[0.65rem] font-medium  py-1.5 bg-gray-200 rounded-md'>{inventory.invoiceType}</div>
+          <div className='w-[8rem] flex  items-center  text-neutral-400 text-base font-medium pl-2'>{inventory.invoiceNo}</div>
         </div>
       ))}
        {/* Pagination controls */}
