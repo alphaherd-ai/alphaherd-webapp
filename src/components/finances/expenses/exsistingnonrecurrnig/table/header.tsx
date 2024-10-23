@@ -4,8 +4,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import editicon from "../../../../../assets/icons/finance/1. Icons-25.svg"
 import Loading2 from '@/app/loading2';
 
-const ExsistingNonRecurringHeader = ({otherData, isLoading}:any) => {
-  
+const ExsistingNonRecurringHeader = ({ otherData, isLoading }: any) => {
+
 
 
     const [startDate, setStartDate] = useState(new Date());
@@ -13,7 +13,7 @@ const ExsistingNonRecurringHeader = ({otherData, isLoading}:any) => {
     const [isSearchable, setIsSearchable] = useState(true);
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
-   
+
     useEffect(() => {
         if (!disableButton && inputRef.current) {
             inputRef.current.focus();
@@ -21,7 +21,7 @@ const ExsistingNonRecurringHeader = ({otherData, isLoading}:any) => {
     }, [disableButton]);
 
 
-    const handleDateChange = (date:any) => {
+    const handleDateChange = (date: any) => {
         setStartDate(date);
         // setHeaderData((prevData) => ({ ...prevData, date }));
     };
@@ -43,15 +43,15 @@ const ExsistingNonRecurringHeader = ({otherData, isLoading}:any) => {
 
 
 
-  return (
-    <>
+    return (
+        <>
 
 
-<div className="flex justify-between w-full pb-[16px]">
+            <div className="flex justify-between w-full pb-[16px]">
                 <div className="px-6  bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold ">Customer:</div>
-                        <div className={`text-textGrey2 text-base font-medium  border-0 bg-inherit`}>{!isLoading ? otherData.party : <Loading2/>}</div>
+                        <div className={`text-textGrey2 text-base font-medium  border-0 bg-inherit`}>{!isLoading ? otherData.party : <Loading2 />}</div>
                     </div>
                 </div>
                 <div className="px-6 py-1  bg-white rounded-[10px] justify-start items-center flex w-full ">
@@ -69,10 +69,10 @@ const ExsistingNonRecurringHeader = ({otherData, isLoading}:any) => {
                                 onClick={handleEditButtonClick} className="border-0"
                             >
                                 {/* <Image src={editicon} alt="edit" ></Image> */}
-                            {/* </button> */} 
+                            {/* </button> */}
                             <div
                                 className={`text-textGrey2 text-base font-medium  border-0 bg-inherit`}
-                                > {!isLoading ? otherData.invoiceNo : <Loading2 />} </div>
+                            > {!isLoading ? otherData.invoiceNo : <Loading2 />} </div>
                         </div>
                     </div>
                 </div>
@@ -129,7 +129,7 @@ const ExsistingNonRecurringHeader = ({otherData, isLoading}:any) => {
                             )}
                         /> */}
                         <div className={"text-textGrey2 text-base font-medium  w-full"}>
-                             {!isLoading ? formatDateAndTime(otherData.dueDate).formattedDate : <Loading2 />}
+                            {!isLoading ? formatDateAndTime(otherData.dueDate).formattedDate : <Loading2 />}
                         </div>
 
 
@@ -141,8 +141,8 @@ const ExsistingNonRecurringHeader = ({otherData, isLoading}:any) => {
                 <div className="px-6 py-1  bg-white rounded-[10px] justify-between items-center gap-4 flex w-full ">
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold py-3">Notes:</div>
-                        <div className='w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0 outline-none'>{!isLoading ? otherData.notes : <Loading2 />}</div>              
-                        </div>
+                        <div className='w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0 outline-none'>{!isLoading ? otherData.notes : <Loading2 />}</div>
+                    </div>
                 </div>
             </div>
             {/* <div className="flex justify-between w-full pb-[16px]">
@@ -162,7 +162,7 @@ const ExsistingNonRecurringHeader = ({otherData, isLoading}:any) => {
 
 
         </>
-  )
+    )
 }
 
 export default ExsistingNonRecurringHeader

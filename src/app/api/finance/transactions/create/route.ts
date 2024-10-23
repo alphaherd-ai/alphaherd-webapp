@@ -14,14 +14,14 @@ export const POST=async(req: NextRequest, { params }: { params: { type: string }
 
 
       // console.log("here")
-        // console.log(body)
+        
         
         const transactions = await prismaClient.transactions.create({
           data: {
             ...body,
             FinanceSection: {
               connect: { id: financeId },
-            },
+            }
           },
         });
         return new Response(JSON.stringify( transactions ), {

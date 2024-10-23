@@ -1,19 +1,20 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from 'react';
-import { Tooltip, Button } from "@nextui-org/react";
+import React, { useEffect, useState } from 'react';
+import { Tooltip, Button, toggle } from "@nextui-org/react";
 import Link from 'next/link';
 import closeicon from "../../../assets/icons/inventory/closeIcon.svg";
 import arrowicon from "../../../assets/icons/inventory/arrow.svg";
 import Paws from "../../../assets/icons/database/1. Icons-24 (12).svg"
 import Check from "../../../assets/icons/database/check.svg"
-import { z, ZodError,ZodType } from "zod"
+import { z, ZodError, ZodType } from "zod"
 import Select from 'react-select';
 import PatientPopup from '../patient/newpatientpopup'
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 import { useAppSelector } from '@/lib/hooks';
 import { Bounce, ToastContainer, toast } from 'react-toastify';
 import capitalizeFirst from "@/utils/capitiliseFirst";
+import Loading2 from "@/app/loading2";
 type PopupProps = {
     onClose: () => void;
 }
@@ -29,107 +30,124 @@ type PopupProps = {
 
 
 
-const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
+const ClientPopup: React.FC<PopupProps> = ({ onClose }: any) => {
     const [formData, setFormData] = useState<any>({});
     const [showPopup, setShowPopup] = React.useState(false);
     const appState = useAppSelector((state) => state.app)
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [isSaveDisabled, setIsSaveDisabled] = useState(true);
+    const [savingData, setSavingData] = useState(false);
+    const [isClientSaved,setClientStatus]=useState<any>(false);
+    let addAnotherPatient=false;
     const togglePopup = () => {
         setShowPopup(!showPopup);
     }
 
     const customStyles = {
         control: (provided: any, state: any) => ({
-          ...provided,
-          width: '100%',
-          maxWidth: '100%',
-          border: state.isFocused ? '1px solid #35BEB1' : 'none',
-          '&:hover': {
-            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
+            border: state.isFocused ? '1px solid #35BEB1' : 'none',
+            '&:hover': {
+                borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4',
             },
-          boxShadow: state.isFocused ? 'none' : 'none',
+            boxShadow: state.isFocused ? 'none' : 'none',
         }),
         valueContainer: (provided: any) => ({
-          ...provided,
-          width: '100%',
-          maxWidth: '100%',
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
         }),
         singleValue: (provided: any, state: any) => ({
-          ...provided,
-          width: '100%',
-          maxWidth: '100%',
-          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
+            color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
         }),
         menu: (provided: any) => ({
-          ...provided,
-          backgroundColor: 'white',
-          width: '100%',
-          maxWidth: '100%',
+            ...provided,
+            backgroundColor: 'white',
+            width: '100%',
+            maxWidth: '100%',
         }),
         option: (provided: any, state: any) => ({
-          ...provided,
-          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
-          color: state.isFocused ? 'white' : '#6B7E7D',
-          '&:hover': {
-            backgroundColor: '#35BEB1',
-            color: 'white',
-          },
+            ...provided,
+            backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+            color: state.isFocused ? 'white' : '#6B7E7D',
+            '&:hover': {
+                backgroundColor: '#35BEB1',
+                color: 'white',
+            },
         }),
-      };
+    };
 
     const handleSaveClick = async () => {
         // console.log("Save button");
+        console.log(addAnotherPatient);
         try {
-            
-        //   clientSchema.parse(formData);
-        //   console.log("Form data is valid:", formData);
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/create?branchId=${appState.currentBranchId}`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              clientName: formData.clientName,
-              email: formData.email,
-              contact: formData.contact,
-              address: formData.address,
-              city: formData.city ? formData.city[0].value : undefined,
-              pinCode: formData.pinCode,
-            }),
-          });
-          if (response.ok) {
-                // console.log('Data saved successfully');
-                onClose();
+            setIsSaveDisabled(true);
+            setSavingData(true);
+
+            //   clientSchema.parse(formData);
+            console.log("Form data is valid:", formData);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/create?branchId=${appState.currentBranchId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    clientName: formData.clientName,
+                    email: formData.email,
+                    contact: formData.contact,
+                    address: formData.address,
+                    city: formData.city ? formData.city[0].value : undefined,
+                    pinCode: formData.pinCode,
+                }),
+            });
+            if (response.ok) {
+                
+                console.log('Data saved successfully');
+                if(!addAnotherPatient){ onClose(); addAnotherPatient = false;}
+                else{
+                    togglePopup();
+                    addAnotherPatient=false;
+                }
+                
                 window.dispatchEvent(new FocusEvent('focus'));
             } else {
                 console.error('Failed to save data', response.statusText);
             }
-        } 
+            setClientStatus(true);
+        }
         catch (error) {
             console.error('Error while saving data:', error);
         }
+        finally {
+            
+            setSavingData(false);
+        }
     };
-      
-    
+
+
     const handleChange = (field: string, value: any) => {
         setFormData((prevFormData: any) => {
             const updatedFormData = { ...prevFormData, [field]: value };
-    
+
             // Validate fields to enable or disable the Save button
             const isFormValid =
                 updatedFormData.clientName !== '' &&
                 updatedFormData.contact &&
-                updatedFormData.contact.length === 10&&
+                updatedFormData.contact.length === 10 &&
                 /^[0-9]+$/.test(updatedFormData.contact);
-    
+
             setIsSaveDisabled(!isFormValid);
-    
+
             return updatedFormData;
         });
 
         // Optional: Handle errors for specific fields
-        if (field === 'contact' ) {
+        if (field === 'contact') {
             if (value.length > 10) {
                 setErrors((prevErrors) => ({
                     ...prevErrors,
@@ -164,20 +182,28 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
     ];
 
     const City = [
-            {value:'Bangalore', label:'Bangalore'},
-            { value: 'Delhi', label: 'Delhi' },
-            { value: 'Noida', label: 'Noida' },
-            {value:'Gurgaon', label:'Gurgaon'},
-            {value:'Faridabad', label:'Faridabad'},
-            { value: 'Mumbai', label: 'Mumbai' },
-            {value:'Chennai', label:'Chennai'},
-            
+        { value: 'Bangalore', label: 'Bangalore' },
+        { value: 'Delhi', label: 'Delhi' },
+        { value: 'Noida', label: 'Noida' },
+        { value: 'Gurgaon', label: 'Gurgaon' },
+        { value: 'Faridabad', label: 'Faridabad' },
+        { value: 'Mumbai', label: 'Mumbai' },
+        { value: 'Chennai', label: 'Chennai' },
+
     ]
 
+    const handleNewPatientPopUp=()=>{
+        addAnotherPatient=true
+        if(!isClientSaved) handleSaveClick();
+        else togglePopup();
+    }
+
+    
+
     return <>
-        
-       <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0  inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
-            <div className="w-[640px] h-[575px]  px-8 py-4 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
+
+        <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0  inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50" onClick={onClose}>
+            <div className="w-[640px] h-[575px]  px-8 py-4 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex" onClick={(e) => e.stopPropagation()}>
                 <div className="self-end items-start gap-6 flex">
                     <button className="border-0 outline-none cursor-pointer" onClick={onClose}>
                         <Image src={closeicon} alt="close"></Image>
@@ -192,14 +218,14 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                         onChange={(e) => {
                             const value = e.target.value;
                             e.target.value = value.charAt(0).toUpperCase() + value.slice(1);
-        handleChange("clientName", e.target.value);
-                        }} required/>
+                            handleChange("clientName", e.target.value);
+                        }} required />
                         {errors.clientName && (
                             <div className="text-[red] error">{errors.clientName}</div>
                         )}
-                        </div>
+                    </div>
                 </div>
-              
+
                 <div className="flex items-center gap-[88px]">
                     <div className="text-gray-500 text-base font-medium ">Email</div>
                     <div>
@@ -207,81 +233,81 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                         {errors.email && (
                             <div className="text-red-500 text-sm mt-1">{errors.email}</div>
                         )}
-                        </div>
-                    
+                    </div>
+
                 </div>
                 <div className="flex items-center gap-[33px] w-full">
                     <div className="text-gray-500 text-base font-medium  w-2/12">Phone No.<span className="text-[red]">*</span></div>
                     <div className="flex w-10/12">
-                    <div className="flex-1 ml-1">
-                        <input className="h-9 w-full text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="contact" onChange={(e) => handleChange("contact", e.target.value)} required/>
-                        {errors.contact && (
-                            <div className="text-[red] error">{errors.contact}</div>
-                        )}
-                    </div>
+                        <div className="flex-1 ml-1">
+                            <input className="h-9 w-full text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="contact" onChange={(e) => handleChange("contact", e.target.value)} required />
+                            {errors.contact && (
+                                <div className="text-[red] error">{errors.contact}</div>
+                            )}
+                        </div>
                     </div>
                 </div>
                 <div className="flex items-center gap-[33px] w-full">
                     <div className="text-gray-500 text-base font-medium  w-2/12">Address</div>
                     <div className="flex w-10/12">
-                  
-                    <div className="flex-1 ml-1">
-                        <input className="w-full h-9 text-textGrey2 text-base font-medium   focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" placeholder="  Enter address or Google Maps link" type="text" name="address" onChange={(e) => handleChange("address", e.target.value)} />
-                        
-                    </div>
-                    {/* <div className=" ml-1  w-9 h-9 ">
+
+                        <div className="flex-1 ml-1">
+                            <input className="w-full h-9 text-textGrey2 text-base font-medium   focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" placeholder="  Enter address or Google Maps link" type="text" name="address" onChange={(e) => handleChange("address", e.target.value)} />
+
+                        </div>
+                        {/* <div className=" ml-1  w-9 h-9 ">
                     <button  className="w-full h-full rounded-[5px] justify-center text-2xl items-center gap-2 flex border-borderText border border-solid bg-white outline-none">
                         <div className="text-textGrey2 text-lg">+</div>
                     </button>
                     </div> */}
                     </div>
                 </div>
-            <div className="flex  w-full gap-[65px] justify-between">
+                <div className="flex  w-full gap-[65px] justify-between">
 
-                
-                <div className="flex items-center gap-[99px] ">
-                    <div className="text-gray-500 text-base font-medium  w-2/12">City</div>
-                    <div className="flex w-10/12 h-11">
-             
-                        <Select
-                            className="text-textGrey2 w-[10rem] text-base font-medium "
-                            placeholder=""
-                            isClearable={true}
-                            isSearchable={true}
-                            options={City}
-                            isMulti={false}
-                            name="city"
-                            onChange={(value) => handleChange("city", value?.label)}
-                            styles={customStyles}
-                        />
-         
-              
-                 
-            
+
+                    <div className="flex items-center gap-[99px] ">
+                        <div className="text-gray-500 text-base font-medium  w-2/12">City</div>
+                        <div className="flex w-10/12 h-11">
+
+                            <Select
+                                className="text-textGrey2 w-[10rem] text-base font-medium "
+                                placeholder=""
+                                isClearable={true}
+                                isSearchable={true}
+                                options={City}
+                                isMulti={false}
+                                name="city"
+                                onChange={(value) => handleChange("city", value?.label)}
+                                styles={customStyles}
+                            />
+
+
+
+
+                        </div>
+                    </div>
+                    <div className="flex items-center ">
+                        <div className="text-gray-500 text-base font-medium ">Pin Code</div>
+                        <div className="flex  h-9">
+
+
+                            <input className=" w-[8rem] ml-[25px] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="pinCode" onChange={(e) => handleChange("pinCode", e.target.value)} />
+
+
+                        </div>
                     </div>
                 </div>
-                <div className="flex items-center ">
-                    <div className="text-gray-500 text-base font-medium ">Pin Code</div>
-                    <div className="flex  h-9">
-           
-                   
-                        <input className=" w-[8rem] ml-[25px] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="pinCode" onChange={(e) => handleChange("pinCode", e.target.value)} />
-            
-                   
-                    </div>
-                </div>
-            </div>
-            
+
                 <div className="self-end items-start gap-6 flex">
-                
+
                     {/* <button className="px-4 py-2.5 bg-greenButton border-none rounded-[5px] justify-start items-center gap-2 flex"onClick={togglePopup}>
                         <div className="text-white text-base font-bold ">Add Patient</div>
                     </button> */}
-                    <div className=" h-11 px-4 py-2.5 bg-teal-400 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer" onClick={togglePopup}>
+                    <div  className=" h-11 px-4 py-2.5 bg-teal-400 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer" onClick={handleNewPatientPopUp}>
                         <div className="w-6 h-7"> <Image src={Paws} alt='Paws' className='w-6 h-6 ' /></div>
                         <div className="text-gray-100 text-base font-medium ">Add Patient</div>
                     </div>
-                   
+
                     {/* <button className="px-4 py-2 bg-black rounded-[5px] justify-start items-center gap-2 flex" onClick={handleSaveClick}>
                         <div className="text-white border-none text-base font-bold ">Save</div>
                     </button>  */}
@@ -297,27 +323,26 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                         <Image src={arrowicon} alt="arrow"></Image>
                     </button>)} */}
                     <div
-                      className={`h-11 px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer ${
-                          isSaveDisabled ? 'bg-[#17181A] cursor-not-allowed' : 'bg-zinc-900'
-                      }`}
-                      onClick={isSaveDisabled ? undefined : handleSaveClick}
-                  >
-                      {!isSaveDisabled && (
-                          <div className="w-6 h-6 relative">
-                              <div className="w-6 h-6 left-0 top-0 absolute">
-                                  <Image src={Check} alt="Check" />
-                              </div>
-                          </div>
-                      )}
-                      <div className="text-gray-100 text-base font-bold">Save</div>
-                  </div>
+                        className={`h-11 px-4 py-2.5 rounded-[5px]  justify-start items-center gap-2 flex  ${isSaveDisabled  ? 'bg-gray-400 cursor-not-allowed' : 'bg-zinc-900 cursor-pointer'
+                            }`}
+                        onClick={isSaveDisabled || isClientSaved ? undefined : handleSaveClick}
+                    >
+                        {!isSaveDisabled && (
+                            <div className="w-6 h-6 relative">
+                                <div className="w-6 h-6 left-0 top-0 absolute">
+                                    <Image src={Check} alt="Check" />
+                                </div>
+                            </div>
+                        )}
+                        <div className="text-gray-100 text-base font-bold">{savingData  ? <Loading2 /> : "Save"}</div>
+                    </div>
                 </div>
             </div>
         </div>
-      
+
         {showPopup && <PatientPopup onClose={togglePopup} clientData={formData} />}
     </>;
-    
+
 }
 
 export default ClientPopup;

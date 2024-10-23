@@ -1,15 +1,23 @@
 import React from 'react'
 import {useSelector} from 'react-redux'
-const TransactionsBlanceSheetCashItemSales = ({mode}:any) => {
+const TransactionsBlanceSheetItemPurchases = ({mode,filterdate}:any) => {
 
   const transactionAmount = useSelector((state:any) => state.transactionAmount)
-  // console.log(transactionAmount)
+  console.log(transactionAmount)
+  const isodate = new Date(filterdate);
+  
+  const filteredTransactionAmount = transactionAmount.filter((item: { date: any })=>{
+    const date=new Date(item.date);
+    return date.getFullYear() === isodate.getFullYear() && date.getMonth() === isodate.getMonth() && date.getDate() === isodate.getDate()
+  })
 
-  const totalMoneyIn = transactionAmount
-    .filter((transaction:any) => transaction.mode === mode && transaction.invoiceLink?.startsWith('S'))
+  console.log(filteredTransactionAmount);
+  
+  const totalMoneyIn = filteredTransactionAmount
+    .filter((transaction:any) => transaction.mode === mode && transaction.invoiceLink?.startsWith('P'))
     .reduce((a:any, b:any) => (b.moneyChange === "In" ? a + b.amountPaid : a), 0);
-  const totalMoneyOut = transactionAmount
-    .filter((transaction:any) => transaction.mode === mode && transaction.invoiceLink?.startsWith('S'))
+  const totalMoneyOut = filteredTransactionAmount
+    .filter((transaction:any) => transaction.mode === mode && transaction.invoiceLink?.startsWith('P'))
     .reduce((a:any, b:any) => (b.moneyChange === "Out" ? a + b.amountPaid : a), 0);
 
     
@@ -48,4 +56,4 @@ const TransactionsBlanceSheetCashItemSales = ({mode}:any) => {
   )
 }
 
-export default TransactionsBlanceSheetCashItemSales
+export default TransactionsBlanceSheetItemPurchases;

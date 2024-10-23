@@ -70,8 +70,8 @@ const InventoryNavbar = () => {
           ...provided,
           height: '2.8rem', 
           minHeight: '2.8rem' ,
-          width: '22rem',
-          maxWidth: '22rem', 
+          width: '30rem',
+          maxWidth: '25rem', 
           borderColor: state.isFocused ? '#35BEB1' : '#C4C4C4', 
             '&:hover': {
             borderColor: state.isFocused ? '#35BEB1' : '#C4C4C4', 
@@ -186,7 +186,7 @@ const InventoryNavbar = () => {
                 <div className='flex h-full items-center'>
                     <div className="relative h-full w-full items-center z-[1]">
                         <Select
-                            className="text-gray-500 text-base font-medium  w-[100%]  border-0 boxShadow-0"
+                            className="text-gray-500 text-base font-medium border-0 boxShadow-0"
                             classNamePrefix="select"
                             isClearable={true}
                             isSearchable={true}
@@ -197,6 +197,12 @@ const InventoryNavbar = () => {
                         />
                         
                     </div>
+
+                  
+                    {/* <Link className='no-underline h-full  ml-4' href='/finance/overview'>
+                        <div className='flex items-center border border-solid border-gray-300 bg-white rounded-lg px-3 h-[2.8rem]  '>
+                            <Image src={Settings} alt='Setting' className='w-5  h-5' /></div>
+                    </Link> */}
                 </div>
             </div >
             {showPopup && <Popup onClose={togglePopup} />}

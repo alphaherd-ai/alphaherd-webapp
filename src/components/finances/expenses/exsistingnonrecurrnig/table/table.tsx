@@ -225,7 +225,7 @@ const ExsistingNonRecurringTable = () => {
                 </div>
                     <ExsistingNonRecurringTotalAmount otherData={otherData} isLoading={isLoading} />
             </div>
-            <ExsistingNonRecurringBottomBar expenseId={data?.id}/>
+            <ExsistingNonRecurringBottomBar expenseId={data?.id}z/>
         </div>
        
         </>

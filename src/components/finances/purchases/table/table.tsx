@@ -74,7 +74,7 @@ useEffect(()=>{
     }
     setTotalLen(filteredData.length);
     setTableData(filteredData)
-    setPurchases(filteredData?.reverse().slice(0,TOTAL_VALUES_PER_PAGE));
+    setPurchases(filteredData?.slice(0,TOTAL_VALUES_PER_PAGE));
   }
 },[data,error,isLoading,setPurchases,startDate, endDate, selectedParties])
 

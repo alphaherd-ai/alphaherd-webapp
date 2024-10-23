@@ -22,6 +22,9 @@ export const GET = async (req: NextRequest) => {
           },
         },
       },
+      orderBy:{
+        date:'desc'
+      }
     });
 
     return new Response(JSON.stringify(purchases), {

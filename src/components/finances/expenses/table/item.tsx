@@ -12,9 +12,9 @@ import { useSearchParams } from 'next/navigation';
 // @ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
-const FinancesExpensesTableItem = ({ onCountsChange,currentPageNumber,setCurrentPageNumber,setStartInd,setEndInd,setTotalLen,pagevalue }: {onCountsChange:any,currentPageNumber:number,setCurrentPageNumber:React.Dispatch<React.SetStateAction<number>>,setStartInd:React.Dispatch<React.SetStateAction<number>>,setEndInd:React.Dispatch<React.SetStateAction<number>>,setTotalLen:React.Dispatch<React.SetStateAction<number>>,pagevalue:number}) => {
+const FinancesExpensesTableItem = ({ onCountsChange, currentPageNumber, setCurrentPageNumber, setStartInd, setEndInd, setTotalLen, pagevalue }: { onCountsChange: any, currentPageNumber: number, setCurrentPageNumber: React.Dispatch<React.SetStateAction<number>>, setStartInd: React.Dispatch<React.SetStateAction<number>>, setEndInd: React.Dispatch<React.SetStateAction<number>>, setTotalLen: React.Dispatch<React.SetStateAction<number>>, pagevalue: number }) => {
   const [expenses, setExpenses] = useState<any[]>([]);
-  const [tableData,setTableData]=useState<any[]>([]);
+  const [tableData, setTableData] = useState<any[]>([]);
   const appState = useAppSelector((state) => state.app);
   const urlSearchParams = useSearchParams();
   const startDate = useMemo(() => urlSearchParams.get('startDate') ? new Date(urlSearchParams.get('startDate')!) : null, [urlSearchParams]);
@@ -22,16 +22,18 @@ const FinancesExpensesTableItem = ({ onCountsChange,currentPageNumber,setCurrent
   const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
   const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
   //Pagination in the table
-  useEffect(()=>{
-    const start=(currentPageNumber-1)*pagevalue;
-    const end=currentPageNumber*pagevalue;
+
+  useEffect(() => {
+    const start = (currentPageNumber - 1) * pagevalue;
+    const end = currentPageNumber * pagevalue;
     setStartInd(start);
     setEndInd(end);
     setExpenses(tableData.slice(start, end));
-  },[currentPageNumber])
+  }, [currentPageNumber])
 
   useEffect(() => {
     if (!isLoading && data && !error) {
+
       let filteredData = data;
       if (startDate || endDate) {
         filteredData = filteredData.filter((item: any) => {
@@ -48,7 +50,7 @@ const FinancesExpensesTableItem = ({ onCountsChange,currentPageNumber,setCurrent
         );
       }
 
-      
+
       const recurringExpenses = filteredData.filter((item: any) => item.type === FinanceCreationType.Expense_Recurring);
       const allExpenses = [...filteredData];
 
@@ -69,7 +71,7 @@ const FinancesExpensesTableItem = ({ onCountsChange,currentPageNumber,setCurrent
       });
       setTotalLen(allExpenses.length);
       setTableData(allExpenses);
-      setExpenses(allExpenses.slice(0,pagevalue));
+      setExpenses(allExpenses.slice(0, pagevalue));
     }
   }, [data, error, isLoading, setExpenses, startDate, endDate, selectedParties]);
 
@@ -111,12 +113,12 @@ const FinancesExpensesTableItem = ({ onCountsChange,currentPageNumber,setCurrent
               query: { id: expense.id }
             }}
           >
-            <div className='w-[10rem] flex text-base font-medium'>{expense.type}</div>
+            <div className='w-[10rem] flex text-[0.9rem] font-medium'>{expense.type}</div>
           </Link>
           <div className='w-2/12 flex   text-base font-medium '>{expense.party}</div>
           <div className='w-[9rem] flex   text-base font-medium'>{expense.invoiceNo}</div>
-          <div className='w-1/12 flex   text-base font-medium'>$ {(expense.totalCost).toFixed(2)}</div>
-          <div className='w-[9rem] flex   text-base font-medium'>{expense.totalQty} items</div>
+          <div className='w-1/12 flex   text-base font-medium'>₹ {(expense.totalCost).toFixed(2)}</div>
+          {/* <div className='w-[9rem] flex   text-base font-medium'>{expense.totalQty} items</div> */}
           <div className='w-[6rem] flex   text-base font-medium'>{formatDateAndTime(expense.dueDate).formattedDate}</div>
           <div className='w-[12rem] flex  items-center  text-base font-medium'>
             <Tooltip content={expense.status} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
@@ -148,10 +150,10 @@ const calculateFrequency = (startDate: Date, endDate: Date, interval: number) =>
   endDate= new Date(endDate)
   startDate=new Date(startDate)
   if (!startDate || !endDate) return 0;
-  const currentDate= new Date();
+  const currentDate = new Date();
   let diffTime;
-  if(currentDate.getTime()<endDate.getTime()){
-  diffTime= Math.abs(currentDate.getTime()-startDate.getTime());  
+  if (currentDate.getTime() < endDate.getTime()) {
+    diffTime = Math.abs(currentDate.getTime() - startDate.getTime());
   }
   else {
     diffTime = Math.abs(endDate.getTime() - startDate.getTime());

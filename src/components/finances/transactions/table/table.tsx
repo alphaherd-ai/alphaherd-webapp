@@ -72,7 +72,7 @@ const FinancesTransactionsTable = () => {
       })
       setTotalLen(filteredData.length);
       setTableData(filteredData);
-      setTransactions(filteredData.reverse().slice(0, TOTAL_VALUES_PER_PAGE));
+      setTransactions(filteredData.slice(0, TOTAL_VALUES_PER_PAGE));
     }
   }, [data, error, isLoading, setTransactions]);
 

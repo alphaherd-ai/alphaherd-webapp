@@ -38,16 +38,17 @@ const ExistingsaleEstimateTable = () => {
                 // console.log(items)
               const shallowDataCopy = [...items]; 
               const itemData = shallowDataCopy.map((item: any) => ({
-                id: item.productBatch.productId,
+                id: item.itemType==='product' ? item.productBatch.productId : item.serviceId,
                 itemName: item.name,
                 quantity: item.quantity,
                 sellingPrice: item.sellingPrice,
-                expiry: item.productBatch.expiry,
-                batchNumber: item.productBatch.batchNumber,
+                expiry: item.itemType==='product' ? item.productBatch.expiry : "",
+                batchNumber:item.itemType==='product' ?  item.productBatch.batchNumber:"",
                 tax: item.taxAmount,
                 lowQty: item.lowQty,
                 highQty: item.highQty,
-                discount: item.discount
+                discount: item.discount,
+                provider:item.itempType==='product'?"":item.services.providers[0]
             }));
             setItems(itemData);
         }
@@ -101,7 +102,7 @@ const ExistingsaleEstimateTable = () => {
                             <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12  text-gray-500 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey'>
                                 <div className=' flex text-gray-500 text-base font-medium  w-[3rem] '>No.</div>
                                 <div className=' flex text-gray-500 text-base font-medium  w-[15rem] '>Name</div>
-                                <div className=' flex text-gray-500 text-base font-medium  w-[10rem]'>Batch No.</div>
+                                <div className=' flex text-gray-500 text-base font-medium  w-[10rem]'>Batch No./Providers</div>
                                 <div className=' flex text-gray-500 text-base font-medium  w-[10rem] '>Selling Price</div>
 
                                 <div className='flex text-gray-500 text-base font-medium  w-1/12 '>
@@ -123,7 +124,7 @@ const ExistingsaleEstimateTable = () => {
                                         <div className='w-[3rem] flex items-center text-textGrey2 text-base font-medium '>{index + 1}</div>
                                         <div className='w-[15rem] flex items-center text-textGrey2  text-base font-medium'>{item.itemName}</div>
                                         <div className='w-[10rem] flex-col items-center text-textGrey2  text-base font-medium '>
-                                            <div className="text-textGrey2 text-base  font-medium  "> {item.batchNumber}</div>
+                                            <div className="text-textGrey2 text-base  font-medium  "> {item.itemType==='product' ? item.batchNumber:item.provider}</div>
 
                                             <div className="text-neutral-400 text-[13px] font-medium ">{formatDateAndTime(item.expiry).formattedDate}</div>
                                         </div>
