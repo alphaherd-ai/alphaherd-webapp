@@ -28,6 +28,11 @@ interface Species{
     name:string | string[],
 }
 
+interface Breed{
+    speciesId: any;
+    id:string,
+    name:string | string[],
+}
 
 const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
     const [formData, setFormData] = useState<any>({});
@@ -39,8 +44,9 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
     const [errors, setErrors] =  useState<{ patientName?: string; clientName?: string }>({});
     const [startDate, setStartDate] = useState<Date | null>(null);
     const [age, setAge] = useState<{ years: number; months: number; days: number }>({ years: 0, months: 0, days: 0 });
-    const [selectedSpecies, setSelectedSpecies] = useState<any>(null);
+    const [breeds, setBreeds] = useState<any[]>([]);
     const [filteredBreeds, setFilteredBreeds] = useState<any[]>([]);
+    const [selectedSpecies, setSelectedSpecies] = useState<any>(null);
 
     const customStyles = {
         control: (provided: any, state: any) => ({
@@ -164,7 +170,13 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
     const handleSaveClick = async () => {
         try {
            
-            // console.log("Form data is valid", formData);
+            console.log("Form data is valid", formData);
+            console.log('Form Data Species:', formData.species);
+            console.log('Form Data Breed:', formData.breed);
+            const selectedBreed = Array.isArray(formData.breed.label) && formData.breed.label.length > 0
+            ? formData.breed.label[0]  
+            : formData.breed.label; 
+            console.log('selected breed',selectedBreed);
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/patients/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
@@ -173,8 +185,8 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 body: JSON.stringify({
                     patientName: formData.patientName,
                     clientId: clientData===undefined?formData.clientName.value:null,
-                    species: formData.species ? formData.species.value : undefined, 
-                    breed: formData.breed ? formData.breed.value : undefined, 
+                    species: formData.species ? formData.species.label : undefined, 
+                    breed: selectedBreed,
                     dateOfBirth: formData.dateOfBirth, 
                     age: formatAgeString(age),
                     gender: selectedGender,
@@ -215,85 +227,60 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
         });
     };
 
-    const Species = [
-        {value:'Dog', label:'Dog'},
-        { value: 'Cat', label: 'Cat' },
-        { value: 'Turtle', label: 'Turtle' },
-        {value:'Horse', label:'Horse'},
-        {value:'Cow', label:'Cow'},
-    ]
-
-    const [species, setSpecies] = useState<any[]>([]);
-    useEffect(() => {
-        const fetchSpecies = async () => {
-            try {
-              const response = await axios.get(
-                `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`
-              );
-      
-              const speciesList: any[] = response.data.reduce((acc: any[], speciesEntry: Species) => {
-                if (Array.isArray(speciesEntry.name)) {
-                  speciesEntry.name.forEach((name: string) => {
-                    acc.push({ value: speciesEntry.id, label: name });
-                  });
-                } else {
-                  acc.push({ value: speciesEntry.id, label: speciesEntry.name });
-                }
-                return acc;
-              }, []);
-      
-              console.log(speciesList);
-              setSpecies(speciesList);
-            } catch (error) {
-              console.log('Error fetching species', error);
-            }
-          };
-      
-          fetchSpecies();
-        }, [appState.currentBranchId]);
-
-    const Breed = [
-        {
-            label: "Dog",
-            options: [
-              { value: "Labrador Retriever", label: "Labrador Retriever" },
-              { value: "German Shepherd", label: "German Shepherd" },
-              { value: "Golden Retriever", label: "Golden Retriever" },
-            ],
-          },
-          {
-            label: "Cat",
-            options: [
-              { value: "Bomaby", label: "Bomaby" },
-              { value: "Himalayan", label: "Himalayan" },
-              { value: "Persian", label: "Persian" },
-              { value: "Bengal", label: "Bengal" },
-            ],
-          },
-    ];
-
     
-const handleSpeciesChange = (selectedOption: any) => {
-    setSelectedSpecies(selectedOption);
-    const filtered = Breed.find(breed => breed.label === selectedOption?.value)?.options || [];
-    setFilteredBreeds(filtered);
-    setFormData((prevData: any) => ({
-        ...prevData,
-        species: selectedOption 
-    }));
-};
+const [species, setSpecies] = useState<any[]>([]);
+useEffect(() => {
+    const fetchSpecies = async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`
+            );
 
-// Handles changes when a breed is selected
-const handleBreedChange = (selectedOption: any) => {
-    console.log('Selected breed:', selectedOption);
-    setFormData((prevData: any) => ({
-        ...prevData,
-        breed: selectedOption 
-    }));
-};
+            const speciesList: any[] = response.data.map((speciesEntry: Species) => ({
+                value: speciesEntry.id,
+                label: speciesEntry.name 
+            }));
+            console.log(speciesList);
+            setSpecies(speciesList);
+        } catch (error) {
+            console.log('Error fetching species', error);
+        }
+    };
 
+    fetchSpecies();
+}, [appState.currentBranchId]);
 
+useEffect(() => {
+    const fetchBreeds = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/breed/getAll?branchId=${appState.currentBranchId}`
+        );
 
+        const breedList: any[] = response.data.map((breedEntry: Breed) => ({
+          value: breedEntry.id,
+          label: breedEntry.name,
+          speciesId: breedEntry.speciesId, 
+        }));
+
+        setBreeds(breedList);
+      } catch (error) {
+        console.error("Error fetching breeds", error);
+      }
+    };
+
+    fetchBreeds();
+  }, [appState.currentBranchId]);
+
+  // Filter breeds based on selected species
+  useEffect(() => {
+    if (selectedSpecies) {
+      const filtered = breeds.filter((breed) => breed.speciesId === selectedSpecies.value);
+      setFilteredBreeds(filtered);
+    } else {
+      setFilteredBreeds([]); // Reset if no species is selected
+    }
+  }, [selectedSpecies, breeds]);
     const handleGenderChange = (gender: any) => {
         setSelectedGender(gender);
     };  
@@ -359,7 +346,10 @@ const handleBreedChange = (selectedOption: any) => {
                                 options={species}
                                 isMulti={false}
                                 name="species"
-                                onChange={handleSpeciesChange}
+                                onChange={(selectedSpecies: any) => {
+                                    setSelectedSpecies(selectedSpecies);
+                                    handleChange("species", selectedSpecies);
+                                  }}
                                 styles={customStyles}
                             />
                         </div>
@@ -377,7 +367,7 @@ const handleBreedChange = (selectedOption: any) => {
                             options={filteredBreeds}
                             isMulti={false}
                             name="breed"
-                            onChange={handleBreedChange}
+                            onChange={(selectedBreed: any) => handleChange("breed", selectedBreed)}
                             styles={customStyles}
                             
                         />

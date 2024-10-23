@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import prismaClient from "../../../../../../prisma";
 import { connect } from "http2";
+import { fetchDatabaseId } from "@/utils/fetchBranchDetails";
 
 export const POST = async (req: NextRequest)=>{
     if(req.method!=='POST'){
@@ -8,14 +9,18 @@ export const POST = async (req: NextRequest)=>{
     }
     try{
         const body = await req.json();
+        const databaseId = await fetchDatabaseId(req);
         if(!body.speciesId){
             return new Response('Species ID is required',{status:400});
         }
         const breed = await prismaClient.breed.create({
             data: {
-                ...body,
+                name: body.name,
                 species: {
-                    connect: { id: body.speciesId }, // Ensure this line is correctly formatted
+                    connect: { id: body.speciesId }, // Use speciesId to connect species relation
+                },
+                DatabaseSection: {
+                    connect : {id: databaseId}
                 },
             },
         });

@@ -30,9 +30,9 @@ const DatabasePatientTableItem = ({ patients, clients, isPatientLoading }:any) =
           return ''; // Both are null
         }
         if (species && breed) {
-          return `${species} & ${breed}`; // Both are present
+          return `${species} & ${breed}`;
         }
-        return species || breed || ''; // Only one is present or both are null
+        return species || breed || ''; 
       };
       
 if(isPatientLoading)return (<Loading/>)
