@@ -14,7 +14,10 @@ interface Species{
 const AddBreed = ({ onClose }: any) => {
     const appState = useAppSelector((state) => state.app);
 
-    const [formData, setFormData] = useState<any>("");
+    const [formData, setFormData] = useState<{ species: string; breeds: string[] }>({
+        species: '',
+        breeds: [],
+    });
     const customStyles = {
         control: (provided: any, state: any) => ({
           ...provided,
@@ -69,40 +72,38 @@ const AddBreed = ({ onClose }: any) => {
     };
     
     
+    const handleAddInput = () => {
+        setFormData((prevData) => ({
+            ...prevData,
+            breeds: [...prevData.breeds, ''], 
+        }));
+    };
+    
     const handleDeleteInput = (index: number) => {
-        const newInputs = [...formData];
-        newInputs.splice(index, 1);
-        setFormData(newInputs);
+        setFormData((prevData) => {
+            const newBreeds = [...prevData.breeds];
+            newBreeds.splice(index, 1);
+            return {
+                ...prevData,
+                breeds: newBreeds,
+            };
+        });
     };
 
     const handleSave = async () => {
         try {
             console.log('Form Data before saving:', formData);
-            
-
-                // Ensure we're using the correct species object which includes the id
-                const species = formData.species; // should be the selected species object
-
-                // Check if breeds is not empty
-                const breedsArray = Array.isArray(formData.breeds) ? formData.breeds : [formData.breeds];
-
-                // Ensure we have both species and breeds
-                if (!species || !breedsArray.length) {
-                    console.error('Species and breeds must be provided');
-                    return;
-                }
-
+            const requestBody = {
+                speciesId: formData.species,
+                name: formData.breeds,
+            };
+            console.log('Request Body:', requestBody);
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/breed/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    species: {
-                        connect: { id: species.value }, // Pass the species id
-                    },
-                    name: breedsArray, 
-                }),
+                body: JSON.stringify(requestBody),
             });
             if (response.ok) {
                 console.log('Breed Data saved successfully',response);
@@ -124,17 +125,10 @@ const AddBreed = ({ onClose }: any) => {
                     `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`
                 );
     
-                const speciesList: any[] = response.data.reduce((acc: any[], speciesEntry: Species) => {
-                    if (Array.isArray(speciesEntry.name)) {
-                        speciesEntry.name.forEach((name: string) => {
-                            acc.push({ value: speciesEntry.id, label: name });
-                        });
-                    } else {
-                        acc.push({ value: speciesEntry.id, label: speciesEntry.name });
-                    }
-                    return acc;
-                }, []);
-    
+                const speciesList: any[] = response.data.map((speciesEntry: Species) => ({
+                    value: speciesEntry.id,
+                    label: speciesEntry.name 
+                }));
                 console.log(speciesList);
                 setSpecies(speciesList);
             } catch (error) {
@@ -164,14 +158,14 @@ const AddBreed = ({ onClose }: any) => {
                             <div  className="w-full flex  items-center">
                                 <div className="text-gray-500 text-base font-medium w-[12rem]">Species</div>
                                 <Select
-                                    className="ml-[5rem] w-[80%] border border-solid border-borderGrey outline-none h-11 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                    className="ml-[5rem] w-[80%] border border-solid border-borderGrey outline-none h-11 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen "
                                     placeholder="Select Species"
                                     isClearable={false}
                                     isSearchable={true}
                                     options={species}
                                     isMulti={false}
                                     name="species"
-                                    onChange={(e) => handleChange("species", e)} 
+                                    onChange={(e) => handleChange("species", e?.value)} 
                                     styles={customStyles}
                                 />
                                
@@ -189,17 +183,21 @@ const AddBreed = ({ onClose }: any) => {
                                     name="breeds"
                                     onChange={(e) => handleChange("breeds", e.target.value.split(','))}
                                 />
-                                {/* <div className="ml-2 h-11 px-[0.6rem] rounded-[5px] justify-start items-center flex bg-black cursor-pointer" onClick={() => handleDeleteInput(index)}>
+                                <div className="ml-2 h-11 px-[0.6rem] rounded-[5px] justify-start items-center flex bg-black cursor-pointer" >
+                                {/* onClick={() => handleDeleteInput(index)} */}
                                     <Image src={delicon} alt="delete"></Image>
-                                </div> */}
+                                </div>
                                
                             </div>
+
                     </div>
                 </div>
                 <div className="w-full flex justify-between mt-[5px] cursor-pointer">
-                    <button className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer" onClick={handleSave}>
-                        <div className="text-white text-base font-bold ">Save</div>
-                    </button>
+                <div className="text-white text-base font-normal bg-black p-2 rounded-md py-2.5" >Add another</div>
+
+                        <button className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer" onClick={handleSave}>
+                            <div className="text-white text-base font-bold ">Save</div>
+                        </button>
                 </div>
             </div>
         </div>
