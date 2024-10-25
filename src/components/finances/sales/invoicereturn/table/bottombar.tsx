@@ -14,6 +14,7 @@ import { useAppSelector } from '@/lib/hooks';
 import { useSearchParams } from "next/navigation"
 import { Button } from "@nextui-org/react"
 import { useRouter } from "next/navigation"
+import Loading2 from "@/app/loading2"
 
 
 const InvoiceReturnBottomBar = ({invoiceData}:any) => {
@@ -26,21 +27,24 @@ const InvoiceReturnBottomBar = ({invoiceData}:any) => {
     const handleSubmit = async () => {
         setSaving(true);
         const allData = {headerData, tableData, totalAmountData};
-        // console.log("this is all data",allData)
+        console.log("this is all data",allData)
         let totalQty=0;
         tableData.forEach(data => {
             totalQty+=(data.quantity)||0;
         });
         const items = tableData.map(data => ({
             productId: data.productId,
-            productBatchId:data.id, 
+            serviceId: data?.serviceId,
+            productBatchId: data.productId ? data.id : null,
             quantity: data.quantity,  
             sellingPrice:data.unitPrice,
             taxAmount:data.tax,
             name:data.itemName,
+           
     }));
      const data={
             customer: (id===null)?allData.headerData.customer.value:invoiceData.customer,
+            clientId:(id==null)?allData.headerData.customer.value.clientId:invoiceData.clientId,
             email:(id=== null)?allData.headerData.customer.value.email:"",
             notes: (id===null)?allData.headerData.notes:invoiceData.notes,
             subTotal: allData.totalAmountData.subTotal,
@@ -51,14 +55,15 @@ const InvoiceReturnBottomBar = ({invoiceData}:any) => {
             totalCost: allData.totalAmountData.totalCost,
             overallDiscount: allData.totalAmountData.gst,
             totalQty:totalQty,
-            status: "Pending",
+            status: `Returned: ${totalQty} items`,
             type: FinanceCreationType.Sales_Return,
             items:{
                 create:items
             }
             
         }
-        // console.log(JSON.stringify(data))
+        console.log(data,invoiceData);
+        //console.log(JSON.stringify(data))
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Return}?branchId=${appState.currentBranchId}`,data)
 
@@ -99,7 +104,7 @@ const InvoiceReturnBottomBar = ({invoiceData}:any) => {
                                 </Button>
                                 <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer" onClick={handleSubmit} disabled={isSaving}>
                                     <Image src={checkicon} alt="check"></Image>
-                                    <div>{isSaving?"Saving...":"Save"}</div>
+                                    <div>{isSaving?<Loading2></Loading2>:"Save"}</div>
                                 </Button>
                             </div>
                         </div>

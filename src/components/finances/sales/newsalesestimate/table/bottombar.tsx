@@ -282,7 +282,7 @@ const NewsaleEstimateBottomBar = () => {
         }
     }, [headerData]);
 
-    const isDisabled = !headerData.customer || tableData.length === 0 ;
+    const isDisabled = !headerData.customer || tableData.length === 1 ;
     return (
         <>
 

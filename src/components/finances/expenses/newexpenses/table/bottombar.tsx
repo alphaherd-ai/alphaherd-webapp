@@ -25,6 +25,15 @@ const NewExpensesBottomBar = ({ expenseData }: any) => {
     const id = url.get('id');
     const appState = useAppSelector((state) => state.app);
     const [isSaving, setSaving] = useState(false);
+
+    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+
+    const balanceDue = totalAmountData.totalCost - totalPaidAmount + totalAmountToPay;
+
+    
     const handleSubmit = async () => {
         tableData.pop();
         const allData = { headerData, tableData, totalAmountData, recurringData, transactionsData };
@@ -57,6 +66,7 @@ const NewExpensesBottomBar = ({ expenseData }: any) => {
             recurringRepeatType: allData.recurringData?.repeatType?.value,
             recurringEndson: allData.recurringData.endDate,
             type: allData.recurringData.startDate ? FinanceCreationType.Expense_Recurring : FinanceCreationType.Expense_NonRecurring,
+            status:balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
             items: {
                 create: items
             }

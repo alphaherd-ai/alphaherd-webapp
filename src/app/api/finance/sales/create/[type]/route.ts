@@ -11,19 +11,20 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
   }
 
   try {
-    const { clientId, ...body }: any = await req.json();
-    console.log(body.items);
+    const body: any = await req.json();
+    //console.log(body.items);
     const inventoryId = await fetchInventoryId(req);
     const financeId = await fetchFinanceId(req);
     // console.log(financeId);
-    console.log("Here's the client id",clientId)
-    
+    //console.log("Here's the client id",clientId)
+    console.log(body);
     const [sales, items,client] = await prismaClient.$transaction([
 
 
       prismaClient.sales.create({
         data: {
           ...body,
+         
           type: params.type,
           FinanceSection: {
             connect: {
@@ -37,7 +38,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
       }),
       prismaClient.clients.update({
         where: {
-          id: Number(clientId)
+          id: Number(body.clientId)
         },
         data: {
           invoiceNo: {

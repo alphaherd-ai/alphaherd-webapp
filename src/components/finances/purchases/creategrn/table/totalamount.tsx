@@ -111,11 +111,7 @@ const CreateGrnTotalAmount = () => {
     }, [totalAmount, overAllDiscount, shipping, adjustment]);
 
 
-    const [showPopup, setShowPopup] = React.useState(false);
-
-    const togglePopup = () => {
-        setShowPopup(!showPopup);
-    }
+    
 
 
     const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
@@ -123,24 +119,20 @@ const CreateGrnTotalAmount = () => {
     const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
 
-    const balanceDue = grandAmt - totalPaidAmount + totalAmountToPay;
+    const balanceDue = -grandAmt - totalPaidAmount + totalAmountToPay;
 
 
     const [count, setCount] = useState(0);
     const [initialInvoiceNo, setInitialInvoiceNo] = useState('');
 
-    useEffect(() => {
-        if (showPopup) {
-            setCount((prevCount) => prevCount + 1);
-        }
-    }, [showPopup]);
+    
 
     useEffect(() => {
-        if (showPopup) {
+       
             const newInvoiceNo = generateInvoiceNumber(count);
             setInitialInvoiceNo(newInvoiceNo);
-        }
-    }, [count, showPopup]);
+        
+    }, [count]);
 
 
     // console.log(headerData)
@@ -189,7 +181,7 @@ const CreateGrnTotalAmount = () => {
 
 
             <div className="flex gap-4 pt-[20px] pb-[20px]">
-                
+
                 <div className="w-1/2 mr-4 flex flex-col gap-4">
                     <div className="px-6 py-2 bg-white rounded-[5px] justify-between items-center gap-4 flex w-full border border-solid border-borderGrey">
                         <div className="flex gap-[0.2rem] items-center w-full">
@@ -225,7 +217,7 @@ const CreateGrnTotalAmount = () => {
 
 
                     <div className="w-full mr-4 flex flex-col mt-8">
-                        <Popup headerdata={headerData} onClose={togglePopup} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} balanceDue={balanceDue} />
+                        <Popup headerdata={headerData} setCount={setCount} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} balanceDue={balanceDue} />
                     </div>
 
                 </div>
@@ -300,7 +292,7 @@ const CreateGrnTotalAmount = () => {
                                 <div className="text-gray-500 text-md font-medium ">Advance Paid on  {formatDateAndTime(transaction.date).formattedDate}</div>
                                 <div className='flex items-center h-9 px-4  justify-between rounded-lg '>
                                     <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
-                                        ₹ {transaction.amountPaid}
+                                        ₹ {transaction.amountPaid > 0 ? transaction.amountPaid : -1*transaction.amountPaid }
                                     </div>
                                 </div>
                             </div>)
@@ -313,7 +305,7 @@ const CreateGrnTotalAmount = () => {
                                 <div className="text-gray-500 text-md font-medium ">Paid on {formatDateAndTime(transaction.date).formattedDate}</div>
                                 <div className='flex items-center h-9 px-4  justify-between rounded-lg '>
                                     <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
-                                        ₹ {transaction.amountPaid}
+                                        ₹ {transaction.amountPaid > 0 ? transaction.amountPaid : -1*transaction.amountPaid }
                                     </div>
                                 </div>
                             </div>)
@@ -324,7 +316,7 @@ const CreateGrnTotalAmount = () => {
                             <div className="text-gray-500 text-base font-bold  w-1/3 py-4">Balance Due</div>
                             <div className="text-gray-500 text-lg font-medium  w-1/3 py-4 flex  items-center"></div>
                             <div className="text-gray-500 text-base font-bold  w-1/3 py-4 ">₹{totalAmountData.subTotal ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
-                            {balanceDue < 0 ? <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 rounded-[5px] bg-[#E7F5EE] justify-center items-center gap-2 ml-[5px]">
+                                {balanceDue > 0 ? <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 rounded-[5px] bg-[#E7F5EE] justify-center items-center gap-2 ml-[5px]">
                                     You’re owed
                                 </span> : balanceDue === 0 ? "" : <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9]   rounded-[5px] justify-center items-center gap-2 ml-[5px]">
                                     You owe

@@ -59,7 +59,7 @@ const ExistingsalesReturnTable = () => {
                 expiry:item.itemType==='product' ? item.productBatch.expiry:"",
                 batchNumber:item.itemType==='product'?item.productBatch.batchNumber:"",
                 tax:item.taxAmount,
-                provider:item.itempType==='product'?"":item.services.providers[0]
+                provider:item.itempType==='product'?"":item.services?.providers[0]
           }));
           setItems(itemData);
         }

@@ -20,7 +20,7 @@ const NewsalesReturnTotalAmout = () => {
     const [selectedDiscount, setDiscount] = useState(0);
     let totalAmount = 0;
     tableData.forEach(data => {
-        totalAmount += (data.quantity * data.sellingPrice + data.quantity * data.gst*data.sellingPrice)||0;
+        totalAmount += (data.quantity * data.sellingPrice + data.quantity * data.gst * data.sellingPrice) || 0;
     });
 
     const { totalAmountData, setTotalAmountData } = useContext(DataContext);
@@ -37,26 +37,26 @@ const NewsalesReturnTotalAmout = () => {
         { value: 'amount', label: '₹ in Amount' }
     ];
 
-    const [discountMethod,setDiscountMethod]=useState('amount');
+    const [discountMethod, setDiscountMethod] = useState('amount');
     const handleSelectChange = (selectedOption: any) => {
         setDiscountMethod(selectedOption.value);
     };
-    const [discountInput,setDiscountInput]=useState(0);
-    const handleDiscountChange =(discount:number)=>{
-        if(discountMethod==='amount'){
+    const [discountInput, setDiscountInput] = useState(0);
+    const handleDiscountChange = (discount: number) => {
+        if (discountMethod === 'amount') {
             setDiscountInput(discount);
-            let discountedAmount=grandAmt-discount;
-            let discountPercent=Number(discount/totalAmount).toFixed(4)
+            let discountedAmount = grandAmt - discount;
+            let discountPercent = Number(discount / totalAmount).toFixed(4)
             setDiscount(Number(discountPercent))
             setGrandAmt(discountedAmount);
-            setTotalAmountData((prevData)=>({...prevData,gst:Number(discountPercent)}))
+            setTotalAmountData((prevData) => ({ ...prevData, gst: Number(discountPercent) }))
         }
-        else if(discountMethod==='percent'){
+        else if (discountMethod === 'percent') {
             setDiscountInput(discount);
-            let discountedAmount=grandAmt-grandAmt*(discount/100);
-            setDiscount(Number(discount/100));
+            let discountedAmount = grandAmt - grandAmt * (discount / 100);
+            setDiscount(Number(discount / 100));
             setGrandAmt(discountedAmount);
-            setTotalAmountData((prevData)=>({...prevData,gst:Number(discount/100)}))
+            setTotalAmountData((prevData) => ({ ...prevData, gst: Number(discount / 100) }))
         }
     }
 
@@ -80,110 +80,102 @@ const NewsalesReturnTotalAmout = () => {
         }
     };
 
-    useEffect(()=>{
-        if(totalAmountData.subTotal==0) {
+    useEffect(() => {
+        if (totalAmountData.subTotal == 0) {
             setShipping('');
             setAdjustment('');
         }
-      },[totalAmountData])
+    }, [totalAmountData])
 
     const updateGrandTotal = () => {
-        const discountedAmount = (totalAmount - totalAmount * selectedDiscount)||0;
+        const discountedAmount = (totalAmount - totalAmount * selectedDiscount) || 0;
         const shippingValue = parseFloat(shipping) || 0;
         const adjustmentValue = parseFloat(adjustment) || 0;
         const newGrandTotal = discountedAmount + shippingValue + adjustmentValue;
         setGrandAmt(newGrandTotal);
         setTotalAmountData((prevData) => ({
             ...prevData,
-            subTotal:totalAmount,
-            totalCost: newGrandTotal, 
-            shipping:shippingValue,
-            adjustment:adjustmentValue,
+            subTotal: totalAmount,
+            totalCost: newGrandTotal,
+            shipping: shippingValue,
+            adjustment: adjustmentValue,
         }));
     };
 
     useEffect(() => {
-        updateGrandTotal(); 
+        updateGrandTotal();
     }, [totalAmount, selectedDiscount, shipping, adjustment]);
 
-    const [showPopup, setShowPopup] = React.useState(false);
-    
-    const togglePopup = () => {
-        setShowPopup(!showPopup);
-    }
+
 
     const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
     const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
 
-    const balanceDue = grandAmt-totalPaidAmount+totalAmountToPay;
+    const balanceDue = grandAmt - totalPaidAmount + totalAmountToPay;
 
 
-    
+
     const [count, setCount] = useState(0);
     const [initialInvoiceNo, setInitialInvoiceNo] = useState('');
-  
+
+
+
     useEffect(() => {
-      if (showPopup) {
-        setCount((prevCount) => prevCount + 1);
-      }
-    }, [showPopup]);
-  
-    useEffect(() => {
-      if (showPopup) {
+
         const newInvoiceNo = generateInvoiceNumber(count);
         setInitialInvoiceNo(newInvoiceNo);
-      }
-    }, [count, showPopup]);
+
+    }, [count]);
 
     const customStyles = {
         control: (provided: any, state: any) => ({
-          ...provided,
-          width: '100%',
-          maxWidth: '100%',
-          border: state.isFocused ? '1px solid #35BEB1' : 'none',
-          '&:hover': {
-            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
+            border: state.isFocused ? '1px solid #35BEB1' : 'none',
+            '&:hover': {
+                borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4',
             },
-          boxShadow: state.isFocused ? 'none' : 'none',
+            boxShadow: state.isFocused ? 'none' : 'none',
         }),
         valueContainer: (provided: any) => ({
-          ...provided,
-          width: '100%',
-          maxWidth: '100%',
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
         }),
         singleValue: (provided: any, state: any) => ({
-          ...provided,
-          width: '100%',
-          maxWidth: '100%',
-          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
+            color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
         }),
         menu: (provided: any) => ({
-          ...provided,
-          backgroundColor: 'white',
-          width: '100%',
-          maxWidth: '100%',
+            ...provided,
+            backgroundColor: 'white',
+            width: '100%',
+            maxWidth: '100%',
         }),
         option: (provided: any, state: any) => ({
-          ...provided,
-          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
-          color: state.isFocused ? 'white' : '#6B7E7D',
-          '&:hover': {
-            backgroundColor: '#35BEB1',
-            color: 'white',
-          },
+            ...provided,
+            backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+            color: state.isFocused ? 'white' : '#6B7E7D',
+            '&:hover': {
+                backgroundColor: '#35BEB1',
+                color: 'white',
+            },
         }),
-        menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
-      };
+        menuPortal: (base: any) => ({ ...base, zIndex: 9999 })
+    };
 
     return (
         <>
 
 
- <div className="flex gap-4  pt-[20px] pb-[20px]">
+            <div className="flex gap-4  pt-[20px] pb-[20px]">
 
-                <Popup headerdata={headerData} onClose={togglePopup} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} balanceDue={balanceDue} />
+                <Popup headerdata={headerData} setCount={setCount} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} balanceDue={balanceDue} />
 
                 <div className="w-1/2  rounded-md">
                     <div className='w-full bg-white'>
@@ -248,7 +240,7 @@ const NewsalesReturnTotalAmout = () => {
                                 <div className="text-gray-500 text-md font-medium ">Advance Paid on  {formatDateAndTime(transaction.date).formattedDate}</div>
                                 <div className='flex items-center h-9 px-4  justify-between rounded-lg '>
                                     <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
-                                        ₹ {transaction.amountPaid}
+                                        ₹ {transaction.amountPaid > 0 ? transaction.amountPaid : -1 * transaction.amountPaid}
                                     </div>
                                 </div>
                             </div>)
@@ -261,7 +253,7 @@ const NewsalesReturnTotalAmout = () => {
                                 <div className="text-gray-500 text-md font-medium ">Paid on {formatDateAndTime(transaction.date).formattedDate}</div>
                                 <div className='flex items-center h-9 px-4  justify-between rounded-lg '>
                                     <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
-                                        ₹ {transaction.amountPaid}
+                                        ₹ {transaction.amountPaid > 0 ? transaction.amountPaid : -1 * transaction.amountPaid}
                                     </div>
                                 </div>
                             </div>)
@@ -284,7 +276,7 @@ const NewsalesReturnTotalAmout = () => {
 
                 </div>
             </div>
-          
+
         </>
 
     )

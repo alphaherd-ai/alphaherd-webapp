@@ -43,6 +43,7 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: number }
     try {
       
       const body = await req.json();
+      const status=body.status;
       const newTransaction = body.recordTransaction[0];
       const purchases = await prismaClient.purchases.update({
         where: { id: Number(params.id) },
@@ -50,6 +51,7 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: number }
           recordTransaction: {
             create: newTransaction,
           },
+          status:status,
         },
         include: {
           items: {
@@ -58,7 +60,9 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: number }
             },
           },
           recordTransaction: true,
+          
         },
+        
       });
   
       return new Response(JSON.stringify(purchases), {

@@ -23,17 +23,18 @@ const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 
 type PopupProps = {
-    onClose: () => void;
+    
     headerdata: any;
     transactionsData: any;
     setTransactionsData: any;
     initialInvoiceNo: any;
     totalAmount: any;
     balanceDue: any;
+    setCount:any;
 }
 
 
-const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, transactionsData, setTransactionsData, initialInvoiceNo, totalAmount, balanceDue}) => {
+const RecordTransactionPopup: React.FC<PopupProps> = ({headerdata,setCount, transactionsData, setTransactionsData, initialInvoiceNo, totalAmount, balanceDue}) => {
 
     const dispatch = useDispatch();
     const [isSaving,setSaving]=useState(false);
@@ -107,14 +108,15 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
                     invoiceLink: headerdata.invoiceNo,
                     receiptNo: formData.receiptNo,
                     date: formData.date || new Date(),
-                    amountPaid: parseInt(formData.amountPaid, 10) || balanceDue,
+                    amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1*formData.amountPaid, 10) || (balanceDue),
                     mode: selectedMode,
                     moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
                 })
             });
             if (response.ok) {
                 // console.log('Data saved Sucessfully')
-                onClose();
+                setCount((prev:any)=>prev+1);
+               
                 window.dispatchEvent(new FocusEvent('focus'))
             } else {
                 console.error('Failed to save data')
@@ -126,7 +128,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
         }
 
         const newTransaction = {
-            amountPaid: parseInt(formData.amountPaid, 10) || balanceDue,
+            amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1*formData.amountPaid, 10) || (balanceDue),
             date: formData.date || new Date(),
             isAdvancePayment: isAdvancePayment,
             mode: selectedMode,
@@ -135,7 +137,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, headerdata, tran
         };
 
         dispatch(addAmount({
-            amountPaid: parseInt(formData.amountPaid, 10) || balanceDue,
+            amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1*formData.amountPaid, 10) || (balanceDue),
             mode: selectedMode,
             invoiceLink: headerdata.invoiceNo,
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
