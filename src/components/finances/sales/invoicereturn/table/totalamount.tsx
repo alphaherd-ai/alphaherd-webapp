@@ -98,19 +98,19 @@ const InvoiceReturnTotalAmount = () => {
             <div className="flex  pt-[20px] pb-[20px]">
                 <div className="w-1/2 mr-4 flex flex-col">
 
-                    <div className="w-full  p-6 bg-white rounded-tl-md rounded-tr-md border border-solid  border-borderGrey justify-between items-center gap-6 flex">
+                    {/* <div className="w-full  p-6 bg-white rounded-tl-md rounded-tr-md border border-solid  border-borderGrey justify-between items-center gap-6 flex">
                         <div className="text-gray-500 text-xl font-medium ">Payments</div>
-                        {/* <div className='flex items-center h-9 py-2.5 bg-black justify-between rounded-lg cursor-pointer'> */}
+                        <div className='flex items-center h-9 py-2.5 bg-black justify-between rounded-lg cursor-pointer'> 
 
-                        {/* <Popover placement="bottom-end" showArrow offset={10}>
-                                <PopoverTrigger> */}
-                        <Button
-                            variant="solid"
-                            className="capitalize flex h-9 py-2.5 border-none text-base bg-black text-white rounded-lg cursor-pointer">
-                            <div className='flex'><Image src={Rupee} alt='Rupee' className='w-6 h-6 ' /></div>
-                            Recorded Transaction
-                        </Button>
-                        {/* </PopoverTrigger>
+                            <Popover placement="bottom-end" showArrow offset={10}>
+                                <PopoverTrigger>
+                                    <Button
+                                        variant="solid"
+                                        className="capitalize flex h-9 py-2.5 border-none text-base bg-black text-white rounded-lg cursor-pointer">
+                                        <div className='flex'><Image src={Rupee} alt='Rupee' className='w-6 h-6 ' /></div>
+                                        Recorded Transaction
+                                    </Button>
+                                </PopoverTrigger>
                                 <PopoverContent className="p-5 bg-black text-white flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
 
                                     <div className="flex flex-col ">
@@ -135,13 +135,13 @@ const InvoiceReturnTotalAmount = () => {
 
 
                                 </PopoverContent>
-                            </Popover> */}
+                            </Popover>
 
 
 
-                        {/* </div> */}
-                    </div>
-                    <div className="w-full  p-6 bg-white rounded-bl-md rounded-br-md  justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
+                        </div> 
+                    </div> */}
+                    {/* <div className="w-full  p-6 bg-white rounded-bl-md rounded-br-md  justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
                         <div className="text-gray-500 text-xl font-medium">22/06/24</div>
                         <div className='flex items-center h-9 px-4 py-2.5 justify-between rounded-lg '>
 
@@ -149,16 +149,13 @@ const InvoiceReturnTotalAmount = () => {
                                 {totalAmount.toFixed(2)}
                                 <span className="px-2 py-1 rounded-md bg-[#FFEAEA] text-[#FF3030] text-sm font-medium ml-[5px]">Out</span>
 
-                                {/* USE THE LABELS AS PER REQ. ----------------------*/}
-
-                                {/* <span className="px-2 py-1 rounded-md bg-[#E7F5EE] text-[#0F9D58] text-sm font-medium ml-[5px]">In</span>
-    <span className="px-2 py-1 rounded-md bg-[#FFF0E9] text-[#FC6E20] text-sm font-medium ml-[5px]">You Owe</span> */}
+                                
                             </div>
 
 
 
                         </div>
-                    </div>
+                    </div> */}
                 </div>
                 <div className="w-1/2 bg-white rounded-[10px]">
                     <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">

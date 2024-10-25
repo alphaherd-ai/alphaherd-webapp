@@ -16,39 +16,44 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useAppSelector } from "@/lib/hooks";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import Creatable from "react-select/creatable";
 import Loading2 from "@/app/loading2";
+import Creatable from "react-select/creatable";
 type PopupProps = {
     onClose: () => void;
     clientData: any;
 }
-
-interface Species{
-    id:string,
-    name:string | string[],
+interface Species {
+    id: string,
+    name: string | string[],
 }
 
+interface Breed {
+    speciesId: any;
+    id: string,
+    name: string | string[],
+}
 
 const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
-    
-    const appState = useAppSelector((state) => state.app)
     const [formData, setFormData] = useState<any>({});
     const [clients, setClients] = useState<{ value: string; label: string }[]>([]);
+    //const [startDate, setStartDate] = useState(new Date());
     const [selectedGender, setSelectedGender] = useState('unspecified');
+    const appState = useAppSelector((state) => state.app)
+    const [isSaveDisabled, setIsSaveDisabled] = useState(true);
+    const [errors, setErrors] = useState<{ patientName?: string; clientName?: string }>({});
     const [startDate, setStartDate] = useState<Date | null>(null);
     const [age, setAge] = useState<{ years: number; months: number; days: number }>({ years: 0, months: 0, days: 0 });
-    const [selectedSpecies, setSelectedSpecies] = useState<any>(null);
-    const [filteredBreeds, setFilteredBreeds] = useState<any[]>([]);
-    const [errors, setErrors] = useState<{ patientName?: string; clientName?: string }>({});
-    const [isSaveDisabled, setIsSaveDisabled] = useState(true);
+    const [breeds, setBreeds] = useState<any[]>([]);
     const [savingData, setSavingData] = useState(false);
-    const [isImPatient,setIsImpatient]=useState(false);
-    let isAnotherPatient=false;
-    let selectedClient: { value: string; label: string; } | null | undefined=null;
+    const [isImPatient, setIsImpatient] = useState(false);
+    const [filteredBreeds, setFilteredBreeds] = useState<any[]>([]);
+    const [selectedSpecies, setSelectedSpecies] = useState<any>(null);
+    let isAnotherPatient = false;
+    let selectedClient: { value: string; label: string; } | null | undefined = null;
 
     const resetForm = () => {
         setFormData((prevData: { clientName: any; }) => ({
-            clientName: prevData.clientName, 
+            clientName: prevData.clientName,
             patientName: '',
             species: null,
             breed: null,
@@ -103,7 +108,6 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
             },
         }),
     };
-
     const calculateAge = (dob: Date) => {
         const today = new Date();
         let years = today.getFullYear() - dob.getFullYear();
@@ -125,7 +129,6 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
         let years = age.years;
         let months = age.months;
         let days = age.days;
-
         if (field === "years") years = value;
         if (field === "months") months = value;
         if (field === "days") days = value;
@@ -167,8 +170,6 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
     };
 
 
-
-
     useEffect(() => {
         fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`)
             .then((response) => response.json())
@@ -182,38 +183,42 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
             .catch((error) =>
                 console.error("Error fetching client from API: ", error)
             );
-            if(clientData){
-                setFormData((prevData: { clientName: any; }) => ({
-                    clientName: selectedClient,
-                    patientName: '',
-                    species: null,
-                    breed: null,
-                    dateOfBirth: null,
-                }));
-            }
+        if (clientData) {
+            setFormData((prevData: { clientName: any; }) => ({
+                clientName: selectedClient,
+                patientName: '',
+                species: null,
+                breed: null,
+                dateOfBirth: null,
+            }));
+        }
     }, []);
 
-    const handleAnotherpatient=()=>{
-        
-        isAnotherPatient=true;
+    const handleAnotherpatient = () => {
+
+        isAnotherPatient = true;
         handleSaveClick();
     }
-    useEffect(()=>{
-        if(clients.length > 0){
-        selectedClient=(clients.find(client=>client.label===clientData?.clientName));
-        handleChange("clientName",selectedClient);
-        }
-    },[clients])
 
-  
+    useEffect(() => {
+        if (clients.length > 0) {
+            selectedClient = (clients.find(client => client.label === clientData?.clientName));
+            handleChange("clientName", selectedClient);
+        }
+    }, [clients])
+
 
     const handleSaveClick = async () => {
-       
+        console.log("clicked");
         try {
             setSavingData(true);
-           
             setIsSaveDisabled(true);
-            console.log("Form data is valid", formData);
+            let selectedBreed=null;
+            console.log(formData.breed);
+            if(formData.breed !==undefined && formData.breed!==null) {selectedBreed = Array.isArray(formData.breed.label) && formData.breed.label.length > 0
+                ? formData.breed.label[0]
+                : formData.breed.label;}
+           
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/patients/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
@@ -222,8 +227,8 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 body: JSON.stringify({
                     patientName: formData.patientName,
                     clientId: formData.clientName.value,
-                    species: formData.species ? formData.species.value : undefined,
-                    breed: formData.breed ? formData.breed.value : undefined,
+                    species: formData.species ? formData.species.label : undefined,
+                    breed: selectedBreed ? selectedBreed: undefined,
                     dateOfBirth: formData.dateOfBirth,
                     age: formatAgeString(age),
                     gender: selectedGender,
@@ -232,135 +237,101 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 }),
             });
             if (response.ok) {
-            
-                if(!isAnotherPatient) onClose();
-                else{
+                // console.log('Data saved successfully');
+                if (!isAnotherPatient) onClose();
+                else {
                     resetForm();
-                    isAnotherPatient=false;
+                    isAnotherPatient = false;
                 }
                 window.dispatchEvent(new FocusEvent('focus'));
             } else {
                 console.error('Failed to save data:', response.statusText);
             }
         } catch (error) {
+            
             console.error('Error while saving data:', error);
         }
-        finally {
+        finally{
             setSavingData(false);
             setIsSaveDisabled(false);
         }
     };
-
-   
-
+    // console.log(formData);
     const handleChange = (field: string, value: any) => {
         setFormData((prevFormData: any) => {
             const updatedFormData = { ...prevFormData, [field]: value };
-            console.log(updatedFormData);
             const isPatientNameValid = updatedFormData.patientName !== '';
             const isClientNameValid = updatedFormData.clientName !== undefined;
-
             const newErrors: { patientName?: string; clientName?: string } = {};
             if (!isPatientNameValid) newErrors.patientName = 'Patient name is required';
             if (!isClientNameValid) newErrors.clientName = 'Client name is required';
-
             setErrors(newErrors);
             setIsSaveDisabled(!isPatientNameValid || !isClientNameValid);
-
             return updatedFormData;
 
         });
     };
 
-    // const Species = [
-    //     { value: 'Dog', label: 'Dog' },
-    //     { value: 'Cat', label: 'Cat' },
-    //     { value: 'Turtle', label: 'Turtle' },
-    //     { value: 'Horse', label: 'Horse' },
-    //     { value: 'Cow', label: 'Cow' },
-    // ]
 
     const [species, setSpecies] = useState<any[]>([]);
     useEffect(() => {
         const fetchSpecies = async () => {
             try {
-              const response = await axios.get(
-                `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`
-              );
-              
-              const speciesList: any[] = response.data.reduce((acc: any[], speciesEntry: Species) => {
-                if (Array.isArray(speciesEntry.name)) {
-                  speciesEntry.name.forEach((name: string) => {
-                    acc.push({ value: speciesEntry.id, label: name });
-                  });
-                } else {
-                  acc.push({ value: speciesEntry.id, label: speciesEntry.name });
-                }
-                return acc;
-              }, []);
-      
-             
-              setSpecies(speciesList);
+                const response = await axios.get(
+                    `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`
+                );
+
+                const speciesList: any[] = response.data.map((speciesEntry: Species) => ({
+                    value: speciesEntry.id,
+                    label: speciesEntry.name
+                }));
+                console.log(speciesList);
+                setSpecies(speciesList);
             } catch (error) {
-              console.log('Error fetching species', error);
+                console.log('Error fetching species', error);
             }
-          };
-      
-          fetchSpecies();
-        }, [appState.currentBranchId]);
+        };
 
-    const Breed = [
-        {
-            label: "Dog",
-            options: [
-                { value: "Labrador Retriever", label: "Labrador Retriever" },
-                { value: "German Shepherd", label: "German Shepherd" },
-                { value: "Golden Retriever", label: "Golden Retriever" },
-            ],
-        },
-        {
-            label: "Cat",
-            options: [
-                { value: "Bomaby", label: "Bomaby" },
-                { value: "Himalayan", label: "Himalayan" },
-                { value: "Persian", label: "Persian" },
-                { value: "Bengal", label: "Bengal" },
-            ],
-        },
-    ];
+        fetchSpecies();
+    }, [appState.currentBranchId]);
 
+    useEffect(() => {
+        const fetchBreeds = async () => {
+            try {
+                const response = await axios.get(
+                    `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/breed/getAll?branchId=${appState.currentBranchId}`
+                );
 
-    const handleSpeciesChange = (selectedOption: any) => {
-        setSelectedSpecies(selectedOption);
-        const filtered = Breed.find(breed => breed.label === selectedOption?.value)?.options || [];
-        setFilteredBreeds(filtered);
-        setFormData((prevData: any) => ({
-            ...prevData,
-            species: selectedOption
-        }));
-    };
+                const breedList: any[] = response.data.map((breedEntry: Breed) => ({
+                    value: breedEntry.id,
+                    label: breedEntry.name,
+                    speciesId: breedEntry.speciesId,
+                }));
 
-    // Handles changes when a breed is selected
-    const handleBreedChange = (selectedOption: any) => {
-     
-        setFormData((prevData: any) => ({
-            ...prevData,
-            breed: selectedOption
-        }));
-    };
+                setBreeds(breedList);
+            } catch (error) {
+                console.error("Error fetching breeds", error);
+            }
+        };
 
+        fetchBreeds();
+    }, [appState.currentBranchId]);
 
-
+    // Filter breeds based on selected species
+    useEffect(() => {
+        if (selectedSpecies) {
+            const filtered = breeds.filter((breed) => breed.speciesId === selectedSpecies.value);
+            setFilteredBreeds(filtered);
+        } else {
+            setFilteredBreeds([]); // Reset if no species is selected
+        }
+    }, [selectedSpecies, breeds]);
     const handleGenderChange = (gender: any) => {
         setSelectedGender(gender);
     };
-   
-    
-  
-
     return <>
-        <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50" onClick={onClose}>
-            <div className="w-[640px]  px-8 py-4 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-4 flex" onClick={(e) => e.stopPropagation()}>
+        <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50" >
+            <div className="w-[640px]  px-8 py-4 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex" >
                 <div className="self-end flex">
                     <button onClick={onClose} className="border-0 outline-none cursor-pointer">
                         <Image src={closeicon} alt="close" />
@@ -384,11 +355,10 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                         )}
                     </div>
                 </div>
-
                 <div className="flex items-center gap-[48px]">
                     <div className="  w-[8rem] text-gray-500 text-base font-medium ">Client Name</div>
                     <div>
-                       
+
                             <Select
                                 className="text-textGrey2 text-base font-medium  w-[25rem] border-0 boxShadow-0 "
                                 classNamePrefix="select"
@@ -396,10 +366,9 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                                 isSearchable={true}
                                 name="clientName"
                                 options={clients}
-                                value={clients.find((client) => client.label === clientData?.clientName)}
                                 onChange={(selectedClient: any) => handleChange("clientName", selectedClient)}
                                 styles={customStyles}
-                                
+                                value={clients.find((client) => client.label === clientData?.clientName)}
                             />
                         
 
@@ -419,9 +388,12 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                                 options={species}
                                 isMulti={false}
                                 name="species"
-                                onChange={handleSpeciesChange}
+                                onChange={(selectedSpecies: any) => {
+                                    setSelectedSpecies(selectedSpecies);
+                                    handleChange("species", selectedSpecies);
+                                }}
                                 styles={customStyles}
-                                value={selectedSpecies}
+                                value={formData.species}
                             />
                         </div>
                     </div>
@@ -429,7 +401,6 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 <div className="flex items-center gap-[95px] w-full">
                     <div className="text-gray-500 text-base font-medium  w-2/12">Breed</div>
                     <div className="flex w-10/12 h-11">
-
                         <Creatable
                             className="text-textGrey2 text-base font-medium w-[25rem] "
                             placeholder=""
@@ -438,9 +409,9 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                             options={filteredBreeds}
                             isMulti={false}
                             name="breed"
-                            onChange={handleBreedChange}
+                            onChange={(selectedBreed: any) => handleChange("breed", selectedBreed)}
                             styles={customStyles}
-                            value={formData.breed || null}
+                            value={formData.breed}
                         />
                     </div>
                 </div>
@@ -520,7 +491,6 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                         </div>
                     </div>
                 </div>
-
                 <div className="h-auto justify-start items-center gap-[3.4rem] flex ">
                     <div className="w-[120px] text-gray-500 text-base font-medium">Gender</div>
                     <div className="flex flex-wrap sm:flex-nowrap justify-start items-center gap-4">
@@ -542,14 +512,12 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 </div>
                 <div className=" ml-[2rem] w-[576px] h-6 px-[136px] justify-start items-center gap-4 flex">
                     <div className="grow shrink basis-0 self-stretch justify-start items-center gap-2 flex">
-                        <input className="mt-1 accent-teal-500 text-4xl" type="checkbox" onClick={()=>setIsImpatient((prev)=>!prev)}/>
+                        <input className="mt-1 accent-teal-500 text-4xl" type="checkbox" />
                         <div className=" text-teal-400 text-base font-medium ">Mark as inpatient</div>
                     </div>
                 </div>
-
                 <div className=" justify-end items-start gap-6 flex w-full">
-
-                    <div className=" h-11 px-4 py-2.5 bg-teal-400 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer" onClick={isSaveDisabled ? undefined:handleAnotherpatient}>
+                    <div className=" h-11 px-4 py-2.5 bg-teal-400 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer" onClick={isSaveDisabled ? undefined : handleAnotherpatient}>
                         <div className="w-6 h-7"> <Image src={Paws} alt='Paws' className='w-6 h-6 ' /></div>
                         <div className="text-gray-100 text-base font-medium ">Add another Patient</div>
                     </div>
@@ -572,7 +540,4 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
         </div >
     </>
 }
-
 export default PatientPopup;
-
-

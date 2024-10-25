@@ -88,26 +88,32 @@ const FinancesSalesTableItem = ({ onCountsChange, data, sales, isLoading }: any)
               <div>
                 {
                   sale.status?.includes("You’re owed") ? (
-                    <span className="text-[#0F9D58]  px-2 py-1.5 text-sm font-medium bg-[#E7F5EE] rounded-[5px]">
+                    <span className="text-[#0F9D58] px-2 py-1.5 text-sm font-medium bg-[#E7F5EE] rounded-[5px]">
                       {sale.status}
                     </span>
                   ) : sale.status?.includes("You owe") ? (
                     <span className="text-[#FC6E20] px-2 py-1.5 text-sm font-medium bg-[#FFF0E9] rounded-[5px]">
                       {sale.status}
                     </span>
-                  ) : sale.status?.includes("Returned")?
-                  (
-                    <span className="text-[#FF3030]  text-sm font-medium px-2 py-1.5 bg-[#FFEAEA] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                  ) : sale.status?.includes("Returned") ? (
+                    <span className="text-[#FF3030] text-sm font-medium px-2 py-1.5 bg-[#FFEAEA] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
                       {sale.status}
                     </span>
-                  )
-                  :(
-                    <span className="text-[#6B7E7D]  text-sm font-medium px-2 py-1.5 bg-[#EDEDED] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                  ) : sale.status?.includes("Pending") ? (
+                    <span className="text-[#FC6E20] px-2 py-1.5 text-sm font-medium bg-[#FFF0E9] rounded-[5px]">
+                      {sale.status}
+                    </span>
+                  ) : sale.status?.includes("Accepted") ? (
+                    <span className="text-[#0F9D58] px-2 py-1.5 text-sm font-medium bg-[#E7F5EE] rounded-[5px]">
+                      {sale.status}
+                    </span>
+                  ) : (
+                    <span className="text-[#6B7E7D] text-sm font-medium px-2 py-1.5 bg-[#EDEDED] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
                       {sale.status}
                     </span>
                   )
                 }
-              </div>
+              </div >
             </Tooltip>
 
           </div>

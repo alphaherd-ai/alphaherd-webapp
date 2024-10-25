@@ -25,7 +25,7 @@ const InvoiceReturnBottomBar = ({invoiceData}:any) => {
     const router=useRouter();
     const [isSaving,setSaving]=useState(false);
     const handleSubmit = async () => {
-        setSaving(true);
+       setSaving(true);
         const allData = {headerData, tableData, totalAmountData};
         console.log("this is all data",allData)
         let totalQty=0;
@@ -40,7 +40,7 @@ const InvoiceReturnBottomBar = ({invoiceData}:any) => {
             sellingPrice:data.unitPrice,
             taxAmount:data.tax,
             name:data.itemName,
-           
+            itemType: data.itemType
     }));
      const data={
             customer: (id===null)?allData.headerData.customer.value:invoiceData.customer,
@@ -55,14 +55,14 @@ const InvoiceReturnBottomBar = ({invoiceData}:any) => {
             totalCost: allData.totalAmountData.totalCost,
             overallDiscount: allData.totalAmountData.gst,
             totalQty:totalQty,
-            status: `Returned: ${totalQty} items`,
+            status: `Returned: ${totalQty}`,
             type: FinanceCreationType.Sales_Return,
             items:{
                 create:items
             }
             
         }
-        console.log(data,invoiceData);
+       // console.log(tableData);
         //console.log(JSON.stringify(data))
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Return}?branchId=${appState.currentBranchId}`,data)

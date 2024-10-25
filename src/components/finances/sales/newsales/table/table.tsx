@@ -88,7 +88,7 @@ function DataFromEstimate(id: number | null, branchId: number | null) {
     }
 }
 const NewsalesTable = () => {
-    const { tableData, setTableData } = useContext(DataContext);
+    const { tableData, setTableData,headerData,setHeaderData } = useContext(DataContext);
     const [selectedProductDetails, setSelectedProduct] = useState<Products>()
     const [discountPercent, setDiscountPercent] = useState<any>();
     const [discountAmt, setDiscountAmt] = useState<any>();
@@ -116,21 +116,26 @@ const NewsalesTable = () => {
             const { items, ...otherData } = estimateData;
             // eslint-disable-next-line react-hooks/rules-of-hooks
             setOtherData(otherData)
+            console.log(estimateData);
             const shallowDataCopy = [...items];
-            const itemData = shallowDataCopy.map((item: any) => ({
-                productId: item.productBatch.productId,
+             const itemData = shallowDataCopy.map((item: any) => ({
+                itemType:item.itemType,
+                productId: item.itemType==="product" ? item.productBatch.productId:null,
+                serviceId:item.itemType==="product"?null:item.serviceId,
                 itemName: item.name,
                 quantity: item.quantity,
                 sellingPrice: item.sellingPrice,
-                expiry: item.productBatch.expiry,
-                batchNumber: item.productBatch.batchNumber,
-                gst: item.productBatch.product.tax,
-                id: item.productBatch.id
-            }));
-            setItems(itemData);
+                expiry: item.itemType==='product' ? item.productBatch.expiry:"",
+                batchNumber:item.itemType==='product' ?  item.productBatch.batchNumber:"",
+                gst: item.taxAmount,
+                id: item.itemType==='product' ? item.productBatch.productId : item.serviceId,
+                provider:item.itemType==='product'?"":item?.services?.providers[0]
+             }));
+             console.log(itemData);
+             setItems(itemData);
 
         }
-    }, [estimateData]);
+    }, [estimateData,id]);
 
     const [discountStates, setDiscountStates] = useState(new Array(items.length).fill(false));
     const discountOptions = [
@@ -650,7 +655,7 @@ const NewsalesTable = () => {
                                                     styles={customStyles}
                                                 />
                                             ) : (
-                                                item.providerName
+                                                item.provider
                                             )
                                         )}
 

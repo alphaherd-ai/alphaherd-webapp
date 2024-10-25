@@ -35,14 +35,15 @@ const NewsaleEstimateBottomBar = () => {
         //Removing last item from table data as it is null
         tableData.pop();
         const allData = { headerData, tableData, totalAmountData };
-        // console.log(allData)
+
+        console.log(allData)
         let totalQty = 0;
         tableData.forEach(data => {
             totalQty += (data.quantity) || 0;
         });
         const items = tableData.map(data => ({
             productId: data.productId,
-
+            serviceId:data.serviceId,
             productBatchId:data.id, 
             quantity: data.quantity,  
             sellingPrice:data.sellingPrice,
@@ -50,12 +51,13 @@ const NewsaleEstimateBottomBar = () => {
             name:data.itemName,
             lowQty:data.lowQty,
             highQty:data.highQty,
-            discount:data.discount
+            discount:data.discount,
+            itemType:data.itemType,
     }));
         const data={
             customer: allData.headerData.customer.value.clientName ,
+            clientId:allData.headerData.customer.value.clientId,
             email:allData.headerData.customer.value.email,
-
             notes: allData.headerData.notes,
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo: allData.headerData.invoiceNo,

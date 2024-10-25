@@ -550,7 +550,7 @@ model Reason{
 
 model Species {
   id                   Int     @id @default(autoincrement())
-  name                 String[]  
+  name                 String?
   breed                Breed[] 
   DatabaseSection      DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
   databaseSectionId    Int?

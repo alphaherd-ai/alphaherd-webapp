@@ -95,6 +95,7 @@ const InvoiceReturnTable = () => {
                 id: item.itemType==='product' ? item.productBatchId  :  item.serviceId,
                 productId: item.itemType==='product' ? item.productId:null,
                 serviceId: item.itemType==='service' ? item.serviceId:null,
+                itemType:item.itemType,
                 itemName: item.name,
                 quantity: item.quantity,
                 unitPrice: item.itemType==='product' ? item.productBatch?.costPrice:item.sellingPrice,
@@ -191,7 +192,7 @@ const InvoiceReturnTable = () => {
 
 
     useEffect(() => {
-        if (id == null) {
+        if (id !== null) {
             setItems(items);
             setTableData(items);
         }

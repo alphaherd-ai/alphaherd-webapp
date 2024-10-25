@@ -37,9 +37,9 @@ const NewsalesBottomBar = ({estimateData}:any) => {
 
     const balanceDue = totalAmountData.totalCost - totalPaidAmount + totalAmountToPay;
 
-
+    
     const handleSubmit = async () => {
-        if (!headerData.customer) {
+        if (!headerData.customer &&  !estimateData.customer) {
             alert('Customer is required');
             return;
         }
@@ -61,12 +61,11 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             taxAmount: data.gst,
             name: data.itemName,
             itemType: data.itemType
-            
         }));
         const data = {
             customer: (id === null) ? allData.headerData.customer.value.clientName : estimateData.customer,
-            clientId:(id==null)?allData.headerData.customer.value.clientId:"",
-            email:(id=== null)?allData.headerData.customer.value.email:"",
+            clientId:(id==null)?allData.headerData.customer.value.clientId:estimateData.clientId,
+            email:(id=== null)?allData.headerData.customer.value.email:estimateData.email,
             notes: (id === null) ?allData.headerData.notes:estimateData.notes,
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo: (id === null) ?allData.headerData.invoiceNo:estimateData.invoiceNo,
@@ -149,7 +148,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             contact:allData.headerData.customer.value.contact,
             overallDiscount: `${allData.totalAmountData.gst*100}%`,
             totalQty: totalQty,
-            status:balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
+            status:(balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed'),
             type: FinanceCreationType.Sales_Invoice,
             items: {
                 create: items
@@ -229,7 +228,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
         } 
     };
     
-    const isDisabled = !headerData?.customer || tableData.length === 1;
+    const isDisabled = headerData?.customer ? (!headerData?.customer) : (!estimateData?.customer) || id===null ? tableData.length === 1:tableData.length===0 
 
     return (
         <>
