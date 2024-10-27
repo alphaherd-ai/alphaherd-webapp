@@ -40,7 +40,7 @@ const FilterDropdwonCard = () => {
         },
       }));
 
-      const combinedOptions = [...clientOptions, ...distributorOptions];
+      const combinedOptions = [ ...distributorOptions];
       console.log(combinedOptions);
       setPartyInfo(combinedOptions);
     }
@@ -93,7 +93,7 @@ const FilterDropdwonCard = () => {
           onClick={() => handleTabChange("party")}
         >
           <div className={`text-sm font-bold ${activeTab === "party" ? "text-white" : "text-neutral-400"}`}>
-            Party
+            Distributors
           </div>
           <div className="w-4 h-4 p-2 bg-teal-400 rounded-[17px] flex-col justify-center items-center gap-2.5 inline-flex">
             <div className="text-white text-[10px] font-medium">2</div>

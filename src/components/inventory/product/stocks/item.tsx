@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Tooltip, Button, Spinner } from "@nextui-org/react";
 import { useAppSelector } from '@/lib/hooks';
 import useSWR from 'swr';
+import { Notif_Source } from "@prisma/client";
 import formatDateAndTime from '@/utils/formateDateTime';
 import Loading from '@/app/loading';
+import axios from 'axios';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 interface Products{
@@ -38,20 +40,71 @@ const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
     setProducts(data);
    }
   }, [data,error,isLoading]);
+  console.log("item data is :" , data);
   console.log(products);
   const filteredProducts = products?.filter(product => {
     console.log(product)
     if (activeTabValue === "Low Stock") {
+
+      if(product?.quantity <= product?.product?.minStock){
+      const notifData = {
+        source: Notif_Source.Inventory_Product_Remain,
+        orgId: appState.currentOrgId,
+            totalItems : product.quantity,
+            productName : product.product?.itemName,
+            url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/all`,
+          }
+       const notif = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
+       }
+
       return product?.quantity <= product?.product?.minStock;
+
     } else if (activeTabValue === "Excess") {
+
+      if(product?.quantity >= product?.product?.maxStock)
+      {
+        const notifData = {
+          source: Notif_Source.Inventory_Product_MaxStock,
+              orgId: appState.currentOrgId,
+             
+              productName : product.product?.itemName,
+              url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/all`,
+            }
+         const notif = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
+      }
+
       return product?.quantity >= product?.product?.maxStock;
     }else if (activeTabValue === "Expired") { 
       const currentDate = new Date();
       const expiryDate = new Date(product?.expiry);
+      if(expiryDate <= currentDate)
+      {
+        const notifData = {
+          source: Notif_Source.Inventory_ProductBatch,
+              orgId: appState.currentOrgId,
+              batchNumber : product.batchNumber,
+              productName : product.product?.itemName,
+              url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/all`,
+            }
+         const notif = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
+      }
       return expiryDate <= currentDate;
     }else if(activeTabValue==="Expiring"){
       const currentDate =new Date();
       const expiryDate=new Date(product?.expiry);
+      if(expiryDate>currentDate&&(expiryDate.getTime()-currentDate.getTime())<=Number(30 * 24 * 60 * 60 * 1000))
+
+        {
+          const notifData = {
+            source: Notif_Source.Inventory_Product_Expiry,
+                orgId: appState.currentOrgId,
+                totalItems : product.quantity,
+                expiry : product.expiry,
+                productName : product.product?.itemName,
+                url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/all`,
+              }
+           const notif = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
+        }
       return expiryDate>currentDate&&(expiryDate.getTime()-currentDate.getTime())<=Number(30 * 24 * 60 * 60 * 1000)
     }
  

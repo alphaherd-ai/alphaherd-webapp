@@ -17,7 +17,7 @@ import NewPurchasesTotalAmount from "./totalamount";
 import { useAppSelector } from "@/lib/hooks";
 import formatDateAndTime from '@/utils/formateDateTime';
 import { Tax } from '@prisma/client';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import { DataContext } from "./DataContext"
 import Popup from '../../../../inventory/product/producttable/newproductpopup';
 import Popup1 from "@/components/database/distributor/newdistributorpopup"
@@ -67,6 +67,7 @@ function DataFromOrder(id:number|null,branchId:number|null){
 
 const NewPurchasesTable = () => {
     const { tableData, setTableData } = useContext(DataContext);
+    const { setDistributorData } = useContext(DataContext);
     const [selectedProductDetails,setSelectedProduct]= useState<Products>()
     const [products, setProducts] = useState<any[]>([]);
     const [otherData, setOtherData] = useState({});
@@ -259,7 +260,22 @@ const handleAddItem= useCallback(() => {
     }, [items]);
 
 
+   
 
+    const handleDistributorAdd = () => {
+        togglePopup1; // Close the popup
+        const url = `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll?branchId=${appState.currentBranchId}`;
+        
+        // Use mutate to refresh the distributor list from the API
+        mutate(url, async () => {
+            const response = await fetch(url);
+            const updatedDistributors = await response.json();
+            setDistributorData(updatedDistributors); // Update distributorData in DataContext
+            return updatedDistributors;
+        });
+    };
+
+    
     const customStyles = {
         control: (provided: any, state: any) => ({
           ...provided,
@@ -527,7 +543,7 @@ const handleAddItem= useCallback(() => {
             <NewPurchasesBottomBar orderData={orderData}/>
         </div>
         {showPopup && <Popup onClose={togglePopup} />}
-        {showDistributorPopup && <Popup1 onClose={togglePopup1} />}
+        {showDistributorPopup && <Popup1 onClose={handleDistributorAdd} />}
         </>
     )
 

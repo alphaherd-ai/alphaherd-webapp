@@ -24,6 +24,7 @@ enum Notif_Source {
   Inventory_ProductBatch
   Sales_Invoice
   Expense_Invoice
+  Sales_Invoice_Due
 }
 
 enum Sales_Status {

@@ -11,7 +11,7 @@ export function notifications(data: any) {
         return `Stock levels successfully updated for ${data.totalItems} items. Click here to see items removed from inventory.`
     }
     if(data.source===Notif_Source.Inventory_Product_Expiry){
-        return `${data.totalItems} units of ${data.productName} are ${data.expiry} away from exipration. Evaluate your current inventory needs and consider adjusting levels accordingly.`
+        return `${data.totalItems} units of ${data.productName} are ${formatDateAndTime(data.expiry)} away from exipration. Evaluate your current inventory needs and consider adjusting levels accordingly.`
     }
     if(data.source===Notif_Source.Inventory_Product_Remain){
         return `Only ${data.totalItems} of ${data.productName} remaining. Replenish items soon for seamless operations.`
@@ -28,5 +28,6 @@ export function notifications(data: any) {
     if(data.source ===Notif_Source.Inventory_Update_Approval_Request){
         return `User is trying to update stocks.Approve or Deny.`
     }
+    
   }
   

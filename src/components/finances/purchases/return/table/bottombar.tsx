@@ -46,10 +46,10 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
             notes: (id === null) ?allData.headerData.notes:invoiceData.notes,
             invoiceNo: (id === null) ?allData.headerData.invoiceNo:invoiceData.invoiceNo,
             dueDate: (id === null) ?allData.headerData.dueDate:invoiceData.dueDate,
-            shipping: (id === null) ?allData.totalAmountData.shipping:invoiceData.shipping,
-            adjustment: (id === null) ?allData.totalAmountData.adjustment:invoiceData.adjustment,
-            totalCost: (id === null) ?allData.totalAmountData.totalCost:invoiceData.totalCost,
-            overallDiscount: allData.totalAmountData.overAllDiscount,
+            shipping: totalAmountData.shipping,
+            adjustment: totalAmountData.adjustment,
+            totalCost: totalAmountData.totalCost,
+            overallDiscount: totalAmountData.overAllDiscount,
             totalQty:totalQty,
             status: "Pending",
             type: FinanceCreationType.Purchase_Return,
@@ -58,8 +58,8 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
             }
             
         }
-        console.log("email is (inside) :",data.email);
-        console.log("header data in bottom bar is : ",headerData);
+        console.log("bottom bar data is : ",data);
+        
         console.log(JSON.stringify(data))
         try {
             const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Return}?branchId=${appState.currentBranchId}`,data)

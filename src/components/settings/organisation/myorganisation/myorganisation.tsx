@@ -195,7 +195,7 @@ export const MyOrganisationSettings = () => {
                                 <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '>
                                     <Button
                                         variant="solid"
-                                        className="capitalize flex border-none bg-black text-white rounded-lg " onClick={togglePopup}> Add Branch</Button>
+                                        className="capitalize flex border-none bg-black text-white rounded-lg hover:cursor-pointer " onClick={togglePopup}> Add Branch</Button>
 
                                 </div>
                             </div>
@@ -219,10 +219,9 @@ export const MyOrganisationSettings = () => {
                     </div>
                 </div >
             </div >
-
-            {showPopup && <AddBranchPopup onClose={togglePopup} />}
-
-          
+           
+            {showPopup && <AddBranchPopup onClose={togglePopup} />} 
+           
         </>
     )
 }

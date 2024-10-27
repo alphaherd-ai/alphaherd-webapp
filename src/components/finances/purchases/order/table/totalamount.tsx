@@ -218,7 +218,8 @@ const NewPurchasesTotalAmount = () => {
                                         <input
                                         type='number'
                                         className="text-right  text-base  w-[50%] border-none outline-none"
-                                        value={totalAmountData.subTotal?discountInput:0}
+                                        placeholder='0'
+                                        value={discountInput}
                                         onChange={(e)=>handleDiscountChange(Number(e.target.value))}
                                         /></div>
                                         <div className=' flex text-gray-500 text-base font-medium pl-6'>

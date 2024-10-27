@@ -23,7 +23,7 @@ const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
 const NewPurchasesHeader = ({existingHeaderData}:any) => {
 
-    const { headerData, setHeaderData } = useContext(DataContext);
+    const { headerData, setHeaderData,distributorData } = useContext(DataContext);
     const url=useSearchParams();
     const count=url.get('count');
     const initialInvoiceNo =generateInvoiceNumber(Number(count));
@@ -133,14 +133,15 @@ const NewPurchasesHeader = ({existingHeaderData}:any) => {
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold ">Distributor:</div>
                         { id===null?(
+                            
                             isLoading?<div>Loading...</div>:(
                         <Select
                             className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
                             classNamePrefix="select"
-                            defaultValue={distributor[0]}
+                            defaultValue={distributor && distributor[0]}
                             isClearable={isClearable}
                             isSearchable={isSearchable}
-                            name="color"
+                            name="distributor"
                             value={headerData.distributor}
                             options={distributor}
                             styles={customStyles}

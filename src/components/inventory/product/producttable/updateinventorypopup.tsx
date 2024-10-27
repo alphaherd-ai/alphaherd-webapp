@@ -370,6 +370,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
                             url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/timeline`,
                             orgId: appState.currentOrgId
                         }
+                        console.log("nnotifs data : ",notifData);
                         const notifPromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
                         setTimeout(() => {
                             onClose();

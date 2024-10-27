@@ -210,7 +210,7 @@ const OrgEdit = () => {
 
           let json = await res.json();
           if (res.ok) {
-              // Update OrgBranch with branchName if it exists
+              
               if (data.branchName) {
                   const branchRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/admin/orgEdit`, {
                       method: 'PATCH',

@@ -24,23 +24,10 @@ const AddBranchPopup = ({ onClose }:any) => {
     const handleAddBranch = async () => {
         try{
             if (branchNameInput.trim() !== '') {
-                let resp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/admin/branch?orgId=${appState.currentOrgId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    credentials: 'include',
-                    body: JSON.stringify({
-                        "branchName": branchNameInput.trim()
-                    })
-                });
+                
                 appState.currentBranch.branchName = branchNameInput.trim();
-                let json = await resp.json();
-                if(!resp.ok){
-                    console.log(json);
-                    throw new Error(json.message);
-                }
-                toast.success(json.message, {
+              
+                toast.success('Branch name saved locally. Please submit the form to add it.', {
                     position: "bottom-right",
                     autoClose: 5000,
                     hideProgressBar: false,
@@ -50,11 +37,12 @@ const AddBranchPopup = ({ onClose }:any) => {
                     progress: undefined,
                     theme: "colored",
                     transition: Bounce,
-                  });
-                setTimeout(() => onClose(),4000)
+                });
+    
+                // Optionally, handle UI cleanup
+                setTimeout(() => onClose(), 1000);
             }
-        }
-        catch(err : any){
+        } catch (err: any) {
             toast.error(err.message, {
                 position: "bottom-right",
                 autoClose: 5000,
@@ -65,8 +53,11 @@ const AddBranchPopup = ({ onClose }:any) => {
                 progress: undefined,
                 theme: "colored",
                 transition: Bounce,
-              });
-        }setTimeout(() => {
+            });
+        }
+    
+        // Ensure the form is closed regardless
+        setTimeout(() => {
             onClose();
             console.log("router pushed");
             router.push(`/auth/admin/branchSetup`);
