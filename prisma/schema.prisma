@@ -571,4 +571,3 @@ model TaxType{
   inventorySectionId       Int?
 }
 
-

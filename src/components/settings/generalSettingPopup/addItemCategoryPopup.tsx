@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import closeicon from "../../../assets/icons/inventory/closeIcon.svg";
 import Image from "next/image";
 import { Bounce, ToastContainer, toast } from 'react-toastify';
@@ -12,9 +12,68 @@ import { useAppSelector } from '@/lib/hooks';
 
 
 const AddItemCategoryPopup = ({onClose}:any) => {
-    const [inputs, setInputs] = useState<string[]>(['']);
+    const [inputs, setInputs] = useState<string[]>([]);
     const appState = useAppSelector((state) => state.app);
+    const [existingItems, setExistingItems] = useState<string[]>([]);
+    const [errors, setErrors] = useState<string[]>([]);
+    const defaultCategories = ['A','B','BFG'];
 
+    // Fetch existing item categories and add defaults if missing
+    useEffect(() => {
+        const initializeCategories = async () => {
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemCategory/getAll?branchId=${appState.currentBranchId}`);
+                if (response.ok) {
+                    const fetchedItems = await response.json();
+                    const categoryNames = fetchedItems.map((category: { name: string }) => category.name);
+                    setExistingItems(categoryNames);
+                    console.log('Fetched existing items:', categoryNames);
+                    const missingDefaults = defaultCategories.filter(
+                        (defaultCategory) => !categoryNames.includes(defaultCategory)
+                    );
+
+                    if (missingDefaults.length > 0) {
+                        console.log('Adding missing default categories:', missingDefaults);
+                        await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemCategory/create?branchId=${appState.currentBranchId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                name: missingDefaults,
+                            }),
+                        });
+                    }
+                } else {
+                    console.error('Failed to fetch existing items:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error while fetching or creating default items:', error);
+            }
+        };
+
+        initializeCategories();
+    }, []); 
+
+    useEffect(() => {
+        const fetchExistingItems = async () => {
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemCategory/getAll?branchId=${appState.currentBranchId}`);
+                const data = await response.json();
+
+                const names = data.map((item: { name: any[]; }) => item.name[0]);
+                setExistingItems(names);
+                
+                console.log('Existing items fetched:', names);
+            } catch (error) {
+                console.error('Error fetching existing items:', error);
+            }
+        };
+
+        fetchExistingItems();
+    }, [appState.currentBranchId]);
+
+    
 
     const handleAddInput = () => {
         setInputs([...inputs, '']);
@@ -30,9 +89,37 @@ const AddItemCategoryPopup = ({onClose}:any) => {
         const newInputs = [...inputs];
         newInputs[index] = value;
         setInputs(newInputs);
+        const newErrors = [...errors];
+        newErrors[index] = '';
+        setErrors(newErrors);
+        console.log(`Input changed at index ${index}: ${value}`);
     };
 
     const handleSaveClick = async () => {
+        const newErrors = [...errors];
+        let hasError = false;
+
+        const allExistingItems = [...existingItems, ...defaultCategories];
+        console.log('All existing items (including defaults):', allExistingItems);
+
+        inputs.forEach((input, index) => {
+            const trimmedInput = input.trim();
+            console.log(`Checking input: ${trimmedInput}`);
+            if (allExistingItems.includes(trimmedInput)) {
+                newErrors[index] = 'This item already exists';
+                hasError = true;
+                console.log(`Duplicate item detected: ${trimmedInput}`);
+            } else {
+                newErrors[index] = ''; 
+            }
+        });
+
+        setErrors(newErrors);
+
+        if (hasError) {
+            console.log('Error found, not saving.');
+            return;
+        }
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemCategory/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
@@ -68,10 +155,10 @@ const AddItemCategoryPopup = ({onClose}:any) => {
                     </div>
                 </div>
                 <div className="w-full flex items-center gap-[6rem] ">
-                    
-                    <div className='w-full flex flex-col  gap-3'>
-                        {inputs.map((input, index) => (
-                            <div key={index} className="w-full flex  items-center">
+                    <div className='w-full flex flex-col gap-3'>
+                    {inputs.map((input, index) => (
+                        <div key={index} className="w-full">
+                            <div className="flex items-center">
                                 <div className="text-gray-500 text-base font-medium w-[12rem]">Item Category</div>
                                 <input
                                     className="ml-[5rem] w-[80%] border border-solid border-borderGrey outline-none h-11 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
@@ -79,17 +166,20 @@ const AddItemCategoryPopup = ({onClose}:any) => {
                                     value={input}
                                     onChange={(e) => handleChangeInput(index, e.target.value)}
                                 />
-                                {/* <div className="ml-2 h-11 px-[0.6rem] rounded-[5px] justify-start items-center flex bg-black cursor-pointer" onClick={handleAddInput}>
-                                    <Image src={addicon} alt="add"></Image>
-                                </div> */}
                                 <div className="ml-2 h-11 px-[0.6rem] rounded-[5px] justify-start items-center flex bg-black cursor-pointer" onClick={() => handleDeleteInput(index)}>
-                                    <Image src={delicon} alt="delete"></Image>
+                                    <Image src={delicon} alt="delete" />
                                 </div>
                             </div>
-                        ))}
+                            {errors[index] && (
+                                <div className="text-red-500 text-sm mt-1 ml-[17rem]">
+                                    {errors[index]}
+                                </div>
+                            )}
+                        </div>
+                    ))}
                     </div>
-                    
                 </div>
+
                 <div className="w-full flex justify-between mt-[5px] cursor-pointer">
                 <div className="text-white text-base font-normal bg-black p-2 rounded-md py-2.5" onClick={handleAddInput}>Add another</div>
 
