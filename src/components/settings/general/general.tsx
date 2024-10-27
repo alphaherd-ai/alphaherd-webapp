@@ -40,8 +40,8 @@ const defaultServiceCategory = ['General Consultation','Follow Up', 'Surgery','V
 const defaultPaymentMethod = ['Cash','UPI','Netbanking'];
 const defaultReason = ['Damaged','Expired','Wrong Item','Quality Issues'];
 const defaultSpeciesandBreed = [
-    { name: 'Dog', breed: ['Labrador', 'Indie'] },
-    { name: 'Cat', breed: ['Persian', 'Indie', 'Siamese'] },
+    { name: 'Dog', breed: ['Labrador Retriever','German Shepherd','Golden Retriever','Beagle','Pug','Indian Mastiff','Husky','Dashshund','Shi Tzu'] },
+    { name: 'Cat', breed: ['Domestic Short Hair','Bombay','Himalayan','Persian','Bengal', 'Siamese'] },
     { name: 'Bird', breed: [] }, 
     { name: 'Fish', breed: [] },  
 ];
