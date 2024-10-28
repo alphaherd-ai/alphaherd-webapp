@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import closeicon from "../../../assets/icons/inventory/closeIcon.svg";
 import Image from "next/image";
 import { Bounce, ToastContainer, toast } from 'react-toastify';
@@ -14,7 +14,23 @@ const AddSpeciesPopup = ({onClose}:any) => {
     const appState = useAppSelector((state) => state.app);
 
     const [formData, setFormData] = useState<any>("");
+    const [existingSpecies, setExistingSpecies] = useState<string[]>([]);
+    const [error, setError] = useState<string | null>(null);
 
+    useEffect(()=>{
+        const fetchSpecies = async() => {
+            try{
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`);
+                const data = await response.json();
+                const speciesNames = data.map((item: {name: string}) => item.name);
+                setExistingSpecies(speciesNames);
+                console.log('Existing Species fetched: ',speciesNames);
+            } catch(error){
+                console.log('Error fetching species name :',error);
+            }
+        };
+        fetchSpecies();
+    },[appState.currentBranchId])
 
 const handleChange = (field: string, value: any) => {
     setFormData((prevFormData: any) => ({
@@ -24,7 +40,13 @@ const handleChange = (field: string, value: any) => {
     }
 
     const handleSave = async () => {
-        //console.log("Species:" + formData.species);
+        if(existingSpecies.includes(formData.species)){
+            setError(`${formData.species} already exists.`);
+            console.log(`Duplicate Species detected ${formData.species}`);
+            return;
+        }else{
+            setError(null);
+        }
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
@@ -62,15 +84,21 @@ const handleChange = (field: string, value: any) => {
                 <div className="w-full flex items-center gap-[6rem] ">
                     <div className='w-full flex flex-col  gap-3'>
 
-                            <div  className="w-full flex  items-center">
-                                <div className="text-gray-500 text-base font-medium w-[12rem]">Species</div>
-                                <input
-                                    className="ml-[5rem] w-[80%] border border-solid border-borderGrey outline-none h-11 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    type="text"
-                                    name="species"
-                                    onChange={(e) => handleChange("species", e.target.value)}
-                                />
-                               
+                            <div  className="w-full">
+                                <div className="flex items-center">
+                                    <div className="text-gray-500 text-base font-medium w-[12rem]">Species</div>
+                                    <input
+                                        className="ml-[5rem] w-[80%] border border-solid border-borderGrey outline-none h-11 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                        type="text"
+                                        name="species"
+                                        onChange={(e) => handleChange("species", e.target.value)}
+                                    />
+                                </div>
+                                {error && (
+                                    <div className="ml-[17rem] text-red-500 text-sm mt-1">
+                                        {error}
+                                    </div>
+                                )}
                             </div>
                     </div>
                 </div>
