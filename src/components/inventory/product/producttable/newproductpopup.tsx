@@ -135,6 +135,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                       });
                     } else {
                       acc.push({ value: categoryEntry.id, label: categoryEntry.name });
+                      
                     }
                     return acc;
                   }, []);
