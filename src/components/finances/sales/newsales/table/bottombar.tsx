@@ -20,6 +20,7 @@ import { generatePdfForInvoiceAndUpload } from "@/utils/uploadPdf"
 import { useRouter } from "next/navigation"
 import { create } from "domain"
 import Loading2 from "@/app/loading2"
+import { header } from "express-validator"
 
 const NewsalesBottomBar = ({estimateData}:any) => {
     const { headerData, tableData, totalAmountData, transactionsData } = useContext(DataContext);
@@ -28,8 +29,17 @@ const NewsalesBottomBar = ({estimateData}:any) => {
     const id = url.get('id');
     const router = useRouter();
     const [isSaving,setSaving]=useState(false);
+
+    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+
+    const balanceDue = totalAmountData.totalCost - totalPaidAmount + totalAmountToPay;
+
+    
     const handleSubmit = async () => {
-        if (!headerData.customer) {
+        if (!headerData.customer &&  !estimateData.customer) {
             alert('Customer is required');
             return;
         }
@@ -51,12 +61,11 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             taxAmount: data.gst,
             name: data.itemName,
             itemType: data.itemType
-            
         }));
         const data = {
             customer: (id === null) ? allData.headerData.customer.value.clientName : estimateData.customer,
-            clientId:(id==null)?allData.headerData.customer.value.clientId:"",
-            email:(id=== null)?allData.headerData.customer.value.email:"",
+            clientId:(id==null)?allData.headerData.customer.value.clientId:estimateData.clientId,
+            email:(id=== null)?allData.headerData.customer.value.email:estimateData.email,
             notes: (id === null) ?allData.headerData.notes:estimateData.notes,
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo: (id === null) ?allData.headerData.invoiceNo:estimateData.invoiceNo,
@@ -69,13 +78,14 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             recordTransaction: {
                 create: allData.transactionsData
             },
-            status: "Pending",
+            status:balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
             type: FinanceCreationType.Sales_Invoice,
             items: {
                 create: items
             }
 
         }
+        
         // console.log(appState.currentBranch)
         const notifData = {
             source: Notif_Source.Sales_Invoice,
@@ -86,28 +96,28 @@ const NewsalesBottomBar = ({estimateData}:any) => {
         }
         // console.log(JSON.stringify(data))
         // console.log("this is notif data", notifData)
-        // try {
-        //     setSaving(true); 
-        //     const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Invoice}?branchId=${appState.currentBranchId}`, data)
-        //     const notifPromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
+        try {
+            setSaving(true); 
+            const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Invoice}?branchId=${appState.currentBranchId}`, data)
+            const notifPromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
            
-        //     setTimeout(()=>{
-        //         router.back();
-        //     },2000);
+            setTimeout(()=>{
+                router.back();
+            },2000);
 
-        //     const [response,notif]=await Promise.all([responsePromise,notifPromise])
+            const [response,notif]=await Promise.all([responsePromise,notifPromise])
             
-        //     if (!response.data) {
-        //         throw new Error('Network response was not ok');
-        //     }
+            if (!response.data) {
+                throw new Error('Network response was not ok');
+            }
             
             
-        // } catch (error) {
-        //     console.error('Error:', error);
-        // }
-        // finally{
-        //     setSaving(false)
-        // }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+        finally{
+            setSaving(false)
+         }
     };
 
     const downloadPdf = async () => {
@@ -138,7 +148,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             contact:allData.headerData.customer.value.contact,
             overallDiscount: `${allData.totalAmountData.gst*100}%`,
             totalQty: totalQty,
-            status: "Pending",
+            status:(balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed'),
             type: FinanceCreationType.Sales_Invoice,
             items: {
                 create: items
@@ -218,7 +228,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
         } 
     };
     
-    const isDisabled = !headerData?.customer || tableData.length === 1;
+    const isDisabled = headerData?.customer ? (!headerData?.customer) : (!estimateData?.customer) || id===null ? tableData.length === 1:tableData.length===0 
 
     return (
         <>

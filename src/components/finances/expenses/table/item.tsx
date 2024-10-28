@@ -63,7 +63,7 @@ const FinancesExpensesTableItem = ({ onCountsChange, currentPageNumber, setCurre
           const recurrenceDate = new Date(expense.recurringStartedOn);
           recurrenceDate.setDate(recurrenceDate.getDate() + i * repeatInterval);
           // console.log("this is recurrence date", recurrenceDate)
-          
+
           if ((!startDate || recurrenceDate >= startDate) && (!endDate || recurrenceDate <= endDate)) {
             allExpenses.push({ ...expense, date: recurrenceDate });
           }
@@ -122,8 +122,22 @@ const FinancesExpensesTableItem = ({ onCountsChange, currentPageNumber, setCurre
           <div className='w-[6rem] flex   text-base font-medium'>{formatDateAndTime(expense.dueDate).formattedDate}</div>
           <div className='w-[12rem] flex  items-center  text-base font-medium'>
             <Tooltip content={expense.status} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
-              <div className='bg-[#E7F5EE] rounded-md px-2 py-2' >
-                <span className="text-[#0F9D58]  text-sm font-medium ">{expense.status}</span>
+              <div >
+                {
+                  expense.status?.includes("You’re owed") ? (
+                    <span className="text-[#0F9D58] px-2 py-1.5 text-sm font-medium bg-[#E7F5EE] rounded-[5px]">
+                      {(expense.status)}
+                    </span>
+                  ) : expense.status?.includes("You owe") ? (
+                    <span className="text-[#FC6E20] px-2 py-1.5 text-sm font-medium bg-[#FFF0E9] rounded-[5px]">
+                      {expense.status}
+                    </span>
+                  ) : (
+                    <span className="text-[#6B7E7D]  text-sm font-medium px-2 py-1.5 bg-[#EDEDED] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                      {expense.status || "Status unknown"}
+                    </span>
+                  )
+                }
               </div>
             </Tooltip>
 
@@ -147,8 +161,8 @@ const getRepeatInterval = (repeatType: string) => {
 
 const calculateFrequency = (startDate: Date, endDate: Date, interval: number) => {
   // console.log("this is start date", startDate,endDate)
-  endDate= new Date(endDate)
-  startDate=new Date(startDate)
+  endDate = new Date(endDate)
+  startDate = new Date(startDate)
   if (!startDate || !endDate) return 0;
   const currentDate = new Date();
   let diffTime;

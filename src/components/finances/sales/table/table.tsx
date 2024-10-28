@@ -118,13 +118,13 @@ const FinancesSalesTable = () => {
         <div className=' flex text-gray-500 text-base font-medium   w-1/12 '>Date</div>
         <div className=' flex text-gray-500 text-base font-medium   w-1/12 '>Time</div>
         <div className=' flex text-gray-500 text-base font-medium   w-[4rem] '>Type</div>
-        <div className=' flex text-gray-500 text-base font-medium px-4  w-2/12 '>Client</div>
+        <div className=' flex text-gray-500 text-base font-medium   w-2/12 '>Client</div>
         <div className=' flex text-gray-500 text-base font-medium   w-1/12 '>Ref. No.</div>
         <div className=' flex text-gray-500 text-base font-medium   w-1/12 '>Total Cost</div>
         {/* <div className=' flex text-gray-500 text-base font-medium   w-1/12 '>Total Qty.</div> */}
         <div className=' flex text-gray-500 text-base font-medium   w-1/12 '>Due date</div>
 
-        <div className=' flex text-gray-500 text-base font-medium  w-1/12'>Status</div>
+        <div className=' flex text-gray-500 text-base font-medium  w-2/12'>Status</div>
         <div className='w-[3.5rem] '>
 
         </div>

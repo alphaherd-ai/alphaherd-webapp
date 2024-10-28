@@ -48,7 +48,7 @@ const ExistingsaleEstimateTable = () => {
                 lowQty: item.lowQty,
                 highQty: item.highQty,
                 discount: item.discount,
-                provider:item.itempType==='product'?"":item?.services?.providers[0]
+                provider:item.itemType==='product'?"":item?.services?.providers[0]
             }));
             setItems(itemData);
         }

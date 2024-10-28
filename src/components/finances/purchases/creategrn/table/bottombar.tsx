@@ -23,6 +23,14 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
     const id = url.get('id');
     const [isSaving, setSaving] = useState(false);
     const router = useRouter();
+
+    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+
+    const balanceDue = -totalAmountData.totalCost - totalPaidAmount + totalAmountToPay;
+
     const handleSubmit = async () => {
         tableData.pop();
         const allData = { headerData, tableData, totalAmountData, transactionsData };
@@ -40,6 +48,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             expiry: data.expiry,
             batchNumber: data.batchNumber,
             hsnCode: data.barCode,
+            
             costPrice: Number(data.unitPrice)
         }));
         const data = {
@@ -55,7 +64,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             recordTransaction: {
                 create: allData.transactionsData
             },
-            status: "Pending",
+            status:balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
             type: FinanceCreationType.Purchase_Order,
             items: {
                 create: items

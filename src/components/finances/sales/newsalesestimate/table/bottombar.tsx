@@ -43,7 +43,7 @@ const NewsaleEstimateBottomBar = () => {
         });
         const items = tableData.map(data => ({
             productId: data.productId,
-
+            serviceId:data.serviceId,
             productBatchId:data.id, 
             quantity: data.quantity,  
             sellingPrice:data.sellingPrice,
@@ -51,7 +51,8 @@ const NewsaleEstimateBottomBar = () => {
             name:data.itemName,
             lowQty:data.lowQty,
             highQty:data.highQty,
-            discount:data.discount
+            discount:data.discount,
+            itemType:data.itemType,
     }));
         const data={
             customer: allData.headerData.customer.value.clientName ,

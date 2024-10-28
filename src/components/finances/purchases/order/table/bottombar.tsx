@@ -17,12 +17,21 @@ import { FinanceCreationType } from "@prisma/client"
 import axios from "axios"
 
 const NewPurchasesBottomBar = ({ orderData }: any) => {
-    const { headerData, tableData, totalAmountData } = useContext(DataContext);
+    const { headerData, tableData, totalAmountData, transactionsData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
     const router = useRouter();
     const url = useSearchParams();
     const id = url.get('id');
     const [isSaving, setSaving] = useState(false);
+
+    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+
+    const balanceDue = -totalAmountData.totalCost - totalPaidAmount + totalAmountToPay;
+    console.log(balanceDue);
+
     var userEmail = "";
     const handleSubmit = async () => {
         tableData.pop();
@@ -51,7 +60,7 @@ const NewPurchasesBottomBar = ({ orderData }: any) => {
             totalCost: allData.totalAmountData.totalCost,
             totalQty: totalQty,
             overallDiscount: allData.totalAmountData.overallDiscount,
-            status: "Pending",
+            status:balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
             type: FinanceCreationType.Purchase_Order,
             items: {
                 create: items
@@ -60,9 +69,9 @@ const NewPurchasesBottomBar = ({ orderData }: any) => {
 
         }
         userEmail = data.email;
-        // console.log("email is (inside) :",data.email);
-        // console.log("header data in bottom bar is : ",headerData);
-        // console.log(JSON.stringify(data))
+        console.log("email is (inside) :",data.email);
+        console.log("header data in bottom bar is : ",headerData);
+        console.log(JSON.stringify(data))
         try {
             setSaving(true);
             const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Order}?branchId=${appState.currentBranchId}`, data)

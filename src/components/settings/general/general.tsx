@@ -574,10 +574,10 @@ const GeneralSettings = () => {
     const handleExpandSpecies = (speciesId: number) => {
         setExpandedSpecies(expandedSpecies === speciesId ? null : speciesId);
     };
-    console.log('item categories: ', itemCategories);
-    console.log('Tax Type',taxType);
-    console.log('Species: ', species);
-    console.log('Breed',expandedSpecies);
+    // console.log('item categories: ', itemCategories);
+    // console.log('Tax Type',taxType);
+    // console.log('Species: ', species);
+    // console.log('Breed',expandedSpecies);
 
 
 

@@ -15,10 +15,7 @@ import Loading2 from '@/app/loading2';
 const ExsistingGrnTotalAmount = ({ otherData, isLoading }: any) => {
 
 
-    const [showPopup, setShowPopup] = React.useState(false);
-    const togglePopup = () => {
-        setShowPopup(!showPopup);
-    }
+    
 
 
     const totalPaidAmount = otherData?.recordTransaction?.reduce((acc: any, transaction: any) => {
@@ -38,25 +35,21 @@ const ExsistingGrnTotalAmount = ({ otherData, isLoading }: any) => {
     // const totalPaidAmount = otherData?.recordTransaction?.reduce((a: any, b: any) => a + b.amountPaid, 0);
 
 
-    const balanceDue = otherData.totalCost - totalPaidAmount + totalAmountPay
+    const balanceDue = -otherData.totalCost - totalPaidAmount + totalAmountPay
 
 
 
     const [count, setCount] = useState(0);
     const [initialInvoiceNo, setInitialInvoiceNo] = useState('');
 
-    useEffect(() => {
-        if (showPopup) {
-            setCount((prevCount) => prevCount + 1);
-        }
-    }, [showPopup]);
+    
 
     useEffect(() => {
-        if (showPopup) {
-            const newInvoiceNo = generateInvoiceNumber(count);
-            setInitialInvoiceNo(newInvoiceNo);
-        }
-    }, [count, showPopup]);
+
+        const newInvoiceNo = generateInvoiceNumber(count);
+        setInitialInvoiceNo(newInvoiceNo);
+        
+    }, [count]);
 
     return (
         <>
@@ -74,11 +67,11 @@ const ExsistingGrnTotalAmount = ({ otherData, isLoading }: any) => {
                         </div>
                     </div>
                     <div className="w-full mr-4 flex flex-col mt-8 rounded-[20px]">
-                        <Popup headerdata={otherData} onClose={togglePopup} initialInvoiceNo={initialInvoiceNo} balanceDue={balanceDue} />
+                        <Popup headerdata={otherData} setCount={setCount} initialInvoiceNo={initialInvoiceNo} balanceDue={balanceDue} />
                     </div>
                 </div>
 
-                <div className='w-1/2 '>
+                <div className='w-1/2'>
                     <div className="w-full  bg-white rounded-md">
                         <div className="w-full flex  border border-solid  border-borderGrey justify-between items-center   rounded-t-md  ">
                             <div className="text-gray-500 px-4 py-4 text-base font-bold ">Subtotal</div>
@@ -135,7 +128,7 @@ const ExsistingGrnTotalAmount = ({ otherData, isLoading }: any) => {
                                                 </div>
                                                 {transaction.mode}
                                             </div>
-                                            <div className="text-textGrey1 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid)?.toFixed(2)}</div>
+                                            <div className="text-textGrey1 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid > 0 ? transaction.amountPaid : -1*transaction.amountPaid)?.toFixed(2)}</div>
                                         </div>)
                                     ))}
                                     {otherData && otherData.recordTransaction && otherData.recordTransaction.map((transaction: any, index: any) => (
@@ -148,7 +141,7 @@ const ExsistingGrnTotalAmount = ({ otherData, isLoading }: any) => {
                                                 </div>
                                                 {transaction.mode}
                                             </div>
-                                            <div className="text-textGrey1 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid)?.toFixed(2)}
+                                            <div className="text-textGrey1 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid > 0 ? transaction.amountPaid : -1*transaction.amountPaid)?.toFixed(2)}
                                                 {transaction.moneyChange === 'Out' && <span className="px-2 py-1 rounded-md bg-[#FFEAEA] text-[#FF3030] text-sm font-medium ml-[5px]">Out</span>}
                                                 {transaction.moneyChange === 'In' && <span className="px-2 py-1 rounded-md bg-[#E7F5EE] text-[#0F9D58] text-sm font-medium ml-[5px]">In</span>}
                                             </div>
@@ -161,7 +154,7 @@ const ExsistingGrnTotalAmount = ({ otherData, isLoading }: any) => {
                                 <div className="text-gray-500 text-base font-bold  w-1/3 py-4">Balance Due</div>
                                 <div className="text-gray-500 text-lg font-medium  w-1/3 py-4 flex  items-center"></div>
                                 <div className="text-gray-500 text-base font-bold  w-1/3 py-4 ">₹{balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue || 0)?.toFixed(2)}
-                                {balanceDue < 0 ? <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 rounded-[5px] justify-center bg-[#E7F5EE] items-center gap-2 ml-[5px]">
+                                {balanceDue > 0 ? <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 rounded-[5px] justify-center bg-[#E7F5EE] items-center gap-2 ml-[5px]">
                                     You’re owed
                                 </span> : balanceDue === 0 ? "" : <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9]   rounded-[5px] justify-center items-center gap-2 ml-[5px]">
                                     You owe

@@ -404,7 +404,6 @@ const NewsaleEstimateTable = () => {
                     sellingPrice: data.value.sellingPrice,
                     productId: data.value.productId
                 };
-                console.log("these are updated", updatedItems)
                 setItems(updatedItems);
                 setTableData(updatedItems);
                 // const updatedProducts = products.filter((product) => product.value !== selectedProduct.value);
@@ -428,9 +427,11 @@ const NewsaleEstimateTable = () => {
 
 
     useEffect(() => {
-        setItems(items);
-        setTableData(items)
-    }, [items]);
+        if (id == null) {
+            setItems(items);
+            setTableData(items);
+        }
+    }, [id, items]);
 
 
     const [showPopup, setShowPopup] = React.useState(false);
@@ -572,7 +573,6 @@ const NewsaleEstimateTable = () => {
                                                         value={filteredBatches.find((prod) => prod.value.id === item.id)}
                                                         isClearable={false}
                                                         isSearchable={true}
-                                                        onFocus={handleAddItem}
                                                         name={`batchNumber=${index}`}
                                                         options={filteredBatches}
                                                         onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}

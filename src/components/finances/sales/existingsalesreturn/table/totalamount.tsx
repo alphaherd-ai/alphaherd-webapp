@@ -18,10 +18,7 @@ import Loading2 from '@/app/loading2';
 const ExistingsalesReturnTotalAmout = ({ otherData, isLoading }: any) => {
 
 
-    const [showPopup, setShowPopup] = React.useState(false);
-    const togglePopup = () => {
-        setShowPopup(!showPopup);
-    }
+    
 
 
     const totalPaidAmount = otherData?.recordTransaction?.reduce((acc: any, transaction: any) => {
@@ -47,18 +44,14 @@ const ExistingsalesReturnTotalAmout = ({ otherData, isLoading }: any) => {
     const [count, setCount] = useState(0);
     const [initialInvoiceNo, setInitialInvoiceNo] = useState('');
 
-    useEffect(() => {
-        if (showPopup) {
-            setCount((prevCount) => prevCount + 1);
-        }
-    }, [showPopup]);
+    
 
     useEffect(() => {
-        if (showPopup) {
+       
             const newInvoiceNo = generateInvoiceNumber(count);
             setInitialInvoiceNo(newInvoiceNo);
-        }
-    }, [count, showPopup]);
+        
+    }, [count]);
 
 
     return (
@@ -66,7 +59,7 @@ const ExistingsalesReturnTotalAmout = ({ otherData, isLoading }: any) => {
 
 
             <div className="flex gap-4  pt-[20px] pb-[20px]">
-                <Popup headerdata={otherData} onClose={togglePopup} initialInvoiceNo={initialInvoiceNo} balanceDue={balanceDue} />
+                <Popup headerdata={otherData} setCount={setCount} initialInvoiceNo={initialInvoiceNo} balanceDue={balanceDue} />
                 <div className='w-full rounded-md'>
                     <div className="w-full  bg-white rounded-md">
                         <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">
@@ -120,7 +113,7 @@ const ExistingsalesReturnTotalAmout = ({ otherData, isLoading }: any) => {
                                             </div>
                                             {transaction.mode}
                                         </div>
-                                        <div className="text-textGrey1 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid)?.toFixed(2)}</div>
+                                        <div className="text-textGrey1 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid > 0 ?transaction.amountPaid : -1*transaction.amountPaid)?.toFixed(2)}</div>
                                     </div>)
                                 ))}
                                 {otherData && otherData.recordTransaction && otherData.recordTransaction.map((transaction: any, index: any) => (
@@ -133,7 +126,7 @@ const ExistingsalesReturnTotalAmout = ({ otherData, isLoading }: any) => {
                                             </div>
                                             {transaction.mode}
                                         </div>
-                                        <div className="text-textGrey1 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid)?.toFixed(2)}
+                                        <div className="text-textGrey1 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid > 0 ?transaction.amountPaid : -1*transaction.amountPaid)?.toFixed(2)}
                                             {transaction.moneyChange === 'Out' && <span className="px-2 py-1 rounded-md bg-[#FFEAEA] text-[#FF3030] text-sm font-medium ml-[5px]">Out</span>}
                                             {transaction.moneyChange === 'In' && <span className="px-2 py-1 rounded-md bg-[#E7F5EE] text-[#0F9D58] text-sm font-medium ml-[5px]">In</span>}
                                         </div>

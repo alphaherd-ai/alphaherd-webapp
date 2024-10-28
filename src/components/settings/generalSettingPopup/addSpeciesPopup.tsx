@@ -76,9 +76,9 @@ const handleChange = (field: string, value: any) => {
                     <Image src={closeicon} alt="close"></Image>
                 </div>
                 <div className="flex-col justify-start items-start gap-2 flex w-full">
-                    <div className="text-gray-500 text-xl font-medium">Add Payment Method</div>
+                    <div className="text-gray-500 text-xl font-medium">Add Species</div>
                     <div className='w-full flex justify-between '>
-                        <div className="text-neutral-400 text-base font-medium">Add and configure your payment methods</div>
+                        <div className="text-neutral-400 text-base font-medium">Add and configure your Species</div>
                     </div>
                 </div>
                 <div className="w-full flex items-center gap-[6rem] ">

@@ -23,7 +23,7 @@ const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
 
 type PopupProps = {
-    onClose: () => void;
+    setCount:any,
     headerdata: any;
     transactionsData: any;
     setTransactionsData: any;
@@ -33,7 +33,7 @@ type PopupProps = {
 }
 
 
-const RecordReturnTransactionPopup: React.FC<PopupProps> = ({ onClose, headerdata, transactionsData, setTransactionsData, initialInvoiceNo, totalAmount, balanceDue }) => {
+const RecordReturnTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, transactionsData, setTransactionsData, initialInvoiceNo, totalAmount, balanceDue }) => {
 
     const dispatch = useDispatch();
 
@@ -107,14 +107,14 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({ onClose, headerdat
                     invoiceLink: headerdata.invoiceNo,
                     receiptNo: initialInvoiceNo,
                     date: formData.date || new Date(),
-                    amountPaid: parseInt(formData.amountPaid, 10) || balanceDue,
+                    amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1*formData.amountPaid, 10) || (balanceDue),
                     mode: selectedMode,
                     moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
                 })
             });
             if (response.ok) {
                 // console.log('Data saved Sucessfully')
-                onClose();
+                setCount((prev:any)=>prev+1);
                 window.dispatchEvent(new FocusEvent('focus'))
             } else {
                 console.error('Failed to save data')
@@ -126,14 +126,14 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({ onClose, headerdat
         }
 
         const newTransaction = {
-            amountPaid: parseInt(formData.amountPaid, 10) || balanceDue,
+            amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1*formData.amountPaid, 10) || (balanceDue),
             date: formData.date || new Date(),
             isAdvancePayment: isAdvancePayment,
             mode: selectedMode,
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
         };
 
-        dispatch(addAmount({ amountPaid: parseInt(formData.amountPaid, 10) || balanceDue, mode: selectedMode, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out',date: formData.date || new Date() }))
+        dispatch(addAmount({ amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1*formData.amountPaid, 10) || (balanceDue), mode: selectedMode, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out',date: formData.date || new Date() }))
 
         setTransactionsData((prevTransactions: any) => [...prevTransactions, newTransaction]);
 

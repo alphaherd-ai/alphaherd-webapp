@@ -50,7 +50,8 @@ const ExistingsalesTable = () => {
                 expiry:item.itemType==='product' ? item.productBatch.expiry:"",
                 batchNumber:item.itemType==='product'?item.productBatch.batchNumber:"",
                 tax:item.taxAmount,
-                discount:item.discount
+                discount:item.discount,
+                provider:item.itempType==='product'?"":item.services?.providers[0]
               }));
               setItems(itemData);
             }
@@ -164,7 +165,7 @@ const ExistingsalesTable = () => {
                                         <div className='w-[10rem] flex-col items-center text-[#6B7E7D] text-base font-medium'>
                                             <div className="text-[#6B7E7D] text-base  font-medium  "> {item.batchNumber}</div>
 
-                                            <div className="text-neutral-400 text-[13px] font-medium ">{item.itempType==='product' ? formatDateAndTime(item.expiry).formattedDate:"Provider"}</div>
+                                            <div className="text-neutral-400 text-[13px] font-medium ">{item.itempType==='product' ? formatDateAndTime(item.expiry).formattedDate:item.provider}</div>
                                         </div>
                                         <div className='w-1/12 flex items-center text-[#6B7E7D] text-base font-medium gap-[12px]'>
 

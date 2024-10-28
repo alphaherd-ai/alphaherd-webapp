@@ -87,9 +87,35 @@ const FinacesOverviewTableItem = ({currentPageNumber,setCurrentPageNumber,setSta
           <div className='w-[8rem] flex  items-center    text-base font-medium'>{formatDateAndTime(data.sale?.dueDate || data.purchases?.dueDate || data.expenses?.dueDate).formattedDate}</div>
 
           <div className='w-[10rem] flex  items-center  text-base font-medium'>
-            <Tooltip content={data.sale?.status || data.purchases?.status || data.expenses?.status} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
-              <div className='bg-[#E7F5EE] rounded-md px-2 py-2' >
-                <span className="text-[#0F9D58]  text-sm font-medium ">{data.sale?.status || data.purchases?.status || data.expenses?.status}</span>
+          <Tooltip content={data.sale?.status || data.expenses?.status || data.purchases?.status} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
+              <div>
+                {
+                  (data.sale?.status || data.expenses?.status || data.purchases?.status)?.includes("You’re owed") ? (
+                    <span className="text-[#0F9D58]  px-1 py-1.5 text-[0.8rem] font-medium bg-[#E7F5EE] rounded-[5px]">
+                      {data.sale?.status || data.expenses?.status || data.purchases?.status}
+                    </span>
+                  ) : (data.sale?.status || data.expenses?.status || data.purchases?.status)?.includes("You owe") ? (
+                    <span className="text-[#FC6E20] px-2 py-1.5 text-[0.8rem] font-medium bg-[#FFF0E9] rounded-[5px]">
+                      {data.sale?.status || data.expenses?.status || data.purchases?.status}
+                    </span>
+                  ) : (data.sale?.status || data.expenses?.status || data.purchases?.status)?.includes("Accepted") ? (
+                    <span className="text-[#0F9D58]  px-1 py-1.5 text-[0.8rem] font-medium bg-[#E7F5EE] rounded-[5px]">
+                      {data.sale?.status || data.expenses?.status || data.purchases?.status}
+                    </span>
+                  ) : (data.sale?.status || data.expenses?.status || data.purchases?.status)?.includes("Pending") ? (
+                    <span className="text-[#FC6E20] px-2 py-1.5 text-[0.8rem] font-medium bg-[#FFF0E9] rounded-[5px]">
+                      {data.sale?.status || data.expenses?.status || data.purchases?.status}
+                    </span>
+                  ) : (data.sale?.status || data.expenses?.status || data.purchases?.status)?.includes("Returned") ? (
+                    <span className="text-[#FF3030] text-sm font-medium px-2 py-1.5 bg-[#FFEAEA] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                      {data.sale?.status || data.expenses?.status || data.purchases?.status}
+                    </span>
+                  ) :(
+                    <span className="text-[#6B7E7D]  text-[0.8rem] font-medium px-2 py-1.5 bg-[#EDEDED] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                      {data.sale?.status || data.expenses?.status || data.purchases?.status}
+                    </span>
+                  )
+                }
               </div>
             </Tooltip>
           </div>

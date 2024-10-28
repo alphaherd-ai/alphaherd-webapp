@@ -22,6 +22,15 @@ const NewPurchaseReturnNewBottomBar = ({ invoiceData }: any) => {
     const id = url.get('id');
     const router = useRouter();
     const [isSaving, setSaving] = useState(false);
+
+    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+
+    const balanceDue = totalAmountData.totalCost - totalPaidAmount + totalAmountToPay;
+
+
     const handleSubmit = async () => {
         tableData.pop();
         const allData = { headerData, tableData, totalAmountData, transactionsData };
@@ -52,7 +61,7 @@ const NewPurchaseReturnNewBottomBar = ({ invoiceData }: any) => {
             recordTransaction: {
                 create: allData.transactionsData
             },
-            status: "Pending",
+            status:balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
             type: FinanceCreationType.Purchase_Return,
             items: {
                 create: items

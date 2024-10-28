@@ -114,12 +114,7 @@ const NewPurchaseReturnNewTotalAmount = () => {
     }, [totalAmount, overAllDiscount, shipping, adjustment]);
 
 
-    const [showPopup, setShowPopup] = React.useState(false);
-
-    const togglePopup = () => {
-        setShowPopup(!showPopup);
-    }
-
+    
 
     const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
@@ -132,18 +127,14 @@ const NewPurchaseReturnNewTotalAmount = () => {
     const [count, setCount] = useState(0);
     const [initialInvoiceNo, setInitialInvoiceNo] = useState('');
 
-    useEffect(() => {
-        if (showPopup) {
-            setCount((prevCount) => prevCount + 1);
-        }
-    }, [showPopup]);
+    
 
     useEffect(() => {
-        if (showPopup) {
+        
             const newInvoiceNo = generateInvoiceNumber(count);
             setInitialInvoiceNo(newInvoiceNo);
-        }
-    }, [count, showPopup]);
+        
+    }, [count]);
 
 
     const customStyles = {
@@ -226,7 +217,7 @@ const NewPurchaseReturnNewTotalAmount = () => {
 
 
                     <div className="w-full mr-4 flex flex-col mt-8">
-                        <Popup headerdata={headerData} onClose={togglePopup} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} balanceDue={balanceDue} />
+                        <Popup headerdata={headerData} setCount={setCount} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} balanceDue={balanceDue} />
 
                     </div>
 
@@ -302,7 +293,7 @@ const NewPurchaseReturnNewTotalAmount = () => {
                                 <div className="text-gray-500 text-md font-medium ">Advance Paid on  {formatDateAndTime(transaction.date).formattedDate}</div>
                                 <div className='flex items-center h-9 px-4  justify-between rounded-lg '>
                                     <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
-                                        ₹ {transaction.amountPaid}
+                                        ₹ {transaction.amountPaid > 0 ? transaction.amountPaid : -1*transaction.amountPaid}
                                     </div>
                                 </div>
                             </div>)
@@ -315,7 +306,7 @@ const NewPurchaseReturnNewTotalAmount = () => {
                                 <div className="text-gray-500 text-md font-medium ">Paid on {formatDateAndTime(transaction.date).formattedDate}</div>
                                 <div className='flex items-center h-9 px-4  justify-between rounded-lg '>
                                     <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
-                                        ₹ {transaction.amountPaid}
+                                        ₹ {transaction.amountPaid > 0 ? transaction.amountPaid : -1*transaction.amountPaid}
                                     </div>
                                 </div>
                             </div>)

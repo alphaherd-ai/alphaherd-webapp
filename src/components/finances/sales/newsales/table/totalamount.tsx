@@ -167,11 +167,7 @@ const NewsalesTotalAmout = () => {
 
 
 
-    const [showPopup, setShowPopup] = React.useState(true);
 
-    const togglePopup = () => {
-        setShowPopup(!showPopup);
-    }
 
 
     const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
@@ -185,25 +181,21 @@ const NewsalesTotalAmout = () => {
     const [count, setCount] = useState(0);
     const [initialInvoiceNo, setInitialInvoiceNo] = useState('');
 
-    useEffect(() => {
-        if (showPopup) {
-            setCount((prevCount) => prevCount + 1);
-        }
-    }, [showPopup]);
+    
 
     useEffect(() => {
-        if (showPopup) {
+        
             const newInvoiceNo = generateInvoiceNumber(count);
             setInitialInvoiceNo(newInvoiceNo);
-        }
-    }, [count, showPopup]);
+        
+    }, [count]);
 
 
     return (
         <>
             <div className="flex gap-4  pt-[20px] pb-[20px]">
 
-                <Popup headerdata={headerData} onClose={togglePopup} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} balanceDue={balanceDue} />
+                <Popup headerdata={headerData} setCount={setCount} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} balanceDue={balanceDue} />
 
                 <div className="w-1/2  rounded-md">
                     <div className='w-full bg-white'>
@@ -268,7 +260,7 @@ const NewsalesTotalAmout = () => {
                                 <div className="text-gray-500 text-md font-medium ">Advance Paid on  {formatDateAndTime(transaction.date).formattedDate}</div>
                                 <div className='flex items-center h-9 px-4  justify-between rounded-lg '>
                                     <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
-                                        ₹ {transaction.amountPaid}
+                                        ₹ {transaction.amountPaid > 0 ? transaction.amountPaid : -1*transaction.amountPaid}
                                     </div>
                                 </div>
                             </div>)
@@ -281,7 +273,7 @@ const NewsalesTotalAmout = () => {
                                 <div className="text-gray-500 text-md font-medium ">Paid on {formatDateAndTime(transaction.date).formattedDate}</div>
                                 <div className='flex items-center h-9 px-4  justify-between rounded-lg '>
                                     <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
-                                        ₹ {transaction.amountPaid}
+                                        ₹ {transaction.amountPaid > 0 ? transaction.amountPaid : -1*transaction.amountPaid}
                                     </div>
                                 </div>
                             </div>)
