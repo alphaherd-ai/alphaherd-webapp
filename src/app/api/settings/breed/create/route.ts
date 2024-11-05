@@ -1,34 +1,54 @@
 import { NextRequest } from "next/server";
 import prismaClient from "../../../../../../prisma";
-import { connect } from "http2";
 
-export const POST = async (req: NextRequest)=>{
-    if(req.method!=='POST'){
-        return new Response('Mthod not allowed',{status: 405});
+export const POST = async (req: NextRequest) => {
+    if (req.method !== 'POST') {
+        return new Response('Method not allowed', { status: 405 });
     }
-    try{
+
+    try {
         const body = await req.json();
-        if(!body.speciesId){
-            return new Response('Species ID is required',{status:400});
-        }
-        const breed = await prismaClient.breed.create({
-            data:{
-                ...body,
-                species:{
-                    connect: {id: body.speciesId},
-                },
-            },
+const speciesName = body.speciesName;
+const breedName = body.name;
+
+if (!speciesName || typeof speciesName !== 'string') {
+    return new Response('Species name is required and should be a string.', { status: 400 });
+}
+
+if (!breedName || typeof breedName !== 'string') {
+    return new Response('Breed name is required and should be a string.', { status: 400 });
+}
+
+        // Find the Species by name
+        const species = await prismaClient.species.findUnique({
+            where: { name: speciesName },
         });
-        return new Response(JSON.stringify(breed),{
-            status: 201,
-            headers:{
-                'Content-Type':'application/json',
+
+        console.log("species is :",species)
+        if (!species) {
+            return new Response('Species not found', { status: 404 });
+        }
+
+        // Create the Breed with the connected Species ID
+        const breed = await prismaClient.breed.create({
+            data: {
+                name: breedName,
+                species: {
+                    connect: { id: species.id }
+                }
             }
         });
-    }catch(error){
-        console.log('Error creating breed: ',error);
-        return new Response(JSON.stringify(error));
-    }finally{
+ 
+        return new Response(JSON.stringify(breed), {
+            status: 201,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    } catch (error) {
+        console.log('Error creating breed:', error);
+        return new Response(JSON.stringify({ error }), { status: 500 });
+    } finally {
         await prismaClient.$disconnect();
     }
-}
+};

@@ -24,7 +24,6 @@ enum Notif_Source {
   Inventory_ProductBatch
   Sales_Invoice
   Expense_Invoice
-  Sales_Invoice_Due
 }
 
 enum Sales_Status {
@@ -273,6 +272,10 @@ model Products {
   totalQuantity      Int?
   minStock           Int?
   maxStock           Int?
+  lastOutOfStockNotif  DateTime?
+  lastExpiryNotif  DateTime?       // Last expired notification sent
+  lastExpiringNotif DateTime?      // Last expiring soon notification sent
+  excessNotif      DateTime?
   isApproved         Boolean?          @default(false)
   productBatches     ProductBatch[]
   items              Items[]
@@ -299,6 +302,10 @@ model ProductBatch {
   date               DateTime?
   balanceDue         Boolean?
   isApproved         Boolean?            @default(false)
+  lastOutOfStockNotif  DateTime?
+  lastExpiryNotif   DateTime?       // Last expired notification sent
+  lastExpiringNotif  DateTime?      // Last expiring soon notification sent
+  excessNotif       DateTime?
   items              Items[]
   product            Products            @relation(fields: [productId], references: [id])
   inventoryTimeline  InventoryTimeline[] // Add the opposite relation
@@ -332,6 +339,7 @@ model Services {
 model Sales {
   id                Int                  @id @default(autoincrement())
   customer          String?
+  clientId          Int?
   email             String?
   date              DateTime?            @default(now())
   notes             String?
@@ -480,6 +488,12 @@ model Items {
   FinanceSection   FinanceSection? @relation(fields: [financeSectionId], references: [id])
   financeSectionId Int?
 
+  expiryDate       DateTime?       // Expiry date for the item
+  lastLowStockNotif DateTime?      // Last low stock notification sent
+  lastExpiryNotif  DateTime?       // Last expired notification sent
+  lastExpiringNotif DateTime?      // Last expiring soon notification sent
+  excessNotif      DateTime?
+
   @@index([salesId, purchasesId, expensesId, financeSectionId])
 }
 
@@ -521,8 +535,8 @@ model FinanceTimeline {
 }
 
 model ItemCategory{
-  id               Int       @id @default(autoincrement())
-  name             String[]
+  id                 Int       @id @default(autoincrement())
+  name               String[]
   InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId Int?
 }
@@ -550,7 +564,7 @@ model Reason{
 
 model Species {
   id                   Int     @id @default(autoincrement())
-  name                 String  @unique
+  name                 String?
   breed                Breed[] 
   DatabaseSection      DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
   databaseSectionId    Int?
@@ -558,7 +572,7 @@ model Species {
 
 model Breed {
   id                    Int      @id @default(autoincrement())
-  name                  String
+  name                  String[]
   speciesId             Int      
   species               Species  @relation(fields: [speciesId], references: [id])
   DatabaseSection       DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
@@ -567,10 +581,7 @@ model Breed {
 
 model TaxType{
   id                       Int    @id @default(autoincrement())
-  name                     Float?
+  name                     Int[]
   InventorySection         InventorySection? @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId       Int?
-
 }
-
-

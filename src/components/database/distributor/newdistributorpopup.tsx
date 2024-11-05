@@ -24,7 +24,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     
     const appState = useAppSelector((state) => state.app)
 
-    console.log(appState);
+
     const handleSaveClick = async () => {
         try {
             // formSchema.parse(formData);
@@ -221,7 +221,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
 
     return <>
 
-       <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0  inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50" onClick={onClose} >
+       <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0  inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50" onClick={onClose}>
             <div className="w-[640px] h-[705px]  px-8 py-4 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
                 <div className="self-end items-start gap-6 flex">
                     <button className="border-0 outline-none cursor-pointer" onClick={onClose}>
@@ -365,7 +365,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                 </div>
                             </div>
                         )}
-                        <div className="text-gray-100 text-base font-bold " onClick={onClose} >Save</div>
+                        <div className="text-gray-100 text-base font-bold">Save</div>
                     </div>
 
                                     

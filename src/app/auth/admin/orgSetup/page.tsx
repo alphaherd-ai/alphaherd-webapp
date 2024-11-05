@@ -27,7 +27,7 @@ const formSchema = z.object({
   adminName: z.string(),
   adminEmail: z.string().email('Invalid Email Address'),
   adminPhoneNo: z.string().length(10, 'Invalid Phone No.'),
-  adminAltPhoneNo: z.string(),
+  adminAltPhoneNo: z.string().length(10, 'Invalid Phone No.'),
   adminPassword: z.string().min(4, 'Admin Password must be at least 4 characters'),
   reAdminPassword: z.string().min(4, 'Admin Password must be at least 4 characters')
 }).superRefine((data, ctx) => {
@@ -38,8 +38,15 @@ const formSchema = z.object({
       message: 'Alt. Phone No. must be different',
     });
   }
+  
+  if (data.adminPassword !== data.reAdminPassword) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['reAdminPassword'],
+      message: 'Re-entered password must match the original password',
+    });
+  }
 });
-
 
 const OrgSetup = () => {
 
@@ -318,14 +325,14 @@ const OrgSetup = () => {
                 </button> : null
               }
               {
-                activeTab === formElements.length - 1 ? <button className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0" onClick={formSubmit}>
+                activeTab === formElements.length - 1 ? <button className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0 cursor-pointer" onClick={formSubmit}>
                   <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
                     <img src={createAccountLogo?.src}></img>
-                    <div className="text-white text-sm font-bold ">
+                    <div className="text-white text-sm font-bold cursor-pointer ">
                       Create Account
                     </div>
                   </div>
-                </button> : null
+                </button > : null
               }
             </div>
           </div>

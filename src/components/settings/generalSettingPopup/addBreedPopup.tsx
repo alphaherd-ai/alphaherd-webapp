@@ -22,10 +22,11 @@ const AddBreed = ({ onClose }: any) => {
         newInputs.splice(index, 1);
         setFormData(newInputs);
     };
+    console.log("form data is :" , formData);
 
     const handleSave = async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/create?branchId=${appState.currentBranchId}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/breed/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -66,8 +67,8 @@ const AddBreed = ({ onClose }: any) => {
                                 <input
                                     className="ml-[5rem] w-[80%] border border-solid border-borderGrey outline-none h-11 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                     type="text"
-                                    name="paymentMethod"
-                                    onChange={(e) => handleChange("paymentMethod", e.target.value)}
+                                    name="species"
+                                    onChange={(e) => handleChange("species", e.target.value)}
                                 />
                                
                             </div>

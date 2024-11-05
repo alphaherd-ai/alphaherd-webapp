@@ -22,12 +22,15 @@ const Popup = ({ onClose }:any) => {
     const tabs = ["Staff", "Manager", "Veterinarian"];
     const [selectedTab, setSelectedTab] = useState(tabs[0]);
     const [loading, setLoading] = useState<boolean>(false);
+    const [isEmailValid, setIsEmailValid] = useState(false);
     const handleInputChange = (event: any) => {
         const email = event.target.value;
         setEmailInput(event.target.value);
         if (!validateEmail(email)) {
+            setIsEmailValid(false);
             setEmailError('Please enter a valid email address.');
         } else {
+            setIsEmailValid(true);
             setEmailError('');
         }
     };
@@ -36,6 +39,7 @@ const Popup = ({ onClose }:any) => {
         return re.test(String(email).toLowerCase());
     };
     const handleSendInvite = async () => {
+        if(!isEmailValid) return;
         try{
             if (emailInput.trim() !== '') {
                 setLoading(true);
@@ -68,7 +72,7 @@ const Popup = ({ onClose }:any) => {
                     theme: "colored",
                     transition: Bounce,
                   });
-                setTimeout(() => {onClose(),setLoading(false);},4000)
+                setTimeout(() => {onClose(),setLoading(false);},0)
             }
         }
         catch(err : any){
@@ -83,7 +87,8 @@ const Popup = ({ onClose }:any) => {
                 theme: "colored",
                 transition: Bounce,
               });
-              setLoading(false);
+              setTimeout(() => {onClose(),setLoading(false);},0)
+              
         }
     };
 
@@ -168,7 +173,7 @@ const Popup = ({ onClose }:any) => {
                             <input type="email" name="" id="" className="text-neutral-400 text-base  h-11 px-4 py-[13px] w-[100%] bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-4 flex" placeholder="Enter Email" value={emailInput}
                                 onChange={handleInputChange} />
                         </div>
-                        <div className={`w-[145px] self-stretch px-4 py-2.5 ${loading ? "bg-gray-400" : "bg-zinc-900"} rounded-[5px] justify-start items-center gap-2 flex ${loading ? "cursor-not-allowed" : "hover:cursor-pointer"}`} onClick={!loading ? handleSendInvite : undefined}>
+                        <div className={`w-[145px] self-stretch px-4 py-2.5 ${loading ? "bg-gray-400" : "bg-zinc-900"} rounded-[5px] justify-start items-center gap-2 flex ${loading ? "cursor-not-allowed" : "hover:cursor-pointer"}`} onClick={!loading && isEmailValid ? handleSendInvite : undefined}>
                             <Image src={mailIcon} alt="mail"></Image>
                             <div className="text-white text-base]">{loading ? "Sending..." : "Send Invite"}</div>
                         </div>

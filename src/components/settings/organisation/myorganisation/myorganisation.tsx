@@ -80,6 +80,7 @@ export const MyOrganisationSettings = () => {
           setOrgBranches(data.branches)
       }
     },[data,error,isLoading]);
+    console.log("appstate is ",appState);
 
     return (
 
@@ -139,7 +140,7 @@ export const MyOrganisationSettings = () => {
                             </div>
                             <div className="flex flex-col gap-4 w-9/12">
                                 <div className="w-full h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
-                                    <div className="text-gray-500 text-base font-bold ">Name:</div>
+                                    <div className="text-gray-500 text-base font-bold ">Org. Name:</div>
                                     <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.orgName}</div>
                                 </div>
                                 <div className="w-full h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
@@ -166,7 +167,7 @@ export const MyOrganisationSettings = () => {
                                     <div className="w-8/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.phoneNo}</div>                            </div>
                                 <div className="w-6/12 h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                     <div className="text-gray-500 text-base font-bold ">Alternate Phone No.:</div>
-                                    <input className="w-6/12 h-8 border-0 p-1 text-gray-500 text-base" type="text" name="" id="" defaultValue={"+91"} />
+                                    <div className="w-6/12 h-8 border-0 p-1 text-gray-500 text-base"  >{appState.currentOrg.phoneNo}</div>
                                 </div>
                             </div>
                             <div className="w-full h-14 rounded-[10px] justify-start items-center gap-2 flex">
@@ -175,12 +176,12 @@ export const MyOrganisationSettings = () => {
                                     <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.gstNo}</div>                            </div>
                                 <div className="w-6/12 h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                     <div className="text-gray-500 text-base font-bold ">PAN Number:</div>
-                                    <input className="w-8/12 h-8 border-0 p-1 text-gray-500 text-base" type="text" name="" id="" defaultValue={"+91"} />
+                                    <div className="w-8/12 h-8 border-0 p-1 text-gray-500 text-base" > DRMGW0000H </div>
                                 </div>
                             </div>
                             <div className="w-full h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                 <div className="text-gray-500 text-base font-bold ">Website:</div>
-                                <input className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base" type="text" name="" id="" defaultValue={"petfirst.com"} />
+                                <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"  >petfirst.com </div>
                             </div>
                             <div className="w-full min-h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                 <div className="text-gray-500 text-base font-bold ">Description:</div>

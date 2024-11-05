@@ -12,6 +12,13 @@ import { CldUploadButton } from 'next-cloudinary';
 import axios from 'axios';
 import useSWR from 'swr';
 import { updateUser,UserState } from '@/lib/features/userSlice';
+interface UserRole {
+  id: number;
+  orgBranchId: number;
+  role: string;
+  userId: string; // Assuming userId is a string based on your setup
+}
+
 //@ts-ignore
 /*
 
@@ -73,22 +80,21 @@ import { updateUser,UserState } from '@/lib/features/userSlice';
 */
 import router from 'next/router';
 //@ts-ignore
-interface UserRole {
-    role: string;
-  }
-  
+
   interface AdminOrganization {
     id: number;
     address: string;
   }
+  
 //const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 const AdminProfile = () => {
+
     const userState= useAppSelector((state)=>state.user)
     const appState=useAppSelector((state)=>state.app)
     console.log("this is user from appstate",userState)
     const [resource, setResource] = useState<any>();
     const currentRoute = usePathname();
-
+    const router = useRouter();
     //const [editable, setEditable] = useState(false);
   //const [value, setValue] = useState<string>(String(userState.name));
   const [phone, setPhone] = useState<string>(String(userState.phoneNo));
@@ -156,17 +162,25 @@ const AdminProfile = () => {
     const userRoles: UserRole[] = userState.userRoles || [];
    // const address= userState.adminOrganizations.map((e:any)=>e.address);
     const orgId=userState.adminOrganizations.map((e:any)=>e.id);
-
+    
     console.log("address",address);
     //@ts-ignore
     console.log("User Email:", userState.email);  // Log email
     console.log("Branch ID:", appState.currentBranchId);  // Log branch ID
-    const [activeRole, setActiveRole] = useState<string>(userRoles[0]?.role || '');
-   
+    const [activeRole, setActiveRole] = useState<string>('');
+
+    useEffect(() => {
+      
+      const currentBranchRole = userRoles.find(
+        (role) => role.orgBranchId === appState.currentBranchId
+      )
+      console.log("current role :", currentBranchRole);
+      setActiveRole(currentBranchRole?.role || ''); 
+    }, [userRoles, appState.currentBranchId]);
 
     console.log("User Email:", userState.email);  // Log email
     console.log("Branch ID:", appState.currentBranchId);  // Log branch ID
-    const router=useRouter();
+  
     const handleRoleChange = async (newRole: string) => {
         setActiveRole(newRole);
         console.log("new role is :" , newRole);
@@ -200,6 +214,7 @@ const AdminProfile = () => {
     
           const data = await res.json();
           if (res.ok) {
+            dispatch(updateUser(data.user));
             console.log('Role updated successfully:', data.message);
           } else {
             console.error('Failed to update role:', data.message);

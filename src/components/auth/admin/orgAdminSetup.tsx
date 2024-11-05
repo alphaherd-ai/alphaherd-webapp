@@ -58,7 +58,7 @@ const OrgAdminSetup = (props: any, { handleFileUpload }: any) => {
 
                     <div className="w-28 h-28 bg-gray-200 rounded-full border border-neutral-400 flex justify-center items-center cursor-pointer">
                         <CldUploadButton
-                            className="rounded-full w-28 h-28 border-none"
+                            className="rounded-full w-28 h-28 border-none cursor-pointer"
                             options={{
                                 sources: ['local', 'url'],
                                 multiple: false,
@@ -74,9 +74,9 @@ const OrgAdminSetup = (props: any, { handleFileUpload }: any) => {
                             }}
                         >
                             {!resource ?
-                                <Image className=" w-8 h-8" src={upload} width={100} height={100} alt="upload" />
+                                <Image className=" w-8 h-8 cursor-pointer" src={upload} width={100} height={100} alt="upload" />
                                 :
-                                <Image className="w-28 h-28 rounded-full" src={resource} alt="Uploaded image" width={100} height={100} />
+                                <Image className="w-28 h-28 rounded-full cursor-pointer" src={resource} alt="Uploaded image" width={100} height={100} />
                             }
 
                         </CldUploadButton>
@@ -100,7 +100,7 @@ const OrgAdminSetup = (props: any, { handleFileUpload }: any) => {
                             <div className="text-gray-500 text-base font-medium ">Email*</div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
 
-                                <input className="w-[645px] h-11 bg-white text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="adminEmail" value={props.data.adminEmail} onChange={props.handleChange} placeholder="example@gmail.com" />
+                                <input className="w-[645px] h-11 bg-white text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="adminEmail" value={props.data.adminEmail} onChange={props.handleChange}  />
                                 {props.validationErrors.adminEmail && (
                                     <div className="text-[red] error">{props.validationErrors.adminEmail}</div>
                                 )}
