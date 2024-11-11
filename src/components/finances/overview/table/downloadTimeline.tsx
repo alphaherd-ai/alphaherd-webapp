@@ -162,7 +162,7 @@ const DownloadPopup = ({ onClose, timeline }:any) => {
       body: tableRows,
     });
 
-    const fileName = `timeline_report_${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'}_to_${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}.pdf`;
+    const fileName = `timeline_report_${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'} to ${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}.pdf`;
     doc.save(fileName);
   })
   }
@@ -181,12 +181,12 @@ const DownloadPopup = ({ onClose, timeline }:any) => {
           </div>
           <div className="flex flex-col items-start gap-6 mt-6">
             <div className="flex items-center gap-2">
-              <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Custom' ? 'bg-textGreen' : 'bg-white'}`}
+              {/* <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Custom' ? 'bg-textGreen' : 'bg-white'}`}
                 onClick={() => handleOptionClick('Custom')}>
                 <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Custom' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
                   Custom
                 </div>
-              </div>
+              </div> */}
               {/* <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Today' ? 'bg-textGreen' : 'bg-white'}`}
                 onClick={() => handleOptionClick('Today')}>
                 <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Today' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>

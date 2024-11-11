@@ -93,7 +93,8 @@ const FilterDropdwonCard = () => {
   };
 
   return (
-    <div className="w-[420px] h-[441px] px-4 py-4 bg-white rounded-[10px] flex-col justify-start items-start gap-2 inline-flex shadow-lg">
+    <div className="w-[420px] h-[441px] px-4 py-4 bg-white rounded-[10px] flex-col justify-start items-start gap-2 inline-flex shadow-lg ">
+
       <div className="items-start flex border border-solid border-borderGrey rounded-[5px] cursor-pointer">
         <div
           className={`px-2 py-1 ${
@@ -104,9 +105,7 @@ const FilterDropdwonCard = () => {
           <div className={`text-sm font-bold ${activeTab === "party" ? "text-white" : "text-neutral-400"}`}>
             Party
           </div>
-          <div className="w-4 h-4 p-2 bg-teal-400 rounded-[17px] flex-col justify-center items-center gap-2.5 inline-flex">
-            <div className="text-white text-[10px] font-medium">2</div>
-          </div>
+          
         </div>
         <div
           className={`px-2 py-1 ${
@@ -117,9 +116,7 @@ const FilterDropdwonCard = () => {
           <div className={`text-sm font-bold ${activeTab === "dateRange" ? "text-white" : "text-neutral-400"}`}>
             Date Range
           </div>
-          <div className="w-4 h-4 p-2 bg-teal-400 rounded-[17px] flex-col justify-center items-center gap-2.5 inline-flex">
-            <div className="text-white text-[10px] font-medium">2</div>
-          </div>
+          
         </div>
         <div
           className={`px-2 py-1 ${
@@ -130,9 +127,7 @@ const FilterDropdwonCard = () => {
           <div className={`text-sm font-bold ${activeTab === "invoiceType" ? "text-white" : "text-neutral-400"}`}>
             Invoice Type
           </div>
-          <div className="w-4 h-4 p-2 bg-teal-400 rounded-[17px] flex-col justify-center items-center gap-2.5 inline-flex">
-            <div className="text-white text-[10px] font-medium">2</div>
-          </div>
+          
         </div>
         <div
           className={`px-2 py-1 ${
@@ -143,16 +138,15 @@ const FilterDropdwonCard = () => {
           <div className={`text-sm font-bold ${activeTab === "status" ? "text-white" : "text-neutral-400"}`}>
             Status
           </div>
-          <div className="w-4 h-4 p-2 bg-teal-400 rounded-[17px] flex-col justify-center items-center gap-2.5 inline-flex">
-            <div className="text-white text-[10px] font-medium">1</div>
-          </div>
+          
         </div>
       </div>
+      <div className='h-full w-full overflow-y-auto container'>
       {activeTab === "party" && (
         <div className="w-full h-full flex flex-col gap-4">
           <div className="w-full">
             <input
-              className="w-full p-2 border border-solid border-borderGrey outline-none rounded-[5px] text-sm text-textGrey2 font-medium"
+              className="w-[96%] p-2 border border-solid border-borderGrey outline-none rounded-[5px] text-sm text-textGrey2 font-medium"
               type="text"
               name=""
               id=""
@@ -301,6 +295,7 @@ const FilterDropdwonCard = () => {
         </div>
       )}
       {activeTab === "status" && <div className="w-full h-full"></div>}
+      </div>
       <div className="w-full h-fit flex justify-between items-center">
         <div className="flex items-center gap-2">
           <input type="checkbox" name="" id="" />

@@ -375,7 +375,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
                 
             </div>
             <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Party</span></div>
+                    <div><span className='text-gray-500 text-base font-medium '>Client/Distributor</span></div>
                     <div className='w-[440px]'>
                     {/* <Select
                         className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
@@ -410,7 +410,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
                     <div><input className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2  outline-none border border-solid border-borderGrey focus:border-teal-500 " type="text" name="subject" onChange={(e) => handleChange("subject", e.target.value)} /></div>
             </div>
             <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Link Invoice</span></div>
+                    <div><span className='text-gray-500 text-base font-medium '>Ref. No.</span></div>
                     <div className='w-[440px]'>
                     {linkInvoice ? (
                         <Select

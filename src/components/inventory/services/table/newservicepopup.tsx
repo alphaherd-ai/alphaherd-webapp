@@ -105,7 +105,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
                 'Content-Type': 'application/json',
             }
         });
-        let productsJson = await productsResponse.json();
+        let productsJson = await productsResponse?.json();
         // console.log(productsJson);
         const staffResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/branch/staff?branchId=${appState.currentBranchId}`, {
             method: 'GET',
@@ -175,7 +175,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
             });
 
             if (response.ok) {
-                // console.log('Data saved successfully');
+                console.log('Data saved successfully');
                 onClose();
                 window.dispatchEvent(new FocusEvent('focus'));
             } else {
@@ -457,10 +457,9 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
                         <button
                             onClick={handleSaveClick}
                             // disabled={buttonDisabled}
-                            className={`px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${buttonDisabled ? 'bg-grey-500' : 'bg-zinc-900'
-                                }`}
+                            className={`px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex border-0 outline-none cursor-pointer bg-white`}
                         >
-                            <div className={`text-base font-bold ${buttonDisabled ? 'text-neutral-200' : 'text-white'}`}>
+                            <div className={`text-base font-bold text-black`}>
                                 Save
                             </div>
                         </button>

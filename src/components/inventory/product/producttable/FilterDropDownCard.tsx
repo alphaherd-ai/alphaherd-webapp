@@ -160,6 +160,7 @@ const FilterDropdwonCard = () => {
           </div>
         </div>
       </div>
+      <div className='h-full w-full overflow-y-auto container'>
       {activeTab === "party" && (
         <div className="w-full h-full flex flex-col gap-4">
           <div className="w-full">
@@ -338,6 +339,7 @@ const FilterDropdwonCard = () => {
           </div>
         </div>
  }
+ </div>
       <div className="w-full flex justify-between items-center">
         <div className="flex items-center gap-2">
           <input type="checkbox" name="" id="" />
