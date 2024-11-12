@@ -27,7 +27,7 @@ const FinancesPurchasesTable = () => {
     setCurrentPageNumber((prev) => prev - 1);
   };
   const goOnNextPage = () => {
-    if (currentPageNumber === data.length / TOTAL_VALUES_PER_PAGE) return;
+    if (currentPageNumber === Math.ceil(totalLen / TOTAL_VALUES_PER_PAGE)) return;
     setCurrentPageNumber((prev) => prev + 1);
   };
   useEffect(()=>{

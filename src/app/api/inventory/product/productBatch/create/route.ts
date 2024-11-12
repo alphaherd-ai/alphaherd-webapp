@@ -64,7 +64,7 @@ export const POST = async (req: NextRequest) => {
           isApproved:isApproved
         },
       });
-
+      
       return { productBatch: createdProductBatch, inventory: createdInventory };
     });
 

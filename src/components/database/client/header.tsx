@@ -27,13 +27,14 @@ const DatabaseClientHeader = ({ clients, onSortChange }: any) => {
     const togglePopup1 = () => setShowPopup1(!showPopup1);
 
     const handleSortChange = (key: string) => {
+       // console.log(key,selectedSort);
         if (key === selectedSort) {
             setSortOrder(sortOrder === "asc" ? "desc" : "asc");
         } else {
             setSelectedSort(key);
             setSortOrder("asc");
         }
-
+        //console.log(key,sortOrder);
         onSortChange(key, sortOrder);
     };
 

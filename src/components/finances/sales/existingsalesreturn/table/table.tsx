@@ -59,7 +59,7 @@ const ExistingsalesReturnTable = () => {
                 expiry:item.itemType==='product' ? item.productBatch.expiry:"",
                 batchNumber:item.itemType==='product'?item.productBatch.batchNumber:"",
                 tax:item.taxAmount,
-                provider:item.itempType==='product'?"":item.services?.providers[0]
+                provider:item.itemType==='product'?"":item.serviceProvider
           }));
           setItems(itemData);
         }
@@ -168,7 +168,7 @@ const ExistingsalesReturnTable = () => {
                                         <div className='w-[10rem] flex-col items-center text-textGrey2 text-base font-medium '>
                                             <div className="text-textGrey2 text-base  font-medium  "> {item.itemType==='product' ? item.batchNumber:item.provider}</div>
 
-                                            <div className="text-neutral-400 text-[13px] font-medium ">{formatDateAndTime(item.expiry).formattedDate}</div>
+                                            <div className="text-neutral-400 text-[13px] font-medium ">{item.itempType==='product' ? formatDateAndTime(item.expiry).formattedDate:""}</div>
                                         </div>
                                         <div className='w-[12rem] flex items-center text-textGrey2 text-base font-medium gap-[12px] '>
 

@@ -25,9 +25,9 @@ const ExistingsalesNavbar = () => {
 
                     </div>
                     </div>
-                    <div className='absolute right-16 bg-white w-6 h-6 flex jsutify-center items-center'>
+                  {/*  <div className='absolute right-16 bg-white w-6 h-6 flex jsutify-center items-center'>
       
-      <Popover placement="left" showArrow offset={10}>
+       <Popover placement="left" showArrow offset={10}>
           <PopoverTrigger>
               <Button 
             //   color="gray-400"
@@ -59,11 +59,11 @@ const ExistingsalesNavbar = () => {
             
 
           </PopoverContent>
-      </Popover>
+      </Popover> 
 
 
 
-  </div>
+  </div>*/}
                 </div>
            
         </>

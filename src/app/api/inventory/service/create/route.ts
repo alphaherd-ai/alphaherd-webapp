@@ -12,7 +12,7 @@ export const POST=async(req: NextRequest)=> {
 } 
     try {
       const {source,...body}  = await req.json();
-      // console.log(body)
+      console.log(body,source);
       const validatedData = ServiceSchema.safeParse(body);
       //  console.log(validatedData.error)
       if (!validatedData.success) {
@@ -49,6 +49,7 @@ export const POST=async(req: NextRequest)=> {
             
           }
         })
+        //console.log(inventory,service);
         return new Response(JSON.stringify({service,inventory}), {
           status: 201,
           headers: {

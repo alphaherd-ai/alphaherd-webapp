@@ -51,7 +51,7 @@ const ExistingsalesTable = () => {
                 batchNumber:item.itemType==='product'?item.productBatch.batchNumber:"",
                 tax:item.taxAmount,
                 discount:item.discount,
-                provider:item.itempType==='product'?"":item.services?.providers[0]
+                provider:item.itemType==='product'?"":item.serviceProvider
               }));
               setItems(itemData);
             }
@@ -130,7 +130,7 @@ const ExistingsalesTable = () => {
         <>
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
                 <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-end items-center gap-6 flex">
-                    <div className='flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'><Image src={Download} alt='Download' className='w-4  h-4' /></div>
+                    {/* <div className='flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'><Image src={Download} alt='Download' className='w-4  h-4' /></div> */}
                 </div>
                 <div className="flex-col w-full max-h-[80vh] pr-[16px] pl-[16px] pt-[20px] overflow-y-auto">
                     <ExistingsalesHeader otherData={otherData} isLoading={isLoading} />
@@ -153,7 +153,9 @@ const ExistingsalesTable = () => {
 
 
                                 <div className=' flex text-gray-500 text-base font-medium  w-1/12'>Tax %</div>
-                                <div className=' flex text-gray-500 text-base font-medium  w-[10rem]'>Tax Amt.</div>
+                                <div className=' flex text-gray-500 text-base font-medium  w-1/12'>Tax Amt.</div>
+                                <div className=' flex text-gray-500 text-base font-medium  w-1/12 mr-4'>Discount %</div>
+                                <div className=' flex text-gray-500 text-base font-medium  w-1/12'>Discount</div>
                                 <div className=' flex text-gray-500 text-base font-medium  w-1/12'>Total</div>
                             </div>
 
@@ -184,11 +186,13 @@ const ExistingsalesTable = () => {
                                             <div className="text-[#6B7E7D] text-base  font-medium  "> {item.tax * 100} %</div>
 
                                         </div>
-                                        <div className='w-[10rem] flex items-center text-[#6B7E7D] text-base font-medium'>{`₹${(item.quantity * item.tax * 100).toFixed(2)}`}</div>
-                                        <div className='w-1/12 flex items-center text-[#6B7E7D] text-base font-medium'>{`₹${item.quantity * item.sellingPrice + item.quantity * item.tax}`}</div>
+                                        <div className='w-1/12 flex items-center text-[#6B7E7D] text-base font-medium'>{`₹${(item.quantity * item.sellingPrice * item.tax).toFixed(2)}`}</div>
+                                        <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium'>{`${(item.discount? item.discount:0).toFixed(2)}`}</div>
+                                        <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium'>{`₹${(item.quantity*item.sellingPrice*item.discount/100).toFixed(2)}`}</div>
+                                        <div className='w-1/12 flex items-center text-[#6B7E7D] text-base font-medium'>{`₹${(item.quantity * item.sellingPrice + item.quantity * item.sellingPrice*item.tax-(item.quantity*item.sellingPrice*item.discount/100)).toFixed(2)}`}</div>
 
                                     </div>
-                                    <div>
+                                    {/* <div>
                                         <div className='flex  w-full justify-evenly items-center box-border bg-white  h-12  border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-500'>
                                             <div className=' flex text-gray-500 text-base font-medium w-[3rem]'></div>
                                             <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>
@@ -196,7 +200,7 @@ const ExistingsalesTable = () => {
                                                     <div className="text-indigo-600 text-sm font-medium ">Item Discount</div>
                                                 </div>
                                             </div>
-                                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'> {(item.discount * 100).toFixed(2)}% off</div>
+                                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'> {(item.discount).toFixed(2)}% off</div>
                                             <div className=' flex text-gray-500 text-base font-medium w-1/12'>
 
                                             </div>
@@ -205,11 +209,11 @@ const ExistingsalesTable = () => {
 
                                             <div className=' flex text-gray-500 text-base font-medium w-1/12'> </div>
                                             <div className=' flex text-gray-500 text-base font-medium w-[10rem]'></div>
-                                            <div className="text-red-500 text-base font-bold w-1/12 ">-₹{(item.discount * item.sellingPrice * item.quantity).toFixed(2)}</div>
+                                            <div className="text-red-500 text-base font-bold w-1/12 ">-₹{((item.discount/100) * item.sellingPrice * item.quantity).toFixed(2)}</div>
 
                                         </div>
 
-                                    </div>
+                                    </div> */}
                                 </div>
 
 
@@ -220,16 +224,24 @@ const ExistingsalesTable = () => {
                                 <div className=' flex text-gray-500 text-base font-medium  w-[3rem]'></div>
                                 <div className=' flex text-gray-500 text-base font-medium  w-[15rem]'> Total</div>
                                 <div className=' flex text-gray-500 text-base font-medium  w-[10rem]'></div>
+
+                               
                                 <div className=' flex text-gray-500 text-base font-medium  w-1/12'>{items.reduce((acc, item) => acc + item.quantity, 0)} Items</div>
+                               
+                                
                                 <div className=' flex text-gray-500 text-base font-medium  w-[10rem]'> </div>
 
 
 
                                 <div className=' flex text-gray-500 text-base font-medium  w-1/12'>
-                                    <div className="text-neutral-400 text-base  font-medium   "></div>
                                 </div>
-                                <div className=' flex text-gray-500 text-base font-medium  w-[10rem]'>{`₹${items.reduce((acc, item) => acc + item.quantity * item.tax * 100, 0).toFixed(2)}`}</div>
-                                <div className='flex text-gray-500 text-base font-medium w-1/12' >{`₹${(items.reduce((acc, item) => acc + item.quantity * item?.sellingPrice + item.quantity * item?.sellingPrice * item.tax - (item.quantity * item?.sellingPrice * item.discount || 0), 0).toFixed(2) || 0)}`}</div>
+                                
+                                <div className=' flex text-gray-500 text-base font-medium  w-1/12'>{`₹${items.reduce((acc, item) => acc + item.quantity * item.tax * item.sellingPrice, 0).toFixed(2)}`}</div>
+                                <div className=' flex text-gray-500 text-base font-medium  w-1/12'>
+                                </div>
+                                <div className=' flex text-gray-500 text-base font-medium  w-1/12'>{`₹${items.reduce((acc, item) => acc + item.sellingPrice*item.quantity*item.discount/100, 0).toFixed(2)}`}
+                                </div>
+                                <div className='flex text-gray-500 text-base font-medium w-1/12' >{`₹${(items.reduce((acc, item) => acc + item.quantity * item?.sellingPrice + item.quantity * item?.sellingPrice * item.tax - (item.quantity * item?.sellingPrice * (item.discount/100) || 0), 0).toFixed(2) || 0)}`}</div>
 
                             </div>
                         </div>

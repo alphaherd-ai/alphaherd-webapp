@@ -15,6 +15,7 @@ import { Tax } from '@prisma/client';
 import useSWR from 'swr'
 import { useAppSelector } from '@/lib/hooks';
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
+import Cash from "../../../../../assets/icons/finance/Cash.svg"
 import formatDateAndTime from '@/utils/formateDateTime';
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
@@ -35,7 +36,7 @@ interface Transactions {
 
 
 
-const NewsalesTotalAmout = () => {
+const NewsalesTotalAmout = ({otherData}:{otherData:any}) => {
 
     const customStyles = {
         control: (provided: any, state: any) => ({
@@ -79,7 +80,7 @@ const NewsalesTotalAmout = () => {
 
 
     const { tableData, headerData } = useContext(DataContext);
-    const [selectedDiscount, setDiscount] = useState(0);
+
     const appState = useAppSelector((state) => state.app)
 
     let totalAmount = 0;
@@ -93,7 +94,7 @@ const NewsalesTotalAmout = () => {
     const [grandAmt, setGrandAmt] = useState(totalAmount);
 
     const gstOptions = [
-        { value: 'percent', label: '₹ in Percent' },
+        { value: 'percent', label: '% in Percent' },
         { value: 'amount', label: '₹ in Amount' }
     ];
     const [discountMethod, setDiscountMethod] = useState('amount');
@@ -101,20 +102,23 @@ const NewsalesTotalAmout = () => {
         setDiscountMethod(selectedOption.value);
     };
     const [discountInput, setDiscountInput] = useState(0);
+    const [selectedDiscountPer, setDiscountPer] = useState(0);
+
     const handleDiscountChange = (discount: number) => {
         if (discountMethod === 'amount') {
             setDiscountInput(discount);
-            let discountedAmount = grandAmt - discount;
-            let discountPercent = Number(discount / totalAmount).toFixed(4)
-            setDiscount(Number(discountPercent))
-            setGrandAmt(discountedAmount);
+            //let discountedAmount = grandAmt - discount;
+            const discountPercent = Number(discount / totalAmount).toFixed(4)
+            setDiscountPer(Number(discountPercent))
+            //setGrandAmt(discountedAmount);
             setTotalAmountData((prevData) => ({ ...prevData, gst: Number(discountPercent) }))
         }
         else if (discountMethod === 'percent') {
             setDiscountInput(discount);
-            let discountedAmount = grandAmt - grandAmt * (discount / 100);
-            setDiscount(Number(discount / 100));
-            setGrandAmt(discountedAmount);
+            const discountPercent = Number(discount / 100).toFixed(4)
+            setDiscountPer(Number(discountPercent));
+            //setGrandAmt(discountedAmount);
+            setDiscountInput(Number(discountPercent) * totalAmount)
             setTotalAmountData((prevData) => ({ ...prevData, gst: Number(discount / 100) }))
         }
     }
@@ -147,7 +151,7 @@ const NewsalesTotalAmout = () => {
     };
 
     const updateGrandTotal = () => {
-        const discountedAmount = (totalAmount - totalAmount * selectedDiscount) || 0;
+        const discountedAmount = (totalAmount - (discountMethod === 'amount' ? discountInput : totalAmount * selectedDiscountPer)) || 0;
         const shippingValue = parseFloat(shipping) || 0;
         const adjustmentValue = parseFloat(adjustment) || 0;
         const newGrandTotal = discountedAmount + shippingValue + adjustmentValue;
@@ -163,7 +167,7 @@ const NewsalesTotalAmout = () => {
 
     useEffect(() => {
         updateGrandTotal();
-    }, [totalAmount, selectedDiscount, shipping, adjustment]);
+    }, [totalAmount, selectedDiscountPer, discountInput, discountMethod, shipping, adjustment]);
 
 
 
@@ -172,7 +176,7 @@ const NewsalesTotalAmout = () => {
 
     const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
-    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out' && !item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
 
     const balanceDue = grandAmt - totalPaidAmount + totalAmountToPay;
@@ -181,13 +185,13 @@ const NewsalesTotalAmout = () => {
     const [count, setCount] = useState(0);
     const [initialInvoiceNo, setInitialInvoiceNo] = useState('');
 
-    
+
 
     useEffect(() => {
-        
-            const newInvoiceNo = generateInvoiceNumber(count);
-            setInitialInvoiceNo(newInvoiceNo);
-        
+
+        const newInvoiceNo = generateInvoiceNumber(count);
+        setInitialInvoiceNo(newInvoiceNo);
+
     }, [count]);
 
 
@@ -195,22 +199,22 @@ const NewsalesTotalAmout = () => {
         <>
             <div className="flex gap-4  pt-[20px] pb-[20px]">
 
-                <Popup headerdata={headerData} setCount={setCount} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} balanceDue={balanceDue} />
+                <Popup headerdata={headerData} setCount={setCount} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} balanceDue={balanceDue} otherData={otherData} />
 
                 <div className="w-1/2  rounded-md">
                     <div className='w-full bg-white'>
                         <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">
                             <div className="text-gray-500 text-base font-bold ">Subtotal</div>
-                            <div className="text-right text-gray-500 text-base font-bold ">₹ {(totalAmountData.subTotal)}</div>
+                            <div className="text-right text-gray-500 text-base font-bold ">₹ {totalAmountData.subTotal ? (totalAmountData.subTotal).toFixed(2) : "0"}</div>
                         </div>
                         <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
                             <div className="text-gray-500 text-base font-bold ">Overall Discount</div>
                             <div className="flex items-center">
                                 <div className="text-right text-textGrey2 text-base">
-                                    ₹ <input
+                                    <input
                                         type='number'
                                         className=" text-textGrey2 w-[4rem]  text-base  border-none outline-none"
-                                        value={totalAmountData.subTotal ? discountInput : 0}
+                                        value={discountMethod === "amount" ? discountInput : selectedDiscountPer * 100}
                                         onChange={(e) => handleDiscountChange(Number(e.target.value))}
                                     /></div>
                                 <div className=' flex text-gray-500 text-base font-medium pl-6'>
@@ -231,7 +235,7 @@ const NewsalesTotalAmout = () => {
                             <input
                                 className="text-right text-textGrey2 text-base   border-none outline-none"
                                 placeholder='0'
-                                value={totalAmountData.shipping}
+                                value={shipping}
                                 onChange={handleShippingChange}
                             />
                         </div>
@@ -240,7 +244,7 @@ const NewsalesTotalAmout = () => {
                             <input
                                 className="text-right text-textGrey2 text-base   border-none outline-none"
                                 placeholder='0'
-                                value={totalAmountData.adjustment}
+                                value={adjustment}
                                 onChange={handleAdjustmentChange}
                             />
                         </div>
@@ -260,7 +264,7 @@ const NewsalesTotalAmout = () => {
                                 <div className="text-gray-500 text-md font-medium ">Advance Paid on  {formatDateAndTime(transaction.date).formattedDate}</div>
                                 <div className='flex items-center h-9 px-4  justify-between rounded-lg '>
                                     <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
-                                        ₹ {transaction.amountPaid > 0 ? transaction.amountPaid : -1*transaction.amountPaid}
+                                        ₹ {transaction.amountPaid > 0 ? transaction.amountPaid : -1 * transaction.amountPaid}
                                     </div>
                                 </div>
                             </div>)
@@ -271,10 +275,15 @@ const NewsalesTotalAmout = () => {
                             !transaction.isAdvancePayment &&
                             (<div key={index} className="w-full  px-6 py-2 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
                                 <div className="text-gray-500 text-md font-medium ">Paid on {formatDateAndTime(transaction.date).formattedDate}</div>
-                                <div className='flex items-center h-9 px-4  justify-between rounded-lg '>
-                                    <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
-                                        ₹ {transaction.amountPaid > 0 ? transaction.amountPaid : -1*transaction.amountPaid}
+                                <div className="text-textGrey2 text-base font-medium  w-1/3 py-4 flex  items-center">
+                                    <div className='flex pr-2'>
+                                        <Image src={Cash} alt='Cash' className='w-4 h-4 ' />
                                     </div>
+                                    {transaction.mode}
+                                </div>
+                                <div className="text-textGrey2 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid > 0 ? transaction.amountPaid : -1 * transaction.amountPaid)?.toFixed(2)}
+                                    {transaction.moneyChange === 'Out' && <span className="px-2 py-1 rounded-md bg-[#FFEAEA] text-[#FF3030] text-sm font-medium ml-[5px]">Out</span>}
+                                    {transaction.moneyChange === 'In' && <span className="px-2 py-1 rounded-md bg-[#E7F5EE] text-[#0F9D58] text-sm font-medium ml-[5px]">In</span>}
                                 </div>
                             </div>)
                         ))

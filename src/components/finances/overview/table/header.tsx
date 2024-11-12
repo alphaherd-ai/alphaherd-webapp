@@ -53,51 +53,7 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
 
                         <div  className='flex items-center justify-center w-7 h-7 border border-solid border-gray-300 border-0.5 rounded-md  p-1'><Image src={Chart} alt='Chart' className='w-4  h-4' /></div>
                     </Link>
-                    <div className='flex items-center justify-center h-7   mr-4 border border-solid border-gray-300 border-0.5 rounded-lg p-2'>
-                        <div className='flex '><Image src={Sort} alt='Sort' className='w-4 h-3' /></div>
-                        <Popover>
-                            <PopoverTrigger>
-                                <Button
-                                    variant="solid"
-                                    className="capitalize border-none bg-transparent rounded-lg"
-                                >
-                                   <span className='text-textGrey2 text-sm font-medium'> Sort:Recent</span>
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent>
-                                 {/* <FilterDropdwonCard /> */}
-                                Soon
-                            </PopoverContent>
-                        </Popover>
-                        {/* <Dropdown>
-                            <DropdownTrigger>
-                                <Button
-                                    //   variant="bordered" 
-                                    variant="solid"
-                                    className="capitalize border-none  bg-transparent rounded-lg"
-                                >
-                                    {selectedSortValue}
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                aria-label="Single selection example"
-                                // color="gray-500"
-                                className=" text-base  text-gray-500 bg-gray-200 rounded-lg"
-                                variant="solid"
-                                disallowEmptySelection
-                                selectionMode="single"
-                                selectedKeys={selectedSort}
-                                // onSelectionChange={setselectedSort}
-                            >
-                                <DropdownItem
-                                    className=" p-2 text-base" key="Category:text">Sort:Recently Used</DropdownItem>
-                                <DropdownItem
-                                    className=" p-2 text-base" key="Category:number">Sort:Recently Used</DropdownItem>
-                                <DropdownItem
-                                    className=" p-2 text-base" key="Category:date">Date</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown> */}
-                    </div>
+                    
                     <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg '>
                         <div className='flex '><Image src={Filter} alt='Filter' className='w-4 h-4' /></div>
 

@@ -1,12 +1,12 @@
 "use client";
-import React from 'react'
+import React, { useState } from 'react'
 
 import Sort from '../../../../assets/icons/finance/sort.svg';
 import Filter from '../../../../assets/icons/finance/filter.svg';
 import Chart from '../../../../assets/icons/finance/chart.svg';
 import Download from '../../../../assets/icons/finance/download.svg';
 import DownArrow from '../../../../assets/icons/finance/downArrow.svg';
-
+import FilterDropDownCard from './FilterDropDownCard';
 import Update from '../../../../assets/icons/inventory/update.svg';
 import Add from '../../../../assets/icons/inventory/add.svg';
 import Image from 'next/image';
@@ -20,20 +20,25 @@ import Popup2 from '../../product/producttable/updateinventorypopup';
 
 
 
-const InventoryServicesTableHeader = () => {
+const InventoryServicesTableHeader = ({ onSortChange }: any) => {
     const currentRoute = usePathname();
-    const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
-    const [selectedSort, setselectedSort] = React.useState(new Set(["Category: text"]));
+
+    const [selectedSort, setSelectedSort] = useState<string>("name");
+    const [sortOrder, setSortOrder] = useState<string>("asc");
 
 
-    const selectedCategoryValue = React.useMemo(
-        () => Array.from(selectedCategory).join(", ").replaceAll("_", " "),
-        [selectedCategory]
-    );
-    const selectedSortValue = React.useMemo(
-        () => Array.from(selectedSort).join(", ").replaceAll("_", " "),
-        [selectedSort]
-    );
+    const handleSortChange = (key: string) => {
+        if (key === selectedSort) {
+            const newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+            setSortOrder(newSortOrder);
+            onSortChange(key, newSortOrder);
+        } else {
+            setSelectedSort(key);
+            setSortOrder("asc");
+            onSortChange(key, "asc");
+        }
+    };
+
 
     return (
 
@@ -63,72 +68,87 @@ const InventoryServicesTableHeader = () => {
 
                         <div className='flex items-center justify-center w-7 h-7 border border-solid border-gray-300 border-0.5 rounded-md  p-1'><Image src={Chart} alt='Chart' className='w-4  h-4' /></div>
                     </Link>
-                    <div className='flex items-center justify-center h-7   mr-4 border border-solid border-gray-300 border-0.5 rounded-lg p-2'>
-                        <div className='flex '><Image src={Sort} alt='Sort' className='w-3 h-3 mr-2' /></div>
-
-                        <Dropdown>
-                            <DropdownTrigger className='z-0'>
-                                <Button
-
-                                    // color="gray-400"
-                                    variant="solid"
-                                    className="capitalize border-none  bg-transparent rounded-lg"
-                                >
-                                    {selectedSortValue}
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                aria-label="Single selection example"
-                                // color="gray-500"
-                                className=" text-base  text-gray-500 bg-gray-200 rounded-lg"
-                                variant="solid"
-                                disallowEmptySelection
-                                selectionMode="single"
-                                selectedKeys={selectedSort}
-                                // onSelectionChange={setselectedSort}
-                            >
-                                <DropdownItem
-                                    className=" p-2 text-base" key="Category:text">Sort:Recently Used</DropdownItem>
-                                <DropdownItem
-                                    className=" p-2 text-base" key="Category:number">Sort:Recently Used</DropdownItem>
-                                <DropdownItem
-                                    className=" p-2 text-base" key="Category:date">Date</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
-                    </div>
-                    <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg '>
+                    <div className='flex items-center   h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg '>
                         <div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>
 
-                        <Dropdown>
-                            <DropdownTrigger className='z-0'>
+                        <Popover className='overflow-y-scroll'>
+                            <PopoverTrigger>
                                 <Button
-                                    //   variant="bordered" 
-                                    // color="gray-400"
                                     variant="solid"
                                     className="capitalize border-none bg-transparent rounded-lg"
                                 >
-                                    {selectedCategoryValue}
+                                    Filter
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent>
+                                <FilterDropDownCard />
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+
+                    <div className="flex items-center justify-center h-7 mr-4 border border-solid border-gray-300 rounded-lg p-2">
+                        <div className="flex">
+                            <Image src={Sort} alt="Sort" className="w-3 h-3 mr-2" />
+                        </div>
+                        <Dropdown>
+                            <DropdownTrigger className="z-0">
+                                <Button variant="solid" className="capitalize border-none bg-transparent rounded-lg">
+                                    <div className="flex text-gray-500 items-center">
+                                        <div className="text-base">Sort By: {selectedSort}</div>
+                                    </div>
                                 </Button>
                             </DropdownTrigger>
-                            <DropdownMenu
-                                aria-label="Single selection example"
-                                // color="gray-500"
-                                className=" text-base bg-gray-200 rounded-lg"
-                                variant="solid"
-                                disallowEmptySelection
-                                selectionMode="single"
-                                selectedKeys={selectedCategory}
-                                // onSelectionChange={setSelectedCategory}
-                            >
-                                <DropdownItem
-                                    className=" p-2" key="Category:text">Category: Text</DropdownItem>
-                                <DropdownItem
-                                    className=" p-2" key="Category:number">Category: Number</DropdownItem>
-                                <DropdownItem
-                                    className=" p-2" key="Category:date">Date</DropdownItem>
-                            </DropdownMenu>
+
+
+                            {currentRoute.startsWith("/inventory/services/timeline") ?
+                                <DropdownMenu
+                                    aria-label="Sort options"
+                                    className="text-base text-gray-500 bg-gray-200 rounded-lg"
+                                    variant="solid"
+                                    disallowEmptySelection
+                                    selectionMode="single"
+                                    selectedKeys={new Set([selectedSort])}
+                                >
+                                    <DropdownItem
+                                        className="p-2 text-base"
+                                        key="name"
+                                        onClick={() => handleSortChange("name")}
+                                    >
+                                        Service Name
+                                    </DropdownItem>
+
+                                    <DropdownItem
+                                        className="p-2 text-base"
+                                        key="serviceCharge"
+                                        onClick={() => handleSortChange("serviceCharge")}
+                                    >
+                                        Selling Price
+                                    </DropdownItem>
+                                </DropdownMenu>
+
+                                :
+                                <DropdownMenu
+                                    aria-label="Sort options"
+                                    className="text-base text-gray-500 bg-gray-200 rounded-lg"
+                                    variant="solid"
+                                    disallowEmptySelection
+                                    selectionMode="single"
+                                    selectedKeys={new Set([selectedSort])}
+                                >
+                                    <DropdownItem
+                                        className="p-2 text-base"
+                                        key="date"
+                                        onClick={() => handleSortChange("date")}
+                                    >
+                                        Date of Registration
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            }
+
+
                         </Dropdown>
                     </div>
+
 
                     <div className='flex items-center  justify-between rounded-lg '>
 
@@ -154,14 +174,14 @@ const InventoryServicesTableHeader = () => {
 
                             </DropdownMenu>
                         </Dropdown> */}
-                        
+
 
 
 
                     </div>
                 </div>
             </div >
-            
+
         </>
     )
 }

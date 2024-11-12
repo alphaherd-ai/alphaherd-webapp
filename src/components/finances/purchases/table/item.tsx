@@ -11,6 +11,7 @@ import useSWR from 'swr';
 import { usePathname, useSearchParams } from 'next/navigation';
 import Loading from '@/app/loading';
 import { FinanceCreationType } from '@prisma/client';
+import { getStatusStyles } from '@/utils/getStatusStyles';
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
@@ -67,24 +68,29 @@ const FinancesPurchasesTableItem = ({ onCountsChange, purchases, data, isLoading
           <div className='w-[8rem] flex  items-center  text-base font-medium'>{formatDateAndTime(purchase.dueDate).formattedDate}</div>
           <div className='w-[13rem] flex  items-center  text-base font-medium'>
             <Tooltip content={purchase.status} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
-              <div>
+            <div>
                 {
-                  purchase.status.includes("You’re owed") ? (
-                    <span className="text-[#0F9D58]  px-2 py-1.5 text-sm font-medium bg-[#E7F5EE] rounded-[5px]">
-                      {purchase.status}
-                    </span>
-                  ) : purchase.status.includes("You owe") ? (
-                    <span className="text-[#FC6E20] px-2 py-1.5 text-sm font-medium bg-[#FFF0E9] rounded-[5px]">
-                      {purchase.status}
-                    </span>
-                  ) : (
-                    <span className="text-[#6B7E7D]  text-sm font-medium px-2 py-1.5 bg-[#EDEDED] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
-                      {purchase.status}
-                    </span>
-                  )
-                }
-
-              </div>
+                  (() => {
+                    const statusParts = purchase.status.split('|').map((part: string) => part.trim());
+                    //console.log(statusParts);
+                     if (!statusParts.length) {
+                       return (
+                         <span className="text-[#6B7E7D] bg-[#EDEDED] px-2 py-1.5 text-sm font-medium rounded-[5px]">
+                           No Status
+                         </span>
+                       );
+                     }
+                    return statusParts.map((status: any, index: any) => {
+                      const styles = getStatusStyles(status);
+                      return (
+                        <span  key={index} className={`${styles?.textColor} ${styles?.bgColor} px-2 mr-2 py-1.5 text-sm font-medium rounded-[5px]`}>
+                          {status}
+                        </span>
+                      )
+                    })
+                  })
+                    ()}
+              </div >
             </Tooltip>
 
           </div>

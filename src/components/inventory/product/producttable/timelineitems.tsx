@@ -32,6 +32,7 @@ const ProductAllItem = () => {
   const urlSearchParams = useSearchParams();
   const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
   const selectedCategories = useMemo(() => urlSearchParams.getAll('selectedCategories'), [urlSearchParams]);
+  const selectedInvoices = useMemo(() => urlSearchParams.getAll('selectedInvoiceTypes'), [urlSearchParams]);
   const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${appState.currentBranchId}`, fetcher)
   useEffect(() => {
     if (!isLoading && data && !error) {
@@ -46,13 +47,19 @@ const ProductAllItem = () => {
           selectedCategories.includes(item.category)
         );
       }
+      console.log(selectedInvoices);
+      if (selectedInvoices.length > 0) {
+        filteredData = filteredData.filter((item: any) =>
+          selectedInvoices.includes(item.invoiceType)
+        )
+      }
       setProducts(filteredData?.reverse())
     }
-  }, [data, isLoading, error, selectedCategories, selectedParties]);
+  }, [data, isLoading, error, selectedCategories, selectedParties, selectedInvoices]);
 
-  
+
   // console.log("xcxcxcxcxc")
-  // console.log("products", products);
+  console.log("products", products);
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;

@@ -17,7 +17,7 @@ export const GET=async(req: NextRequest)=> {
         const inventory = await prismaClient.inventoryTimeline.findMany({
              where:{
                inventorySectionId:inventoryId,
-               isApproved:false
+               
              },
             include: {
                 productBatch: {
@@ -34,6 +34,8 @@ export const GET=async(req: NextRequest)=> {
                ttl:60
             }
         });
+
+        //console.log(inventory);
         
         return new Response(JSON.stringify(inventory), {
             status: 201,
