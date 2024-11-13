@@ -8,7 +8,7 @@ const CreateButtonCard = () => {
     <div className="w-[381px] h-[491px] px-4 pt-6 pb-7 bg-zinc-900 rounded-[10px] shadow justify-end items-start gap-5 inline-flex">
       <div className="flex-col justify-start items-start gap-4 inline-flex">
         <div className="self-stretch justify-start items-start gap-2 inline-flex">
-          <div className="text-gray-100 text-sm font-medium font-['Satoshi']">
+          <div className="text-gray-100 text-sm font-medium ">
             Database
           </div>
         </div>
@@ -19,7 +19,7 @@ const CreateButtonCard = () => {
                 <Image src={listImg} alt="" />
               </div>
             </div>
-            <div className="text-white text-base font-medium font-['Satoshi']">
+            <div className="text-white text-base font-medium ">
               Client
             </div>
           </div>
@@ -31,7 +31,7 @@ const CreateButtonCard = () => {
               <Image src={receipt} alt="" />
               </div>
             </div>
-            <div className="text-white text-base font-medium font-['Satoshi']">
+            <div className="text-white text-base font-medium ">
               Patient
             </div>
           </div>
@@ -43,13 +43,13 @@ const CreateButtonCard = () => {
               <Image src={receipt} alt="" />
               </div>
             </div>
-            <div className="text-white text-base font-medium font-['Satoshi']">
+            <div className="text-white text-base font-medium ">
               Distributors
             </div>
           </div>
         </div>
         <div className="self-stretch h-[61px] justify-start items-end gap-2 inline-flex">
-          <div className="text-gray-100 text-sm font-medium font-['Satoshi']">
+          <div className="text-gray-100 text-sm font-medium ">
             Sales
           </div>
         </div>
@@ -60,7 +60,7 @@ const CreateButtonCard = () => {
               <Image src={receipt} alt="" />
               </div>
             </div>
-            <div className="text-white text-base font-medium font-['Satoshi']">
+            <div className="text-white text-base font-medium ">
               Estimate
             </div>
           </div>
@@ -72,7 +72,7 @@ const CreateButtonCard = () => {
               <Image src={receipt} alt="" />
               </div>{" "}
             </div>
-            <div className="text-white text-base font-medium font-['Satoshi']">
+            <div className="text-white text-base font-medium ">
               Invoice
             </div>
           </div>
@@ -84,14 +84,14 @@ const CreateButtonCard = () => {
               <Image src={receipt} alt="" />
               </div>{" "}
             </div>
-            <div className="text-white text-base font-medium font-['Satoshi']">
+            <div className="text-white text-base font-medium ">
               Return
             </div>
           </div>
         </div>
         <div className="h-[99px] flex-col justify-start items-start gap-4 flex">
           <div className="self-stretch h-[61px] justify-start items-end gap-2 inline-flex">
-            <div className="text-gray-100 text-sm font-medium font-['Satoshi']">
+            <div className="text-gray-100 text-sm font-medium ">
               Expenses
             </div>
           </div>
@@ -102,7 +102,7 @@ const CreateButtonCard = () => {
                 <Image src={receipt} alt="" />
                 </div>{" "}
               </div>
-              <div className="text-white text-base font-medium font-['Satoshi']">
+              <div className="text-white text-base font-medium ">
                 Record Expense
               </div>
             </div>
@@ -111,7 +111,7 @@ const CreateButtonCard = () => {
       </div>
       <div className="flex-col justify-start items-start gap-4 inline-flex">
         <div className="self-stretch h-[210px] justify-start items-end gap-2 inline-flex">
-          <div className="text-gray-100 text-sm font-medium font-['Satoshi']">
+          <div className="text-gray-100 text-sm font-medium ">
             Purchases
           </div>
         </div>
@@ -122,7 +122,7 @@ const CreateButtonCard = () => {
               <Image src={receipt} alt="" />
               </div>
             </div>
-            <div className="text-white text-base font-medium font-['Satoshi']">
+            <div className="text-white text-base font-medium ">
               Purchase Order
             </div>
           </div>
@@ -134,7 +134,7 @@ const CreateButtonCard = () => {
               <Image src={receipt} alt="" />
               </div>{" "}
             </div>
-            <div className="text-white text-base font-medium font-['Satoshi']">
+            <div className="text-white text-base font-medium ">
               Purchase Invoice
             </div>
           </div>
@@ -146,7 +146,7 @@ const CreateButtonCard = () => {
               <Image src={receipt} alt="" />
               </div>{" "}
             </div>
-            <div className="text-white text-base font-medium font-['Satoshi']">
+            <div className="text-white text-base font-medium ">
               Purchase Return
             </div>
           </div>
@@ -154,7 +154,7 @@ const CreateButtonCard = () => {
         <div className="flex-col justify-start items-start gap-5 flex">
           <div className="flex-col justify-start items-start gap-4 flex">
             <div className="self-stretch h-[61px] justify-start items-end gap-2 inline-flex">
-              <div className="text-gray-100 text-sm font-medium font-['Satoshi']">
+              <div className="text-gray-100 text-sm font-medium ">
                 Transactions
               </div>
             </div>
@@ -165,7 +165,7 @@ const CreateButtonCard = () => {
                   <Image src={receipt} alt="" />
                   </div>{" "}
                 </div>
-                <div className="text-white text-base font-medium font-['Satoshi']">
+                <div className="text-white text-base font-medium ">
                   Record Transaction
                 </div>
               </div>
