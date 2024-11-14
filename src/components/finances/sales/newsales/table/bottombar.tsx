@@ -87,7 +87,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             }
 
         }
-        console.log(tableData);
+        console.log(items);
         // console.log(appState.currentBranch)
         const notifData = {
             source: Notif_Source.Sales_Invoice,

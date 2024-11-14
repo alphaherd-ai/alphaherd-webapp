@@ -167,7 +167,7 @@ const ExistingsalesTable = () => {
                                         <div className='w-[10rem] flex-col items-center text-[#6B7E7D] text-base font-medium'>
                                             <div className="text-[#6B7E7D] text-base  font-medium  "> {item.batchNumber}</div>
 
-                                            <div className="text-neutral-400 text-[13px] font-medium ">{item.itempType==='product' ? formatDateAndTime(item.expiry).formattedDate:item.provider}</div>
+                                            <div className="text-[0.9rem] text-[#6B7E7D] font-medium ">{item.itempType==='product' ? formatDateAndTime(item.expiry).formattedDate:item.provider}</div>
                                         </div>
                                         <div className='w-1/12 flex items-center text-[#6B7E7D] text-base font-medium gap-[12px]'>
 

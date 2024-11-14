@@ -35,11 +35,12 @@ const ExistingsaleEstimateTable = () => {
             console.log(data);
             const { items, ...otherData } = data;
             setOtherData(otherData)
-            // console.log(items)
+        
             const shallowDataCopy = [...items];
             const itemData = shallowDataCopy.map((item: any) => ({
                 id: item.itemType === 'product' ? item.productBatch.productId : item.serviceId,
                 itemName: item.name,
+                itemType:item.itemType,
                 quantity: item.quantity,
                 sellingPrice: item.sellingPrice,
                 expiry: item.itemType === 'product' ? item.productBatch.expiry : "",
@@ -51,6 +52,7 @@ const ExistingsaleEstimateTable = () => {
                 provider: item.itemType === 'product' ? "" : item.serviceProvider
             }));
             setItems(itemData);
+            console.log(itemData);
         }
     }, [data, error, isLoading]);
 

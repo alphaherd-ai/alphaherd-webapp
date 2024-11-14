@@ -633,8 +633,8 @@ const GeneralSettings = () => {
                         </div>
                         
                     </div>
-                    <div className="w-full flex justify-between">
-                        <div className="w-[43.5rem] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
+                    <div className="w-full flex justify-between ">
+                        <div className="w-[49%] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                             <div className="w-full flex justify-between items-start">
                                 <div>
                                     <div className="text-gray-500 text-base font-bold ">Payment methods</div>
@@ -668,19 +668,22 @@ const GeneralSettings = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="w-[43.5rem] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
+                        <div className="w-[49%] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                             <div className="w-full flex justify-between items-start">
                                 <div>
                                     <div className="text-gray-500 text-base font-bold ">Species & Breeds</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add your species & breed database</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
-                                    <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                    <div className="text-white text-base font-medium " onClick={togglePopup7}>Add Breed</div>
-                                </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
-                                    <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                    <div className="text-white text-base font-medium " onClick={togglePopup}>Add Species</div>
+                                <div className="flex gap-3">
+                                    
+                                    <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
+                                        <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
+                                        <div className="text-white text-base font-medium " onClick={togglePopup}>Add Species</div>
+                                    </div>
+                                    <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
+                                        <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
+                                        <div className="text-white text-base font-medium " onClick={togglePopup7}>Add Breed</div>
+                                    </div>
                                 </div>
                             </div>
                             <div className="w-full h-full">
@@ -749,7 +752,7 @@ const GeneralSettings = () => {
                         </div>
                     </div>
                     <div className="w-full flex justify-between">
-                        <div className="w-[43.5rem] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
+                        <div className="w-[49%] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                             <div className="w-full flex justify-between items-start">
                                 <div>
                                     <div className="text-gray-500 text-base font-bold ">Item Categories</div>
@@ -784,7 +787,7 @@ const GeneralSettings = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="w-[43.5rem] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
+                        <div className="w-[49%] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                             <div className="w-full flex justify-between items-start">
                                 <div>
                                     <div className="text-gray-500 text-base font-bold ">Item Units</div>
@@ -821,7 +824,7 @@ const GeneralSettings = () => {
                         </div>
                     </div>
                     <div className="w-full flex justify-between">
-                        <div className="w-[43.5rem] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
+                        <div className="w-[49%] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                             <div className="w-full flex justify-between items-start">
                                 <div>
                                     <div className="text-gray-500 text-base font-bold ">Service Categories</div>
@@ -857,7 +860,7 @@ const GeneralSettings = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="w-[43.5rem] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
+                        <div className="w-[49%] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                             <div className="w-full flex justify-between items-start">
                                 <div>
                                     <div className="text-gray-500 text-base font-bold ">Tax Types</div>
@@ -906,7 +909,7 @@ const GeneralSettings = () => {
                         </div>
                     </div>
                     <div className="w-full flex justify-between">
-                        <div className="w-[43.5rem] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
+                        <div className="w-[49%] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                             <div className="w-full flex justify-between items-start">
                                 <div>
                                     <div className="text-gray-500 text-base font-bold ">Update Inventory - Stock out Reasons</div>

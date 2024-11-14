@@ -42,14 +42,15 @@ const InvoiceReturnBottomBar = ({invoiceData}:any) => {
             totalQty+=(data.quantity)||0;
         });
         const items = tableData.map(data => ({
-            productId: data.productId,
+            productId: data?.productId,
             serviceId: data?.serviceId,
             productBatchId: data.productId ? data.id : null,
             quantity: data.quantity,  
             sellingPrice:data.unitPrice,
             taxAmount:data.tax,
             name:data.itemName,
-            itemType: data.itemType
+            itemType: data.itemType,
+            serviceProvider:data?.serviceProvider
     }));
      const data={
             customer: (id===null)?allData.headerData.customer.value:invoiceData.customer,
@@ -74,7 +75,7 @@ const InvoiceReturnBottomBar = ({invoiceData}:any) => {
             }
             
         }
-       // console.log(tableData);
+        console.log(items);
         //console.log(JSON.stringify(data))
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Return}?branchId=${appState.currentBranchId}`,data)

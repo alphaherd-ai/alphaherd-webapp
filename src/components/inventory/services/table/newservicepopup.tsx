@@ -115,7 +115,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
                 'Content-Type': 'application/json',
             }
         });
-        let productsJson = await productsResponse.json();
+        let productsJson = await productsResponse?.json();
         // console.log(productsJson);
         const staffResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/branch/staff?branchId=${appState.currentBranchId}`, {
             method: 'GET',
@@ -186,7 +186,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
             });
 
             if (response.ok) {
-                // console.log('Data saved successfully');
+                console.log('Data saved successfully');
                 onClose();
                 window.dispatchEvent(new FocusEvent('focus'));
             } else {

@@ -39,6 +39,18 @@ const InventoryServicesTableHeader = ({ onSortChange }: any) => {
         }
     };
 
+    const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
+   
+
+    const selectedCategoryValue = React.useMemo(
+        () => Array.from(selectedCategory).join(", ").replaceAll("_", " "),
+        [selectedCategory]
+    );
+    const selectedSortValue = React.useMemo(
+        () => Array.from(selectedSort).join(", ").replaceAll("_", " "),
+        [selectedSort]
+    );
+
 
     return (
 
@@ -64,11 +76,44 @@ const InventoryServicesTableHeader = ({ onSortChange }: any) => {
 
                         <div className='flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'><Image src={Download} alt='Download' className='w-4  h-4' /></div>
                     </Link>
-                    <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
+                    {/* <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
 
                         <div className='flex items-center justify-center w-7 h-7 border border-solid border-gray-300 border-0.5 rounded-md  p-1'><Image src={Chart} alt='Chart' className='w-4  h-4' /></div>
-                    </Link>
-                    <div className='flex items-center   h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg '>
+                    </Link>*/}
+                    {/* <div className='flex items-center justify-center h-7   mr-4 border border-solid border-gray-300 border-0.5 rounded-lg p-2'>
+                        <div className='flex '><Image src={Sort} alt='Sort' className='w-3 h-3 mr-2' /></div>
+
+                        <Dropdown>
+                            <DropdownTrigger className='z-0'>
+                                <Button
+
+                                    // color="gray-400"
+                                    variant="solid"
+                                    className="capitalize border-none  bg-transparent rounded-lg"
+                                >
+                                    {selectedSortValue}
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                                aria-label="Single selection example"
+                                // color="gray-500"
+                                className=" text-base  text-gray-500 bg-gray-200 rounded-lg"
+                                variant="solid"
+                                disallowEmptySelection
+                                selectionMode="single"
+                                selectedKeys={selectedSort}
+                                // onSelectionChange={setselectedSort}
+                            >
+                                <DropdownItem
+                                    className=" p-2 text-base" key="Category:text">Sort:Recently Used</DropdownItem>
+                                <DropdownItem
+                                    className=" p-2 text-base" key="Category:number">Sort:Recently Used</DropdownItem>
+                                <DropdownItem
+                                    className=" p-2 text-base" key="Category:date">Date</DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </div> */}
+                    <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg '>
                         <div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>
 
                         <Popover className='overflow-y-scroll'>
@@ -178,9 +223,9 @@ const InventoryServicesTableHeader = ({ onSortChange }: any) => {
 
 
 
-                    </div>
                 </div>
-            </div >
+            </div>
+        </div >
 
         </>
     )

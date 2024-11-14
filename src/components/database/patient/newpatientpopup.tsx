@@ -317,15 +317,20 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
         fetchBreeds();
     }, [appState.currentBranchId]);
 
-    // Filter breeds based on selected species
-    useEffect(() => {
-        if (selectedSpecies) {
-            const filtered = breeds.filter((breed) => breed.speciesId === selectedSpecies.value);
-            setFilteredBreeds(filtered);
-        } else {
-            setFilteredBreeds([]); // Reset if no species is selected
-        }
-    }, [selectedSpecies, breeds]);
+  console.log("breedsss", breeds)
+
+  // Filter breeds based on selected species
+  useEffect(() => {
+    if (selectedSpecies) {
+      const filtered = breeds.filter((breed) => breed.speciesId === selectedSpecies.value);
+      setFilteredBreeds(filtered);
+    } else {
+      setFilteredBreeds([]); // Reset if no species is selected
+    }
+  }, [selectedSpecies, breeds]);
+
+  console.log("filtered breeds", filteredBreeds);
+
     const handleGenderChange = (gender: any) => {
         setSelectedGender(gender);
     };

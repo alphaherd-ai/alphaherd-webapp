@@ -53,11 +53,11 @@ const DatabaseClientHeader = ({ clients, onSortChange }: any) => {
                     >
                         <Image src={Download} alt="Download" className="w-4 h-4" />
                     </div>
-                    <Link className="no-underline flex items-center mr-4" href="/finance/overview">
+                    {/* <Link className="no-underline flex items-center mr-4" href="/finance/overview">
                         <div className="flex items-center justify-center w-7 h-7 border border-solid border-gray-300 rounded-md p-1">
                             <Image src={Chart} alt="Chart" className="w-4 h-4" />
                         </div>
-                    </Link>
+                    </Link> */}
 
                     <div className="flex items-center justify-center h-7 mr-4 border border-solid border-gray-300 rounded-lg p-2">
                         <div className="flex">

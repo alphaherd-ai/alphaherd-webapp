@@ -418,7 +418,7 @@ const NewsalesTable = () => {
                             itemIndex === index ? {
                                 ...item, id: defaultBatch?.value?.id,
                                 quantity: defaultBatch?.value?.quantity || 1,
-                                batchNumber: defaultBatch?.value?.batchNumber,
+                                //batchNumber: defaultBatch?.value?.batchNumber,
                                 expiry: defaultBatch?.value?.expiry,
                                 sellingPrice: defaultBatch?.value?.sellingPrice,
                                 productId: defaultBatch?.value?.productId
@@ -666,18 +666,17 @@ const NewsalesTable = () => {
                                                     styles={customStyles}
                                                 />
                                             ) : (
-                                                item.batchNumber ? item.batchNumber :
-                                                    <Select
-                                                        className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
-                                                        classNamePrefix="select"
-                                                        value={filteredBatches.find((prod) => prod.value.id === item.id)}
-                                                        isClearable={false}
-                                                        isSearchable={true}
-                                                        name={`batchNumber=${index}`}
-                                                        options={filteredBatches}
-                                                        onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
-                                                        styles={customStyles}
-                                                    />
+                                                item.batchNumber ? item.batchNumber : <Select
+                                                className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
+                                                classNamePrefix="select"
+                                                value={filteredBatches.find((prod) => prod.value.id === item.id)}
+                                                isClearable={false}
+                                                isSearchable={true}
+                                                name={`batchNumber=${index}`}
+                                                options={filteredBatches}
+                                                onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
+                                                styles={customStyles}
+                                            />
                                             )
                                         )}
 

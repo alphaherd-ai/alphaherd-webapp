@@ -102,7 +102,8 @@ const InvoiceReturnTable = () => {
                 tax: item.taxAmount,
                 discount: item.discount,
                 expiry: item.itemType === 'product' ? item.productBatch.expiry : "",
-                batchNumber: item.itemType === 'product' ? item.productBatch.batchNumber : item.serviceProvider,
+                batchNumber: item.itemType === 'product' ? item.productBatch.batchNumber : "",
+                serviceProvider:item.itemType==='service'?item.serviceProvider:null,
                 freeQuantity: item.freeQuantity,
                 maxRetailPrice: item.itemType === 'product' ? item.productBatch.sellingPrice : item.sellingPrice
             }));
@@ -231,7 +232,7 @@ const InvoiceReturnTable = () => {
             const filteredItems = items.filter(item => newCheckedItems[item.id] === true);
             setTableData(filteredItems);
             setCheckedItemList(filteredItems);
-            //console.log(newCheckedItems);
+            console.log(filteredItems);
             return newCheckedItems;
         });
     }, [items]);
@@ -346,7 +347,7 @@ const InvoiceReturnTable = () => {
                                             </div>
 
                                             <div className=' flex text-gray-500 text-base  w-[15rem]'>
-                                                {item.batchNumber}
+                                                {item.itemType==='product' ? item.batchNumber : item.serviceProvider}
                                                 {/* <input
                                             type="number"
                                             className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"

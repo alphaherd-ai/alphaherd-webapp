@@ -54,6 +54,7 @@ const ExistingsalesReturnTable = () => {
           const itemData = shallowDataCopy.map((item: any) => ({
             id: item.itemType==='product' ? item.productBatch.productId: item.serviceId,
                 itemName:item.name,
+                itemType:item.itemType,
                 quantity:item.quantity,
                 sellingPrice:item.sellingPrice,
                 expiry:item.itemType==='product' ? item.productBatch.expiry:"",

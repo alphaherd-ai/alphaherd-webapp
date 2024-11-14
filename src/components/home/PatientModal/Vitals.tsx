@@ -120,7 +120,7 @@ const Vitals = () => {
       </div>
       <div className="flex justify-end w-[670px] hover:cursor-pointer">
         <div
-          className="grow shrink basis-0 text-right text-teal-400 text-base font-medium font-['Satoshi']"
+          className="grow shrink basis-0 text-right text-teal-400 text-base font-medium "
           onClick={toggleExpanded}
         >
           {expanded ? "See Less" : "See All"}

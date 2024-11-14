@@ -83,11 +83,11 @@ const InventoryProductTableHeader = ({ onSortChange }: any) => {
                 <div className='flex items-center'>
                     {/* <div onClick={togglePopup1} className='cursor-pointer mr-4 flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'>
                         <Image src={Download} alt='Download' className='w-4  h-4' />
-                    </div> */}
-                    <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
+                    </div>
+                    {/* <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
 
                         <div className='flex items-center justify-center w-7 h-7 border border-solid border-gray-300 border-0.5 rounded-md  p-1'><Image src={Chart} alt='Chart' className='w-4  h-4' /></div>
-                    </Link>
+                    </Link> */}
                     <div className='flex items-center justify-center h-7   mr-4 border border-solid border-gray-300 border-0.5 rounded-lg p-2'>
                         <div className='flex '><Image src={Sort} alt='Sort' className='w-3 h-3 mr-2' /></div>
 
@@ -133,9 +133,9 @@ const InventoryProductTableHeader = ({ onSortChange }: any) => {
                             <PopoverTrigger>
                                 <Button
                                     variant="solid"
-                                    className="capitalize border-none bg-transparent rounded-lg"
+                                    className="capitalize border-none bg-transparent rounded-lg "
                                 >
-                                    Filter
+                                    <span className='text-textGrey2 text-sm font-medium'> Filter By</span>
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent>
