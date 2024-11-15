@@ -115,6 +115,7 @@ const ProductAllItem = ({ sortOrder, sortKey }: any) => {
               return sortOrder === 'asc' ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
             }
           }
+          
           return 0;
         });
         setProducts(sortedData);

@@ -21,7 +21,7 @@ interface Products {
   providers: string[];
 }
 
-const ProductAllItem = () => {
+const ProductAllItem = ({sortOrder,sortKey}:any) => {
 
   const { allData, setAllData } = useContext(DataContext)
 
@@ -53,13 +53,33 @@ const ProductAllItem = () => {
           selectedInvoices.includes(item.invoiceType)
         )
       }
-      setProducts(filteredData?.reverse())
+     
+      if (sortOrder && sortKey) {
+        console.log(sortOrder, sortKey);
+        const sortedData = [...filteredData].sort((a, b) => {
+          if (sortKey === 'date') {
+            const valueA = new Date(a.createdAt)
+            const valueB = new Date(b.createdAt)
+            //console.log(valueA,valueB);
+            if (valueA instanceof Date && valueB instanceof Date) {
+              console.log('in');
+              return sortOrder === 'asc' ? valueA.getTime() - valueB.getTime() : valueB.getTime() - valueA.getTime();
+            }
+          }
+          
+          return 0;
+        });
+        //console.log(sortedData);
+        setProducts(sortedData);
+        return ;
+      }
+      setProducts(filteredData);
     }
-  }, [data, isLoading, error, selectedCategories, selectedParties, selectedInvoices]);
+  }, [data, isLoading, error, selectedCategories, sortOrder,sortKey, selectedParties, selectedInvoices]);
 
 
   // console.log("xcxcxcxcxc")
-  console.log("products", products);
+  //console.log("products", products);
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
@@ -72,14 +92,6 @@ const ProductAllItem = () => {
   return (
     <div>
       {currentProducts
-        ?.sort((a, b) => {
-          const nameA = a?.itemName?.toLowerCase() || '';
-          const nameB = b?.itemName?.toLowerCase() || '';
-
-          if (nameA < nameB) return -1;
-          if (nameA > nameB) return 1;
-          return 0;
-        })
         .map(product => (
           <div
             key={product.id}

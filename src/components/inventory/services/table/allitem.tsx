@@ -26,7 +26,7 @@ interface Services {
 
 
 
-const ServicesAllItem = () => {
+const ServicesAllItem = ({sortOrder,sortKey}:any) => {
   const [services, setServices] = useState<Services[]>([]);
   const appState = useAppSelector((state) => state.app)
 
@@ -42,10 +42,29 @@ const ServicesAllItem = () => {
 
   useEffect(() => {
     if (data) {
+      
+      if (sortOrder && sortKey) {
+        console.log(sortOrder, sortKey);
+        const sortedData = [...data].sort((a, b) => {
+          if (sortKey === 'date') {
+            const valueA = new Date(a.createdAt)
+            const valueB = new Date(b.createdAt)
+            //console.log(valueA,valueB);
+            if (valueA instanceof Date && valueB instanceof Date) {
+              console.log('in');
+              return sortOrder === 'asc' ? valueA.getTime() - valueB.getTime() : valueB.getTime() - valueA.getTime();
+            }
+          }
+          
+          return 0;
+        });
+        //console.log(sortedData);
+        setServices(sortedData);
+        return ;
+      }
       setServices(data);
-      console.log(data);
     }
-  }, [data]);
+  }, [data,sortKey,sortOrder]);
 
   // if (error) return <div>Error fetching services: {error.message}</div>;
   // if (isLoading) return (<Loading />);

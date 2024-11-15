@@ -113,23 +113,7 @@ const InventoryServicesTableHeader = ({ onSortChange }: any) => {
                             </DropdownMenu>
                         </Dropdown>
                     </div> */}
-                    <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg '>
-                        <div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>
 
-                        <Popover className='overflow-y-scroll'>
-                            <PopoverTrigger>
-                                <Button
-                                    variant="solid"
-                                    className="capitalize border-none bg-transparent rounded-lg"
-                                >
-                                    Filter
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent>
-                                <FilterDropDownCard />
-                            </PopoverContent>
-                        </Popover>
-                    </div>
 
                     <div className="flex items-center justify-center h-7 mr-4 border border-solid border-gray-300 rounded-lg p-2">
                         <div className="flex">
@@ -194,6 +178,23 @@ const InventoryServicesTableHeader = ({ onSortChange }: any) => {
                         </Dropdown>
                     </div>
 
+                    <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg '>
+                        <div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>
+
+                        <Popover className='overflow-y-scroll'>
+                            <PopoverTrigger>
+                                <Button
+                                    variant="solid"
+                                    className="capitalize border-none bg-transparent rounded-lg"
+                                >
+                                    Filter
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent>
+                                <FilterDropDownCard />
+                            </PopoverContent>
+                        </Popover>
+                    </div>
 
                     <div className='flex items-center  justify-between rounded-lg '>
 
