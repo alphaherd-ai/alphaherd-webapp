@@ -212,7 +212,7 @@ const InvoiceReturnTotalAmount = ({otherData}:{otherData:any}) => {
                         </div>
                         <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 rounded-b-md justify-between items-center gap-2.5    ">
                             <div className="text-textGreen text-base font-bold ">Grand total</div>
-                            <div className="text-right text-textGreen text-base font-bold ">{(grandAmt)}</div>
+                            <div className="text-right text-textGreen text-base font-bold ">{(grandAmt)?.toFixed(2) || 0}</div>
                         </div>
                     </div>
                     <div className="w-full mr-4 flex flex-col mt-8">

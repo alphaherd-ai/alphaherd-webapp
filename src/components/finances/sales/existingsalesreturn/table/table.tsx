@@ -189,8 +189,8 @@ const ExistingsalesReturnTable = () => {
                                             <div className="text-textGrey2 text-base  font-medium  "> {(item.tax * 100)}</div>
 
                                         </div>
-                                        <div className='w-[6rem] flex items-center text-textGrey2 text-base font-medium '>{`₹${(item.quantity * item.tax * 100).toFixed(2)}`}</div>
-                                        <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium '>{`₹${(item.quantity * item.sellingPrice + item.quantity * item.tax * 100).toFixed(2)}`}</div>
+                                        <div className='w-[6rem] flex items-center text-textGrey2 text-base font-medium '>{`₹${(item.quantity * item.tax*item.sellingPrice).toFixed(2)}`}</div>
+                                        <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium '>{`₹${(item.quantity * item.sellingPrice + item.quantity * item.tax * item.sellingPrice).toFixed(2)}`}</div>
 
                                     </div>
                                     {/* <div>
@@ -234,8 +234,8 @@ const ExistingsalesReturnTable = () => {
                                 <div className=' flex text-gray-500 text-base font-medium w-[8rem]'>
                                     <div className="text-neutral-400 text-base  font-medium   "> Tax inc</div>
                                 </div>
-                                <div className=' flex text-gray-500 text-base font-medium w-[6rem]'>{`₹${items.reduce((acc, item) => acc + item.quantity * item.tax * 100, 0).toFixed(2)}`}</div>
-                                <div className=' flex text-gray-500 text-base font-medium w-1/12'>{`₹${items.reduce((acc, item) => acc + item.quantity * item.sellingPrice + item.quantity * item.tax * 100, 0).toFixed(2)}`}</div>
+                                <div className=' flex text-gray-500 text-base font-medium w-[6rem]'>{`₹${items.reduce((acc, item) => acc + item.quantity * item.tax * item.sellingPrice, 0).toFixed(2)}`}</div>
+                                <div className=' flex text-gray-500 text-base font-medium w-1/12'>{`₹${items.reduce((acc, item) => acc + item.quantity * item.sellingPrice + item.quantity * item.tax * item.sellingPrice, 0).toFixed(2)}`}</div>
                             </div>
                         </div>
 
