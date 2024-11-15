@@ -68,7 +68,7 @@ const FilterDropdownProductsCard = () => {
         },
       }));
 
-      const combinedOptions = [...clientOptions, ...distributorOptions];
+      const combinedOptions = [...distributorOptions];
       // console.log(combinedOptions);
       setPartyInfo(combinedOptions);
     }
@@ -116,7 +116,7 @@ const FilterDropdownProductsCard = () => {
   };
 
   return (
-    <div className="w-[420px] h-[441px] px-4 py-6 bg-white rounded-[10px] flex-col justify-start items-start gap-4 inline-flex shadow-lg">
+    <div className="w-[420px] h-[540px] px-4 py-6 bg-white rounded-[10px] flex-col justify-start items-start gap-4 inline-flex shadow-lg">
       <div className="items-start flex border border-solid border-borderGrey rounded-[5px] cursor-pointer">
         <div
           className={`px-2 py-1 ${
@@ -127,9 +127,7 @@ const FilterDropdownProductsCard = () => {
           <div className={`text-sm font-bold ${activeTab === "party" ? "text-white" : "text-neutral-400"}`}>
             Distributors
           </div>
-          <div className="w-4 h-4 p-2 bg-teal-400 rounded-[17px] flex-col justify-center items-center gap-2.5 inline-flex">
-            <div className="text-white text-[10px] font-medium">2</div>
-          </div>
+          
         </div>
        
         
@@ -142,22 +140,13 @@ const FilterDropdownProductsCard = () => {
           <div className={`text-sm font-bold ${activeTab === "category" ? "text-white" : "text-neutral-400"}`}>
             Categories
           </div>
-          <div className="w-4 h-4 p-2 bg-teal-400 rounded-[17px] flex-col justify-center items-center gap-2.5 inline-flex">
-            <div className="text-white text-[10px] font-medium">1</div>
-          </div>
+         
         </div>
       </div>
       <div className='h-full w-full overflow-y-auto container'>
       {activeTab === "party" && (
         <div className="w-full h-full flex flex-col gap-4">
-          <div className="w-full">
-            <input
-              className="w-full p-2 border border-solid border-borderGrey outline-none rounded-[5px] text-sm text-textGrey2 font-medium"
-              type="text"
-              name=""
-              id=""
-            />
-          </div>
+          
           <div className="w-full flex flex-col gap-4">
             {partyInfo?.map((party: any) => (
               <div key={party.value.id} className="w-full flex gap-2 items-center">
@@ -198,7 +187,7 @@ const FilterDropdownProductsCard = () => {
           <input type="checkbox" name="" id="" />
           <div className="text-textGrey2 font-medium text-base">Select All</div>
         </div>
-        <div className="px-3 py-3 bg-textGreen text-white rounded-[5px] justify-start items-center" onClick={applyFilters}>Apply</div>
+        <div className="px-3 py-3 bg-textGreen text-white rounded-[5px] justify-start items-center cursor-pointer" onClick={applyFilters}>Apply</div>
       </div>
     </div>
   );

@@ -12,61 +12,61 @@ import { useAppSelector } from '@/lib/hooks';
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 import Loading2 from '@/app/loading2';
 //@ts-ignore
-const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
+const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
-const NewsaleEstimateHeader = () => {
+const NewsaleEstimateHeader = ({ isNewClientClicked, newClient }: any) => {
 
     const customStyles = {
         control: (provided: any, state: any) => ({
-          ...provided,
-          width: '100%',
-          maxWidth: '100%',
-          border: state.isFocused ? '1px solid #35BEB1' : 'none',
-          '&:hover': {
-            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
+            border: state.isFocused ? '1px solid #35BEB1' : 'none',
+            '&:hover': {
+                borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4',
             },
-          boxShadow: state.isFocused ? 'none' : 'none',
+            boxShadow: state.isFocused ? 'none' : 'none',
         }),
         valueContainer: (provided: any) => ({
-          ...provided,
-          width: '100%',
-          maxWidth: '100%',
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
         }),
         singleValue: (provided: any, state: any) => ({
-          ...provided,
-          width: '100%',
-          maxWidth: '100%',
-          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
+            color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
         }),
         menu: (provided: any) => ({
-          ...provided,
-          backgroundColor: 'white',
-          width: '100%',
-          maxWidth: '100%',
+            ...provided,
+            backgroundColor: 'white',
+            width: '100%',
+            maxWidth: '100%',
         }),
         option: (provided: any, state: any) => ({
-          ...provided,
-          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
-          color: state.isFocused ? 'white' : '#6B7E7D',
-          '&:hover': {
-            backgroundColor: '#35BEB1',
-            color: 'white',
-          },
+            ...provided,
+            backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+            color: state.isFocused ? 'white' : '#6B7E7D',
+            '&:hover': {
+                backgroundColor: '#35BEB1',
+                color: 'white',
+            },
         }),
-      };
-      
+    };
 
-    const url=useSearchParams();
-    const id=url.get('id');
-    const count=url.get('count');
-    const initialInvoiceNo=generateInvoiceNumber(Number(count));
+
+    const url = useSearchParams();
+    const id = url.get('id');
+    const count = url.get('count');
+    const initialInvoiceNo = generateInvoiceNumber(Number(count));
     const { headerData, setHeaderData } = useContext(DataContext);
     const [startDate, setStartDate] = useState(new Date());
     const [isClearable, setIsClearable] = useState(true);
     const [isSearchable, setIsSearchable] = useState(true);
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
-    const [customers,setCustomers]=useState<any[]>([]);
+    const [customers, setCustomers] = useState<any[]>([]);
     const appState = useAppSelector((state) => state.app)
     const [dueDate, setDueDate] = useState(new Date());
     const [isCustomerValid, setIsCustomerValid] = useState(true);
@@ -80,7 +80,7 @@ const NewsaleEstimateHeader = () => {
         setIsCustomerValid(!!headerData.customer);
     }, [headerData.customer]);
 
-    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
+    const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
     useEffect(() => {
         if (!disableButton && inputRef.current) {
             inputRef.current.focus();
@@ -91,31 +91,51 @@ const NewsaleEstimateHeader = () => {
         setDisableButton(!disableButton);
     };
 
-    const handleDateChange = (date:any) => {
+    const handleDateChange = (date: any) => {
         setStartDate(date);
         setHeaderData((prevData) => ({ ...prevData, date }));
     };
-    const handleDueDateChange= (date:any)=>{
+    const handleDueDateChange = (date: any) => {
         setDueDate(date);
-        setHeaderData((prevData)=>({...prevData,dueDate:date}))
+        setHeaderData((prevData) => ({ ...prevData, dueDate: date }))
     }
-    useEffect(()=>{
-        setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo}))
-       
-    },[])
-    useEffect(()=>{
-        if(!isLoading&&!error&&data){
-              const  clients=data.map((client:any)=>({
-                value:{clientName:client.clientName,
-                       contact:client.contact,
-                       clientId:client.id,
-                       email:client.email},
-                label:`${client.clientName}\u00A0\u00A0\u00A0\u00A0\u00A0${client.contact}`
+    useEffect(() => {
+        setHeaderData((prevData) => ({ ...prevData, invoiceNo: invoiceNo,dueDate:dueDate }))
+
+    }, [])
+
+
+    useEffect(() => {
+        if (isNewClientClicked) {
+            const newlyCreatedClient = {
+                value: {
+                    clientName: newClient.clientName,
+                    contact: newClient.contact,
+                    clientId: newClient.id,
+                    email: newClient.email
+                },
+                label: `${newClient.clientName}\u00A0\u00A0\u00A0\u00A0\u00A0${newClient.contact}`
+            }
+            setHeaderData((prevData) => ({ ...prevData, customer: newlyCreatedClient }))
+        }
+    }, [isNewClientClicked])
+
+
+    useEffect(() => {
+        if (!isLoading && !error && data) {
+            const clients = data.map((client: any) => ({
+                value: {
+                    clientName: client.clientName,
+                    contact: client.contact,
+                    clientId: client.id,
+                    email: client.email
+                },
+                label: `${client.clientName}\u00A0\u00A0\u00A0\u00A0\u00A0${client.contact}`
             }))
             setCustomers(clients);
 
         }
-    },[data])
+    }, [data])
 
     return (
         <>
@@ -123,20 +143,20 @@ const NewsaleEstimateHeader = () => {
                 <div className="px-6 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold ">Client:</div>
-                        { 
-                            isLoading?<div className='text-textGrey2 text-base font-medium'><Loading2/></div>:(
+                        {
+                            isLoading ? <div className='text-textGrey2 text-base font-medium'><Loading2 /></div> : (
                                 <Select
-                                className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
-                                classNamePrefix="select"
-                                isClearable={isClearable}
-                                isSearchable={isSearchable}
-                                value={headerData.customer}
-                                name="color"
-                                options={customers}
-                                styles={customStyles}
-                                onChange={(selectedOption) => setHeaderData((prevData) => ({ ...prevData, customer: selectedOption }))}
+                                    className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
+                                    classNamePrefix="select"
+                                    isClearable={isClearable}
+                                    isSearchable={isSearchable}
+                                    value={headerData.customer}
+                                    name="color"
+                                    options={customers}
+                                    styles={customStyles}
+                                    onChange={(selectedOption) => setHeaderData((prevData) => ({ ...prevData, customer: selectedOption }))}
                                 />
-                        )}
+                            )}
                     </div>
                     {!isCustomerValid && <div className="text-red-500 text-sm mt-1">Customer is required</div>}
                 </div>
@@ -172,29 +192,29 @@ const NewsaleEstimateHeader = () => {
                             )}
                         /> */}
                         <div className='customDatePickerWidth'>
-                        <DatePicker
-                                        className="w-full"
-                                        selected={startDate}
-                                        onChange={handleDateChange}
-                                        calendarClassName="react-datepicker-custom"
-                                        customInput={
-                                            <div className='relative'>
-                                                <input
-                                                    className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={startDate.toLocaleDateString()}
-                                                    readOnly
-                                                />
-                                                <Image
-                                                    src={calicon}
-                                                    alt="Calendar Icon"
-                                                    className="absolute right-2 top-2 cursor-pointer"
-                                                    width={50}
-                                                    height={20}
-                                                />
-                                            </div>
-                                        }
-                                    />
+                            <DatePicker
+                                className="w-full"
+                                selected={startDate}
+                                onChange={handleDateChange}
+                                calendarClassName="react-datepicker-custom"
+                                customInput={
+                                    <div className='relative'>
+                                        <input
+                                            className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                            value={startDate.toLocaleDateString()}
+                                            readOnly
+                                        />
+                                        <Image
+                                            src={calicon}
+                                            alt="Calendar Icon"
+                                            className="absolute right-2 top-2 cursor-pointer"
+                                            width={50}
+                                            height={20}
+                                        />
                                     </div>
+                                }
+                            />
+                        </div>
                     </div>
                 </div>
                 <div className="px-6 py-2 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full">
@@ -210,29 +230,29 @@ const NewsaleEstimateHeader = () => {
                             )}
                         /> */}
                         <div className='customDatePickerWidth'>
-                        <DatePicker
-                            className="w-full"
-                            selected={dueDate} 
-                            onChange={handleDueDateChange} 
-                            calendarClassName="react-datepicker-custom"
-                            customInput={
-                            <div className='relative'>
-                                <input
-                                className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                value={headerData?.dueDate?.toLocaleDateString() || dueDate.toLocaleDateString()}
-                                readOnly
-                                />
-                                <Image
-                                src={calicon}
-                                alt="Calendar Icon"
-                                className="absolute right-2 top-2 cursor-pointer"
-                                width={50}
-                                height={20}
-                                />
-                                            </div>
-                                        }
-                                    />
+                            <DatePicker
+                                className="w-full"
+                                selected={dueDate}
+                                onChange={handleDueDateChange}
+                                calendarClassName="react-datepicker-custom"
+                                customInput={
+                                    <div className='relative'>
+                                        <input
+                                            className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                            value={headerData?.dueDate?.toLocaleDateString() || dueDate.toLocaleDateString()}
+                                            readOnly
+                                        />
+                                        <Image
+                                            src={calicon}
+                                            alt="Calendar Icon"
+                                            className="absolute right-2 top-2 cursor-pointer"
+                                            width={50}
+                                            height={20}
+                                        />
                                     </div>
+                                }
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

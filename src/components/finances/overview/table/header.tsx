@@ -123,13 +123,13 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
 
         products?.forEach((prod: any) => {
             if (prod?.inventoryType === "Product" && prod?.invoiceType === "Purchase_Invoice") {
-                const hsnCode = prod.productBatch.product.hsnCode;
-                const itemName = prod.productBatch.product.itemName;
-                const defaultUnit = prod.productBatch.product.defaultUnit;
-                const sellingPrice = prod.productBatch.sellingPrice;
-                const quantity = prod.productBatch.quantity;
+                const hsnCode = prod.productBatch?.product?.hsnCode;
+                const itemName = prod.productBatch?.product?.itemName;
+                const defaultUnit = prod.productBatch?.product?.defaultUnit;
+                const sellingPrice = prod.productBatch?.sellingPrice;
+                const quantity = prod.productBatch?.quantity;
                 const totalValue = sellingPrice * quantity;
-                const tax = prod.productBatch.product.tax;
+                const tax = prod.productBatch?.product?.tax;
                 const date = (prod.createdAt);
 
                 if (hsnSummary2[hsnCode]) {
@@ -161,13 +161,13 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
     const hsnSummary3: { [key: string]: { quantity: number, itemName: string, defaultUnit: string, totalValue: number, tax: number, date: Date } } = {};
     products?.forEach((prod: any) => {
         if (prod?.inventoryType === "Product" && prod?.invoiceType === "Purchase_Return") {
-            const hsnCode = prod.productBatch.product.hsnCode;
-            const itemName = prod.productBatch.product.itemName;
-            const defaultUnit = prod.productBatch.product.defaultUnit;
-            const sellingPrice = prod.productBatch.sellingPrice;
-            const quantity = prod.productBatch.quantity;
+            const hsnCode = prod.productBatch?.product?.hsnCode;
+            const itemName = prod.productBatch?.product?.itemName;
+            const defaultUnit = prod.productBatch?.product?.defaultUnit;
+            const sellingPrice = prod.productBatch?.sellingPrice;
+            const quantity = prod.productBatch?.quantity;
             const totalValue = sellingPrice * quantity;
-            const tax = prod.productBatch.product.tax;
+            const tax = prod.productBatch?.product?.tax;
             const date = (prod.createdAt);
 
             if (hsnSummary3[hsnCode]) {

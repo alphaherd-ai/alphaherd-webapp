@@ -60,7 +60,9 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             sellingPrice: data.sellingPrice,
             taxAmount: data.gst,
             name: data.itemName,
-            itemType: data.itemType
+            itemType: data.itemType,
+            discount:data.discountPer,
+            serviceProvider:data.provider,
         }));
         const data = {
             customer: (id === null) ? allData.headerData.customer.value.clientName : estimateData.customer,
@@ -85,7 +87,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             }
 
         }
-        
+        console.log(items);
         // console.log(appState.currentBranch)
         const notifData = {
             source: Notif_Source.Sales_Invoice,
@@ -227,8 +229,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             console.error('Error while saving data:', error);
         } 
     };
-    
-    const isDisabled = headerData?.customer ? (!headerData?.customer) : (!estimateData?.customer) || id===null ? tableData.length === 1:tableData.length===0 
+    const isDisabled = headerData?.customer ? (!headerData?.customer) : (!estimateData?.customer) || id===null ? tableData.length === 1 :  tableData.length===0 
 
     return (
         <>
@@ -260,10 +261,10 @@ const NewsalesBottomBar = ({estimateData}:any) => {
                     </Button>
                 </div> */}
                 <div className="flex justify-between items-center gap-4 pr-4">
-                    <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
+                    {/* <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
                         <Image src={drafticon} alt="draft"></Image>
                         <div>Save as Draft</div>
-                    </Button>
+                    </Button> */}
                     <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${
                         isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
                     }`}

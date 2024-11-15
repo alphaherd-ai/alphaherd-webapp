@@ -55,7 +55,7 @@ const NewPurchasesHeader = ({existingHeaderData}:any) => {
         setHeaderData((prevData)=>({...prevData,dueDate:date}))
     }
     useEffect(()=>{
-        setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo}))
+        setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo,dueDate:dueDate}))
        
     },[])
     useEffect(()=>{

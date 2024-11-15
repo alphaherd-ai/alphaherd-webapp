@@ -71,7 +71,7 @@ const ExistingsalesTotalAmout = ({ otherData, isLoading, loading }: any) => {
                         <div className="w-full flex px-4 py-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
                             <div className="text-gray-500 text-base font-bold ">Overall Discount</div>
                             <div className="flex items-center">
-                                <div className="text-right text-textGrey2 text-base  ">{otherData.overallDiscount * 100 || 0}%</div>
+                                <div className="text-right text-textGrey2 text-base  ">{(otherData.overallDiscount * 100 || 0).toFixed(2)}%</div>
 
                             </div>
                         </div>

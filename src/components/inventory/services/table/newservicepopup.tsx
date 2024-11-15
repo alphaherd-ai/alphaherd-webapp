@@ -9,6 +9,8 @@ import Arrow from "../../../../assets/icons/inventory/arrow.svg"
 import Loading2 from "@/app/loading2";
 import capitalizeFirst from "@/utils/capitiliseFirst";
 import axios from 'axios';
+import useSWR from "swr";
+const fetcher = (...args: [RequestInfo, RequestInit?]) => fetch(...args).then(res => res.json())
 type PopupProps = {
     onClose: () => void;
 }
@@ -36,8 +38,9 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
 
     const [selectedProducts, setSelectedProducts] = useState<any>([]);
     const [productOptions, setProductOptions] = useState([]);
-
+    const { data:serviceData, error:serviceError, isLoading:serviceLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true })
     const [taxType, settaxType] = useState<any[]>([]);
+    const [serviceList,setServiceList]=useState<any[]>([]);
     useEffect(() => {
         const fetchTax = async()=>{
             try{
@@ -46,7 +49,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
                     if (Array.isArray(taxTypeEntry.name)) {
                       taxTypeEntry.name.forEach((taxValue: number) => {
                         acc.push({
-                          value: taxValue * 0.01,
+                          value: taxValue,
                           label: `${taxValue}% GST` 
                         });
                       });
@@ -61,6 +64,13 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
         }
         fetchTax();
     }, [appState.currentBranchId]);
+
+    useEffect(()=>{
+        if(serviceData && !serviceError && !serviceLoading){
+            console.log(serviceData);
+            setServiceList(serviceData);
+        }
+    },[serviceData,serviceError,serviceLoading])
 
     const [categories, setCategories] = useState<any[]>([]);
     useEffect(() => {
@@ -77,7 +87,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
                     }
                     return acc;
                   }, []);
-                console.log(serviceCategoryList);
+                console.log(response,serviceCategoryList);
                 setCategories(serviceCategoryList);
             }catch(error){
                 console.log("Error fetching species",error);
@@ -147,12 +157,14 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
             // console.log("Form data is valid:", formData);
             // const selectedProviders = formData.providers.map((provider:any) => provider.label);
             // const selectedProducts = formData.linkProducts.map((linkProducts:any) => linkProducts.label);
-            const selectedProviders = Array.isArray(formData.providers)
-                ? formData.providers.map((provider: any) => provider.label)
+            const selectedProviders = Array.isArray(Providers)
+                ? Providers.map((provider: any) => provider.label)
                 : [];
             // const selectedProducts1 = Array.isArray(formData.selectedProducts) 
             //     ? formData.selectedProducts.map((product: any) => product.label) 
             //     : [];
+
+            //console.log(formData);
 
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
@@ -168,9 +180,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
                     serviceCost: parseInt(formData.serviceCost),
                     serviceCharge: parseInt(formData.serviceCharge),
                     tax: formData.tax ? formData.tax.value : undefined,
-                    category: formData.category ? formData.category[0].value : undefined,
+                    category: formData.category ? formData.category[0].label : undefined,
                     description: formData.description,
-
                 }),
             });
 
@@ -191,7 +202,10 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
 
             // Validation
             if (field === 'name') {
-                setNameError(value ? '' : 'Service name is required');
+                const isServiceExists = serviceList?.some((service: any) => service.name === value);
+                console.log(isServiceExists);
+                setNameError(isServiceExists ? 'The service name  you are trying to add already exists' : value ? '' : 'Service name is required');
+                
             }
 
             if (field === 'serviceCost') {
@@ -265,7 +279,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
                     <div className="text-gray-500 text-xl font-medium ">New Service</div>
                     <div className="text-neutral-400 text-base font-medium ">Introduce a new Service</div>
                     <div className="flex items-center gap-[88px]">
-                        <div className="text-gray-500 text-base font-medium ">Name*</div>
+                        <div className="text-gray-500 text-base font-medium ">Name<span className="text-red-500">*</span></div>
                         <div>
                             <input className="w-[440px] h-9  text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="name" onChange={(e) => {
                                 const value = e.target.value;
@@ -289,7 +303,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
 
                         {/* <input className="w-[576px] h-[88px] mt-[8px]" placeholder="Provide details of the service" type="text" name="description" onChange={(e) => handleChange("description", e.target.value)} /> */}
                     </div>
-                    <div className="self-end items-start gap-4 flex">
+                    <div className="self-end items-start gap-4 flex mb-4">
                         {/* <button onClick={handleContinueClick} className="px-4 py-2.5 bg-bg-zinc-900 rounded-[5px] justify-start items-center gap-1 flex border-0 outline-none cursor-pointer">
                             <div className="text-white text-base font-bold ">Continue</div>
                             <div className="w-6 h-6">
@@ -299,10 +313,10 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
                         <button
                             onClick={handleContinueClick}
                             disabled={!formData.name}
-                            className={`px-4 py-2.5 rounded-[5px] justify-start items-center gap-1 flex border-0 outline-none cursor-pointer ${formData.name ? "bg-zinc-900" : "bg-grey-500"
+                            className={`px-4 py-2.5 rounded-[5px] justify-start items-center gap-1 flex border-0 outline-none cursor-pointer ${formData.name ? "bg-zinc-900" : "bg-gray-500"
                                 }`}
                         >
-                            <div className={`text-base font-bold ${formData.name ? "text-white" : "text-neutral-200"}`}>
+                            <div className={`text-base font-bold ${formData.name ? "text-white" : "text-neutral-200 cursor-not-allowed"}`}>
                                 Continue
                             </div>
                             {formData.name && (
@@ -327,7 +341,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
                     <div className="text-neutral-400 text-base font-medium ">Configure your service</div>
                     <div className="flex justify-between items-center  w-full">
                         <div className="flex gap-[52px] items-center">
-                            <div className="text-gray-500 text-base font-medium ">Service Cost</div>
+                            <div className="text-gray-500 text-base font-medium ">Selling Price <span className="text-red-500">*</span></div>
 
                             <input className="w-[157px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="number" name="serviceCharge" onChange={(e) => handleChange("serviceCharge", e.target.value)} />
                             {serviceCostError && (
@@ -335,7 +349,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
                             )}
                         </div>
                         <div className="flex items-center gap-[16px]">
-                            <div className="text-gray-500 text-base font-medium ">Tax</div>
+                            <div className="text-gray-500 text-base font-medium ">Tax<span className="text-red-500">*</span></div>
 
                             <Select
                                 className="w-[157px] text-neutral-400 text-base font-medium border border-solid border-borderGrey rounded-[5px]"
@@ -378,7 +392,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
                             />
                         </div>
                     </div>
-                    <div className="flex items-center gap-[75px] w-full">
+                    {/* <div className="flex items-center gap-[75px] w-full">
                         <div className="text-gray-500 text-base font-medium ">Providers</div>
                         <div className="w-4/5">
                             <Select
@@ -393,7 +407,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
                                 styles={customStyles}
                             />
                         </div>
-                    </div>
+                    </div> */}
                     <div className="flex items-center gap-[22px] w-full ">
                         <div className="text-gray-500 text-base font-medium w-[8rem]">Link Product(s)</div>
                         <div className="w-4/5">
@@ -454,16 +468,21 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
 
                     </div>
                     <div className="self-end items-start gap-6 flex">
-                        <button
+                    <button
                             onClick={handleSaveClick}
-                            // disabled={buttonDisabled}
-                            className={`px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex border-0 outline-none cursor-pointer bg-white`}
+                            disabled={!formData.serviceCharge || !formData.tax}
+                            className={`px-4 py-2.5 rounded-[5px] justify-start items-center gap-1 flex border-0 outline-none cursor-pointer ${formData.name ? "bg-zinc-900" : "bg-gray-500"
+                                }`}
                         >
-                            <div className={`text-base font-bold text-black`}>
+                            <div className={`text-base font-bold ${(formData.serviceCharge && formData.tax) ? "text-white" : "text-neutral-200 cursor-not-allowed"}`}>
                                 Save
                             </div>
+                            {(formData.serviceCharge && formData.tax) && (
+                                <div className="w-6 h-6">
+                                    <Image src={Arrow} alt="Arrow" />
+                                </div>
+                            )}
                         </button>
-
                     </div>
                 </div>
             </div>

@@ -36,6 +36,7 @@ const FinancesSalesTable = () => {
   const startDate = useMemo(() => urlSearchParams.get('startDate') ? new Date(urlSearchParams.get('startDate')!) : null, [urlSearchParams]);
   const endDate = useMemo(() => urlSearchParams.get('endDate') ? new Date(urlSearchParams.get('endDate')!) : null, [urlSearchParams]);
   const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
+  const selectedStatus = useMemo(() => urlSearchParams.getAll('selectedStatus'), [urlSearchParams]);
   const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true })
 
   console.log("data is :" ,data);
@@ -53,7 +54,8 @@ const FinancesSalesTable = () => {
       setCurrentPageNumber((prev) => prev - 1);
     };
     const goOnNextPage = () => {
-      if (currentPageNumber === data.length / TOTAL_VALUES_PER_PAGE) return;
+      //console.log(currentPageNumber,data.length/TOTAL_VALUES_PER_PAGE);
+      if (currentPageNumber === Math.ceil((totalLen) / TOTAL_VALUES_PER_PAGE)) return;
       setCurrentPageNumber((prev) => prev + 1);
     };
     useEffect(()=>{
@@ -91,6 +93,12 @@ const FinancesSalesTable = () => {
           selectedParties.includes(item.customer)
         );
       }
+
+      if(selectedStatus.length>0){
+        filteredData = filteredData.filter((item: any) =>
+          selectedStatus.some((status)=>item.status.startsWith(status)))
+      }
+      //console.log(filteredData.length);
       setTotalLen(filteredData.length);
       setTableData(filteredData)
       setSales(filteredData?.slice(0,TOTAL_VALUES_PER_PAGE));
@@ -131,7 +139,7 @@ const FinancesSalesTable = () => {
       </div>
 
       <FinancesSalesTableItem
-        onCountsChange={handleCountsChange} sales={sales} data={data} isLoading={isLoading}
+        onCountsChange={handleCountsChange}  sales={sales} data={data} isLoading={isLoading}
       />
       <FinancesSalesTableBottombar
       goOnPrevPage={goOnPrevPage}

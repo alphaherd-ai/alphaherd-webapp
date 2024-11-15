@@ -8,6 +8,7 @@ import { useAppSelector } from '@/lib/hooks';
 import Loading from '@/app/loading';
 import { FinanceCreationType } from '@prisma/client';
 import { useSearchParams } from 'next/navigation';
+import { getStatusStyles } from '@/utils/getStatusStyles';
 
 // @ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
@@ -122,23 +123,29 @@ const FinancesExpensesTableItem = ({ onCountsChange, currentPageNumber, setCurre
           <div className='w-[6rem] flex   text-base font-medium'>{formatDateAndTime(expense.dueDate).formattedDate}</div>
           <div className='w-[12rem] flex  items-center  text-base font-medium'>
             <Tooltip content={expense.status} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
-              <div >
+             <div>
                 {
-                  expense.status?.includes("You’re owed") ? (
-                    <span className="text-[#0F9D58] px-2 py-1.5 text-sm font-medium bg-[#E7F5EE] rounded-[5px]">
-                      {(expense.status)}
-                    </span>
-                  ) : expense.status?.includes("You owe") ? (
-                    <span className="text-[#FC6E20] px-2 py-1.5 text-sm font-medium bg-[#FFF0E9] rounded-[5px]">
-                      {expense.status}
-                    </span>
-                  ) : (
-                    <span className="text-[#6B7E7D]  text-sm font-medium px-2 py-1.5 bg-[#EDEDED] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
-                      {expense.status || "Status unknown"}
-                    </span>
-                  )
-                }
-              </div>
+                  (() => {
+                    const statusParts = (expense.status ?? "Status Unknown").split('|').map((part: string) => part.trim());
+                    //console.log(statusParts);
+                     if (!statusParts.length) {
+                       return (
+                         <span className="text-[#6B7E7D] bg-[#EDEDED] px-2 py-1.5 text-sm font-medium rounded-[5px]">
+                           No Status
+                         </span>
+                       );
+                     }
+                    return statusParts.map((status: any, index: any) => {
+                      const styles = getStatusStyles(status);
+                      return (
+                        <span  key={index} className={`${styles?.textColor} ${styles?.bgColor} px-2 mr-2 py-1.5 text-sm font-medium rounded-[5px]`}>
+                          {status}
+                        </span>
+                      )
+                    })
+                  })
+                    ()}
+              </div >
             </Tooltip>
 
           </div>

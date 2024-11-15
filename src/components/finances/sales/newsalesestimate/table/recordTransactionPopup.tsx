@@ -16,8 +16,8 @@ import closeicon from "../../../../../assets/icons/inventory/closeIcon.svg";
 import Select from 'react-select';
 import { Button } from '@nextui-org/react';
 import { useAppSelector } from '@/lib/hooks';
-import useSWR from 'swr';
 import Loading2 from '@/app/loading2';
+import useSWR from 'swr';
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
@@ -33,16 +33,15 @@ type PopupProps = {
 }
 
 
-const RecordReturnTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, transactionsData, setTransactionsData, initialInvoiceNo, totalAmount, balanceDue }) => {
+const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, transactionsData, setTransactionsData, initialInvoiceNo, totalAmount, balanceDue }) => {
 
     const dispatch = useDispatch();
-
     const [isSaving, setSaving] = useState(false);
     const [formData, setFormData] = useState<any>({
         amountPaid: "",
     });
     const appState = useAppSelector((state) => state.app)
-    const [isAdvancePayment, setIsAdvancePayment] = useState(false);
+    const [isAdvancePayment, setIsAdvancePayment] = useState(true);
 
     const Mode = [
         { value: "Cash", label: "Cash" },
@@ -72,8 +71,6 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({ setCount, headerda
     }
 
 
-
-
     const Party = [
         { value: "WeCare", label: "WeCare" },
         { value: "Pawzeeble", label: "Pawzeeble" },
@@ -94,6 +91,8 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({ setCount, headerda
         setTransactionType(type);
     };
 
+    
+
     const handleSaveClick = async () => {
         setSaving(true);
         try {
@@ -103,9 +102,8 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({ setCount, headerda
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    partyName: headerdata?.customer.label,
+                    partyName: headerdata?.customer?.label,
                     invoiceLink: headerdata.invoiceNo,
-                    
                     receiptNo: initialInvoiceNo,
                     date: formData.date || new Date(),
                     amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1*formData.amountPaid, 10) || (balanceDue),
@@ -134,11 +132,13 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({ setCount, headerda
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
         };
 
-        dispatch(addAmount({ amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1*formData.amountPaid, 10) || (balanceDue), mode: selectedMode, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out',date: formData.date || new Date() }))
+        dispatch(addAmount({ amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1*formData.amountPaid, 10) || (balanceDue), mode: selectedMode, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out', date: formData.date || new Date(),}))
+
+        // setTransactionsData([{amountPaid:parseInt(formData.amountPaid, 10), date:formData.date, isAdvancePayment:isAdvancePayment}]);
 
         setTransactionsData((prevTransactions: any) => [...prevTransactions, newTransaction]);
-
     };
+
     useEffect(() => {
         if (balanceDue !== undefined) {
             setFormData((prevData: any) => ({
@@ -151,7 +151,6 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({ setCount, headerda
     const handleChange = (field: string, value: any) => {
         setFormData({ ...formData, [field]: value });
     }
-
 
     const customStyles = {
         control: (provided: any, state: any) => ({
@@ -193,8 +192,10 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({ setCount, headerda
         menuPortal: (base: any) => ({ ...base, zIndex: 9999 })
     };
 
-    const isDisabled = !(headerdata?.customer?.label) || !(formData.amountPaid) || !selectedMode
 
+    
+    const isDisabled = !(headerdata?.customer?.label) || !(formData.amountPaid) || !selectedMode
+    console.log(formData,selectedMode,isDisabled)
 
     return (
         <div className="w-1/2 h-full flex  items-center backdrop-blur-sm  ">
@@ -240,11 +241,11 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({ setCount, headerda
                     <div>
                         <div className="w-[440px] flex items-center h-9 rounded-[5px] text-textGrey2 bg-white text-base font-medium px-2 py-6  outline-none border border-solid border-gray-300 ">{headerdata ? headerdata?.customer?.label : ""}
                             <div >
-                                {balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
-                                    You owe ₹{totalAmount.subTotal ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
-                                </span> : balanceDue === 0 ? "" : <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
-                                    You’re owed ₹{totalAmount.subTotal ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
-                                </span>}
+                            {balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                                You owe ₹{totalAmount.subTotal ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) :0}
+                            </span> : balanceDue === 0 ? "" : <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                                You’re owed ₹{totalAmount.subTotal ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) :0}
+                            </span>}
                             </div>
                         </div>
 
@@ -257,7 +258,7 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({ setCount, headerda
                             className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2 outline-none border border-solid border-gray-300 focus:border-teal-500"
                             type="number"
                             name="amountPaid"
-                            value={formData.amountPaid > 0 ? formData.amountPaid : -1 * formData.amountPaid}
+                            value={formData.amountPaid > 0 ? formData.amountPaid    : -1*formData.amountPaid}
                             onChange={(e) => handleChange("amountPaid", e.target.value)}
                         />
                     </div>
@@ -297,15 +298,15 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({ setCount, headerda
                     <div><span className='text-gray-500 text-base font-medium '>Mode</span></div>
                     <div className='w-[440px] flex justify-between items-center'>
                         {/* <Select
-        className="text-neutral-400 text-base font-medium w-full"
-        placeholder="Mode"
-        isClearable={false}
-        isSearchable={true}
-        options={Mode}
-        isMulti={false}
-        name="mode"
-        onChange={(value) => handleChange("mode", value)}
-    /> */}
+                        className="text-neutral-400 text-base font-medium w-full"
+                        placeholder="Mode"
+                        isClearable={false}
+                        isSearchable={true}
+                        options={Mode}
+                        isMulti={false}
+                        name="mode"
+                        onChange={(value) => handleChange("mode", value)}
+                    /> */}
                         {!modesLoading && modeOptions ? (
                             <Select
                                 className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
@@ -347,4 +348,4 @@ const RecordReturnTransactionPopup: React.FC<PopupProps> = ({ setCount, headerda
 
 }
 
-export default RecordReturnTransactionPopup
+export default RecordTransactionPopup

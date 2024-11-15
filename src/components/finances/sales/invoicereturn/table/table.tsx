@@ -92,19 +92,20 @@ const InvoiceReturnTable = () => {
             setOtherData(otherData)
             const shallowDataCopy = [...items];
             const itemData = shallowDataCopy.map((item: any) => ({
-                id: item.itemType==='product' ? item.productBatchId  :  item.serviceId,
-                productId: item.itemType==='product' ? item.productId:null,
-                serviceId: item.itemType==='service' ? item.serviceId:null,
-                itemType:item.itemType,
+                id: item.itemType === 'product' ? item.productBatchId : item.serviceId,
+                productId: item.itemType === 'product' ? item.productId : null,
+                serviceId: item.itemType === 'service' ? item.serviceId : null,
+                itemType: item.itemType,
                 itemName: item.name,
                 quantity: item.quantity,
-                unitPrice: item.itemType==='product' ? item.productBatch?.costPrice:item.sellingPrice,
+                unitPrice: item.itemType === 'product' ? item.productBatch?.costPrice : item.sellingPrice,
                 tax: item.taxAmount,
                 discount: item.discount,
-                expiry: item.itemType==='product' ? item.productBatch.expiry:"",
-                batchNumber: item.itemType==='product' ? item.productBatch.batchNumber : item.services.providers[0],
+                expiry: item.itemType === 'product' ? item.productBatch.expiry : "",
+                batchNumber: item.itemType === 'product' ? item.productBatch.batchNumber : "",
+                serviceProvider:item.itemType==='service'?item.serviceProvider:null,
                 freeQuantity: item.freeQuantity,
-                maxRetailPrice: item.itemType==='product' ? item.productBatch.sellingPrice : item.sellingPrice
+                maxRetailPrice: item.itemType === 'product' ? item.productBatch.sellingPrice : item.sellingPrice
             }));
             setItems(itemData);
 
@@ -154,10 +155,26 @@ const InvoiceReturnTable = () => {
                 return item;
             })
         );
+        setCheckedItemList((prevItems: any) =>
+            prevItems.map((item: any) => {
+                if (item.id === itemId && item.quantity > 1) {
+                    return { ...item, quantity: item.quantity - 1 };
+                }
+                return item;
+            })
+        );
     };
 
     const handleQuantityIncClick = (itemId: any) => {
         setItems((prevItems: any) =>
+            prevItems.map((item: any) => {
+                if (item.id === itemId) {
+                    return { ...item, quantity: item.quantity + 1 };
+                }
+                return item;
+            })
+        );
+        setCheckedItemList((prevItems: any) =>
             prevItems.map((item: any) => {
                 if (item.id === itemId) {
                     return { ...item, quantity: item.quantity + 1 };
@@ -180,6 +197,7 @@ const InvoiceReturnTable = () => {
                     return item;
                 })
             );
+            
         }
     };
 
@@ -190,17 +208,19 @@ const InvoiceReturnTable = () => {
         // console.log(items)
     }, [items]);
 
+    const [checkedItems, setCheckedItems] = useState<CheckedItems>({});
+    const [checkedItemList, setCheckedItemList] = useState<any[]>([]);
 
     useEffect(() => {
         if (id !== null) {
             setItems(items);
-            setTableData(items);
+            if (checkedItemList.length > 0) setTableData(checkedItemList);
         }
-    }, [id, items]);
+    }, [id, checkedItems, items]);
 
 
 
-    const [checkedItems, setCheckedItems] = useState<CheckedItems>({});
+
 
     const handleCheckboxChange = useCallback((id: number) => {
         setCheckedItems(prevState => {
@@ -211,7 +231,8 @@ const InvoiceReturnTable = () => {
 
             const filteredItems = items.filter(item => newCheckedItems[item.id] === true);
             setTableData(filteredItems);
-
+            setCheckedItemList(filteredItems);
+            console.log(filteredItems);
             return newCheckedItems;
         });
     }, [items]);
@@ -326,7 +347,7 @@ const InvoiceReturnTable = () => {
                                             </div>
 
                                             <div className=' flex text-gray-500 text-base  w-[15rem]'>
-                                                {item.batchNumber}
+                                                {item.itemType==='product' ? item.batchNumber : item.serviceProvider}
                                                 {/* <input
                                             type="number"
                                             className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
@@ -346,7 +367,7 @@ const InvoiceReturnTable = () => {
                                             </div>
                                             <div className=' flex text-gray-500 text-base  w-[15rem]'>
                                                 <div className="customDatePickerWidth1">
-                                                    {formatDateAndTime(item.expiry).formattedDate}
+                                                    {item.itemType === 'product' ? formatDateAndTime(item.expiry).formattedDate : ""}
                                                 </div>
                                             </div>
                                             <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
@@ -374,7 +395,7 @@ const InvoiceReturnTable = () => {
                                     /> */}
                                             </div>
                                             <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                                                {item.discount * 100}
+                                                {item.discount ? item.discount : 0}
                                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
@@ -383,7 +404,7 @@ const InvoiceReturnTable = () => {
                                             </div>
 
                                             <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                                                ₹ {item.discount * item.unitPrice * item.quantity}
+                                                ₹ {(item.discount / 100) * item.unitPrice * item.quantity}
                                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
@@ -414,7 +435,7 @@ const InvoiceReturnTable = () => {
                                         <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => checkedItems[item.id] ? acc + (item.tax) * (item.quantity * Number(item.unitPrice)) : acc, 0).toFixed(2) ||
                                             0}</div>
                                         <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
-                                        <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => checkedItems[item.id] ? acc + (item.discount) * (item.quantity * Number(item.unitPrice)) : acc, 0).toFixed(2) ||
+                                        <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => checkedItems[item.id] ? acc + (item.discount / 100) * (item.quantity * Number(item.unitPrice)) : acc, 0).toFixed(2) ||
                                             0}</div>
                                         <div className=' flex text-gray-500 text-base font-bold w-1/12'></div>
                                     </div>
@@ -425,11 +446,11 @@ const InvoiceReturnTable = () => {
                                     </div>
                                     {items.map((item: any, index: number) => (
                                         <div key={item.id} className="flex items-center justify-center  w-[10rem] box-border bg-white text-gray-500 border-t-0 border-r-0 border-l border-b border-solid border-gray-200 h-12">
-                                            <div className=' flex text-gray-500 text-base font-medium'>{checkedItems[item.id] ? ((item.tax - item.discount + 1) * (item.quantity * Number(item.unitPrice))).toFixed(2) : 0 ||
+                                            <div className=' flex text-gray-500 text-base font-medium'>{checkedItems[item.id] ? ((item.tax - (item.discount / 100) + 1) * (item.quantity * Number(item.unitPrice))).toFixed(2) : 0 ||
                                                 0}</div>
                                         </div>
                                     ))}
-                                    <div className=' flex text-textGreen text-base font-bold w-[10rem] h-12 items-center justify-center'>₹{items.reduce((acc, item) => checkedItems[item.id] ? acc + (item.tax - item.discount + 1) * (item.quantity * Number(item.unitPrice)) : acc, 0).toFixed(2) ||
+                                    <div className=' flex text-textGreen text-base font-bold w-[10rem] h-12 items-center justify-center'>₹{items.reduce((acc, item) => checkedItems[item.id] ? acc + (item.tax - (item.discount / 100) + 1) * (item.quantity * Number(item.unitPrice)) : acc, 0).toFixed(2) ||
                                         0}</div>
                                 </div>
                             </div>
@@ -438,7 +459,7 @@ const InvoiceReturnTable = () => {
                         </div>
                     </div>
 
-                    <InvoiceReturnTotalAmount />
+                    <InvoiceReturnTotalAmount otherData={otherData} />
                 </div>
                 <InvoiceReturnBottomBar invoiceData={invoiceData} />
             </div>

@@ -36,7 +36,7 @@ const DatabaseDistributorTableItem = ({ distributors, isLoading, data }: any) =>
             <div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{distributor.contact}</div>
             <div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{distributor.gstinNo}</div>
             <div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium'>{distributor.email}</div>
-            <div className='w-1/6 flex  items-center  px-6 text-neutral-400 text-base font-medium text-green-500'><span className='bg-green-100 px-1'>rfer</span> </div>
+            <div className='w-1/6 flex  items-center  px-6  text-base font-medium text-green-500'><span className='bg-green-100 px-1'>rfer</span> </div>
           </div>
         ))
 

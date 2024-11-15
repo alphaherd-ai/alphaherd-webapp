@@ -18,29 +18,39 @@ import Loading2 from "@/app/loading2"
 
 
 const InvoiceReturnBottomBar = ({invoiceData}:any) => {
-    const { headerData, tableData, totalAmountData } = useContext(DataContext);
+    const { headerData, tableData, totalAmountData,transactionsData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
     const url=useSearchParams();
     const id=url.get('id');
     const router=useRouter();
     const [isSaving,setSaving]=useState(false);
+
+    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+
+    const balanceDue = totalAmountData.totalCost - totalPaidAmount + totalAmountToPay;
+
+
     const handleSubmit = async () => {
        setSaving(true);
-        const allData = {headerData, tableData, totalAmountData};
+        const allData = {headerData, tableData, totalAmountData,transactionsData};
         console.log("this is all data",allData)
         let totalQty=0;
         tableData.forEach(data => {
             totalQty+=(data.quantity)||0;
         });
         const items = tableData.map(data => ({
-            productId: data.productId,
+            productId: data?.productId,
             serviceId: data?.serviceId,
             productBatchId: data.productId ? data.id : null,
             quantity: data.quantity,  
             sellingPrice:data.unitPrice,
             taxAmount:data.tax,
             name:data.itemName,
-            itemType: data.itemType
+            itemType: data.itemType,
+            serviceProvider:data?.serviceProvider
     }));
      const data={
             customer: (id===null)?allData.headerData.customer.value:invoiceData.customer,
@@ -55,14 +65,17 @@ const InvoiceReturnBottomBar = ({invoiceData}:any) => {
             totalCost: allData.totalAmountData.totalCost,
             overallDiscount: allData.totalAmountData.gst,
             totalQty:totalQty,
-            status: `Returned: ${totalQty}`,
+            recordTransaction: {
+                create: allData.transactionsData
+            },
+            status:balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
             type: FinanceCreationType.Sales_Return,
             items:{
                 create:items
             }
             
         }
-       // console.log(tableData);
+        console.log(items);
         //console.log(JSON.stringify(data))
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Return}?branchId=${appState.currentBranchId}`,data)
@@ -75,6 +88,28 @@ const InvoiceReturnBottomBar = ({invoiceData}:any) => {
             console.error('Error:', error);
         } finally{
             setSaving(false);
+        }
+
+        try {
+            
+            const putResponse: Response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/status/${id}/?branchId=${appState.currentBranchId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    status: `Returned ${totalQty} | ${balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed'}`
+                })
+            });
+            if (putResponse.ok) {
+                // console.log('Data saved Sucessfully2')
+                //router.push(`newsales?id=${existingSalesData?.id}`)
+
+            } else {
+                console.error('Failed to save data')
+            }
+        } catch (error) {
+            // console.log("Error while put request",error)
         }
     };
 

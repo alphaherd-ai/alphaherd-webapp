@@ -12,6 +12,7 @@ import formatDateAndTime from '@/utils/formateDateTime';
 import useSWR from 'swr';
 import { usePathname, useSearchParams } from 'next/navigation';
 import Loading from '@/app/loading';
+import { getStatusStyles } from '@/utils/getStatusStyles';
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 interface Sales {
@@ -25,6 +26,8 @@ interface Sales {
   dueDate: string;
   status: string;
 }
+
+
 const FinancesSalesTableItem = ({ onCountsChange, data, sales, isLoading }: any) => {
 
 
@@ -40,6 +43,9 @@ const FinancesSalesTableItem = ({ onCountsChange, data, sales, isLoading }: any)
     }
     console.log("data is :", data);
   }, [data]);
+
+
+
 
 
   const handleCounts = () => {
@@ -62,6 +68,8 @@ const FinancesSalesTableItem = ({ onCountsChange, data, sales, isLoading }: any)
   if (isLoading && !data) return (<Loading />)
 
 
+
+
   return (
     <div>
       {sales?.map((sale: any) => (
@@ -77,7 +85,8 @@ const FinancesSalesTableItem = ({ onCountsChange, data, sales, isLoading }: any)
                   sale.type === FinanceCreationType.Sales_Return ? 'existingsalesreturn' : "",
               query: { id: sale.id }
             }}
-          ><div className='flex w-[4rem]  items-center  text-base font-medium'>{sale.type == FinanceCreationType.Sales_Estimate ? ("Estimate") : (sale.type == FinanceCreationType.Sales_Invoice) ? ("Invoice") : ("Return")}</div></Link>
+          ><div className='flex w-[4rem]  items-center  text-base font-medium'>{sale.type == FinanceCreationType.Sales_Estimate ? ("Estimate") : (sale.type == FinanceCreationType.Sales_Invoice) ? ("Invoice") : ("Return")}</div>
+          </Link>
           <div className='w-2/12 flex  items-center  px-4 text-base font-medium'>{sale.customer}</div>
           <div className='w-1/12 flex  items-center  text-base font-medium'>{sale.invoiceNo}</div>
           <div className='w-1/12 flex  items-center  text-base font-medium'>₹ {(sale.totalCost).toFixed(2)}</div>
@@ -87,32 +96,26 @@ const FinancesSalesTableItem = ({ onCountsChange, data, sales, isLoading }: any)
             <Tooltip content={sale.status} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
               <div>
                 {
-                  sale.status?.includes("You’re owed") ? (
-                    <span className="text-[#0F9D58] px-2 py-1.5 text-sm font-medium bg-[#E7F5EE] rounded-[5px]">
-                      {sale.status}
-                    </span>
-                  ) : sale.status?.includes("You owe") ? (
-                    <span className="text-[#FC6E20] px-2 py-1.5 text-sm font-medium bg-[#FFF0E9] rounded-[5px]">
-                      {sale.status}
-                    </span>
-                  ) : sale.status?.includes("Returned") ? (
-                    <span className="text-[#FF3030] text-sm font-medium px-2 py-1.5 bg-[#FFEAEA] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
-                      {sale.status}
-                    </span>
-                  ) : sale.status?.includes("Pending") ? (
-                    <span className="text-[#FC6E20] px-2 py-1.5 text-sm font-medium bg-[#FFF0E9] rounded-[5px]">
-                      {sale.status}
-                    </span>
-                  ) : sale.status?.includes("Accepted") ? (
-                    <span className="text-[#0F9D58] px-2 py-1.5 text-sm font-medium bg-[#E7F5EE] rounded-[5px]">
-                      {sale.status}
-                    </span>
-                  ) : (
-                    <span className="text-[#6B7E7D] text-sm font-medium px-2 py-1.5 bg-[#EDEDED] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
-                      {sale.status}
-                    </span>
-                  )
-                }
+                  (() => {
+                    const statusParts = sale.status.split('|').map((part: string) => part.trim());
+                    //console.log(statusParts);
+                    if (!statusParts.length) {
+                      return (
+                        <span className="text-[#6B7E7D] bg-[#EDEDED] px-2 py-1.5 text-sm font-medium rounded-[5px]">
+                          No Status
+                        </span>
+                      );
+                    }
+                    return statusParts.map((status: any, index: any) => {
+                      const styles = getStatusStyles(status);
+                      return (
+                        <span key={index} className={`${styles?.textColor} ${styles?.bgColor} px-2 mr-2 py-1.5 text-sm font-medium rounded-[5px]`}>
+                          {status}
+                        </span>
+                      )
+                    })
+                  })
+                    ()}
               </div >
             </Tooltip>
 

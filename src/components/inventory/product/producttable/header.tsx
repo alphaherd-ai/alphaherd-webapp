@@ -38,26 +38,16 @@ const InventoryProductTableHeader = ({ onSortChange }: any) => {
 
     const handleSortChange = (key: string) => {
         if (key === selectedSort) {
-            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+            const newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+            setSortOrder(newSortOrder);
+            onSortChange(key, newSortOrder);
         } else {
             setSelectedSort(key);
             setSortOrder("asc");
+            onSortChange(key, "asc");
         }
-
-       
     };
 
-
-
-   
-    const selectedCategoryValue = React.useMemo(
-        () => Array.from(selectedCategory).join(", ").replaceAll("_", " "),
-        [selectedCategory]
-    );
-    const selectedSortValue = React.useMemo(
-        () => Array.from(selectedSort).join(", ").replaceAll("_", " "),
-        [selectedSort]
-    );
     const [showPopup1, setShowPopup1] = React.useState(false);
     const togglePopup1 = () => {
         setShowPopup1(!showPopup1);
@@ -73,7 +63,7 @@ const InventoryProductTableHeader = ({ onSortChange }: any) => {
 
 
 
-<div className='flex w-full bg-white h-20  p-4 px-6  justify-between border-0 border-b border-solid border-borderGrey rounded-tl-lg rounded-tr-lg'>
+            <div className='flex w-full bg-white h-20  p-4 px-6  justify-between border-0 border-b border-solid border-borderGrey rounded-tl-lg rounded-tr-lg'>
 
                 <div className='flex  text-gray-500 items-center w-5/12'>
                     <Link className='no-underline flex item-center' href='/inventory/products/timeline'>
@@ -91,7 +81,7 @@ const InventoryProductTableHeader = ({ onSortChange }: any) => {
                     </Link>
                 </div>
                 <div className='flex items-center'>
-                    <div onClick={togglePopup1} className='cursor-pointer mr-4 flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'>
+                    {/* <div onClick={togglePopup1} className='cursor-pointer mr-4 flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'>
                         <Image src={Download} alt='Download' className='w-4  h-4' />
                     </div>
                     {/* <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
@@ -103,7 +93,7 @@ const InventoryProductTableHeader = ({ onSortChange }: any) => {
 
                         <Dropdown>
                             <DropdownTrigger className='z-0'>
-                            <Button variant="solid" className="capitalize border-none bg-transparent rounded-lg">
+                                <Button variant="solid" className="capitalize border-none bg-transparent rounded-lg">
                                     <div className="flex text-gray-500 items-center">
                                         <div className="text-base">Sort By</div>
                                     </div>
@@ -116,15 +106,23 @@ const InventoryProductTableHeader = ({ onSortChange }: any) => {
                                 disallowEmptySelection
                                 selectionMode="single"
                                 selectedKeys={new Set([selectedSort])}
-                                // onSelectionChange={setselectedSort}
+                            // onSelectionChange={setselectedSort}
                             >
-                               <DropdownItem
+                                {currentRoute.startsWith("/inventory/products/timeline") ? <DropdownItem
                                     className="p-2 text-base"
-                                    key="date"
-                                    onClick={() => handleSortChange("date")}
+                                    key="name"
+                                    onClick={() => handleSortChange("distributorName")}
                                 >
-                                    Date
-                                </DropdownItem>
+                                    Distributor
+                                </DropdownItem> :
+                                    <DropdownItem
+                                        className="p-2 text-base"
+                                        key="date"
+                                        onClick={() => handleSortChange("date")}
+                                    >
+                                        Date of Registration
+                                    </DropdownItem>}
+
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -141,8 +139,8 @@ const InventoryProductTableHeader = ({ onSortChange }: any) => {
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent>
-                            {currentRoute.startsWith("/inventory/products/timeline")?
-                        ( <FilterDropdwonCard />):currentRoute.startsWith("/inventory/products/all")?(<FilterDropdownProductsCard/>):""}                                
+                                {currentRoute.startsWith("/inventory/products/timeline") ?
+                                    (<FilterDropdwonCard />) : currentRoute.startsWith("/inventory/products/all") ? (<FilterDropdownProductsCard />) : ""}
                             </PopoverContent>
                         </Popover>
                     </div>
@@ -157,11 +155,11 @@ const InventoryProductTableHeader = ({ onSortChange }: any) => {
                             <button className='bg-transparent border-0 text-white text-base cursor-pointer' >Update Inventory</button>
                         </div>
                     </div> */}
-                    
+
 
                 </div>
             </div >
-            {showPopup1 && <DownloadPopup onClose={togglePopup1}  products={allData} />}
+            {showPopup1 && <DownloadPopup onClose={togglePopup1} products={allData} />}
 
         </>
     )

@@ -188,7 +188,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                 },
                 label: product.batchNumber
             }));
-            // console.log("lajsdlfjlkj", formattedProductBatches)
+            console.log(formattedProductBatches)
             setBatches(formattedProductBatches)
         }
     }, [fetchedProducts, fetchedBathces, batchError, error, isBatchLoading, isLoading])
@@ -227,6 +227,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
     const handleQuantityDecClick = useCallback((index: number) => {
         const updatedInventory = [...inventory];
         updatedInventory[index].quantity = Math.max(updatedInventory[index].quantity - 1, 0);
+        handleInputChange(index,'quantity',updatedInventory[index].quantity);
         setInventory(updatedInventory);
     }, [inventory]);
 
@@ -235,9 +236,11 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
         if (selectedOption === Stock.StockOUT) {
             if (updatedInventory[index].quantity < updatedInventory[index].maxQuantity) {
                 updatedInventory[index].quantity += 1;
+                handleInputChange(index,'quantity',updatedInventory[index].quantity);
             }
         } else {
             updatedInventory[index].quantity += 1;
+            handleInputChange(index,'quantity',updatedInventory[index].quantity);
         }
 
         setInventory(updatedInventory);
@@ -247,7 +250,12 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
 
         const updatedInventory = [...inventory];
         updatedInventory[index][field] = value;
+        if (field === 'quantity' || field === 'costPrice') {
+            updatedInventory[index].sellingPrice = 
+                (updatedInventory[index]?.quantity || 0) * (updatedInventory[index]?.costPrice || 0);
+        }
         setInventory(updatedInventory);
+        console.log(updatedInventory);
     }, [inventory]);
 
 
@@ -335,6 +343,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                     maxRetailPrice: data?.value?.maxRetailPrice,
                     productId: data?.value?.productId,
                 };
+                
                 setInventory(updatedInventory);
                 // if (selectedOption === Stock.StockOUT) {
                 //     const updatedProducts = products.filter((product) => product.value !== selectedProduct.value);
@@ -352,6 +361,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                 const { id, date, quantity, batchNumber, distributors, productId, maxRetailPrice, isApproved } = item;
                 const invoiceType = "Manual";
                 let { expiry, costPrice, sellingPrice } = item;
+                console.log(sellingPrice);
                 // // console.log("here is the product", productId)
                 expiry = expiry || null;
                 costPrice = costPrice || null;
@@ -415,7 +425,8 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                     }
 
                 } else if (selectedOption === Stock.StockIN) {
-                    // console.log("saving new batch")
+                    console.log(body);
+                    console.log("saving new batch")
                     const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/create?branchId=${appState.currentBranchId}`, body);
                     setTimeout(() => {
                         onClose();
@@ -428,7 +439,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                         orgId: appState.currentOrgId
                     }
                     const notif = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
-                    // console.log('Created New Batch Item:', response.data);
+                    console.log('Created New Batch Item:', response.data);
                 }
 
             }
@@ -481,6 +492,8 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
         }
         fetchReason();
     }, [appState.currentBranchId]);
+
+    
 
 
 
@@ -700,20 +713,23 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                                 <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium'>₹
                                     <input
                                         type="number"
+                                        disabled={true}
                                         value={item.quantity * item.costPrice}
                                         placeholder="0"
                                         onChange={(e) => handleInputChange(index, 'sellingPrice', parseFloat(e.target.value))}
                                         className="w-full border border-solid border-white focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded placeholder:text-textGrey1"
                                         name={`sellingPrice-${index}`}
+                                        
                                     />
                                 </div>
-                                {/* <div className="w-[2rem]">
-                                    <button onClick={() => handleDeleteRow(index)} className=" border-0 flex-col justify-start items-end gap-2.5 flex">
+                                <div className="w-[2rem]">
+                                    {index !==inventory.length-1 ?<button onClick={() => handleDeleteRow(index)} className=" border-0 flex-col justify-start items-end gap-2.5 flex">
                                         <div className="h-6 px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
                                             <Image className="w-4 h-4 relative" src={deleteicon} alt="delete" />
                                         </div>
-                                    </button>
-                                </div> */}
+                                    </button> :""} 
+                                    
+                                </div>
                             </div>
                         ))}
                     </div>
