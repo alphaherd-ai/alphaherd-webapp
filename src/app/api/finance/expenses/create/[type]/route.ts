@@ -25,7 +25,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
 
     if (body.items && body.items.length > 0) {
       await prismaClient.items.createMany({
-        data: body.items.map((item: any) => ({
+        data: body.items.map(async (item: any) => ({
           ...item,
           expenseId: expense.id,
         })),

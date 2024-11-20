@@ -82,17 +82,17 @@ export const DELETE = async (req: NextRequest, { params }: { params: { id: numbe
   try {
     
     const expensesId = Number(params.id);
-
+    const financeId=await fetchFinanceId(req);
     await prismaClient.financeTimeline.deleteMany({
-      where: { expensesId },
+      where: { expensesId,financeSectionId:financeId },
     });
 
     await prismaClient.items.deleteMany({
-      where: { expensesId },
+      where: { expensesId,financeSectionId:financeId },
     });
 
     await prismaClient.expenses.delete({
-      where: { id: expensesId },
+      where: { id: expensesId,financeSectionId:financeId },
     });
 
     return new Response(`expenses with id: ${expensesId} deleted successfully`, { status: 201 });
