@@ -143,7 +143,9 @@ const ProductAllItem = ({ sortOrder, sortKey }: any) => {
   }
 
   const handleRedirect = async ({ invoice, invoiceType }: HandleRedirectParams) => {
-    const financeItemType = invoice?.startsWith('SI') ? 'sales' : 'purchase';
+    // in dev mode just add a prefix /alphaherd 
+    console.log(invoice,invoiceType);
+    const financeItemType = (invoice?.startsWith('SI') || invoice?.startsWith('SR')) ? 'sales' : 'purchase';
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/getfromInvoice/?branchId=${appState.currentBranchId}`, {
         method: 'POST',
@@ -154,16 +156,16 @@ const ProductAllItem = ({ sortOrder, sortKey }: any) => {
       }).then(res => res.json()).then(data => {
         console.log(data);
         if (invoiceType.includes('Sales_Invoice')) {
-          window.location.replace(`/alphaherd/finance/sales/existingsales?id=${data.id}`)
+          window.location.replace(`/finance/sales/existingsales?id=${data.id}`)
         }
         else if (invoiceType.includes('Purchase_Invoice')) {
-          window.location.replace(`/alphaherd/finance/purchases/exsistinggrn?id=${data.id}`)
+          window.location.replace(`/finance/purchases/exsistinggrn?id=${data.id}`)
         }
         else if (invoiceType.includes('Purchase_Return')) {
-          window.location.replace(`/alphaherd/finance/purchases/exsistingpurchasereturn?id=${data.id}`)
+          window.location.replace(`/finance/purchases/exsistingpurchasereturn?id=${data.id}`)
         }
         else if (invoiceType.includes('Sales_Return')) {
-          window.location.replace(`/alphaherd/finance/sales/existingsalesreturn?id=${data.id}`)
+          window.location.replace(`/finance/sales/existingsalesreturn?id=${data.id}`)
         }
       });
     } catch (err) {

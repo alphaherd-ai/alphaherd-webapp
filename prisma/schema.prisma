@@ -282,7 +282,7 @@ model Products {
   InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId Int?
    createdAt          DateTime?         @default(now())
-  @@index([inventorySectionId])
+  @@index([inventorySectionId,id])
 }
 
 model ProductBatch {
@@ -313,6 +313,7 @@ model ProductBatch {
   inventorySectionId Int?
 
   @@index([inventorySectionId, productId])
+  @@index([id,inventorySectionId])
 }
 
 model Services {
@@ -333,7 +334,7 @@ model Services {
   InventorySection   InventorySection?   @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId Int?
    createdAt          DateTime?         @default(now())
-  @@index([inventorySectionId])
+  @@index([inventorySectionId,id])
 }
 
 model Sales {
@@ -359,7 +360,8 @@ model Sales {
   FinanceSection    FinanceSection?      @relation(fields: [financeSectionId], references: [id])
   financeSectionId  Int?
 
-  @@index([financeSectionId])
+  @@index([financeSectionId,id])
+  @@index([financeSectionId, invoiceNo])
 }
 
 model RecordTransaction {
@@ -377,6 +379,7 @@ model RecordTransaction {
   expensesId       Int?
 
   @@index([salesId, purchasesId, expensesId])
+  
 }
 
 model Purchases {
@@ -404,7 +407,8 @@ model Purchases {
   FinanceSection       FinanceSection?     @relation(fields: [financeSectionId], references: [id])
   financeSectionId     Int?
 
-  @@index([financeSectionId])
+  @@index([financeSectionId,id])
+  @@index([financeSectionId, invoiceNo])
 }
 
 model Expenses {
@@ -431,7 +435,7 @@ model Expenses {
   FinanceSection      FinanceSection?     @relation(fields: [financeSectionId], references: [id])
   financeSectionId    Int?
 
-  @@index([financeSectionId])
+  @@index([financeSectionId,id])
 }
 
 model Transactions {
@@ -449,7 +453,7 @@ model Transactions {
   FinanceSection   FinanceSection? @relation(fields: [financeSectionId], references: [id])
   financeSectionId Int?
 
-  @@index([financeSectionId])
+  @@index([financeSectionId,id])
 }
 
 model PaymentMethod {
@@ -494,7 +498,8 @@ model Items {
   lastExpiringNotif DateTime?      // Last expiring soon notification sent
   excessNotif      DateTime?
 
-  @@index([salesId, purchasesId, expensesId, financeSectionId])
+  @@index([salesId, purchasesId, expensesId, financeSectionId,productId])
+
 }
 
 model InventoryTimeline {
@@ -531,7 +536,7 @@ model FinanceTimeline {
   FinanceSection   FinanceSection?      @relation(fields: [financeSectionId], references: [id])
   financeSectionId Int?
 
-  @@index([salesId, createdAt, expensesId, financeSectionId])
+  @@index([salesId, createdAt, purchasesId, expensesId, financeSectionId])
 }
 
 model ItemCategory{
