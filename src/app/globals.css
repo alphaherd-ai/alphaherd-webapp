@@ -1,0 +1,77 @@
+@import url("https://fonts.googleapis.com/css2?family=Satoshi:wght@500;700&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  font-family: 'Satoshi', sans-serif;
+  margin: 0;
+  /* bg-[#EDEDED] */
+}
+/* body {
+  background-color: #EDEDED;
+} */
+button:focus {
+  outline: none;
+  
+}
+@layer base {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+.customDatePickerWidth, 
+.customDatePickerWidth > div.react-datepicker-wrapper, 
+.customDatePickerWidth > div > div.react-datepicker__input-container
+.customDatePickerWidth > div > div.react-datepicker__input-container input {
+   width: 100%;
+}
+.customDatePickerWidth1, 
+.customDatePickerWidth1 > div.react-datepicker-wrapper, 
+.customDatePickerWidth1 > div > div.react-datepicker__input-container
+.customDatePickerWidth1 > div > div.react-datepicker__input-container input {
+   width: 90%;
+}
+
+
+.container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* Track */
+.container::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+/* Handle */
+.container::-webkit-scrollbar-thumb {
+  background: #d3d3d3; 
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active{
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+}
+
+@keyframes slide-in {
+  from {
+      transform: translateX(100%);
+      opacity: 0;
+  }
+  to {
+      transform: translateX(0);
+      opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.1s ease-out forwards;
+}
+
