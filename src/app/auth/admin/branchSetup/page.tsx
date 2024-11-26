@@ -18,7 +18,8 @@ const formSchema = z.object({
     phoneNo: z.string().length(10, 'Invalid Phone No.'),
     address: z.string(),
     state: z.string(),
-    pincode: z.string(),
+    pincode: z.string()
+    .regex(/^\d{6}$/, 'Invalid Pincode - must be exactly 6 numeric digits'),
     description: z.string(),
    
   });

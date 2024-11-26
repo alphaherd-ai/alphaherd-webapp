@@ -74,6 +74,10 @@ const NewPurchasesTable = () => {
     const appState = useAppSelector((state) => state.app)
     const { tableData: items, setTableData: setItems } = useContext(DataContext);   
     const [discountStates, setDiscountStates] = useState(new Array(items.length).fill(false));
+    const [isNewDistributorClicked, setIsNewDistributorClicked] = useState<any>(false);
+    const [newDistributor, setNewDistributor] = useState<any>();
+    const [isNewProductClicked, setIsNewProductClicked] = useState<any>(false);
+    const [newProduct, setNewProduct] = useState<any>();
     const url= useSearchParams();
     const id=url.get('id');
     let orderData:any=null,isorderDataLoading=false,isorderDataError=false; 
@@ -90,6 +94,24 @@ const NewPurchasesTable = () => {
         isorderDataError=error;
         isorderDataLoading=isLoading;        
     }
+
+    useEffect(() => {
+        if (isNewProductClicked) {
+        
+            const newlyCreatedProduct = {
+                value: {
+                    itemName:newProduct.itemName,
+                    productId: newProduct.value.id,
+                    
+                   
+                }
+              
+            }
+            setProducts((prevData) => ({ ...prevData, Product: newlyCreatedProduct }))
+        }
+    }, [isNewProductClicked])
+
+    console.log("new product is :",setNewProduct);
 
     useEffect(()=>{
             if (!isorderDataLoading && orderData && !isorderDataError) {
@@ -274,7 +296,6 @@ const handleAddItem= useCallback(() => {
             return updatedDistributors;
         });
     };
-
     
     const customStyles = {
         control: (provided: any, state: any) => ({
@@ -322,19 +343,27 @@ const handleAddItem= useCallback(() => {
             <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-end items-center gap-6 flex">
                     
                     
-                    <Button className='bg-textGreen text-white capitalize h-9 flex border-none px-4 py-2.5  rounded-md cursor-pointer' onClick={togglePopup1}>
+                    <Button 
+                    className='bg-textGreen text-white capitalize h-9 flex border-none px-4 py-2.5  rounded-md cursor-pointer' 
+                    onClick={ togglePopup1}>
+
                     <div className='flex pr-2'><Image src={addicon1} alt='addicon1' className='w-6 h-6 ' /></div>
                             New Distributor
                     </Button>
+                    {showDistributorPopup && <Popup1 onClose={ togglePopup1} setNewDistributor ={setNewDistributor} setIsNewDistributorClicked={setIsNewDistributorClicked} />}
+                    {/* {showDistributorPopup && <Popup1 onClose={ togglePopup1} />} */}
+                   
 
                     <Button
                                     variant="solid"
                                     className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer" onClick={togglePopup}>
                                     <div className='flex pr-2'><Image src={addicon} alt='addicon' className='w-6 h-6 ' /></div>New Product </Button>
+                                    {showPopup && <Popup onClose={togglePopup} setNewProduct ={setNewProduct} setIsNewProductClicked={setIsNewProductClicked}/>}
                     
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px] overflow-auto max-h-[40rem]">
-                    <NewPurchasesHeader  existingHeaderData={otherData}/>
+                    <NewPurchasesHeader  existingHeaderData={otherData} isNewDistributorClicked={isNewDistributorClicked} newDistributor={newDistributor} />
+                   
                 <div>
                 <div className="w-full rounded-md border border-solid border-borderGrey">
                     <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
@@ -543,7 +572,8 @@ const handleAddItem= useCallback(() => {
             <NewPurchasesBottomBar orderData={orderData}/>
         </div>
         {showPopup && <Popup onClose={togglePopup} />}
-        {showDistributorPopup && <Popup1 onClose={handleDistributorAdd} />}
+     
+       
         </>
     )
 

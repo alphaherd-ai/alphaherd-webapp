@@ -180,7 +180,7 @@ const NewPurchaseReturnHeader = ({existingHeaderData}:any) => {
             <div className="flex justify-between w-full pb-[16px]">
                 <div className="px-6 py-2 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                     <div className="flex gap-[0.8rem] items-center w-full">
-                        <div className="text-gray-500 text-base font-bold  w-1/8">Date:</div>
+                        <div className="text-gray-500 text-base font-bold  w-1/8">Purchase Date:</div>
                         {id===null?(
                         // <DatePicker
                         //     className={"text-gray-500 text-base font-medium  w-full"}
@@ -225,7 +225,7 @@ const NewPurchaseReturnHeader = ({existingHeaderData}:any) => {
                 </div>
                 <div className="px-6 py-2 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full ">
                     <div className="flex gap-[0.2rem] items-center w-full">
-                        <div className="text-gray-500 text-base font-bold  w-[12rem]">Delivery Due Date:</div>
+                        <div className="text-gray-500 text-base font-bold  w-[12rem]">Return Date:</div>
                         {/* <DatePicker
                             className={"text-gray-500 text-base font-medium  w-10/12 border-0 boxShadow-0"}
                             selected={startDate}
@@ -276,21 +276,41 @@ const NewPurchaseReturnHeader = ({existingHeaderData}:any) => {
                 </div>
             </div>
             <div className="flex justify-between w-full pb-[16px]">
-                <div className="px-6 py-1  bg-white rounded-[10px] justify-between items-center gap-4 flex w-full ">
-                    <div className="flex gap-[16px] items-center w-full">
-                        <div className="text-gray-500 text-base font-bold py-3">Notes:</div>
-                        {id===null?(
-                        <input
-                            type="text"
-                            className=" w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                            placeholder="..."
-                            onChange={(e) => setHeaderData((prevData) => ({ ...prevData, notes: e.target.value }))}
-                        />    ):(
-                            existingHeaderData.notes
-                        )}             
-                        </div>
-                </div>
-            </div>
+    <div className="px-6 py-1 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full">
+        <div className="flex gap-[16px] items-center w-full">
+            <div className="text-gray-500 text-base font-bold py-3">Notes:</div>
+            {id === null ? (
+                <input
+                    type="text"
+                    value={headerData.notes}
+                    className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                    placeholder="..."
+                    onChange={(e) =>
+                        setHeaderData((prevData) => ({
+                            ...prevData,
+                            notes: e.target.value,
+                        }))
+                    }
+                />
+            ) : (
+                <input
+                    type="text"
+                    value={existingHeaderData.notes}
+                    className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                    placeholder="..."
+                    onChange={(e) =>
+                        setHeaderData((prevData) => ({
+                            ...prevData,
+                            notes: e.target.value,
+                        }))
+                    }
+                />
+            )}
+        </div>
+    </div>
+</div>
+
+            
             {/* <div className="flex justify-between w-full pb-[16px]">
                 <div className="px-6 py-4  bg-white rounded-[10px] justify-between items-center gap-4 flex flex-col w-full ">
                     <div className="flex flex-col gap-[16px] w-full">

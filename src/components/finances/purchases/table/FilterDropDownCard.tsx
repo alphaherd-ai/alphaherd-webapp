@@ -16,6 +16,7 @@ const FilterDropdwonCard = () => {
   const appState = useAppSelector((state) => state.app);
   const [partyInfo, setPartyInfo] = useState<any[]>([]);
   const [selectedParties, setSelectedParties] = useState<any[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<string[]>([]);
   const { data, isLoading, error } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);

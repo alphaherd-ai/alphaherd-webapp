@@ -22,7 +22,8 @@ const formSchema = z.object({
   phoneNo: z.string().length(10, 'Invalid Phone No.'),
   address: z.string().min(1, "Enter Company Address to continue"),
   state: z.string().min(1, "Select State to continue").optional(),
-  pincode: z.string().min(1, 'Enter pincode to continue'),
+  pincode: z.string()
+  .regex(/^\d{6}$/, 'Invalid Pincode - must be exactly 6 digits'),
   description: z.string(),
   adminName: z.string(),
   adminEmail: z.string().email('Invalid Email Address'),
@@ -85,6 +86,7 @@ const OrgSetup = () => {
   console.log(validationErrors);
 
   const [activeTab, setActiveTab] = useState(0);
+  
 
   const handlePicChange = (imageUrl: any, source: string) => {
     let name = source, value = imageUrl.secure_url;

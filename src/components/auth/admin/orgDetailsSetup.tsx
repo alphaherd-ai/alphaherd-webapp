@@ -59,7 +59,7 @@ const OrgDetailsSetup = (props: any) => {
                         <div className="flex justify-around items-center">
                             <div className="text-gray-500 text-xl font-medium mr-6">My Organisation</div>
                             <CldUploadButton
-                                className="bg-inherit w-50 h-20 border-none"
+                                className="bg-inherit w-50 h-20 border-none cursor-pointer"
                                 options={{
                                     sources: ['local', 'url'],
                                     multiple: false,
@@ -166,7 +166,7 @@ const OrgDetailsSetup = (props: any) => {
                                     name="orgEmail"
                                     onChange={props.handleChange}
                                     value={props.data.orgEmail}
-                                    placeholder="example@gmail.com"
+                                    placeholder=""
                                 />
                                 {props.validationErrors.orgEmail && (
                                     <div className="text-[red] error">{props.validationErrors.orgEmail}</div>

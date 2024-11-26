@@ -175,9 +175,19 @@ const handleGstSelect = (selectedGst: any, index: number) => {
     };
     setTableData(updatedItems);
 };
-const handleAddItem= useCallback(() => {
+const handleAddItem = useCallback(() => {
     setItems([...items, {}]);
 }, [items]);
+
+useEffect(() => {
+    items.push({
+        productId: null,
+        serviceId: null,
+        itemName: "",
+    });
+    setItems(items);
+}, [])
+
 
     const handleQuantityDecClick = (itemId: any) => {
         setItems((prevItems:any) =>
@@ -268,6 +278,14 @@ const handleAddItem= useCallback(() => {
     const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
         console.log(selectedProduct);
         if (selectedProduct.value) {
+            if (index === items.length - 1) {
+                items.push({
+                    productId: null,
+                    serviceId: null,
+                    itemName: "",
+                });
+                setItems(items);
+            }
           try {
             const data = products.find((product) => product.value.id === selectedProduct.value.id);
             setSelectedProduct(data);
@@ -287,7 +305,19 @@ const handleAddItem= useCallback(() => {
           }
         }
       }, [items, products]);
-   
+
+      const [errors, setErrors] = useState<{ [key: number]: boolean }>({}); // To track errors for batch numbers
+
+      const validateBatchNumbers = (): boolean => {
+          const newErrors: { [key: number]: boolean } = {};
+          items.forEach((item, index) => {
+              if (!item.batchNumber) {
+                  newErrors[index] = true; // Mark as an error if batchNumber is empty
+              }
+          });
+          setErrors(newErrors);
+          return Object.keys(newErrors).length === 0; // Return true if no errors
+      };
     
     
     
@@ -423,16 +453,29 @@ const handleAddItem= useCallback(() => {
                                   )}
                                     </div>
 
-                                    <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>
-                                    <input
-                                        type="text"
-                                        value={item.batchNumber}
-                                        className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                       onChange={(e) => handleItemsDataChange(index,'batchNumber', e.target.value)}
-                                       name={`batchNumber-${index+1}`}
-
-                                    />
-                                    </div>
+                                    <div
+                    className="flex text-gray-500 text-base font-medium w-[15rem]"
+                    key={index}
+                >
+                    <input
+                        type="text"
+                        value={item.batchNumber}
+                        className={`w-[80%] border border-solid outline-none h-8 rounded-md text-textGrey2 font-medium text-base px-2 ${
+                            errors[index] ? 'border-red-500' : 'border-borderGrey'
+                        }`}
+                        onChange={(e) => {
+                            handleItemsDataChange(index, 'batchNumber', e.target.value);
+                            setErrors((prevErrors) => ({
+                                ...prevErrors,
+                                [index]: false, // Clear error when input changes
+                            }));
+                        }}
+                        name={`batchNumber-${index + 1}`}
+                    />
+                     {!item.batchNumber && (
+                    <div className="text-red-500 text-sm mt-1">Batch No. is Required.</div>
+                )}
+                </div>
                                     <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>
                                     <input
                                         type="text"
@@ -618,7 +661,7 @@ const handleAddItem= useCallback(() => {
                             <div className=' flex text-gray-500 text-base font-medium w-[12rem]'></div>
                             <div className=' flex text-gray-500 text-base font-medium w-[15rem] '></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[18rem]'>{items.reduce((acc, item) => acc + item.quantity, 0) ||0} Items</div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[18rem]'></div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[18rem]'>{items.reduce((acc, item) => acc + item.freeQuantity, 0) ||0} Items</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{isNaN(items.reduce((acc, item) => acc + (item.quantity*Number(item.unitPrice)) , 0)) ? 0 : items.reduce((acc, item) => acc + (item.quantity*Number(item.unitPrice)) , 0).toFixed(2)}</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>

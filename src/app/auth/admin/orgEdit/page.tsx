@@ -14,11 +14,12 @@ import { useAppSelector } from "@/lib/hooks";
 const formSchema = z.object({
     orgName: z.string().min(4, 'Org Name must be at least 4 characters'),
     orgEmail: z.string().email('Invalid Email Address'),
-    gstNo: z.string().length(15, 'Invalid GST No.'),
+    gstNo: z.string().length(15, 'Invalid GST no. - must be 15 digits'),
     phoneNo: z.string().length(10, 'Invalid Phone No.'),
     address: z.string(),
     state: z.string(),
-    pincode: z.string(),
+    pincode: z.string()
+    .regex(/^\d{6}$/, 'Invalid Pincode - must be exactly 6 numeric digits'),
     description: z.string()
   });
 
@@ -45,9 +46,10 @@ const OrgEdit = () => {
         ["orgEmail","orgImgUrl","gstNo","phoneNo","branchName","address","state","pincode","description"]
       ];
 
-    const [validationErrors, setValidationErrors] = useState(initialErrors);
+   
 
     const [data, setData] = useState(formSchema.parse(appState.currentOrg));
+    const [validationErrors, setValidationErrors] = useState(initialErrors);
 
     console.log(validationErrors);
 
@@ -97,25 +99,29 @@ const OrgEdit = () => {
         }
       }
     };
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>|any) => {
-      let name: string,value: any;
-      if(e?.label){
-         name="state"
-         value=e.value
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement> | any) => {
+      let name: string, value: any;
+      if (e?.label) {
+        name = "state"
+        value = e.value
+      }
+      else if (e?.target.name === 'orgName') {
+        name = "orgName",
+          value =e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1);
       }
       else {
         name = e.target.name;
-        value=e.target.value;
+        value = e.target.value;
       }
-      
-      try{
-        console.log(name,value)
+  
+      try {
+        console.log(name, value)
         setData((prevData) => ({
           ...prevData,
           [name]: value,
         }));
         console.log("inside handle change 1");
-        formSchema.parse({...data,[name]: value});
+        formSchema.parse({ ...data, [name]: value });
         console.log("inside handle change 2");
         setValidationErrors((prevErrors) => {
           console.log("here");
@@ -124,7 +130,7 @@ const OrgEdit = () => {
           return newErrors;
         });
       }
-      catch(err : any){
+      catch (err: any) {
         if (err instanceof z.ZodError) {
           console.log(err.flatten());
           let fieldErrors = err.flatten().fieldErrors;
@@ -132,14 +138,14 @@ const OrgEdit = () => {
           let fields: string[] = Object.keys(fieldErrors);
           console.log(name);
           console.log(fields);
-          if(fields.includes(name)){
+          if (fields.includes(name)) {
             setValidationErrors((prevErrors) => {
               let newErrors = prevErrors;
               newErrors[name as keyof typeof prevErrors] = fieldErrors[name]!.length > 0 ? fieldErrors[name]![0] : '';
               return newErrors;
             });
           }
-          else{
+          else {
             setValidationErrors((prevErrors) => {
               console.log("here");
               let newErrors = prevErrors;
@@ -150,6 +156,9 @@ const OrgEdit = () => {
         }
       }
     };
+  
+  
+    
 
     function handleContinue(){
       try{
@@ -167,10 +176,7 @@ const OrgEdit = () => {
       }
     }
 
-    const formElements = [
-      <OrgNameSetup key="orgName" data={data} handleChange={handleChange} validationErrors={validationErrors} />,
-      <OrgDetailsSetup key="orgDetails" data={data} handleChange={handleChange}  validationErrors={validationErrors} handlePicChange={handlePicChange} />,
-    ];
+   
 
     const formSubmit = async (e : React.FormEvent) => {
         e.preventDefault();
@@ -232,6 +238,10 @@ const OrgEdit = () => {
           }
         }
     }
+    const formElements = [
+      <OrgNameSetup key="orgName" data={data} handleChange={handleChange} validationErrors={validationErrors} />,
+      <OrgDetailsSetup key="orgDetails" data={data} handleChange={handleChange}  validationErrors={validationErrors} handlePicChange={handlePicChange} />,
+    ];
 
 
     return <>
@@ -245,10 +255,10 @@ const OrgEdit = () => {
                     <div className="flex justify-between px-[5rem] pb-[2rem]">
                         {
                           activeTab!==0 ? <button
-                          className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0" disabled={activeTab === 0 ? true : false}
+                          className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0 cursor-pointer" disabled={activeTab === 0 ? true : false}
                           onClick={() => setActiveTab(prev => prev - 1)}>
                           <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
-                              <div className="text-white text-sm font-bold font-['Satoshi']">
+                              <div className="text-white text-sm font-bold font-['Satoshi'] cursor-pointer">
                                   Prev
                               </div>
                               <div className="w-6 h-6 relative">
@@ -262,7 +272,7 @@ const OrgEdit = () => {
                                 disabled={activeTab === formElements.length - 1 ? true : false}
                                 onClick={() => handleContinue()} >
                                 <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
-                                    <div className="text-white text-sm font-bold font-['Satoshi']">
+                                    <div className="text-white text-sm font-bold font-['Satoshi'] cursor-pointer">
                                         Continue
                                     </div>
                                     <div className="w-6 h-6 relative">
@@ -272,7 +282,7 @@ const OrgEdit = () => {
                             </button> : null
                         }
                         {
-                            activeTab === formElements.length - 1 ? <button className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0" onClick={formSubmit}>
+                            activeTab === formElements.length - 1 ? <button className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0 cursor-pointer" onClick={formSubmit}>
                                 <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
                                     <div className="text-white text-sm font-bold font-['Satoshi']">
                                         Submit Details

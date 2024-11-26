@@ -607,13 +607,13 @@ const NewsaleEstimateTable = () => {
                                         <div className='w-[7rem] flex justify-center items-center text-neutral-400 text-base font-medium gap-5'>
                                             ₹{item.sellingPrice || 0}
                                             {/* <Select
-                    className="text-neutral-400 text-sm font-medium"
-                    defaultValue={taxOptions[0]}
-                    isClearable={false}
-                    isSearchable={true}
-                    options={taxOptions}
-                    styles={customStyles}
-                /> */}
+                                            className="text-neutral-400 text-sm font-medium"
+                                            defaultValue={taxOptions[0]}
+                                            isClearable={false}
+                                            isSearchable={true}
+                                            options={taxOptions}
+                                            styles={customStyles}
+                                        /> */}
                                         </div>
                                         {!isChecked && (
                                             <div className='w-[10rem] flex justify-center items-center text-neutral-400 text-base font-medium gap-[12px]'>

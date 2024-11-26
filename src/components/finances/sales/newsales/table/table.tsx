@@ -549,9 +549,11 @@ const NewsalesTable = () => {
                         New Client
                     </Button>
                     {showPopup && <ClientPopup onClose={togglePopup} />}
+                    
 
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px]">
+                    
                     <NewsalesHeader existingHeaderData={otherData} />
                     <div className="w-full rounded-md border border-solid border-borderGrey">
                         <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">

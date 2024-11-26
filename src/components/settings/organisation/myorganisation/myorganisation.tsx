@@ -91,7 +91,7 @@ export const MyOrganisationSettings = () => {
                     <OrganisationNavbar />
                     <div className="w-full h-full px-4 py-5 bg-gray-100 border border-neutral-400 flex-col justify-start items-start gap-4 flex">
                         <div className="w-full flex gap-4">
-                            <div className="w-3/12 px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-4 flex">
+                            <div className="w-3/12 px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-4 flex ">
                                 <div className="flex flex-col gap-2">
                                     <div className="text-neutral-400 text-base font-bold ">Logo and watermark</div>
                                     <div className="text-neutral-400 text-base font-medium ">Upload an image of your clinic’s logo and watermark</div>
@@ -99,7 +99,7 @@ export const MyOrganisationSettings = () => {
                                 <div className="flex gap-4">
                                     {appState.isCurrentOrgAdmin?(
                                          <CldUploadButton
-                                         className="rounded-full  h-0 border-none"
+                                         className="rounded-full  h-0 border-none  hover:cursor-pointer"
                                          options={{
                                              sources: ['local', 'url'],
                                              multiple: false,

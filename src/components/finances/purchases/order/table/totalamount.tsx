@@ -28,7 +28,7 @@ const NewPurchasesTotalAmount = () => {
 
 
     
-    const [overAllDiscount,setDiscount]=useState(0); 
+    const [overAllDiscount,setDiscount]=useState<string>(""); 
 
     const [shipping, setShipping] = useState<string>('');
     const [adjustment, setAdjustment] = useState<string>('');
@@ -56,31 +56,41 @@ const NewPurchasesTotalAmount = () => {
             updateGrandTotal();
         }
     };
-    const [discountMethod,setDiscountMethod]=useState('amount');
+    const [discountMethod,setDiscountMethod]=useState("amount");
     const handleSelectChange = (selectedOption: any) => {
         setDiscountMethod(selectedOption.value);
     };
-    const [discountInput,setDiscountInput]=useState(0);
-    const handleDiscountChange =(discount:number)=>{
-        if(discountMethod==='amount'){
-            setDiscountInput(discount);
-            let discountedAmount=grandAmt-discount;
-            let discountPercent=Number(discount/totalAmount).toFixed(10)
-            setDiscount(Number(discountPercent))
+    const [discountInput,setDiscountInput]=useState<string>("");
+    const handleDiscountChange = (value: string) => {
+        if (/^\d*\.?\d*$/.test(value)) {
+          setDiscountInput(value);
+    
+          const discount = parseFloat(value) || 0;
+    
+          if (discountMethod === "amount") {
+            const discountedAmount = grandAmt - discount;
+            const discountPercent = Number(discount / totalAmount).toFixed(10);
+            setDiscount(discountPercent);
             setGrandAmt(discountedAmount);
-            setTotalAmountData((prevData)=>({...prevData,overallDiscount:Number(discountPercent)}))
-        }
-        else if(discountMethod==='percent'){
-            setDiscountInput(discount);
-            let discountedAmount=grandAmt-grandAmt*(discount/100);
-            setDiscount(Number(discount/100));
+            setTotalAmountData((prevData) => ({
+              ...prevData,
+              overallDiscount: discountPercent,
+            }));
+          } else if (discountMethod === "percent") {
+            const discountedAmount = grandAmt - grandAmt * (discount / 100);
+            setDiscount((discount / 100).toString());
             setGrandAmt(discountedAmount);
-            setTotalAmountData((prevData)=>({...prevData,overallDiscount:Number(discount/100)}))
+            setTotalAmountData((prevData) => ({
+              ...prevData,
+              overallDiscount: discount / 100,
+            }));
+          }
         }
-    }
+      };
+    
 
     const updateGrandTotal = () => {
-        const discountedAmount = (totalAmount - totalAmount * overAllDiscount)||0;
+        const discountedAmount = (totalAmount - totalAmount * parseFloat(overAllDiscount || "0") || 0);
         const shippingValue = parseFloat(shipping) || 0;
         const adjustmentValue = parseFloat(adjustment) || 0;
         const newGrandTotal = discountedAmount + shippingValue + adjustmentValue;
@@ -212,29 +222,31 @@ const NewPurchasesTotalAmount = () => {
                         <div className="text-right text-gray-500 text-base font-bold ">{totalAmount.toFixed(2)}</div>
                     </div>
                     <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
-                                    <div className="text-gray-500 text-base font-bold ">Overall Discount</div>
-                                    <div className="flex items-center">
-                                        <div className="text-right text-borderText text-base  ">
-                                        <input
-                                        type='number'
-                                        className="text-right  text-base  w-[50%] border-none outline-none"
-                                        placeholder='0'
-                                        value={discountInput}
-                                        onChange={(e)=>handleDiscountChange(Number(e.target.value))}
-                                        /></div>
-                                        <div className=' flex text-gray-500 text-base font-medium pl-6'>
-                                            <Select
-                                                className="text-neutral-400 text-base font-medium"
-                                                defaultValue={gstOptions[1]}
-                                                isClearable={false}
-                                                isSearchable={true}
-                                                options={gstOptions}
-                                                styles={customStyles}
-                                                onChange={handleSelectChange}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
+            <div className="text-gray-500 text-base font-bold ">
+              Overall Discount
+            </div>
+            <div className="flex items-center">
+              <div className="text-right text-textGrey1 text-base  ">
+                <input
+                  className="text-right text-textGrey1 text-base   border-none outline-none"
+                  placeholder="0"
+                  value={discountInput}
+                  onChange={(e) => handleDiscountChange(e.target.value)}
+                />
+              </div>
+              <div className=" flex text-gray-500 text-base font-medium pl-6">
+                <Select
+                  className="text-neutral-400 text-base font-medium"
+                  defaultValue={gstOptions[1]}
+                  isClearable={false}
+                  isSearchable={true}
+                  options={gstOptions}
+                  styles={customStyles}
+                  onChange={handleSelectChange}
+                />
+              </div>
+            </div>
+          </div>
                     <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
                         <div className="text-gray-500 text-base font-bold ">Shipping</div>
                         <div className="flex items-center">

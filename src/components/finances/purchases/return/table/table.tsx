@@ -34,6 +34,7 @@ interface ProductBatch {
     date: string;
     time: string;
     quantity: number;
+    originalQuantity :number,
     batchNumber:string;
     expiry:string;
     costPrice:number;
@@ -93,6 +94,7 @@ const NewPurchaseReturnTable = () => {
                 productId:item.productId,
                 itemName:item.name,
                 quantity:item.quantity,
+                originalQuantity : item.quantity,
                 unitPrice:item.productBatch.costPrice,
                 tax:item.taxAmount,
                 discount:item.discount,
@@ -138,7 +140,7 @@ const NewPurchaseReturnTable = () => {
             inputRef.current.focus();
         }
     }, [disableButton]);
-
+    
 
     const handleQuantityDecClick = (itemId: any) => {
         setItems((prevItems : any) => {
@@ -158,7 +160,10 @@ const NewPurchaseReturnTable = () => {
         setItems((prevItems: any) => {
             const updatedItems = prevItems.map((item: any) => {
                 if (item.id === itemId) {
-                    return { ...item, quantity: item.quantity + 1 };
+                    // Ensure quantity does not exceed purchased or original quantity
+                    if ( item.quantity < item.originalQuantity) {
+                        return { ...item, quantity: item.quantity + 1 };
+                    }
                 }
                 return item;
             });

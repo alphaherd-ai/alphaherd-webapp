@@ -21,7 +21,7 @@ import formatDateAndTime from "@/utils/formateDateTime";
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
-const NewPurchasesHeader = ({existingHeaderData}:any) => {
+const NewPurchasesHeader = ({existingHeaderData,isNewDistributorClicked, newDistributor }:any) => {
 
     const { headerData, setHeaderData,distributorData } = useContext(DataContext);
     const url=useSearchParams();
@@ -46,6 +46,26 @@ const NewPurchasesHeader = ({existingHeaderData}:any) => {
     const [invoiceNo] = useState(`PO-${initialInvoiceNo}`);
 
 
+    
+
+
+    useEffect(() => {
+        if (isNewDistributorClicked) {
+        
+            const newlyCreatedDistributor = {
+                value: {
+                    distributor: newDistributor.distributorName,
+                    contact: newDistributor.contact,
+                    DistributorId: newDistributor.id,
+                    email: newDistributor.email
+                },
+                label: `${newDistributor.distributorName}\u00A0\u00A0\u00A0\u00A0\u00A0${newDistributor.contact}`
+            }
+            setHeaderData((prevData) => ({ ...prevData, distributor: newlyCreatedDistributor }))
+        }
+    }, [isNewDistributorClicked])
+
+
     const handleDateChange = (date:any) => {
         setStartDate(date);
         setHeaderData((prevData) => ({ ...prevData, date }));
@@ -58,6 +78,7 @@ const NewPurchasesHeader = ({existingHeaderData}:any) => {
         setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo}))
        
     },[])
+
     useEffect(()=>{
         if(!isLoading&&!error&&data){
               const distributors=data?.map((distributor:any)=>({
@@ -71,12 +92,13 @@ const NewPurchasesHeader = ({existingHeaderData}:any) => {
     },[data])
 
 
-
+    
     useEffect(() => {
         if (!disableButton && inputRef.current) {
             inputRef.current.focus();
         }
     }, [disableButton]);
+
 
     const handleEditButtonClick = () => {
         setDisableButton(!disableButton);
@@ -138,7 +160,7 @@ const NewPurchasesHeader = ({existingHeaderData}:any) => {
                         <Select
                             className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
                             classNamePrefix="select"
-                            defaultValue={distributor && distributor[0]}
+                         //   defaultValue={distributor && distributor[0]}
                             isClearable={isClearable}
                             isSearchable={isSearchable}
                             name="distributor"
@@ -148,6 +170,7 @@ const NewPurchasesHeader = ({existingHeaderData}:any) => {
                             onChange={(selectedOption) => setHeaderData((prevData) => ({ ...prevData, distributor: selectedOption }))}
                         /> )):(
                             existingHeaderData.distributor
+                            
                         )}
 
                     </div>
