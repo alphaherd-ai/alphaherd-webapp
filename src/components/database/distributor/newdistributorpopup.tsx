@@ -387,6 +387,6 @@ const Popup: React.FC<PopupProps> = ({ onClose,setNewDistributor,setIsNewDistrib
     </>;
 }
 
-export default DistributorPopup;
+export default Popup;
 
 

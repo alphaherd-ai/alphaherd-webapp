@@ -18,6 +18,7 @@ import { ZodError } from 'zod';
 import { setValidationErrorsForForm } from '@/utils/setValidationErrorForForm';
 import capitalizeFirst from "@/utils/capitiliseFirst";
 import Popup2 from "./updateinventorypopup";
+import { ItemUnit } from "@prisma/client";
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 type PopupProps = {

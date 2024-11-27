@@ -252,66 +252,67 @@ const CreateGrnTotalAmount = () => {
 
             </div>
             
-            <div className="w-1/2 h-full  bg-white rounded-[10px]">
-                <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">
-                        <div className="text-gray-500 text-base font-bold  ">Subtotal</div>
-                        <div className="text-right text-gray-500 text-base font-bold ">{totalAmount.toFixed(2)}</div>
-                    </div>
-                    <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
-                                    <div className="text-gray-500 text-base font-bold ">Overall Discount</div>
-                                    <div className="flex items-center">
-                                        <div className="text-right text-borderText text-base  ">
-                                        <input
-                                        placeholder='0'
-                                        className="text-right  text-base  w-[50%] border-none outline-none"
-                                        value={totalAmountData.subTotal?discountInput:0}
-                                        onChange={(e)=>handleDiscountChange((e.target.value))}
-                                        /></div>
-                                        <div className=' flex text-gray-500 text-base font-medium pl-6'>
-                                            <Select
-                                                className="text-neutral-400 text-base font-medium"
-                                                defaultValue={gstOptions[1]}
-                                                isClearable={false}
-                                                isSearchable={true}
-                                                options={gstOptions}
-                                                styles={customStyles}
-                                                onChange={handleSelectChange}
-                                            />
+                <div className="w-1/2 h-full  bg-white rounded-[10px]">
+                    <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">
+                            <div className="text-gray-500 text-base font-bold  ">Subtotal</div>
+                            <div className="text-right text-gray-500 text-base font-bold ">{totalAmount.toFixed(2)}</div>
+                        </div>
+                        <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
+                                        <div className="text-gray-500 text-base font-bold ">Overall Discount</div>
+                                        <div className="flex items-center">
+                                            <div className="text-right text-borderText text-base  ">
+                                            <input
+                                            placeholder='0'
+                                            className="text-right  text-base  w-[50%] border-none outline-none"
+                                            value={totalAmountData.subTotal?discountInput:0}
+                                            onChange={(e)=>handleDiscountChange((e.target.value))}
+                                            /></div>
+                                            <div className=' flex text-gray-500 text-base font-medium pl-6'>
+                                                <Select
+                                                    className="text-neutral-400 text-base font-medium"
+                                                    defaultValue={gstOptions[1]}
+                                                    isClearable={false}
+                                                    isSearchable={true}
+                                                    options={gstOptions}
+                                                    styles={customStyles}
+                                                    onChange={handleSelectChange}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                    <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
-                        <div className="text-gray-500 text-base font-bold ">Shipping</div>
-                        <div className="flex items-center">
-                            <div className="text-right text-textGrey1 text-base  "><input
-                                            className="text-right text-textGrey1 text-base   border-none outline-none"
-                                            placeholder='0'
-                                            value={shipping} 
-                                            onChange={handleShippingChange} 
-                                        /></div>
-                            
+                        <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
+                            <div className="text-gray-500 text-base font-bold ">Shipping</div>
+                            <div className="flex items-center">
+                                <div className="text-right text-textGrey1 text-base  "><input
+                                                className="text-right text-textGrey1 text-base   border-none outline-none"
+                                                placeholder='0'
+                                                value={shipping} 
+                                                onChange={handleShippingChange} 
+                                            /></div>
+                                
+                            </div>
                         </div>
-                    </div>
-                    <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
-                        <div className="text-gray-500 text-base font-bold ">Adjustment</div>
-                        <div className="flex items-center">
-                            <div className="text-right text-textGrey1 text-base  "><input
-                                            className="text-right text-textGrey1 text-base   border-none outline-none"
-                                            placeholder='0'
-                                            value={adjustment} 
-                                            onChange={handleAdjustmentChange} 
-                                        /></div>
-                            
+                        <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
+                            <div className="text-gray-500 text-base font-bold ">Adjustment</div>
+                            <div className="flex items-center">
+                                <div className="text-right text-textGrey1 text-base  "><input
+                                                className="text-right text-textGrey1 text-base   border-none outline-none"
+                                                placeholder='0'
+                                                value={adjustment} 
+                                                onChange={handleAdjustmentChange} 
+                                            /></div>
+                                
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 rounded-b-md justify-between items-center gap-2.5    ">
-                    <div className="text-textGreen text-base font-bold ">Grand total</div>
-                        <div className="text-right text-textGreen text-base font-bold "> { grandAmt.toFixed(2)}</div>
-                    </div>
+                        
+                        <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 rounded-b-md justify-between items-center gap-2.5    ">
+                        <div className="text-textGreen text-base font-bold ">Grand total</div>
+                            <div className="text-right text-textGreen text-base font-bold "> { grandAmt.toFixed(2)}</div>
+                        </div>
 
-                </div>
-            </div>
+                    </div>
+            
+                
 
         </>
     )
