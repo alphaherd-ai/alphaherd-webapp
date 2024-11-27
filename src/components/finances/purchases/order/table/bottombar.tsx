@@ -6,7 +6,7 @@ import drafticon from "../../../../../assets/icons/finance/draft.svg"
 import checkicon from "../../../../../assets/icons/finance/check.svg"
 import React, { useState, useEffect, useContext } from 'react';
 import downloadicon from "../../../../../assets/icons/finance/download.svg"
-
+import Loading2 from '@/app/loading2';
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from '@nextui-org/react'
@@ -16,80 +16,90 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { FinanceCreationType } from "@prisma/client"
 import axios from "axios"
 
-const NewPurchasesBottomBar = ({orderData}:any) => {
-    const { headerData, tableData, totalAmountData } = useContext(DataContext);
+const NewPurchasesBottomBar = ({ orderData }: any) => {
+    const { headerData, tableData, totalAmountData, transactionsData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
-    const router=useRouter();
-    const url =useSearchParams();
-    const id= url.get('id');
-    const [isSaving,setSaving]=useState(false);
-    var userEmail ="";
+    const router = useRouter();
+    const url = useSearchParams();
+    const id = url.get('id');
+    const [isSaving, setSaving] = useState(false);
+
+    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+
+    const balanceDue = -totalAmountData.totalCost - totalPaidAmount + totalAmountToPay;
+    console.log(balanceDue);
+
+    var userEmail = "";
     const handleSubmit = async () => {
-        setSaving(true);
-        const allData = {headerData, tableData, totalAmountData};
+        tableData.pop();
+        const allData = { headerData, tableData, totalAmountData };
         console.log(allData)
-        let totalQty=0;
+        let totalQty = 0;
         tableData.forEach(data => {
-            totalQty+=(data.quantity)||0;
+            totalQty += (data.quantity) || 0;
         });
         const items = tableData.map(data => ({
             productId: data.productId,
-            quantity: data.quantity,  
-            sellingPrice:Number(data.unitPrice),
-            taxAmount:data.gst,
-            name:data.itemName,
-            discount:Number(data.discountPercent)/100
-    }));
-        const data={
-            distributor: (id === null) ?allData.headerData.distributor.value:orderData.distributor,
-            email:(id=== null)?allData.headerData.distributor.email:"",
-            notes: (id === null) ?allData.headerData.notes:orderData.notes,
+            quantity: data.quantity,
+            sellingPrice: Number(data.unitPrice),
+            taxAmount: data.gst,
+            name: data.itemName,
+            discount: Number(data.discountPercent) / 100
+        }));
+        const data = {
+            distributor: (id === null) ? allData.headerData.distributor.value : orderData.distributor,
+            email: (id === null) ? allData.headerData.distributor.email : "",
+            notes: (id === null) ? allData.headerData.notes : orderData.notes,
             invoiceNo: allData.headerData.invoiceNo,
-            dueDate: (id === null) ?allData.headerData.dueDate:orderData.dueDate,
+            dueDate: (id === null) ? allData.headerData.dueDate : orderData.dueDate,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
             totalCost: allData.totalAmountData.totalCost,
             totalQty: totalQty,
-            overallDiscount:allData.totalAmountData.overallDiscount,
-            status: "Pending",
+            overallDiscount: allData.totalAmountData.overallDiscount,
+            status:balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
             type: FinanceCreationType.Purchase_Order,
-            items:{
-                create:items
+            items: {
+                create: items
             }
-           
-            
+
+
         }
         userEmail = data.email;
-        // console.log("email is (inside) :",data.email);
-        // console.log("header data in bottom bar is : ",headerData);
+        console.log("email is (inside) :",data.email);
+        console.log("header data in bottom bar is : ",headerData);
         console.log(JSON.stringify(data))
         try {
-            const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Order}?branchId=${appState.currentBranchId}`,data)
-            setTimeout(()=>{
+            setSaving(true);
+            const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Order}?branchId=${appState.currentBranchId}`, data)
+            setTimeout(() => {
                 router.back();
-            },2000);
-            const response= await responsePromise;
+            }, 2000);
+            const response = await responsePromise;
             if (!response.data) {
                 throw new Error('Network response was not ok');
             }
-            
-    
+
+
         } catch (error) {
             console.error('Error:', error);
         }
-        finally{
+        finally {
             setSaving(false);
         }
     };
 
-    console.log("email is :",userEmail);
-  
-    const sendEmail = ()=>{
-        try {   
+    console.log("email is :", userEmail);
+
+    const sendEmail = () => {
+        try {
             const response = fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/email`, {
                 method: 'POST',
-                headers:{
-                    'Content-type':'application/json',
+                headers: {
+                    'Content-type': 'application/json',
                 },
                 body: JSON.stringify({
                     email: userEmail,
@@ -99,12 +109,12 @@ const NewPurchasesBottomBar = ({orderData}:any) => {
             console.log('Email sent successfully:', response);
         } catch (error) {
             console.error('Error while saving data:', error);
-        } 
+        }
     };
 
-    const isDisabled = !headerData.distributor || tableData.length === 0 || tableData.some(data => !data.itemName);
-  return (
-    <>
+    const isDisabled = !headerData.distributor || tableData.length === 1;
+    return (
+        <>
 
 
 <div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
@@ -132,15 +142,15 @@ const NewPurchasesBottomBar = ({orderData}:any) => {
                     }`}
                     onClick={handleSubmit} disabled={isDisabled}>
                         <Image src={checkicon} alt="check"></Image>
-                        <div>{isSaving?"Saving...":"Save"}</div>
+                        <div>{isSaving ? <Loading2></Loading2> : "Save"}</div>
                     </Button>
                 </div>
-                            
-                        </div>
-    
-          
+
+            </div>
+
+
         </>
-  )
+    )
 }
 
 export default NewPurchasesBottomBar

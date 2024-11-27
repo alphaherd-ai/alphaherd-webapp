@@ -17,7 +17,7 @@ export const POST=async(req: NextRequest)=> {
       //     status: 422,
       //   });
       // }
-      console.log(body)
+      // console.log(body)
         const client = await prismaClient.clients.create({
             data:{ 
               ...body,

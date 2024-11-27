@@ -127,14 +127,14 @@ function useServiceTimeLine (id:string | null, branchId:number|null){
       },[fetchedService,error,isLoading,fetchedServiceTimeLine,serviceError,serviceLoading]
     );
 
-    console.log("service", service);
+    // console.log("service", service);
 
     const [productDetails, setProductDetails] = useState<any>([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const productIds = service?.linkProducts.map((product:any) => (
-            console.log("product",product),
+        const productIds = service?.linkProducts?.map((product:any) => (
+            // console.log("product",product),
             product.value
         ));
         
@@ -158,7 +158,7 @@ function useServiceTimeLine (id:string | null, branchId:number|null){
         }
     }, [service?.linkProducts, appState.currentBranchId]);
 
-    console.log("productDetails", productDetails);
+    // console.log("productDetails", productDetails);
 
 
     return <>
@@ -190,7 +190,7 @@ function useServiceTimeLine (id:string | null, branchId:number|null){
                                 {/* </div> */}
                             </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="p-5 text-textGrey2 bg-white text-sm p-2 font-medium flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
+                        <PopoverContent className=" text-textGrey2 bg-white text-sm p-2 font-medium flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
 
                             <div className="flex flex-col ">
                                 <div className='flex flex-col'>

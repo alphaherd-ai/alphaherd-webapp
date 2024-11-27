@@ -62,7 +62,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
     if (params.type === FinanceCreationType.Purchase_Invoice) {
       await Promise.all(
         body.items.create.map(async (item: any) => {
-          console.log("these are the items",item)
+          // console.log("these are the items",item)
           const batch = await prismaClient.productBatch.create({
             data: {
                quantity:item.quantity,

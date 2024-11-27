@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import prismaClient from "../../../../../../prisma";
+import { fetchDatabaseId } from "@/utils/fetchBranchDetails";
 
 export const POST = async (req: NextRequest) => {
     if (req.method !== 'POST') {

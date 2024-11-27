@@ -26,7 +26,7 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
     const handleSubmit = async () => {
         setSaving(true);
         const allData = {headerData, tableData, totalAmountData};
-        console.log(allData)
+        // console.log(allData)
         let totalQty=0;
         tableData.forEach(data => {
             totalQty+=(data.quantity)||0;

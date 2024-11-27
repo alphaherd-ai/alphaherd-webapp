@@ -32,8 +32,9 @@ const DropdownMenu = ({ currBranch }: { currBranch: string }) => {
     }
   }, [data, error, isLoading, appState.currentOrgId]);
 
-  function handleOrgBranchSelect(orgBranch: any) {
-    console.log(orgBranch);
+  function handleOrgBranchSelect(orgBranch : any){
+
+    // console.log(orgBranch);
 
     const currentOrgId = appState.currentOrgId || 0; 
 

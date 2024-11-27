@@ -15,6 +15,7 @@ import { useSearchParams } from "next/navigation"
 import { Button } from "@nextui-org/react"
 import { useRouter } from "next/navigation"
 import { generatePdfForInvoice } from "@/utils/salesPdf"
+import Loading2 from "@/app/loading2"
 
 
 const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
@@ -24,11 +25,20 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
     const id = url.get('id');
     const router = useRouter();
     const [isSaving, setSaving] = useState(false);
+    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+
+    const balanceDue = totalAmountData.totalCost - totalPaidAmount + totalAmountToPay;
+    
     const handleSubmit = async () => {
         if (!headerData.customer) {
             alert('Customer is required');
             return;
         }
+        // Remove the last item from the item table as it will not create inventory timeline due to null constraints in prisma
+        tableData.pop();
         const allData = { headerData, tableData, totalAmountData, transactionsData };
         console.log("this is all data", allData)
         let totalQty = 0;
@@ -37,15 +47,14 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
         });
         const items = tableData.map(data => ({
             productId: data.productId,
-
-     
+            serviceProvider:data.provider,
             serviceId: data.serviceId,
             productBatchId: data.productId ? data.id : null,
             quantity: data.quantity,
             sellingPrice: data.sellingPrice,
             taxAmount: data.gst,
             name: data.itemName,
-            itemType: data.itemType
+            itemType: data.itemType,
         }));
         const data={
             customer: (id===null)?allData.headerData.customer.value.clientName :invoiceData.customer,
@@ -63,15 +72,17 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
             recordTransaction: {
                 create: allData.transactionsData
             },
-            status: "Pending",
+            status:balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
             type: FinanceCreationType.Sales_Return,
             items: {
                 create: items
             }
 
         }
-        console.log(JSON.stringify(data))
+        console.log(items);
+        // console.log(JSON.stringify(data))
         try {
+            setSaving(true);
             const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Return}?branchId=${appState.currentBranchId}`, data)
             setTimeout(() => {
                 router.back();
@@ -90,7 +101,7 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
     };
     const downloadPdf = async () => {
         const allData = { headerData, tableData, totalAmountData };
-        console.log("this is all data", allData)
+        // console.log("this is all data", allData)
         let totalQty = 0;
         tableData.forEach(data => {
             totalQty += (data.quantity) || 0;
@@ -102,7 +113,7 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
             sellingPrice: data.sellingPrice,
             taxAmount: data.gst,
             name: data.itemName,
-            discount: data.discount
+            discount:data.discountPer,
         }));
         const data = {
 
@@ -179,20 +190,20 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
 
                 })
             });
-            console.log('Email sent successfully:', response);
+            // console.log('Email sent successfully:', response);
         } catch (error) {
             console.error('Error while saving data:', error);
         }
     };
 
-    const isDisabled = tableData.length === 0 || tableData.some(data => !data.itemName);
+    const isDisabled = tableData.length === 1 || !headerData?.customer ;
 
     return (
 
 
 
 
-        <div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
+        <div className="flex justify-end items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
             {/* <div className="flex justify-between items-center gap-4 pl-4">
                     <Button className="p-2 bg-white rounded-md border border-solid  border-borderGrey  justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={printicon} alt="print"></Image>
@@ -218,15 +229,15 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
                     </Button>
                 </div> */}
             <div className="flex justify-between items-center gap-4 pr-4">
-                <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
+                {/* <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
                     <Image src={drafticon} alt="draft"></Image>
                     <div>Save as Draft</div>
-                </Button>
+                </Button> */}
                 <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
                     }`}
-                    onClick={handleSubmit} disabled={isDisabled}>
+                    onClick={handleSubmit} disabled={isDisabled || isSaving}>
                     <Image src={checkicon} alt="check"></Image>
-                    <div>{isSaving ? "Saving..." : "Save"}</div>
+                    <div>{isSaving ? <Loading2/>: "Save"}</div>
                 </Button>
             </div>
         </div>

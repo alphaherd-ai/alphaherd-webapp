@@ -1,12 +1,8 @@
 "use client";
 import React, { useEffect, useState } from 'react'
-
-
-
 import Settings from '../../../assets/icons/finance/Settings.svg';
 import Search from '../../../assets/icons/finance/Search.svg';
-
-
+import Add from '../../../assets/icons/inventory/add.svg';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -15,16 +11,22 @@ import ClientIcon from './icons/clientIcon';
 import { useAppSelector } from '@/lib/hooks';
 import useSWR from 'swr';
 import Select from 'react-select';
+import ClientPopup from '../client/newclientpopoup';
+import Popup from '../patient/newpatientpopup';
+import DistributorPopup from '../distributor/newdistributorpopup';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json());
 
 
 const DatabaseNavbar = () => {
-    const appState = useAppSelector((state) => state.app);
+    const appState = useAppSelector((state: { app: any; }) => state.app);
     const [searchData, setSearchData] = useState<any[]>([]);
     const [searchOptions, setSearchOptions] = useState<any[]>([]);
     const [searchInput, setSearchInput] = useState<string>('');
     const router=useRouter();
+    const [showPopup1, setShowPopup1] = React.useState(false);
+    const [showPopup2, setShowPopup2] = React.useState(false);
+    const [showPopup3, setShowPopup3] = React.useState(false);
     const {data, isLoading, error} = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/getAll?branchId=${appState.currentBranchId}`, fetcher);
     
    
@@ -112,9 +114,19 @@ const DatabaseNavbar = () => {
             '&:hover': {
               backgroundColor: '#35BEB1', 
             }
-          }),
-          
-      };
+          }
+        ),
+    };
+
+      const togglePopup1 = () => {
+        setShowPopup1(!showPopup1);
+    }
+    const togglePopup2 = () => {
+        setShowPopup2(!showPopup2);
+    }
+    const togglePopup3 = () => {
+        setShowPopup3(!showPopup3);
+    }
 
 
     return (
@@ -149,6 +161,39 @@ const DatabaseNavbar = () => {
                            Distributors
                         </div>
                     </Link>
+                    <div className='flex items-center space-x-2'> 
+                        <div className='mr-1' /> 
+                        {currentRoute.startsWith("/database/clients") && (
+                            <div className='flex items-center text-base p-4 bg-black text-white rounded-lg cursor-pointer py-2 w-[148px] h-[44px]' onClick={togglePopup1}>
+                                <div className='flex pr-2'>
+                                    <Image src={Add} alt='Add' className='w-5 h-5' />
+                                </div>
+                                <button className='bg-transparent border-0 text-white text-base cursor-pointer'>
+                                    Add Client
+                                </button>
+                            </div>
+                        )}
+                        {currentRoute.startsWith("/database/patient") && (
+                             <div className='flex items-center justify-center capitalize border-none bg-black text-white rounded-lg cursor-pointer py-2 w-[157px] h-[44px]' onClick={togglePopup2}>
+                             <div className='flex items-center'>
+                                 <Image src={Add} alt='Update' className='w-5 h-5 mr-2' />
+                                 <button className='bg-transparent border-0 text-white text-base'>
+                                     Add Patient
+                                 </button>
+                             </div>
+                         </div>
+                        )}   
+                        {currentRoute.startsWith("/database/distributor") && (
+                            <div className='flex items-center text-base p-4 bg-black text-white rounded-lg cursor-pointer py-2 w-[168px] h-[44px]' onClick={togglePopup3}>
+                                <div className='flex pr-2'>
+                                    <Image src={Add} alt='Add' className='w-5 h-5' />
+                                </div>
+                                <button className='bg-transparent border-0 text-white text-base cursor-pointer'>
+                                    Add Distributor
+                                </button>
+                            </div>
+                        )}                        
+                    </div>
              
                 </div>
                 <div className='flex h-full items-center'>
@@ -171,12 +216,16 @@ const DatabaseNavbar = () => {
                     </div>
 
                   
-                    <Link className='no-underline h-full  ml-4' href='/finance/overview'>
+                    {/* <Link className='no-underline h-full  ml-4' href='/finance/overview'>
                         <div className='flex items-center border border-solid border-gray-300 bg-white rounded-lg px-3 h-[2.8rem]'>
                             <Image src={Settings} alt='Setting' className='w-5  h-5' /></div>
-                    </Link>
+                    </Link> */}
                 </div>
             </div >
+            {showPopup1 && <ClientPopup onClose={togglePopup1} />}
+            {showPopup2 && <Popup onClose={togglePopup2} clientData={undefined}/>}
+            {showPopup3 && <DistributorPopup onClose={togglePopup3} />}
+
         </>
     )
 }

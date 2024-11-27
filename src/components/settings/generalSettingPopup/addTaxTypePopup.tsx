@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import closeicon from "../../../assets/icons/inventory/closeIcon.svg";
 import Image from "next/image";
 import { Bounce, ToastContainer, toast } from 'react-toastify';
@@ -14,7 +14,25 @@ import { useAppSelector } from '@/lib/hooks';
 const AddTaxType = ({onClose}:any) => {
     const [inputs, setInputs] = useState<string[]>(['']);
     const appState = useAppSelector((state) => state.app)
+    const [existingTaxTypes, setExistingTaxTypes] = useState<number[]>([]); 
+    const [errors, setErrors] = useState<string[]>([]);
 
+    useEffect(() => {
+        const fetchExistingTaxTypes = async () => {
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/taxType/getAll?branchId=${appState.currentBranchId}`);
+                const data = await response.json();
+                const taxTypeValues = data.map((taxType: { name: number[] }) => taxType.name[0]); // Extract the first value of the 'name' array
+                setExistingTaxTypes(taxTypeValues);
+    
+                console.log('Existing tax types fetched:', taxTypeValues); 
+            } catch (error) {
+                console.error('Error fetching existing tax types:', error);
+            }
+        };
+        fetchExistingTaxTypes();
+    }, [appState.currentBranchId]); 
+    
     const handleAddInput = () => {
         setInputs([...inputs, '']);
     };
@@ -25,25 +43,48 @@ const AddTaxType = ({onClose}:any) => {
         setInputs(newInputs);
     };
 
-    const handleChangeInput = (index: number, value: string) => {
+    const handleChangeInput = (index: number, value: any) => {
         const newInputs = [...inputs];
         newInputs[index] = value;
         setInputs(newInputs);
+        const newErrors = [...errors];
+        newErrors[index] = '';
+        setErrors(newErrors);
+        console.log(`Input changed at index ${index}: ${value}`);
     };
 
     const handleSave = async () => {
+        const newErrors = [...errors];
+    let hasError = false;
+    inputs.forEach((input, index) => {
+        const inputValue = parseInt(input.trim(), 10); 
+        if (existingTaxTypes.includes(inputValue)) {
+            newErrors[index] = 'This Tax Type already exists'; 
+            hasError = true;
+            console.log(`Duplicate Tax Type detected: ${input}`);
+        } else {
+            newErrors[index] = ''; 
+        }
+    });
+
+    setErrors(newErrors); 
+    if (hasError) {
+        console.log('Error found, not saving.'); 
+        return; 
+    }
         try {
+            const intInputs = inputs.map((input) => parseInt(input.trim(), 10));
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/taxType/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    name:inputs,
+                    name:intInputs,
                 }),
             });
             if (response.ok) {
-                console.log('Data saved successfully');
+                console.log('Tax Data saved successfully');
                 onClose();
                 window.dispatchEvent(new FocusEvent('focus'));
             } else {
@@ -70,11 +111,12 @@ const AddTaxType = ({onClose}:any) => {
                     
                     <div className='w-full flex flex-col  gap-3'>
                         {inputs.map((input, index) => (
-                            <div key={index} className="w-full flex  items-center">
+                             <div key={index} className="w-full">
+                             <div className="flex items-center">
                                 <div className="text-gray-500 text-base font-medium w-[12rem]">Tax Type</div>
                                 <input
                                     className="ml-[5rem] w-[80%] border border-solid border-borderGrey outline-none h-11 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    type="float"
+                                    type="number"
                                     value={input}
                                     onChange={(e) => handleChangeInput(index, e.target.value)}
                                 />
@@ -84,6 +126,12 @@ const AddTaxType = ({onClose}:any) => {
                                 <div className="ml-2 h-11 px-[0.6rem] rounded-[5px] justify-start items-center flex bg-black cursor-pointer" onClick={() => handleDeleteInput(index)}>
                                     <Image src={delicon} alt="delete"></Image>
                                 </div>
+                            </div>
+                                {errors[index] && (
+                                    <div className="text-red-500 text-sm mt-1 ml-[17rem]">
+                                        {errors[index]}
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>

@@ -18,7 +18,7 @@ export const POST=async(req: NextRequest)=> {
       //     status: 422,
       //   });
       // }
-      console.log(body)
+      // console.log(body)
         
         const distributor = await prismaClient.distributors.create({
             data: {

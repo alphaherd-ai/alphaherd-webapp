@@ -75,7 +75,7 @@ const NewPurchasesHeader = ({existingHeaderData,isNewDistributorClicked, newDist
         setHeaderData((prevData)=>({...prevData,dueDate:date}))
     }
     useEffect(()=>{
-        setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo}))
+        setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo,dueDate:dueDate}))
        
     },[])
 
@@ -272,7 +272,7 @@ const NewPurchasesHeader = ({existingHeaderData,isNewDistributorClicked, newDist
                                             <div className='relative'>
                                                 <input
                                                     className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={headerData?.dueDate?.toLocaleDateString() || new Date().toLocaleDateString()}
+                                                    value={headerData?.dueDate?.toLocaleDateString() || dueDate.toLocaleDateString()}
                                                     readOnly
                                                 />
                                                 <Image

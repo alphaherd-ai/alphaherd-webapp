@@ -80,7 +80,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
     const [serviceOptions, setServiceOptions] = useState([]);
     const [selectedInvoiceLink, setSelectedInvoiceLink] = useState<string | string[]>([]);
     const [selectedInvoiceLinkID, setSelectedInvoiceLinkID] = useState([]);
-    const [selectedMode, setSelectedMode] = useState([]);
+    const [selectedMode, setSelectedMode] = useState('');
     const [linkInvoice, setLinkInvoice] = useState<any>([]);
     const [modeOptions, setModeOptions] = useState<any>([]);
     const [clientsOptions, setClientsOptions] = useState<any>([]);
@@ -118,7 +118,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
                 })
             });
             if (response.ok) {
-                console.log('Data saved Sucessfully')
+                // console.log('Data saved Sucessfully')
                 onClose();
                 window.dispatchEvent(new FocusEvent('focus'))
             } else {
@@ -137,7 +137,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
         };
 
-        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: (selectedMode), invoiceLink: selectedInvoiceLink || "Direct", moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
+        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid, 10), mode: (selectedMode), invoiceLink: selectedInvoiceLink || "Direct", moneyChange: transactionType === 'Money In' ? 'In' : 'Out',date: formData.date || new Date()}))
 
         try {
             if (Array.isArray(selectedInvoiceLink) && selectedInvoiceLink[0].startsWith("P")) {
@@ -162,13 +162,13 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
                 });
             }
            } catch (error) {
-                console.log("Error while put request",error)
+                // console.log("Error while put request",error)
            }finally {
             setSaving(false);
            }
     };
 
-    console.log(formData)
+    // console.log(formData)
 
     const handleChange = (field: string, value: any) => {
         setFormData({ ...formData, [field]: value });
@@ -330,6 +330,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
       };
 
       console.log("setSelectedInvoiceLinkID", selectedInvoiceLinkID)
+      const isDisabled= !(selectedClient || selectedDistributor) || !(formData?.subject) || !(formData?.amountPaid) || !selectedMode || !(selectedProducts || selectedServices)
 
   return (
     <div className="w-full h-full flex justify-center items-center  fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
@@ -374,7 +375,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
                 
             </div>
             <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Party</span></div>
+                    <div><span className='text-gray-500 text-base font-medium '>Client/Distributor</span></div>
                     <div className='w-[440px]'>
                     {/* <Select
                         className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
@@ -409,7 +410,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
                     <div><input className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2  outline-none border border-solid border-borderGrey focus:border-teal-500 " type="text" name="subject" onChange={(e) => handleChange("subject", e.target.value)} /></div>
             </div>
             <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Link Invoice</span></div>
+                    <div><span className='text-gray-500 text-base font-medium '>Ref. No.</span></div>
                     <div className='w-[440px]'>
                     {linkInvoice ? (
                         <Select
@@ -592,7 +593,9 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo
 
             </div>
             <div className='w-full flex justify-end'>
-                    <Button className="px-2 py-2.5 bg-navBar rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer"  onClick={handleSaveClick}>
+            <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${
+                        isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
+                    }`} onClick={handleSaveClick} disabled={isDisabled || isSaving}>
                         <Image src={check} alt='check' /> 
                         <span className='text-white text-base font-medium pr-2'>{isSaving ? "Saving..." : "Save Payment"}</span>
                     </Button>

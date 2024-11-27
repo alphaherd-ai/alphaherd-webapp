@@ -51,23 +51,23 @@ const OrgEdit = () => {
     const [data, setData] = useState(formSchema.parse(appState.currentOrg));
     const [validationErrors, setValidationErrors] = useState(initialErrors);
 
-    console.log(validationErrors);
+    // console.log(validationErrors);
 
     const [activeTab, setActiveTab] = useState(0);
     const handlePicChange=(imageUrl:any,source:string)=>{
       let name=source,value=imageUrl.secure_url;
-      console.log(name,value)
+      // console.log(name,value)
       try{
-        console.log(name,value)
+        // console.log(name,value)
         setData((prevData) => ({
           ...prevData,
           [name]: value,
         }));
-        console.log("inside handle change 1");
+        // console.log("inside handle change 1");
         formSchema.parse({...data,[name]: value});
-        console.log("inside handle change 2");
+        // console.log("inside handle change 2");
         setValidationErrors((prevErrors) => {
-          console.log("here");
+          // console.log("here");
           let newErrors = prevErrors;
           newErrors[name as keyof typeof prevErrors] = '';
           return newErrors;
@@ -75,12 +75,12 @@ const OrgEdit = () => {
       }
       catch(err : any){
         if (err instanceof z.ZodError) {
-          console.log(err.flatten());
+          // console.log(err.flatten());
           let fieldErrors = err.flatten().fieldErrors;
-          console.log(fieldErrors);
+          // console.log(fieldErrors);
           let fields: string[] = Object.keys(fieldErrors);
-          console.log(name);
-          console.log(fields);
+          // console.log(name);
+          // console.log(fields);
           if(fields.includes(name)){
             setValidationErrors((prevErrors) => {
               let newErrors = prevErrors;
@@ -90,7 +90,7 @@ const OrgEdit = () => {
           }
           else{
             setValidationErrors((prevErrors) => {
-              console.log("here");
+              // console.log("here");
               let newErrors = prevErrors;
               newErrors[name as keyof typeof prevErrors] = '';
               return newErrors;
@@ -113,18 +113,18 @@ const OrgEdit = () => {
         name = e.target.name;
         value = e.target.value;
       }
-  
-      try {
-        console.log(name, value)
+      
+      try{
+        // console.log(name,value)
         setData((prevData) => ({
           ...prevData,
           [name]: value,
         }));
-        console.log("inside handle change 1");
-        formSchema.parse({ ...data, [name]: value });
-        console.log("inside handle change 2");
+        // console.log("inside handle change 1");
+        formSchema.parse({...data,[name]: value});
+        // console.log("inside handle change 2");
         setValidationErrors((prevErrors) => {
-          console.log("here");
+          // console.log("here");
           let newErrors = prevErrors;
           newErrors[name as keyof typeof prevErrors] = '';
           return newErrors;
@@ -132,13 +132,13 @@ const OrgEdit = () => {
       }
       catch (err: any) {
         if (err instanceof z.ZodError) {
-          console.log(err.flatten());
+          // console.log(err.flatten());
           let fieldErrors = err.flatten().fieldErrors;
-          console.log(fieldErrors);
+          // console.log(fieldErrors);
           let fields: string[] = Object.keys(fieldErrors);
-          console.log(name);
-          console.log(fields);
-          if (fields.includes(name)) {
+          // console.log(name);
+          // console.log(fields);
+          if(fields.includes(name)){
             setValidationErrors((prevErrors) => {
               let newErrors = prevErrors;
               newErrors[name as keyof typeof prevErrors] = fieldErrors[name]!.length > 0 ? fieldErrors[name]![0] : '';
@@ -147,7 +147,7 @@ const OrgEdit = () => {
           }
           else {
             setValidationErrors((prevErrors) => {
-              console.log("here");
+              // console.log("here");
               let newErrors = prevErrors;
               newErrors[name as keyof typeof prevErrors] = '';
               return newErrors;
@@ -162,13 +162,13 @@ const OrgEdit = () => {
 
     function handleContinue(){
       try{
-        console.log("CLICKED");
+        // console.log("CLICKED");
         formSchema.parse(data);
         setActiveTab(prev => prev + 1);
       }
       catch(err : any){
         if (err instanceof z.ZodError) {
-          console.log(err.flatten());
+          // console.log(err.flatten());
           if(!setValidationErrorsForForm(err,setValidationErrors,activeTab,stepFields)){
             setActiveTab(prev => prev + 1);
           }
@@ -181,7 +181,7 @@ const OrgEdit = () => {
     const formSubmit = async (e : React.FormEvent) => {
         e.preventDefault();
 
-        console.log("form button")
+        // console.log("form button")
     
         try {
     
@@ -196,7 +196,7 @@ const OrgEdit = () => {
               body: JSON.stringify(data)
             }
           )
-          console.log(res);
+          // console.log(res);
           let json = await res.json();
           if (res.ok) {
             toast.success(json.message, {
@@ -217,10 +217,10 @@ const OrgEdit = () => {
           }
         }
         catch (err : any) {
-          console.log(err.message);
-          console.log(typeof(err))
+          // console.log(err.message);
+          // console.log(typeof(err))
           if (err instanceof z.ZodError) {
-            console.log(err.flatten());
+            // console.log(err.flatten());
             setValidationErrorsForForm(err,setValidationErrors,activeTab,stepFields);
           } else {
             console.error('Error:', err);
@@ -284,7 +284,7 @@ const OrgEdit = () => {
                         {
                             activeTab === formElements.length - 1 ? <button className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0 cursor-pointer" onClick={formSubmit}>
                                 <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
-                                    <div className="text-white text-sm font-bold font-['Satoshi']">
+                                    <div className="text-white text-sm font-bold ">
                                         Submit Details
                                     </div>
                                 </div>

@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext,useEffect,useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Rupee from "../../../../../assets/icons/finance/rupee.svg"
 import Image from "next/image"
 import { Button } from "@nextui-org/react";
@@ -7,18 +7,23 @@ import { DataContext } from './DataContext';
 import { Tax } from '@prisma/client';
 import Select from 'react-select';
 import { custom } from 'zod';
+import formatDateAndTime from '@/utils/formateDateTime';
+import RecordOrderTransaction from './recordOrderTransaction';
+import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 
 const NewPurchasesTotalAmount = () => {
 
 
-    const { tableData } = useContext(DataContext);
+    const { tableData, headerData } = useContext(DataContext);
+
     let totalAmount = 0;
     tableData.forEach(data => {
-      
-            totalAmount += (data.quantity * Number(data.unitPrice) + data.quantity * data.gst*Number(data.unitPrice)-(data.quantity*data.discountPercent/100*Number(data.unitPrice)||0))||0;    
+
+        totalAmount += (data.quantity * Number(data.unitPrice) + data.quantity * data.gst * Number(data.unitPrice) - (data.quantity * data.discountPercent / 100 * Number(data.unitPrice) || 0)) || 0;
     });
 
     const { totalAmountData, setTotalAmountData } = useContext(DataContext);
+   // const { transactionsData, setTransactionsData } = useContext(DataContext);
     const [grandAmt, setGrandAmt] = useState(totalAmount);
 
     const gstOptions = [
@@ -33,12 +38,12 @@ const NewPurchasesTotalAmount = () => {
     const [shipping, setShipping] = useState<string>('');
     const [adjustment, setAdjustment] = useState<string>('');
 
-    useEffect(()=>{
-        if(totalAmountData.subTotal==0) {
+    useEffect(() => {
+        if (totalAmountData.subTotal == 0) {
             setShipping('');
             setAdjustment('');
         }
-      },[totalAmountData])
+    }, [totalAmountData])
 
     const handleShippingChange = (event: any) => {
         //console.log(typeof event.target.value)
@@ -94,64 +99,79 @@ const NewPurchasesTotalAmount = () => {
         const shippingValue = parseFloat(shipping) || 0;
         const adjustmentValue = parseFloat(adjustment) || 0;
         const newGrandTotal = discountedAmount + shippingValue + adjustmentValue;
-        
+
         setGrandAmt(newGrandTotal);
         setTotalAmountData((prevData) => ({
             ...prevData,
-            subTotal:totalAmount,
-            totalCost: newGrandTotal, 
-            shipping:shippingValue,
-            adjustment:adjustmentValue,
-            overAllDiscount:overAllDiscount
+            subTotal: totalAmount,
+            totalCost: newGrandTotal,
+            shipping: shippingValue,
+            adjustment: adjustmentValue,
+            overAllDiscount: overAllDiscount
         }));
     };
 
+  //  const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+  //  const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+
+ //   const balanceDue = -grandAmt - totalPaidAmount + totalAmountToPay;
+  //  console.log(-grandAmt,totalPaidAmount,totalAmountToPay);
+
     useEffect(() => {
-        updateGrandTotal(); 
+        updateGrandTotal();
     }, [totalAmount, overAllDiscount, shipping, adjustment]);
 
     const customStyles = {
         control: (provided: any, state: any) => ({
-          ...provided,
-          width: '100%',
-          maxWidth: '100%',
-          border: state.isFocused ? '1px solid #35BEB1' : 'none',
-          '&:hover': {
-            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
+            border: state.isFocused ? '1px solid #35BEB1' : 'none',
+            '&:hover': {
+                borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4',
             },
-          boxShadow: state.isFocused ? 'none' : 'none',
+            boxShadow: state.isFocused ? 'none' : 'none',
         }),
         valueContainer: (provided: any) => ({
-          ...provided,
-          width: '100%',
-          maxWidth: '100%',
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
         }),
         singleValue: (provided: any, state: any) => ({
-          ...provided,
-          width: '100%',
-          maxWidth: '100%',
-          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
+            color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
         }),
         menu: (provided: any) => ({
-          ...provided,
-          backgroundColor: 'white',
-          width: '100%',
-          maxWidth: '100%',
+            ...provided,
+            backgroundColor: 'white',
+            width: '100%',
+            maxWidth: '100%',
         }),
         option: (provided: any, state: any) => ({
-          ...provided,
-          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
-          color: state.isFocused ? 'white' : '#6B7E7D',
-          '&:hover': {
-            backgroundColor: '#35BEB1',
-            color: 'white',
-          },
+            ...provided,
+            backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+            color: state.isFocused ? 'white' : '#6B7E7D',
+            '&:hover': {
+                backgroundColor: '#35BEB1',
+                color: 'white',
+            },
         }),
-        menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
-      };
+        menuPortal: (base: any) => ({ ...base, zIndex: 9999 })
+    };
 
-  return (
-    <>
+    const [initialInvoiceNo, setInitialInvoiceNo] = useState('');
+    const [count, setCount] = useState(0);
+    useEffect(() => {
+        const newInvoiceNo = generateInvoiceNumber(count);
+        setInitialInvoiceNo(newInvoiceNo);
+    }, [count])
+
+    return (
+        <>
 
 
             <div className="flex w-full box-border bg-gray-100 pt-[20px] pb-[20px]">
@@ -276,12 +296,14 @@ const NewPurchasesTotalAmount = () => {
                     <div className="text-textGreen text-base font-bold ">Grand total</div>
                         <div className="text-right text-textGreen text-base font-bold "> { grandAmt.toFixed(2)}</div>
                     </div>
+
+
                 </div>
             </div>
 
 
         </>
-  )
+    )
 }
 
 export default NewPurchasesTotalAmount

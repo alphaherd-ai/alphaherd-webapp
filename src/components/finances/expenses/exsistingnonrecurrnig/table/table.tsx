@@ -35,7 +35,7 @@ const ExsistingNonRecurringTable = () => {
             if (!isLoading && data && !error) {
                 const {items,...otherData}=data;
                 setOtherData(otherData)
-                console.log("this is all of the data",data)
+                // console.log("this is all of the data",data)
               const shallowDataCopy = [...items]; 
               const itemData = shallowDataCopy.map((item: any) => ({
                 id: item.id,
@@ -48,7 +48,7 @@ const ExsistingNonRecurringTable = () => {
             }
           }, [data,error,isLoading]); 
           
-    console.log(items)
+    // console.log(items)
 
     return (
         <>
@@ -225,7 +225,7 @@ const ExsistingNonRecurringTable = () => {
                 </div>
                     <ExsistingNonRecurringTotalAmount otherData={otherData} isLoading={isLoading} />
             </div>
-            <ExsistingNonRecurringBottomBar expenseId={data?.id}/>
+            <ExsistingNonRecurringBottomBar expenseId={data?.id}z/>
         </div>
        
         </>

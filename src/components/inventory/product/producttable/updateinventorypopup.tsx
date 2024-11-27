@@ -32,12 +32,17 @@ interface Distributors {
     id: string,
     distributorName: string
 }
-interface Products{
-    id :string,
-    itemName:string,
-    productBatch:ProductBatch[],
-    hsnCode:string,
-    quantity:number
+interface Products {
+    id: string,
+    itemName: string,
+    productBatch: ProductBatch[],
+    hsnCode: string,
+    quantity: number
+}
+
+interface Reason {
+    id: string,
+    name: string | string[],
 }
 interface ProductBatch {
     id: number;
@@ -72,7 +77,7 @@ function useProductBatchfetch(id: number | null) {
         batchError: error
     }
 }
-const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any) => {
+const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: any) => {
     const [selectedOption, setSelectedOption] = useState<string>(Stock.StockIN);
     const [selectedProductDetails, setSelectedProduct] = useState<Products>()
     const [isChecked, setChecked] = useState(false);
@@ -86,71 +91,71 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
 
     const customStyles = {
         control: (provided: any, state: any) => ({
-          ...provided,
-          width: '100%',
-          maxWidth: '100%',
-          border: state.isFocused ? '1px solid #35BEB1' : 'none',
-          '&:hover': {
-            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
+            border: state.isFocused ? '1px solid #35BEB1' : 'none',
+            '&:hover': {
+                borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4',
             },
-          boxShadow: state.isFocused ? 'none' : 'none',
+            boxShadow: state.isFocused ? 'none' : 'none',
         }),
         valueContainer: (provided: any) => ({
-          ...provided,
-          width: '100%',
-          maxWidth: '100%',
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
         }),
         singleValue: (provided: any, state: any) => ({
-          ...provided,
-          width: '100%',
-          maxWidth: '100%',
-          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
+            color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
         }),
         menu: (provided: any) => ({
-          ...provided,
-          backgroundColor: 'white',
-          width: '100%',
-          maxWidth: '100%',
+            ...provided,
+            backgroundColor: 'white',
+            width: '100%',
+            maxWidth: '100%',
         }),
         option: (provided: any, state: any) => ({
-          ...provided,
-          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
-          color: state.isFocused ? 'white' : '#6B7E7D',
-          '&:hover': {
-            backgroundColor: '#35BEB1',
-            color: 'white',
-          },
+            ...provided,
+            backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+            color: state.isFocused ? 'white' : '#6B7E7D',
+            '&:hover': {
+                backgroundColor: '#35BEB1',
+                color: 'white',
+            },
         }),
         placeholder: (provided: any) => ({
             ...provided,
-            color: '#A2A3A3', 
+            color: '#A2A3A3',
         }),
     };
 
     const { fetchedProducts, isLoading, error } = useProductfetch(appState.currentBranchId);
     const { fetchedBathces, isBatchLoading, batchError } = useProductBatchfetch(appState.currentBranchId);
     useEffect(() => {
-            if (individualSelectedProduct && products.length>0) {
-                 console.log(individualSelectedProduct)
-                const fillItemName=()=>{
-                    // console.log(inventory);
-                    console.log(fetchedProducts,products)
-                    const object = {
-                        label: individualSelectedProduct.itemName,
-                        value: {
-                            id: individualSelectedProduct.id
-                        }
-                    };
-                    setInventory((prevInventory)=>{
-                        const updatedInventory=[...prevInventory, { itemName: individualSelectedProduct.itemName }];
-                        handleProductSelect(object, updatedInventory.length - 1);
-                        return updatedInventory;
-                    });
+        if (individualSelectedProduct && products.length > 0) {
+            console.log(individualSelectedProduct)
+            const fillItemName = () => {
+                // console.log(inventory);
+                console.log(fetchedProducts, products)
+                const object = {
+                    label: individualSelectedProduct.itemName,
+                    value: {
+                        id: individualSelectedProduct.id
+                    }
+                };
+                setInventory((prevInventory) => {
+                    const updatedInventory = [...prevInventory, { itemName: individualSelectedProduct.itemName }];
+                    handleProductSelect(object, updatedInventory.length - 1);
+                    return updatedInventory;
+                });
 
-                }
-                fillItemName()
             }
-    }, [individualSelectedProduct,products])
+            fillItemName()
+        }
+    }, [individualSelectedProduct, products])
     useEffect(() => {
         if (!isLoading && products && !error) {
             const formattedProducts = fetchedProducts.map((product: Products) => ({
@@ -183,10 +188,15 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
                 },
                 label: product.batchNumber
             }));
-            // console.log("lajsdlfjlkj", formattedProductBatches)
+            console.log(formattedProductBatches)
             setBatches(formattedProductBatches)
         }
     }, [fetchedProducts, fetchedBathces, batchError, error, isBatchLoading, isLoading])
+
+    useEffect(() => {
+        inventory.push({});
+        setInventory(inventory);
+    }, [])
 
     //Handlers
     const handleRadioChange = useCallback((value: string) => {
@@ -204,6 +214,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
     }, [inventory]);
 
     const handleChange = (field: string, value: any) => {
+
         setFormData({ ...formData, [field]: value });
     };
 
@@ -216,6 +227,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
     const handleQuantityDecClick = useCallback((index: number) => {
         const updatedInventory = [...inventory];
         updatedInventory[index].quantity = Math.max(updatedInventory[index].quantity - 1, 0);
+        handleInputChange(index,'quantity',updatedInventory[index].quantity);
         setInventory(updatedInventory);
     }, [inventory]);
 
@@ -224,18 +236,26 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
         if (selectedOption === Stock.StockOUT) {
             if (updatedInventory[index].quantity < updatedInventory[index].maxQuantity) {
                 updatedInventory[index].quantity += 1;
+                handleInputChange(index,'quantity',updatedInventory[index].quantity);
             }
         } else {
             updatedInventory[index].quantity += 1;
+            handleInputChange(index,'quantity',updatedInventory[index].quantity);
         }
 
         setInventory(updatedInventory);
     }, [inventory]);
 
     const handleInputChange = useCallback((index: number, field: string, value: string | number) => {
+
         const updatedInventory = [...inventory];
         updatedInventory[index][field] = value;
+        if (field === 'quantity' || field === 'costPrice') {
+            updatedInventory[index].sellingPrice = 
+                (updatedInventory[index]?.quantity || 0) * (updatedInventory[index]?.costPrice || 0);
+        }
         setInventory(updatedInventory);
+        console.log(updatedInventory);
     }, [inventory]);
 
 
@@ -248,7 +268,11 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
     }, [inventory]);
 
     const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
-         console.log(selectedProduct)
+        console.log(selectedProduct)
+        if (index === inventory.length - 1) {
+            inventory.push({});
+            setInventory(inventory);
+        }
         if (selectedProduct.value) {
             try {
                 const data = products.find((product) => product.value.id === selectedProduct.value.id);
@@ -298,7 +322,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
         if (selectedProduct.value) {
             try {
                 const data = filteredBatches.find((batch) => batch.value.id == selectedProduct.value.id);
-                console.log(selectedProduct,data)
+                // console.log(data)
                 const updatedInventory = [...inventory];
                 updatedInventory[index] = {
                     ...updatedInventory[index],
@@ -319,6 +343,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
                     maxRetailPrice: data?.value?.maxRetailPrice,
                     productId: data?.value?.productId,
                 };
+                
                 setInventory(updatedInventory);
                 // if (selectedOption === Stock.StockOUT) {
                 //     const updatedProducts = products.filter((product) => product.value !== selectedProduct.value);
@@ -331,11 +356,13 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
     }, [inventory, products, selectedOption]);
     const handleUpdateInventory = useCallback(async () => {
         try {
+            inventory.pop();
             for (const item of inventory) {
                 const { id, date, quantity, batchNumber, distributors, productId, maxRetailPrice, isApproved } = item;
                 const invoiceType = "Manual";
                 let { expiry, costPrice, sellingPrice } = item;
-                // console.log("here is the product", productId)
+                console.log(sellingPrice);
+                // // console.log("here is the product", productId)
                 expiry = expiry || null;
                 costPrice = costPrice || null;
                 sellingPrice = sellingPrice || null;
@@ -399,7 +426,8 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
                     }
 
                 } else if (selectedOption === Stock.StockIN) {
-                    // console.log("saving new batch")
+                    console.log(body);
+                    console.log("saving new batch")
                     const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/create?branchId=${appState.currentBranchId}`, body);
                     setTimeout(() => {
                         onClose();
@@ -412,7 +440,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
                         orgId: appState.currentOrgId
                     }
                     const notif = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
-                    // console.log('Created New Batch Item:', response.data);
+                    console.log('Created New Batch Item:', response.data);
                 }
 
             }
@@ -442,39 +470,38 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
         fetchDistributors();
     }, []);
 
-    //reasons
-    // const [reason, setReason] = useState<any[]>([]);
-    // useEffect(() => {
+    const [reason, setReason] = useState<any[]>([]);
+    useEffect(() => {
+        const fetchReason = async () => {
+            try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/reason/getAll?branchId=${appState.currentBranchId}`);
+                const reasonList: any[] = response.data.reduce((acc: any[], reasonEntry: Reason) => {
+                    if (Array.isArray(reasonEntry.name)) {
+                        reasonEntry.name.forEach((name: string) => {
+                            acc.push({ value: reasonEntry.id, label: name });
+                        });
+                    } else {
+                        acc.push({ value: reasonEntry.id, label: reasonEntry.name });
+                    }
+                    return acc;
+                }, []);
+                console.log(reasonList);
+                setReason(reasonList);
+            } catch (error) {
+                console.log("Error fetching species", error);
+            }
+        }
+        fetchReason();
+    }, [appState.currentBranchId]);
 
-    //     const fetchReasons = async()=>{
-    //         try{
-    //             const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/settings/reason/getAll?branchId=${appState.currentBranchId}`);
-    //             const reasons = response.data.map((reason:Reasons)=>({
-    //                 value: reason.id,
-    //                 label: reason.reasonName
-    //             }));
-    //             console.log(reasons);
-    //             setReason(reasons);
-    //         }catch(error){
-    //             console.log("Error fetching reasons",error);
-    //         }
-    //     }
-    //       fetchReasons();
-    // }, []);
-
-    const Reasons = [
-        { value: "Damaged", label: "Damaged" },
-        { value: "Expired", label: "Expired" },
-        { value: "Quality Issues", label: "Quality Issues" },
-        { value: "Wrong Item", label: "Wrong Item" },
-        { value: "Other(mention reason)", label: "Other(mention reason)" },
-    ]
     
+
+
 
     return (
         <>
             <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-[#F4F5F7] bg-opacity-50 z-50">
-                <div className="w-[1392px] min-h-[481px] flex-col p-8 bg-[#F4F5F7] gap-6 rounded-[20px]">
+                <div className="w-[98%] min-h-[481px] flex-col p-8 bg-[#F4F5F7] gap-6 rounded-[20px]">
                     {/* <div className="flex justify-end p-8 gap-4">
                         
                         <button className="border-0 outline-0 cursor-pointer" onClick={onClose}><Image src={closeicon} alt="minimize" /></button>
@@ -487,7 +514,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
                     </div>
                     <div className="text-gray-500 text-xl font-medium ">Update Inventory</div>
                     <div className="text-neutral-400 text-base font-medium ">Add or subtract quantity from inventory</div>
-                    <div className="w-full h-[72px] px-6 py-4 bg-white border border-neutral-400 justify-between items-center gap-4 flex">
+                    <div className="w-full h-[72px] px-6 py-4 bg-white border border-neutral-400 justify-between items-center gap-4 flex rounded-t-lg">
                         <div className="flex gap-4">
                             <RadioButton
                                 label="Stock In"
@@ -502,38 +529,38 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
                                 onChange={handleRadioChange}
                             />
                         </div>
-                        <div className="relative">
+                        {/* <div className="relative">
                             <button className="cursor-pointer h-11 px-4 py-2.5 bg-zinc-900 rounded-[5px] border-0 justify-start items-center gap-2 flex" onClick={handleAddItemClick}>
                                 <Image src={addicon} alt="add" />
                                 <div className="text-white text-base font-bold  bg-transparent border-0" >
                                     Add Item
                                 </div>
                             </button>
-                        </div>
+                        </div> */}
                     </div>
-                    <div className="pb-6">
-                    <div className='flex w-full justify-between items-center box-border bg-gray-100 h-12 border-b border-neutral-400 text-gray-500'>
-                            <div className='flex text-gray-500 text-base font-medium w-[5rem]'>No.</div>
-                            <div className='flex text-gray-500 text-base font-medium w-[15rem]'>Product</div> 
-                            <div className='flex text-gray-500 text-base font-medium w-[8rem]'>Quantity</div> 
+                    <div className="pb-6 rounded-b-lg">
+                        <div className='flex w-full justify-between items-center box-border bg-gray-100 h-12 border-b border-neutral-400 text-gray-500'>
+                            <div className='flex text-gray-500 text-base font-medium px-2 w-[5rem]'>No.</div>
+                            <div className='flex text-gray-500 text-base font-medium w-[15rem]'>Product</div>
+                            <div className='flex text-gray-500 text-base font-medium w-[8rem]'>Quantity</div>
                             {selectedOption === Stock.StockOUT && (
-                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>Reason</div> 
+                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>Reason</div>
                             )}
                             <div className='flex text-gray-500 text-base font-medium w-[8rem]'>Batch No.</div>
-                            <div className='flex text-gray-500 text-base font-medium w-[10rem]'>Expiry</div> 
-                            <div className='flex text-gray-500 text-base font-medium w-[6rem]'>Barcode</div> 
-                            <div className='flex text-gray-500 text-base font-medium w-[8rem]'>Location</div> 
-                            <div className='flex text-gray-500 text-base font-medium w-[10rem]'>Distributor</div> 
+                            <div className='flex text-gray-500 text-base font-medium w-[10rem]'>Expiry</div>
+                            <div className='flex text-gray-500 text-base font-medium w-[6rem]'>Barcode</div>
+                            <div className='flex text-gray-500 text-base font-medium w-[8rem]'>Location</div>
+                            <div className='flex text-gray-500 text-base font-medium w-[10rem]'>Distributor</div>
                             <div className='flex text-gray-500 text-base font-medium w-[8rem]'>Unit Price</div>
                             <div className='flex text-gray-500 text-base font-medium w-[8rem]'>MRP</div>
-                            <div className='flex text-gray-500 text-base font-medium w-[8rem]'>Subtotal</div> 
-                            <div className='flex text-gray-500 text-base font-medium w-[3rem]'> </div>
+                            <div className='flex text-gray-500 text-base font-medium w-[8rem]'>Subtotal</div>
+                            
                         </div>
-                        
+
                         {inventory.map((item, index) => (
-                            <div key={index} className='flex justify-evenly items-center w-full  py-2  bg-white text-gray-400  '>
-                                <div className='w-[3rem] flex items-center text-neutral-400 text-base font-medium'>{index + 1}</div>
-                                <div className='w-[12rem] flex items-center text-neutral-400 text-base font-medium'>
+                            <div key={index + 1} className='flex justify-evenly items-center w-full  py-2  bg-white text-gray-400  '>
+                                <div className='w-[5rem] px-2 flex items-center text-neutral-400 text-base font-medium'>{index + 1}</div>
+                                <div className='w-[15rem] flex items-center text-neutral-400 text-base font-medium'>
                                     <Select
                                         className="text-gray-500 text-base font-medium w-[90%] "
                                         classNamePrefix="select"
@@ -546,29 +573,29 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
                                         styles={customStyles}
                                     />
                                 </div>
-                                <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
+                                <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
                                     <button className="bg-white rounded-[5px] border-2 border-solid border-white" onClick={() => handleQuantityDecClick(index)}>
-                                        <Image className="w-4 h-2" src={subicon} alt="-" />
+                                        <Image className="w-4 h-4" src={subicon} alt="-" />
                                     </button>
                                     <input
-                                        type="number" 
-                                        value={item.quantity} 
+                                        type="number"
+                                        value={item.quantity}
                                         onChange={(e) => handleInputChange(index, 'quantity', parseInt(e.target.value, 10))}
-                                        className="w-[40px] border border-solid border-white focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded" 
-                                        
+                                        className="w-[40px] border border-solid border-white focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
+
                                     />
                                     <button className="bg-white rounded-[5px] border-2 border-solid border-white" onClick={() => handleQuantityIncClick(index)}>
-                                        <Image className="w-4 h-2" src={add1icon} alt="+" />
+                                        <Image className="w-4 h-4" src={add1icon} alt="+" />
                                     </button>
                                 </div>
                                 {selectedOption === Stock.StockOUT && (
-                                    <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
+                                    <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
                                         <Select
                                             className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
                                             placeholder="Reason"
                                             isClearable={false}
                                             isSearchable={true}
-                                            options={Reasons}
+                                            options={reason}
                                             isMulti={true}
                                             name="Reasons"
                                             onChange={(value) => handleChange("reasons", value)}
@@ -577,139 +604,146 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct}:any)
                                     </div>
                                 )}
 
-                                <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>
-                                    { selectedOption===Stock.StockIN ?(
-                                    <input
-                                    type="text"
-                                    value={item.batchNumber}
-                                    placeholder="00000000"
-                                    onChange={(e) => handleInputChange(index,'batchNumber', e.target.value)}
-                                    className="w-full border border-solid border-white focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded placeholder:text-[#A2A3A3]"
-                                    name={`batchNumber-${index}`}
+                                <div className='w-[8em] flex items-center text-neutral-400 text-base font-medium'>
+                                    {selectedOption === Stock.StockIN ? (
+                                        <input
+                                            type="text"
+                                            value={item.batchNumber}
+                                            placeholder="00000000"
+                                            onChange={(e) => handleInputChange(index, 'batchNumber', e.target.value)}
+                                            className="w-[90%] focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded placeholder:text-[#A2A3A3] border border-solid border-borderGrey"
+                                            name={`batchNumber-${index}`}
+                                        />
+                                    ) :
+                                        (
+                                            <Select
+                                                className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
+                                                classNamePrefix="select"
+                                                value={batches.find((prod) => prod.value.id === item.id)}
+                                                isClearable={false}
+                                                isSearchable={true}
+                                                name={`batchNumber=${index}`}
+                                                options={filteredBatches}
+                                                onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
+                                                styles={customStyles}
+                                            />
+                                        )}
+
+                                </div>
+                                <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
+                                    <DatePicker
+                                        // showIcon
+                                        className="w-[90%] rounded-[5px] border border-solid border-borderGrey outline-none  focus:border focus:border-textGreen px-1 py-2"
+                                        selected={item.expiry}
+                                        placeholderText="MM/DD/YYYY"
+                                        onChange={(date: any) => {
+                                            handleInputChange(index, "expiry", date)
+                                        }}
+                                        calendarClassName="react-datepicker-custom"
+                                    // value={startDate.toLocaleDateString()}
+                                    // customInput={
+                                    //     // <div className="relative">
+                                    //     //     <input
+                                    //     //         className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border border-solid border-borderText focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                    //     //         value={startDate.toLocaleDateString()}
+
+                                    //     //     />
+
+                                    //     // </div>
+                                    // }
                                     />
-                                    ):
-                                    (
-                                      <Select
-                                        className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
-                                        classNamePrefix="select"
-                                        value={batches.find((prod) => prod.value.id === item.id)}
+                                    {item.expiry && selectedOption !== Stock.StockIN && (
+                                        <div>{formatDateAndTime(item.expiry).formattedDate}</div>
+                                    )}
+                                </div>
+
+                                <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>
+                                    <input
+                                        type="text"
+                                        value={item.hsnCode}
+                                        onChange={(e) => handleInputChange(index, 'hsnCode', e.target.value)}
+                                        placeholder="000000"
+                                        className="w-[90%] border border-solid border-white focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded placeholder:text-textGrey1"
+                                        name={`hsnCode-${index}`}
+                                    />
+                                </div>
+                                <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium'>
+                                    <input
+                                        type="text"
+                                        value={item.category}
+                                        onChange={(e) => handleInputChange(index, 'category', e.target.value)}
+                                        className="w-[90%] border border-solid border-white focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
+                                        name={`category-${index}`}
+                                    />
+                                </div>
+                                <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium '>
+                                    <Select
+                                        className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
+                                        placeholder="Select"
                                         isClearable={false}
                                         isSearchable={true}
-                                        name={`batchNumber=${index}`}
-                                        options={filteredBatches}
-                                        onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
+                                        options={distributor}
+                                        isMulti={false}
+                                        name={`providers-${index}`}
+                                        onChange={(e) => handleInputChange(index, 'providers', e?.label)}
                                         styles={customStyles}
-                                        />  
-                                    )}
-           
-        </div>
-        <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium'>
-        <DatePicker
-            // showIcon
-            className="w-full rounded-[5px] border border-solid border-borderGrey outline-none  focus:border focus:border-textGreen px-1 py-2"
-            selected={item.expiry}
-            placeholderText="MM/DD/YYYY"
-            onChange={(date:any) =>{ 
-                handleInputChange(index,"expiry",date)}}
-            calendarClassName="react-datepicker-custom"
-            // value={startDate.toLocaleDateString()}
-            // customInput={
-            //     // <div className="relative">
-            //     //     <input
-            //     //         className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border border-solid border-borderText focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-            //     //         value={startDate.toLocaleDateString()}
-                        
-            //     //     />
-                    
-            //     // </div>
-            // }
-        />
-    {item.expiry && selectedOption !== Stock.StockIN && (
-        <div>{formatDateAndTime(item.expiry).formattedDate}</div>
-    )}
-</div>
+                                    />
 
-        <div className='w-[5rem] flex items-center text-neutral-400 text-base font-medium'>
-            <input
-                type="text"
-                value={item.hsnCode}
-                onChange={(e) => handleInputChange(index, 'hsnCode' ,e.target.value)}
-                placeholder="000000"
-                className="w-full border border-solid border-white focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded placeholder:text-[#A2A3A3]"
-            name={`hsnCode-${index}`}
-            />
-        </div>
-        <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>
-            <input
-                type="text"
-                value={item.category}
-                onChange={(e) => handleInputChange(index,'category' ,e.target.value)}
-                className="w-full border border-solid border-white focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
-            name={`category-${index}`}
-            />
-        </div>
-        <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium '>
-                        <Select
-                            className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
-                            placeholder="Select"
-                            isClearable={false}
-                            isSearchable={true}
-                            options={distributor}
-                            isMulti={false}
-                            name={`providers-${index}`}
-                            onChange={(e) => handleInputChange(index,'providers', e?.label)}
-                            styles={customStyles}
-                        />
-
-                        </div>
-        <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>₹ 
-            <input
-                type="number"
-                value={item.costPrice}
-                onChange={(e) => handleInputChange(index, 'costPrice',parseFloat(e.target.value))}
-                className="w-full border border-solid border-white focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
-                name={`costPrice-${index}`}
-            />
-        </div>
-        <div className='w-[6rem] rounded-[5px] flex items-center text-neutral-400 text-base font-medium'>₹
-            <input
-                type="number"
-                value={item.maxRetailPrice}
-                onChange={(e) =>  handleInputChange(index, 'maxRetailPrice',parseFloat(e.target.value))}
-                className="w-full border border-solid border-white focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
-                name={`maxRetailPrice-${index}`}
-            />
-        </div>
-
-        <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>₹
-            <input
-                type="number"
-                value={item.quantity*item.costPrice}
-                onChange={(e) =>  handleInputChange(index, 'sellingPrice',parseFloat(e.target.value))}
-                className="w-full border border-solid border-white focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded"
-                name={`sellingPrice-${index}`}
-            />
-        </div>
-        <div className="w-[2rem]">
-        <button onClick={() => handleDeleteRow(index)} className=" border-0 flex-col justify-start items-end gap-2.5 flex">
-                                <div className="h-6 px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
-                                    <Image className="w-4 h-4 relative" src={deleteicon} alt="delete" />
                                 </div>
-        </button>
-        </div>
-    </div>
-))}
+                                <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium'>₹
+                                    <input
+                                        type="number"
+                                        value={item.costPrice}
+                                        placeholder="0"
+                                        onChange={(e) => handleInputChange(index, 'costPrice', parseFloat(e.target.value))}
+                                        className="w-full border border-solid border-white focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded placeholder:text-textGrey1"
+                                        name={`costPrice-${index}`}
+                                    />
+                                </div>
+                                <div className='w-[8rem] rounded-[5px] flex items-center text-neutral-400 text-base font-medium'>₹
+                                    <input
+                                        type="number"
+                                        value={item.maxRetailPrice}
+                                        placeholder="0"
+                                        onChange={(e) => handleInputChange(index, 'maxRetailPrice', parseFloat(e.target.value))}
+                                        className="w-full border border-solid border-white focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded placeholder:text-textGrey1"
+                                        name={`maxRetailPrice-${index}`}
+                                    />
+                                </div>
+
+                                <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium'>₹
+                                    <input
+                                        type="number"
+                                        disabled={true}
+                                        value={item.quantity * item.costPrice}
+                                        placeholder="0"
+                                        onChange={(e) => handleInputChange(index, 'sellingPrice', parseFloat(e.target.value))}
+                                        className="w-full border border-solid border-white focus:border-textGreen outline-none bg-transparent text-neutral-400 text-base font-medium px-1 py-1 rounded placeholder:text-textGrey1"
+                                        name={`sellingPrice-${index}`}
+                                        
+                                    />
+                                </div>
+                                <div className="w-[2rem]">
+                                    {index !==inventory.length-1 ?<button onClick={() => handleDeleteRow(index)} className=" border-0 flex-col justify-start items-end gap-2.5 flex">
+                                        <div className="h-6 px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
+                                            <Image className="w-4 h-4 relative" src={deleteicon} alt="delete" />
+                                        </div>
+                                    </button> :""} 
+                                    
+                                </div>
+                            </div>
+                        ))}
                     </div>
                     <div>
-                    <div className="flex items-center">
-                       <div className="flex-grow"></div>
-                       <div className="bg-black px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
-                            <Image src={checkicon} alt="add" />
-                            <button className="text-white text-base font-bold bg-transparent border-0 cursor-pointer" onClick={handleUpdateInventory}>
-                                Update Inventory
-                            </button>
+                        <div className="flex items-center">
+                            <div className="flex-grow"></div>
+                            <div className="bg-black px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
+                                <Image src={checkicon} alt="add" />
+                                <button className="text-white text-base font-bold bg-transparent border-0 cursor-pointer" onClick={handleUpdateInventory}>
+                                    Update Inventory
+                                </button>
+                            </div>
                         </div>
-                    </div>
                     </div>
                 </div>
             </div>

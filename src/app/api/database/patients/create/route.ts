@@ -36,7 +36,7 @@ export const POST = async (req: NextRequest) => {
             }
           }
         })
-        console.log(client)
+        // console.log(client)
         clientId=client.id;
       }
       catch(error){

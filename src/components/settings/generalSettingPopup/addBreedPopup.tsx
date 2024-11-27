@@ -1,42 +1,165 @@
-import React, { useState } from 'react';
+import React, { useEffect,useState } from 'react';
 import closeicon from "../../../assets/icons/inventory/closeIcon.svg";
 import Image from "next/image";
 import { useAppSelector } from '@/lib/hooks';
 import delicon from "../../../assets/icons/settings/deleteicon.svg"
+import axios from "axios";
+import Select from 'react-select';
+
+interface Species{
+    id:string,
+    name:string | string[],
+}
 
 const AddBreed = ({ onClose }: any) => {
     const appState = useAppSelector((state) => state.app);
 
-    const [formData, setFormData] = useState<any>("");
+    const [formData, setFormData] = useState<{ species: string; breeds: string[] }>({
+        species: '',
+        breeds: [],
+    });
+    const [existingBreeds, setExistingBreeds] = useState<string[]>([]); 
+    const [error, setError] = useState<string | null>(null);
+
+    const customStyles = {
+        control: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          border: state.isFocused ? '1px solid #35BEB1' : 'none',
+          '&:hover': {
+            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            },
+          boxShadow: state.isFocused ? 'none' : 'none',
+        }),
+        valueContainer: (provided: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        singleValue: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+        }),
+        menu: (provided: any) => ({
+          ...provided,
+          backgroundColor: 'white',
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        option: (provided: any, state: any) => ({
+          ...provided,
+          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+          color: state.isFocused ? 'white' : '#6B7E7D',
+          '&:hover': {
+            backgroundColor: '#35BEB1',
+            color: 'white',
+          },
+        }),
+    };
 
 
     const handleChange = (field: string, value: any) => {
-    setFormData((prevFormData: any) => ({
-        ...prevFormData,
-        [field]: value,
-    }));
-    }
+        setFormData((prevFormData: any) => ({
+            ...prevFormData,
+            [field]: value,
+        }));
+        if (field === 'species') {
+            setFormData((prevFormData: any) => ({
+                ...prevFormData,
+                breeds: [] 
+            }));
+        }
+    };
+    
+    
+    const handleAddInput = () => {
+        setFormData((prevData) => ({
+            ...prevData,
+            breeds: [...prevData.breeds, ''], 
+        }));
+    };
     
     const handleDeleteInput = (index: number) => {
-        const newInputs = [...formData];
-        newInputs.splice(index, 1);
-        setFormData(newInputs);
+        setFormData((prevData) => {
+            const newBreeds = [...prevData.breeds];
+            newBreeds.splice(index, 1);
+            return {
+                ...prevData,
+                breeds: newBreeds,
+            };
+        });
     };
-    console.log("form data is :" , formData);
+    const [species, setSpecies] = useState<any[]>([]);
+    useEffect(() => {
+        const fetchSpecies = async () => {
+            try {
+                const response = await axios.get(
+                    `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`
+                );
+    
+                const speciesList: any[] = response.data.map((speciesEntry: Species) => ({
+                    value: speciesEntry.id,
+                    label: speciesEntry.name 
+                }));
+                console.log(speciesList);
+                setSpecies(speciesList);
+            } catch (error) {
+                console.log('Error fetching species', error);
+            }
+        };
+    
+        fetchSpecies();
+    }, [appState.currentBranchId]);
+
+    useEffect(() => {
+        const fetchAllBreeds = async () => {
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/breed/getAll?branchId=${appState.currentBranchId}`);
+                const breedsData = await response.json();
+    
+                // Filter breeds by the selected species
+                const filteredBreeds = breedsData.filter((breed: { speciesId: string }) => breed.speciesId === formData.species);
+                setExistingBreeds(filteredBreeds.flatMap((breed: { name: string[] }) => breed.name)); // Flatten the breed names
+            } catch (error) {
+                console.log('Error fetching breeds', error);
+            }
+        };
+    
+        if (formData.species) {
+            fetchAllBreeds();
+        }
+    }, [formData.species, appState.currentBranchId]);
 
     const handleSave = async () => {
+        const duplicates = formData.breeds.filter(breed => existingBreeds.includes(breed));
+    
+        if (duplicates.length > 0) {
+            setError(`${duplicates.join(', ')} already exists.`); 
+            console.log(`Duplicate Breeds detected: ${duplicates}`);
+            return;
+        } else {
+            setError(null); // Clear error if no duplicates
+        }
+
         try {
+            
+            const requestBody = {
+                speciesId: formData.species,
+                name: formData.breeds,
+            };
+            console.log('Request Body:', requestBody);
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/breed/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    name:formData.breeds,
-                }),
+                body: JSON.stringify(requestBody),
             });
             if (response.ok) {
-                console.log('Data saved successfully',response);
+                console.log('Breed Data saved successfully',response);
                 onClose();
                 window.dispatchEvent(new FocusEvent('focus'));
             } else {
@@ -46,6 +169,7 @@ const AddBreed = ({ onClose }: any) => {
             console.error('Error while saving data:', error);
         }
     }
+
 
     return (
         <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
@@ -64,11 +188,16 @@ const AddBreed = ({ onClose }: any) => {
 
                             <div  className="w-full flex  items-center">
                                 <div className="text-gray-500 text-base font-medium w-[12rem]">Species</div>
-                                <input
-                                    className="ml-[5rem] w-[80%] border border-solid border-borderGrey outline-none h-11 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    type="text"
+                                <Select
+                                    className="ml-[5rem] w-[80%] border border-solid border-borderGrey outline-none h-11 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen "
+                                    placeholder="Select Species"
+                                    isClearable={false}
+                                    isSearchable={true}
+                                    options={species}
+                                    isMulti={false}
                                     name="species"
-                                    onChange={(e) => handleChange("species", e.target.value)}
+                                    onChange={(e) => handleChange("species", e?.value)} 
+                                    styles={customStyles}
                                 />
                                
                             </div>
@@ -77,25 +206,35 @@ const AddBreed = ({ onClose }: any) => {
                 <div className="w-full flex items-center gap-[6rem] ">
                     <div className='w-full flex flex-col  gap-3'>
 
-                            <div  className="w-full flex  items-center">
-                                <div className="text-gray-500 text-base font-medium w-[12rem]">Breeds</div>
-                                <input
-                                    className="ml-[5rem] w-[80%] border border-solid border-borderGrey outline-none h-11 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    type="text"
-                                    name="breeds"
-                                    onChange={(e) => handleChange("breeds", e.target.value)}
-                                />
-                                {/* <div className="ml-2 h-11 px-[0.6rem] rounded-[5px] justify-start items-center flex bg-black cursor-pointer" onClick={() => handleDeleteInput(index)}>
-                                    <Image src={delicon} alt="delete"></Image>
-                                </div> */}
-                               
+                            <div  className="w-full">
+                                <div className=" flex items-center">
+                                    <div className="text-gray-500 text-base font-medium w-[12rem]">Breeds</div>
+                                    <input
+                                        className="ml-[5rem] w-[80%] border border-solid border-borderGrey outline-none h-11 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                        type="text"
+                                        name="breeds"
+                                        onChange={(e) => handleChange("breeds", e.target.value.split(','))}
+                                    />
+                                    <div className="ml-2 h-11 px-[0.6rem] rounded-[5px] justify-start items-center flex bg-black cursor-pointer" >
+                                    {/* onClick={() => handleDeleteInput(index)} */}
+                                        <Image src={delicon} alt="delete"></Image>
+                                    </div>
+                                </div>
+                                {error && (
+                                    <div className="text-red-500 text-sm mt-1">
+                                        {error}
+                                    </div>
+                                )}
                             </div>
+
                     </div>
                 </div>
                 <div className="w-full flex justify-between mt-[5px] cursor-pointer">
-                    <button className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer" onClick={handleSave}>
-                        <div className="text-white text-base font-bold ">Save</div>
-                    </button>
+                <div className="text-white text-base font-normal bg-black p-2 rounded-md py-2.5" >Add another</div>
+
+                        <button className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer" onClick={handleSave}>
+                            <div className="text-white text-base font-bold ">Save</div>
+                        </button>
                 </div>
             </div>
         </div>

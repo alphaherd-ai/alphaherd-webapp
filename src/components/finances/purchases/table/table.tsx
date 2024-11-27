@@ -27,7 +27,7 @@ const FinancesPurchasesTable = () => {
     setCurrentPageNumber((prev) => prev - 1);
   };
   const goOnNextPage = () => {
-    if (currentPageNumber === data.length / TOTAL_VALUES_PER_PAGE) return;
+    if (currentPageNumber === Math.ceil(totalLen / TOTAL_VALUES_PER_PAGE)) return;
     setCurrentPageNumber((prev) => prev + 1);
   };
   useEffect(()=>{
@@ -74,7 +74,7 @@ useEffect(()=>{
     }
     setTotalLen(filteredData.length);
     setTableData(filteredData)
-    setPurchases(filteredData?.reverse().slice(0,TOTAL_VALUES_PER_PAGE));
+    setPurchases(filteredData?.slice(0,TOTAL_VALUES_PER_PAGE));
   }
 },[data,error,isLoading,setPurchases,startDate, endDate, selectedParties])
 
@@ -102,7 +102,7 @@ useEffect(()=>{
                 <div className=' flex  text-base font-medium  w-[8rem] '>Total cost</div>
                 <div className=' flex  text-base font-medium  w-[8rem] '>Total qty</div>
                 <div className=' flex  text-base font-medium  w-[8rem] '>Due date</div>
-                <div className=' flex  text-base font-medium  w-[8rem]'>Status</div>
+                <div className=' flex  text-base font-medium  w-[10rem]'>Status</div>
                 <div className=' flex  text-base font-medium  w-[3rem]'></div>
             </div>
           <FinancesPurchasesTableItem onCountsChange={handleCountsChange} purchases={purchases} data={data} isLoading={isLoading}/>

@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import React, { useEffect, useMemo, useState } from 'react'
 import useSWR from 'swr'
+import { getStatusStyles } from '@/utils/getStatusStyles';
 
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
@@ -23,6 +24,7 @@ const FinacesOverviewTableItem = ({currentPageNumber,setCurrentPageNumber,setSta
   const endDate = useMemo(() => urlSearchParams.get('endDate') ? new Date(urlSearchParams.get('endDate')!) : null, [urlSearchParams]);
   const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
   const selectedInvoiceTypes = useMemo(() => urlSearchParams.getAll('selectedInvoiceTypes'), [urlSearchParams]);
+  const selectedStatus = useMemo(() => urlSearchParams.getAll('selectedStatus'), [urlSearchParams]);
   //Pagination in the table
   useEffect(()=>{
     const start=(currentPageNumber-1)*pagevalue;
@@ -35,11 +37,11 @@ const FinacesOverviewTableItem = ({currentPageNumber,setCurrentPageNumber,setSta
   useEffect(() => {
     if (!isLoading && !error && data) {
       let filteredData = data;
-
+      console.log(filteredData);
       if (startDate || endDate) {
         filteredData = filteredData.filter((item: any) => {
-          const itemDate = new Date(item.sale?.date || item.purchases?.date || item.expenses?.date);
-          console.log(itemDate)
+          const itemDate = new Date(item.sale?.date||item.purchases?.date||item.expenses?.date);
+          // console.log(itemDate)
           if (startDate && itemDate < startDate) return false;
           if (endDate && itemDate > endDate) return false;
           return true;
@@ -59,11 +61,18 @@ const FinacesOverviewTableItem = ({currentPageNumber,setCurrentPageNumber,setSta
           selectedInvoiceTypes.includes(item.type || item.expenses?.type)
         );
       }
+
+      if(selectedStatus.length>0){
+        console.log(selectedStatus);
+        filteredData=filteredData.filter((item:any)=>
+        selectedStatus.some((status)=>(item.sale?.status?.startsWith(status)) || (item.purchases?.status?.startsWith(status)) || (item.expenses?.status?.startsWith(status)))
+        )
+      }
       setTotalLen(filteredData.length);
       setTableData(filteredData);
       setTimeline(filteredData.slice(0,pagevalue));
     }
-  }, [data, isLoading, error, startDate, endDate, selectedParties, selectedInvoiceTypes]);
+  }, [data, isLoading, error, startDate, endDate, selectedParties, selectedInvoiceTypes,selectedStatus]);
 
   if (isLoading) return (<Loading />)
 
@@ -87,10 +96,30 @@ const FinacesOverviewTableItem = ({currentPageNumber,setCurrentPageNumber,setSta
           <div className='w-[8rem] flex  items-center    text-base font-medium'>{formatDateAndTime(data.sale?.dueDate || data.purchases?.dueDate || data.expenses?.dueDate).formattedDate}</div>
 
           <div className='w-[10rem] flex  items-center  text-base font-medium'>
-            <Tooltip content={data.sale?.status || data.purchases?.status || data.expenses?.status} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
-              <div className='bg-[#E7F5EE] rounded-md px-2 py-2' >
-                <span className="text-[#0F9D58]  text-sm font-medium ">{data.sale?.status || data.purchases?.status || data.expenses?.status}</span>
-              </div>
+          <Tooltip content={data.sale?.status || data.expenses?.status || data.purchases?.status} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
+          <div>
+                {
+                  (() => {
+                    const statusParts = (data.sale?.status || data.expenses?.status || data.purchases?.status).split('|').map((part: string) => part.trim());
+                    //console.log(statusParts);
+                     if (!statusParts.length) {
+                       return (
+                         <span className="text-[#6B7E7D] bg-[#EDEDED] px-2 py-1.5 text-sm font-medium rounded-[5px]">
+                           No Status
+                         </span>
+                       );
+                     }
+                    return statusParts.map((status: any, index: any) => {
+                      const styles = getStatusStyles(status);
+                      return (
+                        <span  key={index} className={`${styles?.textColor} ${styles?.bgColor} px-2 mr-2 py-1.5 text-sm font-medium rounded-[5px]`}>
+                          {status}
+                        </span>
+                      )
+                    })
+                  })
+                    ()}
+              </div >
             </Tooltip>
           </div>
 

@@ -6,6 +6,7 @@ export const GET = async (req: NextRequest) => {
   if (req.method !== 'GET') {
     return new Response('Method not allowed', { status: 405 });
   }
+  
 
   try {
     const inventoryId= await fetchInventoryId(req);

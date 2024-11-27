@@ -20,8 +20,13 @@ export const GET = async (req: NextRequest) => {
           include: {
             productBatch: true, 
           },
-        },
-      },
+        }, 
+        
+        
+      }, 
+      orderBy:{
+        date:"desc"
+      }
     });
 
     return new Response(JSON.stringify(expenses), {

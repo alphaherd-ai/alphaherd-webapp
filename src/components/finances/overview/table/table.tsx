@@ -32,7 +32,7 @@ const FinancesOverviewTable = () => {
     setCurrentPageNumber((prev) => prev - 1);
   };
   const goOnNextPage = () => {
-    if (currentPageNumber === data.length / TOTAL_VALUES_PER_PAGE) return;
+    if (currentPageNumber === Math.round(totalLen / TOTAL_VALUES_PER_PAGE)) return;
     setCurrentPageNumber((prev) => prev + 1);
   };
 

@@ -4,15 +4,24 @@ import Image from 'next/image'
 import cash from "../../../../assets/icons/finance/Cash.svg"
 
 
-const TransactionsBlanceSheetCashItem = ({mode}:any) => {
+const TransactionsBlanceSheetCashItem = ({mode,filterdate}:any) => {
 
   const transactionAmount = useSelector((state:any) => state.transactionAmount)
   console.log(transactionAmount)
+  const isodate = new Date(filterdate);
+  
 
-  const totalMoneyIn = transactionAmount
+  const filteredTransactionAmount = transactionAmount.filter((item: { date: any })=>{
+    const date=new Date(item.date);
+    return date.getFullYear() === isodate.getFullYear() && date.getMonth() === isodate.getMonth() && date.getDate() === isodate.getDate()
+  })
+
+  //console.log(filteredTransactionAmount);
+
+  const totalMoneyIn = filteredTransactionAmount
     .filter((transaction:any) => transaction.mode === mode)
     .reduce((a:any, b:any) => (b.moneyChange === "In" ? a + b.amountPaid : a), 0);
-  const totalMoneyOut = transactionAmount
+  const totalMoneyOut = filteredTransactionAmount
     .filter((transaction:any) => transaction.mode === mode)
     .reduce((a:any, b:any) => (b.moneyChange === "Out" ? a + b.amountPaid : a), 0);
 

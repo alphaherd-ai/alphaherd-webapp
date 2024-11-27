@@ -17,7 +17,9 @@ import TransactionsBlanceSheetCashItem from "./item";
 import TransactionsBlanceSheetUpiItem from "./itemUpi";
 import TransactionsBlanceSheetCardItem from "./itemCard";
 import TransactionsBlanceSheetNetBankingItem from "./itemRazorpay";
-import TransactionsBlanceSheetCashItemSales from "./itemSalesCash";
+import TransactionsBlanceSheetItemSales from "./itemSales";
+import TransactionsBlanceSheetItemExpenses from "./itemExpenses";
+import TransactionsBlanceSheetItemPurchases from "./itemPurchase";
 import TransactionsBlanceSheetCardItemSales from "./itemSalesCard";
 import TransactionsBlanceSheetNetBankingItemSales from "./itemSalesRazorpay";
 import TransactionsBlanceSheetUpiItemSales from "./itemSalesUpi";
@@ -98,13 +100,22 @@ const FinancesTransactionSheet = () => {
                                     </div>
                                 </div>
                                 <div
-                                    className={`px-2 py-1 ${activeTab === 'Expenses' ? 'bg-zinc-900 border-zinc-900' : 'bg-gray-100 border-neutral-400'} rounded-tr-[5px] rounded-br-[5px] border justify-start items-center gap-1 flex`}
+                                    className={`px-2 py-1 border-t-0 border-b-0 border-l border-r border-solid border-borderGrey ${activeTab === 'Expenses' ? 'bg-zinc-900 border-zinc-900' : 'bg-gray-100 border-neutral-400'}  border justify-start items-center gap-1 flex`}
                                     onClick={() => setActiveTab('Expenses')}
                                 >
                                     <div className={`text-sm font-medium ${activeTab === 'Expenses' ? 'text-gray-100' : 'text-textGrey2'}`}>
                                         Expenses
                                     </div>
                                 </div>
+                                <div
+                                    className={`px-2 py-1 border-t-0 border-b-0 border-l border-r border-solid border-borderGrey ${activeTab === 'Purchases' ? 'bg-zinc-900 border-zinc-900' : 'bg-gray-100 border-neutral-400'} rounded-tr-[5px] rounded-br-[5px] border justify-start items-center gap-1 flex`}
+                                    onClick={() => setActiveTab('Purchases')}
+                                >
+                                    <div className={`text-sm font-medium ${activeTab === 'Purchases' ? 'text-gray-100' : 'text-textGrey2'}`}>
+                                    Purchases
+                                    </div>
+                                </div>
+                                
                             </div>
 
                         </div>
@@ -115,17 +126,17 @@ const FinancesTransactionSheet = () => {
                                     <Image className="w-6 h-6 relative" src={righticon} alt="right_icon" onClick={handleNext}/>
                                 </div>
                                 <div className="text-gray-500 text-sm font-medium ">
-                                    {date.toLocaleDateString('en-US', {year:'numeric',month:'short',day:'numeric'})}
+                                    {new Date().toLocaleDateString('en-US', {year:'numeric',month:'short',day:'numeric'})!==date.toLocaleDateString('en-US', {year:'numeric',month:'short',day:'numeric'})?date.toLocaleDateString('en-US', {year:'numeric',month:'short',day:'numeric'}):"Today"}
                                 </div>
                             </div>
-                            {['Today'].map((label, index) => (
+                            {/* {['Today'].map((label, index) => (
                                 <button className="border-none bg-transparent" onClick={() => handleClick(index)} key={index}>
                                     <div className={`${index === clickedIndex ? "text-center text-teal-400 font-bold" : "text-neutral-400"} text-neutral-400 text-sm font-medium `} onClick={getCurrentDate}>
                                         {label}
                                     </div>
                                     {index === clickedIndex && <Image src={selecttab} alt="icon" />}
                                 </button>
-                            ))} 
+                            ))}  */}
                         </div>
                     </div>
                 </div>
@@ -137,7 +148,7 @@ const FinancesTransactionSheet = () => {
                         {isLoading ? <Loading /> : paymentMethod.map((item: any) => {
                             return (
                                 <div key={item.id}>
-                                    <TransactionsBlanceSheetCashItem mode={item.name} />
+                                    <TransactionsBlanceSheetCashItem mode={item.name} filterdate={date}/>
                                 </div>
                             );
                         })}
@@ -157,26 +168,59 @@ const FinancesTransactionSheet = () => {
                                         </span>
                                         {item.name}
                                     </div>
-                                    <TransactionsBlanceSheetCashItemSales mode={item.name} />
+                                    <TransactionsBlanceSheetItemSales mode={item.name} filterdate={date}/>
                                 </div>
                             );
                         })}
 
                     </div>}
 
+                    {activeTab === 'Expenses' &&
+                    <div className="flex">
 
-                {activeTab === 'Expenses' && <div><div className="h-16 flex border border-neutral-400 bg-white border-l ">
-                    <div className="items-center justify-center flex text-gray-500 text-xl font-bold w-1/4 border-0 border-r border-l border-solid py-4 border-borderGrey"><span className="mr-2"><Image src={cash} alt='cash' className='w-6 h-6 mt-1' /></span> Cash</div>
-                    <div className="items-center justify-center flex text-gray-500 text-xl font-bold w-1/4 border-0 border-r border-solid py-4 border-borderGrey"><span className="mr-2"><Image src={upi} alt='upi' className='w-6 h-6 mt-1' /></span> UPI</div>
-                    <div className="items-center justify-center flex text-gray-500 text-xl font-bold w-1/4 border-0 border-r border-solid py-4 border-borderGrey"><span className="mr-2"><Image src={card} alt='card' className='w-6 h-6 mt-1' /></span> Card</div>
-                    <div className="items-center justify-center flex text-gray-500 text-xl font-bold w-1/4 border-0 border-r border-solid py-4 border-borderGrey"><span className="mr-2"><Image src={razorpay} alt='razorpay' className='w-6 h-6 mt-1' /></span> Razorpay</div>
-                </div>
-                    <div className=" flex bg-gray-100 border-l border-r border-borderGrey py-2 ">
-                        <div className=" border-0 border-r border-l w-1/4 border-solid p-2 border-borderGrey"><TransactionsBlanceSheetItem /> </div>
-                        <div className="items-center justify-center flex text-gray-500 text-xl font-bold w-1/4 border-0 border-r border-solid p-2  flex-col border-borderGrey"><TransactionsBlanceSheetItem />  </div>
-                        <div className="items-center justify-center flex text-gray-500 text-xl font-bold w-1/4 border-0 border-r border-solid p-2  flex-col border-borderGrey"><TransactionsBlanceSheetItem />  </div>
-                        <div className="items-center justify-center flex text-gray-500 text-xl font-bold w-1/4 border-0 border-r border-solid p-2  flex-col border-borderGrey"><TransactionsBlanceSheetItem />  </div>
-                    </div></div>}
+                        {isLoading ? <Loading /> : paymentMethod.map((item: any) => {
+                            return (
+                                <div key={item.id} className="w-1/4 border-0 border-r border-l border-solid border-borderGrey bg-gray-100 pb-2">
+                                    <div className="items-center justify-center flex text-gray-500 text-xl font-bold  py-4 border-borderGrey bg-white mb-2">
+                                        <span className="mr-2">
+                                            <Image src={cash} alt='cash' className='w-6 h-6 mt-1' />
+                                        </span>
+                                        {item.name}
+                                    </div>
+                                    <TransactionsBlanceSheetItemExpenses mode={item.name} filterdate={date}/>
+                                </div>
+                            );
+                        })}
+
+                        
+
+                    </div>}
+
+                    {activeTab === 'Purchases' &&
+                    <div className="flex">
+
+                        {isLoading ? <Loading /> : paymentMethod.map((item: any) => {
+                            return (
+                                <div key={item.id} className="w-1/4 border-0 border-r border-l border-solid border-borderGrey bg-gray-100 pb-2">
+                                    <div className="items-center justify-center flex text-gray-500 text-xl font-bold  py-4 border-borderGrey bg-white mb-2">
+                                        <span className="mr-2">
+                                            <Image src={cash} alt='cash' className='w-6 h-6 mt-1' />
+                                        </span>
+                                        {item.name}
+                                    </div>
+                                    <TransactionsBlanceSheetItemPurchases mode={item.name} filterdate={date}/>
+                                </div>
+                            );
+                        })}
+
+                        
+
+                    </div>}
+
+                    
+
+
+                
 
             </div>
         </>

@@ -93,7 +93,7 @@ const DatabaseClientTable = () => {
           {/* Pass the sortedClients to the DatabaseClientTableItem component */}
           <DatabaseClientTableItem clients={sortedClients} isLoading={isLoading} />
           
-          <DatabaseClientBottombar />
+          
       </div>
   );
 };

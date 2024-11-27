@@ -19,6 +19,8 @@ import { generatePdfForInvoice } from "@/utils/salesPdf"
 import { generatePdfForInvoiceAndUpload } from "@/utils/uploadPdf"
 import { useRouter } from "next/navigation"
 import { create } from "domain"
+import Loading2 from "@/app/loading2"
+import { header } from "express-validator"
 
 const NewsalesBottomBar = ({estimateData}:any) => {
     const { headerData, tableData, totalAmountData, transactionsData } = useContext(DataContext);
@@ -27,14 +29,25 @@ const NewsalesBottomBar = ({estimateData}:any) => {
     const id = url.get('id');
     const router = useRouter();
     const [isSaving,setSaving]=useState(false);
+
+    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+
+    const balanceDue = totalAmountData.totalCost - totalPaidAmount + totalAmountToPay;
+
+    
     const handleSubmit = async () => {
-        if (!headerData.customer) {
+        if (!headerData.customer &&  !estimateData.customer) {
             alert('Customer is required');
             return;
         }
-        
+        // Remove the last item from the item table as it will not create inventory timeline due to null constraints in prisma
+        tableData.pop();
+        console.log(tableData);
         const allData = { headerData, tableData, totalAmountData, transactionsData };
-        console.log("this is all data", allData)
+        // console.log("this is all data", allData)
         let totalQty = 0;
         tableData.forEach(data => {
             totalQty += (data.quantity) || 0;
@@ -47,12 +60,14 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             sellingPrice: data.sellingPrice,
             taxAmount: data.gst,
             name: data.itemName,
-            itemType: data.itemType
+            itemType: data.itemType,
+            discount:data.discountPer,
+            serviceProvider:data.provider,
         }));
         const data = {
             customer: (id === null) ? allData.headerData.customer.value.clientName : estimateData.customer,
-            clientId:(id==null)?allData.headerData.customer.value.clientId:"",
-            email:(id=== null)?allData.headerData.customer.value.email:"",
+            clientId:(id==null)?allData.headerData.customer.value.clientId:estimateData.clientId,
+            email:(id=== null)?allData.headerData.customer.value.email:estimateData.email,
             notes: (id === null) ?allData.headerData.notes:estimateData.notes,
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo: (id === null) ?allData.headerData.invoiceNo:estimateData.invoiceNo,
@@ -65,14 +80,15 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             recordTransaction: {
                 create: allData.transactionsData
             },
-            status: "Pending",
+            status:balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
             type: FinanceCreationType.Sales_Invoice,
             items: {
                 create: items
             }
 
         }
-        console.log(appState.currentBranch)
+        console.log(items);
+        // console.log(appState.currentBranch)
         const notifData = {
             source: Notif_Source.Sales_Invoice,
             totalCost: data.totalCost,
@@ -80,9 +96,10 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             orgId: appState.currentOrgId,
             orgBranch: appState.currentOrg.orgName
         }
-        console.log(JSON.stringify(data))
-        console.log("this is notif data", notifData)
+        // console.log(JSON.stringify(data))
+        // console.log("this is notif data", notifData)
         try {
+            setSaving(true); 
             const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Invoice}?branchId=${appState.currentBranchId}`, data)
             const notifPromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
            
@@ -102,12 +119,12 @@ const NewsalesBottomBar = ({estimateData}:any) => {
         }
         finally{
             setSaving(false)
-        }
+         }
     };
 
     const downloadPdf = async () => {
         const allData = { headerData, tableData, totalAmountData };
-        console.log("this is all data", allData)
+        // console.log("this is all data", allData)
         let totalQty = 0;
         tableData.forEach(data => {
             totalQty += (data.quantity) || 0;
@@ -133,7 +150,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             contact:allData.headerData.customer.value.contact,
             overallDiscount: `${allData.totalAmountData.gst*100}%`,
             totalQty: totalQty,
-            status: "Pending",
+            status:(balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed'),
             type: FinanceCreationType.Sales_Invoice,
             items: {
                 create: items
@@ -171,7 +188,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
 
                 }),
             });
-            console.log('SMS sent successfully:', response);
+            // console.log('SMS sent successfully:', response);
         } catch (error) {
             console.error('Error while sending message', error);
         } 
@@ -189,7 +206,7 @@ const NewsalesBottomBar = ({estimateData}:any) => {
 
                 }),
             });
-            console.log('Whatsapp Message sent successfully:', response);
+            // console.log('Whatsapp Message sent successfully:', response);
         } catch (error) {
             console.error('Error while sending message', error);
         } 
@@ -207,19 +224,18 @@ const NewsalesBottomBar = ({estimateData}:any) => {
 
                 })
             });
-            console.log('Email sent successfully:', response);
+            // console.log('Email sent successfully:', response);
         } catch (error) {
             console.error('Error while saving data:', error);
         } 
     };
-
-    const isDisabled = !headerData?.customer || tableData.length === 0 || tableData.some(data => !data.itemName);
+    const isDisabled = headerData?.customer ? (!headerData?.customer) : (!estimateData?.customer) || id===null ? tableData.length === 1 :  tableData.length===0 
 
     return (
         <>
 
 
-            <div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
+            <div className="flex justify-end items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
                 {/* <div className="flex justify-between items-center gap-4 pl-4">
                     <Button className="p-2 bg-white rounded-md border border-solid  border-borderGrey  justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={printicon} alt="print"></Image>
@@ -245,21 +261,19 @@ const NewsalesBottomBar = ({estimateData}:any) => {
                     </Button>
                 </div> */}
                 <div className="flex justify-between items-center gap-4 pr-4">
-                    <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
+                    {/* <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
                         <Image src={drafticon} alt="draft"></Image>
                         <div>Save as Draft</div>
-                    </Button>
+                    </Button> */}
                     <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${
                         isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
                     }`}
-                    onClick={handleSubmit} disabled={isDisabled}>
+                    onClick={handleSubmit} disabled={isDisabled || isSaving}>
                         <Image src={checkicon} alt="check"></Image>
-                        <div>{isSaving?"Saving...":"Save"}</div>
+                        <div>{isSaving?<Loading2/>:"Save"}</div>
                     </Button>
                 </div>
             </div>
-
-
         </>
 
     )

@@ -31,7 +31,7 @@ const DatabaseDistributorTable = () => {
     console.log("distributor data is:",data);
     useEffect(() => {
         const handleWindowFocus = () => {
-          console.log('Window focused');
+          // console.log('Window focused');
         };
         window.addEventListener('focus', handleWindowFocus);
         return () => window.removeEventListener('focus', handleWindowFocus);
@@ -80,7 +80,7 @@ const DatabaseDistributorTable = () => {
       </div>
       <DatabaseDistributorTableItem distributors={distributors} data={data} isLoading={isLoading} />
      
-      <DatabaseDistributorBottombar />
+      
 
     </div>
 

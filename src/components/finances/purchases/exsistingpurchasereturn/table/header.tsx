@@ -57,14 +57,14 @@ const ExsistingPurcaseReturnHeader = ({otherData, isLoading}:any) => {
                 <div className="px-6  bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold ">Distributor:</div>
-                       <span className="text-textGrey2 text-base font-medium">{!isLoading ? otherData.distributor : <Loading2 />} </span>
+                       <span className="text-textGrey2 text-base font-medium">{!isLoading ? otherData?.distributor : <Loading2 />} </span>
                     </div>
                 </div>
                 <div className="px-6 py-1  bg-white rounded-[10px] justify-start items-center flex w-full ">
                     <div className="flex w-full justify-start">
                         <div className="text-gray-500 text-base font-bold  pr-[8px] w-3/12 py-3">Reference Number:</div>
                         <div className="flex items-center justify-between w-[29.4rem]">
-                            <span className="text-textGrey2 text-base font-medium">{!isLoading ? otherData.invoiceNo : <Loading2 />}</span>
+                            <span className="text-textGrey2 text-base font-medium">{!isLoading ? otherData?.invoiceNo : <Loading2 />}</span>
                             {/* <input
                                 ref={inputRef}
                                 className={`w-[25rem] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border-0 rounded-[5px] focus:border focus:border-solid focus:border-[#35BEB1] bg-inherit`}
@@ -89,7 +89,7 @@ const ExsistingPurcaseReturnHeader = ({otherData, isLoading}:any) => {
 
                         <div
                             className={"text-gray-500 text-base font-medium  w-full"}>
-                            {!isLoading ? formatDateAndTime(otherData.date).formattedDate : <Loading2 />}
+                            {!isLoading ? formatDateAndTime(otherData?.date).formattedDate : <Loading2 />}
                         </div>
 
 
@@ -101,7 +101,7 @@ const ExsistingPurcaseReturnHeader = ({otherData, isLoading}:any) => {
                         
                         <div
                             className={"text-gray-500 text-base font-medium  w-full"}>
-                             {!isLoading ? formatDateAndTime(otherData.dueDate).formattedDate : <Loading2 />}
+                             {!isLoading ? formatDateAndTime(otherData?.dueDate).formattedDate : <Loading2 />}
                         </div>
 
 
@@ -113,7 +113,7 @@ const ExsistingPurcaseReturnHeader = ({otherData, isLoading}:any) => {
                 <div className="px-6 py-1  bg-white rounded-[10px] justify-between items-center gap-4 flex w-full ">
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold py-3">Notes:</div>
-                        <div className='w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0 outline-none'>{!isLoading ? otherData.notes : <Loading2 />}</div>
+                        <div className='w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0 outline-none'>{!isLoading ? otherData?.notes : <Loading2 />}</div>
                         </div>
                 </div>
             </div>

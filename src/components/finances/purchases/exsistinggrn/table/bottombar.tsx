@@ -12,30 +12,29 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from '@nextui-org/react'
 
-const ExsistingGrnBottomBar = ({existingPurchaseData}: any) => {
+const ExsistingGrnBottomBar = ({ existingPurchaseData }: any) => {
 
-    const appState = useAppSelector((state) => state.app);
-    console.log("app state is in existingsales bottom :" , appState);
-    const [email, setEmail] = useState("");
-    console.log("data in bottom bar is :", existingPurchaseData);
+  const appState = useAppSelector((state) => state.app);
+  
+  const [email, setEmail] = useState("");
+ 
+  const data = existingPurchaseData;
+  const shareInvoiceViaEmail = async () => {
+    try {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/email`, {
+        email: existingPurchaseData.email,
+        invoiceData: existingPurchaseData,
+      });
+      if (response.status === 200) {
+        alert("Invoice sent successfully");
 
-    const data = existingPurchaseData;
-    const shareInvoiceViaEmail = async () => {
-        try {
-          const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/email`, {
-            email: existingPurchaseData.email,
-            invoiceData: existingPurchaseData,
-          });
-          if (response.status === 200) {
-            alert("Invoice sent successfully");
-            
-           
-          }
-        } catch (error) {
-          console.error("Error sending invoice:", error);
-          alert("Failed to send invoice");
-        }
-      };
+
+      }
+    } catch (error) {
+      console.error("Error sending invoice:", error);
+      alert("Failed to send invoice");
+    }
+  };
   return (
     <>
 

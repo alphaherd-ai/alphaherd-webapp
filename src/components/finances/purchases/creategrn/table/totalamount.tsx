@@ -1,4 +1,4 @@
-import React, { useContext,useEffect,useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Rupee from "../../../../../assets/icons/finance/rupee.svg"
 import Image from "next/image"
 import { Button } from "@nextui-org/react";
@@ -16,8 +16,8 @@ const CreateGrnTotalAmount = () => {
     const { tableData, headerData } = useContext(DataContext);
     let totalAmount = 0;
     tableData.forEach(data => {
-      
-            totalAmount += (data.quantity * Number(data.unitPrice) + data.quantity * data.gst*Number(data.unitPrice)-(data.quantity*data.discountPercent/100*Number(data.unitPrice)||0))||0;    
+
+        totalAmount += (data.quantity * Number(data.unitPrice) + data.quantity * data.gst * Number(data.unitPrice) - (data.quantity * data.discountPercent / 100 * Number(data.unitPrice) || 0)) || 0;
     });
 
     const { totalAmountData, setTotalAmountData } = useContext(DataContext);
@@ -29,7 +29,7 @@ const CreateGrnTotalAmount = () => {
         { value: 'percent', label: '₹ in Percent' },
         { value: 'amount', label: '₹ in Amount' }
     ];
-    const [startDate,setDate]=useState(new Date());
+    const [startDate, setDate] = useState(new Date());
     const [shipping, setShipping] = useState<string>('');
     const [adjustment, setAdjustment] = useState<string>('');
 
@@ -52,13 +52,13 @@ const CreateGrnTotalAmount = () => {
         }
     };
 
-    useEffect(()=>{
-        if(totalAmountData.subTotal==0) {
+    useEffect(() => {
+        if (totalAmountData.subTotal == 0) {
             setShipping('');
             setAdjustment('');
         }
-      },[totalAmountData])
-      
+    }, [totalAmountData])
+
 
       const [discountMethod, setDiscountMethod] = useState("amount");
       const handleSelectChange = (selectedOption: any) => {
@@ -135,15 +135,11 @@ const CreateGrnTotalAmount = () => {
     // };
 
     useEffect(() => {
-        updateGrandTotal(); 
+        updateGrandTotal();
     }, [totalAmount, overAllDiscount, shipping, adjustment]);
 
 
-    const [showPopup, setShowPopup] = React.useState(false);
     
-    const togglePopup = () => {
-        setShowPopup(!showPopup);
-    }
 
 
     const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
@@ -151,155 +147,107 @@ const CreateGrnTotalAmount = () => {
     const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
 
-    const balanceDue = grandAmt-totalPaidAmount+totalAmountToPay;
+    const balanceDue = -grandAmt - totalPaidAmount + totalAmountToPay;
 
 
     const [count, setCount] = useState(0);
     const [initialInvoiceNo, setInitialInvoiceNo] = useState('');
-  
+
+    
+
     useEffect(() => {
-      if (showPopup) {
-        setCount((prevCount) => prevCount + 1);
-      }
-    }, [showPopup]);
-  
-    useEffect(() => {
-      if (showPopup) {
-        const newInvoiceNo = generateInvoiceNumber(count);
-        setInitialInvoiceNo(newInvoiceNo);
-      }
-    }, [count, showPopup]);
+       
+            const newInvoiceNo = generateInvoiceNumber(count);
+            setInitialInvoiceNo(newInvoiceNo);
+        
+    }, [count]);
 
 
-    console.log(headerData)
+    // console.log(headerData)
 
     const customStyles = {
         control: (provided: any, state: any) => ({
-          ...provided,
-          width: '100%',
-          maxWidth: '100%',
-          border: state.isFocused ? '1px solid #35BEB1' : 'none',
-          '&:hover': {
-            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
+            border: state.isFocused ? '1px solid #35BEB1' : 'none',
+            '&:hover': {
+                borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4',
             },
-          boxShadow: state.isFocused ? 'none' : 'none',
+            boxShadow: state.isFocused ? 'none' : 'none',
         }),
         valueContainer: (provided: any) => ({
-          ...provided,
-          width: '100%',
-          maxWidth: '100%',
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
         }),
         singleValue: (provided: any, state: any) => ({
-          ...provided,
-          width: '100%',
-          maxWidth: '100%',
-          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
+            color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
         }),
         menu: (provided: any) => ({
-          ...provided,
-          backgroundColor: 'white',
-          width: '100%',
-          maxWidth: '100%',
+            ...provided,
+            backgroundColor: 'white',
+            width: '100%',
+            maxWidth: '100%',
         }),
         option: (provided: any, state: any) => ({
-          ...provided,
-          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
-          color: state.isFocused ? 'white' : '#6B7E7D',
-          '&:hover': {
-            backgroundColor: '#35BEB1',
-            color: 'white',
-          },
+            ...provided,
+            backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+            color: state.isFocused ? 'white' : '#6B7E7D',
+            '&:hover': {
+                backgroundColor: '#35BEB1',
+                color: 'white',
+            },
         }),
-      };
+    };
 
-  return (
-    <>
+    return (
+        <>
 
 
-            <div className="flex w-full box-border bg-gray-100 pt-[20px] pb-[20px]">
-            <div className="w-1/2 mr-4 flex flex-col gap-4">
+            <div className="flex gap-4 pt-[20px] pb-[20px]">
 
-            <div className="px-6 py-2 bg-white rounded-[5px] justify-between items-center gap-4 flex w-full border border-solid border-borderGrey">
-                    <div className="flex gap-[0.2rem] items-center w-full">
-                        <div className="text-gray-500 text-base font-bold  w-[20rem]">Last Date Of Item Returns:</div>
-                        
-                        <div className="customDatePickerWidth">
-                        <DatePicker
-                                        className="w-full"
-                                        selected={startDate}
-                                        onChange={handleDateChange}
-                                        calendarClassName="react-datepicker-custom"
-                                        customInput={
-                                            <div className='relative'>
-                                                <input
-                                                    className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={startDate.toLocaleDateString()}
-                                                    readOnly
-                                                />
-                                                <Image
-                                                    src={calicon}
-                                                    alt="Calendar Icon"
-                                                    className="absolute right-2 top-2 cursor-pointer"
-                                                    width={50}
-                                                    height={20}
-                                                />
-                                            </div>
-                                        }
-                                    />
-                                    </div>
-                    </div>
-            </div>
+                <div className="w-1/2 mr-4 flex flex-col gap-4">
+                    <div className="px-6 py-2 bg-white rounded-[5px] justify-between items-center gap-4 flex w-full border border-solid border-borderGrey">
+                        <div className="flex gap-[0.2rem] items-center w-full">
+                            <div className="text-gray-500 text-base font-bold  w-[20rem]">Last Date Of Item Returns:</div>
 
-            <div className="w-full mr-4 flex flex-col">
-                    <div className="w-full  p-6 bg-white rounded-tl-md rounded-tr-md border border-solid  border-borderGrey justify-between items-center gap-6 flex">
-                        <div className="text-gray-500 text-xl font-medium ">Payments</div>
-                        
-                                    <Button 
-                                        onClick={togglePopup}
-                                        variant="solid"
-                                        className="capitalize flex h-9 py-2.5 border-none text-base bg-black text-white rounded-lg cursor-pointer">
-                                        <div className='flex'><Image src={Rupee} alt='Rupee' className='w-6 h-6 ' /></div>
-                                        Record Payment
-                                    </Button>       
-                    </div>
-                    {transactionsData && transactionsData.map((transaction, index) => (
-                        transaction.isAdvancePayment &&
-                    (<div  key={index} className="w-full  px-6 py-4 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
-                        <div className="text-gray-500 text-lg font-medium ">Advance Paid</div>
-                        <div className='flex items-center h-9 px-4 py-2.5 justify-between rounded-lg '>   
-                            <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
-                                ₹ {transaction.amountPaid}
-                            </div>       
+                            <div className="customDatePickerWidth">
+                                <DatePicker
+                                    className="w-full"
+                                    selected={startDate}
+                                    onChange={handleDateChange}
+                                    calendarClassName="react-datepicker-custom"
+                                    customInput={
+                                        <div className='relative'>
+                                            <input
+                                                className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                                value={startDate.toLocaleDateString()}
+                                                readOnly
+                                            />
+                                            <Image
+                                                src={calicon}
+                                                alt="Calendar Icon"
+                                                className="absolute right-2 top-2 cursor-pointer"
+                                                width={50}
+                                                height={20}
+                                            />
+                                        </div>
+                                    }
+                                />
+                            </div>
                         </div>
-                    </div>)
-                    ))
-                    }
 
-                    {transactionsData && transactionsData.map((transaction, index) => (
-                    !transaction.isAdvancePayment &&
-                    (<div  key={index} className="w-full  px-6 py-4 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
-                        <div className="text-gray-500 text-lg font-medium ">{formatDateAndTime(transaction.date).formattedDate}</div>
-                        <div className='flex items-center h-9 px-4 py-2.5 justify-between rounded-lg '>   
-                            <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
-                                ₹ {transaction.amountPaid}
-                            </div>       
-                        </div>
-                    </div>)
-                    ))
-                    }       
-
-                    <div className="w-full  px-6 bg-white rounded-bl-md rounded-br-md justify-between items-center flex border border-t-0 border-solid border-borderGrey">
-                        <div className="text-gray-500 text-base font-bold  w-1/3 py-4">Balance Due</div>
-                        <div className="text-gray-500 text-lg font-medium  w-1/3 py-4 flex  items-center"></div>
-                        <div className="text-gray-500 text-base font-bold  w-1/3 py-4 ">₹{balanceDue < 0 ? -1*(balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2) }
-                        {balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
-                            You owe
-                        </span> : balanceDue === 0 ? "" : <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
-                            You’re owed
-                        </span>}
-                        </div>
-                       
                     </div>
+
+
+                    <div className="w-full mr-4 flex flex-col mt-8">
+                        <Popup headerdata={headerData} setCount={setCount} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} balanceDue={balanceDue} />
+                    </div>
+
                 </div>
 
             </div>
@@ -361,14 +309,12 @@ const CreateGrnTotalAmount = () => {
                     <div className="text-textGreen text-base font-bold ">Grand total</div>
                         <div className="text-right text-textGreen text-base font-bold "> { grandAmt.toFixed(2)}</div>
                     </div>
+
                 </div>
             </div>
 
-            {showPopup && <Popup headerdata={headerData} onClose={togglePopup} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} balanceDue={balanceDue} />}
-
-
         </>
-  )
+    )
 }
 
 export default CreateGrnTotalAmount

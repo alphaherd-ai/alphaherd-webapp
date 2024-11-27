@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import closeicon from "../../../assets/icons/inventory/closeIcon.svg";
 import Image from "next/image";
 import { Bounce, ToastContainer, toast } from 'react-toastify';
@@ -13,7 +13,26 @@ import { useAppSelector } from '@/lib/hooks';
 
 const AddServiceCategory = ({onClose}:any) => {
     const [inputs, setInputs] = useState<string[]>(['']);
-    const appState = useAppSelector((state) => state.app)
+    const appState = useAppSelector((state) => state.app);
+    const [existingCategory, setExistingCategory] = useState<string[]>([]);
+    const [errors, setErrors] = useState<string[]>([]);
+
+    useEffect(() => {
+        const fetchExistingItems = async () => {
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/serviceCategory/getAll?branchId=${appState.currentBranchId}`);
+                const data = await response.json();
+                const names = data.map((item: { name: any[]; }) => item.name[0]); 
+                setExistingCategory(names);
+                
+                console.log('Existing reasons fetched:', names); 
+            } catch (error) {
+                console.error('Error fetching existing items:', error);
+            }
+        };
+
+        fetchExistingItems();
+    }, [appState.currentBranchId]);
 
     const handleAddInput = () => {
         setInputs([...inputs, '']);
@@ -29,9 +48,37 @@ const AddServiceCategory = ({onClose}:any) => {
         const newInputs = [...inputs];
         newInputs[index] = value;
         setInputs(newInputs);
+        const newErrors = [...errors];
+        newErrors[index] = '';
+        setErrors(newErrors);
+        console.log(`Input changed at index ${index}: ${value}`);
     };
 
     const handleSave = async () => {
+        const newErrors = [...errors];
+    let hasError = false;
+
+    // Define default service categories
+    const defaultServiceCategories = ['Grooming', 'Consultation'];
+    const allExistingCategories = [...existingCategory, ...defaultServiceCategories];
+
+    inputs.forEach((input, index) => {
+        const trimmedInput = input.trim();
+        if (allExistingCategories.includes(trimmedInput)) {
+            newErrors[index] = 'This Service Category already exists';
+            hasError = true;
+            console.log(`Duplicate Service Category detected: ${trimmedInput}`);
+        } else {
+            newErrors[index] = '';
+        }
+    });
+
+    setErrors(newErrors);
+
+        if (hasError) {
+            console.log('Error found, not saving.'); 
+            return; 
+        }
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/serviceCategory/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
@@ -43,9 +90,9 @@ const AddServiceCategory = ({onClose}:any) => {
                 }),
             });
             if (response.ok) {
-                console.log('Data saved successfully');
-                onClose();
-                window.dispatchEvent(new FocusEvent('focus'));
+                const result = await response.json();
+                // console.log('Payment methods saved:', result);
+                onClose(); 
             } else {
                 console.error('Failed to save data:', response.statusText);
             }
@@ -70,7 +117,8 @@ const AddServiceCategory = ({onClose}:any) => {
                     
                     <div className='w-full flex flex-col  gap-3'>
                         {inputs.map((input, index) => (
-                            <div key={index} className="w-full flex  items-center">
+                            <div key={index} className="w-full ">
+                                <div className='flex  items-center'>
                                 <div className="text-gray-500 text-base font-medium w-[12rem]">Service Category</div>
                                 <input
                                     className="ml-[5rem] w-[80%] border border-solid border-borderGrey outline-none h-11 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
@@ -85,6 +133,12 @@ const AddServiceCategory = ({onClose}:any) => {
                                     <Image src={delicon} alt="delete"></Image>
                                 </div>
                             </div>
+                            {errors[index] && (
+                                <div className="text-red-500 text-sm mt-1 ml-[17rem]">
+                                    {errors[index]}
+                                </div>
+                            )}
+                        </div>
                         ))}
                     </div>
                     

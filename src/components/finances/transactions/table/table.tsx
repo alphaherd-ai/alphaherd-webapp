@@ -37,7 +37,7 @@ const FinancesTransactionsTable = () => {
     setCurrentPageNumber((prev) => prev - 1);
   };
   const goOnNextPage = () => {
-    if (currentPageNumber === data.length / TOTAL_VALUES_PER_PAGE) return;
+    if (currentPageNumber === Math.ceil(totalLen / TOTAL_VALUES_PER_PAGE)) return;
     setCurrentPageNumber((prev) => prev + 1);
   };
   useEffect(() => {
@@ -54,7 +54,7 @@ const FinancesTransactionsTable = () => {
   const currentUrl = useSearchParams();
   useEffect(() => {
     const handleWindowFocus = () => {
-      console.log('Window focused');
+      // console.log('Window focused');
     };
     window.addEventListener('focus', handleWindowFocus);
     return () => window.removeEventListener('focus', handleWindowFocus);
@@ -72,7 +72,7 @@ const FinancesTransactionsTable = () => {
       })
       setTotalLen(filteredData.length);
       setTableData(filteredData);
-      setTransactions(filteredData.reverse().slice(0, TOTAL_VALUES_PER_PAGE));
+      setTransactions(filteredData.slice(0, TOTAL_VALUES_PER_PAGE));
     }
   }, [data, error, isLoading, setTransactions]);
 

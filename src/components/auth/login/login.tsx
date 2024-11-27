@@ -32,7 +32,7 @@ const Login = () => {
 
   const handleChange = (event: any) => {
 
-    console.log(data, event.target.value);
+    // console.log(data, event.target.value);
 
     const { name, value } = event.target;
     setData({
@@ -44,8 +44,8 @@ const Login = () => {
 
 
   async function userDetailsLoginSubmit() {
-    console.log(process.env.NEXT_PUBLIC_API_BASE_PATH);
-    console.log(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/login${userInviteString ? "?userInviteString=" + userInviteString : ""}`);
+    // console.log(process.env.NEXT_PUBLIC_API_BASE_PATH);
+    // console.log(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/login${userInviteString ? "?userInviteString=" + userInviteString : ""}`);
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/login${userInviteString ? "?userInviteString=" + userInviteString : ""}`,
       {
         method: 'POST',
@@ -55,9 +55,9 @@ const Login = () => {
         body: JSON.stringify(data)
       }
     )
-    console.log(res);
+    // console.log(res);
     let json = await res.json();
-    console.log(json)
+    // console.log(json)
     if (!res.ok) {
       throw new Error(json.message);
     }
@@ -67,6 +67,7 @@ const Login = () => {
 
   const formSubmit = async () => {
 
+    // console.log("form button")
     if (loading) return; // Prevent duplicate submissions
 
     setLoading(true); // Set loading state to true
@@ -78,7 +79,22 @@ const Login = () => {
       const isCurrentOrgAdmin = isAdminOfOrg(currentOrgId, user as UserState);
       const isCurrentBranchManager = isManagerOfBranch(currentBranchId, user as UserState);
 
-      const appState: AppState = {
+      // console.log(currentBranchUserRole);
+      // console.log(currentBranch);
+      // console.log(currentOrgId);
+      // console.log(currentBranchId);
+      // console.log(isCurrentOrgAdmin);
+      // console.log(isCurrentBranchManager);
+
+      //   const initialState : AppState = {
+      //     currentOrgId : null,
+      //     currentBranchId : null,
+      //     currentOrg : null,
+      //     isCurrentOrgAdmin: false,
+      //     isCurrentBranchManager: false
+      // }
+
+      const appState : AppState = {
         currentOrgId,
         currentBranchId,
         currentBranch,

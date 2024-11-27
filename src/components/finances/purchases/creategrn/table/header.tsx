@@ -57,12 +57,13 @@ const CreateGrnHeader = ({existingHeaderData}:any) => {
         setHeaderData((prevData)=>({...prevData,dueDate:date}))
     }
     useEffect(()=>{
+        
         if(id){
             setHeaderData(existingHeaderData)
-            console.log("this is header data",headerData)
+            // console.log("this is header data",headerData)
         }
      else{
-        setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo}))}
+        setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo,dueDate:dueDate}))}
     },[])
     useEffect(()=>{
         if(!isLoading&&!error&&data){

@@ -27,6 +27,7 @@ import useSWR from 'swr';
 import { useSearchParams } from 'next/navigation';
 import { ConversationContextImpl } from 'twilio/lib/rest/conversations/v1/conversation';
 import { M_PLUS_1 } from 'next/font/google';
+import { useRouter } from 'next/router';
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
@@ -104,7 +105,7 @@ const NewsalesReturnTable = () => {
     const { tableData: items, setTableData: setItems } = useContext(DataContext);
 
     if (id) {
-        const { data, isLoading, error } = DataFromInvoice(Number(id), appState.currentBranchId);
+        const { data, isLoading, error } = DataFromInvoice(id ? Number(id) : null, appState.currentBranchId);
         invoiceData = data;
         isInvoiceDataError = error;
         isInvoiceDataLoading = isLoading;
@@ -117,20 +118,22 @@ const NewsalesReturnTable = () => {
             setOtherData(otherData)
             const shallowDataCopy = [...items];
             const itemData = shallowDataCopy.map((item: any) => ({
-                productId: item.productBatch.productId,
+                itemType: item.itemType,
+                productId: item.itemType === "product" ? item.productBatch.productId : null,
+                serviceId: item.itemType === "product" ? null : item.serviceId,
                 itemName: item.name,
                 quantity: item.quantity,
                 sellingPrice: item.sellingPrice,
-                expiry: item.productBatch.expiry,
-                batchNumber: item.productBatch.batchNumber,
-                gst: item.productBatch.product.tax,
-                id: item.productBatch.id,
-                discountAmt: item.discountAmt
+                expiry: item.itemType === 'product' ? item.productBatch.expiry : "",
+                batchNumber: item.itemType === 'product' ? item.productBatch.batchNumber : "",
+                gst: item.taxAmount,
+                id: item.itemType === 'product' ? item.productBatch.productId : item.serviceId,
+                provider: item.itemType === 'product' ? "" : item.serviceProvider
             }));
             setItems(itemData);
 
         }
-    }, [invoiceData]);
+    }, [invoiceData, isInvoiceDataLoading, isInvoiceDataError, id]);
 
     const taxOptions = [
         { value: 'Tax excl.', label: 'Tax excl.' },
@@ -217,6 +220,7 @@ const NewsalesReturnTable = () => {
         const updatedItems = [...items];
         updatedItems.splice(index, 1);
         setItems(updatedItems);
+        setTableData(updatedItems);
     }, [items]);
 
     // const handleGstSelect = (selectedGst: any, index: number) => {
@@ -457,6 +461,7 @@ const NewsalesReturnTable = () => {
 
 
     const handleProviderSelect = useCallback((selectedProvider: any, index: number) => {
+        console.log('trigger')
         const updatedItems = [...tableData];
         updatedItems[index] = {
             ...updatedItems[index],
@@ -472,6 +477,7 @@ const NewsalesReturnTable = () => {
             setItems(items);
             setTableData(items);
         }
+        //console.log(items);
     }, [id, items]);
 
 
@@ -569,18 +575,18 @@ const NewsalesReturnTable = () => {
                             <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12  text-gray-500 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey'>
                                 <div className='flex text-gray-500 text-base font-medium w-[3rem]'>No.</div>
                                 <div className='flex text-gray-500 text-base font-medium w-[12rem]'>Name</div>
-                                <div className='flex text-gray-500 text-base font-medium w-[8rem]'>Batch No.</div>
+                                <div className='flex text-gray-500 text-base font-medium w-[8rem]'>Batch No./Provider</div>
                                 <div className='flex text-gray-500 text-base font-medium w-[7rem]'>Selling Price</div>
 
-                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>Quantity</div>
+                                <div className='flex text-gray-500 justify-center text-base font-medium w-[8rem]'>Quantity</div>
 
 
-                                <div className='flex text-gray-500 text-base font-medium w-[6rem]'>Tax %</div>
-                                <div className='flex text-gray-500 text-base font-medium w-[6rem]'>Discount %</div>
-                                <div className='flex text-gray-500 text-base font-medium  w-[8rem]'>Tax Amt.</div>
+                                <div className='flex justify-center text-gray-500 text-base font-medium w-[6rem]'>Tax %</div>
+                                <div className='flex text-gray-500 justify-center text-base font-medium  w-[10rem]'>Tax Amt.</div>
+                                <div className='flex text-gray-500 text-base font-medium w-[6rem] mr-4'>Discount %</div>
                                 <div className='flex text-gray-500 text-base font-medium  w-[8rem]'>Discount Amt.</div>
                                 <div className='flex text-gray-500 text-base font-medium w-1/12'>Total</div>
-                                <div className='flex text-gray-500 text-base font-medium w-1/12 '></div>
+                                <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
                             </div>
                             {items.map((item: any, index: number) => (
                                 <div key={index + 1} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400 py-2'>
@@ -667,14 +673,14 @@ const NewsalesReturnTable = () => {
                                 /> */}
                                     </div>
 
-                                    <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
+                                    <div className='w-[8rem] justify-center flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
                                         <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
                                             <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
                                                 <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
                                             </button>
                                             <input
                                                 type="number"
-                                                value={item.length?item.quantity:1}
+                                                value={item.quantity ? item.quantity : 0}
                                                 onChange={(e) => handleInputChange(index, e.target.value, 'quantity')}
                                                 className="w-[3rem] text-textGrey2   text-center border border-solid border-borderGrey h-8  rounded-md font-medium text-base"
                                                 name={`quantity-${index + 1}`}
@@ -687,7 +693,7 @@ const NewsalesReturnTable = () => {
                                         </div>
                                     </div>
 
-                                    <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>
+                                    <div className='w-[6rem] justify-center flex items-center text-neutral-400 text-base font-medium'>
                                         {/* { id==null?(
                                         <Select
                                             className="text-neutral-400 text-base font-medium"
@@ -707,27 +713,29 @@ const NewsalesReturnTable = () => {
                                         {item.gst * 100 || 0}%
                                         {/* )} */}
                                     </div>
-                                    <div className='w-[6rem] flex  items-center text-neutral-400 text-base font-medium'>
-                                        <input className='w-[2rem] text-neutral-400 outline-none border-none' placeholder='0' type='number' value={item.discountPer} onChange={(e) => handleDiscountPercentChange(index, e.target.value)}></input>%
+
+                                    <div className='w-[10rem] justify-center flex items-center text-neutral-400 text-base font-medium'>{`₹${((item?.sellingPrice * item?.quantity * item?.gst) || 0).toFixed(2)}`}</div>
+                                    <div className='w-[6rem] flex  items-center text-neutral-400 text-base font-medium mr-4'>
+                                        <input className='w-[3rem] border border-solid border-borderGrey px-2 py-1 rounded-md text-neutral-400 outline-none mr-1' placeholder='0' type='number' value={item.discountPer ? item.discountPer : 0} onChange={(e) => handleDiscountPercentChange(index, e.target.value)}></input>%
                                     </div>
-                                    <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium'>{`₹${((item?.sellingPrice * item?.quantity * item?.gst) || 0).toFixed(2)}`}</div>
                                     <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium'>
-                                        ₹<input className='w-[5rem] text-neutral-400 outline-none border-none' placeholder='0' type='number' value={item.discountAmt} onChange={(e) => handleDiscountAmtChange(index, e.target.value)}></input>
+                                        ₹<input className='w-[5rem] ml-1 border border-solid border-borderGrey px-2 py-1 rounded-md text-neutral-400 outline-none' placeholder='0' type='number' value={item.discountAmt ? item.discountAmt : 0} onChange={(e) => handleDiscountAmtChange(index, e.target.value)}></input>
                                     </div>
                                     <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium'>{`₹${(
                                         (item.quantity || 0) * (item.sellingPrice || 0) +
                                         (item.quantity || 0) * (item.sellingPrice || 0) * (item.gst || 0) -
                                         ((item.quantity || 0) * (item.sellingPrice || 0) * (item.discountPer || 0) / 100)
                                     ).toFixed(2)}`}</div>
-                                    <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[20px] justify-end'>
-                                        <button className="border-0 bg-transparent cursor-pointer">
-                                            <Image className='w-5 h-5' src={sellicon} alt="sell" ></Image>
-                                        </button>
+                                    {index !== items.length - 1 ?
+                                        <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[20px] justify-end'>
+                                            <button className="border-0 bg-transparent cursor-pointer">
+                                                <Image className='w-5 h-5' src={sellicon} alt="sell" ></Image>
+                                            </button>
 
-                                        <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
-                                            <Image className='w-5 h-5' src={delicon} alt="delete" ></Image>
-                                        </button>
-                                    </div>
+                                            <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
+                                                <Image className='w-5 h-5' src={delicon} alt="delete" ></Image>
+                                            </button>
+                                        </div> : <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[20px] justify-end'></div>}
                                 </div>
                             ))}
                             <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12  text-gray-500 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey'>
@@ -735,18 +743,19 @@ const NewsalesReturnTable = () => {
                                 <div className='flex text-gray-500 text-base font-medium w-[12rem]'>Total</div>
                                 <div className='flex text-gray-500 text-base font-medium w-[8rem]'></div>
                                 <div className='flex text-gray-500 text-base font-medium w-[7rem]'></div>
-                                <div className='flex text-gray-500 text-base font-medium w-[10rem]'>{(items.reduce((acc: any, item: any) => { if (!item.itemName) return acc; return acc + item.quantity }, 0)) || 0} Items</div>
+                                <div className='flex justify-center text-gray-500 text-base font-medium w-[8rem]'>{(items.reduce((acc: any, item: any) => { if (!item.itemName) return acc; return acc + item.quantity }, 0)) || 0} Items</div>
 
                                 <div className='flex text-gray-500 text-base font-medium w-[6rem]'></div>
-                                <div className='flex text-gray-500 text-base font-medium w-[6rem]'></div>
-                                <div className='flex text-gray-500 text-base font-bold w-[8rem]'>{`₹${(items.reduce((acc: any, item: any) => {
+                                <div className='flex justify-center text-gray-500 text-base font-bold w-[10rem]'>{`₹${(items.reduce((acc: any, item: any) => {
                                     if (!item.itemName) return acc;
                                     return acc + item.quantity * item.gst * item.sellingPrice
                                 }, 0) || 0).toFixed(2)}`}</div>
-                                <div className='flex text-gray-500 text-base font-bold w-[8rem]'>{`₹${(items.reduce((acc: any, item: any) => { if (!item.itemName) return acc; return acc + item.discountAmt }, 0) || 0).toFixed(2)}`}</div>
+                                <div className='flex text-gray-500 text-base font-medium w-[6rem]'></div>
+
+                                <div className='flex text-gray-500 text-base font-bold w-[8rem] ml-4'>{`₹${(items.reduce((acc: any, item: any) => { if (!item.itemName) return acc; return acc + (item?.discountAmt || 0) }, 0) || 0).toFixed(2)}`}</div>
                                 <div className='flex text-gray-500 text-base font-bold w-1/12' >{`₹${(items.reduce((acc: any, item: any) => { if (!item.itemName) return acc; return acc + item.quantity * item.sellingPrice + item.quantity * item.gst * item.sellingPrice - (item?.discountAmt || 0) }, 0)).toFixed(2)}`}</div>
+
                                 <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
-                                {/* <div className='flex text-gray-500 text-base font-medium w-1/12'></div> */}
                             </div>
                         </div>
                     </div>

@@ -58,7 +58,7 @@ const Popup = ({ onClose }:any) => {
                 });
                 let json = await resp.json();
                 if(!resp.ok){
-                    console.log(json);
+                    // console.log(json);
                     throw new Error(json.message);
                 }
                 toast.success(json.message, {
@@ -112,32 +112,32 @@ const Popup = ({ onClose }:any) => {
                     <div className="w-[576px] h-[27px] justify-start items-center gap-2 inline-flex"><p className="text-gray-500">User Role:</p>
                         <div className="grow shrink basis-0 h-[27px] justify-start items-center flex hover:cursor-pointer">
                             {selectedTab == tabs[0] && (<div className="px-2 py-1 bg-zinc-900 rounded-tl-[5px] rounded-[5px] border border-zinc-900 justify-start items-center gap-1 flex">
-                                <div className="text-white text-sm font-bold font-['Satoshi']">
+                                <div className="text-white text-sm font-bold ">
                                     <div onClick={() => setSelectedTab(tabs[0])}>{tabs[0]}</div>
                                 </div>
                             </div>)}
                             {selectedTab !== tabs[0] && (<div className="px-2 py-1 bg-gray-100 border border-neutral-400 justify-start items-center gap-1 flex">
-                                <div className="text-neutral-400 text-sm font-bold font-['Satoshi']">
+                                <div className="text-neutral-400 text-sm font-bold ">
                                     <div onClick={() => setSelectedTab(tabs[0])}>{tabs[0]}</div>
                                 </div>
                             </div>)}
                             {selectedTab == tabs[1] && (<div className="px-2 py-1 bg-zinc-900 rounded-[5px] rounded-bl-[5px] border border-zinc-900 justify-start items-center gap-1 flex">
-                                <div className="text-white text-sm font-bold font-['Satoshi']">
+                                <div className="text-white text-sm font-bold ">
                                     <div onClick={() => setSelectedTab(tabs[1])}>{tabs[1]}</div>
                                 </div>
                             </div>)}
                             {selectedTab !== tabs[1] && (<div className="px-2 py-1 bg-gray-100 border border-neutral-400 justify-start items-center gap-1 flex">
-                                <div className="text-neutral-400 text-sm font-bold font-['Satoshi']">
+                                <div className="text-neutral-400 text-sm font-bold ">
                                     <div onClick={() => setSelectedTab(tabs[1])}>{tabs[1]}</div>
                                 </div>
                             </div>)}
                             {selectedTab == tabs[2] && (<div className="px-2 py-1 bg-zinc-900 rounded-[5px] rounded-bl-[5px] border border-zinc-900 justify-start items-center gap-1 flex">
-                                <div className="text-white text-sm font-bold font-['Satoshi']">
+                                <div className="text-white text-sm font-bold ">
                                     <div onClick={() => setSelectedTab(tabs[2])}>{tabs[2]}</div>
                                 </div>
                             </div>)}
                             {selectedTab !== tabs[2] && (<div className="px-2 py-1 bg-gray-100 border border-neutral-400 justify-start items-center gap-1 flex">
-                                <div className="text-neutral-400 text-sm font-bold font-['Satoshi']">
+                                <div className="text-neutral-400 text-sm font-bold ">
                                     <div onClick={() => setSelectedTab(tabs[2])}>{tabs[2]}</div>
                                 </div>
                             </div>)}

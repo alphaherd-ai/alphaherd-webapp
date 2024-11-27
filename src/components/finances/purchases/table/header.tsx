@@ -88,7 +88,7 @@ const FinancesPurchasesTableHeader = ({invoiceCount,orderCount,returnCount, purc
 <div onClick={togglePopup1} className='cursor-pointer mr-4 flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'>
             <Image src={Download} alt='Download' className='w-4  h-4' />
         </div>
-    <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
+    {/* <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
 
         <div  className='flex items-center justify-center w-7 h-7 border border-solid border-gray-300 border-0.5 rounded-md  p-1'><Image src={Chart} alt='Chart' className='w-4  h-4' /></div>
     </Link>

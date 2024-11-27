@@ -29,7 +29,7 @@ const NotificationList =  ({ notifs, isLoading }) => {
 
   const handleAction = (notifId: number, action: string,notifData:any) => {
     const acceptRequest= axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${notifData.productBatchId}?branchId=${appState.currentBranchId}`, {isApproved:true});
-    console.log(`Notification ID: ${notifId}, Action: ${action}`);
+    // console.log(`Notification ID: ${notifId}, Action: ${action}`);
 
   };
 

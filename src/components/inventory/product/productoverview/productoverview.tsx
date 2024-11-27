@@ -91,6 +91,9 @@ const ProductDetails = () => {
         return `${value}°C`;
     }
 
+
+    console.log(fetchedProduct);
+
     return <>
         <div className="w-full h-full relative  rounded-[20px] pr-[16px] pl-[16px] z-1">
             <div className="w-full flex items-center justify-between">

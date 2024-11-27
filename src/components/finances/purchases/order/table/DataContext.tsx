@@ -8,8 +8,8 @@ interface DataContextType {
   setTableData: Dispatch<SetStateAction<{ [key: string]: any }[]>>;
   totalAmountData: { [key: string]: any };
   setTotalAmountData: Dispatch<SetStateAction<{ [key: string]: any }>>;
-  distributorData: { value: string; label: string }[];
-  setDistributorData: Dispatch<SetStateAction<{ value: string; label: string }[]>>;
+  transactionsData: { [key: string]: any }[];
+  setTransactionsData: Dispatch<SetStateAction<{ [key: string]: any }[]>>;
 }
 
 const defaultValue: DataContextType = {
@@ -19,8 +19,8 @@ const defaultValue: DataContextType = {
   setTableData: () => {},
   totalAmountData: {},
   setTotalAmountData: () => {},
-  distributorData: [],
-  setDistributorData: () => {},
+  transactionsData: [],
+  setTransactionsData: () => {},
 };
 
 export const DataContext = createContext<DataContextType>(defaultValue);
@@ -29,10 +29,9 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [headerData, setHeaderData] = useState<{ [key: string]: any }>({});
   const [tableData, setTableData] = useState<{ [key: string]: any }[]>([]);
   const [totalAmountData, setTotalAmountData] = useState<{ [key: string]: any }>({});
-  const [distributorData, setDistributorData] = useState<{ value: string; label: string }[]>([]);
-
+  const [transactionsData, setTransactionsData] = useState<{ [key: string]: any }[]>([]);
   return (
-    <DataContext.Provider value={{ headerData, setHeaderData, tableData, setTableData, totalAmountData, setTotalAmountData, distributorData, setDistributorData }}>
+    <DataContext.Provider value={{ headerData, setHeaderData, tableData, setTableData, totalAmountData, setTotalAmountData,transactionsData, setTransactionsData }}>
       {children}
     </DataContext.Provider>
   );

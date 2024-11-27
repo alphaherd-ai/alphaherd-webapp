@@ -16,16 +16,10 @@ import { usePathname } from 'next/navigation';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 import DownloadPopup from './downloadDistributorPopup';
-import Popup from './newdistributorpopup';
 
 
 const DatabaseDistributorHeader = ({ distributors, onSortChange }: any) => {
     const currentRoute = usePathname();
-    const [showPopup, setShowPopup] = React.useState(false);
-
-    const togglePopup = () => {
-        setShowPopup(!showPopup);
-    }
 
     const [showPopup1, setShowPopup1] = React.useState(false);
     const togglePopup1 = () => {
@@ -74,10 +68,10 @@ const DatabaseDistributorHeader = ({ distributors, onSortChange }: any) => {
                     <div onClick={togglePopup1} className='cursor-pointer mr-4 flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'>
                         <Image src={Download} alt='Download' className='w-4  h-4' />
                     </div>
-                    <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
+                    {/* <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
 
                         <div className='flex items-center justify-center w-7 h-7 border border-solid border-gray-300 border-0.5 rounded-md  p-1'><Image src={Chart} alt='Chart' className='w-4  h-4' /></div>
-                    </Link>
+                    </Link> */}
                     <div className='flex items-center justify-center h-7   mr-4 border border-solid border-gray-300 border-0.5 rounded-lg p-2'>
                         <div className='flex '><Image src={Sort} alt='Sort' className='w-3 h-3 mr-2' /></div>
 
@@ -150,30 +144,9 @@ const DatabaseDistributorHeader = ({ distributors, onSortChange }: any) => {
                             </DropdownMenu>
                         </Dropdown>
                     </div>
-
-                    {/* <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '> */}
-
-                        {/* <Popover placement="bottom-end" showArrow offset={10}>
-                            <PopoverTrigger> */}
-                                <Button 
-                                    variant="solid"
-                                    className="cursor-pointer capitalize flex px-4 py-2.5 border-none bg-black text-white rounded-lg " 
-                                    onClick={togglePopup}> 
-                                    <div className='flex'>
-                                        <Image src={Add} alt='Add' className='w-3 h-3 ' />
-                                    </div> 
-                                    New Distributor
-                             </Button>
-                            {/* </PopoverTrigger>
-                      
-                        </Popover> */}
-
-
-
-                    {/* </div> */}
                 </div>
             </div >
-            {showPopup && <Popup onClose={togglePopup} />}
+            
             {showPopup1 && <DownloadPopup onClose={togglePopup1}  distributors={distributors} />}
 
 

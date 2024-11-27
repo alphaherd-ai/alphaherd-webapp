@@ -8,6 +8,7 @@ import { useAppSelector } from '@/lib/hooks';
 import Loading from '@/app/loading';
 import { FinanceCreationType } from '@prisma/client';
 import {useRouter} from 'next/navigation';
+import { SalesStatus } from '@/utils/statusType';
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json());
 
@@ -15,6 +16,7 @@ const FilterDropdwonCard = () => {
   const router=useRouter();
   const appState = useAppSelector((state) => state.app);
   const [partyInfo, setPartyInfo] = useState<any[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<any[]>([]);
   const [selectedParties, setSelectedParties] = useState<any[]>([]);
   const [selectedInvoiceTypes, setSelectedInvoiceTypes] = useState<string[]>([]);
   const { data, isLoading, error } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
@@ -42,7 +44,7 @@ const FilterDropdwonCard = () => {
       }));
 
       const combinedOptions = [...clientOptions, ...distributorOptions];
-      console.log(combinedOptions);
+      // console.log(combinedOptions);
       setPartyInfo(combinedOptions);
     }
   }, [data, error, isLoading]);
@@ -81,9 +83,20 @@ const FilterDropdwonCard = () => {
     setActiveTab(tab);
   };
 
+  const handleStatusChange = (status: any) => {
+    setSelectedStatus((prevSelectedStatus) => {
+      if (prevSelectedStatus.includes(String(status))) {
+        return prevSelectedStatus.filter((statusName) => statusName !== String(status));
+      } else {
+        return [...prevSelectedStatus, String(status)];
+      }
+    });
+  }
+
   const applyFilters = () => {
     const queryParams = new URLSearchParams();
     selectedParties.forEach((id) => queryParams.append('selectedParties', id));
+    selectedStatus.forEach((status) => queryParams.append('selectedStatus', status));
     if (startDate) queryParams.set('startDate', startDate.toISOString());
     if (endDate) queryParams.set('endDate', endDate.toISOString());
     selectedInvoiceTypes.forEach((type) => queryParams.append('selectedInvoiceTypes', type));
@@ -93,21 +106,9 @@ const FilterDropdwonCard = () => {
   };
 
   return (
-    <div className="w-[420px] h-[441px] px-4 py-4 bg-white rounded-[10px] flex-col justify-start items-start gap-2 inline-flex shadow-lg">
+    <div className="w-[420px] h-[541px] px-4 py-4 bg-white rounded-[10px] flex-col justify-start items-start gap-2 inline-flex shadow-lg">
       <div className="items-start flex border border-solid border-borderGrey rounded-[5px] cursor-pointer">
-        <div
-          className={`px-2 py-1 ${
-            activeTab === "party" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
-          } rounded-tl-[5px] rounded-bl-[5px] border-0 border-r border-solid border-borderGrey justify-start items-center gap-1 flex`}
-          onClick={() => handleTabChange("party")}
-        >
-          <div className={`text-sm font-bold ${activeTab === "party" ? "text-white" : "text-neutral-400"}`}>
-            Party
-          </div>
-          <div className="w-4 h-4 p-2 bg-teal-400 rounded-[17px] flex-col justify-center items-center gap-2.5 inline-flex">
-            <div className="text-white text-[10px] font-medium">2</div>
-          </div>
-        </div>
+       
         <div
           className={`px-2 py-1 ${
             activeTab === "dateRange" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
@@ -117,9 +118,7 @@ const FilterDropdwonCard = () => {
           <div className={`text-sm font-bold ${activeTab === "dateRange" ? "text-white" : "text-neutral-400"}`}>
             Date Range
           </div>
-          <div className="w-4 h-4 p-2 bg-teal-400 rounded-[17px] flex-col justify-center items-center gap-2.5 inline-flex">
-            <div className="text-white text-[10px] font-medium">2</div>
-          </div>
+          
         </div>
         <div
           className={`px-2 py-1 ${
@@ -130,9 +129,7 @@ const FilterDropdwonCard = () => {
           <div className={`text-sm font-bold ${activeTab === "invoiceType" ? "text-white" : "text-neutral-400"}`}>
             Invoice Type
           </div>
-          <div className="w-4 h-4 p-2 bg-teal-400 rounded-[17px] flex-col justify-center items-center gap-2.5 inline-flex">
-            <div className="text-white text-[10px] font-medium">2</div>
-          </div>
+          
         </div>
         <div
           className={`px-2 py-1 ${
@@ -143,35 +140,10 @@ const FilterDropdwonCard = () => {
           <div className={`text-sm font-bold ${activeTab === "status" ? "text-white" : "text-neutral-400"}`}>
             Status
           </div>
-          <div className="w-4 h-4 p-2 bg-teal-400 rounded-[17px] flex-col justify-center items-center gap-2.5 inline-flex">
-            <div className="text-white text-[10px] font-medium">1</div>
-          </div>
+          
         </div>
       </div>
-      {activeTab === "party" && (
-        <div className="w-full h-full flex flex-col gap-4">
-          <div className="w-full">
-            <input
-              className="w-full p-2 border border-solid border-borderGrey outline-none rounded-[5px] text-sm text-textGrey2 font-medium"
-              type="text"
-              name=""
-              id=""
-            />
-          </div>
-          <div className="w-full flex flex-col gap-4">
-            {partyInfo?.map((party: any) => (
-              <div key={party.value.id} className="w-full flex gap-2 items-center">
-                <input
-                  type="checkbox"
-                  checked={selectedParties.includes(party.label)}
-                  onChange={() => handlePartySelect(party.label)}
-                />
-                <div className="text-textGrey2 font-medium text-base">{party.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+     
       {activeTab === "dateRange" && (
         <div className="w-full h-full flex flex-col gap-6">
           <div className="w-full flex flex-col gap-2">
@@ -300,7 +272,20 @@ const FilterDropdwonCard = () => {
           </div>
         </div>
       )}
-      {activeTab === "status" && <div className="w-full h-full"></div>}
+      {activeTab === "status" && <div className="w-full h-full">
+        <div className="w-full flex flex-col gap-4">
+          {SalesStatus?.map((item: any) => (
+            <div key={item.id} className="w-full flex gap-2 items-center">
+              <input
+                type="checkbox"
+                checked={selectedStatus.includes(item.status)}
+                onChange={() => handleStatusChange(item.status)}
+              />
+              <div className="text-textGrey2 font-medium text-base">{item.status}</div>
+            </div>
+          ))}
+        </div>
+      </div>}
       <div className="w-full h-fit flex justify-between items-center">
         <div className="flex items-center gap-2">
           <input type="checkbox" name="" id="" />

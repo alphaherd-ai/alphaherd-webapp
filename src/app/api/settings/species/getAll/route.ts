@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import prismaClient from "../../../../../../prisma";
+import { fetchDatabaseId } from "@/utils/fetchBranchDetails";
 
 export const GET = async(req:NextRequest)=>{
     console.log("get species called");
@@ -7,8 +8,12 @@ export const GET = async(req:NextRequest)=>{
         return new Response('Method not allowed',{status:405});
     }
     try {
-        const species = await prismaClient.species.findMany();
-        console.log("species is :",species);
+        const databaseId = await fetchDatabaseId(req);
+        const species = await prismaClient.species.findMany({
+            where: {
+                databaseSectionId: databaseId
+            },
+        });
         return new Response(JSON.stringify(species),{
             status: 201,
             headers: {

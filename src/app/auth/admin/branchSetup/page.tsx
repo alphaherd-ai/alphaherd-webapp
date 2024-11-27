@@ -266,7 +266,7 @@ const OrgEdit = () => {
                           className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0" disabled={activeTab === 0 ? true : false}
                           onClick={() => setActiveTab(prev => prev - 1)}>
                           <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
-                              <div className="text-white text-sm font-bold font-['Satoshi']">
+                              <div className="text-white text-sm font-bold ">
                                   Prev
                               </div>
                               <div className="w-6 h-6 relative">
@@ -280,7 +280,7 @@ const OrgEdit = () => {
                                 disabled={activeTab === formElements.length - 1 ? true : false}
                                 onClick={() => handleContinue()} >
                                 <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
-                                    <div className="text-white text-sm font-bold font-['Satoshi']">
+                                    <div className="text-white text-sm font-bold ">
                                         Continue
                                     </div>
                                     <div className="w-6 h-6 relative">
@@ -292,7 +292,7 @@ const OrgEdit = () => {
                         {
                             activeTab === formElements.length - 1 ? <button className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0" onClick={formSubmit}>
                                 <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
-                                    <div className="text-white text-sm font-bold font-['Satoshi']">
+                                    <div className="text-white text-sm font-bold ">
                                         Submit Details
                                     </div>
                                 </div>

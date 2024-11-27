@@ -45,9 +45,9 @@ const OrgDetailsSetup = (props: any) => {
         { value: 'Delhi', label: 'Delhi' },
         { value: 'Lakshadweep', label: 'Lakshadweep' },
         { value: 'Puducherry', label: 'Puducherry' }
-    ];
-    console.log("this is props", props.data.state)
-    const [resource, setResource] = useState<any>();
+      ];
+    //   console.log("this is props",props.data.state)
+      const [resource, setResource] = useState<any>();
 
     return (
         <div className="w-[1016px] h-fit px-10 py-8 rounded-[30px] border border-stone-300  justify-center  inline-flex">

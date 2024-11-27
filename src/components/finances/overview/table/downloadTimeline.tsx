@@ -10,6 +10,7 @@ import download from "../../../../assets/icons/finance/downloadGreen.svg";
 import { Button } from '@nextui-org/react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import downloadDisabled from "../../../../assets/icons/finance/download.svg";
 // import logo from "../../../../assets/icons/finance/pfpimg.png";
 import { useAppSelector } from '@/lib/hooks';
 import formatDateAndTime from '@/utils/formateDateTime';
@@ -161,7 +162,7 @@ const DownloadPopup = ({ onClose, timeline }:any) => {
       body: tableRows,
     });
 
-    const fileName = `timeline_report_${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'}_to_${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}.pdf`;
+    const fileName = `timeline_report_${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'} to ${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}.pdf`;
     doc.save(fileName);
   })
   }
@@ -180,13 +181,13 @@ const DownloadPopup = ({ onClose, timeline }:any) => {
           </div>
           <div className="flex flex-col items-start gap-6 mt-6">
             <div className="flex items-center gap-2">
-              <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Custom' ? 'bg-textGreen' : 'bg-white'}`}
+              {/* <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Custom' ? 'bg-textGreen' : 'bg-white'}`}
                 onClick={() => handleOptionClick('Custom')}>
                 <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Custom' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
                   Custom
                 </div>
-              </div>
-              <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Today' ? 'bg-textGreen' : 'bg-white'}`}
+              </div> */}
+              {/* <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Today' ? 'bg-textGreen' : 'bg-white'}`}
                 onClick={() => handleOptionClick('Today')}>
                 <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Today' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
                   Today
@@ -209,7 +210,7 @@ const DownloadPopup = ({ onClose, timeline }:any) => {
                 <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Year' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
                   Year
                 </div>
-              </div>
+              </div> */}
             </div>
             {selectedOption === 'Custom' && (
               <>
@@ -259,13 +260,18 @@ const DownloadPopup = ({ onClose, timeline }:any) => {
           </div>
         </div>
         <div className='flex gap-4 justify-end w-full'>
-          <Button className="cursor-pointer outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex" onClick={downloadPDF}>
+          {startDate && endDate ? (<Button className="cursor-pointer outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex" onClick={downloadPDF}>
             <div className="w-6 h-6">
               <Image src={download} alt="download" />
             </div>
             <div className="text-white text-base font-medium">Download as PDF</div>
-          </Button>
-          <CSVLink
+          </Button>) : (<Button className="cursor-not-allowed outline-none border-0 px-4 py-2.5 bg-[#EDEDED] rounded-[5px] justify-start items-center gap-2 flex" disabled>
+              <div className="w-6 h-6">
+                <Image src={download} alt="download" />
+              </div>
+              <div className="text-textGrey2 text-base font-medium">Download as PDF</div>
+            </Button>)}
+          {startDate && endDate ? (<CSVLink
             data={data}
             filename={`sales_report_${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'}_to_${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}.csv`}
             className="no-underline flex items-center mr-4"
@@ -285,7 +291,12 @@ const DownloadPopup = ({ onClose, timeline }:any) => {
               </div>
               <div className="text-white text-base font-medium">Download as CSV</div>
             </Button>
-          </CSVLink>
+          </CSVLink>) : (<Button className="cursor-not-allowed outline-none border-0 px-4 py-2.5 bg-[#EDEDED] rounded-[5px] justify-start items-center gap-2 flex" disabled>
+              <div className="w-6 h-6">
+                <Image src={download} alt="download" />
+              </div>
+              <div className="text-textGrey2 text-base font-medium">Download as CSV</div>
+            </Button>)}
         </div>
       </div>
     </div>

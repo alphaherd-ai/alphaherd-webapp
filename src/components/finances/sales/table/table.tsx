@@ -36,6 +36,7 @@ const FinancesSalesTable = () => {
   const startDate = useMemo(() => urlSearchParams.get('startDate') ? new Date(urlSearchParams.get('startDate')!) : null, [urlSearchParams]);
   const endDate = useMemo(() => urlSearchParams.get('endDate') ? new Date(urlSearchParams.get('endDate')!) : null, [urlSearchParams]);
   const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
+  const selectedStatus = useMemo(() => urlSearchParams.getAll('selectedStatus'), [urlSearchParams]);
   const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true })
 
   console.log("data is :" ,data);
@@ -53,7 +54,8 @@ const FinancesSalesTable = () => {
       setCurrentPageNumber((prev) => prev - 1);
     };
     const goOnNextPage = () => {
-      if (currentPageNumber === data.length / TOTAL_VALUES_PER_PAGE) return;
+      //console.log(currentPageNumber,data.length/TOTAL_VALUES_PER_PAGE);
+      if (currentPageNumber === Math.ceil((totalLen) / TOTAL_VALUES_PER_PAGE)) return;
       setCurrentPageNumber((prev) => prev + 1);
     };
     useEffect(()=>{
@@ -78,7 +80,7 @@ const FinancesSalesTable = () => {
       if (startDate || endDate) {
         filteredData = filteredData.filter((item: any) => {
           const itemDate = new Date(item.date);
-          console.log(itemDate)
+          // console.log(itemDate)
           if (startDate && itemDate < startDate) return false;
           if (endDate && itemDate > endDate) return false;
           return true;
@@ -91,9 +93,15 @@ const FinancesSalesTable = () => {
           selectedParties.includes(item.customer)
         );
       }
+
+      if(selectedStatus.length>0){
+        filteredData = filteredData.filter((item: any) =>
+          selectedStatus.some((status)=>item.status.startsWith(status)))
+      }
+      //console.log(filteredData.length);
       setTotalLen(filteredData.length);
       setTableData(filteredData)
-      setSales(filteredData?.reverse().slice(0,TOTAL_VALUES_PER_PAGE));
+      setSales(filteredData?.slice(0,TOTAL_VALUES_PER_PAGE));
     }
   }, [data, error, isLoading, setSales, startDate, endDate, selectedParties])
 
@@ -107,7 +115,7 @@ const FinancesSalesTable = () => {
     setEstimateCount(counts.estimateCount);
     setReturnCount(counts.returnCount);
   };
-  console.log(invoiceCount, estimateCount, returnCount)
+  // console.log(invoiceCount, estimateCount, returnCount)
 
 
 
@@ -118,20 +126,20 @@ const FinancesSalesTable = () => {
         <div className=' flex text-gray-500 text-base font-medium   w-1/12 '>Date</div>
         <div className=' flex text-gray-500 text-base font-medium   w-1/12 '>Time</div>
         <div className=' flex text-gray-500 text-base font-medium   w-[4rem] '>Type</div>
-        <div className=' flex text-gray-500 text-base font-medium px-4  w-2/12 '>Client</div>
+        <div className=' flex text-gray-500 text-base font-medium   w-2/12 '>Client</div>
         <div className=' flex text-gray-500 text-base font-medium   w-1/12 '>Ref. No.</div>
         <div className=' flex text-gray-500 text-base font-medium   w-1/12 '>Total Cost</div>
         {/* <div className=' flex text-gray-500 text-base font-medium   w-1/12 '>Total Qty.</div> */}
         <div className=' flex text-gray-500 text-base font-medium   w-1/12 '>Due date</div>
 
-        <div className=' flex text-gray-500 text-base font-medium  w-1/12'>Status</div>
+        <div className=' flex text-gray-500 text-base font-medium  w-2/12'>Status</div>
         <div className='w-[3.5rem] '>
 
         </div>
       </div>
 
       <FinancesSalesTableItem
-        onCountsChange={handleCountsChange} sales={sales} data={data} isLoading={isLoading}
+        onCountsChange={handleCountsChange}  sales={sales} data={data} isLoading={isLoading}
       />
       <FinancesSalesTableBottombar
       goOnPrevPage={goOnPrevPage}

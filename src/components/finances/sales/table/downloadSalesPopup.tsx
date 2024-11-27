@@ -181,13 +181,13 @@ const DownloadPopup = ({ onClose, sales, type }:any) => {
     <div className="flex flex-col items-start gap-6 mt-6">
         
             <div className="flex items-center gap-2">
-                <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Custom' ? 'bg-textGreen' : 'bg-white'}`}
+                {/* <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Custom' ? 'bg-textGreen' : 'bg-white'}`}
                     onClick={() => handleOptionClick('Custom')}>
                     <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Custom' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
                         Custom
                     </div>
-                </div>
-                <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Day' ? 'bg-textGreen' : 'bg-white'}`}
+                </div> */}
+                {/* <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Day' ? 'bg-textGreen' : 'bg-white'}`}
                     onClick={() => handleOptionClick('Day')}>
                     <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Day' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
                     Day
@@ -210,7 +210,7 @@ const DownloadPopup = ({ onClose, sales, type }:any) => {
                     <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Year' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
                     Year
                     </div>
-                </div>
+                </div> */}
             </div>
         
         

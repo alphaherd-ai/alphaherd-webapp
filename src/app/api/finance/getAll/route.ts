@@ -19,7 +19,11 @@ export const GET = async (req: NextRequest) => {
         sale: true,
         expenses:true,
         purchases:true
+
       },
+      orderBy:{
+        createdAt: 'desc',
+      }
     });
 
     return new Response(JSON.stringify(financeTimeline), {
@@ -29,7 +33,7 @@ export const GET = async (req: NextRequest) => {
       },
     });
   } catch (error) {
-    console.error("Hello this is the error",error)
+    //console.error("Hello this is the error",error)
     return new Response('Internal server error', { status: 500 });
   } finally {
     await prismaClient.$disconnect();

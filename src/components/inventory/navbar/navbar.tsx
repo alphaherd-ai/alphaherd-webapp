@@ -16,6 +16,8 @@ import Select from 'react-select';
 import { FinanceCreationType } from '@prisma/client';
 import Popup from '../product/producttable/newproductpopup';
 import Popup2 from '../product/producttable/updateinventorypopup';
+import Popup3 from '../services/table/newservicepopup';
+
 
 
 
@@ -33,6 +35,7 @@ const InventoryNavbar = () => {
     const [showPopup, setShowPopup] = React.useState(false);
     const [showPopup2, setShowPopup2] = React.useState(false);
     const [showPopup1, setShowPopup1] = React.useState(false);
+    const [showPopup3, setShowPopup3] = React.useState(false);
     const togglePopup1 = () => {
         setShowPopup1(!showPopup1);
     }
@@ -67,8 +70,8 @@ const InventoryNavbar = () => {
           ...provided,
           height: '2.8rem', 
           minHeight: '2.8rem' ,
-          width: '22rem',
-          maxWidth: '22rem', 
+          width: '30rem',
+          maxWidth: '25rem', 
           borderColor: state.isFocused ? '#35BEB1' : '#C4C4C4', 
             '&:hover': {
             borderColor: state.isFocused ? '#35BEB1' : '#C4C4C4', 
@@ -108,6 +111,9 @@ const InventoryNavbar = () => {
     const togglePopup2 = () => {
         setShowPopup2(!showPopup2);
     }
+    const togglePopup3 = () => {
+        setShowPopup3(!showPopup3);
+    }
 
     return (
 
@@ -140,22 +146,38 @@ const InventoryNavbar = () => {
                     </Link>
 
                     <div className='flex items-center space-x-2'> 
-                        <div className='mr-1' /> <div className='flex items-center text-base p-4 bg-black text-white rounded-lg cursor-pointer py-2 w-[156px] h-[44px]' onClick={togglePopup}>
-                            <div className='flex pr-2'>
-                                <Image src={Add} alt='Add' className='w-5 h-5' />
-                            </div>
-                            <button className='bg-transparent border-0 text-white text-base cursor-pointer'>
-                                New Product
-                            </button>
-                        </div>
-                        <div className='flex items-center justify-center capitalize border-none bg-black text-white rounded-lg cursor-pointer py-2 w-[168px] h-[44px]' onClick={togglePopup2}>
-                            <div className='flex items-center'>
-                                <Image src={Update} alt='Update' className='w-5 h-5 mr-2' />
-                                <button className='bg-transparent border-0 text-white text-base'>
-                                    Update Inventory
+                        <div className='mr-1' /> 
+                        {currentRoute.startsWith("/inventory/products") && (
+                            <>
+                                <div className='flex items-center text-base p-4 bg-black text-white rounded-lg cursor-pointer py-2 w-[156px] h-[44px]' onClick={togglePopup}>
+                                    <div className='flex pr-2'>
+                                        <Image src={Add} alt='Add' className='w-5 h-5' />
+                                    </div>
+                                    <button className='bg-transparent border-0 text-white text-base cursor-pointer'>
+                                        New Product
+                                    </button>
+                                </div>
+
+                                <div className='flex items-center justify-center capitalize border-none bg-black text-white rounded-lg cursor-pointer py-2 w-[168px] h-[44px]' onClick={togglePopup2}>
+                                    <div className='flex items-center'>
+                                        <Image src={Update} alt='Update' className='w-5 h-5 mr-2' />
+                                        <button className='bg-transparent border-0 text-white text-base'>
+                                            Update Inventory
+                                        </button>
+                                    </div>
+                                </div>
+                            </>
+                        )}
+                        {currentRoute.startsWith("/inventory/services") && (
+                            <div className='flex items-center text-base p-4 bg-black text-white rounded-lg cursor-pointer py-2 w-[156px] h-[44px]' onClick={togglePopup3}>
+                                <div className='flex pr-2'>
+                                    <Image src={Add} alt='Add' className='w-5 h-5' />
+                                </div>
+                                <button className='bg-transparent border-0 text-white text-base cursor-pointer'>
+                                    New Service
                                 </button>
                             </div>
-                        </div>
+                        )}                        
                     </div>
                 </div>
 
@@ -164,7 +186,7 @@ const InventoryNavbar = () => {
                 <div className='flex h-full items-center'>
                     <div className="relative h-full w-full items-center z-[1]">
                         <Select
-                            className="text-gray-500 text-base font-medium  w-[100%]  border-0 boxShadow-0"
+                            className="text-gray-500 text-base font-medium border-0 boxShadow-0"
                             classNamePrefix="select"
                             isClearable={true}
                             isSearchable={true}
@@ -173,22 +195,19 @@ const InventoryNavbar = () => {
                             placeholder="Search via Item/Service name and Batch no."
                             styles={customStyles}
                         />
-                        {/* <div className="absolute inset-y-0 right-3 pl-2 flex items-center pointer-events-none">
-                            <div className='flex items-center '>
-                                <Image src={Search} alt='Search' className='w-5  h-5' />
-                            </div>
-                        </div> */}
+                        
                     </div>
 
                   
-                    <Link className='no-underline h-full  ml-4' href='/finance/overview'>
+                    {/* <Link className='no-underline h-full  ml-4' href='/finance/overview'>
                         <div className='flex items-center border border-solid border-gray-300 bg-white rounded-lg px-3 h-[2.8rem]  '>
                             <Image src={Settings} alt='Setting' className='w-5  h-5' /></div>
-                    </Link>
+                    </Link> */}
                 </div>
             </div >
             {showPopup && <Popup onClose={togglePopup} />}
             {showPopup2 && <Popup2 onClose={togglePopup2} />}
+            {showPopup3 && <Popup3 onClose={togglePopup3} />}
 
            
         </>
