@@ -2,16 +2,21 @@ import React, { useState } from "react";
 import CreateButtonCard from "../CreateButtonCard/CreateButtonCard";
 import AppointmentModal from "../Modal/AppointmentModal";
 import Image from "next/image";
+import addUserIcon from "../../../assets/icons/settings/1. Icons-24 (3).svg"
 // import SnackBar from "../SnackBars/SnackBar";
 // import DeletePopUp from "../DeletePopUp/DeletePopUp";
 // import NotificationPopUp from "../NotificationCard/NotificationPopUp";
 import cashStethoscope from "../../../assets/icons/home/cash=Stethoscope, Color=Green.png"
 import chevron from "../../../assets/icons/home/chevron_left.png"
 import { Popover, PopoverTrigger, PopoverContent, Input, Button } from "@nextui-org/react";
+import Popup from "@/components/auth/addUsersPopup"
 
 const Header = () => {
   const [isAppOpen, setIsAppOpen] = useState(false);
-
+  const [showPopup, setShowPopup] = React.useState(false);
+    const togglePopup = () => {
+        setShowPopup(!showPopup);
+    }
 
 
   // Function to toggle modal visibility
@@ -72,12 +77,20 @@ const Header = () => {
             Add Appointment
           </span>
         </div>
+        <Button
+                  variant="solid"
+                  className="flex items-center justify-center rounded-md  bg-[#17181A]  text-white relative z-0 cursor-pointer gap-2 px-4"  onClick={togglePopup}>
+                  <div className='flex'><Image src={addUserIcon} alt='addUserIcon' className='w-6 h-6 ' /></div>
+                  <span>Add User</span>
+                  </Button>
       </div>
+      
       <div className="mr-[1rem]">
         <span className="text-gray-500 text-[28px] font-bold">Schedule</span>
       </div>
       {/* Conditionally render the modal */}
       {isAppOpen && <AppointmentModal />}
+      {showPopup && <Popup onClose={togglePopup} />}
     </div>
   );
 };

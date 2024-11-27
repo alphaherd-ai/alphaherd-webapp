@@ -2,32 +2,37 @@ import { NextRequest } from "next/server";
 import prismaClient from "../../../../../../prisma";
 import { fetchDatabaseId } from "@/utils/fetchBranchDetails";
 
-export const POST = async(req: NextRequest)=>{
-    if(req.method!=='POST'){
-        return new Response('Method not allowed', {status: 400});
+export const POST = async (req: NextRequest) => {
+    if (req.method !== 'POST') {
+        return new Response('Method not allowed', { status: 400 });
     }
-    try{
-        const databaseId = await fetchDatabaseId(req);
+    console.log("create called");
+    try {
         const body = await req.json();
-        const species = await prismaClient.species
-        .create({
+
+        // Ensure name is a string, not an array or other type
+        if (!body.name || typeof body.name !== 'string') {
+            return new Response('Invalid data: name should be a string.', { status: 400 });
+        }
+
+        const species = await prismaClient.species.create({
             data: {
-                ...body, 
-                DatabaseSection: {
-                    connect : {id: databaseId}
-                },
+                name: body.name,
+               
             },
         });
-        return new Response(JSON.stringify(species),{
+        
+        console.log("species in create ", species);
+        return new Response(JSON.stringify(species), {
             status: 201,
-            headers:{
+            headers: {
                 'Content-Type': 'application/json',
             }
-        })
-    }catch(error){
+        });
+    } catch (error) {
         console.log(error);
-        return new Response(JSON.stringify(error));
-    }finally{
+        return new Response(JSON.stringify({ error }), { status: 500 });
+    } finally {
         await prismaClient.$disconnect();
     }
-}
+};

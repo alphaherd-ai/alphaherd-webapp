@@ -17,10 +17,11 @@ import NewPurchasesTotalAmount from "./totalamount";
 import { useAppSelector } from "@/lib/hooks";
 import formatDateAndTime from '@/utils/formateDateTime';
 import { Tax } from '@prisma/client';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import { DataContext } from "./DataContext"
 import Popup from '../../../../inventory/product/producttable/newproductpopup';
 import DistributorPopup from "@/components/database/distributor/newdistributorpopup"
+import Popup1 from "@/components/database/distributor/newdistributorpopup"
 import { useSearchParams } from "next/navigation"
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
@@ -67,15 +68,20 @@ function DataFromOrder(id: number | null, branchId: number | null) {
 
 const NewPurchasesTable = () => {
     const { tableData, setTableData } = useContext(DataContext);
-    const [selectedProductDetails, setSelectedProduct] = useState<Products>()
+    const { setDistributorData } = useContext(DataContext);
+    const [selectedProductDetails,setSelectedProduct]= useState<Products>()
     const [products, setProducts] = useState<any[]>([]);
     const [otherData, setOtherData] = useState({});
     const appState = useAppSelector((state) => state.app)
     const { tableData: items, setTableData: setItems } = useContext(DataContext);
     const [discountStates, setDiscountStates] = useState(new Array(items.length).fill(false));
-    const url = useSearchParams();
-    const id = url.get('id');
-    let orderData: any = null, isorderDataLoading = false, isorderDataError = false;
+    const [isNewDistributorClicked, setIsNewDistributorClicked] = useState<any>(false);
+    const [newDistributor, setNewDistributor] = useState<any>();
+    const [isNewProductClicked, setIsNewProductClicked] = useState<any>(false);
+    const [newProduct, setNewProduct] = useState<any>();
+    const url= useSearchParams();
+    const id=url.get('id');
+    let orderData:any=null,isorderDataLoading=false,isorderDataError=false; 
     const taxOptions = [
         { value: 'Tax excl.', label: 'Tax excl.' },
         { value: 'Tax incl.', label: 'Tax incl.' }
@@ -83,19 +89,37 @@ const NewPurchasesTable = () => {
     const [showPopup, setShowPopup] = React.useState(false);
     const [showDistributorPopup, setDistributorPopup] = React.useState(false);
 
-    if (id) {
-        const { data, isLoading, error } = DataFromOrder(Number(id), appState.currentBranchId);
-        orderData = data;
-        isorderDataError = error;
-        isorderDataLoading = isLoading;
+    if(id){
+        const {data,isLoading,error}=DataFromOrder(Number(id),appState.currentBranchId);
+        orderData=data;
+        isorderDataError=error;
+        isorderDataLoading=isLoading;        
     }
 
     useEffect(() => {
-        if (!isorderDataLoading && orderData && !isorderDataError) {
-            const { items, ...otherData } = orderData;
-            setOtherData(otherData)
-            const shallowDataCopy = [...items];
-            const itemData = shallowDataCopy.map((item: any) => ({
+        if (isNewProductClicked) {
+        
+            const newlyCreatedProduct = {
+                value: {
+                    itemName:newProduct.itemName,
+                    productId: newProduct.value.id,
+                    
+                   
+                }
+              
+            }
+            setProducts((prevData) => ({ ...prevData, Product: newlyCreatedProduct }))
+        }
+    }, [isNewProductClicked])
+
+    console.log("new product is :",setNewProduct);
+
+    useEffect(()=>{
+            if (!isorderDataLoading && orderData && !isorderDataError) {
+                const {items,...otherData}=orderData;
+                setOtherData(otherData)
+              const shallowDataCopy = [...items]; 
+              const itemData = shallowDataCopy.map((item: any) => ({
                 id: item.productId,
                 productId: item.productId,
                 itemName: item.name,
@@ -300,73 +324,95 @@ const NewPurchasesTable = () => {
         }, [tableData])
 
 
+   
 
-        const customStyles = {
-            control: (provided: any, state: any) => ({
-                ...provided,
-                width: '100%',
-                maxWidth: '100%',
-                border: state.isFocused ? '1px solid #35BEB1' : 'none',
-                '&:hover': {
-                    borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4',
-                },
-                boxShadow: state.isFocused ? 'none' : 'none',
-            }),
-            valueContainer: (provided: any) => ({
-                ...provided,
-                width: '100%',
-                maxWidth: '100%',
-            }),
-            singleValue: (provided: any, state: any) => ({
-                ...provided,
-                width: '100%',
-                maxWidth: '100%',
-                color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
-            }),
-            menu: (provided: any) => ({
-                ...provided,
-                backgroundColor: 'white',
-                width: '100%',
-                maxWidth: '100%',
-            }),
-            option: (provided: any, state: any) => ({
-                ...provided,
-                backgroundColor: state.isFocused ? '#35BEB1' : 'white',
-                color: state.isFocused ? 'white' : '#6B7E7D',
-                '&:hover': {
-                    backgroundColor: '#35BEB1',
-                    color: 'white',
-                },
-            }),
-            menuPortal: (base: any) => ({ ...base, zIndex: 9999 })
-        };
+    const handleDistributorAdd = () => {
+        togglePopup1; // Close the popup
+        const url = `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll?branchId=${appState.currentBranchId}`;
+        
+        // Use mutate to refresh the distributor list from the API
+        mutate(url, async () => {
+            const response = await fetch(url);
+            const updatedDistributors = await response.json();
+            setDistributorData(updatedDistributors); // Update distributorData in DataContext
+            return updatedDistributors;
+        });
+    };
+    
+    const customStyles = {
+        control: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          border: state.isFocused ? '1px solid #35BEB1' : 'none',
+          '&:hover': {
+            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            },
+          boxShadow: state.isFocused ? 'none' : 'none',
+        }),
+        valueContainer: (provided: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        singleValue: (provided: any, state: any) => ({
+          ...provided,
+          width: '100%',
+          maxWidth: '100%',
+          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+        }),
+        menu: (provided: any) => ({
+          ...provided,
+          backgroundColor: 'white',
+          width: '100%',
+          maxWidth: '100%',
+        }),
+        option: (provided: any, state: any) => ({
+          ...provided,
+          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+          color: state.isFocused ? 'white' : '#6B7E7D',
+          '&:hover': {
+            backgroundColor: '#35BEB1',
+            color: 'white',
+          },
+        }),
+        menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
+      };
 
-        return (
-            <>
-                <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
-                    <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-end items-center gap-6 flex">
+    return (
+        <>
+            <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
+            <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-end items-center gap-6 flex">
+                    
+                    
+                    <Button 
+                    className='bg-textGreen text-white capitalize h-9 flex border-none px-4 py-2.5  rounded-md cursor-pointer' 
+                    onClick={ togglePopup1}>
 
-
-                        <Button className='bg-textGreen text-white capitalize h-9 flex border-none px-4 py-2.5  rounded-md cursor-pointer' onClick={togglePopup1}>
-                            <div className='flex pr-2'><Image src={addicon1} alt='addicon1' className='w-6 h-6 ' /></div>
+                    <div className='flex pr-2'><Image src={addicon1} alt='addicon1' className='w-6 h-6 ' /></div>
                             New Distributor
-                        </Button>
+                    </Button>
+                    {showDistributorPopup && <Popup1 onClose={ togglePopup1} setNewDistributor ={setNewDistributor} setIsNewDistributorClicked={setIsNewDistributorClicked} />}
+                    {/* {showDistributorPopup && <Popup1 onClose={ togglePopup1} />} */}
+                   
 
-                        <Button
-                            variant="solid"
-                            className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer" onClick={togglePopup}>
-                            <div className='flex pr-2'><Image src={addicon} alt='addicon' className='w-6 h-6 ' /></div>New Product </Button>
-
-                    </div>
-                    <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px] overflow-auto max-h-[40rem]">
-                        <NewPurchasesHeader existingHeaderData={otherData} />
-                        <div>
-                            <div className="w-full rounded-md border border-solid border-borderGrey">
-                                <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
-                                    <div className="text-gray-500 text-xl font-medium ">
-                                        Items
-                                    </div>
-
+                    <Button
+                                    variant="solid"
+                                    className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer" onClick={togglePopup}>
+                                    <div className='flex pr-2'><Image src={addicon} alt='addicon' className='w-6 h-6 ' /></div>New Product </Button>
+                                    {showPopup && <Popup onClose={togglePopup} setNewProduct ={setNewProduct} setIsNewProductClicked={setIsNewProductClicked}/>}
+                    
+                </div>
+                <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px] overflow-auto max-h-[40rem]">
+                    <NewPurchasesHeader  existingHeaderData={otherData} isNewDistributorClicked={isNewDistributorClicked} newDistributor={newDistributor} />
+                   
+                <div>
+                <div className="w-full rounded-md border border-solid border-borderGrey">
+                    <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
+                        <div className="text-gray-500 text-xl font-medium ">
+                            Items
+                        </div>
+                            
 
                                     {/* <div className="flex items-center justify-center ">
 
@@ -567,14 +613,15 @@ const NewPurchasesTable = () => {
                             </div>
                         </div>
 
-                        <NewPurchasesTotalAmount />
-                    </div>
-                    <NewPurchasesBottomBar orderData={orderData} />
-                </div>
-                {showPopup && <Popup onClose={togglePopup} />}
-                {showDistributorPopup && <DistributorPopup onClose={togglePopup1} />}
-            </>
-        )
+                <NewPurchasesTotalAmount />
+            </div>
+            <NewPurchasesBottomBar orderData={orderData}/>
+        </div>
+        {showPopup && <Popup onClose={togglePopup} />}
+     
+       
+        </>
+    )
 
     }
 

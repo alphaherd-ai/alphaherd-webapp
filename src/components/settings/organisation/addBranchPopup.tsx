@@ -50,11 +50,12 @@ const AddBranchPopup = ({ onClose }:any) => {
                     progress: undefined,
                     theme: "colored",
                     transition: Bounce,
-                  });
-                setTimeout(() => onClose(),4000)
+                });
+    
+                // Optionally, handle UI cleanup
+                setTimeout(() => onClose(), 1000);
             }
-        }
-        catch(err : any){
+        } catch (err: any) {
             toast.error(err.message, {
                 position: "bottom-right",
                 autoClose: 5000,
@@ -65,8 +66,11 @@ const AddBranchPopup = ({ onClose }:any) => {
                 progress: undefined,
                 theme: "colored",
                 transition: Bounce,
-              });
-        }setTimeout(() => {
+            });
+        }
+    
+        // Ensure the form is closed regardless
+        setTimeout(() => {
             onClose();
             console.log("router pushed");
             router.push(`/auth/admin/branchSetup`);

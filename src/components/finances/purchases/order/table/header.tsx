@@ -21,9 +21,9 @@ import formatDateAndTime from "@/utils/formateDateTime";
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
-const NewPurchasesHeader = ({existingHeaderData}:any) => {
+const NewPurchasesHeader = ({existingHeaderData,isNewDistributorClicked, newDistributor }:any) => {
 
-    const { headerData, setHeaderData } = useContext(DataContext);
+    const { headerData, setHeaderData,distributorData } = useContext(DataContext);
     const url=useSearchParams();
     const count=url.get('count');
     const initialInvoiceNo =generateInvoiceNumber(Number(count));
@@ -46,6 +46,26 @@ const NewPurchasesHeader = ({existingHeaderData}:any) => {
     const [invoiceNo] = useState(`PO-${initialInvoiceNo}`);
 
 
+    
+
+
+    useEffect(() => {
+        if (isNewDistributorClicked) {
+        
+            const newlyCreatedDistributor = {
+                value: {
+                    distributor: newDistributor.distributorName,
+                    contact: newDistributor.contact,
+                    DistributorId: newDistributor.id,
+                    email: newDistributor.email
+                },
+                label: `${newDistributor.distributorName}\u00A0\u00A0\u00A0\u00A0\u00A0${newDistributor.contact}`
+            }
+            setHeaderData((prevData) => ({ ...prevData, distributor: newlyCreatedDistributor }))
+        }
+    }, [isNewDistributorClicked])
+
+
     const handleDateChange = (date:any) => {
         setStartDate(date);
         setHeaderData((prevData) => ({ ...prevData, date }));
@@ -58,6 +78,7 @@ const NewPurchasesHeader = ({existingHeaderData}:any) => {
         setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo,dueDate:dueDate}))
        
     },[])
+
     useEffect(()=>{
         if(!isLoading&&!error&&data){
               const distributors=data?.map((distributor:any)=>({
@@ -71,12 +92,13 @@ const NewPurchasesHeader = ({existingHeaderData}:any) => {
     },[data])
 
 
-
+    
     useEffect(() => {
         if (!disableButton && inputRef.current) {
             inputRef.current.focus();
         }
     }, [disableButton]);
+
 
     const handleEditButtonClick = () => {
         setDisableButton(!disableButton);
@@ -133,20 +155,22 @@ const NewPurchasesHeader = ({existingHeaderData}:any) => {
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold ">Distributor:</div>
                         { id===null?(
+                            
                             isLoading?<div>Loading...</div>:(
                         <Select
                             className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
                             classNamePrefix="select"
-                            defaultValue={distributor[0]}
+                         //   defaultValue={distributor && distributor[0]}
                             isClearable={isClearable}
                             isSearchable={isSearchable}
-                            name="color"
+                            name="distributor"
                             value={headerData.distributor}
                             options={distributor}
                             styles={customStyles}
                             onChange={(selectedOption) => setHeaderData((prevData) => ({ ...prevData, distributor: selectedOption }))}
                         /> )):(
                             existingHeaderData.distributor
+                            
                         )}
 
                     </div>

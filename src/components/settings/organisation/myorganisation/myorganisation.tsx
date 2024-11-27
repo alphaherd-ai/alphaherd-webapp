@@ -89,19 +89,19 @@ export const MyOrganisationSettings = () => {
         <>
             <div className="w-full h-full">
 
-                <div className="w-full h-full mt-[26px] border border-solid border-borderGrey rounded-[10px]">
+                <div className="w-full h-full mt-[26px]">
                     <OrganisationNavbar />
-                    <div className="w-full h-full px-4 py-5 bg-gray-100 rounded-b-[10px] flex-col justify-start items-start gap-2 flex">
+                    <div className="w-full h-full px-4 py-5 bg-gray-100 border border-neutral-400 flex-col justify-start items-start gap-4 flex">
                         <div className="w-full flex gap-4">
-                            <div className="w-5/12 px-6 pt-4 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-4 flex">
+                            <div className="w-3/12 px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-4 flex ">
                                 <div className="flex flex-col gap-2">
                                     <div className="text-neutral-400 text-base font-bold ">Logo and watermark</div>
                                     <div className="text-neutral-400 text-base font-medium ">Upload an image of your clinic’s logo and watermark</div>
                                 </div>
-                                <div className="flex justify-between w-full">
+                                <div className="flex gap-4">
                                     {appState.isCurrentOrgAdmin?(
                                          <CldUploadButton
-                                         className="rounded-full  h-0 border-none"
+                                         className="rounded-full  h-0 border-none  hover:cursor-pointer"
                                          options={{
                                              sources: ['local', 'url'],
                                              multiple: false,
@@ -113,8 +113,8 @@ export const MyOrganisationSettings = () => {
                                                  handleUpdatePic(result.info)
                                                  widget.close();
                                              }}
-                                     >                {appState.currentOrg.orgImgUrl?<Image src={appState.currentOrg.orgImgUrl} alt="profile" width={150} height={150} className="rounded-[10px] object-cover" />:
-                                     <div className="w-[150px] h-[150px]  rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 flex">
+                                     >                {appState.currentOrg.orgImgUrl?<Image src={appState.currentOrg.orgImgUrl} alt="profile" width={150} height={150} />:
+                                     <div className="w-[164px] h-[164px] p-2 rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 flex">
                                      <div className="text-neutral-400 text-base font-bold ">+</div>
                                      <div className="text-neutral-400 text-base font-bold "> Logo</div>
                                  </div>
@@ -123,7 +123,7 @@ export const MyOrganisationSettings = () => {
                                                  </CldUploadButton>
                                     ):(appState.currentOrg.orgImgUrl?<Image src={appState.currentOrg.orgImgUrl} alt="profile" width={150} height={150} />:(
                                         <div className="flex gap-4">
-                                            <div className="w-[150px] h-[150px] rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 flex">
+                                            <div className="w-[164px] h-[164px] p-2 rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 flex">
                                      <div className="text-neutral-400 text-base font-bold ">+</div>
                                      <div className="text-neutral-400 text-base font-bold "> Logo</div>
                                             </div>
@@ -134,23 +134,17 @@ export const MyOrganisationSettings = () => {
                                
                                    
                                     
-                                    <div className="w-[150px] h-[150px] p-2 rounded-[5px] border border-dashed border-borderGrey flex-col justify-center items-center gap-2 flex">
+                                    <div className="w-[164px] h-[164px] p-2 rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 flex">
                                         <div className="text-neutral-400 text-base font-bold ">+</div>
                                         <div className="text-neutral-400 text-base font-bold ">WaterMark</div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex flex-col gap-2 w-9/12">
-                            <div className="w-full h-14 rounded-[10px] justify-start items-center gap-2 flex">
-                                <div className="w-6/12 h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
-                                    <div className="text-gray-500 text-base font-bold ">Name:</div>
+                            <div className="flex flex-col gap-4 w-9/12">
+                                <div className="w-full h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
+                                    <div className="text-gray-500 text-base font-bold ">Org. Name:</div>
                                     <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.orgName}</div>
                                 </div>
-                                <div className="w-6/12 h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center  gap-4 flex">
-                                        <div className="text-gray-500 text-base font-bold ">Branch:</div>
-                                        <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentBranch.branchName}</div>                                
-                                    </div>
-                            </div>
                                 <div className="w-full h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                     <div className="text-gray-500 text-base font-bold ">Address:</div>
                                     <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.address}</div>
@@ -158,12 +152,10 @@ export const MyOrganisationSettings = () => {
                                 <div className="w-full h-14 rounded-[10px] justify-start items-center gap-2 flex">
                                     <div className="w-6/12 h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center  gap-4 flex">
                                         <div className="text-gray-500 text-base font-bold ">State:</div>
-                                        <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.state}</div>                                
-                                    </div>
+                                        <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.state}</div>                                </div>
                                     <div className="w-6/12 h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center  gap-4 flex">
                                         <div className="text-gray-500 text-base font-bold ">Pincode:</div>
-                                        <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.pincode}</div>                                
-                                    </div>
+                                        <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.pincode}</div>                                </div>
                                 </div>
                                 <div className="w-full h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center  gap-4 flex">
                                     <div className="text-gray-500 text-base font-bold ">Email:</div>
@@ -177,7 +169,7 @@ export const MyOrganisationSettings = () => {
                                     <div className="w-8/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.phoneNo}</div>                            </div>
                                 <div className="w-6/12 h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                     <div className="text-gray-500 text-base font-bold ">Alternate Phone No.:</div>
-                                    <input className="w-6/12 h-8 border-0 p-1 text-gray-500 text-base" type="text" name="" id="" defaultValue={"+91"} />
+                                    <div className="w-6/12 h-8 border-0 p-1 text-gray-500 text-base"  >{appState.currentOrg.phoneNo}</div>
                                 </div>
                             </div>
                             <div className="w-full h-14 rounded-[10px] justify-start items-center gap-2 flex">
@@ -186,61 +178,53 @@ export const MyOrganisationSettings = () => {
                                     <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.gstNo}</div>                            </div>
                                 <div className="w-6/12 h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                     <div className="text-gray-500 text-base font-bold ">PAN Number:</div>
-                                    <input className="w-8/12 h-8 border-0 p-1 text-gray-500 text-base" type="text" name="" id="" defaultValue={"+91"} />
+                                    <div className="w-8/12 h-8 border-0 p-1 text-gray-500 text-base" > DRMGW0000H </div>
                                 </div>
                             </div>
                             <div className="w-full h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                 <div className="text-gray-500 text-base font-bold ">Website:</div>
-                                <input className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base" type="text" name="" id="" defaultValue={"petfirst.com"} />
+                                <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"  >petfirst.com </div>
                             </div>
                             <div className="w-full min-h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                 <div className="text-gray-500 text-base font-bold ">Description:</div>
                                 <div className="w-10/12 min-h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.description}</div>                        </div>
                         </div>
-                        <div className="w-full px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
+                        <div className="w-full h-[228px] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                             <div className="flex items-center justify-between w-full gap-2">
                                 <div className="flex flex-col">
                                     <div className="text-gray-500 text-base font-bold ">Linked Branches</div>
                                     <div className="text-neutral-400 text-base font-medium ">Link a new branch with your Organisation</div>
                                 </div>
-                                <div className='flex items-center h-9 px-2 bg-black justify-evenly rounded-lg cursor-pointer'  onClick={togglePopup}>
-                                    <Image  src={branch} alt="logo" w-4 h-4 />
+                                <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '>
                                     <Button
                                         variant="solid"
-                                        className="capitalize flex border-none bg-black text-white rounded-lg "> 
-                                        Add Branch
-                                    </Button>
+                                        className="capitalize flex border-none bg-black text-white rounded-lg hover:cursor-pointer " onClick={togglePopup}> Add Branch</Button>
 
                                 </div>
                             </div>
                             <div className="w-full h-full">
-                                <div className="w-full h-full rounded-[10px] border-0 border-t border-l border-r border-solid border-borderGrey justify-start items-start flex flex-col">
-                                    <div className='flex  w-full  box-border bg-gray-100  h-12 justify-around items-center border-0 border-b border-solid border-borderGrey text-textGrey2 rounded-t-[10px]'>
-                                    <div className=' flex text-gray-500 text-base font-medium   w-[15rem]'>Branch Name</div>
-                                    <div className=' flex text-gray-500 text-base font-medium   w-[8rem]'>Employees</div>
-                                    <div className=' flex text-gray-500 text-base font-medium   w-[10rem]'>Phone No.</div>
-                                    <div className=' flex text-gray-500 text-base font-medium   w-[10rem]'>Email</div>
+                                <div className="w-full h-full rounded-[10px] border border-stone-300 justify-start items-start flex flex-col">
+                                    <div className='flex  w-full  items-center box-border bg-gray-100  h-12 py-4 border-b border-neutral-400 text-gray-500'>
+                                        <div className='flex text-gray-500 text-base font-medium px-6 w-5/12'>Branch Name</div>
                                     </div>
+                                    <div className='flex  items-center w-full  box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
                                         {
                                             orgBranches.map((branch : any,index:number) => {
-                                                return <div key={index+1} className='flex  w-full  box-border h-16 justify-around items-center bg-white   border-0 border-b border-solid border-borderGrey  hover:bg-gray-200 text-textGrey1  hover:text-textGrey2  transition'>
-                                                <div className=' flex text-textGrey2 text-base font-medium   w-[15rem]'>{branch.branchName}</div>
-                                                <div className=' flex text-textGrey2 text-base font-medium   w-[8rem]'>{branch.branchName}</div>
-                                                <div className=' flex text-textGrey2 text-base font-medium   w-[10rem]'>{appState.currentOrg.phoneNo}</div>
-                                                <div className=' flex text-textGrey2 text-base font-medium   w-[10rem]'>{appState.currentOrg.orgEmail}</div>
+                                                return <div key={index+1} className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                                <div className="text-teal-400 text-base font-bold ">{branch.branchName}</div>
                                             </div>
                                             })
                                         }
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div >
             </div >
-
-            {showPopup && <AddBranchPopup onClose={togglePopup} />}
-
-          
+           
+            {showPopup && <AddBranchPopup onClose={togglePopup} />} 
+           
         </>
     )
 }

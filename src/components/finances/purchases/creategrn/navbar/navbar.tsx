@@ -53,12 +53,12 @@ const CreateGrnNavbar = () => {
                 </div>
                 <div className="flex">
                     
-                    <div className="mr-4 self-stretch justify-start items-center gap-2 flex  h-11 px-6 py-2.5 rounded-[5px] border border-borderGrey border-dashed">
+                    {/* <div className="mr-4 self-stretch justify-start items-center gap-2 flex  h-11 px-6 py-2.5 rounded-[5px] border border-borderGrey border-dashed">
                         <div className="w-6 h-6 flex justify-center items-center"> <Image src={Attachment} alt='Attachment' className='w-3 h-3 ' /></div>
                         <div className="justify-start items-center gap-4 flex">
                             <div className="text-gray-500 text-base font-bold ">Attach files</div>
                         </div>
-                    </div>
+                    </div> */}
 
                     <div className="flex">
                         <div className=" w-11 h-11 bg-gray-100 rounded-[5px] border border-neutral-400 flex justify-center items-center mr-4">

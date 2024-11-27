@@ -16,6 +16,7 @@ const FilterDropdwonCard = () => {
   const appState = useAppSelector((state) => state.app);
   const [partyInfo, setPartyInfo] = useState<any[]>([]);
   const [selectedParties, setSelectedParties] = useState<any[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<string[]>([]);
   const { data, isLoading, error } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -40,7 +41,7 @@ const FilterDropdwonCard = () => {
         },
       }));
 
-      const combinedOptions = [...clientOptions, ...distributorOptions];
+      const combinedOptions = [ ...distributorOptions];
       console.log(combinedOptions);
       setPartyInfo(combinedOptions);
     }
@@ -93,7 +94,7 @@ const FilterDropdwonCard = () => {
           onClick={() => handleTabChange("party")}
         >
           <div className={`text-sm font-bold ${activeTab === "party" ? "text-white" : "text-neutral-400"}`}>
-            Party
+            Distributors
           </div>
           <div className="w-4 h-4 p-2 bg-teal-400 rounded-[17px] flex-col justify-center items-center gap-2.5 inline-flex">
             <div className="text-white text-[10px] font-medium">2</div>

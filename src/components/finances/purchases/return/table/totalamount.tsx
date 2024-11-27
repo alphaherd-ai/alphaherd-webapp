@@ -10,10 +10,13 @@ import { DataContext } from './DataContext';
 import { Tax } from '@prisma/client';
 import Select from 'react-select';
 import { dark } from '@mui/material/styles/createPalette';
-
+import Popup from "./recordpurchase"
+import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 
 const NewPurchaseReturnTotalAmount = () => {
     const { tableData, totalAmountData, setTotalAmountData } = useContext(DataContext);
+    const { headerData } = useContext(DataContext);
+    const { transactionsData, setTransactionsData } = useContext(DataContext);
     let totalAmount = 0;
 
     tableData.forEach((data) => {
@@ -24,7 +27,6 @@ const NewPurchaseReturnTotalAmount = () => {
     });
     //const { totalAmountData, setTotalAmountData } = useContext(DataContext);
   
-    console.log("Total amount is :", totalAmount);
     const [grandAmt, setGrandAmt] = useState(totalAmount);
     const gstOptions = [
         { value: 'percent', label: '₹ in Percent' },
@@ -35,7 +37,7 @@ const NewPurchaseReturnTotalAmount = () => {
     const [startDate,setDate]=useState(new Date());
     const [shipping, setShipping] = useState<string>('');
     const [adjustment, setAdjustment] = useState<string>('');
-    const [overAllDiscount,setDiscount]=useState(0); 
+    const [overAllDiscount, setDiscount] = useState<string>("");
 
     const handleShippingChange = (event: any) => {
         const value = event.target.value;
@@ -60,28 +62,55 @@ const NewPurchaseReturnTotalAmount = () => {
         }
       },[totalAmountData])
 
-      
-    const [discountMethod,setDiscountMethod]=useState('amount');
-    const handleSelectChange = (selectedOption: any) => {
+      const [discountMethod, setDiscountMethod] = useState("amount");
+      const handleSelectChange = (selectedOption: any) => {
         setDiscountMethod(selectedOption.value);
-    };
-    const [discountInput,setDiscountInput]=useState(0);
-    const handleDiscountChange = (discount: number) => {
-        if (discountMethod === 'amount') {
-            setDiscountInput(discount);
+      };
+      const [discountInput, setDiscountInput] = useState<string>("");
+      const handleDiscountChange = (value: string) => {
+        if (/^\d*\.?\d*$/.test(value)) {
+          setDiscountInput(value);
+    
+          const discount = parseFloat(value) || 0;
+    
+          if (discountMethod === "amount") {
             const discountedAmount = grandAmt - discount;
-            let discountPercent=Number(discount/totalAmount).toFixed(4)
-            setDiscount(Number(discountPercent))
+            const discountPercent = Number(discount / totalAmount).toFixed(10);
+            setDiscount(discountPercent);
             setGrandAmt(discountedAmount);
-            setTotalAmountData((prevData) => ({ ...prevData, gst:Number(discountPercent) }));
-        } else if (discountMethod === 'percent') {
-            setDiscountInput(discount);
+            setTotalAmountData((prevData) => ({
+              ...prevData,
+              overallDiscount: discountPercent,
+            }));
+          } else if (discountMethod === "percent") {
             const discountedAmount = grandAmt - grandAmt * (discount / 100);
-            setDiscount(Number(discount/100));
+            setDiscount((discount / 100).toString());
             setGrandAmt(discountedAmount);
-            setTotalAmountData((prevData) => ({ ...prevData, gst:Number(discount/100) }));
+            setTotalAmountData((prevData) => ({
+              ...prevData,
+              overallDiscount: discount / 100,
+            }));
+          }
         }
-    };
+      };
+    
+      const updateGrandTotal = () => {
+        const discountedAmount =
+          totalAmount - totalAmount * parseFloat(overAllDiscount || "0") || 0;
+        const shippingValue = parseFloat(shipping) || 0;
+        const adjustmentValue = parseFloat(adjustment) || 0;
+        const newGrandTotal = discountedAmount + shippingValue + adjustmentValue;
+    
+        setGrandAmt(newGrandTotal);
+        setTotalAmountData((prevData) => ({
+          ...prevData,
+          subTotal: totalAmount,
+          totalCost: newGrandTotal,
+          shipping: shippingValue,
+          adjustment: adjustmentValue,
+          overAllDiscount: overAllDiscount,
+        }));
+      };
 
    
     const handleDateChange= (date:any)=>{
@@ -91,22 +120,29 @@ const NewPurchaseReturnTotalAmount = () => {
             lastDateOfReturn:date
         }))
     }
-    const updateGrandTotal = () => {
-        const discountedAmount = totalAmount - totalAmount * overAllDiscount;
-        const shippingValue = parseFloat(shipping) || 0;
-        const adjustmentValue = parseFloat(adjustment) || 0;
-        const newGrandTotal = discountedAmount + shippingValue + adjustmentValue;
 
-        setGrandAmt(newGrandTotal);
-        setTotalAmountData((totalAmountData) => ({
-            ...totalAmountData,
-            subTotal: totalAmount,
-            totalCost: newGrandTotal,
-            shipping: shippingValue,
-            adjustment: adjustmentValue,
-            overAllDiscount: overAllDiscount,
-        }));
-    };
+
+    const [showPopup, setShowPopup] = React.useState(false);
+    const togglePopup = () => {
+        setShowPopup(!showPopup);
+    }
+
+    const [initialInvoiceNo, setInitialInvoiceNo] = useState('');
+    const [count, setCount] = useState(0);
+    useEffect(() => {
+        if (showPopup) {
+          setCount((prevCount) => prevCount + 1);
+        }
+      }, [showPopup]);
+    useEffect(() => {
+        if (showPopup) {
+          const newInvoiceNo = generateInvoiceNumber(count);
+          setInitialInvoiceNo(newInvoiceNo);
+        }
+      }, [showPopup]);
+  
+      const balanceDue = 0;
+
 
     useEffect(() => {
         updateGrandTotal(); 
@@ -198,11 +234,12 @@ const NewPurchaseReturnTotalAmount = () => {
                     <div className="text-gray-500 text-xl font-medium ">Payments</div>
    
                     <Button 
-                        variant="solid"
-                        className="capitalize flex h-9 py-2.5 border-none text-base bg-black text-white rounded-lg cursor-pointer">
-                        <div className='flex'><Image src={Rupee} alt='Rupee' className='w-6 h-6 ' /></div>
-                        Recorded Transaction
-                     </Button>
+                                        onClick={togglePopup}
+                                        variant="solid"
+                                        className="capitalize flex h-9 py-2.5 border-none text-base bg-black text-white rounded-lg cursor-pointer">
+                                        <div className='flex'><Image src={Rupee} alt='Rupee' className='w-6 h-6 ' /></div>
+                                        Record Payment
+                                    </Button>
             
 </div> 
 <div className="w-full  p-6 bg-white rounded-bl-md rounded-br-md  justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
@@ -234,10 +271,10 @@ const NewPurchaseReturnTotalAmount = () => {
                                     <div className="flex items-center">
                                         <div className="text-right text-borderText text-base  ">
                                         <input
-                                        type='number'
+                                        placeholder='0'
                                         className="text-right  text-base  w-[50%] border-none outline-none"
                                         value={discountInput}
-                                        onChange={(e)=>handleDiscountChange(Number(e.target.value))}
+                                        onChange={(e)=>handleDiscountChange((e.target.value))}
                                         /></div>
                                         <div className=' flex text-gray-500 text-base font-medium pl-6'>
                                             <Select
@@ -285,6 +322,7 @@ const NewPurchaseReturnTotalAmount = () => {
             </div>
 
 
+            {showPopup && <Popup headerdata={headerData} onClose={togglePopup} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} />}
 
         </>
   )

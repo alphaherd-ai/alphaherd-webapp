@@ -17,6 +17,7 @@ import { fetchBranchDetailsById, isAdminOfOrg, isManagerOfBranch } from "@/utils
 
 const Login = () => {
   const dispatch = useAppDispatch();
+  const [loading, setLoading] = useState(false); 
 
   let router = useRouter();
 
@@ -39,6 +40,8 @@ const Login = () => {
       [name]: value
     });
   };
+
+
 
   async function userDetailsLoginSubmit() {
     // console.log(process.env.NEXT_PUBLIC_API_BASE_PATH);
@@ -65,17 +68,16 @@ const Login = () => {
   const formSubmit = async () => {
 
     // console.log("form button")
+    if (loading) return; // Prevent duplicate submissions
 
+    setLoading(true); // Set loading state to true
     try {
-
       const user = await userDetailsLoginSubmit();
-      console.log(user);
-      //const currentBranchUserRole = user.userRoles[0];
       const currentBranch = await fetchBranchDetailsById(user?.orgBranchId);
       const currentOrgId = currentBranch.orgId;
       const currentBranchId = currentBranch.id;
-      const isCurrentOrgAdmin = isAdminOfOrg(currentOrgId,user as UserState);
-      const isCurrentBranchManager = isManagerOfBranch(currentBranchId,user as UserState);
+      const isCurrentOrgAdmin = isAdminOfOrg(currentOrgId, user as UserState);
+      const isCurrentBranchManager = isManagerOfBranch(currentBranchId, user as UserState);
 
       // console.log(currentBranchUserRole);
       // console.log(currentBranch);
@@ -96,7 +98,7 @@ const Login = () => {
         currentOrgId,
         currentBranchId,
         currentBranch,
-        currentOrg : currentBranch.org,
+        currentOrg: currentBranch.org,
         isCurrentOrgAdmin,
         isCurrentBranchManager
       };
@@ -114,9 +116,9 @@ const Login = () => {
         theme: "colored",
         transition: Bounce,
       });
+
       router.push("/");
-    }
-    catch (err: any) {
+    } catch (err: any) {
       toast.error(err.message, {
         position: "bottom-right",
         autoClose: 5000,
@@ -128,9 +130,10 @@ const Login = () => {
         theme: "colored",
         transition: Bounce,
       });
+    } finally {
+      setLoading(false); // Reset loading state
     }
-  }
-  
+  };
 
   const handleKeyDown=(e:any)=>{
     if(e.key === 'Enter'){
@@ -182,9 +185,9 @@ const Login = () => {
                     onClick={togglePasswordVisibility} />)}
               </div>
             </div>
-            <div className="flex items-center mt-[16px] gap-2">
+            <div className="flex items-center mt-[16px] gap-2 ">
               <input type="checkbox" />
-              <div className="text-gray-500 text-base font-medium ">Stay signed in</div>
+              <div className="text-gray-500 text-base font-medium  ">Stay signed in</div>
             </div>
             <button className="w-[69px] h-[42px] px-4 py-2 bg-[#35BEB1] hover:bg-teal-500 transition-all rounded-[5px] justify-start items-center gap-2 flex text-white text-sm font-bold  mt-[24px] border-0 outline-none hover:cursor-pointer hover:shadow-md" onClick={formSubmit} >
               Login

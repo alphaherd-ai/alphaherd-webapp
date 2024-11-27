@@ -337,7 +337,18 @@ const GeneralSettings = () => {
             setItemUnits(itemUnitsData); 
         }
     }, [itemUnitsData, itemUnitsError, isLoadingItemUnits]);
-
+    // const [species, setspecies] = useState([]);
+    // const {data: speciesData, error: speciesError, isLoading: isLoadingspecies} = useSWR(
+    //     `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`,
+    //     fetcher,
+    //     { revalidateOnFocus: true } 
+    // );
+    // useEffect(() => {
+    //     if (!isLoadingspecies && !speciesError && speciesData) {
+    //         console.log("species data is :",species);
+    //         setspecies(speciesData); 
+    //     }
+    // }, [speciesData, speciesError, isLoadingspecies]);
     //Reasons
     const [reasons, setReasons] = useState([]);
     const {data: reasonsData, error: reasonsError, isLoading: isLoadingreasons} = useSWR(
@@ -626,7 +637,7 @@ const GeneralSettings = () => {
                                     <div className="text-neutral-400 text-sm font-bold ">WhatsApp</div>
                                 </div></button>)}
                             </div>
-                            <button onClick={handleSaveClick}><div className="w-[111px] h-7 p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
+                            <button onClick={handleSaveClick}><div className="w-[111px] h-7 p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex cursor-pointer" >
                                 
                                 <div className="text-neutral-400 text-sm font-bold ">Save</div>
                             </div></button>
@@ -758,9 +769,9 @@ const GeneralSettings = () => {
                                     <div className="text-gray-500 text-base font-bold ">Item Categories</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your item categories</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer"  onClick={togglePopup2}>
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                    <div className="text-white text-base font-medium " onClick={togglePopup2}>Add Category</div>
+                                    <div className="text-white text-base font-medium ">Add Category</div>
                                 </div>
                             </div>
                             <div className="w-full h-full">
@@ -793,9 +804,9 @@ const GeneralSettings = () => {
                                     <div className="text-gray-500 text-base font-bold ">Item Units</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your inventory item units</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer"  onClick={togglePopup3}>
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                    <div className="text-white text-base font-medium " onClick={togglePopup3}>Add Unit</div>
+                                    <div className="text-white text-base font-medium ">Add Unit</div>
                                 </div>
                             </div>
                             <div className="w-full h-full">
@@ -830,9 +841,9 @@ const GeneralSettings = () => {
                                     <div className="text-gray-500 text-base font-bold ">Service Categories</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your service categories</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer" onClick={togglePopup4}>
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                    <div className="text-white text-base font-medium " onClick={togglePopup4}>Add Category</div>
+                                    <div className="text-white text-base font-medium " >Add Category</div>
                                 </div>
                             </div>
                             <div className="w-full h-full">
@@ -866,9 +877,9 @@ const GeneralSettings = () => {
                                     <div className="text-gray-500 text-base font-bold ">Tax Types</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your tax types</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer" onClick={togglePopup5}>
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                    <div className="text-white text-base font-medium " onClick={togglePopup5}>Add Tax</div>
+                                    <div className="text-white text-base font-medium " >Add Tax</div>
                                 </div>
                             </div>
                             <div className="w-full h-full">
@@ -915,9 +926,9 @@ const GeneralSettings = () => {
                                     <div className="text-gray-500 text-base font-bold ">Update Inventory - Stock out Reasons</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your stock out reasons</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer"  onClick={togglePopup6}>
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                    <div className="text-white text-base font-medium " onClick={togglePopup6}>Add Reason</div>
+                                    <div className="text-white text-base font-medium ">Add Reason</div>
                                 </div>
                             </div>
                             <div className="w-full h-full">
