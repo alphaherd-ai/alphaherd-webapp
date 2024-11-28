@@ -3,7 +3,33 @@ import Link from 'next/link';
 import DatabaseClientBottombar from './bottombar';
 import Loading from '@/app/loading';
 
-const DatabaseClientTableItem = ({ clients, isLoading }) => {
+interface Clients {
+    id: number;
+    clientName: string;
+    email: string;
+    contact: string;
+    address: string;
+    city: string;
+    pinCode: string;
+    age?: number; // Ensure this is present if you're sorting by age
+    patients: Patients[] | undefined;
+}
+
+interface Patients {
+    id: string;
+    patientName: string;
+    species: string;
+    breed: string;
+}
+  
+  // Define the props interface for DatabaseClientTableItem component
+  interface DatabaseClientTableItemProps {
+    clients: Clients[]; // Array of clients
+    isLoading: boolean; // Loading state
+  }
+  
+  // Functional component with typed props
+  const DatabaseClientTableItem: React.FC<DatabaseClientTableItemProps> = ({ clients, isLoading }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [productsPerPage] = useState<number>(50);
 
@@ -38,7 +64,7 @@ const DatabaseClientTableItem = ({ clients, isLoading }) => {
 
                         {/* Patients List */}
                         <div className="w-1/6 flex items-center px-6 text-base font-medium">
-                            {client.patients?.map((patient, index) => (
+                            {client.patients?.map((patient: { id: React.Key | null | undefined; patientName: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; }, index: number) => (
                                 <span key={patient.id}>
                                     {patient.patientName}
                                     {index < (client.patients?.length ?? 0) - 1 ? ', ' : ''}

@@ -63,7 +63,21 @@ import Link from 'next/link';
 import Loading from '@/app/loading';
 import DatabaseDistribuBottombar from './bottombar';
 
-const DatabaseDistributorTableItem = ({ distributors, isLoading }) => {
+interface Distributors{
+    id:string,
+    distributorName:string,
+    contact:string,
+    gstinNo:string,
+    email:string,
+
+}
+interface DatabaseClientTableItemProps {
+    distributors: Distributors[]; // Array of clients
+    isLoading: boolean; // Loading state
+    data:any;
+  }
+
+const DatabaseDistributorTableItem:React.FC<DatabaseClientTableItemProps> = ({ distributors,data, isLoading }) => {
     const [currentPage, setCurrentPage] = useState<any>(1);
     const [productsPerPage] = useState<any>(50);
 

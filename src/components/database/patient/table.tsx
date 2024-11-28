@@ -6,7 +6,8 @@ import DatabasePatientTableItem from './items'
 import { useAppSelector } from '@/lib/hooks'
 import useSWR from 'swr';
 
-const fetcher = (...args: any[]) => fetch(...args).then(res => res.json());
+const fetcher = (...args: [RequestInfo, RequestInit?]) => fetch(...args).then(res => res.json());
+
 
 interface Clients {
   id: number;
@@ -56,7 +57,7 @@ const DatabasePatientTable = () => {
     if (!isPatientError && !isPatientLoading && fetchedPatients) {
       const sortedPatients = [...fetchedPatients].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
       setPatients(sortedPatients);
-      const highestId = Math.max(0, ...fetchedPatients.map(patient => patient.id));
+      const highestId = Math.max(0, ...fetchedPatients.map((patient: { id: any }) => patient.id));
       setMaxId(highestId);
     }
 
