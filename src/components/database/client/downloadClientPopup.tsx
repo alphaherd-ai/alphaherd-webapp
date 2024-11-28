@@ -8,7 +8,7 @@ import Image from 'next/image';
 import calenderIcon from "../../../assets/icons/finance/calendar_today.svg";
 import download from "../../../assets/icons/finance/downloadGreen.svg";
 import { Button } from '@nextui-org/react';
-import jsPDF from 'jspdf';
+import jsPDF, { RGBAData } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import logo from "../../../assets/icons/finance/pfpimg.png";
 import { useAppSelector } from '@/lib/hooks';
@@ -60,12 +60,12 @@ const DownloadPopup = ({ onClose, clients }:any) => {
   const logo = appState?.currentOrg?.orgImgUrl;
 
   const downloadPDF = () => {
-    convertImageToBase64(logo, (base64Image) => {
+    convertImageToBase64(logo, (base64Image: string | HTMLImageElement | Uint8Array | HTMLCanvasElement | RGBAData) => {
       const doc = new jsPDF('landscape');
       const tableColumn = ["S.No.", "Client", "Pet(s)", "Phone No.", "Email", "City"];
-      const tableRows = [];
+      const tableRows: any[][] = [];
   
-      data.forEach((item, index) => {
+      data.forEach((item: { patients: any[]; clientName: any; contact: any; email: any; city: any; }, index: number) => {
         const patientsNames = item.patients?.map((patient) => patient.patientName).join(', ') || '';
         const clientsData = [
           index + 1, // Serial number

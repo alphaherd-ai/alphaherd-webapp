@@ -23,6 +23,7 @@ export const GET=async(req: NextRequest,res:Response)=> {
               'Content-Type': 'application/json',
           },
       });
+   
     } catch (error) {
       console.error(error)
       return new Response(JSON.stringify(error));
