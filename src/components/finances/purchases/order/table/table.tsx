@@ -7,7 +7,7 @@ import addicon1 from "../../../../../assets/icons/finance/add (3).svg"
 
 import Subtract from "../../../../../assets/icons/finance/Subtract.svg"
 import Add from "../../../../../assets/icons/finance/add (2).svg"
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { Dispatch, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import Select from 'react-select';
 import Image from "next/image"
 import { Button } from "@nextui-org/react";
@@ -34,6 +34,12 @@ interface Products {
     quantity: number,
     tax: number
 }
+interface Popup1Props {
+    onClose: () => void;
+    setNewDistributor?: Dispatch<any>; // Add this if it's optional
+    setIsNewDistributorClicked: Dispatch<any>;
+  }
+  
 interface ProductBatch {
     id: number;
     date: string;
@@ -88,6 +94,16 @@ const NewPurchasesTable = () => {
     ];
     const [showPopup, setShowPopup] = React.useState(false);
     const [showDistributorPopup, setDistributorPopup] = React.useState(false);
+
+    const Popup1: React.FC<Popup1Props> = ({ onClose, setNewDistributor, setIsNewDistributorClicked }) => {
+        return (
+          <div>
+            <button onClick={onClose}>Close</button>
+            {/* Use setNewDistributor and setIsNewDistributorClicked as needed */}
+          </div>
+        );
+      };
+      
 
     if(id){
         const {data,isLoading,error}=DataFromOrder(Number(id),appState.currentBranchId);

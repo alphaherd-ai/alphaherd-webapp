@@ -45,6 +45,38 @@ export function generatePdfForInvoice(data: any, appState: any, items: any) {
   let y = 10;
   let lineHeight = 6;
 
+  
+  // Today's date
+const today = new Date();
+const todayString = today.toLocaleDateString("en-US");
+
+// Check if data.dueDate is a valid date
+let dueDate: Date;
+
+if (data.dueDate && !isNaN(new Date(data.dueDate).getTime())) {
+  dueDate = new Date(data.dueDate);
+} else {
+  // If invalid, set dueDate to 30 days from today
+  dueDate = new Date();
+  dueDate.setDate(today.getDate() + 30);
+}
+
+// Ensure dueDate is not older than the issue date
+if (dueDate < today) {
+  dueDate.setDate(today.getDate() + 30); // Set dueDate 30 days from today
+}
+
+// Format the date directly
+const formattedDueDate = dueDate.toLocaleDateString("en-GB", {
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric"
+});
+
+console.log("Last date of return for this invoice is:", formattedDueDate);
+
+
+
   // Fetch image from URL and add to PDF
  
   
@@ -73,14 +105,10 @@ export function generatePdfForInvoice(data: any, appState: any, items: any) {
     addText(`${appState.currentBranch?.branchName}`, 55 ,y, 11, 'center');
     y += 5;
     addText(`${appState.currentBranch?.org?.phoneNo!}`, 55, y, 11, 'center');
-    y += 5;
-    addText(`${appState.currentBranch?.org?.orgEmail!}`, 55, y, 11, 'center');
-    y += 5;
-    addText("petsfirsthospital.in", 55, y, 11, 'center');
-    y += 5;
-    addText(`GSTIN: ${appState.currentBranch?.org?.gstNo!}`, 55, y, 11, 'center');
-    y += 5;
-    addText(`Address: ${appState.currentBranch?.org?.address!}`, 55, y, 11, 'center');
+    y+=5;
+    addText(`${appState.currentBranch?.org?.orgEmail!}`,55,y,11,'center');
+    y+=5;
+    addText("petsfirsthospital.in",55,y,11,'center');
     
     y += lineHeight;
     
@@ -95,9 +123,11 @@ export function generatePdfForInvoice(data: any, appState: any, items: any) {
     var todayString = mm + '/' + dd + '/' + yyyy;
     
     // Add transaction details
+    console.log("I am in salesPDF and here is data: ",data);
     addText('Transaction details', 10, y, 12);
     y += 5;
-    y = addRow(['Subject: Sale', 'Mode: Cash'], y, [10, 110]);
+    // y = addRow(['Subject: Sale', 'Mode: Cash'], y, [10, 110]);
+    y = addRow([`Subject: ${data.type}`, 'Mode: Cash'], y, [10, 110]);
     y = addRow([`Amount Received: ${data.totalCost}`, 'Balance due: 0'], y, [10, 110]);
     y = addRow([`Date: ${todayString}`, `Receipt No.: ${data.invoiceNo}`], y, [10, 110]);
     
@@ -116,7 +146,7 @@ export function generatePdfForInvoice(data: any, appState: any, items: any) {
     y += 5;
     y = addRow([`Invoice No.: ${data.invoiceNo}`, `Date: ${todayString}`], y, [10, 110]);
     y = addRow([`Billed to: ${data.customer}`, `Phone No.: ${data.contact}`], y, [10, 110]);
-    y = addRow([`Pay by: ${todayString}`], y, [10, 110]);
+    y = addRow([`Pay by: ${todayString}`, `Last date of return: ${formattedDueDate}`], y, [10, 110]);
     y = addRow([`Notes: ${data.notes}`], y, [10]);
     
     // Add line below sales invoice details
@@ -125,35 +155,19 @@ export function generatePdfForInvoice(data: any, appState: any, items: any) {
     
     // Add table headers
     addText('No.', 10, y, 10);
-    addText('Product/Service', 20, y, 10);
-    addText('Batch No./Provider', 70, y, 10);
+    addText('Product/Service', 30, y, 10);
     addText('Qty.', 110, y, 10);
     addText('Unit price', 130, y, 10);
-    addText('Amount', 150, y, 10);
-    addText('Tax %', 170, y, 10);
-    addText('Tax Amt', 190, y, 10);
-    addText('Disc. %', 210, y, 10);
-    addText('Disc. Amt', 230, y, 10);
+    addText('Amount', 160, y, 10);
     y += 7;
     
     y = checkPageBreak(doc, y, pageHeight, 20);
     
     // Add table rows
-    const rows = items.map((item: any, idx: any) => [
-      String(idx + 1),
-      item.name,
-      item.batchNo || item.provider || '',
-      String(item.quantity),
-      String(item.sellingPrice),
-      String(item.sellingPrice * item.quantity),
-      String(item.taxAmount * 100),
-      String((item.taxAmount * item.sellingPrice * item.quantity).toFixed(2)),
-      String(item.discountPercentage || 0),
-      String((item.discountAmount || 0).toFixed(2))
-    ]);
+    const rows = items.map((item:any, idx:any) => [String(idx + 1), item.name, String(item.quantity), String(item.sellingPrice),String(item.sellingPrice*item.quantity)]);
     
     rows.forEach((row:any) => {
-      y = addRow(row, y, [10, 20, 70, 110, 130, 150, 170, 190, 210, 230]);
+      y = addRow(row, y, [10, 30, 110, 130, 160]);
       y = checkPageBreak(doc, y, pageHeight, 20);
     });
     
@@ -183,24 +197,6 @@ export function generatePdfForInvoice(data: any, appState: any, items: any) {
     addText(`${(data.subTotal).toFixed(2)}`, 160, y, 12);
     
     y += lineHeight;
-    // Calculate and add tax summary
-    const taxSummary: { [key: string]: number } = {};
-
-    items.forEach((item: any) => {
-      const taxRate = `${item.taxAmount * 100}%`;
-      if (!taxSummary[taxRate]) {
-      taxSummary[taxRate] = 0;
-      }
-      taxSummary[taxRate] += item.quantity * item.sellingPrice * item.taxAmount;
-    });
-
-    Object.keys(taxSummary).forEach((taxRate) => {
-      if (taxRate !== '0%') {
-      y = addRow([`Tax (${taxRate})`, `${taxSummary[taxRate].toFixed(2)}`], y, [130, 160]);
-      addLine(200, y, 130, y);
-      y += lineHeight;
-      }
-    });
     
     // Add line below summary
     addLine(10, y, 200, y);
