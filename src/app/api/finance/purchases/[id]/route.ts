@@ -41,15 +41,17 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: number }
     }
   
     try {
-      
+      const financeId=await fetchFinanceId(req);
       const body = await req.json();
+      const status=body.status;
       const newTransaction = body.recordTransaction[0];
       const purchases = await prismaClient.purchases.update({
-        where: { id: Number(params.id) },
+        where: { id: Number(params.id),financeSectionId:financeId },
         data: {
           recordTransaction: {
             create: newTransaction,
           },
+          status:status,
         },
         include: {
           items: {
@@ -58,7 +60,9 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: number }
             },
           },
           recordTransaction: true,
+          
         },
+        
       });
   
       return new Response(JSON.stringify(purchases), {
@@ -82,19 +86,19 @@ export const DELETE = async (req: NextRequest, { params }: { params: { id: numbe
   }
 
   try {
-    
+    const financeId=await fetchFinanceId(req);
     const purchasesId = Number(params.id);
 
     await prismaClient.financeTimeline.deleteMany({
-      where: { purchasesId },
+      where: { purchasesId,financeSectionId:financeId },
     });
 
     await prismaClient.items.deleteMany({
-      where: { purchasesId },
+      where: { purchasesId,financeSectionId:financeId },
     });
 
     await prismaClient.purchases.delete({
-      where: { id: purchasesId },
+      where: { id: purchasesId,financeSectionId:financeId },
     });
 
     return new Response(`purchases with id: ${purchasesId} deleted successfully`, { status: 201 });

@@ -54,12 +54,13 @@ const ExistingsalesReturnTable = () => {
           const itemData = shallowDataCopy.map((item: any) => ({
             id: item.itemType==='product' ? item.productBatch.productId: item.serviceId,
                 itemName:item.name,
+                itemType:item.itemType,
                 quantity:item.quantity,
                 sellingPrice:item.sellingPrice,
                 expiry:item.itemType==='product' ? item.productBatch.expiry:"",
                 batchNumber:item.itemType==='product'?item.productBatch.batchNumber:"",
                 tax:item.taxAmount,
-                provider:item.itempType==='product'?"":item.services.providers[0]
+                provider:item.itemType==='product'?"":item.serviceProvider
           }));
           setItems(itemData);
         }
@@ -168,7 +169,7 @@ const ExistingsalesReturnTable = () => {
                                         <div className='w-[10rem] flex-col items-center text-textGrey2 text-base font-medium '>
                                             <div className="text-textGrey2 text-base  font-medium  "> {item.itemType==='product' ? item.batchNumber:item.provider}</div>
 
-                                            <div className="text-neutral-400 text-[13px] font-medium ">{formatDateAndTime(item.expiry).formattedDate}</div>
+                                            <div className="text-neutral-400 text-[13px] font-medium ">{item.itempType==='product' ? formatDateAndTime(item.expiry).formattedDate:""}</div>
                                         </div>
                                         <div className='w-[12rem] flex items-center text-textGrey2 text-base font-medium gap-[12px] '>
 
@@ -188,8 +189,8 @@ const ExistingsalesReturnTable = () => {
                                             <div className="text-textGrey2 text-base  font-medium  "> {(item.tax * 100)}</div>
 
                                         </div>
-                                        <div className='w-[6rem] flex items-center text-textGrey2 text-base font-medium '>{`₹${(item.quantity * item.tax * 100).toFixed(2)}`}</div>
-                                        <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium '>{`₹${(item.quantity * item.sellingPrice + item.quantity * item.tax * 100).toFixed(2)}`}</div>
+                                        <div className='w-[6rem] flex items-center text-textGrey2 text-base font-medium '>{`₹${(item.quantity * item.tax*item.sellingPrice).toFixed(2)}`}</div>
+                                        <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium '>{`₹${(item.quantity * item.sellingPrice + item.quantity * item.tax * item.sellingPrice).toFixed(2)}`}</div>
 
                                     </div>
                                     {/* <div>
@@ -233,8 +234,8 @@ const ExistingsalesReturnTable = () => {
                                 <div className=' flex text-gray-500 text-base font-medium w-[8rem]'>
                                     <div className="text-neutral-400 text-base  font-medium   "> Tax inc</div>
                                 </div>
-                                <div className=' flex text-gray-500 text-base font-medium w-[6rem]'>{`₹${items.reduce((acc, item) => acc + item.quantity * item.tax * 100, 0).toFixed(2)}`}</div>
-                                <div className=' flex text-gray-500 text-base font-medium w-1/12'>{`₹${items.reduce((acc, item) => acc + item.quantity * item.sellingPrice + item.quantity * item.tax * 100, 0).toFixed(2)}`}</div>
+                                <div className=' flex text-gray-500 text-base font-medium w-[6rem]'>{`₹${items.reduce((acc, item) => acc + item.quantity * item.tax * item.sellingPrice, 0).toFixed(2)}`}</div>
+                                <div className=' flex text-gray-500 text-base font-medium w-1/12'>{`₹${items.reduce((acc, item) => acc + item.quantity * item.sellingPrice + item.quantity * item.tax * item.sellingPrice, 0).toFixed(2)}`}</div>
                             </div>
                         </div>
 

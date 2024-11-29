@@ -33,6 +33,18 @@ import AddItemUnit from "../generalSettingPopup/addUnitPopup";
 import AddBreed from "../generalSettingPopup/addBreedPopup";
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
+const defaultCategories = ['Pet food','Medicine','Supplements','Pet Accessories','Equipment'];
+const defaultUnits = ['Boxes','Pieces','Vials','Units','Strips'];
+const defaultTaxTypes = [0,5,12,18,28];
+const defaultServiceCategory = ['General Consultation','Follow Up', 'Surgery','Vaccination','Grooming','Boarding','Rescue'];
+const defaultPaymentMethod = ['Cash','UPI','Netbanking'];
+const defaultReason = ['Damaged','Expired','Wrong Item','Quality Issues'];
+const defaultSpeciesandBreed = [
+    { name: 'Dog', breed: ['Labrador Retriever','German Shepherd','Golden Retriever','Beagle','Pug','Indian Mastiff','Husky','Dashshund','Shi Tzu'] },
+    { name: 'Cat', breed: ['Domestic Short Hair','Bombay','Himalayan','Persian','Bengal', 'Siamese'] },
+    { name: 'Bird', breed: [] }, 
+    { name: 'Fish', breed: [] },  
+];
 
 
   
@@ -179,23 +191,60 @@ const GeneralSettings = () => {
       
     
       
-    const [paymentMethod, setPaymentMethod] = useState([
-        { id: 1, name: 'Cash', icon: cashicon },      
-        { id: 2, name: 'UPI', icon: upiicon },       
-        { id: 3, name: 'Netbanking', icon: netbankingicon },
-    ]);
+    const [paymentMethod, setPaymentMethod] = useState([]);
     const appState  = useAppSelector((state) => state.app)
-    const {data, error, isLoading} = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
-    useEffect(() => {
-        if (!isLoading && !error && data) {
-            const additionalMethods = data.map((method: any) => ({
-                id: method.id,
-                name: method.name,
-            }));
-            setPaymentMethod((prevMethods) => [...prevMethods, ...additionalMethods]);
-        }
-    }, [data,error,isLoading]);
+    const { data, error, isLoading } = useSWR(
+        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`,
+        fetcher,
+        { revalidateOnFocus: true }
+    );
 
+    useEffect(() => {
+        const initializePaymentMethods = async () => {
+            if (data) {
+                const existingPaymentMethods = data.map((method: any) => method.name);
+                const missingPaymentMethods = defaultPaymentMethod.filter(
+                    (method) => !existingPaymentMethods.includes(method)
+                );
+
+                if (missingPaymentMethods.length > 0) {
+                    console.log('Adding missing payment methods:', missingPaymentMethods);
+                    
+                    try {
+                        for (const method of missingPaymentMethods) {
+                            await fetch(
+                                `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/create?branchId=${appState.currentBranchId}`,
+                                {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({ name: method }),
+                                }
+                            );
+                        }
+                        const response = await fetch(
+                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`
+                        );
+                        const updatedData = await response.json();
+                        setPaymentMethod(updatedData);
+                    } catch (error) {
+                        console.error('Error while adding default payment methods:', error);
+                    }
+                } else {
+                    console.log('All default payment methods already exist');
+                    setPaymentMethod(data); 
+                }
+            }
+        };
+
+        if (data && !isLoading && !error) {
+            initializePaymentMethods();
+        } else if (error) {
+            console.error('Error fetching payment methods:', error);
+        }
+    }, [data, isLoading, error]);
+    
     //item categories
     const [itemCategories, setItemCategories] = useState([]);
     const {data: itemCategoryData, error: itemCategoryError, isLoading: isLoadingItemCategories} = useSWR(
@@ -204,10 +253,44 @@ const GeneralSettings = () => {
         { revalidateOnFocus: true } 
     );
     useEffect(() => {
-        if (!isLoadingItemCategories && !itemCategoryError && itemCategoryData) {
-            setItemCategories(itemCategoryData); 
+        const addDefaultCategories = async () => {
+            if (itemCategoryData) {
+                const existingCategoryNames = itemCategoryData.flatMap((item: any) =>
+                    Array.isArray(item.name) ? item.name : [item.name]
+                );
+                const missingCategories = defaultCategories.filter(
+                    (category) => !existingCategoryNames.includes(category)
+                );
+
+                if (missingCategories.length > 0) {
+                    console.log('Adding missing categories:', missingCategories);
+                    try {
+                        await fetch(
+                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemCategory/create?branchId=${appState.currentBranchId}`,
+                            {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ name: missingCategories }),
+                            }
+                        );
+
+                        window.location.reload();
+                    } catch (error) {
+                        console.error('Error while adding default categories:', error);
+                    }
+                } else {
+                    console.log('All default categories already exist');
+                }
+            }
+        };
+
+        if (itemCategoryData && !isLoadingItemCategories && !itemCategoryError) {
+            addDefaultCategories();
+            setItemCategories(itemCategoryData);
         }
-    }, [itemCategoryData, itemCategoryError, isLoadingItemCategories]);
+    }, [itemCategoryData, isLoadingItemCategories, itemCategoryError]);
 
     //item Units
     const [itemUnits, setItemUnits] = useState([]);
@@ -217,11 +300,55 @@ const GeneralSettings = () => {
         { revalidateOnFocus: true } 
     );
     useEffect(() => {
+        const addDefaultUnits = async () => {
+            if (itemUnitsData) {
+                const existingUnitNames = itemUnitsData.flatMap((item: any) =>
+                    Array.isArray(item.name) ? item.name : [item.name]
+                );
+                const missingUnit = defaultUnits.filter(
+                    (category) => !existingUnitNames.includes(category)
+                );
+
+                if (missingUnit.length > 0) {
+                    console.log('Adding missing categories:', missingUnit);
+                    try {
+                        await fetch(
+                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemUnit/create?branchId=${appState.currentBranchId}`,
+                            {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ name: missingUnit }),
+                            }
+                        );
+
+                        window.location.reload();
+                    } catch (error) {
+                        console.error('Error while adding default categories:', error);
+                    }
+                } else {
+                    console.log('All default categories already exist');
+                }
+            }
+        };
         if (!isLoadingItemUnits && !itemUnitsError && itemUnitsData) {
+            addDefaultUnits();
             setItemUnits(itemUnitsData); 
         }
     }, [itemUnitsData, itemUnitsError, isLoadingItemUnits]);
-
+    // const [species, setspecies] = useState([]);
+    // const {data: speciesData, error: speciesError, isLoading: isLoadingspecies} = useSWR(
+    //     `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`,
+    //     fetcher,
+    //     { revalidateOnFocus: true } 
+    // );
+    // useEffect(() => {
+    //     if (!isLoadingspecies && !speciesError && speciesData) {
+    //         console.log("species data is :",species);
+    //         setspecies(speciesData); 
+    //     }
+    // }, [speciesData, speciesError, isLoadingspecies]);
     //Reasons
     const [reasons, setReasons] = useState([]);
     const {data: reasonsData, error: reasonsError, isLoading: isLoadingreasons} = useSWR(
@@ -230,7 +357,39 @@ const GeneralSettings = () => {
         { revalidateOnFocus: true } 
     );
     useEffect(() => {
+        const addDefaultReason = async () => {
+            if (reasonsData) {
+                const existingReasons = reasonsData.flatMap((item: any) =>
+                    Array.isArray(item.name) ? item.name : [item.name]
+                );
+                const missingReasons = defaultReason.filter(
+                    (category) => !existingReasons.includes(category)
+                );
+
+                if (missingReasons.length > 0) {
+                    console.log('Adding missing reasons:', missingReasons);
+                    try {
+                        await fetch(
+                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/reason/create?branchId=${appState.currentBranchId}`,
+                            {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ name: missingReasons }),
+                            }
+                        );
+                        window.location.reload();
+                    } catch (error) {
+                        console.error('Error while adding default categories:', error);
+                    }
+                } else {
+                    console.log('All default categories already exist');
+                }
+            }
+        };
         if (!isLoadingreasons && !reasonsError && reasonsData) {
+            addDefaultReason();
             setReasons(reasonsData); 
         }
     }, [reasonsData, reasonsError, isLoadingreasons]);
@@ -243,7 +402,42 @@ const GeneralSettings = () => {
         { revalidateOnFocus: true } 
     );
     useEffect(() => {
-        if (!isLoadingtaxType && !taxTypeError && taxTypeData) {
+        const addDefaultTaxTypes = async () => {
+            if (taxTypeData) {
+                const existingTaxTypes = taxTypeData.flatMap((tax: any) =>
+                    Array.isArray(tax.name) ? tax.name : [tax.name]
+                );
+
+                const missingTaxTypes = defaultTaxTypes.filter(
+                    (tax) => !existingTaxTypes.includes(tax)
+                );
+
+                if (missingTaxTypes.length > 0) {
+                    console.log('Adding missing tax types:', missingTaxTypes);
+                    try {
+                        await fetch(
+                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/taxType/create?branchId=${appState.currentBranchId}`,
+                            {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ name: missingTaxTypes }),
+                            }
+                        );
+
+                        window.location.reload(); 
+                    } catch (error) {
+                        console.error('Error while adding default tax types:', error);
+                    }
+                } else {
+                    console.log('All default tax types already exist');
+                }
+            }
+        };
+
+        if (taxTypeData && !isLoadingtaxType && !taxTypeError) {
+            addDefaultTaxTypes();
             settaxType(taxTypeData); 
           } else if (taxTypeError) {
             console.error('Error fetching tax types:', taxTypeError);
@@ -258,83 +452,143 @@ const GeneralSettings = () => {
         { revalidateOnFocus: true } 
     );
     useEffect(() => {
+        const addDefaultServiceCategory = async () => {
+            if (serviceCategoryData) {
+                const existingServiceCategory = serviceCategoryData.flatMap((item: any) =>
+                    Array.isArray(item.name) ? item.name : [item.name]
+                );
+
+                const missingServiceCategory = defaultServiceCategory.filter(
+                    (category) => !existingServiceCategory.includes(category)
+                );
+
+                if (missingServiceCategory.length > 0) {
+                    console.log('Adding missing reasons:', missingServiceCategory);
+                    try {
+                        await fetch(
+                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/serviceCategory/create?branchId=${appState.currentBranchId}`,
+                            {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ name: missingServiceCategory }),
+                            }
+                        );
+                        window.location.reload();
+                    } catch (error) {
+                        console.error('Error while adding default categories:', error);
+                    }
+                } else {
+                    console.log('All default categories already exist');
+                }
+            }
+        };
         if (!isLoadingserviceCategory && !serviceCategoryError && serviceCategoryData) {
+            addDefaultServiceCategory();
             setserviceCategory(serviceCategoryData); 
         }
     }, [serviceCategoryData, serviceCategoryError, isLoadingserviceCategory]);
 
-    //species
-    // const [species, setspecies] = useState([]);
-    // const {data: speciesData, error: speciesError, isLoading: isLoadingspecies} = useSWR(
-    //     `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`,
-    //     fetcher,
-    //     { revalidateOnFocus: true } 
-    // );
-    // useEffect(() => {
-    //     if (!isLoadingspecies && !speciesError && speciesData) {
-    //         setspecies(speciesData); 
-    //     }
-    // }, [speciesData, speciesError, isLoadingspecies]);
-
-    // const [breeds, setBreeds] = useState([]);
-    // const { data: breedData, error: breedError, isLoading: isLoadingBreed } = useSWR(
-    //     `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/breed/getAll?branchId=${appState.currentBranchId}`,
-    //     fetcher,
-    //     { revalidateOnFocus: true }
-    // );
-    // useEffect(() => {
-    //     if (!isLoadingBreed && !breedError && breedData) {
-    //         const speciesWithBreeds = speciesData.map((specie: any) => ({
-    //         ...specie,
-    //         breed: breedData.filter((breed: any) => breed.speciesId === specie.id),
-    //         }));
-    //         setspecies(speciesWithBreeds);
-    //     }
-    // }, [breedData, breedError, isLoadingBreed, speciesData]);
-
-    // const [expandedSpecies, setExpandedSpecies] = useState<number | null>(null);
-    // const handleExpandSpecies = (speciesId: number) => {
-    //     if (expandedSpecies === speciesId) {
-    //         setExpandedSpecies(null);
-    //     } else {
-    //         setExpandedSpecies(speciesId); 
-    //     }
-    // };
+    //Species and Breed 
     const [species, setSpecies] = useState<any[]>([]);
     const [expandedSpecies, setExpandedSpecies] = useState<number | null>(null);
-    
+
     // Fetch species data
     const { data: speciesData, error: speciesError, isLoading: isLoadingSpecies } = useSWR(
         `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`,
         fetcher,
         { revalidateOnFocus: true }
     );
-    
+
     // Fetch breed data
     const { data: breedData, error: breedError, isLoading: isLoadingBreed } = useSWR(
         `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/breed/getAll?branchId=${appState.currentBranchId}`,
         fetcher,
         { revalidateOnFocus: true }
     );
-    
-    useEffect(() => {
-        if (!isLoadingSpecies && !speciesError && speciesData && !isLoadingBreed && !breedError && breedData) {
-            const speciesWithBreeds = speciesData.map((specie: any) => ({
-                ...specie,
-                breed: breedData.filter((breed: any) => breed.speciesId === specie.id), // Map breeds to species by speciesId
-            }));
-            setSpecies(speciesWithBreeds);
-        }
-    }, [speciesData, breedData, speciesError, breedError, isLoadingSpecies, isLoadingBreed]);
 
+    useEffect(() => {
+        const initializeSpeciesAndBreeds = async () => {
+            if (!isLoadingSpecies && !speciesError && speciesData && !isLoadingBreed && !breedError && breedData) {
+                const speciesWithBreeds = [];
+    
+                for (const defaultSpecies of defaultSpeciesandBreed) {
+                    const existingSpecies = speciesData.find((specie: any) => specie.name === defaultSpecies.name);
+    
+                    if (existingSpecies) {
+                        for (const breed of defaultSpecies.breed) {
+                            const breedExists = breedData.some(
+                                (b: any) => JSON.stringify(b.name) === JSON.stringify([breed]) && b.speciesId === existingSpecies.id
+                            );
+    
+                            if (!breedExists) {
+                                await fetch(
+                                    `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/breed/create?branchId=${appState.currentBranchId}`,
+                                    {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            name: [breed], // Wrap breed name in array
+                                            speciesId: existingSpecies.id,
+                                            databaseSectionId: existingSpecies.databaseSectionId,
+                                        }),
+                                    }
+                                );
+                            }
+                        }
+    
+                        const speciesBreeds = breedData
+                            .filter((b: any) => b.speciesId === existingSpecies.id)
+                            .map((b: any) => ({ name: b.name[0] })); // Convert breed to object with name property
+    
+                        speciesWithBreeds.push({ ...existingSpecies, breed: speciesBreeds });
+                    } else {
+                        const speciesResponse = await fetch(
+                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/create?branchId=${appState.currentBranchId}`,
+                            {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ name: defaultSpecies.name }),
+                            }
+                        );
+                        const newSpecies = await speciesResponse.json();
+    
+                        const newBreeds = [];
+                        for (const breed of defaultSpecies.breed) {
+                            await fetch(
+                                `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/breed/create?branchId=${appState.currentBranchId}`,
+                                {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        name: [breed], // Wrap in array for Prisma's String[]
+                                        speciesId: newSpecies.id,
+                                        databaseSectionId: newSpecies.databaseSectionId,
+                                    }),
+                                }
+                            );
+                            newBreeds.push({ name: breed });
+                        }
+    
+                        speciesWithBreeds.push({ ...newSpecies, breed: newBreeds });
+                    }
+                }
+                setSpecies(speciesWithBreeds);
+            }
+        };
+    
+        initializeSpeciesAndBreeds();
+    }, [speciesData, breedData, speciesError, breedError, isLoadingSpecies, isLoadingBreed]);
+    
     // Toggle species expansion to show/hide breeds
     const handleExpandSpecies = (speciesId: number) => {
         setExpandedSpecies(expandedSpecies === speciesId ? null : speciesId);
     };
-    console.log('item categories: ', itemCategories);
-    console.log('Tax Type',taxType);
-    console.log('Species: ', species);
-    console.log('Breed',expandedSpecies);
+    // console.log('item categories: ', itemCategories);
+    // console.log('Tax Type',taxType);
+    // console.log('Species: ', species);
+    // console.log('Breed',expandedSpecies);
 
 
 
@@ -383,15 +637,15 @@ const GeneralSettings = () => {
                                     <div className="text-neutral-400 text-sm font-bold ">WhatsApp</div>
                                 </div></button>)}
                             </div>
-                            <button onClick={handleSaveClick}><div className="w-[111px] h-7 p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
+                            <button onClick={handleSaveClick}><div className="w-[111px] h-7 p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex cursor-pointer" >
                                 
                                 <div className="text-neutral-400 text-sm font-bold ">Save</div>
                             </div></button>
                         </div>
                         
                     </div>
-                    <div className="w-full flex justify-between">
-                        <div className="w-[43.5rem] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
+                    <div className="w-full flex justify-between ">
+                        <div className="w-[49%] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                             <div className="w-full flex justify-between items-start">
                                 <div>
                                     <div className="text-gray-500 text-base font-bold ">Payment methods</div>
@@ -425,19 +679,22 @@ const GeneralSettings = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="w-[43.5rem] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
+                        <div className="w-[49%] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                             <div className="w-full flex justify-between items-start">
                                 <div>
                                     <div className="text-gray-500 text-base font-bold ">Species & Breeds</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add your species & breed database</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
-                                    <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                    <div className="text-white text-base font-medium " onClick={togglePopup7}>Add Breed</div>
-                                </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
-                                    <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                    <div className="text-white text-base font-medium " onClick={togglePopup}>Add Species</div>
+                                <div className="flex gap-3">
+                                    
+                                    <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
+                                        <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
+                                        <div className="text-white text-base font-medium " onClick={togglePopup}>Add Species</div>
+                                    </div>
+                                    <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
+                                        <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
+                                        <div className="text-white text-base font-medium " onClick={togglePopup7}>Add Breed</div>
+                                    </div>
                                 </div>
                             </div>
                             <div className="w-full h-full">
@@ -506,15 +763,15 @@ const GeneralSettings = () => {
                         </div>
                     </div>
                     <div className="w-full flex justify-between">
-                        <div className="w-[43.5rem] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
+                        <div className="w-[49%] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                             <div className="w-full flex justify-between items-start">
                                 <div>
                                     <div className="text-gray-500 text-base font-bold ">Item Categories</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your item categories</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer"  onClick={togglePopup2}>
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                    <div className="text-white text-base font-medium " onClick={togglePopup2}>Add Category</div>
+                                    <div className="text-white text-base font-medium ">Add Category</div>
                                 </div>
                             </div>
                             <div className="w-full h-full">
@@ -541,15 +798,15 @@ const GeneralSettings = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="w-[43.5rem] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
+                        <div className="w-[49%] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                             <div className="w-full flex justify-between items-start">
                                 <div>
                                     <div className="text-gray-500 text-base font-bold ">Item Units</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your inventory item units</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer"  onClick={togglePopup3}>
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                    <div className="text-white text-base font-medium " onClick={togglePopup3}>Add Unit</div>
+                                    <div className="text-white text-base font-medium ">Add Unit</div>
                                 </div>
                             </div>
                             <div className="w-full h-full">
@@ -578,15 +835,15 @@ const GeneralSettings = () => {
                         </div>
                     </div>
                     <div className="w-full flex justify-between">
-                        <div className="w-[43.5rem] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
+                        <div className="w-[49%] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                             <div className="w-full flex justify-between items-start">
                                 <div>
                                     <div className="text-gray-500 text-base font-bold ">Service Categories</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your service categories</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer" onClick={togglePopup4}>
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                    <div className="text-white text-base font-medium " onClick={togglePopup4}>Add Category</div>
+                                    <div className="text-white text-base font-medium " >Add Category</div>
                                 </div>
                             </div>
                             <div className="w-full h-full">
@@ -614,15 +871,15 @@ const GeneralSettings = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="w-[43.5rem] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
+                        <div className="w-[49%] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                             <div className="w-full flex justify-between items-start">
                                 <div>
                                     <div className="text-gray-500 text-base font-bold ">Tax Types</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your tax types</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer" onClick={togglePopup5}>
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                    <div className="text-white text-base font-medium " onClick={togglePopup5}>Add Tax</div>
+                                    <div className="text-white text-base font-medium " >Add Tax</div>
                                 </div>
                             </div>
                             <div className="w-full h-full">
@@ -663,15 +920,15 @@ const GeneralSettings = () => {
                         </div>
                     </div>
                     <div className="w-full flex justify-between">
-                        <div className="w-[43.5rem] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
+                        <div className="w-[49%] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                             <div className="w-full flex justify-between items-start">
                                 <div>
                                     <div className="text-gray-500 text-base font-bold ">Update Inventory - Stock out Reasons</div>
                                     <div className="text-neutral-400 text-base font-medium ">Add and configure your stock out reasons</div>
                                 </div>
-                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer"  onClick={togglePopup6}>
                                     <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
-                                    <div className="text-white text-base font-medium " onClick={togglePopup6}>Add Reason</div>
+                                    <div className="text-white text-base font-medium ">Add Reason</div>
                                 </div>
                             </div>
                             <div className="w-full h-full">

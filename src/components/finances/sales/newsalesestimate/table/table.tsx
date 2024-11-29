@@ -85,6 +85,8 @@ const NewsaleEstimateTable = () => {
     const [batches, setBatches] = useState<any[]>([]);
     const [filteredBatches, setFilteredBatches] = useState<any[]>([]);
     const [filteredProviders, setFilteredProviders] = useState<any[]>([]);
+    const [isNewClientClicked, setIsNewClientClicked] = useState<any>(false);
+    const [newClient, setNewClient] = useState<any>();
     const [otherData, setOtherData] = useState({});
     const appState = useAppSelector((state) => state.app)
     const { tableData: items, setTableData: setItems } = useContext(DataContext);
@@ -117,7 +119,7 @@ const NewsaleEstimateTable = () => {
     );
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
-    const [isChecked, setChecked] = useState(false);
+    const [isChecked, setChecked] = useState<boolean>(false);
 
     useEffect(() => {
         if (!disableButton && inputRef.current) {
@@ -175,6 +177,7 @@ const NewsaleEstimateTable = () => {
         const updatedItems = [...items];
         updatedItems.splice(index, 1);
         setItems(updatedItems);
+        setTableData(updatedItems);
     }, [items]);
 
     // const handleGstSelect = (selectedGst: any, index: number) => {
@@ -218,7 +221,7 @@ const NewsaleEstimateTable = () => {
         setItems((prevItems) =>
             prevItems.map((item) => ({
                 ...item,
-                quantity: isChecked ? item.quantity : item.quantity,
+                quantity: item.quantity ,
                 lowQty: item.quantity,
                 highQty: item.quantity,
 
@@ -404,7 +407,6 @@ const NewsaleEstimateTable = () => {
                     sellingPrice: data.value.sellingPrice,
                     productId: data.value.productId
                 };
-                console.log("these are updated", updatedItems)
                 setItems(updatedItems);
                 setTableData(updatedItems);
                 // const updatedProducts = products.filter((product) => product.value !== selectedProduct.value);
@@ -414,6 +416,12 @@ const NewsaleEstimateTable = () => {
             }
         }
     }, [items, products]);
+
+    
+
+    
+
+
 
     const handleProviderSelect = useCallback((selectedProvider: any, index: number) => {
         const updatedItems = [...tableData];
@@ -428,9 +436,12 @@ const NewsaleEstimateTable = () => {
 
 
     useEffect(() => {
-        setItems(items);
-        setTableData(items)
-    }, [items]);
+        if (id == null) {
+            setItems(items);
+            setTableData(items);
+        }
+        //console.log(items);
+    }, [id, items]);
 
 
     const [showPopup, setShowPopup] = React.useState(false);
@@ -494,10 +505,10 @@ const NewsaleEstimateTable = () => {
                         </div>
                         New Client
                     </Button>
-                    {showPopup && <ClientPopup onClose={togglePopup} />}
+                    {showPopup && <ClientPopup onClose={togglePopup} setNewClient={setNewClient} setIsNewClientClicked={setIsNewClientClicked} />}
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px]">
-                    <NewsaleEstimateHeader />
+                    <NewsaleEstimateHeader isNewClientClicked={isNewClientClicked} newClient={newClient} />
                     <div className="w-full rounded-md border border-solid border-borderGrey">
                         <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
                             <div className="text-gray-500 text-xl font-medium ">Items & Services</div>
@@ -534,13 +545,15 @@ const NewsaleEstimateTable = () => {
                                     <div className='flex justify-center text-gray-500 text-base font-medium w-[8rem]'>High Quantity</div>
                                 )}
                                 <div className='flex justify-center text-gray-500 text-base font-medium w-[6rem]'>Tax %</div>
-                                <div className='flex justify-center text-gray-500 text-base font-medium w-[6rem]'>Discount %</div>
+                                
 
                                 <div className='flex justify-center text-gray-500 text-base font-medium w-[10rem]'>Tax Amt.</div>
+                                <div className='flex justify-center text-gray-500 text-base font-medium w-[6rem] mr-4'>Discount %</div>
                                 <div className='flex justify-center text-gray-500 text-base font-medium  w-[8rem]'>Discount Amt.</div>
 
                                 <div className='flex justify-center text-gray-500 text-base font-medium w-1/12'>Total</div>
-                                
+                                <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
+
                             </div>
                             {items.map((item: any, index: number) => (
                                 <div key={index + 1} className='flex flex-col w-full'>
@@ -551,7 +564,15 @@ const NewsaleEstimateTable = () => {
                                                 <Select
                                                     className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
                                                     classNamePrefix="select"
-                                                    value={products.concat(services).find((prodOrServ) => prodOrServ.value.id === item.productId || prodOrServ.value.id === item.serviceId)}
+                                                    value={
+                                                        tableData.length === 0
+                                                            ? null // When tableData is empty, set value to null
+                                                            : products.concat(services).find(
+                                                                (prodOrServ) =>
+                                                                    prodOrServ.value.id === item.productId ||
+                                                                    prodOrServ.value.id === item.serviceId
+                                                            ) || null
+                                                    }
                                                     isClearable={false}
                                                     isSearchable={true}
                                                     name="itemName"
@@ -572,7 +593,6 @@ const NewsaleEstimateTable = () => {
                                                         value={filteredBatches.find((prod) => prod.value.id === item.id)}
                                                         isClearable={false}
                                                         isSearchable={true}
-                                                        onFocus={handleAddItem}
                                                         name={`batchNumber=${index}`}
                                                         options={filteredBatches}
                                                         onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
@@ -607,13 +627,13 @@ const NewsaleEstimateTable = () => {
                                         <div className='w-[7rem] flex justify-center items-center text-neutral-400 text-base font-medium gap-5'>
                                             ₹{item.sellingPrice || 0}
                                             {/* <Select
-                    className="text-neutral-400 text-sm font-medium"
-                    defaultValue={taxOptions[0]}
-                    isClearable={false}
-                    isSearchable={true}
-                    options={taxOptions}
-                    styles={customStyles}
-                /> */}
+                                            className="text-neutral-400 text-sm font-medium"
+                                            defaultValue={taxOptions[0]}
+                                            isClearable={false}
+                                            isSearchable={true}
+                                            options={taxOptions}
+                                            styles={customStyles}
+                                        /> */}
                                         </div>
                                         {!isChecked && (
                                             <div className='w-[8rem] flex justify-center items-center text-neutral-400 text-base font-medium gap-[12px]'>
@@ -623,7 +643,7 @@ const NewsaleEstimateTable = () => {
                                                     </button>
                                                     <input
                                                         type="number"
-                                                        value={item.quantity? item.quantity :0}
+                                                        value={item.quantity ? item.quantity : 0}
                                                         onChange={(e) => handleInputChange(index, e.target.value, 'quantity')}
                                                         className="w-[3rem] text-center border border-solid border-borderGrey h-8  rounded-md text-textGrey2 font-medium text-base"
                                                         name={`quantity-${index + 1}`}
@@ -645,7 +665,7 @@ const NewsaleEstimateTable = () => {
                                                         </button>
                                                         <input
                                                             type="number"
-                                                            value={item.lowQty?item.lowQty:0}
+                                                            value={item.lowQty ? item.lowQty : 0}
                                                             onChange={(e) => handleInputChange(index, e.target.value, 'quantity1')}
                                                             className="w-[3rem] text-center border border-solid border-borderGrey h-8  rounded-md text-textGrey2 font-medium text-base"
                                                             name={`quantity-${index + 1}`}
@@ -664,7 +684,7 @@ const NewsaleEstimateTable = () => {
                                                         </button>
                                                         <input
                                                             type="number"
-                                                            value={item.highQty?item.highQty:0}
+                                                            value={item.highQty ? item.highQty : 0}
                                                             onChange={(e) => handleInputChange(index, e.target.value, 'quantity2')}
                                                             className="w-[3rem] text-center border border-solid border-borderGrey h-8  rounded-md text-textGrey2 font-medium text-base"
                                                             name={`quantity-${index + 1}`}
@@ -698,19 +718,21 @@ const NewsaleEstimateTable = () => {
                                             {item.gst * 100 || 0} %
                                             {/* )} */}
                                         </div>
-                                        <div className='w-[6rem] justify-center flex  items-center text-neutral-400 text-base font-medium'>
-                                            <input placeholder='0' className='w-[2rem]  outline-none border-none text-neutral-400 !important' type='number' value={item.discountPer} onChange={(e) => handleDiscountPercentChange(index, e.target.value)}></input>%
-                                        </div>
+                                       
                                         <div className='w-[10rem] justify-center flex items-center text-neutral-400 text-base font-medium'>
                                             {isChecked ? (
                                                 '₹' +
-                                                ((item?.sellingPrice || 0 * item?.lowQty || 0 * (item?.gst || 0)).toFixed(2) +
-                                                    '-' +
-                                                    (item?.sellingPrice || 0 * item?.highQty || 0 * (item?.gst || 0)).toFixed(2) || 0)
+                                                ((item?.sellingPrice || 0) * (item?.lowQty || 0) * (item?.gst || 0)).toFixed(2) +
+                                                '-' +
+                                                ((item?.sellingPrice || 0) * (item?.highQty || 0) * (item?.gst || 0)).toFixed(2)
                                             ) : (
                                                 '₹' +
-                                                ((item?.sellingPrice || 0 * item?.quantity || 0 * (item?.gst || 0)) || 0).toFixed(2)
+                                                ((item?.sellingPrice || 0) * (item?.quantity || 0) * (item?.gst || 0)).toFixed(2)
                                             )}
+                                        </div>
+
+                                        <div className='w-[6rem] justify-center flex  mr-4 items-center text-neutral-400 text-base font-medium'>
+                                            <input placeholder='0' className='w-[3rem] mr-1  outline-none border border-solid border-borderGrey px-2 py-1 rounded-md text-neutral-400 !important' type='number' value={item.discountPer ? item.discountPer : 0} onChange={(e) => handleDiscountPercentChange(index, e.target.value)}></input>%
                                         </div>
 
                                         <div className='w-[8rem] justify-center flex-wrap text-center flex items-center text-neutral-400 text-base font-medium'>
@@ -721,7 +743,7 @@ const NewsaleEstimateTable = () => {
                                                     (item?.sellingPrice * item?.highQty * item?.discountPer / 100 || 0).toFixed(2))
                                             ) : (
 
-                                                <input className='w-[5rem] text-neutral-400 outline-none border-none' placeholder='0' type='number' value={item.discountAmt} onChange={(e) => handleDiscountAmtChange(index, e.target.value)}></input>
+                                                <input className='w-[5rem] ml-1 border border-solid border-borderGrey px-2 py-1 rounded-md  text-neutral-400 outline-none ' placeholder='0' type='number' value={item.quantity * item.sellingPrice * (item.discountPer / 100 || 0)} onChange={(e) => handleDiscountAmtChange(index, e.target.value)}></input>
                                             )}
 
                                         </div>
@@ -759,14 +781,16 @@ const NewsaleEstimateTable = () => {
                                                 </>
                                             )}
                                         </div>
-                                        {/* <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[20px] justify-end'>
-                                            <button className="border-0 bg-transparent cursor-pointer">
-                                                <Image className='w-5 h-5' src={sellicon} alt="sell" ></Image>
-                                            </button>
-                                            <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
-                                                <Image className='w-5 h-5' src={delicon} alt="delete"></Image>
-                                            </button>
-                                        </div> */}
+                                        {index !== items.length - 1 ?
+                                            <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[20px] justify-end'>
+                                                <button className="border-0 bg-transparent cursor-pointer">
+                                                    <Image className='w-5 h-5' src={sellicon} alt="sell" ></Image>
+                                                </button>
+
+                                                <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
+                                                    <Image className='w-5 h-5' src={delicon} alt="delete" ></Image>
+                                                </button>
+                                            </div> : <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[20px] justify-end'></div>}
                                     </div>
 
                                     {/* {discountStates[index] && (
@@ -818,8 +842,6 @@ const NewsaleEstimateTable = () => {
 
                                 <div className='flex text-gray-500 text-base font-medium w-[6rem]'>
                                 </div>
-                                <div className='flex text-gray-500 text-base font-medium w-[6rem]'>
-                                </div>
                                 <div className='flex justify-center text-gray-500 text-base font-bold w-[10rem]'>
                                     {isChecked ? (
 
@@ -828,8 +850,7 @@ const NewsaleEstimateTable = () => {
                                                 <>
                                                     ₹{
                                                         items.reduce(
-                                                            (acc, item) =>
-                                                                {if(!item.itemName) return acc;return acc + (item?.lowQty || 0) * item?.gst * item?.sellingPrice},
+                                                            (acc, item) => { if (!item.itemName) return acc; return acc + (item?.lowQty || 0) * item?.gst * item?.sellingPrice },
                                                             0
                                                         ).toFixed(2) ||
                                                         0
@@ -841,8 +862,7 @@ const NewsaleEstimateTable = () => {
                                                 <>
                                                     ₹{
                                                         items.reduce(
-                                                            (acc, item) =>
-                                                                { if(!item.itemName) return acc;return acc + (item?.highQty || 0) * item?.gst * item?.sellingPrice},
+                                                            (acc, item) => { if (!item.itemName) return acc; return acc + (item?.highQty || 0) * item?.gst * item?.sellingPrice },
                                                             0
                                                         ).toFixed(2) ||
                                                         0
@@ -855,14 +875,17 @@ const NewsaleEstimateTable = () => {
 
                                         <>
                                             ₹{
-                                                items.reduce((acc, item) => {if(!item.itemName) return acc;return acc + item.quantity * item.gst * item?.sellingPrice}, 0).toFixed(2) ||
+                                                items.reduce((acc, item) => { if (!item.itemName) return acc; return acc + item.quantity * item.gst * item?.sellingPrice }, 0).toFixed(2) ||
                                                 0
                                             }
                                         </>
                                     )}
                                 </div>
+                                <div className='flex text-gray-500 text-base font-medium w-[6rem]'>
+                                </div>
+                               
 
-                                <div className='flex justify-center text-gray-500 text-base font-bold w-[8rem]'>{isChecked ? (
+                                <div className='flex justify-center ml-4 text-gray-500 text-base font-bold w-[8rem]'>{isChecked ? (
                                     <>
                                         {items?.some((item) => item?.lowQty) && (
                                             <>
@@ -871,7 +894,7 @@ const NewsaleEstimateTable = () => {
                                                         const lowQty = item?.lowQty || 0;
                                                         const discountPer = item?.discountPer || 0;
                                                         const sellingPrice = item?.sellingPrice || 0;
-                                                        {if(!item.itemName) return acc;return acc + lowQty * (discountPer / 100) * sellingPrice};
+                                                        { if (!item.itemName) return acc; return acc + lowQty * (discountPer / 100) * sellingPrice };
                                                     }, 0)
                                                     .toFixed(2)}
                                                 -{' '}
@@ -884,7 +907,7 @@ const NewsaleEstimateTable = () => {
                                                         const highQty = item?.highQty || 0;
                                                         const discountPer = item?.discountPer || 0;
                                                         const sellingPrice = item?.sellingPrice || 0;
-                                                        {if(!item.itemName) return acc;return acc + highQty * (discountPer / 100) * sellingPrice};
+                                                        { if (!item.itemName) return acc; return acc + highQty * (discountPer / 100) * sellingPrice };
                                                     }, 0)
                                                     .toFixed(2)}
 
@@ -895,7 +918,7 @@ const NewsaleEstimateTable = () => {
                                 )
                                     : (
                                         <>
-                                            ₹{(items.reduce((acc: any, item: any) => {if(!item.itemName) return acc; return acc + item.quantity * item.sellingPrice * (item.discountPer / 100)}, 0) || 0).toFixed(2)}
+                                            ₹{(items.reduce((acc: any, item: any) => { if (!item.itemName) return acc; return acc + item.quantity * item.sellingPrice * (item.discountPer / 100 || 0) }, 0) || 0).toFixed(2)}
                                         </>)}
                                 </div>
 
@@ -907,7 +930,7 @@ const NewsaleEstimateTable = () => {
                                                 <>
                                                     ₹{
                                                         items.reduce(
-                                                            (acc, item) => {if(!item.itemName) return acc;return acc + (item?.lowQty || 0) * item?.sellingPrice + (item?.lowQty || 0) * item?.gst * item?.sellingPrice - ((item?.lowQty || 0) * item?.sellingPrice * (item.discountPer / 100) || 0)},
+                                                            (acc, item) => { if (!item.itemName) return acc; return acc + (item?.lowQty || 0) * item?.sellingPrice + (item?.lowQty || 0) * item?.gst * item?.sellingPrice - ((item?.lowQty || 0) * item?.sellingPrice * (item.discountPer / 100) || 0) },
                                                             0
                                                         ).toFixed(2) ||
                                                         0
@@ -919,7 +942,7 @@ const NewsaleEstimateTable = () => {
                                                 <>
                                                     ₹{
                                                         items.reduce(
-                                                            (acc, item) => {if(!item.itemName) return acc;return acc + (item?.highQty || 0) * item?.sellingPrice + (item?.highQty || 0) * item?.gst * item?.sellingPrice - ((item?.highQty || 0) * item?.sellingPrice * (item.discountPer / 100) || 0)},
+                                                            (acc, item) => { if (!item.itemName) return acc; return acc + (item?.highQty || 0) * item?.sellingPrice + (item?.highQty || 0) * item?.gst * item?.sellingPrice - ((item?.highQty || 0) * item?.sellingPrice * (item.discountPer / 100) || 0) },
                                                             0
                                                         ).toFixed(2) ||
                                                         0
@@ -931,13 +954,13 @@ const NewsaleEstimateTable = () => {
                                     ) : (
 
                                         <>
-                                          {`₹${(items.reduce((acc: any, item: any) => {if(!item.itemName) return acc; return acc + item.quantity * item.sellingPrice + item.quantity * item.gst * item.sellingPrice-(item.quantity*item.sellingPrice*(item.discountPer/100)||0)}, 0) || 0).toFixed(2)}`}
+                                            {`₹${(items.reduce((acc: any, item: any) => { if (!item.itemName) return acc; return acc + item.quantity * item.sellingPrice + item.quantity * item.gst * item.sellingPrice - (item.quantity * item.sellingPrice * (item.discountPer / 100) || 0) }, 0) || 0).toFixed(2)}`}
 
                                         </>
                                     )}
                                 </div>
 
-                                
+                                <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
                             </div>
                         </div>
                     </div>

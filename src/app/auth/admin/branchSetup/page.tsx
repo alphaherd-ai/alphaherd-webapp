@@ -18,7 +18,8 @@ const formSchema = z.object({
     phoneNo: z.string().length(10, 'Invalid Phone No.'),
     address: z.string(),
     state: z.string(),
-    pincode: z.string(),
+    pincode: z.string()
+    .regex(/^\d{6}$/, 'Invalid Pincode - must be exactly 6 numeric digits'),
     description: z.string(),
    
   });
@@ -210,7 +211,7 @@ const OrgEdit = () => {
 
           let json = await res.json();
           if (res.ok) {
-              // Update OrgBranch with branchName if it exists
+              
               if (data.branchName) {
                   const branchRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/admin/orgEdit`, {
                       method: 'PATCH',
@@ -265,7 +266,7 @@ const OrgEdit = () => {
                           className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0" disabled={activeTab === 0 ? true : false}
                           onClick={() => setActiveTab(prev => prev - 1)}>
                           <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
-                              <div className="text-white text-sm font-bold font-['Satoshi']">
+                              <div className="text-white text-sm font-bold ">
                                   Prev
                               </div>
                               <div className="w-6 h-6 relative">
@@ -279,7 +280,7 @@ const OrgEdit = () => {
                                 disabled={activeTab === formElements.length - 1 ? true : false}
                                 onClick={() => handleContinue()} >
                                 <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
-                                    <div className="text-white text-sm font-bold font-['Satoshi']">
+                                    <div className="text-white text-sm font-bold ">
                                         Continue
                                     </div>
                                     <div className="w-6 h-6 relative">
@@ -291,7 +292,7 @@ const OrgEdit = () => {
                         {
                             activeTab === formElements.length - 1 ? <button className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0" onClick={formSubmit}>
                                 <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
-                                    <div className="text-white text-sm font-bold font-['Satoshi']">
+                                    <div className="text-white text-sm font-bold ">
                                         Submit Details
                                     </div>
                                 </div>

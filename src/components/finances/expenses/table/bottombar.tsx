@@ -9,6 +9,7 @@ import Link from 'next/link';
 
 
 const FinancesExpensesTableBottombar = ({goOnPrevPage,goOnNextPage,startInd,endInd,totalLen}:{goOnPrevPage:()=>void,goOnNextPage:()=>void,startInd:number,endInd:number,totalLen:number}) => {
+  if(endInd > totalLen) endInd=totalLen;
   return (
    
     <>

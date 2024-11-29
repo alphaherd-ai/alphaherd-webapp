@@ -88,7 +88,7 @@ function DataFromEstimate(id: number | null, branchId: number | null) {
     }
 }
 const NewsalesTable = () => {
-    const { tableData, setTableData } = useContext(DataContext);
+    const { tableData, setTableData, headerData, setHeaderData } = useContext(DataContext);
     const [selectedProductDetails, setSelectedProduct] = useState<Products>()
     const [discountPercent, setDiscountPercent] = useState<any>();
     const [discountAmt, setDiscountAmt] = useState<any>();
@@ -98,6 +98,8 @@ const NewsalesTable = () => {
     const [filteredBatches, setFilteredBatches] = useState<any[]>([]);
     const [filteredProviders, setFilteredProviders] = useState<any[]>([]);
     const [otherData, setOtherData] = useState({});
+    const [isNewClientClicked, setIsNewClientClicked] = useState<any>(false);
+    const [newClient, setNewClient] = useState<any>();
     const appState = useAppSelector((state) => state.app)
     const url = useSearchParams();
     const id = url.get('id');
@@ -116,21 +118,26 @@ const NewsalesTable = () => {
             const { items, ...otherData } = estimateData;
             // eslint-disable-next-line react-hooks/rules-of-hooks
             setOtherData(otherData)
+            console.log(estimateData);
             const shallowDataCopy = [...items];
             const itemData = shallowDataCopy.map((item: any) => ({
-                productId: item.productBatch.productId,
+                itemType: item.itemType,
+                productId: item.itemType === "product" ? item.productBatch.productId : null,
+                serviceId: item.itemType === "product" ? null : item.serviceId,
                 itemName: item.name,
                 quantity: item.quantity,
                 sellingPrice: item.sellingPrice,
-                expiry: item.productBatch.expiry,
-                batchNumber: item.productBatch.batchNumber,
-                gst: item.productBatch.product.tax,
-                id: item.productBatch.id
+                expiry: item.itemType === 'product' ? item.productBatch.expiry : "",
+                batchNumber: item.itemType === 'product' ? item.productBatch.batchNumber : "",
+                gst: item.taxAmount,
+                id: item.itemType === 'product' ? item.productBatch.productId : item.serviceId,
+                provider: item.itemType === 'product' ? "" : item.serviceProvider
             }));
-            setItems(itemData);
+            console.log(itemData);
+            setItems((prev: any[]) => [...itemData, ...prev,]);
 
         }
-    }, [estimateData]);
+    }, [estimateData, id]);
 
     const [discountStates, setDiscountStates] = useState(new Array(items.length).fill(false));
     const discountOptions = [
@@ -169,8 +176,11 @@ const NewsalesTable = () => {
     const { fetchedProducts, isLoading, error } = useProductfetch(appState.currentBranchId);
     const { fetchedBathces, isBatchLoading, batchError } = useProductBatchfetch(appState.currentBranchId);
     const { fetchedService, serviceLoading, serviceError } = useServiceFetch(appState.currentBranchId);
+
+
     useEffect(() => {
         if (!isLoading && products && !error) {
+            //console.log(products);
             const formattedProducts = fetchedProducts.map((product: Products) => ({
                 value: {
                     id: product.id,
@@ -180,10 +190,11 @@ const NewsalesTable = () => {
                 },
                 label: product.itemName,
             }));
-            // console.log(formattedProducts)
+            //console.log(formattedProducts)
             setProducts(formattedProducts);
         }
         if (!batchError && !isBatchLoading && fetchedBathces) {
+            console.log(fetchedBathces);
             const formattedProductBatches = fetchedBathces.map((product: ProductBatch) => ({
                 value: {
                     id: product.id,
@@ -215,10 +226,12 @@ const NewsalesTable = () => {
 
 
     }, [fetchedProducts, fetchedBathces, fetchedService])
+
     const handleDeleteRow = useCallback((index: number) => {
         const updatedItems = [...items];
         updatedItems.splice(index, 1);
         setItems(updatedItems);
+        setTableData(updatedItems);
     }, [items]);
 
     // const handleGstSelect = (selectedGst: any, index: number) => {
@@ -326,12 +339,14 @@ const NewsalesTable = () => {
 
 
     useEffect(() => {
+
         items.push({
             productId: null,
             serviceId: null,
             itemName: "",
         });
         setItems(items);
+
     }, [])
 
     useEffect(() => {
@@ -403,7 +418,7 @@ const NewsalesTable = () => {
                             itemIndex === index ? {
                                 ...item, id: defaultBatch?.value?.id,
                                 quantity: defaultBatch?.value?.quantity || 1,
-                                batchNumber: defaultBatch?.value?.batchNumber,
+                                //batchNumber: defaultBatch?.value?.batchNumber,
                                 expiry: defaultBatch?.value?.expiry,
                                 sellingPrice: defaultBatch?.value?.sellingPrice,
                                 productId: defaultBatch?.value?.productId
@@ -438,8 +453,8 @@ const NewsalesTable = () => {
     const handleBatchSelect = useCallback(async (selectedProduct: any, index: number) => {
         if (selectedProduct.value) {
             try {
-                
-                const data = filteredBatches.find((batch)=>batch.value.id==selectedProduct.value.id);
+
+                const data = filteredBatches.find((batch) => batch.value.id == selectedProduct.value.id);
                 // console.log(data)
                 const updatedItems = [...items];
                 updatedItems[index] = {
@@ -485,6 +500,7 @@ const NewsalesTable = () => {
     const [showPopup, setShowPopup] = React.useState(false);
 
     const togglePopup = () => {
+
         setShowPopup(!showPopup);
     }
 
@@ -549,11 +565,11 @@ const NewsalesTable = () => {
                         </div>
                         New Client
                     </Button>
-                    {showPopup && <ClientPopup onClose={togglePopup} />}
+                    {showPopup && <ClientPopup onClose={togglePopup} setNewClient={setNewClient} setIsNewClientClicked={setIsNewClientClicked} />}
 
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px]">
-                    <NewsalesHeader existingHeaderData={otherData} />
+                    <NewsalesHeader existingHeaderData={otherData} isNewClientClicked={isNewClientClicked} newClient={newClient} />
                     <div className="w-full rounded-md border border-solid border-borderGrey">
                         <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">
                             <div className="text-gray-500 text-xl font-medium ">Items & Services</div>
@@ -580,16 +596,16 @@ const NewsalesTable = () => {
 
 
                                 <div className='flex justify-center text-gray-500 text-base font-medium w-[6rem]'>Tax %</div>
-                                <div className='flex text-gray-500 text-base font-medium w-[6rem]'>Discount %</div>
                                 <div className='flex text-gray-500 justify-center text-base font-medium  w-[10rem]'>Tax Amt.</div>
+                                <div className='flex text-gray-500 text-base font-medium w-[6rem] mr-4'>Discount %</div>
                                 <div className='flex text-gray-500 text-base font-medium  w-[8rem]'>Discount Amt.</div>
                                 <div className='flex text-gray-500 text-base font-medium w-1/12'>Total</div>
-                                {/* <div className='flex text-gray-500 text-base font-medium w-1/12 '></div> */}
+                                <div className='flex text-gray-500 text-base font-medium w-1/12 '></div>
                             </div>
                             {items.map((item: any, index: number) => (
                                 <div key={index + 1} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400 py-2'>
                                     <div className='w-[3rem] flex items-center text-neutral-400 text-base font-medium '>{index + 1}.
-                                        
+
                                     </div>
                                     <div className='w-[12rem] flex items-center text-neutral-400 text-base font-medium'>
                                         {id === null ? (
@@ -612,7 +628,26 @@ const NewsalesTable = () => {
                                                 onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
                                                 styles={customStyles}
                                             />) : (
-                                            item.itemName
+                                            item.itemName ? item.itemName : <Select
+                                                className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
+                                                classNamePrefix="select"
+                                                value={
+                                                    tableData.length === 0
+                                                        ? null // When tableData is empty, set value to null
+                                                        : products.concat(services).find(
+                                                            (prodOrServ) =>
+                                                                prodOrServ.value.id === item.productId ||
+                                                                prodOrServ.value.id === item.serviceId
+                                                        ) || null
+                                                }
+                                                isClearable={false}
+                                                isSearchable={true}
+                                                name="itemName"
+                                                options={[...products, ...services]}
+                                                onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
+                                                styles={customStyles}
+                                            />
+
                                         )}
                                     </div>
                                     <div className='w-[8rem] flex-col items-center text-neutral-400 text-base font-medium'>
@@ -631,7 +666,17 @@ const NewsalesTable = () => {
                                                     styles={customStyles}
                                                 />
                                             ) : (
-                                                item.batchNumber
+                                                item.batchNumber ? item.batchNumber : <Select
+                                                className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
+                                                classNamePrefix="select"
+                                                value={filteredBatches.find((prod) => prod.value.id === item.id)}
+                                                isClearable={false}
+                                                isSearchable={true}
+                                                name={`batchNumber=${index}`}
+                                                options={filteredBatches}
+                                                onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
+                                                styles={customStyles}
+                                            />
                                             )
                                         )}
 
@@ -650,7 +695,18 @@ const NewsalesTable = () => {
                                                     styles={customStyles}
                                                 />
                                             ) : (
-                                                item.providerName
+                                                item.provider ? item.provider :
+                                                    <Select
+                                                        className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
+                                                        classNamePrefix="select"
+                                                        value={filteredProviders.find((prod) => prod.value.id === item.id)}
+                                                        isClearable={false}
+                                                        isSearchable={true}
+                                                        name={`providerNumber=${index}`}
+                                                        options={filteredProviders}
+                                                        onChange={(selectedProduct: any) => handleProviderSelect(selectedProduct, index)}
+                                                        styles={customStyles}
+                                                    />
                                             )
                                         )}
 
@@ -679,7 +735,7 @@ const NewsalesTable = () => {
                                             </button>
                                             <input
                                                 type="number"
-                                                value={item.quantity? item.quantity :0}
+                                                value={item.quantity ? item.quantity : 0}
                                                 onChange={(e) => handleInputChange(index, e.target.value, 'quantity')}
                                                 className="w-[3rem] text-center border border-solid border-borderGrey h-8  rounded-md text-textGrey2 font-medium text-base"
                                                 name={`quantity-${index + 1}`}
@@ -712,27 +768,29 @@ const NewsalesTable = () => {
                                         {item.gst * 100 || 0}%
                                         {/* )} */}
                                     </div>
-                                    <div className='w-[6rem] flex  items-center text-neutral-400 text-base font-medium'>
-                                        <input className='w-[2rem] outline-none text-neutral-400 border-none' placeholder='0' type='number' value={item.discountPer} onChange={(e) => handleDiscountPercentChange(index, e.target.value)}></input>%
-                                    </div>
+
                                     <div className='w-[10rem] justify-center flex items-center text-neutral-400 text-base font-medium'>{`₹${((item?.sellingPrice * item?.quantity * item?.gst) || 0).toFixed(2)}`}</div>
+                                    <div className='w-[6rem] flex mr-4 items-center text-neutral-400 text-base font-medium'>
+                                        <input className='w-[3rem] outline-none border border-solid border-borderGrey text-neutral-400 px-2 py-1 rounded-md mr-1' placeholder='0' type='number' value={item.discountPer ? item.discountPer : 0} onChange={(e) => handleDiscountPercentChange(index, e.target.value)}></input> %
+                                    </div>
                                     <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium'>
-                                        ₹<input className='w-[5rem] text-neutral-400  outline-none border-none' placeholder='0' type='number' value={item.discountAmt} onChange={(e) => handleDiscountAmtChange(index, e.target.value)}></input>
+                                        ₹<input className='w-[5rem] text-neutral-400 border border-solid border-borderGrey px-2 py-1  outline-none rounded-md ml-1' placeholder='0' type='number' value={item.discountAmt ? item.discountAmt : 0} onChange={(e) => handleDiscountAmtChange(index, e.target.value)}></input>
                                     </div>
                                     <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium'>{`₹${(
                                         (item.quantity || 0) * (item.sellingPrice || 0) +
                                         (item.quantity || 0) * (item.sellingPrice || 0) * (item.gst || 0) -
                                         ((item.quantity || 0) * (item.sellingPrice || 0) * (item.discountPer || 0) / 100)
                                     ).toFixed(2)}`}</div>
-                                    {/* <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[20px] justify-end'>
-                                        <button className="border-0 bg-transparent cursor-pointer">
-                                            <Image className='w-5 h-5' src={sellicon} alt="sell" ></Image>
-                                        </button>
+                                    {index !== items.length - 1 ?
+                                        <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[20px] justify-end'>
+                                            <button className="border-0 bg-transparent cursor-pointer">
+                                                <Image className='w-5 h-5' src={sellicon} alt="sell" ></Image>
+                                            </button>
 
-                                        <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
-                                            <Image className='w-5 h-5' src={delicon} alt="delete" ></Image>
-                                        </button>
-                                    </div> */}
+                                            <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
+                                                <Image className='w-5 h-5' src={delicon} alt="delete" ></Image>
+                                            </button>
+                                        </div> : <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[20px] justify-end'></div>}
                                 </div>
                             ))}
                             <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12  text-gray-500 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey'>
@@ -742,19 +800,20 @@ const NewsalesTable = () => {
                                 <div className='flex text-gray-500 text-base font-medium w-[7rem]'></div>
                                 <div className='flex justify-center text-gray-500 text-base font-medium w-[8rem]'>{(items.reduce((acc: any, item: any) => { if (!item.itemName) return acc; return acc + item.quantity }, 0)) || 0} Items</div>
                                 <div className='flex text-gray-500 text-base font-medium w-[6rem]'></div>
-                                <div className='flex text-gray-500 text-base font-medium w-[6rem]'></div>
-                                <div className='flex justify-center text-gray-500 text-base font-bold w-[10rem]'>{`₹${(items.reduce((acc: any, item: any) => {
+                                <div className='flex justify-center text-gray-500 text-base font-bold  w-[10rem]'>{`₹${(items.reduce((acc: any, item: any) => {
                                     if (!item.itemName) return acc;
                                     return acc + item.quantity * item.gst * item.sellingPrice
                                 }, 0) || 0).toFixed(2)}`}</div>
-                                <div className='flex text-gray-500 text-base font-bold w-[8rem]'>{`₹${(items.reduce((acc: any, item: any) => { if (!item.itemName) return acc; return acc + item.discountAmt }, 0) || 0).toFixed(2)}`}</div>
+                                <div className='flex text-gray-500 text-base font-medium w-[6rem]'></div>
+
+                                <div className='flex text-gray-500 text-base font-bold w-[8rem] ml-4'>{`₹${(items.reduce((acc: any, item: any) => { if (!item.itemName) return acc; return acc + (item?.discountAmt || 0) }, 0) || 0).toFixed(2)}`}</div>
                                 <div className='flex text-gray-500 text-base font-bold w-1/12' >{`₹${(items.reduce((acc: any, item: any) => { if (!item.itemName) return acc; return acc + item.quantity * item.sellingPrice + item.quantity * item.gst * item.sellingPrice - (item?.discountAmt || 0) }, 0)).toFixed(2)}`}</div>
-                                
-                                {/* <div className='flex text-gray-500 text-base font-medium w-1/12'></div> */}
+
+                                <div className='flex text-gray-500 text-base font-medium w-1/12'></div>
                             </div>
                         </div>
                     </div>
-                    <NewsalesTotalAmout />
+                    <NewsalesTotalAmout otherData={otherData}/>
                 </div>
                 <NewsalesBottomBar estimateData={otherData} />
             </div>

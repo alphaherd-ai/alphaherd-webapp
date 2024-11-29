@@ -46,10 +46,10 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
             notes: (id === null) ?allData.headerData.notes:invoiceData.notes,
             invoiceNo: (id === null) ?allData.headerData.invoiceNo:invoiceData.invoiceNo,
             dueDate: (id === null) ?allData.headerData.dueDate:invoiceData.dueDate,
-            shipping: (id === null) ?allData.totalAmountData.shipping:invoiceData.shipping,
-            adjustment: (id === null) ?allData.totalAmountData.adjustment:invoiceData.adjustment,
-            totalCost: (id === null) ?allData.totalAmountData.totalCost:invoiceData.totalCost,
-            overallDiscount: allData.totalAmountData.overAllDiscount,
+            shipping: totalAmountData.shipping,
+            adjustment: totalAmountData.adjustment,
+            totalCost: totalAmountData.totalCost,
+            overallDiscount: totalAmountData.overAllDiscount,
             totalQty:totalQty,
             status: "Pending",
             type: FinanceCreationType.Purchase_Return,
@@ -58,9 +58,9 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
             }
             
         }
-        console.log("email is (inside) :",data.email);
-        console.log("header data in bottom bar is : ",headerData);
-        // console.log(JSON.stringify(data))
+        console.log("bottom bar data is : ",data);
+        
+        console.log(JSON.stringify(data))
         try {
             const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Return}?branchId=${appState.currentBranchId}`,data)
             setTimeout(()=>{
@@ -85,7 +85,7 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
 
 <div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
 <div className="flex justify-between items-center gap-4 pl-4">
-                                <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
+                                {/* <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                                     <Image src={printicon} alt="print"></Image>
                                     <div>Print</div>
                                 </div>
@@ -96,13 +96,13 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
                                 <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                                     <Image src={shareicon} alt="share"></Image>
                                     <div>Share editable sheet</div>
-                                </div>
+                                </div> */}
                             </div>
                             <div className="flex justify-between items-center gap-4 pr-4">
-                    <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
+                    {/* <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
                         <Image src={drafticon} alt="draft"></Image>
                         <div>Save as Draft</div>
-                    </Button>
+                    </Button> */}
                     <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer" onClick={handleSubmit} disabled={isSaving}>
                         <Image src={checkicon} alt="check"></Image>
                         <div>{isSaving?"Saving...":"Save"}</div>

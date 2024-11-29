@@ -21,18 +21,18 @@ import FilterDropdwonCard from './FilterDropDownCard';
 
 
 
-const FinancesSalesTableHeader = ({invoiceCount,estimateCount,returnCount, sales}:any) => {
+const FinancesSalesTableHeader = ({ invoiceCount, estimateCount, returnCount, sales }: any) => {
 
-    const currentUrl=useSearchParams();
+    const currentUrl = useSearchParams();
     const type = currentUrl.get("type")
 
-    
+
     const [showPopup1, setShowPopup1] = React.useState(false);
     const togglePopup1 = () => {
         setShowPopup1(!showPopup1);
     }
-   
-   
+
+
     const currentRoute = usePathname();
     const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
     const [selectedSort, setselectedSort] = React.useState(new Set(["Category: text"]));
@@ -136,7 +136,7 @@ const FinancesSalesTableHeader = ({invoiceCount,estimateCount,returnCount, sales
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent>
-                                 <FilterDropdwonCard />
+                                <FilterDropdwonCard />
                             </PopoverContent>
                         </Popover>
                     </div>

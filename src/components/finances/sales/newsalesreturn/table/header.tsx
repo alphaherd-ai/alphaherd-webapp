@@ -13,10 +13,14 @@ import useSWR from 'swr';
 import { useAppSelector } from '@/lib/hooks';
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 import Loading2 from '@/app/loading2';
+import { useRouter } from 'next/navigation';
+import SalesInvoice from '@/app/finance/sales/invoice/page';
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
 const NewsalesReturnHeader = ({ existingHeaderData }: any) => {
+
+
 
     const customStyles = {
         control: (provided: any, state: any) => ({
@@ -61,6 +65,7 @@ const NewsalesReturnHeader = ({ existingHeaderData }: any) => {
     const url = useSearchParams();
     const id = url.get('id');
     const count = url.get('count');
+    const router=useRouter();
     //console.log(existingHeaderData)
     const initialInvoiceNo = generateInvoiceNumber(Number(count));
     const { headerData, setHeaderData } = useContext(DataContext);
@@ -74,6 +79,27 @@ const NewsalesReturnHeader = ({ existingHeaderData }: any) => {
     const [invoiceOptions, setInvoiceOptions] = useState<any[]>([]);
     const [dueDate, setDueDate] = useState(new Date());
     const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
+    const [searchOptions, setSearchOptions] = useState<any[]>([]);
+    const [selectedInvoice,setSelectedInvoice]=useState<any>(null);
+    const { data: salesData, isLoading: salesLoading, error: salesError } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`, fetcher);
+
+    useEffect(() => {
+        if (!salesError && !salesLoading && salesData) {
+            const filteredOptions = salesData.filter((item: any) => (
+                item.invoiceNo.includes('SI')
+            ))
+
+            const options = filteredOptions.map((item: any) => (
+                {
+                    label: item.invoiceNo,
+                    value: item
+                }
+            ))
+            setSearchOptions(options)
+            //console.log(options);
+        }
+    }, [salesData, salesLoading, salesError])
+
     useEffect(() => {
         if (!disableButton && inputRef.current) {
             inputRef.current.focus();
@@ -93,42 +119,49 @@ const NewsalesReturnHeader = ({ existingHeaderData }: any) => {
         setHeaderData((prevData) => ({ ...prevData, dueDate: date }))
     }
 
-    
-        useEffect(()=>{
-            if(id){
-                setHeaderData(existingHeaderData)
-            }
-         else{
-            
-            setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo}))}
-        },[])
-    
-        useEffect(()=>{
-            if(!isLoading&&!error&&data){
-                
-                  const  clients=data.map((client:any)=>({
-                    value:{clientName:client.clientName,
-                           contact:client.contact,
-                           invoiceNo:client.invoiceNo,
-                           clientId:client.id,
-                           email:client.email},
-                    label:`${client.clientName}\u00A0\u00A0\u00A0\u00A0\u00A0${client.contact}`
-                }))
-                // console.log(clients)
-                setCustomers(clients);
-    
-            }
-            if(headerData.customer){
-                 const invoices= headerData.customer.value.invoiceNo.map((client:any)=>({
-                    value:client,
-                    label:client
-                }))
-                setInvoiceOptions(invoices);
-            }
-            
-        },[data,headerData])
+    const handleSearch=(selectedInvoice:any)=>{
+        console.log(selectedInvoice);
+        setSelectedInvoice(selectedInvoice);
+        router.push(`invoicereturn?id=${selectedInvoice.value.id}`)
+    }
 
-    
+
+    useEffect(() => {
+        if (id) {
+            setHeaderData(existingHeaderData)
+        }
+        else {
+
+            setHeaderData((prevData) => ({ ...prevData, invoiceNo: invoiceNo, dueDate: dueDate }))
+        }
+    }, [])
+
+    useEffect(() => {
+        if (!isLoading && !error && data) {
+
+            const clients = data.map((client: any) => ({
+                value: {
+                    clientName: client.clientName,
+                    contact: client.contact,
+                    invoiceNo: client.invoiceNo,
+                    clientId: client.id,
+                    email: client.email
+                },
+                label: `${client.clientName}\u00A0\u00A0\u00A0\u00A0\u00A0${client.contact}`
+            }))
+            // console.log(clients)
+            setCustomers(clients);
+
+        }
+        if (headerData.customer) {
+            const invoices = headerData.customer.value.invoiceNo.map((client: any) => ({
+                value: client,
+                label: client
+            }))
+            setInvoiceOptions(invoices);
+        }
+
+    }, [data, headerData])
 
 
     return (
@@ -205,8 +238,8 @@ const NewsalesReturnHeader = ({ existingHeaderData }: any) => {
                                     customInput={
                                         <div className='relative '>
                                             <input
-                            className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                            value={startDate.toLocaleDateString()}
+                                                className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                                value={startDate.toLocaleDateString()}
                                                 readOnly
                                             />
                                             <Image

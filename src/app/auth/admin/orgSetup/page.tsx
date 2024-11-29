@@ -22,12 +22,13 @@ const formSchema = z.object({
   phoneNo: z.string().length(10, 'Invalid Phone No.'),
   address: z.string().min(1, "Enter Company Address to continue"),
   state: z.string().min(1, "Select State to continue").optional(),
-  pincode: z.string().min(1, 'Enter pincode to continue'),
+  pincode: z.string()
+  .regex(/^\d{6}$/, 'Invalid Pincode - must be exactly 6 digits'),
   description: z.string(),
   adminName: z.string(),
   adminEmail: z.string().email('Invalid Email Address'),
   adminPhoneNo: z.string().length(10, 'Invalid Phone No.'),
-  adminAltPhoneNo: z.string(),
+  adminAltPhoneNo: z.string().length(10, 'Invalid Phone No.'),
   adminPassword: z.string().min(4, 'Admin Password must be at least 4 characters'),
   reAdminPassword: z.string().min(4, 'Admin Password must be at least 4 characters')
 }).superRefine((data, ctx) => {
@@ -38,8 +39,15 @@ const formSchema = z.object({
       message: 'Alt. Phone No. must be different',
     });
   }
+  
+  if (data.adminPassword !== data.reAdminPassword) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['reAdminPassword'],
+      message: 'Re-entered password must match the original password',
+    });
+  }
 });
-
 
 const OrgSetup = () => {
 
@@ -78,57 +86,62 @@ const OrgSetup = () => {
   // console.log(validationErrors);
 
   const [activeTab, setActiveTab] = useState(0);
- 
-const handlePicChange=(imageUrl:any,source:string)=>{
-  let name=source,value=imageUrl.secure_url;
-  // console.log(name,value)
-  try{
-    // console.log(name,value)
-    setData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-    // console.log("inside handle change 1");
-    formSchema.parse({...data,[name]: value});
-    // console.log("inside handle change 2");
-    setValidationErrors((prevErrors) => {
-      // console.log("here");
-      let newErrors = prevErrors;
-      newErrors[name as keyof typeof prevErrors] = '';
-      return newErrors;
-    });
-  }
-  catch(err : any){
-    if (err instanceof z.ZodError) {
-      // console.log(err.flatten());
-      let fieldErrors = err.flatten().fieldErrors;
-      // console.log(fieldErrors);
-      let fields: string[] = Object.keys(fieldErrors);
-      // console.log(name);
-      // console.log(fields);
-      if(fields.includes(name)){
-        setValidationErrors((prevErrors) => {
-          let newErrors = prevErrors;
-          newErrors[name as keyof typeof prevErrors] = fieldErrors[name]!.length > 0 ? fieldErrors[name]![0] : '';
-          return newErrors;
-        });
-      }
-      else{
-        setValidationErrors((prevErrors) => {
-          // console.log("here");
-          let newErrors = prevErrors;
-          newErrors[name as keyof typeof prevErrors] = '';
-          return newErrors;
-        });
+  
+
+  const handlePicChange = (imageUrl: any, source: string) => {
+    let name = source, value = imageUrl.secure_url;
+    console.log(name, value)
+    try {
+      console.log(name, value)
+      setData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+      console.log("inside handle change 1");
+      formSchema.parse({ ...data, [name]: value });
+      console.log("inside handle change 2");
+      setValidationErrors((prevErrors) => {
+        console.log("here");
+        let newErrors = prevErrors;
+        newErrors[name as keyof typeof prevErrors] = '';
+        return newErrors;
+      });
+    }
+    catch (err: any) {
+      if (err instanceof z.ZodError) {
+        console.log(err.flatten());
+        let fieldErrors = err.flatten().fieldErrors;
+        console.log(fieldErrors);
+        let fields: string[] = Object.keys(fieldErrors);
+        console.log(name);
+        console.log(fields);
+        if (fields.includes(name)) {
+          setValidationErrors((prevErrors) => {
+            let newErrors = prevErrors;
+            newErrors[name as keyof typeof prevErrors] = fieldErrors[name]!.length > 0 ? fieldErrors[name]![0] : '';
+            return newErrors;
+          });
+        }
+        else {
+          setValidationErrors((prevErrors) => {
+            console.log("here");
+            let newErrors = prevErrors;
+            newErrors[name as keyof typeof prevErrors] = '';
+            return newErrors;
+          });
+        }
       }
     }
-  }
-};
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>|any) => {
-    let name: string,value: any;
-    if(e?.label){
-       name="state"
-       value=e.value
+  };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | any) => {
+    let name: string, value: any;
+    if (e?.label) {
+      name = "state"
+      value = e.value
+    }
+    else if (e?.target.name === 'orgName') {
+      name = "orgName",
+        value =e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1);
     }
     else {
       name = e.target.name;
@@ -314,14 +327,14 @@ const handlePicChange=(imageUrl:any,source:string)=>{
                 </button> : null
               }
               {
-                activeTab === formElements.length - 1 ? <button className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0" onClick={formSubmit}>
+                activeTab === formElements.length - 1 ? <button className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0 cursor-pointer" onClick={formSubmit}>
                   <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
                     <img src={createAccountLogo?.src}></img>
-                    <div className="text-white text-sm font-bold ">
+                    <div className="text-white text-sm font-bold cursor-pointer ">
                       Create Account
                     </div>
                   </div>
-                </button> : null
+                </button > : null
               }
             </div>
           </div>

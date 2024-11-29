@@ -17,6 +17,8 @@ import capitalizeFirst from "@/utils/capitiliseFirst";
 import Loading2 from "@/app/loading2";
 type PopupProps = {
     onClose: () => void;
+    setNewClient?:any;
+    setIsNewClientClicked?:any
 }
 
 // const clientSchema = z.object({
@@ -30,7 +32,7 @@ type PopupProps = {
 
 
 
-const ClientPopup: React.FC<PopupProps> = ({ onClose }: any) => {
+const ClientPopup: React.FC<PopupProps> = ({ onClose,setNewClient,setIsNewClientClicked }: any) => {
     const [formData, setFormData] = useState<any>({});
     const [showPopup, setShowPopup] = React.useState(false);
     const appState = useAppSelector((state) => state.app)
@@ -106,9 +108,14 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }: any) => {
                 }),
             });
             if (response.ok) {
-                
+                const clientData = await response.json();
+                if(clientData){
+                    setIsNewClientClicked((prev:any)=>!prev);
+                    setNewClient(clientData);
+                }
                 console.log('Data saved successfully');
-                if(!addAnotherPatient){ onClose(); addAnotherPatient = false;}
+                if(!addAnotherPatient){ onClose();
+                     addAnotherPatient = false;}
                 else{
                     togglePopup();
                     addAnotherPatient=false;

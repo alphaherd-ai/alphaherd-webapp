@@ -67,10 +67,10 @@ const AppointmentModal = () => {
               </div>
               <div className="self-stretch h-[755px] flex-col justify-start items-start gap-4 flex">
                 <div className="flex-col justify-start items-start gap-2 flex">
-                  <div className="text-gray-500 text-xl font-medium font-['Satoshi']">
+                  <div className="text-gray-500 text-xl font-medium ">
                     Add Appointment
                   </div>
-                  <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
+                  <div className="text-neutral-400 text-base font-medium ">
                     Let’s get started
                   </div>
                 </div>
@@ -78,61 +78,61 @@ const AppointmentModal = () => {
                   <div className="self-stretch justify-start items-start gap-6 inline-flex">
                     <div className="grow shrink basis-0 flex-col justify-start items-start gap-6 inline-flex">
                       <div className="self-stretch justify-start items-center gap-6 inline-flex">
-                        <div className="w-[120px] text-gray-500 text-base font-medium font-['Satoshi']">
+                        <div className="w-[120px] text-gray-500 text-base font-medium ">
                           Client Name*
                         </div>
                         <div className="grow shrink basis-0 h-11 px-4 bg-white rounded-[5px] border border-teal-400 flex-col justify-center items-start gap-2 inline-flex">
-                          <div className="text-gray-500 text-base font-medium font-['Satoshi']">
+                          <div className="text-gray-500 text-base font-medium ">
                             Ace Ventura
                           </div>
                           {/* <div className="w-4 h-4 relative" /> */}
                         </div>
                       </div>
                       <div className="self-stretch justify-start items-center gap-6 inline-flex">
-                        <div className="w-[120px] text-gray-500 text-base font-medium font-['Satoshi']">
+                        <div className="w-[120px] text-gray-500 text-base font-medium ">
                           Patient Name
                         </div>
                         <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400" />
                       </div>
                       <div className="self-stretch justify-start items-center gap-6 inline-flex">
-                        <div className="w-[120px] text-gray-500 text-base font-medium font-['Satoshi']">
+                        <div className="w-[120px] text-gray-500 text-base font-medium ">
                           Date
                         </div>
                         <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] flex-col justify-center items-start gap-2 inline-flex">
                           <DatePicker
                             selected={selectedDate}
                             onChange={handleDateChange}
-                            className="text-gray-500 text-base font-medium font-['Satoshi'] ml-[10px]" 
+                            className="text-gray-500 text-base font-medium  ml-[10px]" 
                           />
                         </div>
                       </div>
                       <div className="self-stretch justify-start items-center gap-6 inline-flex">
-                        <div className="w-[120px] text-gray-500 text-base font-medium font-['Satoshi']">
+                        <div className="w-[120px] text-gray-500 text-base font-medium ">
                           Time
                         </div>
                         <div className="flex-col justify-start items-center gap-2 inline-flex">
-                          <div className="text-gray-500 text-base font-medium font-['Satoshi']">
+                          <div className="text-gray-500 text-base font-medium ">
                             9:00am
                           </div>
                           <div className="w-[87px] bg-white rounded-[5px] border border-neutral-400" />
                         </div>
-                        <div className="text-right text-gray-500 text-base font-medium font-['Satoshi']">
+                        <div className="text-right text-gray-500 text-base font-medium ">
                           to
                         </div>
                         <div className="flex-col justify-start items-center gap-2 inline-flex">
-                          <div className="text-gray-500 text-base font-medium font-['Satoshi']">
+                          <div className="text-gray-500 text-base font-medium ">
                             9:30am
                           </div>
                           <div className="w-[87px] bg-white rounded-[5px] border border-neutral-400" />
                         </div>
                       </div>
                       <div className="self-stretch justify-start items-center gap-6 inline-flex">
-                        <div className="w-[120px] text-gray-500 text-base font-medium font-['Satoshi']">
+                        <div className="w-[120px] text-gray-500 text-base font-medium ">
                           Service
                         </div>
                         <div className="grow shrink basis-0 h-11 px-4 py-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center flex">
                         <select
-                          className="grow shrink basis-0 text-neutral-400 text-base font-medium font-['Satoshi'] w-full"
+                          className="grow shrink basis-0 text-neutral-400 text-base font-medium  w-full"
                           value={selectedService}
                           onChange={handleChange}
                         >
@@ -150,7 +150,7 @@ const AppointmentModal = () => {
                     <div className="h-[21px] justify-start items-center gap-6 flex">
                       <div className="grow shrink basis-0 h-[21px] justify-start items-center gap-4 flex">
                         <div className="pr-[59px] justify-start items-center flex">
-                          <div className="text-gray-500 text-base font-medium font-['Satoshi']">
+                          <div className="text-gray-500 text-base font-medium ">
                             Provider
                           </div>
                         </div>
@@ -159,7 +159,7 @@ const AppointmentModal = () => {
                     <div className="w-[432px] h-11 px-4 py-[13px] bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-3.5 flex">
                       <div className="grow shrink basis-0 flex-col justify-start items-start gap-2 inline-flex">
                         <div className="h-7 px-2 py-1.5 bg-gray-100 rounded-[5px] justify-center items-center gap-2 inline-flex">
-                          <div className="text-gray-500 text-sm font-medium font-['Satoshi']">
+                          <div className="text-gray-500 text-sm font-medium ">
                             Dr. Anjana Suresh
                           </div>
                         </div>
@@ -174,13 +174,13 @@ const AppointmentModal = () => {
                   <div className="self-stretch h-[118px] flex-col justify-start items-start gap-2 flex">
                     <div className="w-[576px] justify-start items-center gap-4 inline-flex">
                       <div className="grow shrink basis-0 flex-col justify-start items-start inline-flex">
-                        <div className="text-gray-500 text-base font-medium font-['Satoshi']">
+                        <div className="text-gray-500 text-base font-medium ">
                           Reason for Visit
                         </div>
                       </div>
                     </div>
                     <div className="self-stretch h-[88px] p-2 bg-white rounded-[5px] border border-neutral-400 flex-col justify-start items-start gap-2 flex">
-                      <div className="text-neutral-400 text-base font-medium font-['Satoshi']">
+                      <div className="text-neutral-400 text-base font-medium ">
                         Eg: Difficulty in breathing...
                       </div>
                       <div></div>
@@ -188,11 +188,11 @@ const AppointmentModal = () => {
                   </div>
                 </div>
                 <div className="self-stretch justify-start items-center gap-2 inline-flex">
-                  <div className="grow shrink basis-0 text-teal-400 text-base font-bold font-['Satoshi']">
+                  <div className="grow shrink basis-0 text-teal-400 text-base font-bold ">
                     {" "}
                   </div>
                   <div className="px-4 py-2.5 bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex">
-                    <div className="text-neutral-400 text-base font-bold font-['Satoshi']">
+                    <div className="text-neutral-400 text-base font-bold ">
                       Continue
                     </div>
                     <div className="w-6 h-6 relative">

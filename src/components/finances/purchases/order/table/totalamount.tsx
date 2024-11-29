@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext,useEffect,useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Rupee from "../../../../../assets/icons/finance/rupee.svg"
 import Image from "next/image"
 import { Button } from "@nextui-org/react";
@@ -7,18 +7,23 @@ import { DataContext } from './DataContext';
 import { Tax } from '@prisma/client';
 import Select from 'react-select';
 import { custom } from 'zod';
+import formatDateAndTime from '@/utils/formateDateTime';
+import RecordOrderTransaction from './recordOrderTransaction';
+import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 
 const NewPurchasesTotalAmount = () => {
 
 
-    const { tableData } = useContext(DataContext);
+    const { tableData, headerData } = useContext(DataContext);
+
     let totalAmount = 0;
     tableData.forEach(data => {
-      
-            totalAmount += (data.quantity * Number(data.unitPrice) + data.quantity * data.gst*Number(data.unitPrice)-(data.quantity*data.discountPercent/100*Number(data.unitPrice)||0))||0;    
+
+        totalAmount += (data.quantity * Number(data.unitPrice) + data.quantity * data.gst * Number(data.unitPrice) - (data.quantity * data.discountPercent / 100 * Number(data.unitPrice) || 0)) || 0;
     });
 
     const { totalAmountData, setTotalAmountData } = useContext(DataContext);
+   // const { transactionsData, setTransactionsData } = useContext(DataContext);
     const [grandAmt, setGrandAmt] = useState(totalAmount);
 
     const gstOptions = [
@@ -28,17 +33,17 @@ const NewPurchasesTotalAmount = () => {
 
 
     
-    const [overAllDiscount,setDiscount]=useState(0); 
+    const [overAllDiscount,setDiscount]=useState<string>(""); 
 
     const [shipping, setShipping] = useState<string>('');
     const [adjustment, setAdjustment] = useState<string>('');
 
-    useEffect(()=>{
-        if(totalAmountData.subTotal==0) {
+    useEffect(() => {
+        if (totalAmountData.subTotal == 0) {
             setShipping('');
             setAdjustment('');
         }
-      },[totalAmountData])
+    }, [totalAmountData])
 
     const handleShippingChange = (event: any) => {
         //console.log(typeof event.target.value)
@@ -56,92 +61,117 @@ const NewPurchasesTotalAmount = () => {
             updateGrandTotal();
         }
     };
-    const [discountMethod,setDiscountMethod]=useState('amount');
+    const [discountMethod,setDiscountMethod]=useState("amount");
     const handleSelectChange = (selectedOption: any) => {
         setDiscountMethod(selectedOption.value);
     };
-    const [discountInput,setDiscountInput]=useState(0);
-    const handleDiscountChange =(discount:number)=>{
-        if(discountMethod==='amount'){
-            setDiscountInput(discount);
-            let discountedAmount=grandAmt-discount;
-            let discountPercent=Number(discount/totalAmount).toFixed(10)
-            setDiscount(Number(discountPercent))
+    const [discountInput,setDiscountInput]=useState<string>("");
+    const handleDiscountChange = (value: string) => {
+        if (/^\d*\.?\d*$/.test(value)) {
+          setDiscountInput(value);
+    
+          const discount = parseFloat(value) || 0;
+    
+          if (discountMethod === "amount") {
+            const discountedAmount = grandAmt - discount;
+            const discountPercent = Number(discount / totalAmount).toFixed(10);
+            setDiscount(discountPercent);
             setGrandAmt(discountedAmount);
-            setTotalAmountData((prevData)=>({...prevData,overallDiscount:Number(discountPercent)}))
-        }
-        else if(discountMethod==='percent'){
-            setDiscountInput(discount);
-            let discountedAmount=grandAmt-grandAmt*(discount/100);
-            setDiscount(Number(discount/100));
+            setTotalAmountData((prevData) => ({
+              ...prevData,
+              overallDiscount: discountPercent,
+            }));
+          } else if (discountMethod === "percent") {
+            const discountedAmount = grandAmt - grandAmt * (discount / 100);
+            setDiscount((discount / 100).toString());
             setGrandAmt(discountedAmount);
-            setTotalAmountData((prevData)=>({...prevData,overallDiscount:Number(discount/100)}))
+            setTotalAmountData((prevData) => ({
+              ...prevData,
+              overallDiscount: discount / 100,
+            }));
+          }
         }
-    }
+      };
+    
 
     const updateGrandTotal = () => {
-        const discountedAmount = (totalAmount - totalAmount * overAllDiscount)||0;
+        const discountedAmount = (totalAmount - totalAmount * parseFloat(overAllDiscount || "0") || 0);
         const shippingValue = parseFloat(shipping) || 0;
         const adjustmentValue = parseFloat(adjustment) || 0;
         const newGrandTotal = discountedAmount + shippingValue + adjustmentValue;
-        
+
         setGrandAmt(newGrandTotal);
         setTotalAmountData((prevData) => ({
             ...prevData,
-            subTotal:totalAmount,
-            totalCost: newGrandTotal, 
-            shipping:shippingValue,
-            adjustment:adjustmentValue,
-            overAllDiscount:overAllDiscount
+            subTotal: totalAmount,
+            totalCost: newGrandTotal,
+            shipping: shippingValue,
+            adjustment: adjustmentValue,
+            overAllDiscount: overAllDiscount
         }));
     };
 
+  //  const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+  //  const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+
+ //   const balanceDue = -grandAmt - totalPaidAmount + totalAmountToPay;
+  //  console.log(-grandAmt,totalPaidAmount,totalAmountToPay);
+
     useEffect(() => {
-        updateGrandTotal(); 
+        updateGrandTotal();
     }, [totalAmount, overAllDiscount, shipping, adjustment]);
 
     const customStyles = {
         control: (provided: any, state: any) => ({
-          ...provided,
-          width: '100%',
-          maxWidth: '100%',
-          border: state.isFocused ? '1px solid #35BEB1' : 'none',
-          '&:hover': {
-            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4', 
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
+            border: state.isFocused ? '1px solid #35BEB1' : 'none',
+            '&:hover': {
+                borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4',
             },
-          boxShadow: state.isFocused ? 'none' : 'none',
+            boxShadow: state.isFocused ? 'none' : 'none',
         }),
         valueContainer: (provided: any) => ({
-          ...provided,
-          width: '100%',
-          maxWidth: '100%',
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
         }),
         singleValue: (provided: any, state: any) => ({
-          ...provided,
-          width: '100%',
-          maxWidth: '100%',
-          color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
+            color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
         }),
         menu: (provided: any) => ({
-          ...provided,
-          backgroundColor: 'white',
-          width: '100%',
-          maxWidth: '100%',
+            ...provided,
+            backgroundColor: 'white',
+            width: '100%',
+            maxWidth: '100%',
         }),
         option: (provided: any, state: any) => ({
-          ...provided,
-          backgroundColor: state.isFocused ? '#35BEB1' : 'white',
-          color: state.isFocused ? 'white' : '#6B7E7D',
-          '&:hover': {
-            backgroundColor: '#35BEB1',
-            color: 'white',
-          },
+            ...provided,
+            backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+            color: state.isFocused ? 'white' : '#6B7E7D',
+            '&:hover': {
+                backgroundColor: '#35BEB1',
+                color: 'white',
+            },
         }),
-        menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
-      };
+        menuPortal: (base: any) => ({ ...base, zIndex: 9999 })
+    };
 
-  return (
-    <>
+    const [initialInvoiceNo, setInitialInvoiceNo] = useState('');
+    const [count, setCount] = useState(0);
+    useEffect(() => {
+        const newInvoiceNo = generateInvoiceNumber(count);
+        setInitialInvoiceNo(newInvoiceNo);
+    }, [count])
+
+    return (
+        <>
 
 
             <div className="flex w-full box-border bg-gray-100 pt-[20px] pb-[20px]">
@@ -212,29 +242,32 @@ const NewPurchasesTotalAmount = () => {
                         <div className="text-right text-gray-500 text-base font-bold ">{totalAmount.toFixed(2)}</div>
                     </div>
                     <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
-                                    <div className="text-gray-500 text-base font-bold ">Overall Discount</div>
-                                    <div className="flex items-center">
-                                        <div className="text-right text-borderText text-base  ">
-                                        <input
-                                        type='number'
-                                        className="text-right  text-base  w-[50%] border-none outline-none"
-                                        value={totalAmountData.subTotal?discountInput:0}
-                                        onChange={(e)=>handleDiscountChange(Number(e.target.value))}
-                                        /></div>
-                                        <div className=' flex text-gray-500 text-base font-medium pl-6'>
-                                            <Select
-                                                className="text-neutral-400 text-base font-medium"
-                                                defaultValue={gstOptions[1]}
-                                                isClearable={false}
-                                                isSearchable={true}
-                                                options={gstOptions}
-                                                styles={customStyles}
-                                                onChange={handleSelectChange}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                    <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
+            <div className="text-gray-500 text-base font-bold ">
+              Overall Discount
+            </div>
+            <div className="flex items-center">
+              <div className="text-right text-textGrey1 text-base  ">
+                <input
+                  className="text-right text-textGrey1 text-base   border-none outline-none"
+                  placeholder="0"
+                  value={discountInput}
+                  onChange={(e) => handleDiscountChange(e.target.value)}
+                />
+              </div>
+              <div className=" flex text-gray-500 text-base font-medium pl-6">
+                <Select
+                  className="text-neutral-400 text-base font-medium"
+                  defaultValue={gstOptions[1]}
+                  isClearable={false}
+                  isSearchable={true}
+                  options={gstOptions}
+                  styles={customStyles}
+                  onChange={handleSelectChange}
+                />
+              </div>
+            </div>
+          </div>
+                    <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
                         <div className="text-gray-500 text-base font-bold ">Shipping</div>
                         <div className="flex items-center">
                             <div className="text-right text-textGrey1 text-base  "><input
@@ -246,7 +279,7 @@ const NewPurchasesTotalAmount = () => {
                             
                         </div>
                     </div>
-                    <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
+                    <div className="w-full flex px-4 py-2 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
                         <div className="text-gray-500 text-base font-bold ">Adjustment</div>
                         <div className="flex items-center">
                             <div className="text-right text-textGrey1 text-base  "><input
@@ -263,12 +296,14 @@ const NewPurchasesTotalAmount = () => {
                     <div className="text-textGreen text-base font-bold ">Grand total</div>
                         <div className="text-right text-textGreen text-base font-bold "> { grandAmt.toFixed(2)}</div>
                     </div>
+
+
                 </div>
             </div>
 
 
         </>
-  )
+    )
 }
 
 export default NewPurchasesTotalAmount

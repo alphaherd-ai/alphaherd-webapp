@@ -162,7 +162,7 @@ const DownloadPopup = ({ onClose, timeline }:any) => {
       body: tableRows,
     });
 
-    const fileName = `timeline_report_${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'}_to_${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}.pdf`;
+    const fileName = `timeline_report_${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'} to ${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}.pdf`;
     doc.save(fileName);
   })
   }

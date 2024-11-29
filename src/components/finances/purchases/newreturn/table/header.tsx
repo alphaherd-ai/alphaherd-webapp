@@ -21,6 +21,8 @@ import formatDateAndTime from "@/utils/formateDateTime";
 import { generateInvoiceNumber } from "@/utils/generateInvoiceNo";
 import { custom } from "zod";
 import Loading2 from "@/app/loading2";
+import { useRouter } from 'next/navigation';
+import SalesInvoice from '@/app/finance/purchases/invoice/page';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 const NewPurchaseReturnNewHeader = ({existingHeaderData}:any) => {
@@ -37,9 +39,31 @@ const NewPurchaseReturnNewHeader = ({existingHeaderData}:any) => {
     const [distributor,setDistributors]=useState<any[]>([]);
     const appState = useAppSelector((state) => state.app)
     const [dueDate, setDueDate] = useState(new Date());
+    const [invoiceOptions, setInvoiceOptions] = useState<any[]>([]);
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
     console.log("data in new purchase return header is :", data);
+    const [searchOptions, setSearchOptions] = useState<any[]>([]);
+    const [selectedInvoice,setSelectedInvoice]=useState<any>(null);
+    const { data: purchaseData, isLoading: purchaseLoading, error: purchaseError } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/getAll?branchId=${appState.currentBranchId}`, fetcher);
+    const router=useRouter();
+    console.log("purchase data 123456 is ",purchaseData);
    
+    useEffect(() => {
+        if (!purchaseError && !purchaseLoading && purchaseData) {
+            const filteredOptions = purchaseData.filter((item: any) => (
+                item.invoiceNo.includes('PI')
+            ))
+
+            const options = filteredOptions.map((item: any) => (
+                {
+                    label: item.invoiceNo,
+                    value: item
+                }
+            ))
+            setSearchOptions(options)
+            //console.log(options);
+        }
+    }, [purchaseData, purchaseLoading, purchaseError])
     useEffect(() => {
         if (!disableButton && inputRef.current) {
             inputRef.current.focus();
@@ -56,25 +80,58 @@ const NewPurchaseReturnNewHeader = ({existingHeaderData}:any) => {
         setDueDate(date);
         setHeaderData((prevData)=>({...prevData,dueDate:date}))
     }
+    const handleSearch=(selectedInvoice:any)=>{
+        console.log(selectedInvoice);
+        setSelectedInvoice(selectedInvoice);
+        router.push(`return?id=${selectedInvoice.value.id}`)
+      
+    }
     useEffect(()=>{
         if(id){
             setHeaderData(existingHeaderData)
             // console.log("this is header data",headerData)
         }
      else{
-        setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo}))}
+        setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo,dueDate:dueDate}))}
     },[])
-    useEffect(()=>{
-        if(!isLoading&&!error&&data){
-              const distributors=data?.map((distributor:any)=>({
-                value:distributor.distributorName,
-                email:distributor.email,
-                label:`${distributor.distributorName}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0${distributor.contact}` 
+    // useEffect(()=>{
+    //     if(!isLoading&&!error&&data){
+    //           const distributors=data?.map((distributor:any)=>({
+    //             value:distributor.distributorName,
+    //             email:distributor.email,
+    //             label:`${distributor.distributorName}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0${distributor.contact}` 
+    //         }))
+    //         setDistributors(distributors);
+
+    //     }
+    // },[data])
+    console.log("heder data invoice is : ",headerData.distributor);
+    useEffect(() => {
+        if (!isLoading && !error && Array.isArray(data) && data.length > 0) {
+
+            const distributors = data.map((distributor: any) => ({
+                value: {
+                    distributorName: distributor.distributorName,
+                    contact: distributor.contact,
+                    invoiceNo: distributor.invoiceNo,
+                    distributorId: distributor.id,
+                    email: distributor.email
+                },
+                label: `${distributor.distributorName}\u00A0\u00A0\u00A0\u00A0\u00A0${distributor.contact}`
             }))
+            // console.log(distributors)
             setDistributors(distributors);
 
         }
-    },[data])
+        if (headerData.distributor && headerData.distributor.value?.invoiceNo) {
+            const invoices = headerData.distributor.value.invoiceNo.map((distributor: any) => ({
+                value: distributor,
+                label: distributor
+            }))
+            setInvoiceOptions(invoices);
+        }
+
+    }, [data, headerData])
 
 
 
@@ -160,13 +217,20 @@ const NewPurchaseReturnNewHeader = ({existingHeaderData}:any) => {
                         <div className="text-gray-500 text-base font-bold  pr-[8px] w-3/12 py-3">Reference Number:</div>
                         <div className="flex items-center justify-between w-[29.4rem]">
                         {id===null?   (
-                            <input
-                                ref={inputRef}
-                                className={`w-[25rem] h-9 text-textGrey2 text-base font-medium  px-2 focus:outline-none border-0 rounded-[5px] focus:border focus:border-solid focus:border-[#35BEB1] bg-inherit`}
-                                value={invoiceNo}
-                                disabled={disableButton}
-                                autoFocus={!disableButton}
-                            />):(
+                                <Select
+                                    className="text-gray-500 text-base font-medium w-[100%] border-0 boxShadow-0"
+                                    classNamePrefix="select"
+                                    isClearable={isClearable}
+                                    isSearchable={isSearchable}
+                                    value={selectedInvoice}
+                                    options={searchOptions}
+                                    onChange={(selectedInvocice: any) => handleSearch(selectedInvocice)}
+                                    //placeholder="Search via invoice no."
+                                    menuPortalTarget={document.body}
+                                    styles={customStyles}
+                                    placeholder={invoiceNo}
+                                />
+                            ) : (
                                 existingHeaderData.invoiceNo
                             )}
                             {/* <button
@@ -181,7 +245,7 @@ const NewPurchaseReturnNewHeader = ({existingHeaderData}:any) => {
             <div className="flex justify-between w-full pb-[16px]">
                 <div className="px-6 py-2 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                     <div className="flex gap-[0.8rem] items-center w-full">
-                        <div className="text-gray-500 text-base font-bold  w-1/8">Date:</div>
+                        <div className="text-gray-500 text-base font-bold  w-1/8">Purchase Date:</div>
                         {id===null?(
                         // <DatePicker
                         //     className={"text-gray-500 text-base font-medium  w-full"}
@@ -218,6 +282,7 @@ const NewPurchaseReturnNewHeader = ({existingHeaderData}:any) => {
                                         }
                                     />
                                     </div>
+                                    
                                     // </div>
                     ):(
                             formatDateAndTime(existingHeaderData.date).formattedDate
@@ -226,7 +291,7 @@ const NewPurchaseReturnNewHeader = ({existingHeaderData}:any) => {
                 </div>
                 <div className="px-6 py-2 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full ">
                     <div className="flex gap-[0.2rem] items-center w-full">
-                        <div className="text-gray-500 text-base font-bold  w-[12rem]">Delivery Due Date:</div>
+                        <div className="text-gray-500 text-base font-bold  w-[12rem]">Return Date:</div>
                         {/* <DatePicker
                             className={"text-gray-500 text-base font-medium  w-10/12 border-0 boxShadow-0"}
                             selected={startDate}
@@ -254,7 +319,7 @@ const NewPurchaseReturnNewHeader = ({existingHeaderData}:any) => {
                                             <div className='relative'>
                                                 <input
                                                     className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={headerData?.dueDate?.toLocaleDateString() || dueDate.toLocaleDateString()}
+                                                    value={headerData?.dueDate?.toLocaleDateString()}
                                                     readOnly
                                                 />
                                                 <Image
@@ -267,6 +332,9 @@ const NewPurchaseReturnNewHeader = ({existingHeaderData}:any) => {
                                             </div>
                                         }
                                     />
+                                    {!headerData?.dueDate && (
+                                     <div className="text-red-500 text-sm mt-1">Please select a due date.</div>
+                                    )}
                                     </div>
                                     ) : (
                                         formatDateAndTime(existingHeaderData.dueDate).formattedDate

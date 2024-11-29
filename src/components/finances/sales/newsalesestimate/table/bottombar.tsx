@@ -23,10 +23,12 @@ import Loading2 from "@/app/loading2"
 
 const NewsaleEstimateBottomBar = () => {
 
-    const { headerData, tableData, totalAmountData } = useContext(DataContext);
+    const { headerData, tableData, totalAmountData,transactionsData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
     const router = useRouter();
     const [isSaving,setSaving]=useState<any>(false);
+    
+    //console.log(totalAmountData);
     const handleSubmit = async () => {
         if (!headerData.customer || tableData.length === 0) {
             alert('Customer is required');
@@ -34,16 +36,16 @@ const NewsaleEstimateBottomBar = () => {
         }
         //Removing last item from table data as it is null
         tableData.pop();
-        const allData = { headerData, tableData, totalAmountData };
+        const allData = { headerData, tableData, totalAmountData,transactionsData };
 
-        console.log(allData)
+        
         let totalQty = 0;
         tableData.forEach(data => {
             totalQty += (data.quantity) || 0;
         });
         const items = tableData.map(data => ({
             productId: data.productId,
-
+            serviceId:data.serviceId,
             productBatchId:data.id, 
             quantity: data.quantity,  
             sellingPrice:data.sellingPrice,
@@ -51,7 +53,9 @@ const NewsaleEstimateBottomBar = () => {
             name:data.itemName,
             lowQty:data.lowQty,
             highQty:data.highQty,
-            discount:data.discount
+            discount:data.discountPer,
+            itemType:data.itemType,
+            serviceProvider:data.provider
     }));
         const data={
             customer: allData.headerData.customer.value.clientName ,
@@ -65,6 +69,9 @@ const NewsaleEstimateBottomBar = () => {
             adjustment: allData.totalAmountData.adjustment,
             totalCost: allData.totalAmountData.totalCost,
             overallDiscount: allData.totalAmountData.gst,
+            recordTransaction: {
+                create: allData.transactionsData
+            },
             totalQty: totalQty,
             status: "Pending",
             type: FinanceCreationType.Sales_Estimate,
@@ -73,7 +80,7 @@ const NewsaleEstimateBottomBar = () => {
             }
 
         }
-        // console.log(JSON.stringify(data))
+        console.log(data)
         try {
             setSaving(true);
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Estimate}?branchId=${appState.currentBranchId}`, data)
@@ -318,10 +325,10 @@ const NewsaleEstimateBottomBar = () => {
                     </Button>
                 </div> */}
                 <div className="flex justify-between items-center gap-4 pr-4">
-                    <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
+                    {/* <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
                         <Image src={drafticon} alt="draft"></Image>
                         <div>Save as Draft</div>
-                    </Button>
+                    </Button> */}
                     <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
                     }`}
                     onClick={handleSubmit} disabled={isDisabled || isSaving}>

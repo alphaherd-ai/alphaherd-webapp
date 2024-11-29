@@ -21,13 +21,13 @@ const ExistingsalesNavbar = () => {
                     <Image className="w-6 h-6 relative rounded-[5px]  cursor-pointer" src={lefticon} alt="Back"  onClick={()=>router.back()}></Image>
                     </div>
                     <div className="text-gray-500 text-[28px] font-bold ">
-                    Sales Invoice 
+                    Sales Invoice - SI-000345
 
                     </div>
                     </div>
-                    <div className='absolute right-16 bg-white w-6 h-6 flex jsutify-center items-center'>
+                  {/*  <div className='absolute right-16 bg-white w-6 h-6 flex jsutify-center items-center'>
       
-      <Popover placement="left" showArrow offset={10}>
+       <Popover placement="left" showArrow offset={10}>
           <PopoverTrigger>
               <Button 
             //   color="gray-400"
@@ -59,11 +59,11 @@ const ExistingsalesNavbar = () => {
             
 
           </PopoverContent>
-      </Popover>
+      </Popover> 
 
 
 
-  </div>
+  </div>*/}
                 </div>
            
         </>

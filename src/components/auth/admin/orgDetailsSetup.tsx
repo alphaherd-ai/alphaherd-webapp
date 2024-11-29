@@ -56,46 +56,46 @@ const OrgDetailsSetup = (props: any) => {
                     <div className="w-[940px] justify-start items-start gap-6 inline-flex">
                     </div>
                     <div className="flex-col justify-start items-start gap-2 flex">
-                    <div className="flex justify-around items-center">
-                        <div className="text-gray-500 text-xl font-medium mr-6">My Organisation</div>
-                        <CldUploadButton
-                            className="bg-none w-50 h-20 border-none"
-                            options={{
-                                sources: ['local', 'url'],
-                                multiple: false,
-                                maxFiles: 1
-                            }}
-                            uploadPreset={process.env.CUSTOMCONNSTR_NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
-                            onSuccess={(result, { widget }) => {
-                                //@ts-ignore
-                                setResource(result?.info.secure_url);
-                                // console.log(result); // { public_id, secure_url, etc }
-                                props.handlePicChange(result.info, "orgImgUrl");
-                                widget.close();
-                            }}
-                        >
-    <div className="self-stretch justify-start items-center gap-10 inline-flex">
-        <div className="grow shrink basis-0 h-11 justify-start items-start gap-2.5 flex">
-            <div className="px-6 py-2.5 border border-gray-500 justify-center items-center gap-4 flex border-dashed">
-                <div className="">
-                    <div className="">
-                        
-                            {!resource ?
-                                <Image src={updatelogo} alt="upload" />
-                                :
-                                <Image className="w-8 h-8 rounded-full" src={resource} alt="Uploaded image" width={150} height={150} />
-                            }
-                       
-                    </div>
-                </div>
-                <div className="">
-                    <div className="text-gray-500 text-base font-bold">Upload Logo</div>
-                </div>
-            </div>
-        </div>
-    </div>
-    </CldUploadButton>
-</div>
+                        <div className="flex justify-around items-center">
+                            <div className="text-gray-500 text-xl font-medium mr-6">My Organisation</div>
+                            <CldUploadButton
+                                className="bg-inherit w-50 h-20 border-none cursor-pointer"
+                                options={{
+                                    sources: ['local', 'url'],
+                                    multiple: false,
+                                    maxFiles: 1
+                                }}
+                                uploadPreset={process.env.CUSTOMCONNSTR_NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+                                onSuccess={(result, { widget }) => {
+                                    //@ts-ignore
+                                    setResource(result?.info.secure_url);
+                                    console.log(result); // { public_id, secure_url, etc }
+                                    props.handlePicChange(result.info, "orgImgUrl");
+                                    widget.close();
+                                }}
+                            >
+                                <div className="self-stretch justify-start items-center gap-10 inline-flex">
+                                    <div className="grow shrink basis-0 h-11 justify-start items-start gap-2.5 flex">
+                                        <div className="px-6 py-2.5 border border-gray-500 justify-center items-center gap-4 flex border-dashed">
+                                            <div className="">
+                                                <div className="">
+
+                                                    {!resource ?
+                                                        <Image src={updatelogo} alt="upload" />
+                                                        :
+                                                        <Image className="w-8 h-8 rounded-full" src={resource} alt="Uploaded image" width={150} height={150} />
+                                                    }
+
+                                                </div>
+                                            </div>
+                                            <div className="">
+                                                <div className="text-gray-500 text-base font-bold">Upload Logo</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </CldUploadButton>
+                        </div>
 
 
                         <div className="text-textGrey2 text-base font-medium ">Enter your organisation details</div>
@@ -166,7 +166,7 @@ const OrgDetailsSetup = (props: any) => {
                                     name="orgEmail"
                                     onChange={props.handleChange}
                                     value={props.data.orgEmail}
-                                    placeholder="example@gmail.com"
+                                    placeholder=""
                                 />
                                 {props.validationErrors.orgEmail && (
                                     <div className="text-[red] error">{props.validationErrors.orgEmail}</div>

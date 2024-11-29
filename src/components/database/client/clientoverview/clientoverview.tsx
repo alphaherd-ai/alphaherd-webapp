@@ -1,5 +1,4 @@
 "use client"
-
 import Image from "next/image"
 import Link from "next/link"
 import lefticon from "../../../../assets/icons/inventory/left_icon.svg"
@@ -20,11 +19,11 @@ import { response } from "express"
 import { useAppSelector } from "@/lib/hooks"
 import useSWR from "swr"
 //@ts-ignore
-const fetcher = (...args: any[]) => fetch(...args).then(res => res.json());
+const fetcher = (...args:any[]) => fetch(...args).then(res => res.json());
 
-const ClientDetails = () => {
+  const ClientDetails = () => {
 
-    const router = useRouter();
+    const router=useRouter();
 
     const [client, setClient] = useState<any | null>(null);
     const url = useSearchParams();
@@ -306,7 +305,6 @@ const ClientDetails = () => {
                             <div className='flex text-gray-500 text-base font-medium px-6 w-1/8'>Status</div>
                             <div className='flex text-gray-500 text-base font-medium px-6 w-2/8'></div>
                         </div>
-
                         {/* {client.patients?.map((item, index) => (
                         <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-borderGrey text-gray-400 border-t-0.5  '>
                             <div className='w-1/8 px-6 flex items-center text-textGrey2 text-base font-medium'>{item.quantity} Strips</div>

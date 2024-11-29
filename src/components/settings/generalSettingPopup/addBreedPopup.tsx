@@ -18,6 +18,9 @@ const AddBreed = ({ onClose }: any) => {
         species: '',
         breeds: [],
     });
+    const [existingBreeds, setExistingBreeds] = useState<string[]>([]); 
+    const [error, setError] = useState<string | null>(null);
+
     const customStyles = {
         control: (provided: any, state: any) => ({
           ...provided,
@@ -89,10 +92,60 @@ const AddBreed = ({ onClose }: any) => {
             };
         });
     };
+    const [species, setSpecies] = useState<any[]>([]);
+    useEffect(() => {
+        const fetchSpecies = async () => {
+            try {
+                const response = await axios.get(
+                    `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`
+                );
+    
+                const speciesList: any[] = response.data.map((speciesEntry: Species) => ({
+                    value: speciesEntry.id,
+                    label: speciesEntry.name 
+                }));
+                console.log(speciesList);
+                setSpecies(speciesList);
+            } catch (error) {
+                console.log('Error fetching species', error);
+            }
+        };
+    
+        fetchSpecies();
+    }, [appState.currentBranchId]);
+
+    useEffect(() => {
+        const fetchAllBreeds = async () => {
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/breed/getAll?branchId=${appState.currentBranchId}`);
+                const breedsData = await response.json();
+    
+                // Filter breeds by the selected species
+                const filteredBreeds = breedsData.filter((breed: { speciesId: string }) => breed.speciesId === formData.species);
+                setExistingBreeds(filteredBreeds.flatMap((breed: { name: string[] }) => breed.name)); // Flatten the breed names
+            } catch (error) {
+                console.log('Error fetching breeds', error);
+            }
+        };
+    
+        if (formData.species) {
+            fetchAllBreeds();
+        }
+    }, [formData.species, appState.currentBranchId]);
 
     const handleSave = async () => {
+        const duplicates = formData.breeds.filter(breed => existingBreeds.includes(breed));
+    
+        if (duplicates.length > 0) {
+            setError(`${duplicates.join(', ')} already exists.`); 
+            console.log(`Duplicate Breeds detected: ${duplicates}`);
+            return;
+        } else {
+            setError(null); // Clear error if no duplicates
+        }
+
         try {
-            console.log('Form Data before saving:', formData);
+            
             const requestBody = {
                 speciesId: formData.species,
                 name: formData.breeds,
@@ -117,28 +170,6 @@ const AddBreed = ({ onClose }: any) => {
         }
     }
 
-    const [species, setSpecies] = useState<any[]>([]);
-    useEffect(() => {
-        const fetchSpecies = async () => {
-            try {
-                const response = await axios.get(
-                    `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`
-                );
-    
-                const speciesList: any[] = response.data.map((speciesEntry: Species) => ({
-                    value: speciesEntry.id,
-                    label: speciesEntry.name 
-                }));
-                console.log(speciesList);
-                setSpecies(speciesList);
-            } catch (error) {
-                console.log('Error fetching species', error);
-            }
-        };
-    
-        fetchSpecies();
-    }, [appState.currentBranchId]);
-    
 
     return (
         <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
@@ -175,19 +206,25 @@ const AddBreed = ({ onClose }: any) => {
                 <div className="w-full flex items-center gap-[6rem] ">
                     <div className='w-full flex flex-col  gap-3'>
 
-                            <div  className="w-full flex  items-center">
-                                <div className="text-gray-500 text-base font-medium w-[12rem]">Breeds</div>
-                                <input
-                                    className="ml-[5rem] w-[80%] border border-solid border-borderGrey outline-none h-11 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    type="text"
-                                    name="breeds"
-                                    onChange={(e) => handleChange("breeds", e.target.value.split(','))}
-                                />
-                                <div className="ml-2 h-11 px-[0.6rem] rounded-[5px] justify-start items-center flex bg-black cursor-pointer" >
-                                {/* onClick={() => handleDeleteInput(index)} */}
-                                    <Image src={delicon} alt="delete"></Image>
+                            <div  className="w-full">
+                                <div className=" flex items-center">
+                                    <div className="text-gray-500 text-base font-medium w-[12rem]">Breeds</div>
+                                    <input
+                                        className="ml-[5rem] w-[80%] border border-solid border-borderGrey outline-none h-11 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                        type="text"
+                                        name="breeds"
+                                        onChange={(e) => handleChange("breeds", e.target.value.split(','))}
+                                    />
+                                    <div className="ml-2 h-11 px-[0.6rem] rounded-[5px] justify-start items-center flex bg-black cursor-pointer" >
+                                    {/* onClick={() => handleDeleteInput(index)} */}
+                                        <Image src={delicon} alt="delete"></Image>
+                                    </div>
                                 </div>
-                               
+                                {error && (
+                                    <div className="text-red-500 text-sm mt-1">
+                                        {error}
+                                    </div>
+                                )}
                             </div>
 
                     </div>

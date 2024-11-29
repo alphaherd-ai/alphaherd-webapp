@@ -53,12 +53,12 @@ const NewExpensesNavbar = () => {
                     </div>
                     <div className="flex">
                         
-                        <div className="h-11 px-6 py-2.5 rounded-[5px] mr-4  justify-center items-center inline-flex border border-gray-300 border-solid self-stretch  gap-2 ">
+                        {/* <div className="h-11 px-6 py-2.5 rounded-[5px] mr-4  justify-center items-center inline-flex border border-gray-300 border-solid self-stretch  gap-2 ">
                             <div className="w-6 h-6 flex justify-center items-center"> <Image src={Attachment} alt='Attachment' className='w-3 h-3 ' /></div>
                             <div className="justify-start items-center gap-4 flex">
                                 <div className="text-gray-500 text-base font-bold ">Attach files</div>
                             </div>
-                        </div>
+                        </div> */}
                         <div className="flex">
                         <div className=" w-11 h-11 bg-gray-100 rounded-[5px] border border-neutral-400 flex justify-center items-center mr-4">
                             <Image className="w-6 h-6 relative rounded-full  cursor-pointer" src={minimiseIcon} alt="Back" onClick={() => router.back()}></Image>

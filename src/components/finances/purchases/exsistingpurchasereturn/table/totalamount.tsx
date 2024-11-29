@@ -224,10 +224,7 @@ const ExsistingPurcaseReturnTotalAmount = ({ otherData, isLoading }: any) => {
 
 
 
-    const [showPopup, setShowPopup] = React.useState(false);
-    const togglePopup = () => {
-        setShowPopup(!showPopup);
-    }
+    
 
 
 
@@ -264,18 +261,14 @@ const ExsistingPurcaseReturnTotalAmount = ({ otherData, isLoading }: any) => {
     const [count, setCount] = useState(0);
     const [initialInvoiceNo, setInitialInvoiceNo] = useState('');
 
-    useEffect(() => {
-        if (showPopup) {
-            setCount((prevCount) => prevCount + 1);
-        }
-    }, [showPopup]);
+   
 
     useEffect(() => {
-        if (showPopup) {
+        
             const newInvoiceNo = generateInvoiceNumber(count);
             setInitialInvoiceNo(newInvoiceNo);
-        }
-    }, [count, showPopup]);
+        
+    }, [count]);
 
 
 
@@ -301,7 +294,7 @@ const ExsistingPurcaseReturnTotalAmount = ({ otherData, isLoading }: any) => {
                     </div>
 
                     <div className="w-full mr-4 flex flex-col mt-8 rounded-[20px]">
-                        <Popup headerdata={otherData} onClose={togglePopup} initialInvoiceNo={initialInvoiceNo} balanceDue={balanceDue} />
+                        <Popup headerdata={otherData} setCount={setCount} initialInvoiceNo={initialInvoiceNo} balanceDue={balanceDue} />
                     </div>
                 </div>
 
@@ -362,7 +355,7 @@ const ExsistingPurcaseReturnTotalAmount = ({ otherData, isLoading }: any) => {
                                                 </div>
                                                 {transaction.mode}
                                             </div>
-                                            <div className="text-textGrey1 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid)?.toFixed(2)}</div>
+                                            <div className="text-textGrey1 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid >0 ? transaction.amountPaid : -1*transaction.amountPaid)?.toFixed(2)}</div>
                                         </div>)
                                     ))}
                                     {otherData && otherData.recordTransaction && otherData.recordTransaction.map((transaction: any, index: any) => (
@@ -375,7 +368,7 @@ const ExsistingPurcaseReturnTotalAmount = ({ otherData, isLoading }: any) => {
                                                 </div>
                                                 {transaction.mode}
                                             </div>
-                                            <div className="text-textGrey1 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid)?.toFixed(2)}
+                                            <div className="text-textGrey1 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid >0 ? transaction.amountPaid : -1*transaction.amountPaid)?.toFixed(2)}
                                                 {transaction.moneyChange === 'Out' && <span className="px-2 py-1 rounded-md bg-[#FFEAEA] text-[#FF3030] text-sm font-medium ml-[5px]">Out</span>}
                                                 {transaction.moneyChange === 'In' && <span className="px-2 py-1 rounded-md bg-[#E7F5EE] text-[#0F9D58] text-sm font-medium ml-[5px]">In</span>}
                                             </div>
@@ -398,14 +391,36 @@ const ExsistingPurcaseReturnTotalAmount = ({ otherData, isLoading }: any) => {
                             </div>
                         </div>
 
-                    </div>
-
-
-                </div>
-
+            </div>
+            
+            <div className="w-1/2 h-full  bg-white rounded-[10px]">
+                <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">
+                <div className="text-gray-500 text-base font-bold ">Subtotal</div>
+                                    <div className="text-right text-gray-500 text-base font-bold ">₹{((otherData?.totalCost-otherData?.shipping-otherData?.adjustment)/(1- otherData?.overallDiscount))?.toFixed(2) || 0}</div>
+                                </div>
+                                <div className="w-full flex px-4 py-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
+                                    <div className="text-gray-500 text-base font-bold ">Overall Discount</div>
+                                    <div className="flex items-center">
+                                        <div className="text-right text-textGrey1 text-base  ">{(otherData?.overallDiscount*100).toFixed(2) || 0}%</div>
+                                     
+                                    </div>
+                                </div>
+                                <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5   ">
+                                    <div className="text-gray-500 text-base font-bold ">Shipping</div>
+                                    <div className="text-right text-textGrey1 text-base ">₹{otherData?.shipping || 0}</div>
+                                </div>
+                                <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5  ">
+                                    <div className="text-gray-500 text-base font-bold ">Adjustment</div>
+                                    <div className="text-right text-textGrey1 text-base ">₹{otherData?.adjustment || 0}</div>
+                                </div>
+                                <div className="w-full flex p-4 border border-solid  border-borderGrey border-t-0 rounded-b-md justify-between items-center gap-2.5    ">
+                                    <div className="text-textGreen text-base font-bold">Grand total</div>
+                                    <div className="text-right text-textGreen text-base font-bold ">₹{(otherData?.totalCost)?.toFixed(2) || 0}</div>
+                                </div>
+                            </div>
             </div>
 
-
+</div>
 
 
         </>

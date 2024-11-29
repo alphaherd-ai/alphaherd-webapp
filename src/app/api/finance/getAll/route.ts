@@ -33,7 +33,7 @@ export const GET = async (req: NextRequest) => {
       },
     });
   } catch (error) {
-    console.error("Hello this is the error",error)
+    //console.error("Hello this is the error",error)
     return new Response('Internal server error', { status: 500 });
   } finally {
     await prismaClient.$disconnect();

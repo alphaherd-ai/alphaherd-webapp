@@ -22,39 +22,41 @@ const ExistingsaleEstimateTable = () => {
     const id = url.get('id');
     const appState = useAppSelector((state) => state.app);
     const [otherData, setOtherData] = useState({});
-      
-    
-        const initialItems: any[] | (() => any[])=[];
-        const [items, setItems] = useState(initialItems);
-    
-        const {data,error,isLoading} =useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/${id}/?branchId=${appState.currentBranchId}`,fetcher)
+
+
+    const initialItems: any[] | (() => any[]) = [];
+    const [items, setItems] = useState(initialItems);
+
+    const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/${id}/?branchId=${appState.currentBranchId}`, fetcher)
+
+
+    useEffect(() => {
+        if (!isLoading && data && !error) {
+            console.log(data);
+            const { items, ...otherData } = data;
+            setOtherData(otherData)
         
-        
-        useEffect(() => {
-            if (!isLoading && data && !error) {
-                
-                const {items,...otherData}=data;
-                setOtherData(otherData)
-                // console.log(items)
-              const shallowDataCopy = [...items]; 
-              const itemData = shallowDataCopy.map((item: any) => ({
-                id: item.itemType==='product' ? item.productBatch.productId : item.serviceId,
+            const shallowDataCopy = [...items];
+            const itemData = shallowDataCopy.map((item: any) => ({
+                id: item.itemType === 'product' ? item.productBatch.productId : item.serviceId,
                 itemName: item.name,
+                itemType:item.itemType,
                 quantity: item.quantity,
                 sellingPrice: item.sellingPrice,
-                expiry: item.itemType==='product' ? item.productBatch.expiry : "",
-                batchNumber:item.itemType==='product' ?  item.productBatch.batchNumber:"",
+                expiry: item.itemType === 'product' ? item.productBatch.expiry : "",
+                batchNumber: item.itemType === 'product' ? item.productBatch.batchNumber : "",
                 tax: item.taxAmount,
                 lowQty: item.lowQty,
                 highQty: item.highQty,
                 discount: item.discount,
-                provider:item.itempType==='product'?"":item?.services?.providers[0]
+                provider: item.itemType === 'product' ? "" : item.serviceProvider
             }));
             setItems(itemData);
+            console.log(itemData);
         }
     }, [data, error, isLoading]);
 
-    // console.log(items)
+ console.log(items)
 
 
 
@@ -115,7 +117,9 @@ const ExistingsaleEstimateTable = () => {
                                 </div>
 
                                 <div className=' flex text-gray-500 text-base font-medium  w-1/12 '>Tax %</div>
-                                <div className=' flex text-gray-500 text-base font-medium  w-[10rem] '>Tax Amt.</div>
+                                <div className=' flex text-gray-500 text-base font-medium  w-1/12 '>Tax Amt.</div>
+                                <div className=' flex text-gray-500 text-base font-medium  w-1/12 mr-4'>Discount %</div>
+                                <div className=' flex text-gray-500 text-base font-medium  w-1/12 '>Discount</div>
                                 <div className=' flex text-gray-500 text-base font-medium w-1/12 '>Total</div>
                             </div>
                             {!isLoading ? items.map((item, index) => (
@@ -124,9 +128,9 @@ const ExistingsaleEstimateTable = () => {
                                         <div className='w-[3rem] flex items-center text-textGrey2 text-base font-medium '>{index + 1}</div>
                                         <div className='w-[15rem] flex items-center text-textGrey2  text-base font-medium'>{item.itemName}</div>
                                         <div className='w-[10rem] flex-col items-center text-textGrey2  text-base font-medium '>
-                                            <div className="text-textGrey2 text-base  font-medium  "> {item.itemType==='product' ? item.batchNumber:item.provider}</div>
+                                            <div className="text-textGrey2 text-base  font-medium  "> {item.itemType === 'product' ? item.batchNumber : item.provider}</div>
 
-                                            <div className="text-neutral-400 text-[13px] font-medium ">{formatDateAndTime(item.expiry).formattedDate}</div>
+                                            <div className="text-neutral-400 text-[13px] font-medium ">{item.itempType==='product' ? formatDateAndTime(item.expiry).formattedDate:""}</div>
                                         </div>
                                         <div className='w-[10rem] flex items-center  text-base font-medium gap-1 '>
                                             <div className="flex items-center text-textGrey2  text-base font-medium">₹ {item.sellingPrice}</div>
@@ -134,7 +138,7 @@ const ExistingsaleEstimateTable = () => {
 
                                         </div>
                                         <div className='w-1/12  flex items-center text-textGrey2 text-base font-medium gap-[12px] '>
-                                            {item.lowQty == 0 && item.highQty == 0 ?
+                                            {item.lowQty === 0 && item.highQty === 0 ?
                                                 (<div>{item.quantity}</div>) :
                                                 (<div>{item.lowQty} Strips</div>)
                                             }
@@ -152,7 +156,7 @@ const ExistingsaleEstimateTable = () => {
                                             <div className="text-textGrey2 text-base  font-medium  "> {item.tax * 100}%</div>
 
                                         </div>
-                                        <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>{item.lowQty != 0 && item.highQty != 0 ? (
+                                        <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium mr-4'>{item.lowQty != 0 && item.highQty != 0 ? (
                                             '₹' +
                                             ((item?.sellingPrice * item?.lowQty * item?.tax).toFixed(2) +
                                                 '-' +
@@ -164,30 +168,35 @@ const ExistingsaleEstimateTable = () => {
                                             ((item?.sellingPrice * item?.quantity * item?.tax) || 0)
                                                 .toFixed(2)
                                         )}</div>
+                                        <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium'>{`${(item.discount? item.discount:0).toFixed(2)}`}</div>
+                                        <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium'>{`₹${(item.lowQty==0 && item.highQty==0) ? (item.quantity*item.sellingPrice*item.discount/100).toFixed(2):((item.lowQty*item.sellingPrice*item.discount/100)).toFixed(2) + '-' + ((item.highQty*item.sellingPrice*item.discount/100)).toFixed(2)}`}</div>
                                         <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium'>
                                             {item.lowQty != 0 && item.highQty != 0 ? (
                                                 <>
                                                     {item?.lowQty && (
                                                         <>
-                                                            ₹{(item?.sellingPrice * item?.lowQty * (1 + item?.tax)).toFixed(2) || 0}
+                                                            ₹{(item?.sellingPrice * item?.lowQty * (1 + item?.tax)-item.lowQty*item.sellingPrice*item?.discount/100).toFixed(2) || 0}
                                                             -{' '}
                                                         </>
                                                     )}
                                                     {item?.highQty && (
-                                                        <>₹{(item?.sellingPrice * item?.highQty * (1 + item?.tax)).toFixed(2) || 0}
+                                                        <>₹{(item?.sellingPrice * item?.highQty * (1 + item?.tax)-item.highQty*item.sellingPrice*item?.discount/100).toFixed(2) || 0}
                                                         </>
                                                     )}
                                                 </>
                                             ) : (
                                                 <>
-                                                    ₹{(item?.quantity * item?.sellingPrice * (1 + item?.tax)).toFixed(2) || 0}
+                                                    ₹{(item?.quantity * item?.sellingPrice * (1 + item?.tax)-item.quantity*item.sellingPrice*item?.discount/100).toFixed(2) || 0}
 
                                                 </>
                                             )}
                                         </div>
+                                        
+
 
                                     </div>
-                                    <div>
+
+                                    {/* <div>
                                         <div className='flex  w-full justify-evenly items-center box-border bg-white  h-12  border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-500'>
                                             <div className=' flex text-gray-500 text-base font-medium w-[3rem]'></div>
                                             <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>
@@ -195,7 +204,7 @@ const ExistingsaleEstimateTable = () => {
                                                     <div className="text-indigo-600 text-sm font-medium ">Item Discount</div>
                                                 </div>
                                             </div>
-                                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'> {(item.discount * 100).toFixed(2)}% off</div>
+                                            <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>{(item.discount).toFixed(2)}% off</div>
                                             <div className=' flex text-gray-500 text-base font-medium w-1/12'>
 
                                             </div>
@@ -204,11 +213,11 @@ const ExistingsaleEstimateTable = () => {
 
                                             <div className=' flex text-gray-500 text-base font-medium w-1/12'> </div>
                                             <div className=' flex text-gray-500 text-base font-medium w-[10rem]'></div>
-                                            <div className="text-red-500 text-base font-bold w-1/12 ">-₹{(item.discount * item.sellingPrice * item.quantity).toFixed(2)}</div>
+                                            <div className="text-red-500 text-base font-bold w-1/12 ">-₹{(item.lowQty===0 && item.highQty===0) ? ((item.discount/100)*item.quantity*item.sellingPrice).toFixed(2) :((item.discount/100)*item.lowQty*item.sellingPrice).toFixed(2) }</div>
 
                                         </div>
 
-                                    </div>
+                                    </div> */}
                                 </div>
                             )) :
                                 <div className='h-[10rem] w-full'><Loading2 /></div>
@@ -218,20 +227,151 @@ const ExistingsaleEstimateTable = () => {
                                 <div className=' flex text-gray-500 text-base font-medium  w-[15rem]'>Total</div>
                                 <div className=' flex text-gray-500 text-base font-medium  w-[10rem]'></div>
                                 <div className=' flex text-gray-500 text-base font-medium  w-[10rem]'> </div>
-                                <div className=' flex text-gray-500 text-base font-medium  w-1/12'>{items.reduce((acc, item) => acc + item.quantity, 0)} Items</div>
+                                <div className=' flex text-gray-500 text-base font-medium  w-1/12'>{items.reduce((acc, item) => acc + (item.lowQty === 0 && item.highQty === 0 ? item.quantity : item.lowQty), 0)} Items</div>
 
-                                <div className=' flex text-gray-500 text-base font-medium  w-1/12'>{items.reduce((acc, item) => acc + item.quantity2, 0)} Items</div>
+                                <div className=' flex text-gray-500 text-base font-medium  w-1/12'>{items.reduce((acc, item) => acc + (item.lowQty === 0 && item.highQty === 0 ? 0 : item.highQty), 0)} Items</div>
 
                                 <div className=' flex text-gray-500 text-base font-medium  w-1/12'>
                                     <div className="text-neutral-400 text-base  font-medium   "> Tax inc</div>
                                 </div>
-                                <div className=' flex text-gray-500 text-base font-medium  w-[10rem]'>{`₹ ${items.reduce((acc, item) => acc + item.quantity * item.tax, 0).toFixed(2)}`}</div>
-                                <div className=' flex text-gray-500 text-base font-medium  w-1/12'>{`₹ ${items.reduce((acc, item) => acc + item.quantity * item.sellingPrice + item.quantity * item.tax * item.sellingPrice - (item.quantity * item.sellingPrice * item.discount || 0), 0).toFixed(2)}`}</div>
+                                <div className=' flex text-gray-500 text-base font-medium  w-1/12 mr-4'>
+                                    <>
+                                        {items?.some((item) => item?.lowQty) && (
+                                            <>
+                                                ₹{
+                                                    items.reduce(
+                                                        (acc, item) => { if (!item.itemName) return acc; return acc + (item?.lowQty || 0) * item?.tax * item?.sellingPrice },
+                                                        0
+                                                    ).toFixed(2) ||
+                                                    0
+                                                }
+                                                -{' '}
+                                            </>
+                                        )}
+
+
+                                        {items?.some((item) => item?.highQty) && (
+                                            <>
+                                                ₹{
+                                                    items.reduce(
+                                                        (acc, item) => { if (!item.itemName) return acc; return acc + (item?.highQty || 0) * item?.tax * item?.sellingPrice },
+                                                        0
+                                                    ).toFixed(2) ||
+                                                    0
+                                                }
+
+                                            </>
+                                        )}
+
+                                        
+                                        {items?.some((item) => !item?.highQty) && (
+                                            <>
+                                                ₹{
+                                                    items.reduce(
+                                                        (acc, item) => { if (!item.itemName) return acc; return acc + (item?.quantity) * item?.tax * item?.sellingPrice  },
+                                                        0
+                                                    ).toFixed(2) ||
+                                                    0
+                                                }
+                                            </>
+                                        )}
+                                        
+                                    </>
+                                </div>
+                                <div className=' flex text-gray-500 text-base font-medium  w-1/12'>
+                                    
+                                </div>
+                                <div className=' flex text-gray-500 text-base font-medium  w-1/12'>
+                                <>
+                                        {items?.some((item) => item?.lowQty) && (
+                                            <>
+                                                ₹{
+                                                    items.reduce(
+                                                        (acc, item) => { if (!item.itemName) return acc; return acc + (item?.lowQty || 0) * item?.discount/100 * item?.sellingPrice },
+                                                        0
+                                                    ).toFixed(2) ||
+                                                    0
+                                                }
+                                                -{' '}
+                                            </>
+                                        )}
+                                        {items?.some((item) => item?.highQty) && (
+                                            <>
+                                                ₹{
+                                                    items.reduce(
+                                                        (acc, item) => { if (!item.itemName) return acc; return acc + (item?.highQty || 0) * item?.discount/100 * item?.sellingPrice },
+                                                        0
+                                                    ).toFixed(2) ||
+                                                    0
+                                                }
+
+                                            </>
+                                        )}
+
+                                        
+                                        {items?.some((item) => !(item?.highQty)) && (
+                                            <>
+                                                ₹{
+                                                    items.reduce(
+                                                        (acc, item) => { if (!item.itemName) return acc; return acc + (item?.quantity || 0) * item?.discount/100 * item?.sellingPrice  },
+                                                        0
+                                                    ).toFixed(2) ||
+                                                    0
+                                                }
+                                            </>
+                                        )}
+                                        
+                                    </>
+                                </div>
+                                <div className=' flex text-gray-500 text-base font-medium  w-1/12'>
+                                    <>
+                                        {items?.some((item) => item?.lowQty) && (
+                                            <>
+                                                ₹{
+                                                    items.reduce(
+                                                        (acc, item) => { if (!item.itemName) return acc; return acc + (item?.lowQty || 0) * item?.tax * item?.sellingPrice + item?.lowQty*item?.sellingPrice - (item?.lowQty*item?.sellingPrice*item?.discount/100) },
+                                                        0
+                                                    ).toFixed(2) ||
+                                                    0
+                                                }
+                                                -{' '}
+                                            </>
+                                        )}
+                                        {items?.some((item) => item?.highQty) && (
+                                            <>
+                                                ₹{
+                                                    items.reduce(
+                                                        (acc, item) => { if (!item.itemName) return acc; return acc + (item?.highQty || 0) * item?.tax * item?.sellingPrice + item?.highQty*item?.sellingPrice-(item?.highQty*item?.sellingPrice*item?.discount/100)},
+                                                        0
+                                                    ).toFixed(2) ||
+                                                    0
+                                                }
+
+                                            </>
+                                        )}
+
+                                        
+                                            {items?.some((item) => !item?.highQty) && (
+                                                <>
+                                                    ₹{
+                                                        items.reduce(
+                                                            (acc, item) => { if (!item.itemName) return acc; return acc + (item?.quantity || 0) * item?.tax * item?.sellingPrice + item?.quantity*item?.sellingPrice - (item?.quantity*item?.sellingPrice*item?.discount/100)  },
+                                                            0
+                                                        ).toFixed(2) ||
+                                                        0
+                                                    }
+
+                                                </>
+                                            )}
+                                        
+                                    </>
+
+                                </div>
                             </div>
                         </div>
 
                     </div>
-                    <ExistingsaleEstimateTotalAmout otherData={otherData} />
+                    <ExistingsaleEstimateTotalAmout otherData={otherData} items={items} isLoading={isLoading}/>
                 </div>
                 <ExistingsaleEstimateBottomBar existingSalesData={data} />
             </div>

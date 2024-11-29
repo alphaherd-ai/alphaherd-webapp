@@ -94,15 +94,13 @@ export const fetchFinanceId = async (request:NextRequest) => {
     return financeSection?.id;
 }
 
-export const 
-fetchDatabaseId = async (request:NextRequest) => {
+export const fetchDatabaseId = async (request:NextRequest) => {
     const url = request.nextUrl;
     const { searchParams } = new URL(url);
     // console.log(searchParams);
     const branchId = searchParams.get("branchId")!;  
     
     // console.log("here's the final branchID",branchId)
-    
     if (!branchId) {
         throw new Error("Branch ID not found in request");
     }

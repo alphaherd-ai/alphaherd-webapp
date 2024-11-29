@@ -15,6 +15,13 @@ import { updateUser,UserState } from '@/lib/features/userSlice';
 import { Button } from '@nextui-org/react';
 import logoutIcon from "../../assets/icons/profile/logout.svg"
 
+interface UserRole {
+  id: number;
+  orgBranchId: number;
+  role: string;
+  userId: string; // Assuming userId is a string based on your setup
+}
+
 //@ts-ignore
 /*
 
@@ -76,14 +83,12 @@ import logoutIcon from "../../assets/icons/profile/logout.svg"
 */
 import router from 'next/router';
 //@ts-ignore
-interface UserRole {
-    role: string;
-  }
-  
+
   interface AdminOrganization {
     id: number;
     address: string;
   }
+  
 //const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 const AdminProfile = () => {
 
@@ -117,7 +122,7 @@ const AdminProfile = () => {
     // console.log("this is user from appstate",userState)
     const [resource, setResource] = useState<any>();
     const currentRoute = usePathname();
-
+    const router = useRouter();
     //const [editable, setEditable] = useState(false);
   //const [value, setValue] = useState<string>(String(userState.name));
   const [phone, setPhone] = useState<string>(String(userState.phoneNo));
@@ -185,17 +190,25 @@ const AdminProfile = () => {
     const userRoles: UserRole[] = userState.userRoles || [];
    // const address= userState.adminOrganizations.map((e:any)=>e.address);
     const orgId=userState.adminOrganizations.map((e:any)=>e.id);
-
+    
     console.log("address",address);
     //@ts-ignore
     console.log("User Email:", userState.email);  // Log email
     console.log("Branch ID:", appState.currentBranchId);  // Log branch ID
-    const [activeRole, setActiveRole] = useState<string>(userRoles[0]?.role || '');
-   
+    const [activeRole, setActiveRole] = useState<string>('');
+
+    useEffect(() => {
+      
+      const currentBranchRole = userRoles.find(
+        (role) => role.orgBranchId === appState.currentBranchId
+      )
+      console.log("current role :", currentBranchRole);
+      setActiveRole(currentBranchRole?.role || ''); 
+    }, [userRoles, appState.currentBranchId]);
 
     console.log("User Email:", userState.email);  // Log email
     console.log("Branch ID:", appState.currentBranchId);  // Log branch ID
-    const router=useRouter();
+  
     const handleRoleChange = async (newRole: string) => {
         setActiveRole(newRole);
         console.log("new role is :" , newRole);
@@ -229,6 +242,7 @@ const AdminProfile = () => {
     
           const data = await res.json();
           if (res.ok) {
+            dispatch(updateUser(data.user));
             console.log('Role updated successfully:', data.message);
           } else {
             console.error('Failed to update role:', data.message);
@@ -272,17 +286,31 @@ const AdminProfile = () => {
                 </div>
                 
                 <div className="w-full min-h-[80vh] flex-col justify-start items-start gap-px flex pt-4"  >
-                    <div className="w-full h-[83px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border border-neutral-400 justify-start items-center gap-2 flex"  
-                    style={{ borderTop: "1px solid gray", borderLeft: "1px solid gray", borderRight: "1px solid gray" }}
+                    <div className="w-full h-[83px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border border-neutral-400 justify-between items-center gap-2 flex"  
+                    // style={{ borderTop: "1px solid gray", borderLeft: "1px solid gray", borderRight: "1px solid gray" }}
                     >
+                        <div className='flex items-center gap-2'>
                         <div className="text-gray-500 text-xl font-bold ">
                            
                         
-                                {value}
-                                    
-                     
+                           {value}
+                               
+                
+                   </div>
+                   {orgId[0]!=null?<div className="w-[57px] h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 inline-flex"><div className="text-teal-400 text-sm font-medium ">Admin</div></div>:""}
+                   
                         </div>
-                        {orgId[0]!=null?<div className="w-[57px] h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 inline-flex"><div className="text-teal-400 text-sm font-medium ">Admin</div></div>:""}
+                        <div>
+                        <Button className="cursor-pointer outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+        
+        <div className="w-6 h-6">
+        <Image src={logoutIcon} alt="download" />
+        </div>
+    
+    
+        <div className="text-white text-base font-medium">Logout</div>
+    </Button>
+                        </div>
                         </div>
                     {/* 
                     <div className="w-full min-h-[30rem] p-4 bg-gray-100 border border-neutral-400 flex">
@@ -310,8 +338,8 @@ const AdminProfile = () => {
                               <Image className="w-6 h-6 cursor-pointer" src={editicon} alt="Edit" />
                           </CldUploadButton>
                       </div> */}
-                    <div className="w-full min-h-[30rem]  p-4 bg-gray-100 border border-neutral-400 justify-start items-start gap-6 flex"  
-                    style={{  borderLeft: "1px solid gray", borderRight: "1px solid gray" }}
+                    <div className="w-full min-h-[30rem]  p-4 bg-gray-100  justify-start items-start gap-6 flex"  
+                    // style={{  borderLeft: "1px solid gray", borderRight: "1px solid gray" }}
                     >
                         <div className="w-[245px] h-[270px] relative bg-white rounded-[10px] border border-stone-300 flex justify-end">
                             {userState.imageUrl? (
@@ -385,7 +413,7 @@ const AdminProfile = () => {
                                 </div>
                                 <div className="w-full px-6 py-4 bg-white rounded-[11px] justify-start items-center gap-4 flex">
                                     <div className="text-gray-500 text-base font-bold ">Alternate Phone No.</div>
-                                    <input className="w-[25rem] h-full border-0 p-1 bg-white text-gray-500 text-base font-medium " type="number" name="" id="" defaultValue={String(userState.altPhoneNo)} onChange={(e) => setPhone(e.target.value)} disabled={!editable} />
+                                    <input className="w-[24rem] h-full border-0 p-1 bg-white text-gray-500 text-base font-medium " type="number" name="" id="" defaultValue={String(userState.altPhoneNo)} onChange={(e) => setPhone(e.target.value)} disabled={!editable} />
                                  
                                 </div>
                             </div>
@@ -407,14 +435,14 @@ const AdminProfile = () => {
                         </div>
                     </div>
                     <div className="w-full h-[43px] px-4 py-2 bg-white rounded-bl-[10px] rounded-br-[10px]  box-border   border border-solid border-gray-300" 
-                    style={{ borderBottom: "1px solid gray", borderLeft: "1px solid gray", borderRight: "1px solid gray" }}></div>
+                    ></div>
 
                 </div>
-                <div className="w-full h-[43px] px-4 py-2 bg-white rounded-bl-[10px] rounded-br-[10px] flex justify-end items-center box-border   border border-solid border-gray-300">
+                {/* <div className="w-full h-[43px] px-4 py-2 bg-white rounded-bl-[10px] rounded-br-[10px] flex justify-end items-center box-border   border border-solid border-gray-300">
                       <button className="text-sm bg-red-500 text-white px-4 py-2 rounded-md" >
                           Log Out
                       </button>
-                  </div>
+                  </div> */}
             </div>
             
         </>

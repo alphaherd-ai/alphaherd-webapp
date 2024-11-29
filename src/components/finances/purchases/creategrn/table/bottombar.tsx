@@ -23,6 +23,14 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
     const id = url.get('id');
     const [isSaving, setSaving] = useState(false);
     const router = useRouter();
+
+    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+
+    const balanceDue = -totalAmountData.totalCost - totalPaidAmount + totalAmountToPay;
+
     const handleSubmit = async () => {
         tableData.pop();
         const allData = { headerData, tableData, totalAmountData, transactionsData };
@@ -40,6 +48,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             expiry: data.expiry,
             batchNumber: data.batchNumber,
             hsnCode: data.barCode,
+            
             costPrice: Number(data.unitPrice)
         }));
         const data = {
@@ -55,7 +64,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             recordTransaction: {
                 create: allData.transactionsData
             },
-            status: "Pending",
+            status:balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
             type: FinanceCreationType.Purchase_Order,
             items: {
                 create: items
@@ -83,34 +92,35 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
         }
     };
 
-    const isDisabled = !headerData?.distributor || tableData.length === 1;
-    return (
-        <>
+    const isDisabled = !headerData.distributor || tableData.length === 0 || tableData.some(data => !data.itemName) || tableData.some(data => !data.batchNumber);
+  return (
+    <>
 
 
-            <div className="flex justify-end items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
-                {/* <div className="flex justify-between items-center gap-4 pl-4">
-                    <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
-                        <Image src={printicon} alt="print"></Image>
-                        <div>Print</div>
-                    </div>
-                    <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
-                        <Image src={downloadicon} alt="download"></Image>
-                        <div>Export</div>
-                    </div>
-                    <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
-                        <Image src={shareicon} alt="share"></Image>
-                        <div>Share editable sheet</div>
-                    </div>
-                </div> */}
-                <div className="flex justify-between items-center gap-4 pr-4">
-                    <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
+<div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
+<div className="flex justify-between items-center gap-4 pl-4">
+                                <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
+                                    <Image src={printicon} alt="print"></Image>
+                                    <div>Print</div>
+                                </div>
+                                <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
+                                    <Image src={downloadicon} alt="download"></Image>
+                                    <div>Export</div>
+                                </div>
+                                <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
+                                    <Image src={shareicon} alt="share"></Image>
+                                    <div>Share editable sheet</div>
+                                </div>
+                            </div>
+                            <div className="flex justify-between items-center gap-4 pr-4">
+                    {/* <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
                         <Image src={drafticon} alt="draft"></Image>
                         <div>Save as Draft</div>
-                    </Button>
-                    <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
-                        }`}
-                        onClick={handleSubmit} disabled={isDisabled || isSaving}>
+                    </Button> */}
+                    <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${
+                        isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
+                    }`}
+                    onClick={handleSubmit} disabled={isDisabled}>
                         <Image src={checkicon} alt="check"></Image>
                         <div>{isSaving ? <Loading2/> : "Save"}</div>
                     </Button>

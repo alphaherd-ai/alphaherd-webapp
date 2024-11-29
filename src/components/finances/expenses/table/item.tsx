@@ -8,6 +8,7 @@ import { useAppSelector } from '@/lib/hooks';
 import Loading from '@/app/loading';
 import { FinanceCreationType } from '@prisma/client';
 import { useSearchParams } from 'next/navigation';
+import { getStatusStyles } from '@/utils/getStatusStyles';
 
 // @ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
@@ -63,7 +64,7 @@ const FinancesExpensesTableItem = ({ onCountsChange, currentPageNumber, setCurre
           const recurrenceDate = new Date(expense.recurringStartedOn);
           recurrenceDate.setDate(recurrenceDate.getDate() + i * repeatInterval);
           // console.log("this is recurrence date", recurrenceDate)
-          
+
           if ((!startDate || recurrenceDate >= startDate) && (!endDate || recurrenceDate <= endDate)) {
             allExpenses.push({ ...expense, date: recurrenceDate });
           }
@@ -122,9 +123,29 @@ const FinancesExpensesTableItem = ({ onCountsChange, currentPageNumber, setCurre
           <div className='w-[6rem] flex   text-base font-medium'>{formatDateAndTime(expense.dueDate).formattedDate}</div>
           <div className='w-[12rem] flex  items-center  text-base font-medium'>
             <Tooltip content={expense.status} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
-              <div className='bg-[#E7F5EE] rounded-md px-2 py-2' >
-                <span className="text-[#0F9D58]  text-sm font-medium ">{expense.status}</span>
-              </div>
+             <div>
+                {
+                  (() => {
+                    const statusParts = (expense.status ?? "Status Unknown").split('|').map((part: string) => part.trim());
+                    //console.log(statusParts);
+                     if (!statusParts.length) {
+                       return (
+                         <span className="text-[#6B7E7D] bg-[#EDEDED] px-2 py-1.5 text-sm font-medium rounded-[5px]">
+                           No Status
+                         </span>
+                       );
+                     }
+                    return statusParts.map((status: any, index: any) => {
+                      const styles = getStatusStyles(status);
+                      return (
+                        <span  key={index} className={`${styles?.textColor} ${styles?.bgColor} px-2 mr-2 py-1.5 text-sm font-medium rounded-[5px]`}>
+                          {status}
+                        </span>
+                      )
+                    })
+                  })
+                    ()}
+              </div >
             </Tooltip>
 
           </div>
@@ -147,8 +168,8 @@ const getRepeatInterval = (repeatType: string) => {
 
 const calculateFrequency = (startDate: Date, endDate: Date, interval: number) => {
   // console.log("this is start date", startDate,endDate)
-  endDate= new Date(endDate)
-  startDate=new Date(startDate)
+  endDate = new Date(endDate)
+  startDate = new Date(startDate)
   if (!startDate || !endDate) return 0;
   const currentDate = new Date();
   let diffTime;

@@ -12,30 +12,29 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from '@nextui-org/react'
 
-const ExsistingGrnBottomBar = ({existingPurchaseData}: any) => {
+const ExsistingGrnBottomBar = ({ existingPurchaseData }: any) => {
 
-    const appState = useAppSelector((state) => state.app);
-    console.log("app state is in existingsales bottom :" , appState);
-    const [email, setEmail] = useState("");
-    console.log("data in bottom bar is :", existingPurchaseData);
+  const appState = useAppSelector((state) => state.app);
+  
+  const [email, setEmail] = useState("");
+ 
+  const data = existingPurchaseData;
+  const shareInvoiceViaEmail = async () => {
+    try {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/email`, {
+        email: existingPurchaseData.email,
+        invoiceData: existingPurchaseData,
+      });
+      if (response.status === 200) {
+        alert("Invoice sent successfully");
 
-    const data = existingPurchaseData;
-    const shareInvoiceViaEmail = async () => {
-        try {
-          const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/email`, {
-            email: existingPurchaseData.email,
-            invoiceData: existingPurchaseData,
-          });
-          if (response.status === 200) {
-            alert("Invoice sent successfully");
-            
-           
-          }
-        } catch (error) {
-          console.error("Error sending invoice:", error);
-          alert("Failed to send invoice");
-        }
-      };
+
+      }
+    } catch (error) {
+      console.error("Error sending invoice:", error);
+      alert("Failed to send invoice");
+    }
+  };
   return (
     <>
 
@@ -61,7 +60,8 @@ const ExsistingGrnBottomBar = ({existingPurchaseData}: any) => {
                     <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
                         <Image src={drafticon} alt="draft"></Image>
                         <div>Convert to Purchase Return</div>
-                    </Button></Link>
+                    </Button>
+                    </Link>
                     
                 </div>
                             

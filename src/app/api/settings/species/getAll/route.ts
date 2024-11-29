@@ -3,6 +3,7 @@ import prismaClient from "../../../../../../prisma";
 import { fetchDatabaseId } from "@/utils/fetchBranchDetails";
 
 export const GET = async(req:NextRequest)=>{
+    console.log("get species called");
     if(req.method!=='GET'){
         return new Response('Method not allowed',{status:405});
     }
