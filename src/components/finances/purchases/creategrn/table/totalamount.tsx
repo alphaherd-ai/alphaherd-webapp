@@ -12,6 +12,7 @@ import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 import formatDateAndTime from '@/utils/formateDateTime';
 import Popup from "./recordCreateGrnTransaction"
 import { custom } from 'zod';
+import Cash from "../../../../../assets/icons/finance/cash.svg"
 const CreateGrnTotalAmount = () => {
     const { tableData, headerData } = useContext(DataContext);
     let totalAmount = 0;
@@ -111,7 +112,7 @@ const CreateGrnTotalAmount = () => {
     }, [totalAmount, overAllDiscount, shipping, adjustment]);
 
 
-    
+
 
 
     const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
@@ -119,19 +120,19 @@ const CreateGrnTotalAmount = () => {
     const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
 
-    const balanceDue = -grandAmt - totalPaidAmount + totalAmountToPay;
+    const balanceDue = grandAmt >= headerData.distributor?.creditedToken ? grandAmt + totalPaidAmount - totalAmountToPay-headerData.distributor?.creditedToken:grandAmt+totalPaidAmount-totalAmountToPay;
 
 
     const [count, setCount] = useState(0);
     const [initialInvoiceNo, setInitialInvoiceNo] = useState('');
 
-    
+
 
     useEffect(() => {
-       
-            const newInvoiceNo = generateInvoiceNumber(count);
-            setInitialInvoiceNo(newInvoiceNo);
-        
+
+        const newInvoiceNo = generateInvoiceNumber(count);
+        setInitialInvoiceNo(newInvoiceNo);
+
     }, [count]);
 
 
@@ -286,13 +287,25 @@ const CreateGrnTotalAmount = () => {
                         <div className="w-full  p-4 bg-white rounded-tl-md rounded-tr-md border border-solid  border-borderGrey justify-between items-center gap-6 flex">
                             <div className="text-gray-500 text-xl font-medium ">Payments</div>
                         </div>
+                        {headerData.distributor?.creditedToken > 0 &&
+                            <div className='w-full  py-4 px-6 h-fit  bg-white text-textGrey1 font-medium text-base justify-between items-center flex border  border-solid border-borderGrey'>
+                                <div className='w-full flex items-center justify-between'>
+                                    <p>
+                                        {`${String(new Date(Date.now()).getDate()).padStart(2, '0')}/${String(new Date(Date.now()).getMonth() + 1).padStart(2, '0')}/${String(new Date(Date.now()).getFullYear()).slice(-2)}`}
+                                    </p>
+                                    <p>Debit Note</p>
+                                    <p className='flex items-center'><Image src={Cash} alt="Cash"></Image>Cash</p>
+                                    <p>₹{(headerData.distributor?.creditedToken).toFixed(2)}<span className='ml-2 px-1 py-1 rounded-md bg-[#E7F5EE] text-[#0F9D58] text-md font-medium'>Out</span></p>
+                                </div>
+
+                            </div>}
                         {transactionsData && transactionsData.map((transaction, index) => (
                             transaction.isAdvancePayment &&
                             (<div key={index} className="w-full  px-6 py-2 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
                                 <div className="text-gray-500 text-md font-medium ">Advance Paid on  {formatDateAndTime(transaction.date).formattedDate}</div>
                                 <div className='flex items-center h-9 px-4  justify-between rounded-lg '>
                                     <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
-                                        ₹ {transaction.amountPaid > 0 ? transaction.amountPaid : -1*transaction.amountPaid }
+                                        ₹ {transaction.amountPaid > 0 ? transaction.amountPaid : -1 * transaction.amountPaid}
                                     </div>
                                 </div>
                             </div>)
@@ -305,7 +318,7 @@ const CreateGrnTotalAmount = () => {
                                 <div className="text-gray-500 text-md font-medium ">Paid on {formatDateAndTime(transaction.date).formattedDate}</div>
                                 <div className='flex items-center h-9 px-4  justify-between rounded-lg '>
                                     <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
-                                        ₹ {transaction.amountPaid > 0 ? transaction.amountPaid : -1*transaction.amountPaid }
+                                        ₹ {transaction.amountPaid > 0 ? transaction.amountPaid : -1 * transaction.amountPaid}
                                     </div>
                                 </div>
                             </div>)
@@ -315,12 +328,16 @@ const CreateGrnTotalAmount = () => {
                         <div className="w-full  px-6 bg-white rounded-bl-md rounded-br-md justify-between items-center flex border border-t-0 border-solid border-borderGrey">
                             <div className="text-gray-500 text-base font-bold  w-1/3 py-4">Balance Due</div>
                             <div className="text-gray-500 text-lg font-medium  w-1/3 py-4 flex  items-center"></div>
-                            <div className="text-gray-500 text-base font-bold  w-1/3 py-4 ">₹{totalAmountData.subTotal ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
-                                {balanceDue > 0 ? <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 rounded-[5px] bg-[#E7F5EE] justify-center items-center gap-2 ml-[5px]">
-                                    You’re owed
-                                </span> : balanceDue === 0 ? "" : <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9]   rounded-[5px] justify-center items-center gap-2 ml-[5px]">
-                                    You owe
-                                </span>}
+                            <div className="text-gray-500 text-base font-bold  w-1/3 py-4 ">₹{totalAmountData.subTotal ? (balanceDue < 0 ? (-1 * balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
+                                {
+                                    balanceDue < 0 ? <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 rounded-[5px] bg-[#E7F5EE] justify-center items-center gap-2 ml-[5px]">
+                                        You’re owed
+                                    </span> : balanceDue === 0 ? "" : <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9]   rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                                        You owe
+                                    </span>
+                                   
+
+                                }
                             </div>
 
                         </div>

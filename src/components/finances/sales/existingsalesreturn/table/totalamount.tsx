@@ -105,8 +105,10 @@ const ExistingsalesReturnTotalAmout = ({ otherData, isLoading }: any) => {
                                 {isLoading && <Loading2 />}
                                 {otherData && otherData.recordTransaction && otherData.recordTransaction.map((transaction: any, index: any) => (
                                     transaction.isAdvancePayment &&
-                                    (<div key={index} className='w-full px-6 flex border-0 border-b border-solid border-borderGrey'>
+                                    (<div key={index} className='w-full px-2 flex items-center justify-between border-0 border-b border-solid border-borderGrey'>
                                         <div className="text-textGrey2  text-base font-bold  w-1/3 py-4">Advance Paid</div>
+                                        <div className="text-textGrey1 text-base font-medium  w-1/3 py-4">{formatDateAndTime(transaction.date).formattedDate}</div>
+                                        <div className='text-gray-500 text-md font-medium mr-4'>#{transaction?.receiptNo}</div>
                                         <div className="text-textGrey1 text-base font-medium  w-1/3 py-4 flex  items-center">
                                             <div className='flex pr-2'>
                                                 <Image src={Cash} alt='Cash' className='w-4 h-4 ' />
@@ -118,8 +120,9 @@ const ExistingsalesReturnTotalAmout = ({ otherData, isLoading }: any) => {
                                 ))}
                                 {otherData && otherData.recordTransaction && otherData.recordTransaction.map((transaction: any, index: any) => (
                                     !transaction.isAdvancePayment &&
-                                    (<div key={index} className='w-full px-6 flex border-0 border-b border-solid border-borderGrey'>
+                                    (<div key={index} className='w-full px-2 flex items-center justify-between border-0 border-b border-solid border-borderGrey'>
                                         <div className="text-textGrey1 text-base font-medium  w-1/3 py-4">{formatDateAndTime(transaction.date).formattedDate}</div>
+                                        <div className='text-gray-500 text-md font-medium mr-4'>#{transaction?.receiptNo}</div>
                                         <div className="text-textGrey1 text-base font-medium  w-1/3 py-4 flex  items-center">
                                             <div className='flex pr-2'>
                                                 <Image src={Cash} alt='Cash' className='w-4 h-4 ' />

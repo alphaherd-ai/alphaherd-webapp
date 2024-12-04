@@ -15,6 +15,7 @@ import { useAppSelector } from "@/lib/hooks"
 import { useRouter, useSearchParams } from "next/navigation"
 import { FinanceCreationType } from "@prisma/client"
 import axios from "axios"
+import { header } from "express-validator"
 
 const NewPurchasesBottomBar = ({ orderData }: any) => {
     const { headerData, tableData, totalAmountData, transactionsData } = useContext(DataContext);
@@ -29,7 +30,7 @@ const NewPurchasesBottomBar = ({ orderData }: any) => {
     const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
 
-    const balanceDue = -totalAmountData.totalCost - totalPaidAmount + totalAmountToPay;
+    const balanceDue = totalAmountData.totalCost + totalPaidAmount - totalAmountToPay;
     console.log(balanceDue);
 
     var userEmail = "";
@@ -51,6 +52,7 @@ const NewPurchasesBottomBar = ({ orderData }: any) => {
         }));
         const data = {
             distributor: (id === null) ? allData.headerData.distributor.value : orderData.distributor,
+            distributorId:(id===null) ? allData.headerData.distributor.distributorId : null,
             email: (id === null) ? allData.headerData.distributor.email : "",
             notes: (id === null) ? allData.headerData.notes : orderData.notes,
             invoiceNo: allData.headerData.invoiceNo,
@@ -60,7 +62,7 @@ const NewPurchasesBottomBar = ({ orderData }: any) => {
             totalCost: allData.totalAmountData.totalCost,
             totalQty: totalQty,
             overallDiscount: allData.totalAmountData.overallDiscount,
-            status:balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
+            status:balanceDue <= -1 ? `You’re owed: ₹${parseFloat((-1 * balanceDue).toString()).toFixed(2)}` : balanceDue >= 1 ? `You owe: ₹${parseFloat(( balanceDue).toString()).toFixed(2)}` : 'Closed',
             type: FinanceCreationType.Purchase_Order,
             items: {
                 create: items
@@ -68,10 +70,11 @@ const NewPurchasesBottomBar = ({ orderData }: any) => {
 
 
         }
-        userEmail = data.email;
-        console.log("email is (inside) :",data.email);
-        console.log("header data in bottom bar is : ",headerData);
-        console.log(JSON.stringify(data))
+        // userEmail = data.email;
+        // console.log("email is (inside) :",data.email);
+        // console.log("header data in bottom bar is : ",headerData);
+        console.log(data)
+        
         try {
             setSaving(true);
             const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Order}?branchId=${appState.currentBranchId}`, data)

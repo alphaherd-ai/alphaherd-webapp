@@ -54,7 +54,7 @@ const DatabaseNavbar = () => {
             value: item,
           }));
           const patientOptions = patients.map((item:any)=>({
-            label:`${item?.patientName||''}---${item?.clients.clientName||''}`
+            label:`${item?.patientName||''}---${item?.clients?.clientName||''}`
           }))
           const combinedOptions = [...clientOptions, ...distributorOptions,...patientOptions];
     

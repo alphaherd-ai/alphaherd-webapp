@@ -112,6 +112,8 @@ const NewsaleEstimateTotalAmout = ({isChecked}:{isChecked:boolean}) => {
         }
     };
 
+    const [isFirstAdvancePaymentPaid, setFirstAdvancePaymentPaid] = useState(false);
+
     const updateGrandTotal = () => {
         //console.log(discountInput,selectedDiscount);
         const discountedAmount = (totalAmount -  (discountMethod==='amount'?discountInput:totalAmount *selectedDiscountPer)) || 0;
@@ -184,7 +186,7 @@ const NewsaleEstimateTotalAmout = ({isChecked}:{isChecked:boolean}) => {
     const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out' && !item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
 
-    const balanceDue = (isChecked ? lowGrand * (0.1) : grandAmt * (0.1)) - totalPaidAmount + totalAmountToPay;
+    const balanceDue = (isChecked ? lowGrand  : grandAmt ) - totalPaidAmount + totalAmountToPay;
     //console.log(totalAmount);
 
     const [count, setCount] = useState(0);
@@ -206,7 +208,7 @@ const NewsaleEstimateTotalAmout = ({isChecked}:{isChecked:boolean}) => {
 
 
             <div className="flex gap-4  pt-[20px] pb-[20px]">
-                <RecordTransactionPopup headerdata={headerData} setCount={setCount} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} balanceDue={balanceDue} />
+                <RecordTransactionPopup setFirstAdvancePaymentPaid={setFirstAdvancePaymentPaid} isFirstAdvancePaymentPaid={isFirstAdvancePaymentPaid} headerdata={headerData} setCount={setCount} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} balanceDue={balanceDue} />
                 <div className="w-1/2 rounded-md">
                     <div className="w-full bg-white">
                         <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">
@@ -281,8 +283,9 @@ const NewsaleEstimateTotalAmout = ({isChecked}:{isChecked:boolean}) => {
                         </div>
                         {transactionsData && transactionsData.map((transaction, index) => (
                             transaction.isAdvancePayment &&
-                            (<div key={index} className="w-full  px-6 py-2 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
+                            (<div key={index} className="w-full  px-2 py-2 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
                                 <div className="text-gray-500 text-md font-medium ">Advance Paid on  {formatDateAndTime(transaction.date).formattedDate}</div>
+                                <div className='text-gray-500 text-md font-medium'>#{transaction?.receiptNo}</div>
                                 <div className='flex items-center h-9 px-4  justify-between rounded-lg '>
                                     <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
                                         ₹ {transaction.amountPaid > 0 ? transaction.amountPaid : -1 * transaction.amountPaid}
@@ -294,8 +297,9 @@ const NewsaleEstimateTotalAmout = ({isChecked}:{isChecked:boolean}) => {
 
                         {transactionsData && transactionsData.map((transaction, index) => (
                             !transaction.isAdvancePayment &&
-                            (<div key={index} className="w-full  px-6 py-2 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
+                            (<div key={index} className="w-full  px-2 py-2 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
                                 <div className="text-gray-500 text-md font-medium ">Paid on {formatDateAndTime(transaction.date).formattedDate}</div>
+                                <div className='text-gray-500 text-md font-medium'>#{transaction?.receiptNo}</div>
                                 <div className="text-textGrey2 text-base font-medium  w-1/3 py-4 flex  items-center">
                                     <div className='flex pr-2'>
                                         <Image src={Cash} alt='Cash' className='w-4 h-4 ' />

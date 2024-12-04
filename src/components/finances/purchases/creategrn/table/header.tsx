@@ -69,9 +69,12 @@ const CreateGrnHeader = ({existingHeaderData}:any) => {
         if(!isLoading&&!error&&data){
               const distributors=data?.map((distributor:any)=>({
                 value:distributor.distributorName,
+                distributorId:distributor.id,
                 email:distributor.email,
+                creditedToken:distributor.creditedToken,
                 label:`${distributor.distributorName}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0${distributor.contact}` 
             }))
+            //console.log(distributors);
             setDistributors(distributors);
 
         }
@@ -128,7 +131,7 @@ const CreateGrnHeader = ({existingHeaderData}:any) => {
         }),
         menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
       };
-
+      //console.log(headerData);
   return (
     <>
 

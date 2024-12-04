@@ -68,6 +68,7 @@ const NewPurchaseReturnNewHeader = ({existingHeaderData}:any) => {
         if(!isLoading&&!error&&data){
               const distributors=data?.map((distributor:any)=>({
                 value:distributor.distributorName,
+                distributorId:distributor.id,
                 email:distributor.email,
                 label:`${distributor.distributorName}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0${distributor.contact}` 
             }))

@@ -23,6 +23,14 @@ const STATUS_STYLES: Record<string, StatusStyles> = {
     "Accepted": {
         textColor: "text-[#0F9D58]",
         bgColor: "bg-[#E7F5EE]"
+    },
+    "Credited":{
+        textColor: "text-[#FC6E20]",
+        bgColor: "bg-[#FFF0E9]"
+    },
+    "Debited":{
+        textColor: "text-[#3C50FF]",
+        bgColor: "bg-[#EBEDFF]"
     }
 }
 

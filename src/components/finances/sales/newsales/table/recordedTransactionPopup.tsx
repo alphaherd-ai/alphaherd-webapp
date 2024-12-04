@@ -18,25 +18,29 @@ import { Button } from '@nextui-org/react';
 import { useAppSelector } from '@/lib/hooks';
 import Loading2 from '@/app/loading2';
 import useSWR from 'swr';
+import { useContext } from 'react';
+import { DataContext } from './DataContext';
+import { header } from 'express-validator';
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
 
 type PopupProps = {
-    setCount:any,
+    setCount: any,
     headerdata: any;
     transactionsData: any;
     setTransactionsData: any;
     initialInvoiceNo: any;
     totalAmount: any;
     balanceDue: any;
-    otherData? : any
+    otherData?: any;
 }
 
 
-const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, transactionsData, setTransactionsData, initialInvoiceNo, totalAmount, balanceDue,otherData }) => {
+const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, transactionsData, setTransactionsData, initialInvoiceNo, totalAmount, balanceDue, otherData }) => {
 
     const dispatch = useDispatch();
+    const { headerData } = useContext(DataContext);
     const [isSaving, setSaving] = useState(false);
     const [formData, setFormData] = useState<any>({
         amountPaid: "",
@@ -94,9 +98,11 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
         setTransactionType(type);
     };
 
-    
+
 
     const handleSaveClick = async () => {
+        
+    
         setSaving(true);
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/create?branchId=${appState.currentBranchId}`, {
@@ -109,14 +115,14 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
                     invoiceLink: headerdata.invoiceNo,
                     receiptNo: initialInvoiceNo,
                     date: formData.date || new Date(),
-                    amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1*formData.amountPaid, 10) || (balanceDue),
+                    amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1 * formData.amountPaid, 10) || (balanceDue),
                     mode: selectedMode,
                     moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
                 })
             });
             if (response.ok) {
                 // console.log('Data saved Sucessfully')
-                setCount((prev:any)=>prev+1);
+                setCount((prev: any) => prev + 1);
                 window.dispatchEvent(new FocusEvent('focus'))
             } else {
                 console.error('Failed to save data')
@@ -126,16 +132,17 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
         } finally {
             setSaving(false);
         }
-
+        console.log(initialInvoiceNo);
         const newTransaction = {
-            amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1*formData.amountPaid, 10) || (balanceDue),
+            amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1 * formData.amountPaid, 10) || (balanceDue),
             date: formData.date || new Date(),
             isAdvancePayment: isAdvancePayment,
             mode: selectedMode,
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
+            receiptNo:initialInvoiceNo,
         };
 
-        dispatch(addAmount({ amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1*formData.amountPaid, 10) || (balanceDue), mode: selectedMode, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out', date: formData.date || new Date(),}))
+        dispatch(addAmount({ amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1 * formData.amountPaid, 10) || (balanceDue), mode: selectedMode, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out', date: formData.date || new Date(), }))
 
         // setTransactionsData([{amountPaid:parseInt(formData.amountPaid, 10), date:formData.date, isAdvancePayment:isAdvancePayment}]);
 
@@ -146,8 +153,9 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
         if (balanceDue !== undefined) {
             setFormData((prevData: any) => ({
                 ...prevData,
-                amountPaid: balanceDue,
+                amountPaid: balanceDue
             }));
+            //  console.log(balanceDue);
         }
     }, [balanceDue]);
 
@@ -196,8 +204,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
     };
 
 
-    
-    const isDisabled = !(id===null ? headerdata?.customer?.label : otherData.customer) || !(formData.amountPaid) || !selectedMode
+
+    const isDisabled = !(id === null ? headerdata?.customer?.label : otherData.customer) || !(formData.amountPaid) || !selectedMode
     console.log(otherData);
 
     return (
@@ -242,14 +250,15 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
                     </div>
 
                     <div>
-                        <div className="w-[440px] flex items-center h-9 rounded-[5px] text-textGrey2 bg-white text-base font-medium px-2 py-6  outline-none border border-solid border-gray-300 ">{id===null  ? (headerdata ? headerdata?.customer?.label : "") : otherData?.customer}
-                            <div >
-                            {balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
-                                You owe ₹{totalAmount.subTotal ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) :0}
-                            </span> : balanceDue === 0 ? "" : <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
-                                You’re owed ₹{totalAmount.subTotal ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) :0}
-                            </span>}
-                            </div>
+                        <div className="w-[440px] flex items-center h-9 rounded-[5px] text-textGrey2 bg-white text-base font-medium px-2 py-6  outline-none border border-solid border-gray-300 ">{id === null ? (headerdata ? headerdata?.customer?.label : "") : otherData?.customer}
+                            
+                            {/* <div >
+                                {balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                                    You owe ₹{totalAmount.subTotal ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
+                                </span> : balanceDue === 0 ? "" : <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                                    You’re owed ₹{totalAmount.subTotal ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
+                                </span>}
+                            </div> */}
                         </div>
 
                     </div>
@@ -261,7 +270,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
                             className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2 outline-none border border-solid border-gray-300 focus:border-teal-500"
                             type="number"
                             name="amountPaid"
-                            value={formData.amountPaid > 0 ? formData.amountPaid    : -1*formData.amountPaid}
+                            value={formData.amountPaid > 0 ? formData.amountPaid : -1 * formData.amountPaid}
                             onChange={(e) => handleChange("amountPaid", e.target.value)}
                         />
                     </div>
@@ -338,9 +347,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
                         />
                         <span className='text-textGrey2 text-base font-medium'>Mark as advance payment</span>
                     </div>
-                    <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${
-                        isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
-                    }`} onClick={handleSaveClick} disabled={isDisabled || isSaving}>
+                    <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
+                        }`} onClick={handleSaveClick} disabled={isDisabled || isSaving}>
                         <Image src={check} alt='check' />
                         <span className='text-white text-base font-medium pr-2'>{isSaving ? <Loading2 /> : "Save Transaction"}</span>
                     </Button>

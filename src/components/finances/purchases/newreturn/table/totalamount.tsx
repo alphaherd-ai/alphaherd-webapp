@@ -317,7 +317,11 @@ const NewPurchaseReturnNewTotalAmount = () => {
                             <div className="text-gray-500 text-base font-bold  w-1/3 py-4">Balance Due</div>
                             <div className="text-gray-500 text-lg font-medium  w-1/3 py-4 flex  items-center"></div>
                             <div className="text-gray-500 text-base font-bold  w-1/3 py-4 ">₹{totalAmountData.subTotal ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
-                                {balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                                {transactionsData.length===0?
+                                <span className="text-[#3C50FF] text-sm font-medium  px-2 py-1.5 bg-[#EBEDFF] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                                Debited
+                            </span>
+                                :balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
                                     You owe
                                 </span> : balanceDue === 0 ? "" : <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
                                 You’re owed
