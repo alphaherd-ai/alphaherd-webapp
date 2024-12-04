@@ -167,7 +167,7 @@ const FinancesNavbar = () => {
                         isSearchable={true}
                         options={searchOptions}
                         onChange={(selectedProduct: any) => handleSearch(selectedProduct)}
-                        placeholder="Search via client name or invoice no."
+                        placeholder="Invoice no. or client/distributor name"
                         menuPortalTarget={document.body}
                         styles={customStyles}
                         />

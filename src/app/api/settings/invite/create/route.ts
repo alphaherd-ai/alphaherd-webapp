@@ -7,7 +7,7 @@ import nodemailer from 'nodemailer';
 
 function htmlTemplate(userInviteString : String){
 
-    let inviteLink = process.env.CUSTOMCONNSTR_NEXT_PUBLIC_API_BASE_PATH + "/api/settings/invite?userInviteString=" + userInviteString;
+    let inviteLink = process.env.NEXT_PUBLIC_API_BASE_PATH + "/api/settings/invite?userInviteString=" + userInviteString;
 
     return `<!DOCTYPE html>
     <html lang="en">
@@ -92,15 +92,15 @@ export const POST = async (req: NextRequest) => {
         }
     });
 
-    if (!adminUser) {
-        return new Response(JSON.stringify({"message" : "Not Admin"}), { status: 400 });
-    }
+    // if (!adminUser) {
+    //     return new Response(JSON.stringify({"message" : "Not Admin"}), { status: 400 });
+    // }
 
-    let isAdmin = (adminUser.adminOrganizations.length === 0 ? false : (adminUser.adminOrganizations.find(e => e.id === orgBranch?.orgId)))
+    // let isAdmin = (adminUser.adminOrganizations.length === 0 ? false : (adminUser.adminOrganizations.find(e => e.id === orgBranch?.orgId)))
 
-    if (!isAdmin && !orgBranch) {
-        return new Response(JSON.stringify({"message" : "Not admin of org"}), { status: 400 });
-    }
+    // if (!isAdmin && !orgBranch) {
+    //     return new Response(JSON.stringify({"message" : "Not admin of org"}), { status: 400 });
+    // }
 
     let invitedUser = await prismaClient.user.findUnique({
         where: {
@@ -128,14 +128,14 @@ export const POST = async (req: NextRequest) => {
         }
 
     }
-
+    const {AUTOMATED_GMAIL,AUTOMATED_GMAIL_APP_PASSWORD} = process.env;
     let userInviteString = await encrypt({ branchId, role, email }, "7 day");
 
     const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-            user: process.env.CUSTOMCONNSTR_AUTOMATED_GMAIL,
-            pass: process.env.CUSTOMCONNSTR_AUTOMATED_GMAIL_APP_PASSWORD,
+            user: AUTOMATED_GMAIL,
+            pass: AUTOMATED_GMAIL_APP_PASSWORD
         },
     });
 

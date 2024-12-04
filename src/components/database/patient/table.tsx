@@ -5,13 +5,14 @@ import DatabasePatientHeader from './header'
 import DatabasePatientTableItem from './items'
 import { useAppSelector } from '@/lib/hooks'
 import useSWR from 'swr';
-//@ts-ignore
-const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
+
+const fetcher = (...args: [RequestInfo, RequestInit?]) => fetch(...args).then(res => res.json());
+
+
 interface Clients {
   id: number;
   clientName: string;
 }
-
 
 interface Patients {
   id: number;
@@ -19,10 +20,13 @@ interface Patients {
   clientId: number;
   species: string;
   breed: string;
-  age: number;
+  age: string; // Updated to string as per your example
   gender: string;
-  date: string;
+  date: string; // Date to sort by
+  dateOfBirth: string; // Included as per your example
+  isInpatient: boolean | null; // Assuming this can be true, false, or null
 }
+
 function useClientFetch(id: number | null) {
   const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${id}`, fetcher, { revalidateOnFocus: true });
   return {
@@ -31,6 +35,7 @@ function useClientFetch(id: number | null) {
     isClientError: error
   }
 }
+
 function usePatientFetch(id: number | null) {
   const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/patients/getAll?branchId=${id}`, fetcher, { revalidateOnFocus: true });
   return {
@@ -39,27 +44,21 @@ function usePatientFetch(id: number | null) {
     isPatientError: error
   }
 }
-const DatabasePatientTable = () => {
 
+const DatabasePatientTable = () => {
   const [patients, setPatients] = useState<Patients[]>([]);
   const [clients, setClients] = useState<{ [key: string]: string }>({});
-  const appState = useAppSelector((state) => state.app)
-  const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/patients/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
-  console.log("data is :", data);
+  const [maxId, setMaxId] = useState<number>(0);
+  const appState = useAppSelector((state) => state.app);
   const { fetchedClients, isClientError, isClientLoading } = useClientFetch(appState.currentBranchId);
   const { fetchedPatients, isPatientError, isPatientLoading } = usePatientFetch(appState.currentBranchId);
-  useEffect(() => {
-    const handleWindowFocus = () => {
-      console.log('Window focused');
-    };
-    window.addEventListener('focus', handleWindowFocus);
-    return () => window.removeEventListener('focus', handleWindowFocus);
-  }, []);
-
 
   useEffect(() => {
     if (!isPatientError && !isPatientLoading && fetchedPatients) {
-      setPatients(fetchedPatients);
+      const sortedPatients = [...fetchedPatients].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      setPatients(sortedPatients);
+      const highestId = Math.max(0, ...fetchedPatients.map((patient: { id: any }) => patient.id));
+      setMaxId(highestId);
     }
 
     if (!isClientLoading && fetchedClients && !isClientError) {
@@ -69,60 +68,29 @@ const DatabasePatientTable = () => {
       }, {});
       setClients(clientNames);
     }
-
-
   }, [fetchedClients, fetchedPatients, isClientError, isClientLoading, isPatientError, isPatientLoading]);
-  const [sortOrder, setSortOrder] = useState("asc");
-  const [sortKey, setSortKey] = useState<keyof Patients | null>(null); // Sort key
-  const [patient, setPatient] = useState<Patients[]>([]);
 
-  useEffect(() => {
-    if (!isLoading && !error && data) {
-      setPatient(data);
-    }
-  }, [data, error, isLoading]);
-  const handleSortChange = (key: keyof Patients, order: 'asc' | 'desc') => {
-    setSortKey(key);
-    setSortOrder(order);
-
-    const sortedData = [...patients].sort((a, b) => {
-      const valueA = a[key];
-      const valueB = b[key];
-
-      if (typeof valueA === 'string' && typeof valueB === 'string') {
-        return order === 'asc' ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
-      }
-
-      if (typeof valueA === 'number' && typeof valueB === 'number') {
-        return order === 'asc' ? valueA - valueB : valueB - valueA;
-      }
-
-      return 0;
-    });
-
-
-    setPatient(sortedData);
-    console.log(`Sorting by ${key} in ${order} order`, sortedData);
-  }
+  const addPatient = (newPatientData: Omit<Patients, 'id'>) => {
+    const newPatient = { ...newPatientData, id: maxId + 1 };
+    const updatedPatients = [newPatient, ...patients]; // Add the new patient at the top
+    const sortedPatients = updatedPatients.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()); // Sort by date
+    setPatients(sortedPatients);
+    setMaxId((prev) => prev + 1);
+  };
 
   return (
     <div className='flex flex-col w-full box-border border border-solid border-borderGrey rounded-lg mt-6 mb-6'>
-      <DatabasePatientHeader patients={patients} clients={clients} onSortChange={handleSortChange} />
-      <div className='flex  w-full  box-border bg-gray-100  h-12 justify-evenly items-center border-0 border-b border-solid border-borderGrey text-textGrey2'>
-        <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>Patient</div>
-        <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>Client</div>
-        <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>Species and Breed</div>
-        <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>Age</div>
-        <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>Sex</div>
-
+      <DatabasePatientHeader patients={patients} clients={clients} onAddPatient={addPatient} />
+      <div className='flex w-full box-border bg-gray-100 h-12 justify-evenly items-center border-0 border-b border-solid border-borderGrey text-textGrey2'>
+        <div className='flex text-gray-500 text-base font-medium px-6 w-1/6'>Patient</div>
+        <div className='flex text-gray-500 text-base font-medium px-6 w-1/6'>Client</div>
+        <div className='flex text-gray-500 text-base font-medium px-6 w-1/6'>Species and Breed</div>
+        <div className='flex text-gray-500 text-base font-medium px-6 w-1/6'>Age</div>
+        <div className='flex text-gray-500 text-base font-medium px-6 w-1/6'>Gender</div>
       </div>
-
-      <DatabasePatientTableItem patients={patient} clients={clients} isPatientLoading={isPatientLoading} />
-
-
+      <DatabasePatientTableItem patients={patients} clients={clients} isPatientLoading={isPatientLoading} />
     </div>
-
-  )
+  );
 }
 
-export default DatabasePatientTable
+export default DatabasePatientTable;

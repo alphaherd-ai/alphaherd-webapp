@@ -34,6 +34,7 @@ interface ProductBatch {
     date: string;
     time: string;
     quantity: number;
+    originalQuantity :number,
     batchNumber:string;
     expiry:string;
     costPrice:number;
@@ -93,6 +94,7 @@ const NewPurchaseReturnTable = () => {
                 productId:item.productId,
                 itemName:item.name,
                 quantity:item.quantity,
+                originalQuantity : item.quantity,
                 unitPrice:item.productBatch.costPrice,
                 tax:item.taxAmount,
                 discount:item.discount,
@@ -131,36 +133,47 @@ const NewPurchaseReturnTable = () => {
 
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
-
+        const [checkedItems, setCheckedItems] = useState<CheckedItems>({});
 
     useEffect(() => {
         if (!disableButton && inputRef.current) {
             inputRef.current.focus();
         }
     }, [disableButton]);
-
+    
 
     const handleQuantityDecClick = (itemId: any) => {
-        setItems((prevItems:any) =>
-            prevItems.map((item:any) => {
-                if (item.id === itemId && item.quantity > 1) {
+        setItems((prevItems : any) => {
+            const updatedItems = prevItems.map((item: any) => {
+                if (item.id === itemId && item.quantity > 0) {
                     return { ...item, quantity: item.quantity - 1 };
                 }
                 return item;
-            })
-        );
+            });
+            const filteredItems = updatedItems.filter((item: any) => item.quantity > 0);
+            setTableData(filteredItems);
+            return updatedItems;
+    });
     };
     
     const handleQuantityIncClick = (itemId: any) => {
-        setItems((prevItems:any) =>
-            prevItems.map((item:any) => {
+        setItems((prevItems: any) => {
+            const updatedItems = prevItems.map((item: any) => {
                 if (item.id === itemId) {
-                    return { ...item, quantity: item.quantity + 1 };
+                    // Ensure quantity does not exceed purchased or original quantity
+                    if ( item.quantity < item.originalQuantity) {
+                        return { ...item, quantity: item.quantity + 1 };
+                    }
                 }
                 return item;
-            })
-        );
+            });
+    
+            const filteredItems = updatedItems.filter((item: any) => item.quantity > 0);
+            setTableData(filteredItems);
+            return updatedItems;
+        });
     };
+    
 
     
 
@@ -195,7 +208,7 @@ const NewPurchaseReturnTable = () => {
 
 
 
-    const [checkedItems, setCheckedItems] = useState<CheckedItems>({});
+
 
     const handleCheckboxChange = useCallback((id: number) => {
         setCheckedItems(prevState => {

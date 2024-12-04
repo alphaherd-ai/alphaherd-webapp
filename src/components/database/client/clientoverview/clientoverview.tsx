@@ -8,6 +8,7 @@ import optionicon from "../../../../assets/icons/inventory/more_vert.svg"
 import downloadicon from "../../../../assets/icons/inventory/1. Icons-24.svg"
 import selecttab from "../../../../assets/icons/finance/SelectedTab.svg"
 import icn_icon from "../../../../assets/icons/finance/inc_icon.svg"
+import EditClientPopup from "./editClientPopup"
 import optionarrow from "../../../../assets/icons/inventory/more_vert.svg"
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
 import { ThemeProvider } from '@mui/material/styles';
@@ -30,20 +31,23 @@ const ClientDetails = () => {
 
     const router = useRouter();
     const [formData, setFormData] = useState<any>({
-        amountPaid:"",
-        moneyChange:"In"
+        amountPaid: "",
+        moneyChange: "In"
     });
     const [client, setClient] = useState<any | null>(null);
     const [invoiceList, setInvoiceList] = useState<any | null>(null);
     const url = useSearchParams();
     const appState = useAppSelector((state) => state.app)
     const id = url.get('id');
+    const clientId = Number(id);
+    console.log("ClientId is ", clientId);
     const [clickedIndex, setClickedIndex] = useState(0);
     const { fetchedClient, isLoading, error } = useClientfetch(id, appState.currentBranchId);
     const [open, setOpen] = useState(false);
-    const [recordPaymentPopup,setRecordPaymentPopup]=useState<any>(false);
+    const [recordPaymentPopup, setRecordPaymentPopup] = useState<any>(false);
     const [toBePaid, setToBePaid] = useState(0);
     const [totalInComebynow, setTotalIncome] = useState(0);
+    const [isEditPopupVisible, setEditPopupVisible] = useState(false);
     function useClientfetch(id: string | null, branchId: number | null) {
         const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/${id}?branchId=${branchId}`, fetcher, { revalidateOnFocus: true });
         //setInvoiceList(data?.invoiceNo);
@@ -66,11 +70,11 @@ const ClientDetails = () => {
     }, [id])
 
     useEffect(() => {
-       
-    
+
+
         if (invoiceList?.length > 0) {
-                let totalAmt=0;
-                let totalIncomeByNow=0;
+            let totalAmt = 0;
+            let totalIncomeByNow = 0;
             invoiceList.forEach((invoice: any) => {
                 if (invoice.status.includes("You’re owed")) {
                     const match = invoice.status.match(/[\d.]+/g); // Match both integers and floats
@@ -78,18 +82,18 @@ const ClientDetails = () => {
                         totalAmt += parseFloat(match[0]);
                     }
                 }
-                else if(invoice.status.includes("Closed")){
-                    totalIncomeByNow+=invoice.totalCost;
+                else if (invoice.status.includes("Closed")) {
+                    totalIncomeByNow += invoice.totalCost;
                 }
             });
-            setFormData((prev: any) => ({...prev, amountPaid:totalAmt}));
+            setFormData((prev: any) => ({ ...prev, amountPaid: totalAmt }));
             setToBePaid(totalAmt);
             setTotalIncome(totalIncomeByNow);
         }
-    
-       // console.log(toBePaid);
+
+        // console.log(toBePaid);
     }, [invoiceList]);
-    
+
 
 
     //console.log(client);
@@ -113,7 +117,13 @@ const ClientDetails = () => {
     );
 
 
+    const openEditPopup = () => {
+        setEditPopupVisible(true);
+    };
 
+    const closeEditPopup = () => {
+        setEditPopupVisible(false);
+    };
 
 
 
@@ -121,12 +131,49 @@ const ClientDetails = () => {
         setClickedIndex(index);
     };
 
+    const handleDeleteClient = async () => {
+        try {
+            const branchId = appState.currentBranchId;
+            console.log("Branch ID being sent:", branchId);
+
+            // Ensure the 'Branch-ID' header is a string, not null or a number
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/${clientId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Branch-ID': branchId !== null && branchId !== undefined ? String(branchId) : '', // Ensure it's a string
+                },
+            });
+
+
+            if (response.ok) {
+                alert("Client deleted successfully.");
+                router.push('/clients'); // Redirect to the clients list or relevant page
+            } else {
+                // Only attempt to parse error message if response is not OK
+                let errorMessage = "Failed to delete client. Please try again.";
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.message || errorMessage;
+                } catch {
+                    errorMessage = await response.text();
+                }
+                console.error("Delete error:", errorMessage);
+                alert(errorMessage);
+            }
+        } catch (error) {
+            console.error("Request failed:", error);
+            alert("Failed to delete client. Please check your network connection and try again.");
+        }
+    };
+
+
     return <>
-        {open ? <ClearInvoices invoiceList={invoiceList} formData={formData}  setOpen={setOpen}/> :
+        {open ? <ClearInvoices invoiceList={invoiceList} formData={formData} setOpen={setOpen} /> :
 
             <div className="w-full h-full  relative rounded-[20px] pr-[16px] pl-[16px] z-1">
                 <div className={`fixed inset-0 w-full h-full  bg-opacity-50 backdrop-blur-sm z-40 ${recordPaymentPopup ? 'block' : 'hidden'}`} >
-                <RecordTransactionPopup setOpen={setOpen} formData={formData} setFormData={setFormData}  clientName={client?.clientName} togglePopup={setRecordPaymentPopup}/> 
+                    <RecordTransactionPopup setOpen={setOpen} formData={formData} setFormData={setFormData} clientName={client?.clientName} togglePopup={setRecordPaymentPopup} />
                 </div>
                 <div className="flex items-center justify-between">
                     <div className="flex gap-8">
@@ -136,7 +183,7 @@ const ClientDetails = () => {
                             </div>
                         </div>
                         <div className="text-gray-500 text-[28px] font-bold p-2">
-                            {client? client?.clientName:<Loading2/>}
+                            {client ? client?.clientName : <Loading2 />}
                         </div>
                     </div>
                     <div className="flex items-center gap-4">
@@ -149,22 +196,25 @@ const ClientDetails = () => {
                                         className="capitalize flex border-none  text-gray rounded-lg ">
                                         <div className='w-12 h-12 px-[11px] py-2.5 bg-white rounded-[5px] border border-solid border-stone-300 justify-center items-center gap-2 flex'>   <Image src={optionicon} alt="option"></Image></div></Button>
                                 </PopoverTrigger>
-                                <PopoverContent className="p-5 text-gray-500 bg-white text-sm  font-medium flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
-
-                                    <div className="flex flex-col ">
+                                <PopoverContent className="p-5 text-gray-500 bg-white text-sm p-2 font-medium flex flex-row items-start rounded-lg border-2 mt-2.5">
+                                    <div className="flex flex-col">
                                         <div className='flex flex-col'>
-                                            <Link className='no-underline flex item-center' href='/finance/overview'>
+                                            <div className='no-underline flex item-center' onClick={openEditPopup}>
                                                 <div className='text-gray-500 text-sm p-3 font-medium flex '>
                                                     Edit</div>
-                                            </Link>
-                                            <Link className='no-underline flex item-center' href='/finance/overview'>
+                                            </div>
+                                            <div className='no-underline flex item-center' onClick={handleDeleteClient}>
                                                 <div className='text-gray-500 text-sm p-3 font-medium flex '>
                                                     Delete</div>
-                                            </Link>
+                                            </div>
                                         </div>
                                     </div>
                                 </PopoverContent>
                             </Popover>
+                            {isEditPopupVisible && (
+                                <EditClientPopup onClose={closeEditPopup} clientData={client} />
+                            )}
+
                         </div>
                     </div>
                 </div>
@@ -200,19 +250,19 @@ const ClientDetails = () => {
                         <div className="w-full border-b border-solid border-0 border-stone-300">
                             <div className="w-full flex gap-2 items-center p-6 h-3/12">
                                 <div className="text-textGrey2 text-base font-medium ">Address:</div>
-                                <div className="text-gray-500 text-base font-medium ">{client ? client?.address : <Loading2/>}</div>
+                                <div className="text-gray-500 text-base font-medium ">{client ? client?.address : <Loading2 />}</div>
                             </div>
                         </div>
                         <div className="w-full border-b border-solid border-0 border-stone-300">
                             <div className="w-full flex gap-2 items-center p-6 h-3/12">
                                 <div className="text-textGrey2 text-base font-medium ">Email:</div>
-                                <div className="text-gray-500 text-base font-medium ">{client ? client?.email: <Loading2/>}</div>
+                                <div className="text-gray-500 text-base font-medium ">{client ? client?.email : <Loading2 />}</div>
                             </div>
                         </div>
                         <div className="w-full border-solid border-0 border-stone-300">
                             <div className="w-full flex gap-2 items-center p-6 h-3/12">
                                 <div className="text-textGrey2 text-base font-medium ">Phone Number:</div>
-                                <div className="text-gray-500 text-base font-medium ">{client ? client?.contact : <Loading2/>}</div>
+                                <div className="text-gray-500 text-base font-medium ">{client ? client?.contact : <Loading2 />}</div>
                             </div>
                         </div>
                     </div>
@@ -260,7 +310,7 @@ const ClientDetails = () => {
                         </div>
                     </div>
                 </div>
-                
+
 
                 <div className="rounded-md">
                     <div className="w-full mt-[25px] rounded-md border-borderGrey border border-solid  border-neutral-40  ">
@@ -269,7 +319,7 @@ const ClientDetails = () => {
                                 <div className="text-gray-500 text-xl font-medium ">
                                     Timeline
                                 </div>
-                                <div className="h-12 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-center items-center gap-2 flex" onClick={()=>setRecordPaymentPopup((prev: boolean) => !prev)}>
+                                <div className="h-12 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-center items-center gap-2 flex" onClick={() => setRecordPaymentPopup((prev: boolean) => !prev)}>
                                     <div>
                                         <Image src={addicon} alt="add"></Image>
                                     </div>
@@ -306,12 +356,17 @@ const ClientDetails = () => {
                         </div>
                     </div>
                 </div>
-                
+
             </div>
         }
     </>
 }
 
 export default ClientDetails;
+
+
+
+
+
 
 

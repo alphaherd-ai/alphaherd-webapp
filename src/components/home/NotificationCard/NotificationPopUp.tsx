@@ -1,8 +1,20 @@
-import React from "react";
 
-const NotificationPopUp = () => {
+import React, { useEffect, useState } from "react";
+import useSWR from "swr";
+import { useAppSelector } from "@/lib/hooks";
+import Loading from "@/app/loading";
+
+
+
+
+const NotificationPopUp = (newnotifs: any ) => {
+
+  console.log("nptifs popup is :",newnotifs);
+
+
   return (
-    <div className="absolute bottom-4 z-100 right-[8rem]">
+   
+    <div className="absolute bottom-4 z-100 right-[2rem]">
       <div className="w-[443px] h-[288px] px-5 py-4 bg-neutral-700 rounded-[10px] border border-neutral-700 justify-start items-start gap-4 inline-flex">
         <div className="p-[4.50px] bg-green-600 rounded-[5px] justify-center items-center gap-[11.25px] flex">
           <div className="w-[27px] h-[27px] relative">
@@ -22,18 +34,19 @@ const NotificationPopUp = () => {
             <div className="w-6 h-6 relative bg-neutral-700 rounded-[5px]" />
           </div>
           <div className="self-stretch">
-            <span className="text-stone-300 text-sm font-medium ">
-              A new user is requesting access to create a new Alphaherd account
-              under your organisation.
-              <br />
-              <br />
-              Name:
-            </span>
             <span className="text-stone-300 text-sm font-bold ">
+              {newnotifs.newnotifs.message}
+              <br />
+              <br />
+              <br />
+              {/* Name: */}
+            </span>
+            {/* <span className="text-stone-300 text-sm font-bold ">
               {" "}
             </span>
             <span className="text-emerald-50 text-sm font-bold ">
-              Rani Kumari
+              
+              
               <br />
             </span>
             <span className="text-stone-300 text-sm font-medium ">
@@ -76,11 +89,12 @@ const NotificationPopUp = () => {
               <div className="text-white text-sm font-bold ">
                 Reject
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
     </div>
+   
   );
 };
 

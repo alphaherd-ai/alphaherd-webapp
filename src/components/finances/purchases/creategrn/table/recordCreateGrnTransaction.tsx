@@ -87,7 +87,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
     ]
 
     const [startDate, setStartDate] = useState(new Date());
-    const [transactionType, setTransactionType] = useState<string | null>("Money In");
+    const [transactionType, setTransactionType] = useState<string | null>("Money Out");
 
 
     const handleDateChange = (date: any) => {
@@ -138,13 +138,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
         };
 
-        dispatch(addAmount({
-            amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1*formData.amountPaid, 10) || (balanceDue),
-            mode: selectedMode,
-            invoiceLink: headerdata.invoiceNo,
-            moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
-            date: formData.date || new Date()
-        }))
+        dispatch(addAmount({amountPaid: parseInt(formData.amountPaid|| balanceDue), mode: selectedMode, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out'}))
 
         // setTransactionsData([{amountPaid:parseInt(formData.amountPaid, 10), date:formData.date, isAdvancePayment:isAdvancePayment}]);
 

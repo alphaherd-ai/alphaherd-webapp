@@ -30,8 +30,8 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
     const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
 
-    const balanceDue = totalAmountData?.totalCost >= headerData.distributor?.creditedToken ? (totalAmountData?.totalCost +totalPaidAmount - totalAmountToPay - headerData.distributor?.creditedToken) : totalAmountData?.totalCost + totalPaidAmount - totalAmountToPay;
-    const newCreditedToken = totalAmountData.totalCost >= headerData.distributor?.creditedToken ? 0  : headerData.distributor?.creditedToken;
+    const balanceDue = totalAmountData?.totalCost >= headerData.distributor?.creditedToken ? (totalAmountData?.totalCost + totalPaidAmount - totalAmountToPay - headerData.distributor?.creditedToken) : totalAmountData?.totalCost + totalPaidAmount - totalAmountToPay;
+    const newCreditedToken = totalAmountData.totalCost >= headerData.distributor?.creditedToken ? 0 : headerData.distributor?.creditedToken;
 
     const handleSubmit = async () => {
         tableData.pop();
@@ -50,13 +50,13 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             expiry: data.expiry,
             batchNumber: data.batchNumber,
             hsnCode: data.barCode,
-            
+
             costPrice: Number(data.unitPrice)
         }));
         const data = {
             distributor: (id === null) ? allData.headerData.distributor.value : orderData.distributor,
-            distributorId:(id===null) ? allData.headerData.distributor.distributorId : null,
-            newCreditedToken:(id===null) ? newCreditedToken : 0,
+            distributorId: (id === null) ? allData.headerData.distributor.distributorId : null,
+            newCreditedToken: (id === null) ? newCreditedToken : 0,
             notes: (id === null) ? allData.headerData.notes : orderData.notes,
             invoiceNo: (id === null) ? allData.headerData.invoiceNo : orderData.invoiceNo,
             dueDate: (id === null) ? allData.headerData.dueDate : orderData.dueDate,
@@ -68,7 +68,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             recordTransaction: {
                 create: allData.transactionsData
             },
-            status:balanceDue <= -1 ? `You’re owed: ₹${parseFloat((-1 * balanceDue).toString()).toFixed(2)}` : balanceDue >= 1 ? `You owe: ₹${parseFloat(( balanceDue).toString()).toFixed(2)}` : 'Closed',
+            status: balanceDue <= -1 ? `You’re owed: ₹${parseFloat((-1 * balanceDue).toString()).toFixed(2)}` : balanceDue >= 1 ? `You owe: ₹${parseFloat((balanceDue).toString()).toFixed(2)}` : 'Closed',
             type: FinanceCreationType.Purchase_Order,
             items: {
                 create: items
@@ -96,13 +96,14 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
         }
     };
 
-    const isDisabled = !headerData?.distributor || tableData.length === 1;
+
+    const isDisabled = !headerData.distributor || tableData.length === 0
     return (
         <>
 
 
-            <div className="flex justify-end items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
-                {/* <div className="flex justify-between items-center gap-4 pl-4">
+            <div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
+                <div className="flex justify-between items-center gap-4 pl-4">
                     <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={printicon} alt="print"></Image>
                         <div>Print</div>
@@ -115,17 +116,17 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
                         <Image src={shareicon} alt="share"></Image>
                         <div>Share editable sheet</div>
                     </div>
-                </div> */}
+                </div>
                 <div className="flex justify-between items-center gap-4 pr-4">
-                    <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
+                    {/* <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
                         <Image src={drafticon} alt="draft"></Image>
                         <div>Save as Draft</div>
-                    </Button>
+                    </Button> */}
                     <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
                         }`}
-                        onClick={handleSubmit} disabled={isDisabled || isSaving}>
+                        onClick={handleSubmit} disabled={isDisabled}>
                         <Image src={checkicon} alt="check"></Image>
-                        <div>{isSaving ? <Loading2/> : "Save"}</div>
+                        <div>{isSaving ? <Loading2 /> : "Save"}</div>
                     </Button>
                 </div>
 

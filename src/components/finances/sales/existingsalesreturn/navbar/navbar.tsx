@@ -23,7 +23,7 @@ const ExistingsalesReturnNavbar = () => {
 
                     </div>
                     <div className="text-gray-500 text-[28px] flex items-center font-bold ">
-                    Sales Returns - SR-000345
+                    Sales Returns 
 
                     </div>
                     </div>

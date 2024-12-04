@@ -36,6 +36,7 @@ export default function UsersAndRolesSettings() {
             setBranchUsers(usersWithRoles);
         }
     }, [data, error, isLoading]);
+
     const permission = [
         { value: 'Allow with admin permission', label: 'Allow with admin permission' },
         { value: 'Allow', label: 'Allow' },
@@ -84,6 +85,38 @@ export default function UsersAndRolesSettings() {
             }
         }
     };
+    const handleMakeAdmin = async (email: string) => {
+        try {
+            const branchId = appState.currentBranchId;
+            const newRole = "Admin";
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/updateRole`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, branchId, newRole })
+            });
+
+            if (response.ok) {
+                const updatedUser = await response.json();
+
+                // Update local state with the new role
+                const updatedUsers = branchUsers.map(user =>
+                    user.user.email === email ? { ...user, role: 'Admin' } : user
+                );
+                setBranchUsers(updatedUsers);
+
+                console.log(`User with email ${email} is now an Admin`);
+            } else {
+                const errorData = await response.json();
+                console.error("Failed to update user role:", errorData.message);
+            }
+        } catch (error) {
+            console.error("An error occurred:", error);
+        }
+    };
+
   
     return (
 
@@ -111,24 +144,34 @@ export default function UsersAndRolesSettings() {
                                     
                                     <div className="">{user.user.name}</div>
                                 </div>
-                                <div className='w-3/12 flex items-center text-textGrey2 text-base font-medium gap-2'>
+
+
+                                <div className='w-3/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-2'>
                                     <div className="text-indigo-600 text-sm font-medium  px-2 py-1.5 bg-violet-100 rounded-[5px] justify-center items-center gap-2 flex">{user.role}</div>
-                                    {user.role=='Manager'?<div className="text-teal-400 text-sm font-medium  px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">Admin</div>:""}
+                                    {user.role==='Manager' && (<div className="text-teal-400 text-sm font-medium  px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">Admin</div>)}
                                     
                                 </div>
                                 <div className='w-2/12 flex items-center text-textGrey2 text-base font-medium'>{user.user.phoneNo}</div>
                                 <div className='w-4/12 flex items-center text-textGrey2 text-base font-medium gap-3'>
                                     <div>{user.user.email}</div>
+                                    
+
+
                                     <div className="flex gap-2">
-                                        <div className="px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
-                                            <Image className="w-4 h-4 relative" src={adminicon} alt="admin" />
-                                            <div className="text-textGrey2 text-sm font-medium ">Make Admin</div>
+                                            {user.role !== 'Admin' && (
+                                                <button 
+                                                    onClick={() => handleMakeAdmin(user.user.email)} 
+                                                    className="px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex border-none cursor-pointer"
+                                                >
+                                                    <Image className="w-4 h-4 relative" src={adminicon} alt="admin" />
+                                                    <div className="text-neutral-400 text-sm font-medium">Make Admin</div>
+                                                </button>
+                                            )}
+                                            <button className="px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex border-none cursor-pointer">
+                                                <Image className="w-4 h-4 relative" src={removeusericon} alt="admin" />
+                                                <div className="text-neutral-400 text-sm font-medium">Remove User</div>
+                                            </button>
                                         </div>
-                                        <div className="px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex">
-                                            <Image className="w-4 h-4 relative" src={removeusericon} alt="admin" />
-                                            <div className="text-textGrey2 text-sm font-medium ">Remove User</div>
-                                        </div>
-                                    </div>
                                 </div>
                                 </div>
                                 ))}

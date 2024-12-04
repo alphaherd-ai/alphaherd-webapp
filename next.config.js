@@ -1,29 +1,29 @@
-// /** @type {import('next').NextConfig} */
-// const nextConfig = {
-//   images: {
-//     domains: ['res.cloudinary.com'],
-//   }
-// };
-
-
-// module.exports = nextConfig;
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-      domains: ['res.cloudinary.com'],
-    },
-  basePath: process.env.BASE_PATH,
-  env: {
-     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+    domains: ['res.cloudinary.com'],
+  }
+};
+
+
+ module.exports = nextConfig;
+
+// /** @type {import('next').NextConfig} */
+// const nextConfig = {
+//   images: {
+//       domains: ['res.cloudinary.com'],
+//     },
+//   basePath: process.env.BASE_PATH,
+//   env: {
+//      NEXTAUTH_URL: process.env.NEXTAUTH_URL,
      
-  },
-  reactStrictMode: false,
-}
+//   },
+//   reactStrictMode: false,
+// }
 
-module.exports = nextConfig;
+// module.exports = nextConfig;
 
-// Injected content via Sentry wizard below
+
 
 // const { withSentryConfig } = require("@sentry/nextjs");
 

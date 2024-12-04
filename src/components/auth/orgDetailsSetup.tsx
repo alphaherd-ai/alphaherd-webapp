@@ -66,7 +66,7 @@ const OrgDetailsSetup = (props: any) => {
                         <div className="flex justify-around items-center">
                             <div className="text-gray-500 text-xl font-medium mr-6">My Organisation</div>
                             <CldUploadButton
-                                className="bg-none w-50 h-20 border-none"
+                                className="bg-none w-50 h-20 border-none cursor-pointer"
                                 options={{
                                     sources: ['local', 'url'],
                                     multiple: false,
@@ -120,8 +120,12 @@ const OrgDetailsSetup = (props: any) => {
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium ">Branch Name</div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-start gap-2 inline-flex">
-                                <input type="text" className="text-neutral-400 text-base font-medium  h-full w-full px-2 border border-solid border-[#A2A3A3]  rounded-[5px]" id="branch" name="branch" disabled={true} value={appState.currentBranch.branchName} />
+                                <input type="text" className="text-neutral-400 text-base font-medium  h-full w-full px-2 border-1 border-solid border-[#A2A3A3]  rounded-[5px]" id="branch" name="branch" disabled={true} value={appState.currentBranch.branchName} />
+                                {props.validationErrors.branchName && (
+                                    <div className="text-[red] error">{props.validationErrors.branchName}</div>
+                                )}
                             </div>
+                           
 
                         </div>
                     </div>
@@ -138,9 +142,10 @@ const OrgDetailsSetup = (props: any) => {
                                     onFocus={() => setFocused(true)}
                                     value={props.data.gstNo}
                                 />
-                                {focused && props.data.gstNo.length <= 1 && (
-                                    <div className="text-red-500 text-sm">GST No. is required.</div>
+                                {props.validationErrors.gstNo && (
+                                    <div className="text-[red] error">{props.validationErrors.gstNo}</div>
                                 )}
+                                
                             </div>
                         </div>
 
@@ -157,8 +162,8 @@ const OrgDetailsSetup = (props: any) => {
                                     onFocus={() => setFocused1(true)}
                                     value={props.data.phoneNo}
                                 />
-                                {focused1 && props.data.phoneNo.length <= 1 && (
-                                    <div className="text-red-500 text-sm">Phone Number is required.</div>
+                               {props.validationErrors.phoneNo && (
+                                    <div className="text-[red] error">{props.validationErrors.phoneNo}</div>
                                 )}
                             </div>
                         </div>
@@ -176,8 +181,8 @@ const OrgDetailsSetup = (props: any) => {
                                     onFocus={() => setFocused2(true)}
                                     value={props.data.orgEmail}
                                 />
-                                {focused2 && props.data.orgEmail.length <= 1 && (
-                                    <div className="text-red-500 text-sm">Email is required.</div>
+                                {props.validationErrors.orgEmail && (
+                                    <div className="text-[red] error">{props.validationErrors.orgEmail}</div>
                                 )}
                             </div>
                         </div>
@@ -231,8 +236,8 @@ const OrgDetailsSetup = (props: any) => {
                                     onFocus={() => setFocused5(true)}
                                     value={props.data.pincode}
                                 />
-                                {focused5 && props.data.pincode.length <= 1 && (
-                                    <div className="text-red-500 text-sm">Pincode is required.</div>
+                                {props.validationErrors.pincode && (
+                                    <div className="text-[red] error">{props.validationErrors.pincode}</div>
                                 )}
                             </div>
                         </div>

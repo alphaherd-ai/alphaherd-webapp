@@ -18,14 +18,13 @@ import { ZodError } from 'zod';
 import { setValidationErrorsForForm } from '@/utils/setValidationErrorForForm';
 import capitalizeFirst from "@/utils/capitiliseFirst";
 import Popup2 from "./updateinventorypopup";
+import { ItemUnit } from "@prisma/client";
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 type PopupProps = {
     onClose: () => void;
-}
-interface ItemUnit {
-    id: string,
-    name: string | string[],
+    setNewProduct?:any;
+    setIsNewProductClicked?:any
 }
 
 interface ItemCategory {
@@ -69,8 +68,8 @@ function useProductfetch(id: number | null) {
         error
     }
 }
-const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
-
+const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
+    
     const [lastStep, setLastStep] = useState(false);
     const [formData, setFormData] = useState<any>({});
     const [showPopup2, setShowPopup2] = React.useState(false);
@@ -241,7 +240,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
             });
 
             if (response.ok) {
-                // console.log('Data saved successfully');
+                console.log('Data saved successfully');
                 setProductData({
                     itemName: formData.itemName,
                     providers: selectedProviders,
@@ -249,7 +248,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
                 //onClose();
                 //window.dispatchEvent(new FocusEvent('focus'));
                 setShowPopup2(true);
-            } else {
+                } else {
                 console.error('Failed to save data:', response.statusText);
             }
         } catch (error) {
@@ -339,8 +338,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
     return (
         <>
             {!lastStep && (
-                <div className="w-full h-full overflow-auto flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50" >
-                    <div className="w-[640px] h-[687px] px-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
+                <div className="w-full h-full overflow-auto flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50" onClick={onClose}>
+                    <div className="w-[640px] h-[787px] px-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
                         <div className="self-end items-start gap-6 flex mt-[0.6rem] cursor-pointer" onClick={onClose}>
                             <Image src={closeicon} alt="close"></Image>
                         </div>

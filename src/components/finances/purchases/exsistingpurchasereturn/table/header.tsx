@@ -84,7 +84,7 @@ const ExsistingPurcaseReturnHeader = ({otherData, isLoading}:any) => {
             <div className="flex justify-between w-full pb-[16px]">
                 <div className="px-6 py-2 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                     <div className="flex gap-[0.8rem] items-center w-full">
-                        <div className="text-gray-500 text-base font-bold  w-1/8">Date:</div>
+                        <div className="text-gray-500 text-base font-bold  w-1/8">Purchase Date:</div>
                        
 
                         <div
@@ -97,7 +97,7 @@ const ExsistingPurcaseReturnHeader = ({otherData, isLoading}:any) => {
                 </div>
                 <div className="px-6 py-2 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full ">
                     <div className="flex gap-[0.2rem] items-center w-full">
-                        <div className="text-gray-500 text-base font-bold  w-[12rem]">Delivery Due Date:</div>
+                        <div className="text-gray-500 text-base font-bold  w-[12rem]">Return Date:</div>
                         
                         <div
                             className={"text-gray-500 text-base font-medium  w-full"}>

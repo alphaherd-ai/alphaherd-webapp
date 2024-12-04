@@ -43,7 +43,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({setFirstAdvancePaymentPai
         amountPaid: "",
     });
     const appState = useAppSelector((state) => state.app)
-    const [isAdvancePayment, setIsAdvancePayment] = useState(false);
+    const [isAdvancePayment, setIsAdvancePayment] = useState(true);
 
     const Mode = [
         { value: "Cash", label: "Cash" },
@@ -57,11 +57,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({setFirstAdvancePaymentPai
 
     const { data: modes, error: modesError, isLoading: modesLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
 
-    if(isAdvancePayment){
-        if(!isFirstAdvancePaymentPaid){
-            setFirstAdvancePaymentPaid(true);
-        }
-    }
+    
     useEffect(() => {
         if (modes && !modesError && !modesLoading) {
             const options3 = modes.map((mode: any) => ({
@@ -100,6 +96,11 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({setFirstAdvancePaymentPai
     
 
     const handleSaveClick = async () => {
+        if(isAdvancePayment){
+            if(!isFirstAdvancePaymentPaid){
+                setFirstAdvancePaymentPaid(true);
+            }
+        }
         setSaving(true);
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/create?branchId=${appState.currentBranchId}`, {
@@ -147,6 +148,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({setFirstAdvancePaymentPai
     };
 
     useEffect(() => {
+       // console.log(isFirstAdvancePaymentPaid);
         if (balanceDue !== undefined) {
             setFormData((prevData: any) => ({
                 ...prevData,
