@@ -2,7 +2,7 @@
 
 import lefticon from "../../../../../assets/icons/finance/left_icon.svg"
 import Link from "next/link"
-import Menu from '@/assets/icons/finance/Menu.svg';
+import Menu from '../../../../../assets/icons/finance/menu.svg';
 import Repeat from "../../../../../assets/icons/finance/replay.svg"
 import Image from "next/image"
 import { Button, Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react"
