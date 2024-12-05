@@ -133,6 +133,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, in
             isAdvancePayment: isAdvancePayment,
             mode: selectedMode,
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
+            receiptNo: initialInvoiceNo
         };
 
         dispatch(addAmount({ amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1 * formData.amountPaid, 10) || (balanceDue), mode: selectedMode, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out', date: formData.date || new Date() }))

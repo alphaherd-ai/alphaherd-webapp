@@ -81,8 +81,10 @@ const NewPurchasesHeader = ({existingHeaderData,isNewDistributorClicked, newDist
 
     useEffect(()=>{
         if(!isLoading&&!error&&data){
+            console.log(data);
               const distributors=data?.map((distributor:any)=>({
                 value:distributor.distributorName,
+                distributorId:distributor.id,
                 email:distributor.email,
                 label:`${distributor.distributorName}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0${distributor.contact}`
             }))

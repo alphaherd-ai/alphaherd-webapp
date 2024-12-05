@@ -114,6 +114,7 @@ const NewsaleEstimateBottomBar = () => {
         }));
         const data = {
             customer: allData.headerData.customer.value.clientName,
+            
             notes: allData.headerData.notes,
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo: allData.headerData.invoiceNo,

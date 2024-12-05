@@ -94,32 +94,14 @@ const NewPurchaseReturnNewHeader = ({existingHeaderData}:any) => {
      else{
         setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo,dueDate:dueDate}))}
     },[])
-    // useEffect(()=>{
-    //     if(!isLoading&&!error&&data){
-    //           const distributors=data?.map((distributor:any)=>({
-    //             value:distributor.distributorName,
-    //             email:distributor.email,
-    //             label:`${distributor.distributorName}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0${distributor.contact}` 
-    //         }))
-    //         setDistributors(distributors);
-
-    //     }
-    // },[data])
-    console.log("heder data invoice is : ",headerData.distributor);
-    useEffect(() => {
-        if (!isLoading && !error && Array.isArray(data) && data.length > 0) {
-
-            const distributors = data.map((distributor: any) => ({
-                value: {
-                    distributorName: distributor.distributorName,
-                    contact: distributor.contact,
-                    invoiceNo: distributor.invoiceNo,
-                    distributorId: distributor.id,
-                    email: distributor.email
-                },
-                label: `${distributor.distributorName}\u00A0\u00A0\u00A0\u00A0\u00A0${distributor.contact}`
+    useEffect(()=>{
+        if(!isLoading&&!error&&data){
+              const distributors=data?.map((distributor:any)=>({
+                value:distributor.distributorName,
+                distributorId:distributor.id,
+                email:distributor.email,
+                label:`${distributor.distributorName}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0${distributor.contact}` 
             }))
-            // console.log(distributors)
             setDistributors(distributors);
 
         }

@@ -93,7 +93,8 @@ const NewsalesHeader = ({ existingHeaderData, isNewClientClicked, newClient }: a
                     clientName: newClient.clientName,
                     contact: newClient.contact,
                     clientId: newClient.id,
-                    email: newClient.email
+                    email: newClient.email,
+                    
                 },
                 label: `${newClient.clientName}\u00A0\u00A0\u00A0\u00A0\u00A0${newClient.contact}`
             }
@@ -131,7 +132,8 @@ const NewsalesHeader = ({ existingHeaderData, isNewClientClicked, newClient }: a
                     clientName: client.clientName,
                     contact: client.contact,
                     clientId: client.id,
-                    email: client.email
+                    email: client.email,
+                    creditedToken:client.creditedToken
                 },
                 label: `${client.clientName}\u00A0\u00A0\u00A0\u00A0\u00A0${client.contact}`
             }))

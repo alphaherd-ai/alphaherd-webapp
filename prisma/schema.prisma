@@ -220,7 +220,7 @@ model Clients {
   patients          Patients[]
   DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
   databaseSectionId Int?
-
+  creditedToken     Float?          @default(0)
   @@index([databaseSectionId])
   @@map("client")
 }
@@ -256,7 +256,8 @@ model Distributors {
   date              DateTime?        @default(now())
   DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
   databaseSectionId Int?
-
+  invoiceNo         String[]
+  creditedToken     Float?           @default(0)
   @@index([databaseSectionId])
 }
 
@@ -340,7 +341,6 @@ model Services {
 model Sales {
   id                Int                  @id @default(autoincrement())
   customer          String?
-  clientId          Int?
   email             String?
   date              DateTime?            @default(now())
   notes             String?
@@ -359,6 +359,7 @@ model Sales {
   financeTimeline   FinanceTimeline[]
   FinanceSection    FinanceSection?      @relation(fields: [financeSectionId], references: [id])
   financeSectionId  Int?
+  clientId          Int?
 
   @@index([financeSectionId,id])
   @@index([financeSectionId, invoiceNo])
@@ -377,6 +378,7 @@ model RecordTransaction {
   purchasesId      Int?
   expenses         Expenses?  @relation(fields: [expensesId], references: [id])
   expensesId       Int?
+  receiptNo        String?
 
   @@index([salesId, purchasesId, expensesId])
   
@@ -385,6 +387,7 @@ model RecordTransaction {
 model Purchases {
   id                   Int                 @id @default(autoincrement())
   distributor          String?
+  distributorId        Int?
   email                String?
   date                 DateTime?           @default(now())
   dueDate              DateTime
