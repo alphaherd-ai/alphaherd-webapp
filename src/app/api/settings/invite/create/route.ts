@@ -148,12 +148,14 @@ export const POST = async (req: NextRequest) => {
         html: htmlTemplate(userInviteString),
     }
 
-    transporter.sendMail(options, (error, info)=> {
-        if (error) {
-            console.error(error);
-        } else {
-            console.info('Email sent: ' + info.response);
-        }
-    });
+   await new Promise((resolve, reject) => {
+        transporter.sendMail(options, (error, info) => {
+            if (error) {
+                console.error(error);
+            } else {
+                console.info('Email sent: ' + info.response);
+            }
+        });
+    })
     return new Response(JSON.stringify({"message" : "success"}),{status: 200});
 }
