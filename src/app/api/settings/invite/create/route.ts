@@ -132,6 +132,7 @@ export const POST = async (req: NextRequest) => {
     let userInviteString = await encrypt({ branchId, role, email }, "7 day");
 
     const transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
         service: "gmail",
         secure:true,
         port:465,
