@@ -133,6 +133,8 @@ export const POST = async (req: NextRequest) => {
 
     const transporter = nodemailer.createTransport({
         service: "gmail",
+        secure:true,
+        port:465,
         auth: {
             user: AUTOMATED_GMAIL,
             pass: AUTOMATED_GMAIL_APP_PASSWORD
