@@ -10,7 +10,7 @@ import InventoryIcon from './icons/inventoryIcon';
 import HomeIcon from './icons/homeIcon';
 import Settings from '../../assets/icons/finance/Settings.svg'
 import ProfileIcon from "../../assets/icons/settings/pfpcion.jpeg";
-import addIcon from '../../assets/icons/settings/addicon.svg';
+import addIcon from '../../assets/icons/home/add2.svg';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -28,9 +28,10 @@ import zIndex from '@mui/material/styles/zIndex';
 import useSWR from "swr";
 import { boolean } from 'zod';
 import Invoice from '../../assets/icons/finance/invoice.svg';
-
+import Expense from '../../assets/icons/finance/request_quote.svg';
+import Payment from '../../assets/icons/finance/Cash.svg';
 import Estimate from "../../assets/icons/finance/list_alt.svg"
-
+import add_Icon from '../../assets/icons/finance/1. Icons-24.svg';
 import Return from '../../assets/icons/finance/return.svg';
 
 
@@ -70,79 +71,148 @@ const Navbar = () => {
   };
 
   const DrawerList = (
-    <Box sx={{ width: 250 ,bgcolor: "black"}} onClick={toggleDrawer(false)}>
-      <List>
-
-      <ListItem>
-        <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
-            <div className='text-base p-4  text-white flex '>
-            <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Sales Invoice</div>
-        </Link>
-      </ListItem>
-      <ListItem>
-        <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
-            <div className='text-base p-4  text-white flex '>
-            <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Sales Estimate</div>
-        </Link>
-      </ListItem>
-      <ListItem>
-        <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
-            <div className='text-base p-4  text-white flex '>
-            <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Sales Return</div>
-        </Link>
-      </ListItem>
-      </List>
-      <Divider />
-      <List>
-
-<ListItem>
-  <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
-      <div className='text-base p-4  text-white flex '>
-      <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Purchase Order</div>
-  </Link>
-</ListItem>
-<ListItem>
-  <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
-      <div className='text-base p-4  text-white flex '>
-      <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Purchase Invoice</div>
-  </Link>
-</ListItem>
-<ListItem>
-  <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
-      <div className='text-base p-4  text-white flex '>
-      <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Purchase Retrun</div>
-  </Link>
-</ListItem>
-</List>
-<Divider />
-<List>
-
-<ListItem>
-  <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
-      <div className='text-base p-4  text-white flex '>
-      <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Sales Invoice</div>
-  </Link>
-</ListItem>
-<ListItem>
-  <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
-      <div className='text-base p-4  text-white flex '>
-      <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Sales Invoice</div>
-  </Link>
-</ListItem>
-<ListItem>
-  <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
-      <div className='text-base p-4  text-white flex '>
-      <div className='flex pr-2'><Image src={Invoice} alt='Return' className='w-5 h-5 ' /></div>Sales Invoice</div>
-  </Link>
-</ListItem>
-</List>
-<Divider />
-<List>
-</List>
-    
+    <Box className='min-h-fit h-full' sx={{ width: 250 ,bgcolor: "black"  }} onClick={toggleDrawer(false)}>
+      <div className="subheadbox px-2 pt-6 pb-2">
+        <div className="subhead text-sm font-light text-white pl-4">Sales</div>
+        <List>
+          <ListItem>
+            <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+                <div className='text-base font-normal  text-white flex '>
+                  <div className='flex pr-2'>
+                    <Image src={Estimate} alt='Return' className='w-5 h-5 ' />
+                  </div>
+                  Estimate
+                </div>
+            </Link>
+          </ListItem>
+          <ListItem>
+            <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+                <div className='text-base  text-white flex '>
+                  <div className='flex pr-2'>
+                    <Image src={Invoice} alt='Return' className='w-5 h-5 ' />
+                  </div>
+                  Invoice
+                </div>
+            </Link>
+          </ListItem>
+          <ListItem>
+            <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+                <div className='text-base  text-white flex '>
+                  <div className='flex pr-2'>
+                    <Image src={Return} alt='Return' className='w-5 h-5 ' />
+                  </div>
+                  Return
+                </div>
+            </Link>
+          </ListItem>
+        </List>
+      </div>
+      <hr className='border-solid border-[#393939] mx-[25px] border-[0.5px]' />
+      <div className="subheadbox px-2 pt-6 pb-2">
+        <div className="subhead text-sm font-light text-white pl-4">Database</div>
+        <List>
+          <ListItem>
+            <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+                <div className='text-base font-normal  text-white flex '>
+                  <div className='flex pr-2'>
+                    <Image src={Estimate} alt='Return' className='w-5 h-5 ' />
+                  </div>
+                  Client
+                </div>
+            </Link>
+          </ListItem>
+          <ListItem>
+            <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+                <div className='text-base  text-white flex '>
+                  <div className='flex pr-2'>
+                    <Image src={Invoice} alt='Return' className='w-5 h-5 ' />
+                  </div>
+                  Patient
+                </div>
+            </Link>
+          </ListItem>
+          <ListItem>
+            <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+                <div className='text-base  text-white flex '>
+                  <div className='flex pr-2'>
+                    <Image src={Estimate} alt='Return' className='w-5 h-5 ' />
+                  </div>
+                  Distribution
+                </div>
+            </Link>
+          </ListItem>
+        </List>
+      </div>
+      <hr className='border-[0.5px] border-solid border-[#393939] mx-[25px] important'/>
+      <div className="subheadbox px-2 pt-6 pb-2">
+        <div className="subhead text-sm font-light text-white pl-4">Purchases</div>
+        <List>
+          <ListItem>
+            <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+                <div className='text-base font-normal  text-white flex '>
+                  <div className='flex pr-2'>
+                    <Image src={Estimate} alt='Return' className='w-5 h-5 ' />
+                  </div>
+                  Purchase Order
+                </div>
+            </Link>
+          </ListItem>
+          <ListItem>
+            <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+                <div className='text-base  text-white flex '>
+                  <div className='flex pr-2'>
+                    <Image src={Invoice} alt='Return' className='w-5 h-5 ' />
+                  </div>
+                  Purchase Invoice
+                </div>
+            </Link>
+          </ListItem>
+          <ListItem>
+            <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+                <div className='text-base  text-white flex '>
+                  <div className='flex pr-2'>
+                    <Image src={Return} alt='Return' className='w-5 h-5 ' />
+                  </div>
+                  Purchase Return
+                </div>
+            </Link>
+          </ListItem>
+        </List>
+      </div>
+      <hr className='border-[0.5px] border-solid border-[#393939] mx-[25px] important'/>
+      <div className="subheadbox px-2 pt-6 pb-2">
+        <div className="subhead text-sm font-light text-white pl-4">Expenses</div>
+        <List>
+          <ListItem>
+            <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+                <div className='text-base font-normal  text-white flex '>
+                  <div className='flex pr-2'>
+                    <Image src={Expense} alt='Return' className='w-5 h-5 ' />
+                  </div>
+                  Record Expense
+                </div>
+            </Link>
+          </ListItem>
+        </List>
+      </div>
+      <hr className='border-[0.5px] border-solid border-[#393939] mx-[25px] important'/>
+      <div className="subheadbox px-2 pt-6 pb-2">
+        <div className="subhead text-sm font-light text-white pl-4">Payments</div>
+        <List>
+          <ListItem>
+            <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+                <div className='text-base font-normal  text-white flex '>
+                  <div className='flex pr-2'>
+                    <Image src={Payment} alt='Return' className='w-5 h-5 ' />
+                  </div>
+                  Record Payment
+                </div>
+            </Link>
+          </ListItem>
+        </List>
+      </div>
     </Box>
   );
-
   const router = useRouter() as any;
   const [isCardOpen, setIsCardOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -217,15 +287,14 @@ console.log("new notifs is : ",newnotifs);
 if (user.name === "" || currentRoute.startsWith("/auth"))return null;
   return (
     <div className='h-16 shadow-md min-w-screen box-border flex items-center justify-between text-textGrey1 bg-navBar z-100'>
-        
-      <div className='flex flex-row'>
-      <div className='no-underline py-4 px-3 border-0 border-r-2 border-solid border-gray-800' >
-            <Button onClick={toggleDrawer(true)} className='bg-greenButton w-[2rem] rounded-full'>
-              <Image src={addIcon} alt='addIcon' className='w-4 h-4' />
-            </Button>
-            <Drawer open={open} onClose={toggleDrawer(false)}>
-              {DrawerList}
-            </Drawer>
+      <div className='flex flex-row items-center'>
+        <div className=' px-4 py-2 border-0 border-r border-solid border-[#393939] '>
+          <button onClick={toggleDrawer(true)} className='rounded-full bg-[#38F8E6] flex items-center justify-center h-[3rem] w-[3rem] border-0'>
+            <Image src={addIcon} alt='addIcon' className='w-5 text-black important' />
+          </button>
+          <Drawer  open={open} onClose={toggleDrawer(false)}>
+            {DrawerList}
+          </Drawer>
         </div>
         <Link className='no-underline py-5 px-10 border-0 border-r-2 border-solid border-gray-800' href={`/`}>
           <div className={currentRoute === "/" ? " text-white text-base font-medium leading-6 flex items-center justify-center" : " text-gray-400 text-base font-medium leading-6 flex items-center justify-center"}>
