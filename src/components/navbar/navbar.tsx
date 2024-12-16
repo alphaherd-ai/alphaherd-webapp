@@ -71,7 +71,7 @@ const Navbar = () => {
   };
 
   const DrawerList = (
-    <Box className='min-h-fit h-full [::-webkit-scrollbar-track]:bg-black' sx={{ width: 250 ,bgcolor: "black"  }} onClick={toggleDrawer(false)}>
+    <Box className='min-h-fit h-full' sx={{ width: 250 ,bgcolor: "black"  }} onClick={toggleDrawer(false)}>
       <div className="subheadbox px-2 pt-6 pb-2">
         <div className="subhead text-sm font-light text-white pl-4">Sales</div>
         <List>
