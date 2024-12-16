@@ -11,16 +11,23 @@ import downloadicon from "../../../../../assets/icons/finance/download.svg"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@mui/material"
-import { generatePdfForInvoice } from "@/utils/salesPdf"
+import { generatePdfForInvoice,DownloadPdf,PrintPdf } from "@/utils/salesPdf"
 import { useAppSelector } from "@/lib/hooks"
 import axios from "axios"
 
 const ExistingsalesReturnBottomBar = ({existingSalesData}:any) => {
     const appState = useAppSelector((state: { app: any }) => state.app);
     const downloadPdf = async () => {
-    // const allData = existingSalesData;
+                // const allData = existingSalesData;
+                const data = existingSalesData;
+                const doc = await generatePdfForInvoice(data, appState, existingSalesData.items);
+                // printPdf(doc);
+                DownloadPdf(doc, `Invoice_${data.id}.pdf`);
+            };
+    const printPdf = async () => {
         const data = existingSalesData;
-    generatePdfForInvoice(data, appState, existingSalesData.items);
+        const doc = await generatePdfForInvoice(data, appState, existingSalesData.items);
+        PrintPdf(doc);
     };
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [email, setEmail] = useState("");

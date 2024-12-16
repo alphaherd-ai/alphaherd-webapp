@@ -71,12 +71,12 @@ const Navbar = () => {
   };
 
   const DrawerList = (
-    <Box className='min-h-fit h-full' sx={{ width: 250 ,bgcolor: "black"  }} onClick={toggleDrawer(false)}>
+    <Box className='min-h-fit h-full [::-webkit-scrollbar-track]:bg-black' sx={{ width: 250 ,bgcolor: "black"  }} onClick={toggleDrawer(false)}>
       <div className="subheadbox px-2 pt-6 pb-2">
         <div className="subhead text-sm font-light text-white pl-4">Sales</div>
         <List>
           <ListItem>
-            <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+            <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsalesestimate'}}>
                 <div className='text-base font-normal  text-white flex '>
                   <div className='flex pr-2'>
                     <Image src={Estimate} alt='Return' className='w-5 h-5 ' />
@@ -96,7 +96,7 @@ const Navbar = () => {
             </Link>
           </ListItem>
           <ListItem>
-            <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+            <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsalesreturn'}}>
                 <div className='text-base  text-white flex '>
                   <div className='flex pr-2'>
                     <Image src={Return} alt='Return' className='w-5 h-5 ' />
@@ -112,7 +112,7 @@ const Navbar = () => {
         <div className="subhead text-sm font-light text-white pl-4">Database</div>
         <List>
           <ListItem>
-            <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+            <Link className='no-underline flex item-center' href={{pathname:'/database/clients'}}>
                 <div className='text-base font-normal  text-white flex '>
                   <div className='flex pr-2'>
                     <Image src={Estimate} alt='Return' className='w-5 h-5 ' />
@@ -122,7 +122,7 @@ const Navbar = () => {
             </Link>
           </ListItem>
           <ListItem>
-            <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+            <Link className='no-underline flex item-center' href={{pathname:'/database/patient'}}>
                 <div className='text-base  text-white flex '>
                   <div className='flex pr-2'>
                     <Image src={Invoice} alt='Return' className='w-5 h-5 ' />
@@ -132,12 +132,12 @@ const Navbar = () => {
             </Link>
           </ListItem>
           <ListItem>
-            <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+            <Link className='no-underline flex item-center' href={{pathname:'/database/distributor'}}>
                 <div className='text-base  text-white flex '>
                   <div className='flex pr-2'>
                     <Image src={Estimate} alt='Return' className='w-5 h-5 ' />
                   </div>
-                  Distribution
+                  Distributors
                 </div>
             </Link>
           </ListItem>
@@ -148,7 +148,7 @@ const Navbar = () => {
         <div className="subhead text-sm font-light text-white pl-4">Purchases</div>
         <List>
           <ListItem>
-            <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+            <Link className='no-underline flex item-center' href={{pathname:'/finance/purchases/order'}}>
                 <div className='text-base font-normal  text-white flex '>
                   <div className='flex pr-2'>
                     <Image src={Estimate} alt='Return' className='w-5 h-5 ' />
@@ -158,7 +158,7 @@ const Navbar = () => {
             </Link>
           </ListItem>
           <ListItem>
-            <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+            <Link className='no-underline flex item-center' href={{pathname:'/finance/purchases/creategrn'}}>
                 <div className='text-base  text-white flex '>
                   <div className='flex pr-2'>
                     <Image src={Invoice} alt='Return' className='w-5 h-5 ' />
@@ -168,7 +168,7 @@ const Navbar = () => {
             </Link>
           </ListItem>
           <ListItem>
-            <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+            <Link className='no-underline flex item-center' href={{pathname:'/finance/purchases/newreturn'}}>
                 <div className='text-base  text-white flex '>
                   <div className='flex pr-2'>
                     <Image src={Return} alt='Return' className='w-5 h-5 ' />
@@ -184,7 +184,7 @@ const Navbar = () => {
         <div className="subhead text-sm font-light text-white pl-4">Expenses</div>
         <List>
           <ListItem>
-            <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+            <Link className='no-underline flex item-center' href={{pathname:'/finance/expenses/newexpenses'}}>
                 <div className='text-base font-normal  text-white flex '>
                   <div className='flex pr-2'>
                     <Image src={Expense} alt='Return' className='w-5 h-5 ' />
