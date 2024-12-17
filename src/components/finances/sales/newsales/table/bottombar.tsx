@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation"
 import { create } from "domain"
 import Loading2 from "@/app/loading2"
 import { header } from "express-validator"
+import { mutate } from "swr"
 
 const NewsalesBottomBar = ({ estimateData }: any) => {
     const { headerData, tableData, totalAmountData, transactionsData } = useContext(DataContext);
@@ -105,16 +106,21 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
             const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Invoice}?branchId=${appState.currentBranchId}`, data)
             const notifPromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
 
-            setTimeout(()=>{
-                router.back();
-            },2000);
+            // setTimeout(()=>{
+            //     router.back();
+            // },2000);
 
             const [response,notif]=await Promise.all([responsePromise,notifPromise])
 
             if (!response.data) {
                 throw new Error('Network response was not ok');
             }
-
+            console.log(response.status);
+            // if(response.status===201){
+                
+            // }
+            mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`,(currData:any)=>[...currData,response.data?.sales],false)
+            router.back();
 
         } catch (error) {
             console.error('Error:', error);

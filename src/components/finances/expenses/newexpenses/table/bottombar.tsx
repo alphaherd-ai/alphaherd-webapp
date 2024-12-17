@@ -37,7 +37,8 @@ const NewExpensesBottomBar = ({ expenseData }: any) => {
     const handleSubmit = async () => {
         tableData.pop();
         const allData = { headerData, tableData, totalAmountData, recurringData, transactionsData };
-        console.log("this is all data", allData)
+        // console.log("this is all data", allData)
+        // console.log(new Date(Date.now()));    
         let totalQty = 0;
         tableData.forEach(data => {
             totalQty += 1 || 0;
@@ -53,11 +54,11 @@ const NewExpensesBottomBar = ({ expenseData }: any) => {
             notes: (id === null) ? allData.headerData.notes : expenseData.notes,
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo: (id === null) ? allData.headerData.invoiceNo : expenseData.invoiceNo,
-            dueDate: (id === null) ? allData.headerData.dueDate : expenseData.dueDate,
+            dueDate: (id === null) ? (allData.headerData.dueDate) || new Date(Date.now()) : expenseData.dueDate,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
             totalCost: allData.totalAmountData.totalCost,
-            overallDiscount: allData.totalAmountData.gst.value,
+            overallDiscount: allData.totalAmountData.gst?.value,
             totalQty: totalQty,
             recordTransaction: {
                 create: allData.transactionsData
@@ -88,7 +89,8 @@ const NewExpensesBottomBar = ({ expenseData }: any) => {
             if (!response.data) {
                 throw new Error('Network response was not ok');
             }
-            
+            //console.log(response.data);
+            //mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/getAll?branchId=${appState.currentBranchId}`,(currData:any)=>[...currData,response?.data?.expense],false)
             router.back()
         } catch (error) {
             console.error('Error:', error);
@@ -104,7 +106,8 @@ const NewExpensesBottomBar = ({ expenseData }: any) => {
     }
 
 
-    const isDisabled = !headerData.customer || tableData.length === 1 ;
+    const isDisabled = !(headerData.customer || expenseData?.party) || (id===null) ? tableData.length===1 : tableData.length===0;
+    console.log(isDisabled);
     return (
         <>
 

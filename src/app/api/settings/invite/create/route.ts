@@ -129,25 +129,31 @@ export const POST = async (req: NextRequest) => {
 
     }
     const {AUTOMATED_GMAIL,AUTOMATED_GMAIL_APP_PASSWORD} = process.env;
+    
     let userInviteString = await encrypt({ branchId, role, email }, "7 day");
-
+    
     const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
         service: "gmail",
+        secure:false,
+        port:587,
         auth: {
             user: AUTOMATED_GMAIL,
             pass: AUTOMATED_GMAIL_APP_PASSWORD
         },
     });
 
+    
+
     const message = "Hi there, you were emailed me through nodemailer"
     const options = {
-        from: process.env.CUSTOMCONNSTR_AUTOMATED_GMAIL, // sender address
+        from: AUTOMATED_GMAIL, // sender address
         to: email, // receiver email
         subject: "Invitation to join Organization: Alphaherd", // Subject line
         text: message,
         html: htmlTemplate(userInviteString),
     }
-
+    
     transporter.sendMail(options, (error, info)=> {
         if (error) {
             console.error(error);
@@ -155,5 +161,5 @@ export const POST = async (req: NextRequest) => {
             console.info('Email sent: ' + info.response);
         }
     });
-    return new Response(JSON.stringify({"message" : "success"}),{status: 200});
+    return new Response(JSON.stringify({ message: 'Email sent successfully' }));
 }

@@ -34,7 +34,7 @@ interface ProductBatch {
   sellingPrice: number;
   category: string;
   product: Products;
-
+  productId: string;
 }
 interface InventoryTimeline {
   id: string;
@@ -115,18 +115,18 @@ const ProductAllItem = ({ sortOrder, sortKey }: any) => {
               return sortOrder === 'asc' ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
             }
           }
-          
+
           return 0;
         });
         setProducts(sortedData);
-        return ;
+        return;
       }
 
       setProducts(filteredData);
       console.log(filteredData);
     }
 
-  }, [data, error, isLoading, startDate, endDate,sortOrder,sortKey, selectedInvoiceTypes, selectedInvoiceNo, selectedParties, selectedMoneyTypes])
+  }, [data, error, isLoading, startDate, endDate, sortOrder, sortKey, selectedInvoiceTypes, selectedInvoiceNo, selectedParties, selectedMoneyTypes])
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
@@ -144,32 +144,50 @@ const ProductAllItem = ({ sortOrder, sortKey }: any) => {
 
   const handleRedirect = async ({ invoice, invoiceType }: HandleRedirectParams) => {
     // in dev mode just add a prefix /alphaherd 
-    console.log(invoice,invoiceType);
-    const financeItemType = (invoice?.startsWith('SI') || invoice?.startsWith('SR')) ? 'sales' : 'purchase';
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/getfromInvoice/?branchId=${appState.currentBranchId}`, {
-        method: 'POST',
-        body: JSON.stringify({ invoice, financeType: financeItemType }),
-        headers: {
-          'Content-Type': 'application/json'
+    console.log(invoice, invoiceType);
+    if (invoiceType === "Transfer") {
+        try{
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/transfer/invoice/name/${invoice}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }).then(res => res.json()).then(data => {
+            console.log(data);
+            window.location.replace(`/alphaherd/inventory/exsistingtransfer?id=${data.id}`)
+          });
         }
-      }).then(res => res.json()).then(data => {
-        console.log(data);
-        if (invoiceType.includes('Sales_Invoice')) {
-          window.location.replace(`/finance/sales/existingsales?id=${data.id}`)
+        catch(err){
+          console.log(err);
         }
-        else if (invoiceType.includes('Purchase_Invoice')) {
-          window.location.replace(`/finance/purchases/exsistinggrn?id=${data.id}`)
-        }
-        else if (invoiceType.includes('Purchase_Return')) {
-          window.location.replace(`/finance/purchases/exsistingpurchasereturn?id=${data.id}`)
-        }
-        else if (invoiceType.includes('Sales_Return')) {
-          window.location.replace(`/finance/sales/existingsalesreturn?id=${data.id}`)
-        }
-      });
-    } catch (err) {
-      console.log(err);
+    }
+    else {
+      const financeItemType = (invoice?.startsWith('SI') || invoice?.startsWith('SR')) ? 'sales' : 'purchase';
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/getfromInvoice/?branchId=${appState.currentBranchId}`, {
+          method: 'POST',
+          body: JSON.stringify({ invoice, financeType: financeItemType }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(res => res.json()).then(data => {
+          console.log(data);
+          if (invoiceType.includes('Sales_Invoice')) {
+            window.location.replace(`/finance/sales/existingsales?id=${data.id}`)
+          }
+          else if (invoiceType.includes('Purchase_Invoice')) {
+            window.location.replace(`/finance/purchases/exsistinggrn?id=${data.id}`)
+          }
+          else if (invoiceType.includes('Purchase_Return')) {
+            window.location.replace(`/finance/purchases/exsistingpurchasereturn?id=${data.id}`)
+          }
+          else if (invoiceType.includes('Sales_Return')) {
+            window.location.replace(`/finance/sales/existingsalesreturn?id=${data.id}`)
+          }
+        });
+      } catch (err) {
+        console.log(err);
+      }
     }
   }
 
@@ -184,8 +202,8 @@ const ProductAllItem = ({ sortOrder, sortKey }: any) => {
             <div className='w-[6rem] flex items-center  text-neutral-400 text-base font-medium'>{formatDateAndTime(inventory.createdAt).formattedDate}</div>
             <div className='w-[6rem] flex items-center text-neutral-400 text-base font-medium'>{formatDateAndTime(inventory.createdAt).formattedTime}</div>
             <div className='w-[12rem] flex items-center text-neutral-400 text-base font-medium'>
-              <Link href={{ pathname: 'overview', query: { id: `${inventory.productBatch?.id}` } }} className='transition-colors duration-300 text-gray-400 no-underline hover:underline hover:text-teal-400'>
-                {inventory.productBatch?.product?.itemName}
+              <Link href={{ pathname: 'overview', query: { id: `${inventory?.invoiceNo?.startsWith('IT') ? "" : inventory?.productBatch?.productId}` } }} className={`transition-colors ${inventory?.invoiceNo?.startsWith('IT') ? "cursor-not-allowed" : ""} duration-300 text-gray-400 no-underline hover:underline hover:text-teal-400`}>
+                {inventory?.invoiceNo?.startsWith('IT') ? "Inventory Transfer" : inventory?.productBatch?.product?.itemName}
               </Link>
             </div>
             <div className='w-[5rem] flex items-center text-neutral-400 text-base font-medium'>{inventory.quantityChange}</div>
@@ -209,10 +227,10 @@ const ProductAllItem = ({ sortOrder, sortKey }: any) => {
               </span>
             </div>
             <div className='w-[8rem] flex  items-center  text-neutral-400 text-base font-medium flex-col'>
-              <div className='text-gray-500 text-xs'>{inventory.productBatch?.batchNumber}</div>
-              <div className='text-neutral-400 text-[13px] font-medium'>{formatDateAndTime(inventory.productBatch?.expiry).formattedDate}</div>
+              <div className='text-gray-500 text-xs'>{inventory?.invoiceNo?.startsWith('IT') ? "" : inventory?.productBatch?.batchNumber}</div>
+              <div className='text-neutral-400 text-[13px] font-medium'>{formatDateAndTime(inventory?.invoiceNo?.startsWith('IT') ? "" : inventory?.productBatch?.expiry).formattedDate}</div>
             </div>
-            <div className='w-[12rem] flex  items-center  text-neutral-400 text-base font-medium'>{inventory.productBatch?.product.providers[0]}</div>
+            <div className='w-[12rem] flex  items-center  text-neutral-400 text-base font-medium'>{inventory?.invoiceNo?.startsWith('IT') ? inventory?.party : inventory?.productBatch?.product.providers[0]}</div>
             <div className='w-[8rem] px-1 flex  items-center justify-center text-gray-500 text-[0.65rem] font-medium  py-1.5 bg-gray-200 rounded-md'>{inventory.invoiceType}</div>
             <Tooltip content={inventory.invoiceNo} className='bg-black w-[8rem] text-white px-1 text-sm rounded-lg'>
               <div className='w-[8rem] flex  items-center  text-neutral-400 text-base font-medium pl-2 transition-colors duration-300 cursor-pointer no-underline hover:underline hover:text-teal-400' onClick={() => handleRedirect({ invoice: inventory.invoiceNo, invoiceType: inventory.invoiceType })}>{inventory.invoiceNo}</div>

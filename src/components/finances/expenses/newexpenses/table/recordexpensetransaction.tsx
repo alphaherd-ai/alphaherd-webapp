@@ -31,10 +31,11 @@ type PopupProps = {
     totalAmount: any;
     balanceDue: any;
     setCount:any;
+    expenseData?:any;
 }
 
 
-const RecordTransactionPopup: React.FC<PopupProps> = ({headerdata,setCount, transactionsData, setTransactionsData, initialInvoiceNo, totalAmount, balanceDue}) => {
+const RecordTransactionPopup: React.FC<PopupProps> = ({headerdata,setCount,expenseData, transactionsData, setTransactionsData, initialInvoiceNo, totalAmount, balanceDue}) => {
 
     const dispatch = useDispatch();
     const [isSaving,setSaving]=useState(false);
@@ -161,7 +162,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({headerdata,setCount, tran
         setFormData({ ...formData, [field]: value });
     }
 
-
+    //console.log(expenseData);
 
 
     const customStyles = {
@@ -254,7 +255,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({headerdata,setCount, tran
                     </div>
 
                     <div>
-                        <div className="w-[440px] flex items-center h-9 rounded-[5px] text-textGrey2 bg-white text-base font-medium px-2 py-6  outline-none border border-solid border-gray-300 ">{headerdata ? headerdata?.customer?.label : ""}
+                        <div className="w-[440px] flex items-center h-9 rounded-[5px] text-textGrey2 bg-white text-base font-medium px-2 py-6  outline-none border border-solid border-gray-300 ">{headerdata?.customer ? headerdata?.customer?.label : expenseData?.party}
                             <div >
                                 {balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
                                     You owe ₹{totalAmount.subTotal ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}

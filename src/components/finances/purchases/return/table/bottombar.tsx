@@ -15,6 +15,8 @@ import { useAppSelector } from "@/lib/hooks"
 import { useRouter, useSearchParams } from "next/navigation"
 import { FinanceCreationType } from "@prisma/client"
 import axios from "axios"
+import { mutate } from "swr"
+
 const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
     const { headerData, tableData, totalAmountData } = useContext(DataContext);
     console.log("invoice data is :",invoiceData);
@@ -63,14 +65,15 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
         console.log(JSON.stringify(data))
         try {
             const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Return}?branchId=${appState.currentBranchId}`,data)
-            setTimeout(()=>{
-                router.back();
-            },2000);
+            // setTimeout(()=>{
+            //     router.back();
+            // },2000);
             const response= await responsePromise;
             if (!response.data) {
                 throw new Error('Network response was not ok');
             }
-            
+            mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/getAll?branchId=${appState.currentBranchId}`,(currState:any)=>[...currState,response?.data?.purchases],false);
+            router.back();
     
         } catch (error) {
             console.error('Error:', error);
