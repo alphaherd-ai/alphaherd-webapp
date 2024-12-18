@@ -154,7 +154,7 @@ const ProductAllItem = ({ sortOrder, sortKey }: any) => {
             }
           }).then(res => res.json()).then(data => {
             console.log(data);
-            window.location.replace(`/alphaherd/inventory/exsistingtransfer?id=${data.id}`)
+            window.location.replace(`/inventory/exsistingtransfer?id=${data.id}`)
           });
         }
         catch(err){
