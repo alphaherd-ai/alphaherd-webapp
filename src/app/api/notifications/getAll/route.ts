@@ -9,7 +9,7 @@ export const GET=async(req: NextRequest,res:Response)=> {
 } 
     try { 
         const url= req.nextUrl
-        console.log("url : ",url);
+        //console.log("url : ",url);
         const { searchParams } = new URL(url);
         const orgId = searchParams.get("orgId")!;  
         const allNotifs= await prismaClient.notifications.findMany({where:{

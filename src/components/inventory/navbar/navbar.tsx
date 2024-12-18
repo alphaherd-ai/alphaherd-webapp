@@ -17,12 +17,12 @@ import { FinanceCreationType } from '@prisma/client';
 import Popup from '../product/producttable/newproductpopup';
 import Popup2 from '../product/producttable/updateinventorypopup';
 import Popup3 from '../services/table/newservicepopup';
-
+import InventoryTransferIcon from '../../../assets/icons/inventory/updateInv.svg'
 
 
 
 //@ts-ignore
-const fetcher = (...args:any[]) => fetch(...args).then(res => res.json());
+const fetcher = (...args: any[]) => fetch(...args).then(res => res.json());
 
 
 const InventoryNavbar = () => {
@@ -30,8 +30,8 @@ const InventoryNavbar = () => {
     const [searchData, setSearchData] = useState<any[]>([]);
     const [searchOptions, setSearchOptions] = useState<any[]>([]);
     const [searchInput, setSearchInput] = useState<string>('');
-    const router=useRouter();
-    const {data, isLoading, error} = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/getAll?branchId=${appState.currentBranchId}`, fetcher);
+    const router = useRouter();
+    const { data, isLoading, error } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/getAll?branchId=${appState.currentBranchId}`, fetcher);
     const [showPopup, setShowPopup] = React.useState(false);
     const [showPopup2, setShowPopup2] = React.useState(false);
     const [showPopup1, setShowPopup1] = React.useState(false);
@@ -39,13 +39,24 @@ const InventoryNavbar = () => {
     const togglePopup1 = () => {
         setShowPopup1(!showPopup1);
     }
-   
+
     useEffect(() => {
         if (!error && !isLoading && data) {
-            const options = data?.map((item: any) => ({
-                label: item.productBatch?(`${item.productBatch?.product?.itemName}------${item.productBatch?.batchNumber}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0Product`):item.service?(`${item.service?.name}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0Service`):"",
-                value: item
-            }));
+            const options = data?.map((item: any) => {
+               
+                if (!item?.productId && !item?.serviceId) {
+                    return null; 
+                }
+                return {
+                    label: item.productBatch
+                        ? `${item.productBatch?.product?.itemName}------${item.productBatch?.batchNumber}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0Product`
+                        : item.service
+                        ? `${item.service?.name}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0Service`
+                        : "",
+                    value: item
+                };
+            }).filter(Boolean); 
+            console.log(data);
             setSearchData(data);
             setSearchOptions(options);
         }
@@ -60,51 +71,51 @@ const InventoryNavbar = () => {
             path = `/inventory/products/overview?id=${item.productBatch.product.id}`;
         } else if (item.service) {
             path = `/inventory/services/overview?id=${item.service.id}`;
-        } 
+        }
         router.push(path); // Navigate to the selected route
     };
 
-    
+
     const customStyles = {
-        control: (provided:any, state:any) => ({
-          ...provided,
-          height: '2.8rem', 
-          minHeight: '2.8rem' ,
-          width: '30rem',
-          maxWidth: '25rem', 
-          borderColor: state.isFocused ? '#35BEB1' : '#C4C4C4', 
+        control: (provided: any, state: any) => ({
+            ...provided,
+            height: '2.8rem',
+            minHeight: '2.8rem',
+            width: '30rem',
+            maxWidth: '25rem',
+            borderColor: state.isFocused ? '#35BEB1' : '#C4C4C4',
             '&:hover': {
-            borderColor: state.isFocused ? '#35BEB1' : '#C4C4C4', 
+                borderColor: state.isFocused ? '#35BEB1' : '#C4C4C4',
             },
             boxShadow: state.isFocused ? 'none' : 'none',
         }),
-        valueContainer: (provided:any) => ({
-          ...provided,
-          height: '2.8rem', 
-          width: '22rem',
-          maxWidth: '22rem', 
+        valueContainer: (provided: any) => ({
+            ...provided,
+            height: '2.8rem',
+            width: '22rem',
+            maxWidth: '22rem',
         }),
-        singleValue: (provided:any) => ({
-          ...provided,
-          width: '22rem',
-          maxWidth: '22rem', 
+        singleValue: (provided: any) => ({
+            ...provided,
+            width: '22rem',
+            maxWidth: '22rem',
         }),
-        menu: (provided:any) => ({
+        menu: (provided: any) => ({
             ...provided,
             backgroundColor: 'white',
             width: '22rem',
-            maxWidth: '22rem', 
-          }),
-          option: (provided:any, state:any) => ({
+            maxWidth: '22rem',
+        }),
+        option: (provided: any, state: any) => ({
             ...provided,
-            backgroundColor: state.isFocused ? '#35BEB1' : 'white', 
+            backgroundColor: state.isFocused ? '#35BEB1' : 'white',
             color: state.isFocused ? 'white' : '#6B7E7D',
             '&:hover': {
-              backgroundColor: '#35BEB1', 
+                backgroundColor: '#35BEB1',
             }
-          }),
-          
-      };
+        }),
+
+    };
     const togglePopup = () => {
         setShowPopup(!showPopup);
     }
@@ -121,8 +132,8 @@ const InventoryNavbar = () => {
             <div className='flex h-12  w-full box-border justify-between rounded-tl-lg rounded-tr-lg'>
                 <div className='flex w-8/12 h-full'>
                     <Link className='no-underline' href='/inventory/products/timeline'>
-                        <div 
-                            style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }} 
+                        <div
+                            style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }}
                             className={currentRoute.startsWith("/inventory/products")
                                 ? "flex items-center text-white px-4 py-2.5 bg-black border-r-0 text-base rounded-tl-lg rounded-bl-lg"
                                 : "flex items-center text-gray-400 bg-white px-4 py-2.5 border-r-0 text-base rounded-tl-lg rounded-bl-lg"}>
@@ -133,10 +144,10 @@ const InventoryNavbar = () => {
                         </div>
                     </Link>
                     <Link className='no-underline' href='/inventory/services/timeline'>
-                        <div 
-                            style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }} 
-                            className={currentRoute.startsWith("/inventory/services") 
-                                ? "flex items-center text-white text-base bg-black px-4 py-2.5 border-r-0 rounded-tr-lg rounded-br-lg" 
+                        <div
+                            style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }}
+                            className={currentRoute.startsWith("/inventory/services")
+                                ? "flex items-center text-white text-base bg-black px-4 py-2.5 border-r-0 rounded-tr-lg rounded-br-lg"
                                 : "rounded-tr-lg rounded-br-lg flex items-center text-gray-400 bg-white px-4 py-2.5 text-base border-r-0"}>
                             <div className='flex mr-2'>
                                 <ServicesIcon fill={currentRoute.startsWith("/inventory/services") ? "#38F8E6" : "#A2A3A3"} />
@@ -145,8 +156,8 @@ const InventoryNavbar = () => {
                         </div>
                     </Link>
 
-                    <div className='flex items-center space-x-2'> 
-                        <div className='mr-1' /> 
+                    <div className='flex items-center space-x-2'>
+                        <div className='mr-1' />
                         {currentRoute.startsWith("/inventory/products") && (
                             <>
                                 <div className='flex items-center text-base p-4 bg-black text-white rounded-lg cursor-pointer py-2 w-[156px] h-[44px]' onClick={togglePopup}>
@@ -166,6 +177,16 @@ const InventoryNavbar = () => {
                                         </button>
                                     </div>
                                 </div>
+
+                                <div className='flex items-center mr-8   justify-center capitalize border-none bg-[#35BEB1] px-2  text-white rounded-lg cursor-pointer py-2 w-fit h-[44px]' onClick={()=>router.push('/inventory/transfer')}>
+                                    <div className='flex items-center'>
+                                        <Image src={InventoryTransferIcon} alt='Update' className='w-5 h-5 mr-2' />
+                                        <button className='bg-transparent border-0 text-white text-base'>
+                                            Inventory Transfer
+                                        </button>
+                                    </div>
+                                </div>
+
                             </>
                         )}
                         {currentRoute.startsWith("/inventory/services") && (
@@ -177,13 +198,15 @@ const InventoryNavbar = () => {
                                     New Service
                                 </button>
                             </div>
-                        )}                        
+                        )}
                     </div>
                 </div>
 
-            
 
-                <div className='flex h-full items-center'>
+
+                <div className='flex w-4/12 h-full items-center'>
+
+
                     <div className="relative h-full w-full items-center z-[1]">
                         <Select
                             className="text-gray-500 text-base font-medium border-0 boxShadow-0"
@@ -195,10 +218,10 @@ const InventoryNavbar = () => {
                             placeholder="Search via Item/Service name and Batch no."
                             styles={customStyles}
                         />
-                        
+
                     </div>
 
-                  
+
                     {/* <Link className='no-underline h-full  ml-4' href='/finance/overview'>
                         <div className='flex items-center border border-solid border-gray-300 bg-white rounded-lg px-3 h-[2.8rem]  '>
                             <Image src={Settings} alt='Setting' className='w-5  h-5' /></div>
@@ -209,7 +232,7 @@ const InventoryNavbar = () => {
             {showPopup2 && <Popup2 onClose={togglePopup2} />}
             {showPopup3 && <Popup3 onClose={togglePopup3} />}
 
-           
+
         </>
     )
 }

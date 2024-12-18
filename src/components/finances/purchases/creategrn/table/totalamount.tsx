@@ -13,7 +13,7 @@ import formatDateAndTime from '@/utils/formateDateTime';
 import Popup from "./recordCreateGrnTransaction"
 import { custom } from 'zod';
 import Cash from '../../../../../assets/icons/finance/Cash.svg'
-const CreateGrnTotalAmount = () => {
+const CreateGrnTotalAmount = ({ orderData }: any) => {
     const { tableData, headerData } = useContext(DataContext);
     let totalAmount = 0;
     tableData.forEach(data => {
@@ -27,14 +27,14 @@ const CreateGrnTotalAmount = () => {
     const [grandAmt, setGrandAmt] = useState(totalAmount);
 
     const gstOptions = [
-        { value: 'percent', label: '₹ in Percent' },
+        { value: 'percent', label: '% in Percent' },
         { value: 'amount', label: '₹ in Amount' }
     ];
     const [startDate, setDate] = useState(new Date());
     const [shipping, setShipping] = useState<string>('');
     const [adjustment, setAdjustment] = useState<string>('');
 
-    const [overAllDiscount, setDiscount] = useState<string>("");
+
 
     const handleShippingChange = (event: any) => {
         //console.log(typeof event.target.value)
@@ -66,37 +66,42 @@ const CreateGrnTotalAmount = () => {
         setDiscountMethod(selectedOption.value);
     };
 
-    const [discountInput, setDiscountInput] = useState<string>("");
-    const handleDiscountChange = (value: string) => {
-        if (/^\d*\.?\d*$/.test(value)) {
+    const [discountInput, setDiscountInput] = useState(0);
+    const [selectedDiscountPer, setDiscountPer] = useState(0);
+    const handleDiscountChange = (value: number) => {
+
+
+
+
+
+        if (discountMethod === "amount") {
+            //const discountedAmount = grandAmt - value;
+            //const discountPercent = Number(value / totalAmount).toFixed(10);
+            setDiscountInput(value)
+            const discountPercent = Number(value / totalAmount).toFixed(4)
+            setDiscountPer(Number(discountPercent))
+
+            setTotalAmountData((prevData) => ({
+                ...prevData,
+                overallDiscount: Number(discountPercent),
+            }));
+        } else if (discountMethod === "percent") {
+
             setDiscountInput(value);
+            const discountPercent = Number(value / 100).toFixed(4)
+            setDiscountPer(Number(discountPercent));
+            setDiscountInput(Number(discountPercent) * totalAmount)
 
-            const discount = parseFloat(value) || 0;
-
-            if (discountMethod === "amount") {
-                const discountedAmount = grandAmt - discount;
-                const discountPercent = Number(discount / totalAmount).toFixed(10);
-                setDiscount(discountPercent);
-                setGrandAmt(discountedAmount);
-                setTotalAmountData((prevData) => ({
-                    ...prevData,
-                    overallDiscount: discountPercent,
-                }));
-            } else if (discountMethod === "percent") {
-                const discountedAmount = grandAmt - grandAmt * (discount / 100);
-                setDiscount((discount / 100).toString());
-                setGrandAmt(discountedAmount);
-                setTotalAmountData((prevData) => ({
-                    ...prevData,
-                    overallDiscount: discount / 100,
-                }));
-            }
+            setTotalAmountData((prevData) => ({
+                ...prevData,
+                overallDiscount: value / 100,
+            }));
         }
+
     };
 
     const updateGrandTotal = () => {
-        const discountedAmount =
-            totalAmount - totalAmount * parseFloat(overAllDiscount || "0") || 0;
+        const discountedAmount = (totalAmount - (discountMethod === 'amount' ? (discountInput || 0) : totalAmount * (selectedDiscountPer || 0))) || 0;
         const shippingValue = parseFloat(shipping) || 0;
         const adjustmentValue = parseFloat(adjustment) || 0;
         const newGrandTotal = discountedAmount + shippingValue + adjustmentValue;
@@ -108,7 +113,7 @@ const CreateGrnTotalAmount = () => {
             totalCost: newGrandTotal,
             shipping: shippingValue,
             adjustment: adjustmentValue,
-            overAllDiscount: overAllDiscount,
+            
         }));
     };
     const handleDateChange = (date: any) => {
@@ -137,7 +142,7 @@ const CreateGrnTotalAmount = () => {
 
     useEffect(() => {
         updateGrandTotal();
-    }, [totalAmount, overAllDiscount, shipping, adjustment]);
+    }, [totalAmount, selectedDiscountPer, discountInput, discountMethod, shipping, adjustment]);
 
 
 
@@ -246,7 +251,7 @@ const CreateGrnTotalAmount = () => {
 
 
                     <div className="w-full mr-4 flex flex-col mt-8">
-                        <Popup headerdata={headerData} setCount={setCount} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} balanceDue={balanceDue} />
+                        <Popup headerdata={headerData} orderData={orderData} setCount={setCount} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} balanceDue={balanceDue} />
                     </div>
 
                 </div>
@@ -263,8 +268,8 @@ const CreateGrnTotalAmount = () => {
                                     <input
                                         placeholder='0'
                                         className="text-right  text-base  w-[50%] border-none outline-none"
-                                        value={totalAmountData.subTotal ? discountInput : 0}
-                                        onChange={(e) => handleDiscountChange((e.target.value))}
+                                        value={discountMethod === 'amount' ? discountInput : (selectedDiscountPer || 0) * 100}
+                                        onChange={(e) => handleDiscountChange(Number(e.target.value))}
                                     /></div>
                                 <div className=' flex text-gray-500 text-base font-medium pl-6'>
                                     <Select

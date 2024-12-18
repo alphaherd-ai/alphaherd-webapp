@@ -35,14 +35,14 @@ const ExsistingRecurringTable = () => {
             if (!isLoading && data && !error) {
                 const {items,...otherData}=data;
                 setOtherData(otherData)
-                // console.log("this is all of the data",data)
+                console.log("this is all of the data",data)
               const shallowDataCopy = [...items]; 
               const itemData = shallowDataCopy.map((item: any) => ({
-                id: item.id,
-                itemName:item.name,
-                sellingPrice:item.sellingPrice,
-                tax:item.taxAmount,
-                category:item.category
+                id: item?.id,
+                itemName:item?.name,
+                sellingPrice:item?.sellingPrice,
+                tax:item?.taxAmount,
+                category:item?.category
               }));
               setItems(itemData);
             }
@@ -174,7 +174,7 @@ const ExsistingRecurringTable = () => {
                             <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Tax Amt.</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Total</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[10rem]'>Category</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-1/12'></div>
+                            {/* <div className=' flex text-gray-500 text-base font-medium w-1/12'></div> */}
                         </div>
                         {items.map((item:any,index:number)=>
                          <div key={index+1} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400 py-2'>

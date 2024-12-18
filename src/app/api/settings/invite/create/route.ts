@@ -129,8 +129,9 @@ export const POST = async (req: NextRequest) => {
 
     }
     const {AUTOMATED_GMAIL,AUTOMATED_GMAIL_APP_PASSWORD} = process.env;
+    
     let userInviteString = await encrypt({ branchId, role, email }, "7 day");
-
+    
     const transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
         service: "gmail",
@@ -142,26 +143,23 @@ export const POST = async (req: NextRequest) => {
         },
     });
 
+    
+
     const message = "Hi there, you were emailed me through nodemailer"
     const options = {
-        from: process.env.CUSTOMCONNSTR_AUTOMATED_GMAIL, // sender address
+        from: AUTOMATED_GMAIL, // sender address
         to: email, // receiver email
         subject: "Invitation to join Organization: Alphaherd", // Subject line
         text: message,
         html: htmlTemplate(userInviteString),
     }
-
-try {
-        const info = await transporter.sendMail(options);
-        console.info('Email sent: ' + info.response);
-    } catch (error) {
-        console.error('Error sending email:', error);
-        return new Response(JSON.stringify({ message: 'Failed to send email', error }), {
-            status: 500,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-    }
+    
+    transporter.sendMail(options, (error, info)=> {
+        if (error) {
+            console.error(error);
+        } else {
+            console.info('Email sent: ' + info.response);
+        }
+    });
     return new Response(JSON.stringify({ message: 'Email sent successfully' }));
 }

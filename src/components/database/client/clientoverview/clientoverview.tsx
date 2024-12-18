@@ -224,21 +224,21 @@ const ClientDetails = () => {
                     <div className="w-full justify-start items-start flex rounded-[10px]">
                         <div className="w-4/12 p-6 bg-white border-t border-solid border-0  border-r border-stone-300 flex-col justify-center items-start rounded-b-xl gap-4 flex ">
                             <div className="w-fit bg-[#E7F5EE] py-2 px-2 rounded-md">
-                                <div className="text-[#0F9D58] text-[28px] font-bold ">₹{toBePaid}</div>
+                                <div className="text-[#0F9D58] text-[28px] font-bold ">₹{(toBePaid).toFixed(2)}</div>
                                 <div className="text-[#0F9D58] text-base font-medium ">To be Paid</div>
                             </div>
 
                         </div>
                         <div className="w-4/12 p-6  border-t border-solid border-0 border-r border-stone-300 flex-col justify-center items-start gap-4 flex">
                             <div className="w-fit bg-[#FFF0E9] py-2 px-2 rounded-md">
-                                <div className="text-[#FC6E20] text-[28px] font-bold ">₹{(client?.creditedToken || 0).toFixed(2)}</div>
+                                <div className="text-[#FC6E20] text-[28px] font-bold ">₹{((client?.creditedToken) || 0).toFixed(2)}</div>
                                 <div className="text-[#FC6E20] text-base font-medium ">Credit Note</div>
                             </div>
 
                         </div>
                         <div className="w-4/12 p-6 bg-white border-t border-solid border-0 border-stone-300 flex-col justify-center items-start gap-4 flex rounded-b-xl">
                             <div className="w-fit bg-[#EBEDFF] py-2 px-2 rounded-md">
-                                <div className="text-[#3C50FF] text-[28px] font-bold ">₹{totalInComebynow}</div>
+                                <div className="text-[#3C50FF] text-[28px] font-bold ">₹{(totalInComebynow).toFixed(2)}</div>
                                 <div className="text-[#3C50FF] text-base font-medium ">Total Income From Client</div>
                             </div>
 

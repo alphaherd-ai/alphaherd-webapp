@@ -4,7 +4,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import calicon from "../../../../../assets/icons/finance/calendar_today.svg";
 import check from "../../../../../assets/icons/finance/check.svg"
-import React, {useContext, useState}  from 'react'
+import React, {useContext, useState,useEffect}  from 'react'
 import { Button } from '@nextui-org/react';
 import Select from 'react-select';
 import { DataContext } from './DataContext';
@@ -16,7 +16,7 @@ type PopupProps = {
 
 const ConvertToRecurringPopup: React.FC<PopupProps> = ({ onClose }:any) => {
     const { recurringData, setRecurringData } = useContext(DataContext);
-    const [startDate, setStartDate] = useState(new Date());
+    const [startDate, setStartDate] = useState(new Date()); 
     const [endDate, setEndDate]=useState(new Date());
     const router=useRouter();
     const handleStartDateChange = (date:any) => {
@@ -28,6 +28,9 @@ const ConvertToRecurringPopup: React.FC<PopupProps> = ({ onClose }:any) => {
         setRecurringData((prevData)=>({...prevData,endDate:date}));
     }
 
+    useEffect(()=>{
+        setRecurringData((prevData)=>({...prevData,startDate:startDate,endDate:endDate}));
+    },[])
     const Repeat = [
         {value: "everyDay", label: "Every Day"},
         {value: "everyWeek", label: "Every Week"},

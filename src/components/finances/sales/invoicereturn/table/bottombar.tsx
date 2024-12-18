@@ -15,7 +15,7 @@ import { useSearchParams } from "next/navigation"
 import { Button } from "@nextui-org/react"
 import { useRouter } from "next/navigation"
 import Loading2 from "@/app/loading2"
-
+import { mutate } from "swr"
 
 const InvoiceReturnBottomBar = ({invoiceData}:any) => {
     const { headerData, tableData, totalAmountData,transactionsData } = useContext(DataContext);
@@ -83,6 +83,7 @@ const InvoiceReturnBottomBar = ({invoiceData}:any) => {
             if (!response.data) {
                 throw new Error('Network response was not ok');
             }
+            mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`,(currData:any = [])=>[...currData,response.data?.sales],false)
             router.back();
         } catch (error) {
             console.error('Error:', error);

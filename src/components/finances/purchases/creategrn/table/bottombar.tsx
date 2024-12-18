@@ -16,6 +16,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { FinanceCreationType } from "@prisma/client"
 import axios from "axios"
 import { header } from "express-validator"
+import { mutate } from "swr"
 
 const CreateGrnBottomBar = ({ orderData }: any) => {
     const { headerData, tableData, totalAmountData, transactionsData } = useContext(DataContext);
@@ -28,13 +29,13 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
     const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
     const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
-
+    //console.log(orderData);
 
     const balanceDue = totalAmountData?.totalCost >= headerData.distributor?.creditedToken ? (totalAmountData?.totalCost + totalPaidAmount - totalAmountToPay - headerData.distributor?.creditedToken) : totalAmountData?.totalCost + totalPaidAmount - totalAmountToPay;
-    const newCreditedToken = totalAmountData.totalCost >= headerData.distributor?.creditedToken ? 0 : headerData.distributor?.creditedToken;
-
+    const newCreditedToken =totalAmountData.totalCost >= headerData.distributor?.creditedToken ? 0 : headerData.distributor?.creditedToken;
+    
     const handleSubmit = async () => {
-        tableData.pop();
+        if(id===null) tableData.pop();
         const allData = { headerData, tableData, totalAmountData, transactionsData };
         let totalQty = 0;
         tableData.forEach(data => {
@@ -55,8 +56,8 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
         }));
         const data = {
             distributor: (id === null) ? allData.headerData.distributor.value : orderData.distributor,
-            distributorId: (id === null) ? allData.headerData.distributor.distributorId : null,
-            newCreditedToken: (id === null) ? newCreditedToken : 0,
+            distributorId: (id === null) ? allData.headerData.distributor.distributorId : orderData.distributorId,
+            newCreditedToken: (id === null) ? newCreditedToken : -1,
             notes: (id === null) ? allData.headerData.notes : orderData.notes,
             invoiceNo: (id === null) ? allData.headerData.invoiceNo : orderData.invoiceNo,
             dueDate: (id === null) ? allData.headerData.dueDate : orderData.dueDate,
@@ -79,15 +80,15 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
         try {
             setSaving(true);
             const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Invoice}?branchId=${appState.currentBranchId}`, data)
-            setTimeout(() => {
-                router.back();
-            }, 2000)
+            // setTimeout(() => {
+            //     router.back();
+            // }, 2000)
             const response = await responsePromise;
             if (!response.data) {
                 throw new Error('Network response was not ok');
             }
-
-
+            mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/getAll?branchId=${appState.currentBranchId}`,(currState:any = [])=>[...currState,response?.data?.purchases],false);
+            router.back();
         } catch (error) {
             console.error('Error:', error);
         }
@@ -97,7 +98,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
     };
 
 
-    const isDisabled = !headerData.distributor || tableData.length === 0
+    const isDisabled = headerData?.customer ? (!headerData?.customer) : (!orderData?.distributor) || id === null ? tableData.length === 1 : tableData.length === 0
     return (
         <>
 

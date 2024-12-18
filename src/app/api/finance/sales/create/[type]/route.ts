@@ -6,35 +6,7 @@ import { NextRequest } from 'next/server';
 import { fetchFinanceId, fetchInventoryId } from '@/utils/fetchBranchDetails';
 
 
-const salesObj={
-  id: 477,
-  customer: 'Madhuri Kapoor',
-  email: 'madhuri.kapoor@example.com',
-  date: '2024-11-28T11:53:45.383Z',
-  notes: null,
-  subTotal: 767,
-  invoiceNo: 'SI-2317516136',
-  dueDate: "",
-  shipping: 0,
-  adjustment: 0,
-  totalCost: 767,
-  overallDiscount: null,
-  totalQty: 1,
-  status: 'You’re owed: ₹767',
-  type: 'Sales_Invoice',
-  financeSectionId: 14,
-  clientId: 246
-}
 
-const financeObj={
-  id: 801,
-  salesId: 478,
-  type: 'Sales_Invoice',
-  createdAt: "",
-  purchasesId: null,
-  expensesId: null,
-  financeSectionId: 14
-}
 
 export const POST = async (req: NextRequest, { params }: { params: { type: FinanceCreationType } }) => {
   if (req.method !== 'POST') {
@@ -48,10 +20,10 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
     const financeId = await fetchFinanceId(req);
     // console.log(financeId);
     //console.log("Here's the client id",clientId)
-    //console.log(newCreditedToken,otherBody);
+    console.log(otherBody);
     const [sales, items,client] = await prismaClient.$transaction([
 
-
+      
       prismaClient.sales.create({
         data: {
           ...otherBody,
@@ -78,7 +50,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
         }
       })
     ]);
-//  console.log("sales done",sales)
+     console.log("sales done",sales)
     const finance = await prismaClient.financeTimeline.create({
       data: {
         type: params.type,
@@ -113,6 +85,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
               },
               cacheStrategy: { ttl: 60 },
             });
+            console.log(batch);
   
             await prismaClient.$transaction([
               prismaClient.productBatch.update({

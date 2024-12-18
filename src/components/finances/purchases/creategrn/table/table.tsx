@@ -179,14 +179,14 @@ const handleAddItem = useCallback(() => {
     setItems([...items, {}]);
 }, [items]);
 
-useEffect(() => {
-    items.push({
-        productId: null,
-        serviceId: null,
-        itemName: "",
-    });
-    setItems(items);
-}, [])
+// useEffect(() => {
+//     items.push({
+//         productId: null,
+//         serviceId: null,
+//         itemName: "",
+//     });
+//     setItems(items);
+// }, [])
 
 
     const handleQuantityDecClick = (itemId: any) => {

@@ -25,6 +25,7 @@ import { DataContext } from './DataContext';
 import { useAppSelector } from "@/lib/hooks";
 import { useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
+
 import { table } from 'console';
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
@@ -122,7 +123,7 @@ const NewsalesTable = () => {
             const shallowDataCopy = [...items];
             const itemData = shallowDataCopy.map((item: any) => ({
                 itemType: item.itemType,
-                productId: item.itemType === "product" ? item.productBatch.productId : null,
+                productId: item.itemType === "product" ? item?.productBatch?.productId : null,
                 serviceId: item.itemType === "product" ? null : item.serviceId,
                 itemName: item.name,
                 quantity: item.quantity,
@@ -130,7 +131,7 @@ const NewsalesTable = () => {
                 expiry: item.itemType === 'product' ? item.productBatch.expiry : "",
                 batchNumber: item.itemType === 'product' ? item.productBatch.batchNumber : "",
                 gst: item.taxAmount,
-                id: item.itemType === 'product' ? item.productBatch.productId : item.serviceId,
+                id: item.itemType === 'product' ? item.productBatch.id : item.serviceId,
                 provider: item.itemType === 'product' ? "" : item.serviceProvider
             }));
             console.log(itemData);
