@@ -82,7 +82,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
       }
       await Promise.all(
         otherData.items.create.map(async (item: any) => {
-          // console.log("these are the items",item)
+           console.log("these are the items",item)
           const batch = await prismaClient.productBatch.create({
             data: {
                quantity:item.quantity,
@@ -91,6 +91,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
                costPrice:item.costPrice,
                sellingPrice:item.sellingPrice,
                distributors:item.distributors,
+               isApproved:item.isApproved,
               product:{
                 connect:{id: item.productId }
               },
@@ -99,6 +100,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
               }
             }
         });
+       // console.log(batch);
        
           await prismaClient.$transaction([
              prismaClient.items.updateMany({

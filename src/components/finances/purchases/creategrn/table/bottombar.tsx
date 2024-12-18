@@ -51,7 +51,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             expiry: data.expiry,
             batchNumber: data.batchNumber,
             hsnCode: data.barCode,
-
+            isApproved: appState.isCurrentOrgAdmin ? true : false,
             costPrice: Number(data.unitPrice)
         }));
         const data = {
