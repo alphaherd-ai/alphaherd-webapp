@@ -38,7 +38,7 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
 
     const balanceDue = totalAmountData?.totalCost >= headerData?.customer?.value?.creditedToken ? (totalAmountData?.totalCost - totalPaidAmount + totalAmountToPay - headerData?.customer?.value?.creditedToken) : totalAmountData?.totalCost - totalPaidAmount + totalAmountToPay;
     const newCreditedToken = totalAmountData.totalCost >= headerData?.customer?.value?.creditedToken ? 0 :  headerData?.customer?.value?.creditedToken;
-
+    //console.log(balanceDue);
     const handleSubmit = async () => {
         console.log(newCreditedToken);
         if (!headerData.customer && !estimateData.customer) {
@@ -47,9 +47,10 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
         }
         // Remove the last item from the item table as it will not create inventory timeline due to null constraints in prisma
         tableData.pop();
-        console.log(tableData);
+        //console.log(tableData);
         const allData = { headerData, tableData, totalAmountData, transactionsData };
-        // console.log("this is all data", allData)
+        console.log("this is all data", allData,balanceDue)
+        //console.log(tableData);
         let totalQty = 0;
         tableData.forEach(data => {
             totalQty += (data.quantity) || 0;
@@ -70,7 +71,7 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
             customer: (id === null) ? allData.headerData.customer.value.clientName : estimateData.customer,
             clientId: (id === null) ? allData.headerData.customer.value.clientId : estimateData.clientId,
             email: (id === null) ? allData.headerData.customer.value.email : estimateData.email,
-            newCreditedToken: (id === null) ? newCreditedToken : 0,
+            newCreditedToken: (id === null) ? newCreditedToken : -1,
             notes: (id === null) ? allData.headerData.notes : estimateData.notes,
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo: (id === null) ? allData.headerData.invoiceNo : estimateData.invoiceNo,
@@ -83,14 +84,14 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
             recordTransaction: {
                 create: allData.transactionsData
             },
-            status: headerData.customer?.value?.creditedToken >= balanceDue ? balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed' : balanceDue - headerData?.customer?.value?.creditedToken >= 1 ? `You’re owed: ₹${parseFloat((balanceDue - headerData?.customer?.value?.creditedToken).toFixed(2))}` : balanceDue - headerData?.customer?.value?.creditedToken <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue - headerData?.customer?.value?.creditedToken).toFixed(2))}` : 'Closed',
+            status: (id===null) ? headerData.customer?.value?.creditedToken >= balanceDue ? balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed' : balanceDue - headerData?.customer?.value?.creditedToken >= 1 ? `You’re owed: ₹${parseFloat((balanceDue - headerData?.customer?.value?.creditedToken).toFixed(2))}` : balanceDue - headerData?.customer?.value?.creditedToken <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue - headerData?.customer?.value?.creditedToken).toFixed(2))}` : 'Closed' :balanceDue >=1 ? `You’re owed: ₹${parseFloat((balanceDue).toString()).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1*balanceDue).toString()).toFixed(2)}` : 'Closed',
             type: FinanceCreationType.Sales_Invoice,
             items: {
                 create: items
             }
 
         }
-        console.log(items);
+        //console.log(data,balanceDue,headerData.customer?.value?.creditedToken);
         // console.log(appState.currentBranch)
         const notifData = {
             source: Notif_Source.Sales_Invoice,
@@ -99,8 +100,8 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
             orgId: appState.currentOrgId,
             orgBranch: appState.currentOrg.orgName
         }
-        console.log(JSON.stringify(data))
-        console.log("this is notif data", notifData)
+        //console.log(JSON.stringify(data))
+        //console.log("this is notif data", notifData)
         try {
             setSaving(true); 
             const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Invoice}?branchId=${appState.currentBranchId}`, data)
@@ -119,7 +120,7 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
             // if(response.status===201){
                 
             // }
-            mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`,(currData:any)=>[...currData,response.data?.sales],false)
+            mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`,(currData:any = [])=>[...currData,response.data?.sales],false)
             router.back();
 
         } catch (error) {

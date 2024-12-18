@@ -221,7 +221,7 @@ const ClearInvoices = ({ invoiceList, setOpen, formData }: any) => {
             </div>
             <div className='mt-8 w-full overflow-y-scroll flex flex-col h-[90vh]  rounded-[20px] bg-white border mx-0  border-solid border-borderGrey'>
                 <div className='flex'>
-                    <div className='bg-[#E7F5EE] text-[#0F9D58] px-2 py-2 text-xl rounded-md ml-4 mt-4 '>₹{(formData?.amountPaid).toFixed(2) || 0} to be paid</div>
+                    <div className='bg-[#E7F5EE] text-[#0F9D58] px-2 py-2 text-xl rounded-md ml-4 mt-4 '>₹{Number(formData?.amountPaid).toFixed(2) || 0} to be paid</div>
                     <div className='bg-[#FFF0E9] text-[#FC6E20] px-2 py-2 text-xl rounded-md ml-4 mt-4'>₹{(toPayAmt).toFixed(2)} to pay</div>
                 </div>
                 <div className='mt-4   box-border flex  w-full  items-center  bg-gray-100  h-12 py-4 border-b border-solid border-t border-borderGrey text-gray-500'>

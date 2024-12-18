@@ -10,7 +10,7 @@ import Newsales from '@/app/finance/sales/newsales/page'
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@mui/material"
-import { generatePdfForInvoice } from "@/utils/salesPdf"
+import { generatePdfForInvoice,PrintPdf,DownloadPdf } from "@/utils/salesPdf"
 import { useAppSelector } from "@/lib/hooks"
 import axios from "axios"
 import { useRouter } from "next/navigation"
@@ -24,9 +24,16 @@ const ExistingsaleEstimateBottomBar = ({ existingSalesData }: any) => {
     const [saving, setSaving] = useState<any>(false);
     console.log("app state is :", appState);
     const downloadPdf = async () => {
-        // const allData = existingSalesData;
+                // const allData = existingSalesData;
+                const data = existingSalesData;
+                const doc = await generatePdfForInvoice(data, appState, existingSalesData.items);
+                // printPdf(doc);
+                DownloadPdf(doc, `Invoice_${data.id}.pdf`);
+            };
+    const printPdf = async () => {
         const data = existingSalesData;
-        generatePdfForInvoice(data, appState, existingSalesData.items);
+        const doc = await generatePdfForInvoice(data, appState, existingSalesData.items);
+        PrintPdf(doc);
     };
     const sendSMS = async () => {
         try {
@@ -119,7 +126,7 @@ const ExistingsaleEstimateBottomBar = ({ existingSalesData }: any) => {
 
             <div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
                 <div className="flex justify-between items-center gap-4 pl-4">
-                    <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
+                    <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer" onClick={printPdf}> 
                         <Image src={printicon} alt="print"></Image>
                         <div>Print</div>
                     </div>

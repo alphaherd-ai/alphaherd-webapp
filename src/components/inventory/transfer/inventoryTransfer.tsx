@@ -37,6 +37,7 @@ const InventoryTransfer = () => {
     const [startDate, setStartDate] = useState(new Date());
     const [dueDate, setDueDate] = useState(new Date());
     const [orgBranches, setOrgBranches] = useState<any>([]);
+    const [saving,isSaving]=useState<boolean>(false);
     const [selectedBranch, setSelectedBranch] = useState<any>(null);
     const [items, setItems] = useState<any>([]);
     const [products, setProducts] = useState<any>([]);
@@ -260,6 +261,7 @@ const InventoryTransfer = () => {
     const handleTransfer = async () => {
         items.pop();
         try {
+            isSaving(true);
             const jsonItems = JSON.stringify(items);
             const transferringBranch = transferStatus === 'Transfer To' ? defaultBranchName : transferBranchName;
             const receivingBranch = transferStatus === 'Transfer To' ? transferBranchName : defaultBranchName;
@@ -314,6 +316,9 @@ const InventoryTransfer = () => {
         }
         catch (err) {
             console.log(err);
+        }
+        finally{
+            isSaving(false);
         }
     }
 
@@ -479,7 +484,7 @@ const InventoryTransfer = () => {
                         <div className=' flex text-gray-500 text-base font-medium   w-1/12 '></div>
                     </div>
                     {items.map((item: any, index: number) => (
-                        <div className='flex px-4  w-full  box-border bg-white  h-12 justify-evenly  items-center border-0 border-b border-l border-r  border-solid border-neutral-400 text-textGrey2'>
+                        <div key={index} className='flex px-4  w-full  box-border bg-white  h-12 justify-evenly  items-center border-0 border-b border-l border-r  border-solid border-neutral-400 text-textGrey2'>
                             <div className=' flex text-gray-500 text-base font-medium   w-1/12 '>{index + 1}</div>
                             <div className=' flex text-gray-500 text-base font-medium   w-2/12 '>
                                 {loading ? <Loading2 /> : <Select
@@ -615,7 +620,7 @@ const InventoryTransfer = () => {
                     <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer bg-zinc-900`}
                         onClick={handleTransfer}>
                         <Image src={checkicon} alt="check"></Image>
-                        <div>{"Save"}</div>
+                        <div>{saving ? <Loading2/> : "Save"}</div>
                     </Button>
                 </div>
             </div>

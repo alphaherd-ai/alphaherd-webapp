@@ -67,7 +67,7 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
             totalCost: allData.totalAmountData.totalCost,
-            overallDiscount: allData.totalAmountData.gst,
+            overallDiscount: allData.totalAmountData.gst || 0,
             totalQty: totalQty,
             recordTransaction: {
                 create: allData.transactionsData
@@ -92,7 +92,7 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
                 throw new Error('Network response was not ok');
 
             }
-            mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`,(currData:any)=>[...currData,response.data?.sales],false);
+            mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`,(currData:any = [])=>[...currData,response.data?.sales],false);
             router.back();
         } catch (error) {
             console.error('Error:', error);

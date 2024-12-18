@@ -126,7 +126,7 @@ const InventoryTransfer = () => {
                                 <div className=' flex text-gray-500 text-base font-medium   w-1/12 '></div>
                             </div>
                             {items.map((item: any, index: number) => (
-                                <div className='flex px-4  w-full  box-border bg-white  h-12 justify-evenly  items-center border-0 border-b border-l border-r  border-solid border-neutral-400 text-textGrey2'>
+                                <div key={index} className='flex px-4  w-full  box-border bg-white  h-12 justify-evenly  items-center border-0 border-b border-l border-r  border-solid border-neutral-400 text-textGrey2'>
                                     <div className=' flex text-gray-500 text-base font-medium   w-1/12 '>{index + 1}</div>
                                     <div className=' flex text-gray-500 text-base font-medium   w-2/12 '>{item?.product?.itemName}</div>
                                     <div className=' flex text-gray-500 text-base font-medium   w-2/12 '>{item?.batch?.batchNumber}</div>

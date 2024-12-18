@@ -1,7 +1,7 @@
 import prismaClient from '../../../../../../prisma';
-import { NextApiRequest } from "next";
+import { NextRequest } from 'next/server';
 
-export const GET=async (req:NextApiRequest, {params}:{params:{id:Number}})=>{
+export const GET=async (req:NextRequest, {params}:{params:{id:Number}})=>{
     if (req.method !== 'GET') {
         return new Response('Method not allowed',{status:405});
     }

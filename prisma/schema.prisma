@@ -60,11 +60,7 @@ enum Inventory {
   Service
 }
 
-enum Location {
-  NONE
-  Location1
-  Location2
-}
+
 
 enum Role {
   Admin
@@ -171,6 +167,7 @@ model InventorySection {
   itemCategory    ItemCategory[]
   itemUnit        ItemUnit[]
   serviceCategory ServiceCategory[]
+  location        Location[]
   reason          Reason[]
   taxType         TaxType[]
 
@@ -205,6 +202,7 @@ model DatabaseSection {
   distributors Distributors[]
   species      Species[]
   breed        Breed[]
+  
 
   @@index([branchId])
 }
@@ -297,7 +295,7 @@ model ProductBatch {
   productId           Int
   batchNumber         String?
   costPrice           Int?
-  location            Location            @default(NONE)
+  location           String?
   totalCost           Int?
   maxRetailPrice      Float?
   costPerItem         Int?
@@ -608,4 +606,11 @@ model Inventorytransfer {
   invoiceNumber      String?
   transferringBranch String?
   receivingBranch    String?
+}
+
+model Location {
+  id                 Int               @id @default(autoincrement())
+  name               String[]
+  InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
+  inventorySectionId Int?
 }
