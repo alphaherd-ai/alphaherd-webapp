@@ -29,6 +29,8 @@ import AddItemCategoryPopup from "../generalSettingPopup/addItemCategoryPopup";
 import AddReasons from "../generalSettingPopup/addReason";
 import AddTaxType from "../generalSettingPopup/addTaxTypePopup";
 import AddServiceCategory from "../generalSettingPopup/addServiceCategory";
+import AddExpenseCategory from "../generalSettingPopup/addExpenseCategogy";
+import AddLocation from "../generalSettingPopup/addLocationCategory";
 import AddItemUnit from "../generalSettingPopup/addUnitPopup";
 import AddBreed from "../generalSettingPopup/addBreedPopup";
 //@ts-ignore
@@ -37,7 +39,9 @@ const defaultCategories = ['Pet food','Medicine','Supplements','Pet Accessories'
 const defaultUnits = ['Boxes','Pieces','Vials','Units','Strips'];
 const defaultTaxTypes = [0,5,12,18,28];
 const defaultServiceCategory = ['General Consultation','Follow Up', 'Surgery','Vaccination','Grooming','Boarding','Rescue'];
+const defaultExpenseCategory = ['Rent',' Payroll', 'Utilities', 'Transport', 'Medical Equipment', 'Repair and Maintenance', 'Other'];
 const defaultPaymentMethod = ['Cash','UPI','Netbanking'];
+const defaultLocationCategory = 'Main Warehouse';
 const defaultReason = ['Damaged','Expired','Wrong Item','Quality Issues'];
 const defaultSpeciesandBreed = [
     { name: 'Dog', breed: ['Labrador Retriever','German Shepherd','Golden Retriever','Beagle','Pug','Indian Mastiff','Husky','Dashshund','Shi Tzu'] },
@@ -59,6 +63,8 @@ const GeneralSettings = () => {
     const [showPopup5, setShowPopup5] = useState(false);
     const [showPopup6, setShowPopup6] = useState(false);
     const [showPopup7, setShowPopup7] = useState(false);
+    const [showPopup8, setShowPopup8] = useState(false);
+    const [showPopup9, setShowPopup9] = useState(false);
 
     const togglePopup = () => {
         setShowPopup(!showPopup);
@@ -88,6 +94,12 @@ const GeneralSettings = () => {
 
     const togglePopup7 = () =>{
         setShowPopup7(!showPopup7);
+    }
+    const togglePopup8 = () =>{
+        setShowPopup8(!showPopup8);
+    }
+    const togglePopup9 = () =>{
+        setShowPopup9(!showPopup9);
     }
 
     const reminder = [
@@ -337,6 +349,7 @@ const GeneralSettings = () => {
             setItemUnits(itemUnitsData); 
         }
     }, [itemUnitsData, itemUnitsError, isLoadingItemUnits]);
+    console.log("item categories is :",itemUnits);
     // const [species, setspecies] = useState([]);
     // const {data: speciesData, error: speciesError, isLoading: isLoadingspecies} = useSWR(
     //     `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`,
@@ -490,6 +503,53 @@ const GeneralSettings = () => {
         }
     }, [serviceCategoryData, serviceCategoryError, isLoadingserviceCategory]);
 
+    //ExpenseCategory
+    const [expenseCategory, setexpenseCategory] = useState([]);
+    const {data: expenseCategoryData, error: expenseCategoryError, isLoading: isLoadingexpenseCategory} = useSWR(
+        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/expenseCategory/getAll?branchId=${appState.currentBranchId}`,
+        fetcher,
+        { revalidateOnFocus: true } 
+    );
+    useEffect(() => {
+        const addDefaultExpenseCategory = async () => {
+            if (expenseCategoryData) {
+                const existingExpenseCategory = expenseCategoryData.flatMap((item: any) =>
+                    Array.isArray(item.name) ? item.name : [item.name]
+                );
+
+                const missingExpenseCategory = defaultExpenseCategory.filter(
+                    (category) => !existingExpenseCategory.includes(category)
+                );
+
+                if (missingExpenseCategory.length > 0) {
+                    console.log('Adding missing reasons:', missingExpenseCategory);
+                    try {
+                        await fetch(
+                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/expenseCategory/create?branchId=${appState.currentBranchId}`,
+                            {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ name: missingExpenseCategory }),
+                            }
+                        );
+                       // window.location.reload();
+                    } catch (error) {
+                        console.error('Error while adding default categories:', error);
+                    }
+                } else {
+                    console.log('All default categories already exist');
+                }
+            }
+        };
+        if (!isLoadingexpenseCategory && !expenseCategoryError && expenseCategoryData) {
+            addDefaultExpenseCategory();
+            setexpenseCategory(expenseCategoryData); 
+        }
+    }, [expenseCategoryData, expenseCategoryError, isLoadingexpenseCategory]);
+
+
     //Species and Breed 
     const [species, setSpecies] = useState<any[]>([]);
     const [expandedSpecies, setExpandedSpecies] = useState<number | null>(null);
@@ -580,7 +640,56 @@ const GeneralSettings = () => {
     
         initializeSpeciesAndBreeds();
     }, [speciesData, breedData, speciesError, breedError, isLoadingSpecies, isLoadingBreed]);
-    
+
+
+//    Location Category
+
+const [locationCategory, setlocationCategory] = useState([]);
+const {data: locationCategoryData, error: locationCategoryError, isLoading: isLoadinglocationCategory} = useSWR(
+    `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/LocationCategory/getAll?branchId=${appState.currentBranchId}`,
+    fetcher,
+    { revalidateOnFocus: true } 
+);
+//console.log("location category data is :",locationCategoryData);
+useEffect(() => {
+    const addDefaultLocationCategory = async () => {
+        if (locationCategoryData && locationCategoryData.length===0) {
+            const existingLocationCategory = locationCategoryData.flatMap((item: any) =>
+                Array.isArray(item.name) ? item.name : [item.name]
+            );
+
+            const missingLocationCategory = defaultLocationCategory;
+
+            if (missingLocationCategory.length > 0) {
+                console.log('Adding missing reasons:', missingLocationCategory);
+                try {
+                    await fetch(
+                        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/LocationCategory/create?branchId=${appState.currentBranchId}`,
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ name: missingLocationCategory }),
+                        }
+                    );
+                    window.location.reload();
+                } catch (error) {
+                    console.error('Error while adding default categories:', error);
+                }
+            } else {
+                console.log('All default categories already exist');
+            }
+        }
+    };
+    if (!isLoadinglocationCategory && !locationCategoryError && locationCategoryData) {
+        addDefaultLocationCategory();
+        setlocationCategory(locationCategoryData); 
+    }
+}, [locationCategoryData, locationCategoryError, isLoadinglocationCategory]);
+
+console.log("location data is :", locationCategory);
+
     // Toggle species expansion to show/hide breeds
     const handleExpandSpecies = (speciesId: number) => {
         setExpandedSpecies(expandedSpecies === speciesId ? null : speciesId);
@@ -956,6 +1065,82 @@ const GeneralSettings = () => {
                                 </div>
                             </div>
                         </div>
+                        <div className="w-[49%] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
+                            <div className="w-full flex justify-between items-start">
+                                <div>
+                                    <div className="text-gray-500 text-base font-bold ">Location Categories</div>
+                                    <div className="text-neutral-400 text-base font-medium ">Add and configure your location categories</div>
+                                </div>
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer" onClick={togglePopup8}>
+                                    <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
+                                    <div className="text-white text-base font-medium " >Add Category</div>
+                                </div>
+                            </div>
+                            <div className="w-full h-full">
+                                <div className="w-full h-full rounded-[10px] border border-stone-300 justify-start items-start flex flex-col">
+                                    <div className='flex  w-full  items-center box-border bg-gray-100  h-12 py-4 border-b border-neutral-400 text-gray-500'>
+                                        <div className='flex text-gray-500 text-base font-medium px-6 w-5/12'>Location Category</div>
+                                        
+                                    </div>
+                                    {isLoadinglocationCategory && <Loading />}
+                                    <div className="w-full  max-h-[15rem] overflow-y-auto">
+                                    {locationCategory.map((item: any,index: any) =>(
+                                        <div key={index} className='w-full'>
+                                            
+                                                <div className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
+                                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                                    <div className="text-gray-500 text-base font-medium">{item.name}</div>
+                                                    </div>
+                                                </div>
+                                          
+                                        </div>
+                                    ))
+                                    } 
+                                    </div>  
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                      <div className="w-full flex justify-between">
+                      <div className="w-[49%] px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
+                            <div className="w-full flex justify-between items-start">
+                                <div>
+                                    <div className="text-gray-500 text-base font-bold ">Expense Categories</div>
+                                    <div className="text-neutral-400 text-base font-medium ">Add and configure your Expense categories</div>
+                                </div>
+                                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer" onClick={togglePopup9}>
+                                    <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
+                                    <div className="text-white text-base font-medium " >Add Category</div>
+                                </div>
+                            </div>
+                            <div className="w-full h-full">
+                                <div className="w-full h-full rounded-[10px] border border-stone-300 justify-start items-start flex flex-col">
+                                    <div className='flex  w-full  items-center box-border bg-gray-100  h-12 py-4 border-b border-neutral-400 text-gray-500'>
+                                        <div className='flex text-gray-500 text-base font-medium px-6 w-5/12'>Expense Category</div>
+                                        
+                                    </div>
+                                    {isLoadingexpenseCategory && <Loading />}
+                                    <div className="w-full  max-h-[15rem] overflow-y-auto">
+                                    {expenseCategory.map((item: any,index: any) =>(
+                                        <div key={index} className='w-full'>
+                                            {Array.isArray(item.name) && item.name.map((nameItem: string, nameIndex: number) => (
+                                                <div key={nameIndex} className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
+                                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                                    <div className="text-gray-500 text-base font-medium">{nameItem}</div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ))
+                                    } 
+                                    </div>   
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        
                         
                     </div>
                     {/*  */}
@@ -972,6 +1157,8 @@ const GeneralSettings = () => {
         {showPopup5 && <AddTaxType onClose={togglePopup5} />}
         {showPopup6 && <AddReasons onClose={togglePopup6} />}
         {showPopup7 && <AddBreed onClose={togglePopup7}/>}
+        {showPopup8 && <AddLocation onClose={togglePopup8}/>}
+        {showPopup9 && <AddExpenseCategory onClose={togglePopup9}/>}
     </>
     )
 }

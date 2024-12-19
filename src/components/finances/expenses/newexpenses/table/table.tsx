@@ -27,6 +27,11 @@ import formatDateAndTime from '@/utils/formateDateTime';
 import { useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 import capitalizeFirst from '@/utils/capitiliseFirst';
+
+interface expenseList {
+    id: string,
+    name: string | string[],
+}
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 function DataFromExpense(id:number|null,branchId:number|null){
@@ -66,7 +71,8 @@ const NewExpensesTable = () => {
             gst:item.taxAmount,
             category:item.category
             }));
-            setItems(itemData);
+            setItems((prev: any[]) => [...itemData, ...prev,]);
+            console.log("item data is : ",itemData);
             
         }
     }, [expenseData]); 
@@ -83,15 +89,63 @@ const NewExpensesTable = () => {
         { value: 0.09, label: Tax.GST_9 }
     ];
 
-    const category = [
-        {value: "Utilities", label: "Utilities"},
-        {value: "Rent", label: "Rent"},
-        {value: "Medical Supplies", label: "Medical Supplies"},
-        {value: "Repair and Maintainance", label: "Repair and Maintainance"},
-        {value: "Payroll", label: "Payroll"},
-        {value: "Inventory", label: "Inventory"},
-        {value: "Other", label: "Other"},
-    ]
+    // const category = [
+    //     {value: "Utilities", label: "Utilities"},
+    //     {value: "Rent", label: "Rent"},
+    //     {value: "Medical Supplies", label: "Medical Supplies"},
+    //     {value: "Repair and Maintainance", label: "Repair and Maintainance"},
+    //     {value: "Payroll", label: "Payroll"},
+    //     {value: "Inventory", label: "Inventory"},
+    //     {value: "Other", label: "Other"},
+    // ]
+    const [expense1, setexpense] = useState<any[]>([]);
+    useEffect(() => {
+        const fetchexpense = async () => {
+            try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/expenseCategory/getAll?branchId=${appState.currentBranchId}`);
+                const expenseList: any[] = response.data.reduce((acc: any[], expenseEntry: expenseList) => {
+                    if (Array.isArray(expenseEntry.name)) {
+                        expenseEntry.name.forEach((name: string) => {
+                            acc.push({ value: expenseEntry.id, label: name });
+                        });
+                    } else {
+                        acc.push({ value: expenseEntry.id, label: expenseEntry.name });
+                    }
+                    return acc;
+                }, []);
+                setexpense(expenseList);
+                console.log("expense category is : ",expenseList);
+            } catch (error) {
+                console.log("Error fetching expense", error);
+            }
+        };
+        fetchexpense();
+    }, [appState.currentBranchId]);
+
+    // const handleexpenseSelect = (selectedexpense: { value: number; label: string }, index: number) => {
+    //     const updatedItems = [...items];
+    //     updatedItems[index] = {
+    //         ...updatedItems[index],
+    //         expense: selectedexpense.label // Update the expense
+    //     };
+    //     console.log("updated items is :",updatedItems);
+    //     setItems(updatedItems);
+    //     setTableData(updatedItems); 
+    //     console.log("table data is :",tableData);
+    //     // Ensure the table data context is updated
+    // };
+  
+
+    const handleexpenseSelect=(selectedCategory:{ value: number; label: string }, index: number)=>{
+        const updatedItems=[...tableData];
+        updatedItems[index]={
+            ...updatedItems[index],
+            category:selectedCategory.label
+        }
+        console.log("category data is :",selectedCategory.label);
+        setTableData(updatedItems);
+        console.log("table data is :",tableData);
+    }
     
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -117,14 +171,7 @@ const handleGstSelect = (selectedGst: any, index: number) => {
     };
     setTableData(updatedItems);
 };
-const handleCategorySelect=(selectedCategory:any,index:number)=>{
-    const updatedItems=[...tableData];
-    updatedItems[index]={
-        ...updatedItems[index],
-        category:selectedCategory.value
-    }
-    setTableData(updatedItems);
-}
+
 const handleItemName=(event:any,index:any)=>{
     if(index === items.length - 1){
         items.push({
@@ -391,13 +438,21 @@ useEffect(()=>{
                                 <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium'>{`₹${isNaN(item.sellingPrice) || isNaN(item.gst) ? 0 : (item.sellingPrice * item.gst+item.sellingPrice).toFixed(2)}`}</div>
 
                                 <div className='w-[10rem] flex-col items-center text-textGrey2 text-base font-medium'>
-                                    <Select
-                                        defaultValue={category}
-                                        isClearable={false}
-                                        isSearchable={true}
-                                        options={category}
-                                        styles={customStyles}
-                                        onChange={(selectedOption:any)=>handleCategorySelect(selectedOption,index)}
+                                <Select
+
+                                    className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0 absolute"
+
+                                    classNamePrefix="select"
+
+                                    isClearable={false}
+                                    isSearchable={true}
+                                    name="expense"
+                                    options={expense1}
+                                    onChange={(selectedOption) => handleexpenseSelect(selectedOption, index)}
+                                    //value={ expense1.find(expense => expense.label === item.expense)}
+                                    menuPortalTarget={document.body}
+
+                                    styles={customStyles}
 
                                     />
                                 </div>
@@ -438,7 +493,7 @@ useEffect(()=>{
                     </div>
 
                 </div>
-                    <NewExpensesTotalAmout />
+                <NewExpensesTotalAmout expenseData={expenseData}/>
             </div>
             <NewExpensesBottomBar expenseData={expenseData}/>
         </div>

@@ -28,6 +28,9 @@ export function notifications(data: any) {
     if(data.source ===Notif_Source.Inventory_Update_Approval_Request){
         return `User is trying to update stocks.Approve or Deny.`
     }
+    if(data.source ===Notif_Source.Purchase_Order_Due){
+        return `You owe ${(data.totalCost.toFixed(2))} to ${data.distributor}. This invoice expires on ${formatDateAndTime(data.dueDate).formattedDate}.`
+    }
     
   }
   

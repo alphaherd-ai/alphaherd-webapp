@@ -86,7 +86,7 @@ const AddReasons = ({onClose}:any) => {
             });
             if (response.ok) {
                 const result = await response.json();
-                
+                window.location.reload();
                 onClose(); 
             } else {
                 console.error('Failed to save data:', response.statusText);

@@ -28,7 +28,7 @@ const NotificationList =  ({ notifs, isLoading }) => {
   console.log("read notifs url is :",readNotifs);
 
   const handleAction = (notifId: number, action: string,notifData:any) => {
-    const acceptRequest= axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${notifData.productBatchId}?branchId=${appState.currentBranchId}`, {isApproved:true});
+    const acceptRequest= axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${notifData.productId}?branchId=${appState.currentBranchId}`, {isApproved:true});
     // console.log(`Notification ID: ${notifId}, Action: ${action}`);
 
   };

@@ -16,9 +16,9 @@ import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 import formatDateAndTime from '@/utils/formateDateTime';
 
 
-const NewExpensesTotalAmout = () => {
+const NewExpensesTotalAmout = ({expenseData}:any) => {
     const { tableData, headerData } = useContext(DataContext);
-    // console.log("this is tableData",tableData)
+    //console.log(headerData)
     const [selectedDiscount, setDiscount] = useState(0);
     let totalAmount = 0;
     tableData.forEach(data => {
@@ -125,7 +125,7 @@ const NewExpensesTotalAmout = () => {
 
             <div className="flex gap-4 mt-10  pt-[20px] pb-[20px]">
 
-                <Popup headerdata={headerData}  setCount={setCount} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} balanceDue={balanceDue} />
+                <Popup headerdata={headerData} expenseData={expenseData}  setCount={setCount} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} balanceDue={balanceDue} />
                 <div className="w-1/2 rounded-md">
                     <div className='w-full bg-white'>
                         <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">

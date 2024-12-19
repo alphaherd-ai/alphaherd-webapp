@@ -60,11 +60,7 @@ enum Inventory {
   Service
 }
 
-enum Location {
-  NONE
-  Location1
-  Location2
-}
+
 
 enum Role {
   Admin
@@ -159,20 +155,22 @@ model Permissions {
 }
 
 model InventorySection {
-  id                    Int                 @id @default(autoincrement())
-  name                  String
-  quantity              Int?
-  branch                OrgBranch           @relation(fields: [branchId], references: [id])
-  branchId              Int                 @unique
-  products              Products[]
-  productBatch          ProductBatch[]
-  service               Services[]
-  timeline              InventoryTimeline[]
-  itemCategory          ItemCategory[]
-  itemUnit              ItemUnit[]
-  serviceCategory       ServiceCategory[]
-  reason                Reason[]
-  taxType               TaxType[]
+  id              Int                 @id @default(autoincrement())
+  name            String
+  quantity        Int?
+  branch          OrgBranch           @relation(fields: [branchId], references: [id])
+  branchId        Int                 @unique
+  products        Products[]
+  productBatch    ProductBatch[]
+  service         Services[]
+  timeline        InventoryTimeline[]
+  itemCategory    ItemCategory[]
+  itemUnit        ItemUnit[]
+  serviceCategory ServiceCategory[]
+  expenseCategory ExpenseCategory[]
+  location        Location[]
+  reason          Reason[]
+  taxType         TaxType[]
 
   @@index([branchId])
 }
@@ -205,6 +203,8 @@ model DatabaseSection {
   distributors Distributors[]
   species      Species[]
   breed        Breed[]
+  
+
   @@index([branchId])
 }
 
@@ -220,6 +220,7 @@ model Clients {
   patients          Patients[]
   DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
   databaseSectionId Int?
+  creditedToken     Float?           @default(0)
 
   @@index([databaseSectionId])
   @@map("client")
@@ -256,64 +257,68 @@ model Distributors {
   date              DateTime?        @default(now())
   DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
   databaseSectionId Int?
+  invoiceNo         String[]
+  creditedToken     Float?           @default(0)
 
   @@index([databaseSectionId])
 }
 
 model Products {
-  id                 Int               @id @default(autoincrement())
-  itemName           String?
-  defaultUnit        String?
-  hsnCode            String?
-  tax                Float?
-  category           String?
-  description        String?
-  providers          String[]
-  totalQuantity      Int?
-  minStock           Int?
-  maxStock           Int?
-  lastOutOfStockNotif  DateTime?
-  lastExpiryNotif  DateTime?       // Last expired notification sent
-  lastExpiringNotif DateTime?      // Last expiring soon notification sent
-  excessNotif      DateTime?
-  isApproved         Boolean?          @default(false)
-  productBatches     ProductBatch[]
-  items              Items[]
-  InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
-  inventorySectionId Int?
-   createdAt          DateTime?         @default(now())
-  @@index([inventorySectionId,id])
+  id                  Int               @id @default(autoincrement())
+  itemName            String?
+  defaultUnit         String?
+  hsnCode             String?
+  tax                 Float?
+  category            String?
+  description         String?
+  providers           String[]
+  totalQuantity       Int?
+  minStock            Int?
+  maxStock            Int?
+  location         String?
+  lastOutOfStockNotif DateTime?
+  lastExpiryNotif     DateTime? // Last expired notification sent
+  lastExpiringNotif   DateTime? // Last expiring soon notification sent
+  excessNotif         DateTime?
+  isApproved          Boolean?          @default(false)
+  productBatches      ProductBatch[]
+  items               Items[]
+  InventorySection    InventorySection? @relation(fields: [inventorySectionId], references: [id])
+  inventorySectionId  Int?
+  createdAt           DateTime?         @default(now())
+
+  @@index([inventorySectionId, id])
 }
 
 model ProductBatch {
-  id                 Int                 @id @default(autoincrement())
-  distributors       String[]
-  quantity           Int?
-  productId          Int
-  batchNumber        String?
-  costPrice          Int?
-  location           Location            @default(NONE)
-  totalCost          Int?
-  maxRetailPrice     Float?
-  costPerItem        Int?
-  profitMargin       String?
-  expiry             DateTime?
-  sellingPrice       Int?
-  date               DateTime?
-  balanceDue         Boolean?
-  isApproved         Boolean?            @default(false)
-  lastOutOfStockNotif  DateTime?
-  lastExpiryNotif   DateTime?       // Last expired notification sent
-  lastExpiringNotif  DateTime?      // Last expiring soon notification sent
-  excessNotif       DateTime?
-  items              Items[]
-  product            Products            @relation(fields: [productId], references: [id])
-  inventoryTimeline  InventoryTimeline[] // Add the opposite relation
-  InventorySection   InventorySection?   @relation(fields: [inventorySectionId], references: [id])
-  inventorySectionId Int?
+  id                  Int                 @id @default(autoincrement())
+  distributors        String[]
+  quantity            Int?
+  productId           Int
+  batchNumber         String?
+  costPrice           Int?
+  location           String?
+  totalCost           Int?
+  maxRetailPrice      Float?
+  costPerItem         Int?
+  profitMargin        String?
+  expiry              DateTime?
+  sellingPrice        Int?
+  date                DateTime?
+  balanceDue          Boolean?
+  isApproved          Boolean?            @default(false)
+  lastOutOfStockNotif DateTime?
+  lastExpiryNotif     DateTime? // Last expired notification sent
+  lastExpiringNotif   DateTime? // Last expiring soon notification sent
+  excessNotif         DateTime?
+  items               Items[]
+  product             Products            @relation(fields: [productId], references: [id])
+  inventoryTimeline   InventoryTimeline[] // Add the opposite relation
+  InventorySection    InventorySection?   @relation(fields: [inventorySectionId], references: [id])
+  inventorySectionId  Int?
 
   @@index([inventorySectionId, productId])
-  @@index([id,inventorySectionId])
+  @@index([id, inventorySectionId])
 }
 
 model Services {
@@ -333,14 +338,14 @@ model Services {
   inventoryTimeline  InventoryTimeline[] // Add the opposite relation
   InventorySection   InventorySection?   @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId Int?
-   createdAt          DateTime?         @default(now())
-  @@index([inventorySectionId,id])
+  createdAt          DateTime?           @default(now())
+
+  @@index([inventorySectionId, id])
 }
 
 model Sales {
   id                Int                  @id @default(autoincrement())
   customer          String?
-  clientId          Int?
   email             String?
   date              DateTime?            @default(now())
   notes             String?
@@ -359,8 +364,9 @@ model Sales {
   financeTimeline   FinanceTimeline[]
   FinanceSection    FinanceSection?      @relation(fields: [financeSectionId], references: [id])
   financeSectionId  Int?
+  clientId          Int?
 
-  @@index([financeSectionId,id])
+  @@index([financeSectionId, id])
   @@index([financeSectionId, invoiceNo])
 }
 
@@ -377,14 +383,15 @@ model RecordTransaction {
   purchasesId      Int?
   expenses         Expenses?  @relation(fields: [expensesId], references: [id])
   expensesId       Int?
+  receiptNo        String?
 
   @@index([salesId, purchasesId, expensesId])
-  
 }
 
 model Purchases {
   id                   Int                 @id @default(autoincrement())
   distributor          String?
+  distributorId        Int?
   email                String?
   date                 DateTime?           @default(now())
   dueDate              DateTime
@@ -407,7 +414,7 @@ model Purchases {
   FinanceSection       FinanceSection?     @relation(fields: [financeSectionId], references: [id])
   financeSectionId     Int?
 
-  @@index([financeSectionId,id])
+  @@index([financeSectionId, id])
   @@index([financeSectionId, invoiceNo])
 }
 
@@ -435,7 +442,7 @@ model Expenses {
   FinanceSection      FinanceSection?     @relation(fields: [financeSectionId], references: [id])
   financeSectionId    Int?
 
-  @@index([financeSectionId,id])
+  @@index([financeSectionId, id])
 }
 
 model Transactions {
@@ -453,7 +460,7 @@ model Transactions {
   FinanceSection   FinanceSection? @relation(fields: [financeSectionId], references: [id])
   financeSectionId Int?
 
-  @@index([financeSectionId,id])
+  @@index([financeSectionId, id])
 }
 
 model PaymentMethod {
@@ -464,42 +471,41 @@ model PaymentMethod {
 }
 
 model Items {
-  id               Int             @id @default(autoincrement())
-  taxPercent       Tax?
-  taxAmount        Float?
-  totalAmount      Float?
-  itemType         String?
-  serviceId        Int?
-  reasons          String?
-  category         String?  
-  sellingPrice     Int?
-  quantity         Int?
-  lowQty           Int?
-  highQty          Int?
-  discount         Float?
-  name             String?
-  productId        Int?
-  services         Services?       @relation(fields: [serviceId], references: [id])
-  products         Products?       @relation(fields: [productId], references: [id])
-  salesId          Int?
-  sale             Sales?          @relation(fields: [salesId], references: [id])
-  purchasesId      Int?
-  purchases        Purchases?      @relation(fields: [purchasesId], references: [id])
-  expensesId       Int?
-  expenses         Expenses?       @relation(fields: [expensesId], references: [id])
-  productBatchId   Int?
-  productBatch     ProductBatch?   @relation(fields: [productBatchId], references: [id])
-  FinanceSection   FinanceSection? @relation(fields: [financeSectionId], references: [id])
-  financeSectionId Int?
-  serviceProvider  String?
-  expiryDate       DateTime?       // Expiry date for the item
-  lastLowStockNotif DateTime?      // Last low stock notification sent
-  lastExpiryNotif  DateTime?       // Last expired notification sent
-  lastExpiringNotif DateTime?      // Last expiring soon notification sent
-  excessNotif      DateTime?
+  id                Int             @id @default(autoincrement())
+  taxPercent        Tax?
+  taxAmount         Float?
+  totalAmount       Float?
+  itemType          String?
+  serviceId         Int?
+  reasons           String?
+  category          String?
+  sellingPrice      Int?
+  quantity          Int?
+  lowQty            Int?
+  highQty           Int?
+  discount          Float?
+  name              String?
+  productId         Int?
+  services          Services?       @relation(fields: [serviceId], references: [id])
+  products          Products?       @relation(fields: [productId], references: [id])
+  salesId           Int?
+  sale              Sales?          @relation(fields: [salesId], references: [id])
+  purchasesId       Int?
+  purchases         Purchases?      @relation(fields: [purchasesId], references: [id])
+  expensesId        Int?
+  expenses          Expenses?       @relation(fields: [expensesId], references: [id])
+  productBatchId    Int?
+  productBatch      ProductBatch?   @relation(fields: [productBatchId], references: [id])
+  FinanceSection    FinanceSection? @relation(fields: [financeSectionId], references: [id])
+  financeSectionId  Int?
+  serviceProvider   String?
+  expiryDate        DateTime? // Expiry date for the item
+  lastLowStockNotif DateTime? // Last low stock notification sent
+  lastExpiryNotif   DateTime? // Last expired notification sent
+  lastExpiringNotif DateTime? // Last expiring soon notification sent
+  excessNotif       DateTime?
 
-  @@index([salesId, purchasesId, expensesId, financeSectionId,productId])
-
+  @@index([salesId, purchasesId, expensesId, financeSectionId, productId])
 }
 
 model InventoryTimeline {
@@ -539,54 +545,79 @@ model FinanceTimeline {
   @@index([salesId, createdAt, purchasesId, expensesId, financeSectionId])
 }
 
-model ItemCategory{
-  id                 Int       @id @default(autoincrement())
+model ItemCategory {
+  id                 Int               @id @default(autoincrement())
   name               String[]
   InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId Int?
 }
 
-model ItemUnit{
-  id                      Int       @id @default(autoincrement())
-  name                    String[]
-  InventorySection        InventorySection? @relation(fields: [inventorySectionId], references: [id])
-  inventorySectionId      Int?
-}
-
-model ServiceCategory{
-  id                 Int       @id @default(autoincrement())
+model ItemUnit {
+  id                 Int               @id @default(autoincrement())
   name               String[]
   InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId Int?
 }
 
-model Reason{
-  id                  Int       @id @default(autoincrement())
-  name                String[]
-  InventorySection    InventorySection? @relation(fields: [inventorySectionId], references: [id])
-  inventorySectionId  Int?
+model ServiceCategory {
+  id                 Int               @id @default(autoincrement())
+  name               String[]
+  InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
+  inventorySectionId Int?
+}
+model ExpenseCategory {
+  id                 Int               @id @default(autoincrement())
+  name               String[]
+  InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
+  inventorySectionId Int?
+}
+model Reason {
+  id                 Int               @id @default(autoincrement())
+  name               String[]
+  InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
+  inventorySectionId Int?
 }
 
 model Species {
-  id                   Int     @id @default(autoincrement())
-  name                 String?
-  breed                Breed[] 
-  DatabaseSection      DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
-  databaseSectionId    Int?
+  id                Int              @id @default(autoincrement())
+  name              String?
+  breed             Breed[]
+  DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
+  databaseSectionId Int?
 }
 
 model Breed {
-  id                    Int      @id @default(autoincrement())
-  name                  String[]
-  speciesId             Int      
-  species               Species  @relation(fields: [speciesId], references: [id])
-  DatabaseSection       DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
-  databaseSectionId     Int?
+  id                Int              @id @default(autoincrement())
+  name              String[]
+  speciesId         Int
+  species           Species          @relation(fields: [speciesId], references: [id])
+  DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
+  databaseSectionId Int?
 }
 
-model TaxType{
-  id                       Int    @id @default(autoincrement())
-  name                     Int[]
-  InventorySection         InventorySection? @relation(fields: [inventorySectionId], references: [id])
-  inventorySectionId       Int?
+model TaxType {
+  id                 Int               @id @default(autoincrement())
+  name               Int[]
+  InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
+  inventorySectionId Int?
+}
+
+model Inventorytransfer {
+  id                 Int      @id @default(autoincrement())
+  items              Json?
+  status             String?
+  transferStatus     String?
+  notes              String?
+  dueDate            DateTime?
+  startDate          DateTime?
+  invoiceNumber      String?
+  transferringBranch String?
+  receivingBranch    String?
+}
+
+model Location {
+  id                 Int               @id @default(autoincrement())
+  name               String?
+  InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
+  inventorySectionId Int?
 }

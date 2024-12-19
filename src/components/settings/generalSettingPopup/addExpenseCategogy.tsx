@@ -11,7 +11,7 @@ import { useAppSelector } from '@/lib/hooks';
 
 
 
-const AddServiceCategory = ({onClose}:any) => {
+const AddExpenseCategory = ({onClose}:any) => {
     const [inputs, setInputs] = useState<string[]>(['']);
     const appState = useAppSelector((state) => state.app);
     const [existingCategory, setExistingCategory] = useState<string[]>([]);
@@ -20,7 +20,7 @@ const AddServiceCategory = ({onClose}:any) => {
     useEffect(() => {
         const fetchExistingItems = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/serviceCategory/getAll?branchId=${appState.currentBranchId}`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/expenseCategory/getAll?branchId=${appState.currentBranchId}`);
                 const data = await response.json();
                 const names = data.map((item: { name: any[]; }) => item.name[0]); 
                 setExistingCategory(names);
@@ -58,16 +58,16 @@ const AddServiceCategory = ({onClose}:any) => {
         const newErrors = [...errors];
     let hasError = false;
 
-    // Define default service categories
-    const defaultServiceCategories = ['Grooming', 'Consultation'];
-    const allExistingCategories = [...existingCategory, ...defaultServiceCategories];
+    // Define default expense categories
+    const defaultExpenseCategories = ['Rent',' Payroll', 'Utilities', 'Transport', 'Medical Equipment', 'Repair and Maintenance', 'Other'];
+    const allExistingCategories = [...existingCategory, ...defaultExpenseCategories];
 
     inputs.forEach((input, index) => {
         const trimmedInput = input.trim();
         if (allExistingCategories.includes(trimmedInput)) {
-            newErrors[index] = 'This Service Category already exists';
+            newErrors[index] = 'This Expense Category already exists';
             hasError = true;
-            console.log(`Duplicate Service Category detected: ${trimmedInput}`);
+            console.log(`Duplicate Expense Category detected: ${trimmedInput}`);
         } else {
             newErrors[index] = '';
         }
@@ -80,7 +80,7 @@ const AddServiceCategory = ({onClose}:any) => {
             return; 
         }
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/serviceCategory/create?branchId=${appState.currentBranchId}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/expenseCategory/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -109,9 +109,9 @@ const AddServiceCategory = ({onClose}:any) => {
                     <Image src={closeicon} alt="close"></Image>
                 </div>
                 <div className="flex-col justify-start items-start gap-2 flex w-full">
-                    <div className="text-gray-500 text-xl font-medium">Add Service</div>
+                    <div className="text-gray-500 text-xl font-medium">Add Expense</div>
                     <div className='w-full flex justify-between '>
-                        <div className="text-neutral-400 text-base font-medium">Add and configure your service categories</div>
+                        <div className="text-neutral-400 text-base font-medium">Add and configure your Expense categories</div>
                     </div>
                 </div>
                 <div className="w-full flex items-center gap-[6rem] ">
@@ -120,7 +120,7 @@ const AddServiceCategory = ({onClose}:any) => {
                         {inputs.map((input, index) => (
                             <div key={index} className="w-full ">
                                 <div className='flex  items-center'>
-                                <div className="text-gray-500 text-base font-medium w-[12rem]">Service Category</div>
+                                <div className="text-gray-500 text-base font-medium w-[12rem]">Expense Category</div>
                                 <input
                                     className="ml-[5rem] w-[80%] border border-solid border-borderGrey outline-none h-11 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                     type="text"
@@ -157,4 +157,4 @@ const AddServiceCategory = ({onClose}:any) => {
 }
 
 
-export default AddServiceCategory
+export default AddExpenseCategory
