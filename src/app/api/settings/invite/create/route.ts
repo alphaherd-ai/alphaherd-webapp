@@ -142,9 +142,11 @@ export const POST = async (req: NextRequest) => {
             pass: process.env.AUTOMATED_GMAIL_APP_PASSWORD
         },
         tls: {
-            rejectUnauthorized: false,
+            rejectUnauthorized: true,
         },
     });
+
+    await transporter.verify();
 
 
 
