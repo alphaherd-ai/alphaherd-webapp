@@ -27,8 +27,6 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
     const [showPopup,setShowPopup] = useState(false);
     const id = url.get('id');
     const router = useRouter();
-    //console.log(headerData);
-    //console.log(headerData);
     const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
     const togglePopup = () =>{
         setShowPopup(!showPopup);
@@ -89,7 +87,9 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             expiry: data.expiry,
             batchNumber: data.batchNumber,
             hsnCode: data.barCode,
+
             location:data.location,
+
             isApproved: appState.isCurrentOrgAdmin ? true : false,
             costPrice: Number(data.unitPrice)
         }));
@@ -115,7 +115,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
                 create: items
             }
         }
-    console.log("data is :", data);
+
         try {
             setSaving(true);
             const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Invoice}?branchId=${appState.currentBranchId}`, data)
@@ -136,8 +136,10 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
         }
     };
 
+
    const isDisabled = !headerData.distributor || tableData.length === 0 
     //const isDisabled = headerData?.customer ? (!headerData?.customer) : (!orderData?.distributor) || id === null ? tableData.length === 1 : tableData.length === 0
+
     return (
         <>
             <div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">

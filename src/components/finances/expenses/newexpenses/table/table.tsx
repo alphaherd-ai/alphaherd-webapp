@@ -72,8 +72,10 @@ const NewExpensesTable = () => {
                 category: item.category
             }));
             setItems((prev: any[]) => [...itemData, ...prev,]);
+
             console.log("item data is : ",itemData);
             
+
         }
     }, [expenseData]);
 
@@ -88,6 +90,7 @@ const NewExpensesTable = () => {
         { value: 0.18, label: Tax.GST_18 },
         { value: 0.09, label: Tax.GST_9 }
     ];
+
 
     // const category = [
     //     {value: "Utilities", label: "Utilities"},
@@ -147,6 +150,7 @@ const NewExpensesTable = () => {
         console.log("table data is :",tableData);
     }
     
+
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -163,6 +167,7 @@ const NewExpensesTable = () => {
         setItems(updatedItems);
         setTableData(updatedItems);
     }, [items]);
+
 
 const handleGstSelect = (selectedGst: any, index: number) => {
     const updatedItems = [...tableData];
@@ -452,6 +457,7 @@ const handleItemName=(event:any,index:any)=>{
                                     menuPortalTarget={document.body}
 
                                     styles={customStyles}
+
 
                                         />
                                     </div>
