@@ -64,7 +64,14 @@ const AddExpenseCategory = ({onClose}:any) => {
 
     inputs.forEach((input, index) => {
         const trimmedInput = input.trim();
-        if (allExistingCategories.includes(trimmedInput)) {
+        
+        if (!trimmedInput) {
+            newErrors[index] = 'Expense Category cannot be empty.'
+            console.log("empty");
+            hasError = true;
+            return;
+        }
+       else if (allExistingCategories.includes(trimmedInput)) {
             newErrors[index] = 'This Expense Category already exists';
             hasError = true;
             console.log(`Duplicate Expense Category detected: ${trimmedInput}`);

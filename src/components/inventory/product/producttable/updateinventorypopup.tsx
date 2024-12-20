@@ -21,7 +21,7 @@ import { useAppSelector } from "@/lib/hooks";
 import useSWR from 'swr';
 import { ConversationContextImpl } from "twilio/lib/rest/conversations/v1/conversation";
 
-
+import {UserState } from '@/lib/features/userSlice';
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 type PopupProps = {
@@ -104,8 +104,8 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
     const [distributor, setDistributor] = useState<any[]>([]);
     const [branchUsers,setBranchUsers]=useState<any[]>([]);
     // console.log(appState.isCurrentOrgAdmin)
-
-   
+    const userState= useAppSelector((state)=>state.user)
+    const [value, setValue] = useState<string>(String(userState.name));
 
     const customStyles = {
         control: (provided: any, state: any) => ({
@@ -162,7 +162,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                     role:user.role
                 };
             });
-            console.log("users with role in ",usersWithRoles);
+         //   console.log("users with role in ",usersWithRoles);
             setBranchUsers(usersWithRoles);
         }
     }, [fetchedAdmin, error, isLoading]);
@@ -175,7 +175,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
             console.log(individualSelectedProduct)
             const fillItemName = () => {
                 // console.log(inventory);
-                console.log(fetchedProducts, products)
+             //   console.log(fetchedProducts, products)
                 const object = {
                     label: individualSelectedProduct.itemName,
                     value: {
@@ -203,7 +203,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                 },
                 label: product.itemName,
             }));
-             console.log("formattedProducts  : ",formattedProducts)
+           //  console.log("formattedProducts  : ",formattedProducts)
             setProducts(formattedProducts);
         }
         if (!batchError && !isBatchLoading && fetchedBathces) {
@@ -223,7 +223,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                 },
                 label: product.batchNumber
             }));
-            console.log("formattedProductBatches   ",formattedProductBatches)
+         //   console.log("formattedProductBatches   ",formattedProductBatches)
             setBatches(formattedProductBatches)
         }
     }, [fetchedProducts, fetchedBathces, batchError, error, isBatchLoading, isLoading])
@@ -290,7 +290,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                 (updatedInventory[index]?.quantity || 0) * (updatedInventory[index]?.costPrice || 0);
         }
         setInventory(updatedInventory);
-        console.log("updatedInventory:  ",updatedInventory);
+      //  console.log("updatedInventory:  ",updatedInventory);
     }, [inventory]);
 
 
@@ -303,7 +303,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
     }, [inventory]);
 
     const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
-        console.log(selectedProduct)
+        //console.log(selectedProduct)
         if (index === inventory.length - 1) {
             inventory.push({});
             setInventory(inventory);
@@ -320,7 +320,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                     productId: data.value.id,
                     hsnCode: data.value.hsnCode
                 };
-                console.log("updatedInventory:  ",updatedInventory);
+              //  console.log("updatedInventory:  ",updatedInventory);
                 setInventory(updatedInventory);
                 const productBatches = batches?.filter((batch) => batch.value.productId === selectedProduct.value.id).sort((a, b) => a.value.id - b.value.id);
                 setFilteredBatches(productBatches);
@@ -391,12 +391,14 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
         }
     }, [inventory, products, selectedOption]);
 
+    console.log("Appstate is :",appState)
+
     const [newlocation, setInput] = useState<string>('');
 
     const handleLocationInput = (selectedOption: { value: number; label: string } | null) => {
         if (selectedOption) {
             setInput(selectedOption.label); // Save the label instead of value
-            console.log(`Location changed to: `, selectedOption.label);
+           // console.log(`Location changed to: `, selectedOption.label);
         }
     };
     
@@ -436,7 +438,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                     distributors,
                     location,
                     productId,
-                    isApproved: appState.isCurrentOrgAdmin ? true : false
+                    isApproved: appState.isCurrentOrgAdmin ? true : false 
                 };
 
                 if (selectedOption === Stock.StockOUT) {
@@ -449,7 +451,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                             url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/timeline`,
                             orgId: appState.currentOrgId
                         }
-                        console.log("nnotifs data : ",notifData);
+                       // console.log("nnotifs data : ",notifData);
                         const notifPromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
                         setTimeout(() => {
                             onClose();
@@ -459,42 +461,77 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                         // console.log('Updated inventory item:', response.data);
                     }
                     else {
-                        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/create?branchId=${appState.currentBranchId}`, body);
-                        // console.log("here's the response", response);
+                       // const responsePromise = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/create?branchId=${appState.currentBranchId}`, body);
+                      //   console.log("here's the response", responsePromise);
+                        // console.log("current org is not admin");
                         const notifData = {
                             source: Notif_Source.Inventory_Update_Approval_Request,
                             orgId: appState.currentOrgId,
-                            data: {
-                                newBatchId: response.data.productBatch.id,
-                                oldBatchId: id,
-                                productId: response.data.productBatch.productId,
-                                inventoryId: response.data.inventory.id,
-                                branchId: appState.currentBranchId
-                            }
+                            name : value,
+                              data: {
+                                body1 : body,
+                                // newBatchId: responsePromise.data.productBatch.id,
+                                productId: id,
+                                // inventoryId: responsePromise.data.inventory.id,
+                                // branchId: appState.currentBranchId,
+                               // quantity: responsePromise.data.inventory.quantityChange
+                            },
                         }
                         console.log("nnotifs data : ",notifData);
-                        const notif = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
-
-                        // console.log('Updated inventory item:', response.data);
+                        const notifPromise = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
+                        setTimeout(() => {
+                            onClose();
+                        }, 2000)
+                        const [ notif] = await Promise.all([ notifPromise]);
+                         
                     }
 
-                } else if (selectedOption === Stock.StockIN) {
+                } 
+                
+                else if (selectedOption === Stock.StockIN) {
                     console.log(body);
                     console.log("saving new batch :" , body)
+                    if (appState.isCurrentOrgAdmin) {
                     const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/create?branchId=${appState.currentBranchId}`, body);
-                    setTimeout(() => {
-                        onClose();
-                    }, 2000);
-                    const response = await responsePromise;
                     const notifData = {
                         totalItems: body.quantity,
                         source: Notif_Source.Inventory_Timeline_Added,
                         url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/timeline`,
                         orgId: appState.currentOrgId
                     }
-                    const notif = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
-                    console.log('Created New Batch Item:', response.data);
+                    const notifPromise = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
+                    setTimeout(() => {
+                        onClose();
+                    }, 2000)
+                    const [response, notif] = await Promise.all([responsePromise, notifPromise]);
+                  //  console.log('Created New Batch Item:', response.data);
                 }
+                else {
+                    //const responsePromise = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/create?branchId=${appState.currentBranchId}`, body);
+                    // console.log("here's the response", responsePromise);
+                     //console.log("current org is not admin");
+                    const notifData = {
+                        source: Notif_Source.Inventory_Update_Approval_Request,
+                        orgId: appState.currentOrgId,
+                        name : value,
+                          data: {
+                            body1 : body,
+                            // newBatchId: responsePromise.data.productBatch.id,
+                            productId: id,
+                            // inventoryId: responsePromise.data.inventory.id,
+                            // branchId: appState.currentBranchId,
+                            //quantity: responsePromise.data.inventory.quantityChange
+                        },
+                    }
+                    console.log("nnotifs data : ",notifData);
+                    const notifPromise = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
+                    setTimeout(() => {
+                        onClose();
+                    }, 2000)
+                    const [ notif] = await Promise.all([ notifPromise]);
+                  //   console.log('Updated inventory item:', response.data);
+                }
+            }
 
             }
 
@@ -538,10 +575,10 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                     }
                     return acc;
                 }, []);
-                console.log(reasonList);
+               // console.log(reasonList);
                 setReason(reasonList);
             } catch (error) {
-                console.log("Error fetching species", error);
+           //     console.log("Error fetching species", error);
             }
         }
         fetchReason();

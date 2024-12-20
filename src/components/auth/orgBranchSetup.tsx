@@ -100,6 +100,9 @@ const OrgDetailsSetup = (props: any) => {
                                   onFocus={() => setFocused(true)}
                                    value={appState.currentBranch.branchName}
                                     />
+                                    {props.validationErrors.branchName && (
+                                    <div className="text-[red] error">{props.validationErrors.branchName}</div>
+                                )}
                             </div>
 
                         </div>
@@ -144,7 +147,7 @@ const OrgDetailsSetup = (props: any) => {
                     </div>
                     <div className="self-stretch justify-start items-start gap-10 inline-flex">
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
-                            <div className="w-[136px] text-gray-500 text-base font-medium">Company Email*</div>
+                            <div className="w-[136px] text-gray-500 text-base font-medium">Org. Email*</div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
                                 <input
                                     type="email"
@@ -155,15 +158,15 @@ const OrgDetailsSetup = (props: any) => {
                                     onFocus={() => setFocused2(true)}
                                     value={props.data.orgEmail}
                                 />
-                                {focused2 && props.data.orgEmail.length <= 1 && (
-                                    <div className="text-red-500 text-sm">Email is required.</div>
+                                 {props.validationErrors.orgEmail && (
+                                    <div className="text-[red] error">{props.validationErrors.orgEmail}</div>
                                 )}
                             </div>
                         </div>
                     </div>
                     <div className="self-stretch justify-start items-start gap-10 inline-flex">
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
-                            <div className="w-[136px] text-gray-500 text-base font-medium">Business Address*</div>
+                            <div className="w-[136px] text-gray-500 text-base font-medium">Org. Address*</div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
                                 <input
                                     type="text"
@@ -210,8 +213,8 @@ const OrgDetailsSetup = (props: any) => {
                                     onFocus={() => setFocused5(true)}
                                     value={props.data.pincode}
                                 />
-                                {focused5 && props.data.pincode.length <= 1 && (
-                                    <div className="text-red-500 text-sm">Pincode is required.</div>
+                                {props.validationErrors.pincode && (
+                                    <div className="text-[red] error">{props.validationErrors.pincode}</div>
                                 )}
                             </div>
                         </div>

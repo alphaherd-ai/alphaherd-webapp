@@ -57,12 +57,19 @@ const AddReasons = ({onClose}:any) => {
     const handleSave = async () => {
         const newErrors = [...errors];
         let hasError = false;
-
+     
         inputs.forEach((input, index) => {
-            if (existingReasons.includes(input.trim())) {
+            const trimmedInput = input.trim();
+            if (!trimmedInput) {
+                newErrors[index] = 'Reason cannot be empty.'
+                hasError = true;
+                
+            }
+            
+            else if (existingReasons.includes(trimmedInput)) {
                 newErrors[index] = 'This Reason already exists';
                 hasError = true;
-                console.log(`Duplicate Reason detected: ${input}`);
+                console.log(`Duplicate Reason detected: ${trimmedInput}`);
             } else {
                 newErrors[index] = '';
             }
@@ -86,8 +93,9 @@ const AddReasons = ({onClose}:any) => {
             });
             if (response.ok) {
                 const result = await response.json();
-                window.location.reload();
+                
                 onClose(); 
+                window.dispatchEvent(new FocusEvent('focus'));
             } else {
                 console.error('Failed to save data:', response.statusText);
             }

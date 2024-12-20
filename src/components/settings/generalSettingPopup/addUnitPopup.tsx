@@ -58,10 +58,16 @@ const AddItemUnit = ({onClose}:any) => {
         let hasError = false;
 
         inputs.forEach((input, index) => {
-            if (existingUnit.includes(input.trim())) {
+            const trimmedInput = input.trim();
+        if (!trimmedInput) {
+            newErrors[index] = 'Unit cannot be empty.'
+            hasError = true;
+            
+        }
+           else if (existingUnit.includes(trimmedInput)) {
                 newErrors[index] = 'This Reason already exists';
                 hasError = true;
-                console.log(`Duplicate Reason detected: ${input}`);
+                console.log(`Duplicate Reason detected: ${trimmedInput}`);
             } else {
                 newErrors[index] = '';
             }
