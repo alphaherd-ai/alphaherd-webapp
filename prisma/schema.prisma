@@ -167,21 +167,6 @@ model InventorySection {
   itemCategory    ItemCategory[]
   itemUnit        ItemUnit[]
   serviceCategory ServiceCategory[]
-  location        Location[]
-  reason          Reason[]
-  taxType         TaxType[]
-  id              Int                 @id @default(autoincrement())
-  name            String
-  quantity        Int?
-  branch          OrgBranch           @relation(fields: [branchId], references: [id])
-  branchId        Int                 @unique
-  products        Products[]
-  productBatch    ProductBatch[]
-  service         Services[]
-  timeline        InventoryTimeline[]
-  itemCategory    ItemCategory[]
-  itemUnit        ItemUnit[]
-  serviceCategory ServiceCategory[]
   expenseCategory ExpenseCategory[]
   location        Location[]
   reason          Reason[]
