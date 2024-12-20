@@ -5,7 +5,7 @@ import { connectToDB } from '@/utils';
 import { UserState } from '@/lib/features/userSlice';
 import nodemailer from 'nodemailer';
 
-function htmlTemplate(userInviteString : String){
+function htmlTemplate(userInviteString: String) {
 
     let inviteLink = process.env.NEXT_PUBLIC_API_BASE_PATH + "/api/settings/invite?userInviteString=" + userInviteString;
 
@@ -67,7 +67,7 @@ export const POST = async (req: NextRequest) => {
 
     // console.log("inside API")
 
-    const { branchId, role, email} = await req.json();
+    const { branchId, role, email } = await req.json();
 
     const requestHeaders = new Headers(req.headers)
 
@@ -104,21 +104,21 @@ export const POST = async (req: NextRequest) => {
 
     let invitedUser = await prismaClient.user.findUnique({
         where: {
-            email : email
+            email: email
         }
     });
 
-    if(invitedUser){
+    if (invitedUser) {
         const orgBranchUserRole = await prismaClient.orgBranchUserRole.findFirst({
             where: {
                 userId: invitedUser?.id,
                 orgBranchId: branchId
             }
         });
-    
+
         // console.log(orgBranchUserRole)
-    
-        if(orgBranchUserRole){
+
+        if (orgBranchUserRole) {
             return new Response(JSON.stringify({ "message": "User is already part of the branch" }), {
                 status: 500,
                 headers: {
@@ -128,16 +128,22 @@ export const POST = async (req: NextRequest) => {
         }
 
     }
-    const {AUTOMATED_GMAIL,AUTOMATED_GMAIL_APP_PASSWORD} = process.env;
+
+
     let userInviteString = await encrypt({ branchId, role, email }, "7 day");
 
     const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-            user: AUTOMATED_GMAIL,
-            pass: AUTOMATED_GMAIL_APP_PASSWORD
+            user: process.env.CUSTOMCONNSTR_AUTOMATED_GMAIL,
+            pass: process.env.CUSTOMCONNSTR_AUTOMATED_GMAIL_APP_PASSWORD,
         },
+        
     });
+
+    await transporter.verify();
+
+
 
     const message = "Hi there, you were emailed me through nodemailer"
     const options = {
@@ -148,12 +154,16 @@ export const POST = async (req: NextRequest) => {
         html: htmlTemplate(userInviteString),
     }
 
-    transporter.sendMail(options, (error, info)=> {
-        if (error) {
-            console.error(error);
-        } else {
-            console.info('Email sent: ' + info.response);
-        }
+    await new Promise((resolve, reject) => {
+        transporter.sendMail(options, (err, info) => {
+            if (err) {
+                console.error(err);
+                reject(err);
+            } else {
+                resolve(info);
+            }
+        });
     });
-    return new Response(JSON.stringify({"message" : "success"}),{status: 200});
+
+    return new Response(JSON.stringify({ message: 'Email sent successfully' }));
 }

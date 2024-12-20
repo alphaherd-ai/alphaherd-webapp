@@ -27,13 +27,13 @@ const NewPurchasesTotalAmount = () => {
     const [grandAmt, setGrandAmt] = useState(totalAmount);
 
     const gstOptions = [
-        { value: 'percent', label: '₹ in Percent' },
+        { value: 'percent', label: '% in Percent' },
         { value: 'amount', label: '₹ in Amount' }
     ];
 
 
     
-    const [overAllDiscount,setDiscount]=useState<string>(""); 
+
 
     const [shipping, setShipping] = useState<string>('');
     const [adjustment, setAdjustment] = useState<string>('');
@@ -65,37 +65,37 @@ const NewPurchasesTotalAmount = () => {
     const handleSelectChange = (selectedOption: any) => {
         setDiscountMethod(selectedOption.value);
     };
-    const [discountInput,setDiscountInput]=useState<string>("");
-    const handleDiscountChange = (value: string) => {
-        if (/^\d*\.?\d*$/.test(value)) {
-          setDiscountInput(value);
-    
-          const discount = parseFloat(value) || 0;
-    
-          if (discountMethod === "amount") {
-            const discountedAmount = grandAmt - discount;
-            const discountPercent = Number(discount / totalAmount).toFixed(10);
-            setDiscount(discountPercent);
-            setGrandAmt(discountedAmount);
+    const [discountInput, setDiscountInput] = useState(0);
+        const [selectedDiscountPer, setDiscountPer] = useState(0);
+    const handleDiscountChange = (value: number) => {
+        if (discountMethod === "amount") {
+            //const discountedAmount = grandAmt - value;
+            //const discountPercent = Number(value / totalAmount).toFixed(10);
+            setDiscountInput(value)
+            const discountPercent = Number(value / totalAmount).toFixed(4)
+            setDiscountPer(Number(discountPercent))
+
             setTotalAmountData((prevData) => ({
-              ...prevData,
-              overallDiscount: discountPercent,
+                ...prevData,
+                overallDiscount: Number(discountPercent),
             }));
-          } else if (discountMethod === "percent") {
-            const discountedAmount = grandAmt - grandAmt * (discount / 100);
-            setDiscount((discount / 100).toString());
-            setGrandAmt(discountedAmount);
+        } else if (discountMethod === "percent") {
+
+            setDiscountInput(value);
+            const discountPercent = Number(value / 100).toFixed(4)
+            setDiscountPer(Number(discountPercent));
+            setDiscountInput(Number(discountPercent) * totalAmount)
+
             setTotalAmountData((prevData) => ({
-              ...prevData,
-              overallDiscount: discount / 100,
+                ...prevData,
+                overallDiscount: value / 100,
             }));
-          }
         }
       };
     
 
     const updateGrandTotal = () => {
-        const discountedAmount = (totalAmount - totalAmount * parseFloat(overAllDiscount || "0") || 0);
+        const discountedAmount = (totalAmount - (discountMethod === 'amount' ? (discountInput || 0) : totalAmount * (selectedDiscountPer || 0))) || 0;
         const shippingValue = parseFloat(shipping) || 0;
         const adjustmentValue = parseFloat(adjustment) || 0;
         const newGrandTotal = discountedAmount + shippingValue + adjustmentValue;
@@ -107,7 +107,7 @@ const NewPurchasesTotalAmount = () => {
             totalCost: newGrandTotal,
             shipping: shippingValue,
             adjustment: adjustmentValue,
-            overAllDiscount: overAllDiscount
+            
         }));
     };
 
@@ -121,7 +121,7 @@ const NewPurchasesTotalAmount = () => {
 
     useEffect(() => {
         updateGrandTotal();
-    }, [totalAmount, overAllDiscount, shipping, adjustment]);
+    }, [totalAmount, selectedDiscountPer, discountInput, discountMethod, shipping, adjustment]);
 
     const customStyles = {
         control: (provided: any, state: any) => ({
@@ -190,8 +190,8 @@ const NewPurchasesTotalAmount = () => {
                                     <input
                                         type='number'
                                         className="text-right  text-base  w-[50%] border-none outline-none"
-                                        value={totalAmountData.subTotal ? discountInput : 0}
-                                        onChange={(e) => handleDiscountChange(e.target.value)}
+                                        value={discountMethod === 'amount' ? discountInput : (selectedDiscountPer || 0) * 100}
+                                        onChange={(e) => handleDiscountChange(Number(e.target.value))}
                                     /></div>
                                 <div className=' flex text-gray-500 text-base font-medium pl-6'>
                                     <Select

@@ -206,7 +206,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
 
 
     const isDisabled = !(id === null ? headerdata?.customer?.label : otherData.customer) || !(formData.amountPaid) || !selectedMode
-    console.log(otherData);
+    //console.log(otherData);
 
     return (
         <div className="w-1/2 h-full flex  items-center backdrop-blur-sm  ">

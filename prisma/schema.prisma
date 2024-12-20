@@ -552,26 +552,27 @@ model ItemCategory {
   inventorySectionId Int?
 }
 
-model ItemUnit {
-  id                 Int               @id @default(autoincrement())
+model ItemUnit{
+  id                      Int       @id @default(autoincrement())
+  name                    String[]
+  InventorySection        InventorySection? @relation(fields: [inventorySectionId], references: [id])
+  inventorySectionId      Int?
+}
+
+model ServiceCategory{
+  id                 Int       @id @default(autoincrement())
   name               String[]
   InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId Int?
 }
 
-model ServiceCategory {
-  id                 Int               @id @default(autoincrement())
-  name               String[]
-  InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
-  inventorySectionId Int?
+model Reason{
+  id                  Int       @id @default(autoincrement())
+  name                String[]
+  InventorySection    InventorySection? @relation(fields: [inventorySectionId], references: [id])
+  inventorySectionId  Int?
 }
 model ExpenseCategory {
-  id                 Int               @id @default(autoincrement())
-  name               String[]
-  InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
-  inventorySectionId Int?
-}
-model Reason {
   id                 Int               @id @default(autoincrement())
   name               String[]
   InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
