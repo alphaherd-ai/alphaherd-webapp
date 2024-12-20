@@ -26,6 +26,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
     const [isSaving, setSaving] = useState(false);
     const router = useRouter();
     //console.log(headerData);
+    //console.log(headerData);
     const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
     const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
@@ -58,8 +59,8 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
         console.log("item is :", items);
         const data = {
             distributor: (id === null) ? allData.headerData.distributor.value : orderData.distributor,
-            distributorId: (id === null) ? allData.headerData.distributor.distributorId : orderData.distributorId,
-            //newCreditedToken: (id === null) ? newCreditedToken : -1,
+            distributorId: (id === null) ? allData.headerData.distributor.distributorId : null,
+            newCreditedToken: (id === null) ? newCreditedToken : 0,
             notes: (id === null) ? allData.headerData.notes : orderData.notes,
             invoiceNo: (id === null) ? allData.headerData.invoiceNo : orderData.invoiceNo,
             dueDate: (id === null) ? allData.headerData.dueDate : orderData.dueDate,

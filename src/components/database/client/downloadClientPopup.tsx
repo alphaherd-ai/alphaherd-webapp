@@ -93,7 +93,6 @@ const DownloadPopup = ({ onClose, clients }:any) => {
       doc.text(`Gst No. :  ${appState.currentOrg.gstNo}`, 126, 12);
       doc.setFontSize(13);
       doc.text(`PAN No. :  5465465465465465`, 126, 18);
-
       doc.setFontSize(13);
       doc.text(`Email :  ${appState.currentOrg.orgEmail}`, 220, 12);
       doc.setFontSize(13);

@@ -31,7 +31,7 @@ import Invoice from '../../assets/icons/finance/invoice.svg';
 
 import Estimate from "../../assets/icons/finance/list_alt.svg"
 
-import Return from '../../assets/icons/finance/Return.svg';
+import Return from '../../assets/icons/finance/return.svg';
 
 
 import Box from '@mui/material/Box';
@@ -519,7 +519,7 @@ export default Navbar;
 
 // import Estimate from "../../assets/icons/finance/list_alt.svg"
 
-// import Return from '../../assets/icons/finance/Return.svg';
+// import Return from '../../assets/icons/finance/return.svg';
 
 
 // import Box from '@mui/material/Box';

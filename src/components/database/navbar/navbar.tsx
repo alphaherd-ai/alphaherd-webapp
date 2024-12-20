@@ -54,7 +54,7 @@ const DatabaseNavbar = () => {
             value: item,
           }));
           const patientOptions = patients.map((item:any)=>({
-            label:`${item?.patientName||''}---${item?.clients.clientName||''}`
+            label:`${item?.patientName||''}---${item?.clients?.clientName||''}`
           }))
           const combinedOptions = [...clientOptions, ...distributorOptions,...patientOptions];
     
@@ -205,7 +205,7 @@ const DatabaseNavbar = () => {
                             isSearchable={true}
                             options={searchOptions}
                             onChange={(selectedProduct: any) => handleSearch(selectedProduct)}
-                            placeholder="Search via Item Name or Batch no."
+                            placeholder="Search via name or phone no."
                             styles={customStyles}
                         />
                         {/* <div className="absolute inset-y-0 right-3 pl-2 flex items-center pointer-events-none">

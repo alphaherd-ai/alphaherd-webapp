@@ -6,7 +6,7 @@ import Attachment from "../../../../../assets/icons/finance/attachment.svg"
 import Link from "next/link"
 import Image from "next/image"
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
-import Menu from '@/assets/icons/finance/Menu.svg';
+import Menu from '@/assets/icons/finance/menu.svg';
 import { useRouter } from "next/navigation"
 
 const ExistingsalesReturnNavbar = () => {
@@ -23,7 +23,7 @@ const ExistingsalesReturnNavbar = () => {
 
                     </div>
                     <div className="text-gray-500 text-[28px] flex items-center font-bold ">
-                    Sales Returns - SR-000345
+                    Sales Returns 
 
                     </div>
                     </div>

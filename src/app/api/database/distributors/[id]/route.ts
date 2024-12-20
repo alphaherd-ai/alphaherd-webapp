@@ -62,23 +62,27 @@ export const PUT=async (req: NextRequest,
         }
 }
 
-export const DELETE=async (req: NextRequest,
-    { params }: { params: {id: number; } } )=> {
-    if (req.method !== 'DELETE') {
-                return new Response('Method not allowed',{status:405});
-            } 
-            try {
-                const databaseId = await fetchDatabaseId(req);
-                
-                await prismaClient.distributors.deleteMany({
-                    where: { id: Number(params.id),databaseSectionId:databaseId },
-                });
-              
-                            
-            return new Response(`distributor with id: ${Number(params.id)} Deleted Successfully`,{status:201})
-            } catch (error) {
-                return new Response( "Internal server error",{status:500});
-            } finally {
-                await prismaClient.$disconnect();
-            }
-  }
+export const DELETE = async (
+    req: NextRequest,
+    { params }: { params: { id: number } }
+  ) => {
+    if (req.method !== "DELETE") {
+      return new Response("Method not allowed", { status: 405 });
+    }
+    try {
+      const databaseId = await fetchDatabaseId(req);
+  
+      await prismaClient.distributors.deleteMany({
+        where: { id: Number(params.id), databaseSectionId: databaseId },
+      });
+  
+      return new Response(
+        `Distributor with id: ${Number(params.id)} deleted successfully`,
+        { status: 201 }
+      );
+    } catch (error) {
+      return new Response("Internal server error", { status: 500 });
+    } finally {
+      await prismaClient.$disconnect();
+    }
+  };

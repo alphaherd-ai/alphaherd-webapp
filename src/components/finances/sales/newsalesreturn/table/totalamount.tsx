@@ -240,8 +240,9 @@ const NewsalesReturnTotalAmout = () => {
                         </div>
                         {transactionsData && transactionsData.map((transaction, index) => (
                             transaction.isAdvancePayment &&
-                            (<div key={index} className="w-full  px-6 py-2 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
+                            (<div key={index} className="w-full  px-2 py-2 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
                                 <div className="text-gray-500 text-md font-medium ">Advance Paid on  {formatDateAndTime(transaction.date).formattedDate}</div>
+                                <div className='text-gray-500 text-md font-medium'>#{transaction?.receiptNo}</div>
                                 <div className='flex items-center h-9 px-4  justify-between rounded-lg '>
                                     <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
                                         ₹ {transaction.amountPaid > 0 ? transaction.amountPaid : -1 * transaction.amountPaid}
@@ -253,8 +254,9 @@ const NewsalesReturnTotalAmout = () => {
 
                         {transactionsData && transactionsData.map((transaction, index) => (
                             !transaction.isAdvancePayment &&
-                            (<div key={index} className="w-full  px-6 py-2 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
+                            (<div key={index} className="w-full  px-2 py-2 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
                                 <div className="text-gray-500 text-md font-medium ">Paid on {formatDateAndTime(transaction.date).formattedDate}</div>
+                                <div className='text-gray-500 text-md font-medium'>#{transaction?.receiptNo}</div>
                                 <div className="text-textGrey2 text-base font-medium  w-1/3 py-4 flex  items-center">
                                     <div className='flex pr-2'>
                                         <Image src={Cash} alt='Cash' className='w-4 h-4 ' />
@@ -273,7 +275,9 @@ const NewsalesReturnTotalAmout = () => {
                             <div className="text-gray-500 text-base font-bold  w-1/3 py-4">Balance Due</div>
                             <div className="text-gray-500 text-lg font-medium  w-1/3 py-4 flex  items-center"></div>
                             <div className="text-gray-500 text-base font-bold  w-1/3 py-4 ">₹{totalAmountData.subTotal ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
-                                {balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                                {transactionsData.length === 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                                    Credited
+                                </span> : balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
                                     You owe
                                 </span> : balanceDue === 0 ? "" : <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
                                     You’re owed

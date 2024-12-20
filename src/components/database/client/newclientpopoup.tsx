@@ -310,10 +310,18 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setNewClient,setIsNewClient
                     {/* <button className="px-4 py-2.5 bg-greenButton border-none rounded-[5px] justify-start items-center gap-2 flex"onClick={togglePopup}>
                         <div className="text-white text-base font-bold ">Add Patient</div>
                     </button> */}
-                    <div  className=" h-11 px-4 py-2.5 bg-teal-400 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer" onClick={handleNewPatientPopUp}>
-                        <div className="w-6 h-7"> <Image src={Paws} alt='Paws' className='w-6 h-6 ' /></div>
-                        <div className="text-gray-100 text-base font-medium ">Add Patient</div>
-                    </div>
+                    <div 
+  className={`h-11 px-4 py-2.5 rounded-[5px] flex items-center gap-2 
+              ${isSaveDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-teal-400 cursor-pointer'}`}
+  onClick={!isSaveDisabled && !isClientSaved ? handleNewPatientPopUp : undefined}
+>
+  <div className="w-6 h-7">
+    <Image src={Paws} alt="Paws" className="w-6 h-6" />
+  </div>
+  <div className="text-gray-100 text-base font-medium">
+    Add Patient
+  </div>
+</div>
 
                     {/* <button className="px-4 py-2 bg-black rounded-[5px] justify-start items-center gap-2 flex" onClick={handleSaveClick}>
                         <div className="text-white border-none text-base font-bold ">Save</div>

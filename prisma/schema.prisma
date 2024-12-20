@@ -221,7 +221,7 @@ model Clients {
   DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
   databaseSectionId Int?
   creditedToken     Float?           @default(0)
-
+  
   @@index([databaseSectionId])
   @@map("client")
 }

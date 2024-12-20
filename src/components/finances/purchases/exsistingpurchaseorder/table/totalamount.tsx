@@ -26,7 +26,7 @@ const ExsistingPurchasesTotalAmount = ({ otherData, isLoading }: any) => {
         return acc;
     }, 0);
 
-    const balanceDue = -otherData.totalCost - totalPaidAmount + totalAmountPay
+    const balanceDue = otherData.totalCost + totalPaidAmount - totalAmountPay
     const [count, setCount] = useState(0);
     const [initialInvoiceNo, setInitialInvoiceNo] = useState('');
 
@@ -127,8 +127,8 @@ const ExsistingPurchasesTotalAmount = ({ otherData, isLoading }: any) => {
                             <div className="w-full  px-6 bg-white rounded-bl-md rounded-br-md justify-between items-center flex border border-t-0 border-solid border-borderGrey">
                                 <div className="text-gray-500 text-base font-bold  w-1/3 py-4">Balance Due</div>
                                 <div className="text-gray-500 text-lg font-medium  w-1/3 py-4 flex  items-center"></div>
-                                <div className="text-gray-500 text-base font-bold  w-1/3 py-4 ">₹{balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue || 0)?.toFixed(2)}
-                                    {balanceDue > 0 ? <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 rounded-[5px] justify-center bg-[#E7F5EE] items-center gap-2 ml-[5px]">
+                                <div className="text-gray-500 text-base font-bold  w-1/3 py-4 ">₹{balanceDue < 0 ?  (-1*balanceDue)?.toFixed(2) : (balanceDue || 0)?.toFixed(2)}
+                                    {balanceDue < 0 ? <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 rounded-[5px] justify-center bg-[#E7F5EE] items-center gap-2 ml-[5px]">
                                         You’re owed
                                     </span> : balanceDue === 0 ? "" : <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9]   rounded-[5px] justify-center items-center gap-2 ml-[5px]">
                                         You owe

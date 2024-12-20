@@ -3,7 +3,7 @@
 
 import lefticon from "../../../../../assets/icons/finance/left_icon.svg"
 import Attachment from "../../../../../assets/icons/finance/attachment.svg"
-import Menu from '@/assets/icons/finance/Menu.svg';
+import Menu from '@/assets/icons/finance/menu.svg';
 import Link from "next/link"
 import Image from "next/image"
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";

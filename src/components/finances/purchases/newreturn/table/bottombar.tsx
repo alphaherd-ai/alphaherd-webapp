@@ -50,6 +50,7 @@ const NewPurchaseReturnNewBottomBar = ({ invoiceData }: any) => {
         }));
         const data = {
             distributor: (id === null) ? allData.headerData.distributor.value : invoiceData.distributor,
+            distributorId:(id===null) ? allData.headerData.distributor.distributorId : null,    
             notes: (id === null) ? allData.headerData.notes : invoiceData.notes,
             invoiceNo: (id === null) ? allData.headerData.invoiceNo : invoiceData.invoiceNo,
             dueDate: (id === null) ? allData.headerData.dueDate : invoiceData.dueDate,
@@ -61,7 +62,7 @@ const NewPurchaseReturnNewBottomBar = ({ invoiceData }: any) => {
             recordTransaction: {
                 create: allData.transactionsData
             },
-            status:balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
+            status:allData.totalAmountData.totalCost === balanceDue ? `Debited:₹${parseFloat(balanceDue).toFixed(2)}` :balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
             type: FinanceCreationType.Purchase_Return,
             items: {
                 create: items

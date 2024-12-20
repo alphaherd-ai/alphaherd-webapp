@@ -72,7 +72,7 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
             recordTransaction: {
                 create: allData.transactionsData
             },
-            status:balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
+            status:allData.totalAmountData.totalCost === balanceDue ? `Credited:₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
             type: FinanceCreationType.Sales_Return,
             items: {
                 create: items

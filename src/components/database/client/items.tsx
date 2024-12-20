@@ -1,34 +1,38 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import formatDateAndTime from '@/utils/formateDateTime';
-import { useAppSelector } from '@/lib/hooks';
-import { Spinner } from '@nextui-org/react';
-import useSWR from 'swr';
-import Loading from '@/app/loading';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import DatabaseClientBottombar from './bottombar';
-// interface Clients {
-//     id: number;
-//     clientName: string;
-//     email: string;
-//     contact: string;
-//     address: string;
-//     city: string;
-//     pinCode: string;
-//     patients:Patients[]|undefined;
-// }
+import Loading from '@/app/loading';
 
-// interface Patients{
-//     id:string;
-//     patientName:string;
-//     species:string;
-//     breed:string;
-// }
+interface Clients {
+    id: number;
+    clientName: string;
+    email: string;
+    contact: string;
+    address: string;
+    city: string;
+    pinCode: string;
+    age?: number; // Ensure this is present if you're sorting by age
+    patients: Patients[] | undefined;
+}
 
-const DatabaseClientTableItem = ({ clients, data, isLoading }: any) => {
-    
+interface Patients {
+    id: string;
+    patientName: string;
+    species: string;
+    breed: string;
+}
+  
+  // Define the props interface for DatabaseClientTableItem component
+  interface DatabaseClientTableItemProps {
+    clients: Clients[]; // Array of clients
+    isLoading: boolean; // Loading state
+  }
+  
+  // Functional component with typed props
+  const DatabaseClientTableItem: React.FC<DatabaseClientTableItemProps> = ({ clients, isLoading }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [productsPerPage] = useState<number>(50);
+
     const paginate = (pageNumber: number) => {
         setCurrentPage(pageNumber);
     };
@@ -84,7 +88,6 @@ const DatabaseClientTableItem = ({ clients, data, isLoading }: any) => {
                     paginate={paginate}
                 />
             )}
-
         </>
     );
 };

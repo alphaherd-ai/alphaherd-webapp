@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react'
 import { Tooltip, Button } from "@nextui-org/react";
-import Menu from '@/assets/icons/finance/Menu.svg';
+import Menu from '@/assets/icons/finance/menu.svg';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
