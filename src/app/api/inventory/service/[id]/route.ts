@@ -30,7 +30,7 @@ export const GET=async (req: NextRequest,
 
 export const PUT=async (req: NextRequest,
     { params }: { params: {id: number; } } )=> {
-
+        
         if (req.method !== 'PUT') {
             return new Response('Method not allowed',{status:405});
         } 

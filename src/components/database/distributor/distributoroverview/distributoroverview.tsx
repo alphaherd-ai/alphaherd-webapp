@@ -42,7 +42,7 @@ const DistributorDetails = () => {
         }
     }
 
-    // console.log(distributor);
+    console.log("distribnutor is : ",distributor);
 
     const tabs = [
         { label: 'Day', clicked: clickedIndex === 0 },
@@ -486,7 +486,7 @@ const DistributorDetails = () => {
             </div>
             <div className="rounded-md">
                 <div className="w-full mt-[25px] rounded-[10px] border-borderGrey border border-solid  border-neutral-40  ">
-                    <div className="w-full flex p-6 bg-white items-start justify-between w-full border-0 border-b border-solid border-borderGrey rounded-md">
+                    <div className="flex p-6 bg-white items-start justify-between w-full border-0 border-b border-solid border-borderGrey rounded-md">
                         <div className="text-textGrey2 text-xl font-medium ">
                             Timeline
                         </div>
