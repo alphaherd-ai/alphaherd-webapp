@@ -235,6 +235,8 @@ const ExistingsaleEstimateTotalAmout = ({ otherData, items, isLoading }: any) =>
                                         <div className="text-textGrey2  text-base font-bold  w-1/3 py-4">Advance Paid</div>
                                         <div className="text-textGrey1 text-base font-medium  w-1/3 py-4">{formatDateAndTime(transaction.date).formattedDate}</div>
                                         <div className='text-gray-500 text-md font-medium mr-4'>#{transaction?.receiptNo}</div>
+                                        <div className="text-textGrey1 text-base font-medium  w-1/3 py-4">{formatDateAndTime(transaction.date).formattedDate}</div>
+                                        <div className='text-gray-500 text-md font-medium mr-4'>#{transaction?.receiptNo}</div>
                                         <div className="text-textGrey1 text-base font-medium  w-1/3 py-4 flex  items-center">
                                             <div className='flex pr-2'>
                                                 <Image src={Cash} alt='Cash' className='w-4 h-4 ' />

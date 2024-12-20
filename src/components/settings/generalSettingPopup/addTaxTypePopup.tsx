@@ -57,8 +57,14 @@ const AddTaxType = ({onClose}:any) => {
         const newErrors = [...errors];
     let hasError = false;
     inputs.forEach((input, index) => {
-        const inputValue = parseInt(input.trim(), 10); 
-        if (existingTaxTypes.includes(inputValue)) {
+
+        const inputValue = parseInt(input.trim(), 10);
+        if (!inputValue) {
+            newErrors[index] = 'Tax Type cannot be empty.'
+            hasError = true;
+            
+        } 
+        else if (existingTaxTypes.includes(inputValue)) {
             newErrors[index] = 'This Tax Type already exists'; 
             hasError = true;
             console.log(`Duplicate Tax Type detected: ${input}`);

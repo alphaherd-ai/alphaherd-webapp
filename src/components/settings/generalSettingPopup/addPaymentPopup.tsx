@@ -41,24 +41,33 @@ const handleChange = (field: string, value: any) => {
     }
 
     const handleSave = async () => {
-        if (existingPaymentMethods.includes(formData.paymentMethod)) {
-            setError(`${formData.paymentMethod} already exists.`); 
-            console.log(`Duplicate Payment Method detected: ${formData.paymentMethod}`); 
+        const trimmedInput = formData.paymentMethod?.trim(); // Access and trim the 'paymentMethod'
+        if (!trimmedInput) {
+            setError('Payment Method cannot be empty.');
+            console.log("Empty Field");
+            return;
+        }
+        else if (existingPaymentMethods.includes(trimmedInput)) {
+            setError(`${trimmedInput} already exists.`);
+            console.log(`Duplicate Payment Method detected: ${trimmedInput}`);
             return;
         } else {
-            setError(null); 
+            setError(null);
         }
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/create?branchId=${appState.currentBranchId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    name: formData.paymentMethod, 
-                }),
-            });
-            
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/create?branchId=${appState.currentBranchId}`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: trimmedInput, // Use trimmed input
+                    }),
+                }
+            );
+    
             if (response.ok) {
                 console.log('Payment method saved successfully');
                 onClose();
@@ -69,7 +78,8 @@ const handleChange = (field: string, value: any) => {
         } catch (error) {
             console.error('Error while saving payment method:', error);
         }
-    }
+    };
+    
 
     return (
         <div className="w-full h-full flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">

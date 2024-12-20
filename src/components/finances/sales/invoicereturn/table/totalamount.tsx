@@ -223,6 +223,7 @@ const InvoiceReturnTotalAmount = ({otherData}:{otherData:any}) => {
                             transaction.isAdvancePayment &&
                             (<div key={index} className="w-full  px-6 py-2 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
                                 <div className="text-gray-500 text-md font-medium ">Advance Paid on  {formatDateAndTime(transaction.date).formattedDate}</div>
+                                <div className='text-gray-500 text-md font-medium mr-4'>#{transaction?.receiptNo}</div>
                                 <div className='flex items-center h-9 px-4  justify-between rounded-lg '>
                                     <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
                                         ₹ {transaction.amountPaid > 0 ? transaction.amountPaid : -1 * transaction.amountPaid}
@@ -234,8 +235,9 @@ const InvoiceReturnTotalAmount = ({otherData}:{otherData:any}) => {
 
                         {transactionsData && transactionsData.map((transaction, index) => (
                             !transaction.isAdvancePayment &&
-                            (<div key={index} className="w-full  px-6 py-2 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
+                            (<div key={index} className="w-full  px-2 py-2 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
                                 <div className="text-gray-500 text-md font-medium ">Paid on {formatDateAndTime(transaction.date).formattedDate}</div>
+                                <div className='text-gray-500 text-md font-medium mr-4'>#{transaction?.receiptNo}</div>
                                 <div className="text-textGrey2 text-base font-medium  w-1/3 py-4 flex  items-center">
                                     <div className='flex pr-2'>
                                         <Image src={Cash} alt='Cash' className='w-4 h-4 ' />

@@ -30,10 +30,12 @@ type PopupProps = {
     initialInvoiceNo: any;
     totalAmount: any;
     balanceDue: any;
+    setFirstAdvancePaymentPaid:any,
+    isFirstAdvancePaymentPaid:any,
 }
 
 
-const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, transactionsData, setTransactionsData, initialInvoiceNo, totalAmount, balanceDue }) => {
+const RecordTransactionPopup: React.FC<PopupProps> = ({setFirstAdvancePaymentPaid,isFirstAdvancePaymentPaid, setCount, headerdata, transactionsData, setTransactionsData, initialInvoiceNo, totalAmount, balanceDue }) => {
 
     const dispatch = useDispatch();
     const [isSaving, setSaving] = useState(false);
@@ -55,7 +57,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
 
     const { data: modes, error: modesError, isLoading: modesLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
 
-
+    
     useEffect(() => {
         if (modes && !modesError && !modesLoading) {
             const options3 = modes.map((mode: any) => ({
@@ -94,6 +96,11 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
     
 
     const handleSaveClick = async () => {
+        if(isAdvancePayment){
+            if(!isFirstAdvancePaymentPaid){
+                setFirstAdvancePaymentPaid(true);
+            }
+        }
         setSaving(true);
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/create?branchId=${appState.currentBranchId}`, {
@@ -130,6 +137,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
             isAdvancePayment: isAdvancePayment,
             mode: selectedMode,
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
+            receiptNo:initialInvoiceNo,
         };
 
         dispatch(addAmount({ amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1*formData.amountPaid, 10) || (balanceDue), mode: selectedMode, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out', date: formData.date || new Date(),}))
@@ -140,10 +148,11 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
     };
 
     useEffect(() => {
+       // console.log(isFirstAdvancePaymentPaid);
         if (balanceDue !== undefined) {
             setFormData((prevData: any) => ({
                 ...prevData,
-                amountPaid: balanceDue,
+                amountPaid: isFirstAdvancePaymentPaid ? balanceDue : balanceDue*(0.1),
             }));
         }
     }, [balanceDue]);
@@ -258,7 +267,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
                             className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2 outline-none border border-solid border-gray-300 focus:border-teal-500"
                             type="number"
                             name="amountPaid"
-                            value={formData.amountPaid > 0 ? formData.amountPaid    : -1*formData.amountPaid}
+                            value={Math.abs(formData.amountPaid)}
                             onChange={(e) => handleChange("amountPaid", e.target.value)}
                         />
                     </div>

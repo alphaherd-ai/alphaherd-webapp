@@ -15,6 +15,8 @@ import { useAppSelector } from "@/lib/hooks"
 import { useRouter, useSearchParams } from "next/navigation"
 import { FinanceCreationType } from "@prisma/client"
 import axios from "axios"
+import { mutate } from "swr"
+
 const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
     const { headerData, tableData, totalAmountData } = useContext(DataContext);
     console.log("invoice data is :",invoiceData);
@@ -23,10 +25,12 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
     const id = url.get('id');
     const router=useRouter();
     const [isSaving,setSaving]=useState(false);
+
+    
     const handleSubmit = async () => {
-        setSaving(true);
+        
         const allData = {headerData, tableData, totalAmountData};
-        // console.log(allData)
+        console.log(allData)
         let totalQty=0;
         tableData.forEach(data => {
             totalQty+=(data.quantity)||0;
@@ -42,6 +46,7 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
     }));
         const data={
             distributor: (id === null) ?allData.headerData.distributor.value:invoiceData.distributor,
+            distributorId: (id === null) ? allData.headerData.distributor.distributorId : invoiceData.distributorId,
             email:(id=== null)?allData.headerData.distributor.email:"",
             notes: (id === null) ?allData.headerData.notes:invoiceData.notes,
             invoiceNo: (id === null) ?allData.headerData.invoiceNo:invoiceData.invoiceNo,
@@ -51,7 +56,7 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
             totalCost: totalAmountData.totalCost,
             overallDiscount: totalAmountData.overAllDiscount,
             totalQty:totalQty,
-            status: "Pending",
+            status:totalAmountData.totalCost >= 1 ? `You’re owed: ₹${parseFloat(totalAmountData.totalCost).toFixed(2)}` : totalAmountData.totalCost <= -1 ? `You owe: ₹${parseFloat((-1 * totalAmountData.totalCost).toFixed(2))}` : 'Closed',
             type: FinanceCreationType.Purchase_Return,
             items:{
                 create:items
@@ -62,15 +67,17 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
         
         console.log(JSON.stringify(data))
         try {
+            setSaving(true);
             const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Return}?branchId=${appState.currentBranchId}`,data)
-            setTimeout(()=>{
-                router.back();
-            },2000);
+            // setTimeout(()=>{
+            //     router.back();
+            // },2000);
             const response= await responsePromise;
             if (!response.data) {
                 throw new Error('Network response was not ok');
             }
-            
+            mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/getAll?branchId=${appState.currentBranchId}`,(currState:any = [])=>[...currState,response?.data?.purchases],false);
+            router.back();
     
         } catch (error) {
             console.error('Error:', error);

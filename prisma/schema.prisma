@@ -170,6 +170,22 @@ model InventorySection {
   location        Location[]
   reason          Reason[]
   taxType         TaxType[]
+  id              Int                 @id @default(autoincrement())
+  name            String
+  quantity        Int?
+  branch          OrgBranch           @relation(fields: [branchId], references: [id])
+  branchId        Int                 @unique
+  products        Products[]
+  productBatch    ProductBatch[]
+  service         Services[]
+  timeline        InventoryTimeline[]
+  itemCategory    ItemCategory[]
+  itemUnit        ItemUnit[]
+  serviceCategory ServiceCategory[]
+  expenseCategory ExpenseCategory[]
+  location        Location[]
+  reason          Reason[]
+  taxType         TaxType[]
 
   @@index([branchId])
 }
@@ -220,7 +236,6 @@ model Clients {
   DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
   databaseSectionId Int?
   creditedToken     Float?           @default(0)
-
   @@index([databaseSectionId])
   @@map("client")
 }
@@ -566,6 +581,12 @@ model ServiceCategory {
 }
 
 model Reason {
+  id                 Int               @id @default(autoincrement())
+  name               String[]
+  InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
+  inventorySectionId Int?
+}
+model ExpenseCategory {
   id                 Int               @id @default(autoincrement())
   name               String[]
   InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])

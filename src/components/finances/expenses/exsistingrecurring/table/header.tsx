@@ -152,9 +152,9 @@ const ExsistingRecurringHeader = ({otherData}:any) => {
                     <div className="flex flex-col gap-[16px] w-full">
                         <div className="text-gray-500 text-base font-bold ">Recurring Expense</div>
                         <div className='w-full flex gap-8'>
-                            <input type="text" className="w-[20rem] py-3  text-textGrey2 text-base font-medium px-2 rounded border border-solid border-borderGrey" defaultValue="Every Month" disabled   />
-                            <input type="text" className="w-[20rem] py-3  text-textGrey2 text-base font-medium px-2 rounded border border-solid border-borderGrey" defaultValue="Started on 7/8/24"  disabled />
-                            <input type="text" className="w-[20rem] py-3  text-textGrey1 text-base font-medium px-2 rounded border border-solid border-borderGrey" defaultValue="Ends never"  disabled />
+                            <input type="text" className="w-[20rem] py-3  text-textGrey2 text-base font-medium px-2 rounded border border-solid border-borderGrey" defaultValue={otherData?.recurringRepeatType} disabled   />
+                            <input type="text" className="w-[20rem] py-3  text-textGrey2 text-base font-medium px-2 rounded border border-solid border-borderGrey" defaultValue={"Starts on" + " " +  new Date(otherData?.recurringStartedOn).toLocaleDateString('en-GB')}  disabled />
+                            <input type="text" className="w-[20rem] py-3  text-textGrey2 text-base font-medium px-2 rounded border border-solid border-borderGrey" defaultValue={"Ends on" + " " +  new Date(otherData?.recurringEndson).toLocaleDateString('en-GB')}  disabled />
                         </div>
                     </div>
                     <div className='w-full'>

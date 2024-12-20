@@ -64,7 +64,12 @@ const AddServiceCategory = ({onClose}:any) => {
 
     inputs.forEach((input, index) => {
         const trimmedInput = input.trim();
-        if (allExistingCategories.includes(trimmedInput)) {
+        if (!trimmedInput) {
+            newErrors[index] = 'Service Category cannot be empty.'
+            hasError = true;
+            
+        }
+       else if (allExistingCategories.includes(trimmedInput)) {
             newErrors[index] = 'This Service Category already exists';
             hasError = true;
             console.log(`Duplicate Service Category detected: ${trimmedInput}`);
@@ -91,8 +96,10 @@ const AddServiceCategory = ({onClose}:any) => {
             });
             if (response.ok) {
                 const result = await response.json();
+               
                 // console.log('Payment methods saved:', result);
                 onClose(); 
+                window.dispatchEvent(new FocusEvent('focus'));
             } else {
                 console.error('Failed to save data:', response.statusText);
             }

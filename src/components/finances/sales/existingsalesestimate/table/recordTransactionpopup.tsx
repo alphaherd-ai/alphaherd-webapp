@@ -132,6 +132,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, in
             isAdvancePayment: isAdvancePayment,
             mode: selectedMode,
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
+            receiptNo:initialInvoiceNo,
         };
         
         const balanceStatus = balanceDue + (newTransaction?.moneyChange === "In" ? -1 * newTransaction.amountPaid : newTransaction.amountPaid)

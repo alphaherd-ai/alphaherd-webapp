@@ -1,5 +1,5 @@
 "use client"
-
+import axios from 'axios';
 import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
 import addicon from "../../../../../assets/icons/finance/add.svg"
 import sellicon from "../../../../../assets/icons/finance/sell.svg"
@@ -8,7 +8,7 @@ import calicon from "../../../../../assets/icons/finance/calendar_today.svg"
 
 import DatePicker from "react-datepicker"
 import 'react-datepicker/dist/react-datepicker.css';
-
+import AmountnotMatchedPopup from "./totalTransactionPopup"
 
 import Subtract from "../../../../../assets/icons/finance/Subtract.svg"
 import Add from "../../../../../assets/icons/finance/add (2).svg"
@@ -52,6 +52,11 @@ interface ProductBatch {
     category: string;
     distributors: string[];
     productId: number;
+
+}
+interface LocationList {
+    id: string,
+    name: string | string[],
 }
 
 function useProductfetch(id: number | null) {
@@ -62,6 +67,7 @@ function useProductfetch(id: number | null) {
         error
     }
 }
+
 function DataFromOrder(id: number | null, branchId: number | null) {
     const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/${id}/?branchId=${branchId}`, fetcher);
     return {
@@ -105,7 +111,8 @@ const CreateGrnTable = () => {
                 quantity: item.quantity,
                 unitPrice: item.sellingPrice,
                 gst: item.taxAmount,
-                discountPercent: item.discount
+                discountPercent: item.discount,
+                location :item.location
             }));
             setItems(itemData);
 
@@ -144,6 +151,43 @@ const CreateGrnTable = () => {
     }, [disableButton]);
 
 
+    const [location1, setLocation] = useState<any[]>([]);
+    useEffect(() => {
+        const fetchlocation = async () => {
+            try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/LocationCategory/getAll?branchId=${appState.currentBranchId}`);
+                const locationList: any[] = response.data.reduce((acc: any[], locationEntry: LocationList) => {
+                    if (Array.isArray(locationEntry.name)) {
+                        locationEntry.name.forEach((name: string) => {
+                            acc.push({ value: locationEntry.id, label: name });
+                        });
+                    } else {
+                        acc.push({ value: locationEntry.id, label: locationEntry.name });
+                    }
+                    return acc;
+                }, []);
+                setLocation(locationList);
+            } catch (error) {
+                console.log("Error fetching location", error);
+            }
+        };
+        fetchlocation();
+    }, [appState.currentBranchId]);
+
+    const handleLocationSelect = (selectedLocation: { value: number; label: string }, index: number) => {
+        const updatedItems = [...items];
+        updatedItems[index] = {
+            ...updatedItems[index],
+            location: selectedLocation.label // Update the location
+        };
+        console.log("updated items is :",updatedItems);
+        setItems(updatedItems);
+        setTableData(updatedItems); 
+        console.log("table data is :",tableData);
+        // Ensure the table data context is updated
+    };
+
+
     const { fetchedProducts, isLoading, error } = useProductfetch(appState.currentBranchId);
     useEffect(() => {
         if (!isLoading && products && !error) {
@@ -179,14 +223,14 @@ const handleAddItem = useCallback(() => {
     setItems([...items, {}]);
 }, [items]);
 
-useEffect(() => {
-    items.push({
-        productId: null,
-        serviceId: null,
-        itemName: "",
-    });
-    setItems(items);
-}, [])
+// useEffect(() => {
+//     items.push({
+//         productId: null,
+//         serviceId: null,
+//         itemName: "",
+//     });
+//     setItems(items);
+// }, [])
 
 
     const handleQuantityDecClick = (itemId: any) => {
@@ -390,17 +434,37 @@ useEffect(() => {
         }),
     };
 
-    
-    // console.log("otherdatatattatata", otherData)
+    const [value, setValue] = useState('');
 
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const inputValue = event.target.value.replace(/,/g, ''); // Remove existing commas
+        const formattedValue = formatNumberToIndianStandard(inputValue);
+        setValue(formattedValue);
+    };
+
+    function formatNumberToIndianStandard(number: string): string {
+        const [integerPart, decimalPart] = number.split('.');
+        const lastThreeDigits = integerPart.slice(-3);
+        const otherDigits = integerPart.slice(0, -3);
+        const formattedNumber = otherDigits.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + (otherDigits ? ',' : '') + lastThreeDigits;
+        return number.includes('.') ? `${formattedNumber}.${decimalPart}` : formattedNumber;
+    }
+    // console.log("otherdatatattatata", otherData)
     return (
         <>
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
-                <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-end items-center gap-6 flex">
+                <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-between items-center gap-6 flex">
+                <div className="left flex gap-3 items-center ">
+                    <h2 className="headd text-[#6B7E7D] " id="totalgnrhead">
+                        Total GRN Amount
+                    </h2>
+                    <div className="relative">
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#6B7E7D] font-medium">₹</span>
+                        <input type="text" className="totalgnr py-2 pl-8 pr-3 text-[#6B7E7D] w-80 text-base border-2 border-solid border-[#35BEB1] rounded-md" value={value} id="totalgnrinput" onChange={handleChange} />
+                    </div>
 
-
-
-
+                    <p className="errormess text-red-500 text-sm hidden" id="errormess">*Please fill in the total GRN amount from the invoice to continue</p>
+                </div>
                     <Button
                         variant="solid"
                         className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer" onClick={togglePopup}>
@@ -416,7 +480,6 @@ useEffect(() => {
                                 <div className="text-gray-500 text-xl font-medium ">
                                     Items
                                 </div>
-
 
                                 {/* <div className="flex items-center justify-center ">
 
@@ -449,6 +512,7 @@ useEffect(() => {
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Tax Amt.</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Discount %</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Discount Amt.</div>
+                                        <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Location</div>
 
 
                                     </div>
@@ -657,14 +721,40 @@ useEffect(() => {
                                                     name={`discountAmount-${index + 1}`}
                                                 />
                                             </div>
-                                            {/* <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[20px] justify-end pr-4'>
-                                                <button className="border-0 bg-transparent cursor-pointer">
-                                                    <Image className='w-5 h-5' src={sellicon} alt="sell" ></Image>
-                                                </button>
-                                                <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
+                                            <div className=' flex text-textGrey2 text-base font-medium w-[14rem] '>
+
+                                                
+
+                                                    <Select
+
+                                                        className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0 absolute"
+
+                                                        classNamePrefix="select"
+
+                                                        isClearable={false}
+                                                     isSearchable={true}
+                                                        name="Location"
+                                                        options={location1}
+                                                        onChange={(selectedOption) => handleLocationSelect(selectedOption, index)}
+                                                         //value={ location1.find(location => location.label === item.location)}
+                                                        menuPortalTarget={document.body}
+
+                                                        styles={customStyles}
+
+                                                    />
+
+
+
+
+
+
+
+                                            </div>
+                                           
+                                                {/* <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
                                                     <Image className='w-5 h-5' src={delicon} alt="delete" ></Image>
-                                                </button>
-                                            </div> */}
+                                                </button> */}
+                                            
                                         </div>
                                     ))}
 

@@ -8,7 +8,7 @@ import Download from '../../../../assets/icons/finance/download.svg';
 import DownArrow from '../../../../assets/icons/finance/downArrow.svg';
 import Invoice from '../../../../assets/icons/finance/invoice.svg';
 import Expense from "../../../../assets/icons/finance/request_quote.svg"
-import Return from '../../../../assets/icons/finance/Return.svg';
+import Return from '../../../../assets/icons/finance/return.svg';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';

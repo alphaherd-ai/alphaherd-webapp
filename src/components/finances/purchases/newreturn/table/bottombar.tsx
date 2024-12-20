@@ -15,6 +15,7 @@ import { useAppSelector } from "@/lib/hooks"
 import { useRouter, useSearchParams } from "next/navigation"
 import { FinanceCreationType } from "@prisma/client"
 import axios from "axios"
+import { mutate } from "swr"
 const NewPurchaseReturnNewBottomBar = ({ invoiceData }: any) => {
     const { headerData, tableData, totalAmountData, transactionsData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
@@ -50,6 +51,7 @@ const NewPurchaseReturnNewBottomBar = ({ invoiceData }: any) => {
         }));
         const data = {
             distributor: (id === null) ? allData.headerData.distributor.value : invoiceData.distributor,
+            distributorId:(id===null) ? allData.headerData.distributor.distributorId : null,    
             notes: (id === null) ? allData.headerData.notes : invoiceData.notes,
             invoiceNo: (id === null) ? allData.headerData.invoiceNo : invoiceData.invoiceNo,
             dueDate: (id === null) ? allData.headerData.dueDate : invoiceData.dueDate,
@@ -61,7 +63,7 @@ const NewPurchaseReturnNewBottomBar = ({ invoiceData }: any) => {
             recordTransaction: {
                 create: allData.transactionsData
             },
-            status:balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
+            status:allData.totalAmountData.totalCost === balanceDue ? `Debited:₹${parseFloat(balanceDue).toFixed(2)}` :balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
             type: FinanceCreationType.Purchase_Return,
             items: {
                 create: items
@@ -74,14 +76,15 @@ const NewPurchaseReturnNewBottomBar = ({ invoiceData }: any) => {
         try {
             setSaving(true);
             const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Return}?branchId=${appState.currentBranchId}`, data)
-            setTimeout(() => {
-                router.back();
-            }, 2000);
+            // setTimeout(() => {
+            //     router.back();
+            // }, 2000);
             const response = await responsePromise;
             if (!response.data) {
                 throw new Error('Network response was not ok');
             }
-
+            mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/getAll?branchId=${appState.currentBranchId}`,(currState:any = [])=>[...currState,response?.data?.purchases],false);
+            router.back();
 
         } catch (error) {
             console.error('Error:', error);
@@ -97,7 +100,7 @@ const NewPurchaseReturnNewBottomBar = ({ invoiceData }: any) => {
 
 <div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
 <div className="flex justify-between items-center gap-4 pl-4">
-                                <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
+                                {/* <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                                     <Image src={printicon} alt="print"></Image>
                                     <div>Print</div>
                                 </div>
@@ -108,7 +111,7 @@ const NewPurchaseReturnNewBottomBar = ({ invoiceData }: any) => {
                                 <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                                     <Image src={shareicon} alt="share"></Image>
                                     <div>Share editable sheet</div>
-                                </div>
+                                </div> */}
                             </div>
                             <div className="flex justify-between items-center gap-4 pr-4">
                     {/* <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">

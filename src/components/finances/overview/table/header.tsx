@@ -7,7 +7,7 @@ import Chart from '../../../../assets/icons/finance/chart.svg';
 import Download from '../../../../assets/icons/finance/download.svg';
 import DownArrow from '../../../../assets/icons/finance/downArrow.svg';
 import Invoice from '../../../../assets/icons/finance/invoice.svg';
-import Return from '../../../../assets/icons/finance/Return.svg';
+import Return from '../../../../assets/icons/finance/return.svg';
 import Estimate from "../../../../assets/icons/finance/list_alt.svg"
 import Expense from "../../../../assets/icons/finance/request_quote.svg"
 import Payments from "../../../../assets/icons/finance/Cash.svg"
@@ -46,14 +46,14 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
 
         products?.forEach((prod: any) => {
             if (prod?.inventoryType === "Product" && prod?.invoiceType === "Sales_Invoice") {
-                const hsnCode = prod.productBatch.product.hsnCode;
-                const itemName = prod.productBatch.product.itemName;
-                const defaultUnit = prod.productBatch.product.defaultUnit;
-                const sellingPrice = prod.productBatch.sellingPrice;
-                const quantity = prod.productBatch.quantity;
+                const hsnCode = prod.productBatch?.product?.hsnCode;
+                const itemName = prod.productBatch?.product.itemName;
+                const defaultUnit = prod.productBatch?.product.defaultUnit;
+                const sellingPrice = prod?.productBatch?.sellingPrice;
+                const quantity = prod?.productBatch?.quantity;
                 const totalValue = sellingPrice * quantity;
-                const tax = prod.productBatch.product.tax;
-                const date = (prod.createdAt);
+                const tax = prod?.productBatch?.product?.tax;
+                const date = (prod?.createdAt);
 
                 if (hsnSummary[hsnCode]) {
                     hsnSummary[hsnCode].quantity += quantity;
@@ -85,13 +85,13 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
 
         products?.forEach((prod: any) => {
             if (prod?.inventoryType === "Product" && prod?.invoiceType === "Sales_Return") {
-                const hsnCode = prod.productBatch.product.hsnCode;
-                const itemName = prod.productBatch.product.itemName;
-                const defaultUnit = prod.productBatch.product.defaultUnit;
-                const sellingPrice = prod.productBatch.sellingPrice;
-                const quantity = prod.productBatch.quantity;
+                const hsnCode = prod?.productBatch?.product.hsnCode;
+                const itemName = prod?.productBatch?.product.itemName;
+                const defaultUnit = prod?.productBatch?.product.defaultUnit;
+                const sellingPrice = prod?.productBatch?.sellingPrice;
+                const quantity = prod?.productBatch?.quantity;
                 const totalValue = sellingPrice * quantity;
-                const tax = prod.productBatch.product.tax;
+                const tax = prod?.productBatch?.product.tax;
                 const date = (prod.createdAt);
 
                 if (hsnSummary1[hsnCode]) {

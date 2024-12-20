@@ -144,7 +144,7 @@ const NewPurchasesTable = () => {
                 gst: item.taxAmount,
                 discountPercent: item.discount
             }));
-            setItems(itemData);
+            setItems((prev: any[]) => [...itemData, ...prev,]);
 
         }
     }, [orderData]);
@@ -189,7 +189,7 @@ const NewPurchasesTable = () => {
 
     const { fetchedProducts, isLoading, error } = useProductfetch(appState.currentBranchId);
     useEffect(() => {
-        if (!isLoading && products && !error) {
+        if (!isLoading && fetchedProducts && !error) {
             const formattedProducts = fetchedProducts.map((product: Products) => ({
                 value: {
                     id: product.id,
@@ -201,7 +201,7 @@ const NewPurchasesTable = () => {
             }));
             setProducts(formattedProducts);
         }
-    }, [])
+    }, [isLoading,fetchedProducts,error])
 
     const handleGstSelect = (selectedGst: any, index: number) => {
         const updatedItems = [...tableData];
@@ -322,7 +322,7 @@ const NewPurchasesTable = () => {
 
         useEffect(() => {
             setItems(items);
-            setTableData(items)
+            //setTableData(items)
         }, [items]);
 
         useEffect(() => {

@@ -10,9 +10,9 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
   }
 
   try {
-    const body: any = await req.json();
-   // console.log(body);
-    const itemData=body.items.create;
+    const {newCreditedToken,...otherData}: any = await req.json();
+    //console.log(otherData);
+    const itemData=otherData.items.create;
     const allItemsData=itemData.map((data:any) => ({
       productId: data.productId,
       quantity: data.quantity,  
@@ -27,7 +27,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
     const [purchases,items]= await prismaClient.$transaction([
       prismaClient.purchases.create({
         data: {
-          ...body,
+          ...otherData,
           items:{
             create:
               allItemsData
@@ -42,6 +42,16 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
       }),
       prismaClient.items.createMany({
         data: allItemsData,
+      }),
+      prismaClient.distributors.update({
+        where:{
+          id:Number(otherData.distributorId),
+        },
+        data:{
+          invoiceNo:{
+            push:otherData.invoiceNo
+          }
+        }
       })
     ]);
    
@@ -60,9 +70,19 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
     });
 
     if (params.type === FinanceCreationType.Purchase_Invoice) {
+      if(newCreditedToken >= 0){
+        await prismaClient.distributors.update({
+          where:{
+            id:Number(otherData.distributorId),
+          },
+          data:{
+            creditedToken:newCreditedToken
+          }
+        })
+      }
       await Promise.all(
-        body.items.create.map(async (item: any) => {
-          // console.log("these are the items",item)
+        otherData.items.create.map(async (item: any) => {
+           console.log("these are the items",item)
           const batch = await prismaClient.productBatch.create({
             data: {
                quantity:item.quantity,
@@ -71,6 +91,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
                costPrice:item.costPrice,
                sellingPrice:item.sellingPrice,
                distributors:item.distributors,
+               isApproved:item.isApproved,
               product:{
                 connect:{id: item.productId }
               },
@@ -79,6 +100,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
               }
             }
         });
+       // console.log(batch);
        
           await prismaClient.$transaction([
              prismaClient.items.updateMany({
@@ -106,7 +128,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
                 stockChange:Stock.StockIN,
                 quantityChange: item.quantity,
                 invoiceType:FinanceCreationType.Purchase_Invoice,
-                invoiceNo:body?.invoiceNo,
+                invoiceNo:otherData?.invoiceNo,
                 inventoryType:Inventory.Product,
                 productBatch:{
                   connect:{
@@ -124,8 +146,20 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
         })
       );
     } else if (params.type === FinanceCreationType.Purchase_Return) {
+      if(otherData.status.includes('Debited')){
+        await prismaClient.distributors.update({
+          where:{
+            id:Number(otherData.distributorId),
+          },
+          data:{
+            creditedToken:{
+              increment:otherData.totalCost
+            }
+          }
+        })
+      }
       await Promise.all(
-        body.items.create.map(async (item: any) => {
+        otherData.items.create.map(async (item: any) => {
           const batch=await prismaClient.productBatch.findUnique({
             where:{
               id:Number(item.productBatchId),
@@ -158,7 +192,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
                 stockChange:Stock.StockOUT,
                 quantityChange: item.quantity,
                 invoiceType:FinanceCreationType.Purchase_Return,
-                invoiceNo:body?.invoiceNo,
+                invoiceNo:otherData?.invoiceNo,
                 inventoryType:Inventory.Product,
                 productBatch:{
                   connect:{

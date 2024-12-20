@@ -104,8 +104,14 @@ const AddItemCategoryPopup = ({onClose}:any) => {
 
         inputs.forEach((input, index) => {
             const trimmedInput = input.trim();
-            console.log(`Checking input: ${trimmedInput}`);
-            if (allExistingItems.includes(trimmedInput)) {
+           
+        if (!trimmedInput) {
+            newErrors[index] = 'Item Category cannot be empty.'
+            hasError = true;
+            
+        }
+            
+          else if (allExistingItems.includes(trimmedInput)) {
                 newErrors[index] = 'This item already exists';
                 hasError = true;
                 console.log(`Duplicate item detected: ${trimmedInput}`);

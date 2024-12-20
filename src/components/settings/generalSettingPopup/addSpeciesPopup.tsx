@@ -40,9 +40,15 @@ const handleChange = (field: string, value: any) => {
     }
 
     const handleSave = async () => {
-        if(existingSpecies.includes(formData.species)){
-            setError(`${formData.species} already exists.`);
-            console.log(`Duplicate Species detected ${formData.species}`);
+        const trimmedInput = formData.paymentMethod?.trim(); // Access and trim the 'paymentMethod'
+        if (!trimmedInput) {
+            setError('Specie cannot be empty.');
+            console.log("Empty Field");
+            return;
+        }
+       else if(existingSpecies.includes(trimmedInput)){
+            setError(`${trimmedInput} already exists.`);
+            console.log(`Duplicate Species detected ${trimmedInput}`);
             return;
         }else{
             setError(null);
@@ -54,7 +60,7 @@ const handleChange = (field: string, value: any) => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    name:formData.species,
+                    name:trimmedInput,
                 }),
             });
             if (response.ok) {

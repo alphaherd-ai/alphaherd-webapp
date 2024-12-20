@@ -22,7 +22,11 @@ export const SalesStatus=[
     {
         id:'5',
         status:'Accepted'
+    },{
+        id:'6',
+        status:'Credited'
     }
+
 ]
 
 export const PurchaseStatus=[

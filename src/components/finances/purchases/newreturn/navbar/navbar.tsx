@@ -7,7 +7,7 @@ import Link from "next/link"
 import Image from "next/image"
 import Attachment from "../../../../../assets/icons/finance/attachment.svg"
 
-import Menu from '@/assets/icons/finance/Menu.svg';
+import Menu from '../../../../../assets/icons/finance/menu.svg';
 import { Button, Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react"
 import { useRouter } from "next/navigation"
 import { DataContext } from "../table/DataContext";
@@ -66,7 +66,7 @@ const NewPurchaseReturnNewNavbar = () => {
 
                         </div>
                     </div>
-                    <div className="ml-2">
+                    {/* <div className="ml-2">
                         <Popover placement="bottom" showArrow offset={10}>
                             <PopoverTrigger>
                                 <Button
@@ -101,7 +101,7 @@ const NewPurchaseReturnNewNavbar = () => {
 
                             </PopoverContent>
                         </Popover>
-                    </div>
+                    </div> */}
                 </div>
             </div>
 

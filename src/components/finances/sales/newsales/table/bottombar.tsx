@@ -21,33 +21,36 @@ import { useRouter } from "next/navigation"
 import { create } from "domain"
 import Loading2 from "@/app/loading2"
 import { header } from "express-validator"
+import { mutate } from "swr"
 
-const NewsalesBottomBar = ({estimateData}:any) => {
+const NewsalesBottomBar = ({ estimateData }: any) => {
     const { headerData, tableData, totalAmountData, transactionsData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
     const url = useSearchParams();
     const id = url.get('id');
     const router = useRouter();
-    const [isSaving,setSaving]=useState(false);
+    const [isSaving, setSaving] = useState(false);
 
     const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
     const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
 
-    const balanceDue = totalAmountData.totalCost - totalPaidAmount + totalAmountToPay;
-
-    
+    const balanceDue = totalAmountData?.totalCost >= headerData?.customer?.value?.creditedToken ? (totalAmountData?.totalCost - totalPaidAmount + totalAmountToPay - headerData?.customer?.value?.creditedToken) : totalAmountData?.totalCost - totalPaidAmount + totalAmountToPay;
+    const newCreditedToken = totalAmountData.totalCost >= headerData?.customer?.value?.creditedToken ? 0 :  headerData?.customer?.value?.creditedToken;
+    //console.log(balanceDue);
     const handleSubmit = async () => {
-        if (!headerData.customer &&  !estimateData.customer) {
+        console.log(newCreditedToken);
+        if (!headerData.customer && !estimateData.customer) {
             alert('Customer is required');
             return;
         }
         // Remove the last item from the item table as it will not create inventory timeline due to null constraints in prisma
         tableData.pop();
-        console.log(tableData);
+        //console.log(tableData);
         const allData = { headerData, tableData, totalAmountData, transactionsData };
-        // console.log("this is all data", allData)
+        console.log("this is all data", allData,balanceDue)
+        //console.log(tableData);
         let totalQty = 0;
         tableData.forEach(data => {
             totalQty += (data.quantity) || 0;
@@ -61,17 +64,18 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             taxAmount: data.gst,
             name: data.itemName,
             itemType: data.itemType,
-            discount:data.discountPer,
-            serviceProvider:data.provider,
+            discount: data.discountPer,
+            serviceProvider: data.provider,
         }));
         const data = {
             customer: (id === null) ? allData.headerData.customer.value.clientName : estimateData.customer,
-            clientId:(id==null)?allData.headerData.customer.value.clientId:estimateData.clientId,
-            email:(id=== null)?allData.headerData.customer.value.email:estimateData.email,
-            notes: (id === null) ?allData.headerData.notes:estimateData.notes,
+            clientId: (id === null) ? allData.headerData.customer.value.clientId : estimateData.clientId,
+            email: (id === null) ? allData.headerData.customer.value.email : estimateData.email,
+            newCreditedToken: (id === null) ? newCreditedToken : -1,
+            notes: (id === null) ? allData.headerData.notes : estimateData.notes,
             subTotal: allData.totalAmountData.subTotal,
-            invoiceNo: (id === null) ?allData.headerData.invoiceNo:estimateData.invoiceNo,
-            dueDate: (id === null) ?allData.headerData.dueDate:estimateData.dueDate,
+            invoiceNo: (id === null) ? allData.headerData.invoiceNo : estimateData.invoiceNo,
+            dueDate: (id === null) ? allData.headerData.dueDate : estimateData.dueDate,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
             totalCost: allData.totalAmountData.totalCost,
@@ -80,14 +84,14 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             recordTransaction: {
                 create: allData.transactionsData
             },
-            status:balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
+            status: (id===null) ? headerData.customer?.value?.creditedToken >= balanceDue ? balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed' : balanceDue - headerData?.customer?.value?.creditedToken >= 1 ? `You’re owed: ₹${parseFloat((balanceDue - headerData?.customer?.value?.creditedToken).toFixed(2))}` : balanceDue - headerData?.customer?.value?.creditedToken <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue - headerData?.customer?.value?.creditedToken).toFixed(2))}` : 'Closed' :balanceDue >=1 ? `You’re owed: ₹${parseFloat((balanceDue).toString()).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1*balanceDue).toString()).toFixed(2)}` : 'Closed',
             type: FinanceCreationType.Sales_Invoice,
             items: {
                 create: items
             }
 
         }
-        console.log(items);
+        //console.log(data,balanceDue,headerData.customer?.value?.creditedToken);
         // console.log(appState.currentBranch)
         const notifData = {
             source: Notif_Source.Sales_Invoice,
@@ -96,24 +100,29 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             orgId: appState.currentOrgId,
             orgBranch: appState.currentOrg.orgName
         }
-        // console.log(JSON.stringify(data))
-        // console.log("this is notif data", notifData)
+        //console.log(JSON.stringify(data))
+        //console.log("this is notif data", notifData)
         try {
             setSaving(true); 
             const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Invoice}?branchId=${appState.currentBranchId}`, data)
             const notifPromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
-           
-            setTimeout(()=>{
-                router.back();
-            },2000);
+
+            // setTimeout(()=>{
+            //     router.back();
+            // },2000);
 
             const [response,notif]=await Promise.all([responsePromise,notifPromise])
-            
+
             if (!response.data) {
                 throw new Error('Network response was not ok');
             }
-            
-            
+            console.log(response.status);
+            // if(response.status===201){
+                
+            // }
+            mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`,(currData:any = [])=>[...currData,response.data?.sales],false)
+            router.back();
+
         } catch (error) {
             console.error('Error:', error);
         }
@@ -136,21 +145,21 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             sellingPrice: data.sellingPrice,
             taxAmount: data.gst,
             name: data.itemName,
-            discount:data.discount
+            discount: data.discount
         }));
         const data = {
             customer: (id === null) ? allData.headerData.customer.value.clientName : estimateData.customer,
-            notes: (id === null) ?allData.headerData.notes:estimateData.notes,
+            notes: (id === null) ? allData.headerData.notes : estimateData.notes,
             subTotal: allData.totalAmountData.subTotal,
-            invoiceNo: (id === null) ?allData.headerData.invoiceNo:estimateData.invoiceNo,
-            dueDate: (id === null) ?allData.headerData.dueDate:estimateData.dueDate,
+            invoiceNo: (id === null) ? allData.headerData.invoiceNo : estimateData.invoiceNo,
+            dueDate: (id === null) ? allData.headerData.dueDate : estimateData.dueDate,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
             totalCost: allData.totalAmountData.totalCost,
-            contact:allData.headerData.customer.value.contact,
-            overallDiscount: `${allData.totalAmountData.gst*100}%`,
+            contact: allData.headerData.customer.value.contact,
+            overallDiscount: `${allData.totalAmountData.gst * 100}%`,
             totalQty: totalQty,
-            status:(balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed'),
+            status: (balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed'),
             type: FinanceCreationType.Sales_Invoice,
             items: {
                 create: items
@@ -158,25 +167,25 @@ const NewsalesBottomBar = ({estimateData}:any) => {
 
         }
 
-    //   const pdfUrl=await generatePdfForInvoiceAndUpload(data, appState, items);
-    //   console.log("this is pdfUrl",pdfUrl)
-    //   const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/sms`, {
-    //     method: 'POST',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //         phone: "+919336402936",
-    //         url:pdfUrl
+        //   const pdfUrl=await generatePdfForInvoiceAndUpload(data, appState, items);
+        //   console.log("this is pdfUrl",pdfUrl)
+        //   const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/sms`, {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify({
+        //         phone: "+919336402936",
+        //         url:pdfUrl
 
-    //     }),
-    // });
-    // console.log('SMS sent successfully:', response);
-    generatePdfForInvoice(data, appState, items);
+        //     }),
+        // });
+        // console.log('SMS sent successfully:', response);
+        generatePdfForInvoice(data, appState, items);
     };
 
     const sendSMS = async () => {
-        try {   
+        try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/sms`, {
                 method: 'POST',
                 headers: {
@@ -191,11 +200,11 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             // console.log('SMS sent successfully:', response);
         } catch (error) {
             console.error('Error while sending message', error);
-        } 
+        }
     };
 
     const sendWhatsapp = async () => {
-        try {   
+        try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/whatsapp`, {
                 method: 'POST',
                 headers: {
@@ -209,15 +218,15 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             // console.log('Whatsapp Message sent successfully:', response);
         } catch (error) {
             console.error('Error while sending message', error);
-        } 
+        }
     };
 
-    const sendEmail = ()=>{
-        try {   
+    const sendEmail = () => {
+        try {
             const response = fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/email`, {
                 method: 'POST',
-                headers:{
-                    'Content-type':'application/json',
+                headers: {
+                    'Content-type': 'application/json',
                 },
                 body: JSON.stringify({
                     email: headerData.customer.value.email,
@@ -227,9 +236,9 @@ const NewsalesBottomBar = ({estimateData}:any) => {
             // console.log('Email sent successfully:', response);
         } catch (error) {
             console.error('Error while saving data:', error);
-        } 
+        }
     };
-    const isDisabled = headerData?.customer ? (!headerData?.customer) : (!estimateData?.customer) || id===null ? tableData.length === 1 :  tableData.length===0 
+    const isDisabled = headerData?.customer ? (!headerData?.customer) : (!estimateData?.customer) || id === null ? tableData.length === 1 : tableData.length === 0
 
     return (
         <>
@@ -265,12 +274,11 @@ const NewsalesBottomBar = ({estimateData}:any) => {
                         <Image src={drafticon} alt="draft"></Image>
                         <div>Save as Draft</div>
                     </Button> */}
-                    <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${
-                        isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
-                    }`}
-                    onClick={handleSubmit} disabled={isDisabled || isSaving}>
+                    <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
+                        }`}
+                        onClick={handleSubmit} disabled={isDisabled || isSaving}>
                         <Image src={checkicon} alt="check"></Image>
-                        <div>{isSaving?<Loading2/>:"Save"}</div>
+                        <div>{isSaving ? <Loading2 /> : "Save"}</div>
                     </Button>
                 </div>
             </div>

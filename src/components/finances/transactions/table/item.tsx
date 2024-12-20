@@ -1,6 +1,6 @@
 'use client';
-import React, { useState } from 'react';
-import { Modal, Input, Button, Tooltip } from "@nextui-org/react";
+import React, { useEffect, useState } from 'react'
+import { Tooltip, Button } from "@nextui-org/react";
 import Image from 'next/image';
 import { format, parseISO } from 'date-fns';
 import Menu from '@/assets/icons/finance/Menu.svg';
