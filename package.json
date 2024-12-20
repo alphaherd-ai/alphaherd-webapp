@@ -56,7 +56,7 @@
     "next-connect": "^1.0.0",
     "next-redux-wrapper": "^8.1.0",
     "node-cron": "^3.0.3",
-    "nodemailer": "^6.9.13",
+    "nodemailer": "^6.9.16",
     "npm": "^10.8.1",
     "pdfkit": "^0.15.0",
     "prettier": "^3.2.5",
