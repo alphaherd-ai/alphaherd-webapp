@@ -42,7 +42,6 @@ const DistributorDetails = () => {
         }
     }
 
-    // console.log(distributor);
 
     const tabs = [
         { label: 'Day', clicked: clickedIndex === 0 },
@@ -63,8 +62,6 @@ const DistributorDetails = () => {
         }
     }, [fetchedDistributor, error, isLoading]
     );
-
-    console.log(distributor);
 
     const handleEditSave = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -389,31 +386,56 @@ const DistributorDetails = () => {
             </div>
 
             <div className="w-full mt-[24px] bg-white rounded-[10px] border border-solid border-borderGrey flex-col justify-start items-start flex">
-
-                    <div className="w-full justify-start items-start flex rounded-[10px]">
-                        <div className="w-4/12 p-6 bg-white border-t border-solid border-0  border-r border-stone-300 flex-col justify-center items-start rounded-b-xl gap-4 flex ">
-                            <div className="w-fit bg-[#E7F5EE] py-2 px-2 rounded-md">
-                                <div className="text-[#0F9D58] text-[28px] font-bold ">₹0</div>
-                                <div className="text-[#0F9D58] text-base font-medium ">To be Paid</div>
-                            </div>
-
+                <div className="flex w-full px-[24px] rounded-[10px] py-[16px] h-14 bg-white justify-between items-center">
+                    <div className="h-6 justify-start items-center gap-4 inline-flex">
+                        <div className="flex">
+                            <Image className="w-6 h-6 " src={lefticon} alt="left_icon" />
+                            <Image className="w-6 h-6 " src={righticon} alt="right_icon" />
                         </div>
-                        <div className="w-4/12 p-6  border-t border-solid border-0 border-r border-stone-300 flex-col justify-center items-start gap-4 flex">
-                            <div className="w-fit bg-[#FFF0E9] py-2 px-2 rounded-md">
-                                <div className="text-[#FC6E20] text-[28px] font-bold ">₹{(distributor?.creditedToken || 0).toFixed(2)}</div>
-                                <div className="text-[#FC6E20] text-base font-medium ">Debit Note</div>
-                            </div>
-
+                        <div className="text-textGrey2 text-sm font-medium ">
+                            July 17th - 23rd, 2023
                         </div>
-                        <div className="w-4/12 p-6 bg-white border-t border-solid border-0 border-stone-300 flex-col justify-center items-start gap-4 flex rounded-b-xl">
-                            <div className="w-fit bg-[#EBEDFF] py-2 px-2 rounded-md">
-                                <div className="text-[#3C50FF] text-[28px] font-bold ">25/12/2024</div>
-                                <div className="text-[#3C50FF] text-base font-medium ">Last Date for Item Returns</div>
-                            </div>
-
+                    </div>
+                    <div className="flex h-[19px] justify-start items-start gap-6">
+                        {tabs.map((tab, index) => (
+                            <button className="border-none bg-transparent" onClick={() => handleTabClick(index)} key={index}>
+                                <div className={`${tab.clicked ? "text-center text-teal-400 font-bold" : "text-textGrey1"} text-textGrey1 text-sm font-medium `}>
+                                    {tab.label}
+                                </div>
+                                {tab.clicked && <Image src={selecttab} alt="icon" />}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+                <div className="w-full justify-start items-start flex rounded-[10px]">
+                    <div className="w-4/12 p-6 bg-white border-t border-solid border-0  border-r border-borderGrey flex-col justify-center items-start rounded-b-xl gap-4 flex ">
+                        <div className="text-textGrey2 text-[28px] font-bold ">₹1,200</div>
+                        <div className="text-textGrey2 text-base font-medium ">Total Balance Due</div>
+                        <div className="w-[80px] h-7 px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center items-center inline-flex ">
+                            <div className="text-orange-500 text-sm font-medium ">You owe</div>
+                            <div className="text-orange-500 text-sm font-medium "></div>
+                        </div>
+                    </div>
+                    <div className="w-4/12 p-6 bg-white border-t border-solid border-0 border-r border-borderGrey flex-col justify-center items-start gap-4 flex">
+                        <div className="text-textGrey2 text-[28px] font-bold ">₹32,499</div>
+                        <div className="text-textGrey2 text-base font-medium ">Money In</div>
+                        <div className="w-[150px] h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex ">
+                            <Image className="w-4 h-4 " src={icn_icon} alt="inc"></Image>
+                            <div className="text-green-600 text-sm font-medium ">12.4%</div>
+                            <div className="text-green-600 text-sm font-medium ">this week</div>
+                        </div>
+                    </div>
+                    <div className="w-4/12 p-6 bg-white border-t border-solid border-0 border-borderGrey flex-col justify-center items-start gap-4 flex rounded-b-xl">
+                        <div className="text-textGrey2 text-[28px] font-bold ">₹12,320</div>
+                        <div className="text-textGrey2 text-base font-medium ">Money Out</div>
+                        <div className="w-[150px] h-7 px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex ">
+                            <Image className="w-4 h-4 " src={icn_icon} alt="inc"></Image>
+                            <div className="text-green-600 text-sm font-medium ">12.4%</div>
+                            <div className="text-green-600 text-sm font-medium ">this week</div>
                         </div>
                     </div>
                 </div>
+            </div>
             <div className="w-full flex gap-6">
                 <div className="w-6/12 bg-white mt-[25px] rounded-[10px] border  border-solid border-borderGrey flex-col justify-center items-start flex">
                     <div className="w-full border-b border-solid border-0 border-borderGrey">
@@ -463,7 +485,7 @@ const DistributorDetails = () => {
             </div>
             <div className="rounded-md">
                 <div className="w-full mt-[25px] rounded-[10px] border-borderGrey border border-solid  border-neutral-40  ">
-                    <div className="w-full flex p-6 bg-white items-start justify-between w-full border-0 border-b border-solid border-borderGrey rounded-md">
+                    <div className="flex p-6 bg-white items-start justify-between w-full border-0 border-b border-solid border-borderGrey rounded-md">
                         <div className="text-textGrey2 text-xl font-medium ">
                             Timeline
                         </div>

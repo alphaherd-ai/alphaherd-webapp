@@ -43,6 +43,7 @@ function useProductbatches(id: string | null, branchId: number | null) {
 }
 
 
+
 const ProductDetails = () => {
     const [showPopup2, setShowPopup2] = React.useState(false);
     const togglePopup2 = () => {
@@ -59,6 +60,12 @@ const ProductDetails = () => {
     const appState = useAppSelector((state) => state.app)
     const { fetchedProduct, isLoading, error } = useProductfetch(id, appState.currentBranchId);
     const { fetchedProductBatches } = useProductbatches(id, appState.currentBranchId);
+    const [showEditPopup, setShowEditPopup] = useState(false);
+    const [showDeletePopup, setShowDeletePopup] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+
+
+
     useEffect(() => {
         if (!error && !isLoading && fetchedProduct) {
             setProduct(fetchedProduct);
@@ -93,6 +100,108 @@ const ProductDetails = () => {
 
 
     console.log(fetchedProduct);
+    // console.log("product name is: ",product);
+
+    const oldestBatch = product?.productBatches?.reduce((oldest: { expiry: string | number | Date }, current: { expiry: string | number | Date }) => {
+        const currentExpiry = new Date(current.expiry);
+        const oldestExpiry = new Date(oldest.expiry);
+        return currentExpiry < oldestExpiry ? current : oldest;
+    }, product.productBatches[0]);
+
+    const totalMRP = oldestBatch?.maxRetailPrice || 0;
+
+    const handleEditSave = async (e: React.FormEvent) => {
+        e.preventDefault();
+    
+        // Clean the payload
+        const cleanedProduct = {
+            itemName: product.itemName,
+            category: product.category,
+            tax: product.tax,
+            description: product.description,
+            minStock: product.minStock,
+            maxStock: product.maxStock,
+            hsnCode: product.hsnCode,
+        };
+    
+        console.log("Cleaned Payload being sent:", JSON.stringify(cleanedProduct));
+    
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${id}?branchId=${appState.currentBranchId}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(cleanedProduct),
+                }
+            );
+    
+            console.log("The response created is:", response);
+    
+            if (!response.ok) {
+                let errorMessage = "An unknown error occurred";
+                try {
+                    const errorResponse = await response.json();
+                    console.error("Error response body: ", errorResponse);
+                    errorMessage = errorResponse.message || errorMessage;
+                } catch {
+                    const errorText = await response.text();
+                    console.error("Error response text: ", errorText);
+                    errorMessage = errorText;
+                }
+                alert(`Failed to update product! Error: ${errorMessage}`);
+                return;
+            }
+    
+            alert("Service updated successfully!");
+            setShowEditPopup(false);
+            router.push('/inventory/products/all');
+        } catch (err) {
+            console.error("Unexpected error occurred:", err);
+            alert("An error occurred while updating!");
+        }
+    };
+    
+    
+
+
+    const handleDelete = async () => {
+        setIsDeleting(true);
+        console.log("product name is : ", product);
+        try {
+
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${id}?branchId=${appState.currentBranchId}`,
+                {
+                    method: "DELETE",
+                }
+            );
+            console.log("the response is : ", response);
+
+            if (!response.ok) {
+                const errorText = await response.text(); // Get the server error response
+                console.error("Error deleting product:", errorText);
+                alert(`Failed to delete product! Error: ${response.statusText || errorText}`);
+            }
+
+
+            if (response.ok) {
+                alert("Product deleted successfully!");
+                setShowDeletePopup(false);
+                router.push('/inventory/products/all'); // Adjust the path as needed
+            } else {
+                alert("Failed to delete product!");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("An error occurred!");
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
 
     return <>
         <div className="w-full h-full relative  rounded-[20px] pr-[16px] pl-[16px] z-1">
@@ -130,44 +239,236 @@ const ProductDetails = () => {
                         </div>
 
                     </div>
-                    <div className=' '>
-
-                        <Popover placement="left" showArrow offset={10}>
+                    <div className="relative">
+                        <Popover placement="bottom-end" showArrow={false} offset={0}>
                             <PopoverTrigger>
                                 <Button
                                     variant="solid"
-                                    className="capitalize flex border-none  text-gray rounded-lg ">
-                                    <div className='w-12 h-12 px-[11px] py-2.5 bg-white rounded-[5px] border border-solid border-borderGrey justify-center items-center gap-2 flex'>   <Image src={optionicon} alt="option"></Image></div></Button>
-                            </PopoverTrigger>
-                            <PopoverContent className=" text-gray-500 bg-white text-sm p-2 font-medium flex flex-row items-start rounded-lg border ,t-3 mt-2.5">
-
-                                <div className="flex flex-col ">
-
-                                    <div className='flex flex-col'>
-
-                                        <Link className='no-underline flex item-center' href='/finance/overview'>
-                                            <div className='text-gray-500 text-sm p-3 font-medium flex '>
-                                                gtr</div>
-                                        </Link>
-                                        <Link className='no-underline flex item-center' href='/finance/overview'>
-                                            <div className='text-gray-500 text-sm p-3 font-medium flex '>
-                                                grtt</div>
-                                        </Link>
-                                        <Link className='no-underline flex item-center' href='/finance/overview'>
-                                            <div className='text-gray-500 text-sm p-3 font-medium flex '>
-                                                gtrt</div>
-                                        </Link>
-
+                                    className="capitalize flex border-none text-gray">
+                                    <div className="w-12 h-12 px-[11px] py-2.5 bg-white rounded-[5px] border border-solid border-gray-300 flex items-center justify-center">
+                                        <Image src={optionicon} alt="option" />
                                     </div>
-                                </div>
+                                </Button>
+                            </PopoverTrigger>
+
+                            {/* Dropdown Menu */}
+                            <PopoverContent className="relative right-0 top-full mt-1 w-40 bg-white border border-gray-300 shadow-md z-10 p-0 rounded-lg" style={{ marginLeft: '-10px' }}>
+                                <button
+                                    onClick={() => {
+                                        setShowEditPopup(true);
+                                    }}
+                                    className="w-full px-4 py-3 text-sm text-gray-800 hover:bg-gray-200 text-left bg-white border-none rounded-md"
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setShowDeletePopup(true);
+                                    }}
+                                    className="w-full px-4 py-3 text-sm text-gray-800 hover:bg-gray-200 text-left bg-white border-none rounded-md"
+                                >
+                                    Delete
+                                </button>
+
+                                {/* Delete Popup */}
+                                {showDeletePopup && (
+                                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                                        <div className="bg-white p-6 w-[600px] h-[200px] shadow-lg flex flex-col justify-between rounded-md ">
+                                            <h2 className="text-xl font-semibold text-gray-800">
+                                                Deleting <span className="text-gray-600">Product</span>
+                                            </h2>
+                                            <p className="text-sm text-gray-600">
+                                                Are you sure you want to permanently delete{" "}
+                                                <span className="font-medium text-gray-800">
+                                                    {product?.itemName || "this product"}
+                                                </span>
+                                                ?
+                                            </p>
+                                            <div className="flex justify-end gap-4 mt-4">
+                                                <button
+                                                    className="px-4 py-2 bg-gray-500 text-white text-sm hover:bg-gray-400 rounded-md border-none"
+                                                    onClick={() => setShowDeletePopup(false)}
+                                                >
+                                                    Cancel
+                                                </button>
+                                                <button
+                                                    className={`px-4 py-2 text-white text-sm rounded-md border-none ${isDeleting
+                                                        ? "bg-gray-400 cursor-not-allowed"
+                                                        : "bg-teal-400 hover:bg-teal-400 cursor-pointer"
+                                                        }`}
+                                                    onClick={handleDelete}
+                                                    disabled={isDeleting}
+                                                >
+                                                    {isDeleting ? "Deleting..." : "Delete"}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                )}
+
+                                {showEditPopup && (
+                                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                                        <div className="absolute top-10 right-10 bg-white rounded-lg shadow-lg p-8 w-[600px] max-w-[90vw] flex flex-col">
+                                            {/* Close Button */}
+                                            <button
+                                                onClick={() => setShowEditPopup(false)}
+                                                className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+                                            >
+                                                &#x2715;
+                                            </button>
+
+                                            {/* Popup Heading */}
+                                            <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
+                                                Edit Product
+                                            </h2>
+
+                                            {/* Form */}
+                                            <form className="space-y-4" onSubmit={handleEditSave}>
+                                                {/* Item Name */}
+                                                <div>
+                                                    <label className="block text-gray-700 font-medium">Item Name</label>
+                                                    <input
+                                                        type="text"
+                                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
+                                                        value={product?.itemName || ''}
+                                                        onChange={(e) => setProduct({ ...product, itemName: e.target.value })}
+                                                    />
+                                                </div>
+
+                                                {/* Category */}
+                                                <div>
+                                                    <label className="block text-gray-700 font-medium">Category</label>
+                                                    <input
+                                                        type="text"
+                                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
+                                                        value={product?.category || ''}
+                                                        onChange={(e) => setProduct({ ...product, category: e.target.value })}
+                                                    />
+                                                </div>
+
+                                                {/* HSN Code */}
+                                                <div>
+                                                    <label className="block text-gray-700 font-medium">HSN Code</label>
+                                                    <input
+                                                        type="text"
+                                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
+                                                        value={product?.hsnCode || ''}
+                                                        onChange={(e) => setProduct({ ...product, hsnCode: e.target.value })}
+                                                    />
+                                                </div>
+
+                                                {/* Providers */}
+                                                {/* <div>
+                                                    <label className="block text-gray-700 font-medium">Providers</label>
+                                                    <div className="space-y-2">
+                                                        {product?.providers?.map((provider: string, index: number) => (
+                                                            <div key={index} className="flex items-center space-x-2">
+                                                                <input
+                                                                    type="text"
+                                                                    className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                                                                    value={provider || ''}
+                                                                    onChange={(e) => {
+                                                                        const newProviders = [...(product.providers || [])];
+                                                                        newProviders[index] = e.target.value;
+                                                                        setProduct({ ...product, providers: newProviders });
+                                                                    }}
+                                                                />
+                                                                <button
+                                                                    type="button"
+                                                                    className="text-red-500 hover:text-red-700"
+                                                                    onClick={() => {
+                                                                        const newProviders = product.providers.filter((_: any, i: number) => i !== index);
+                                                                        setProduct({ ...product, providers: newProviders });
+                                                                    }}
+                                                                >
+                                                                    &#x2715;
+                                                                </button>
+                                                            </div>
+                                                        ))}
+                                                        <button
+                                                            type="button"
+                                                            className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 focus:outline-none"
+                                                            onClick={() => setProduct({ ...product, providers: [...(product?.providers || []), ''] })}
+                                                        >
+                                                            Add Provider
+                                                        </button>
+                                                    </div>
+                                                </div> */}
+
+
+                                                {/* Tax */}
+                                                <div>
+                                                    <label className="block text-gray-700 font-medium">Tax (%)</label>
+                                                    <input
+                                                        type="number"
+                                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
+                                                        value={product?.tax || 0}
+                                                        onChange={(e) => setProduct({ ...product, tax: parseFloat(e.target.value) })}
+                                                    />
+                                                </div>
+
+                                                {/* Description */}
+                                                <div>
+                                                    <label className="block text-gray-700 font-medium">Description</label>
+                                                    <input
+                                                        type="text"
+                                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
+                                                        value={product?.description || ''}
+                                                        onChange={(e) => setProduct({ ...product, description: e.target.value })}
+                                                    />
+                                                </div>
+
+                                                {/* Min Stock */}
+                                                <div>
+                                                    <label className="block text-gray-700 font-medium">Min Stock</label>
+                                                    <input
+                                                        type="number"
+                                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
+                                                        value={product?.minStock || 1}
+                                                        onChange={(e) => setProduct({ ...product, minStock: parseInt(e.target.value) })}
+                                                    />
+                                                </div>
+
+                                                {/* Max Stock */}
+                                                <div>
+                                                    <label className="block text-gray-700 font-medium">Max Stock</label>
+                                                    <input
+                                                        type="number"
+                                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
+                                                        value={product?.maxStock || 100}
+                                                        onChange={(e) => setProduct({ ...product, maxStock: parseInt(e.target.value) })}
+                                                    />
+                                                </div>
+
+                                                {/* Save and Cancel Buttons */}
+                                                <div className="flex justify-end space-x-4 mt-6">
+                                                    <button
+                                                        type="button"
+                                                        className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 focus:outline-none border-none"
+                                                        onClick={() => setShowEditPopup(false)}
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                    <button
+                                                        type="submit"
+                                                        className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 focus:outline-none border-none"
+                                                        onClick={handleEditSave}
+                                                    >
+                                                        Save
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                )}
+
 
 
                             </PopoverContent>
                         </Popover>
-
-
-
                     </div>
+
 
                 </div>
             </div>
@@ -179,7 +480,7 @@ const ProductDetails = () => {
                     </div>
                     <div className="w-full rounded-[10px] flex items-center">
                         <ThemeProvider theme={theme}>
-                            <Slider
+                            {/* <Slider
                                 aria-label="Temperature"
                                 defaultValue={product?.quantity}
                                 getAriaValueText={valuetext}
@@ -188,26 +489,28 @@ const ProductDetails = () => {
                                 onChange={handleSliderChange}
                                 min={product?.minStock}
                                 max={product?.maxStock}
-                            />
+                            /> */}
                         </ThemeProvider>
                     </div>
                 </div>
+
                 <div className="w-full justify-start items-start flex rounded-[10px]">
+
                     <div className="w-3/12 p-6 bg-white border-t border-solid border-0  border-r border-borderGrey flex-col justify-center items-start rounded-b-xl gap-4 flex ">
-                        <div className="text-gray-500 text-[28px] font-bold ">₹124</div>
-                        <div className="text-gray-500 text-base font-medium ">Avg. Selling price</div>
+                        <div className="text-gray-500 text-[28px] font-bold ">{product?.totalQuantity}</div>
+                        <div className="text-gray-500 text-base font-medium ">Current Stock</div>
                     </div>
                     <div className="w-3/12 p-6 bg-white border-t border-solid border-0 border-r border-borderGrey flex-col justify-center items-start gap-4 flex">
-                        <div className="text-gray-500 text-[28px] font-bold ">₹124</div>
-                        <div className="text-gray-500 text-base font-medium ">Avg. Selling price</div>
+                        <div className="text-gray-500 text-[28px] font-bold ">{totalMRP}</div>
+                        <div className="text-gray-500 text-base font-medium ">MRP</div>
                     </div>
                     <div className="w-3/12 p-6 bg-white border-t border-solid border-0 border-r border-borderGrey flex-col justify-center items-start gap-4 flex">
-                        <div className="text-gray-500 text-[28px] font-bold ">₹124</div>
-                        <div className="text-gray-500 text-base font-medium ">Avg. Selling price</div>
+                        <div className="text-gray-500 text-[28px] font-bold ">{product?.minStock}</div>
+                        <div className="text-gray-500 text-base font-medium ">Min Stock</div>
                     </div>
                     <div className="w-3/12 p-6 bg-white border-t border-solid border-0 border-borderGrey flex-col justify-center items-start gap-4 flex rounded-b-xl">
-                        <div className="text-gray-500 text-[28px] font-bold ">₹124</div>
-                        <div className="text-gray-500 text-base font-medium ">Avg. Selling price</div>
+                        <div className="text-gray-500 text-[28px] font-bold ">{product?.maxStock}</div>
+                        <div className="text-gray-500 text-base font-medium ">Max Stock</div>
                     </div>
                 </div>
             </div>

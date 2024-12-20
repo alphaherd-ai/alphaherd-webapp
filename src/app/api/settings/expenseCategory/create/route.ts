@@ -9,7 +9,7 @@ export const POST = async(req: NextRequest)=>{
     try {
         const inventoryId = await fetchInventoryId(req);
         const body = await req.json();
-        const itemCategory = await prismaClient.expenseCategory
+        const itemCategory = await (prismaClient as any).expenseCategory
         .create({
             data: {
                 ...body,
