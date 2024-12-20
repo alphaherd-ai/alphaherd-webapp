@@ -82,7 +82,7 @@ function useProductBatchfetch(id: number | null) {
         batchError: error
     }
 }
-function adminFetch(id:number | null)
+function useAdminFetch(id:number | null)
 {
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/getAll?branchId=${id}`,fetcher,{revalidateOnFocus:true});
     return{
@@ -152,7 +152,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
 
     const { fetchedProducts, isLoading, error } = useProductfetch(appState.currentBranchId);
     const { fetchedBathces, isBatchLoading, batchError } = useProductBatchfetch(appState.currentBranchId);
-    const {fetchedAdmin , isAdminLoading , adminError }=  adminFetch(appState.currentBranchId);
+    const {fetchedAdmin , isAdminLoading , adminError }=  useAdminFetch(appState.currentBranchId);
     useEffect(()=>{
         if (fetchedAdmin && !isAdminLoading && !adminError) {
             //    console.log(data)
