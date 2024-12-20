@@ -26,8 +26,11 @@ export function notifications(data: any) {
         return `Batch ${data.batchNumber} under ${data.productName} has reached expiry. Evaluate your current inventory needs and consider adjusting levels accordingly.`
     }
     if(data.source ===Notif_Source.Inventory_Update_Approval_Request){
-        return `User is trying to update stocks.Approve or Deny.`
+        return `${data.name} is trying to update stocks. Approve or Deny.`
     }
+    // if(data.source ===Notif_Source.Purchase_Order_Due){
+    //     return `You owe ${(data.totalCost.toFixed(2))} to ${data.distributor}. This invoice expires on ${formatDateAndTime(data.dueDate).formattedDate}.`
+    // }
     
   }
   

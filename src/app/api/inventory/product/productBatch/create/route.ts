@@ -39,6 +39,7 @@ export const POST = async (req: NextRequest) => {
           isApproved:isApproved
         },
       });
+      console.log('Existing Product Batch:', productBatch);
 
       const inventory = prisma.inventoryTimeline.create({
         data: {
@@ -50,6 +51,7 @@ export const POST = async (req: NextRequest) => {
           isApproved:isApproved
         },
       });
+      console.log('Inventory Timeline Entry:', inventory);
 
       const [updatedProduct, createdProductBatch, createdInventory] = await Promise.all([product, productBatch, inventory]);
 
@@ -64,6 +66,7 @@ export const POST = async (req: NextRequest) => {
           isApproved:isApproved
         },
       });
+      console.log('Updated Product:', updatedProduct);
       
       return { productBatch: createdProductBatch, inventory: createdInventory };
     });

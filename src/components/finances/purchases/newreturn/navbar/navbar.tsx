@@ -66,7 +66,7 @@ const NewPurchaseReturnNewNavbar = () => {
 
                         </div>
                     </div>
-                    <div className="ml-2">
+                    {/* <div className="ml-2">
                         <Popover placement="bottom" showArrow offset={10}>
                             <PopoverTrigger>
                                 <Button
@@ -101,7 +101,7 @@ const NewPurchaseReturnNewNavbar = () => {
 
                             </PopoverContent>
                         </Popover>
-                    </div>
+                    </div> */}
                 </div>
             </div>
 

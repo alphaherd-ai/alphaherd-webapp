@@ -87,9 +87,13 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             expiry: data.expiry,
             batchNumber: data.batchNumber,
             hsnCode: data.barCode,
+
+            location:data.location,
+
             isApproved: appState.isCurrentOrgAdmin ? true : false,
             costPrice: Number(data.unitPrice)
         }));
+        console.log("item is :", items);
         const data = {
             distributor: (id === null) ? allData.headerData.distributor.value : orderData.distributor,
             distributorId: (id === null) ? allData.headerData.distributor.distributorId : orderData.distributorId,
@@ -111,6 +115,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
                 create: items
             }
         }
+
         try {
             setSaving(true);
             const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Invoice}?branchId=${appState.currentBranchId}`, data)
@@ -118,6 +123,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             //     router.back();
             // }, 2000)
             const response = await responsePromise;
+            console.log("resposnse is :",response);
             if (!response.data) {
                 throw new Error('Network response was not ok');
             }
@@ -131,7 +137,9 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
     };
 
 
-    const isDisabled = headerData?.customer ? (!headerData?.customer) : (!orderData?.distributor) || id === null ? tableData.length === 1 : tableData.length === 0
+   const isDisabled = !headerData.distributor || tableData.length === 0 
+    //const isDisabled = headerData?.customer ? (!headerData?.customer) : (!orderData?.distributor) || id === null ? tableData.length === 1 : tableData.length === 0
+
     return (
         <>
             <div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">

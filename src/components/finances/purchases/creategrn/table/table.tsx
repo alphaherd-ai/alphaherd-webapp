@@ -1,5 +1,5 @@
 "use client"
-
+import axios from 'axios';
 import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
 import addicon from "../../../../../assets/icons/finance/add.svg"
 import sellicon from "../../../../../assets/icons/finance/sell.svg"
@@ -52,6 +52,11 @@ interface ProductBatch {
     category: string;
     distributors: string[];
     productId: number;
+
+}
+interface LocationList {
+    id: string,
+    name: string | string[],
 }
 
 function useProductfetch(id: number | null) {
@@ -62,6 +67,7 @@ function useProductfetch(id: number | null) {
         error
     }
 }
+
 function DataFromOrder(id: number | null, branchId: number | null) {
     const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/${id}/?branchId=${branchId}`, fetcher);
     return {
@@ -105,7 +111,8 @@ const CreateGrnTable = () => {
                 quantity: item.quantity,
                 unitPrice: item.sellingPrice,
                 gst: item.taxAmount,
-                discountPercent: item.discount
+                discountPercent: item.discount,
+                location :item.location
             }));
             setItems(itemData);
 
@@ -142,6 +149,43 @@ const CreateGrnTable = () => {
             inputRef.current.focus();
         }
     }, [disableButton]);
+
+
+    const [location1, setLocation] = useState<any[]>([]);
+    useEffect(() => {
+        const fetchlocation = async () => {
+            try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/LocationCategory/getAll?branchId=${appState.currentBranchId}`);
+                const locationList: any[] = response.data.reduce((acc: any[], locationEntry: LocationList) => {
+                    if (Array.isArray(locationEntry.name)) {
+                        locationEntry.name.forEach((name: string) => {
+                            acc.push({ value: locationEntry.id, label: name });
+                        });
+                    } else {
+                        acc.push({ value: locationEntry.id, label: locationEntry.name });
+                    }
+                    return acc;
+                }, []);
+                setLocation(locationList);
+            } catch (error) {
+                console.log("Error fetching location", error);
+            }
+        };
+        fetchlocation();
+    }, [appState.currentBranchId]);
+
+    const handleLocationSelect = (selectedLocation: { value: number; label: string }, index: number) => {
+        const updatedItems = [...items];
+        updatedItems[index] = {
+            ...updatedItems[index],
+            location: selectedLocation.label // Update the location
+        };
+        console.log("updated items is :",updatedItems);
+        setItems(updatedItems);
+        setTableData(updatedItems); 
+        console.log("table data is :",tableData);
+        // Ensure the table data context is updated
+    };
 
 
     const { fetchedProducts, isLoading, error } = useProductfetch(appState.currentBranchId);
@@ -468,6 +512,7 @@ const handleAddItem = useCallback(() => {
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Tax Amt.</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Discount %</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Discount Amt.</div>
+                                        <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Location</div>
 
 
                                     </div>
@@ -676,14 +721,40 @@ const handleAddItem = useCallback(() => {
                                                     name={`discountAmount-${index + 1}`}
                                                 />
                                             </div>
-                                            {/* <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[20px] justify-end pr-4'>
-                                                <button className="border-0 bg-transparent cursor-pointer">
-                                                    <Image className='w-5 h-5' src={sellicon} alt="sell" ></Image>
-                                                </button>
-                                                <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
+                                            <div className=' flex text-textGrey2 text-base font-medium w-[14rem] '>
+
+                                                
+
+                                                    <Select
+
+                                                        className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0 absolute"
+
+                                                        classNamePrefix="select"
+
+                                                        isClearable={false}
+                                                     isSearchable={true}
+                                                        name="Location"
+                                                        options={location1}
+                                                        onChange={(selectedOption) => handleLocationSelect(selectedOption, index)}
+                                                         //value={ location1.find(location => location.label === item.location)}
+                                                        menuPortalTarget={document.body}
+
+                                                        styles={customStyles}
+
+                                                    />
+
+
+
+
+
+
+
+                                            </div>
+                                           
+                                                {/* <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
                                                     <Image className='w-5 h-5' src={delicon} alt="delete" ></Image>
-                                                </button>
-                                            </div> */}
+                                                </button> */}
+                                            
                                         </div>
                                     ))}
 

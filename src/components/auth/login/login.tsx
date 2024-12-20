@@ -185,10 +185,15 @@ const Login = () => {
                     onClick={togglePasswordVisibility} />)}
               </div>
             </div>
-            <div className="flex items-center mt-[16px] gap-2 ">
-              <input type="checkbox" />
-              <div className="text-gray-500 text-base font-medium  ">Stay signed in</div>
-            </div>
+            <div className="flex items-center mt-[16px] gap-2">
+ 
+    <input
+    type="checkbox"
+    className="appearance-none w-5 h-5 bg-white  checked:bg-teal-500 checked:border-teal-500 checked:after:content-['✔'] checked:after:text-white checked:after:block checked:after:text-center"></input>
+ 
+  <div className="text-gray-500 text-base font-medium">Stay signed in</div>
+</div>
+
             <button className="w-[69px] h-[42px] px-4 py-2 bg-[#35BEB1] hover:bg-teal-500 transition-all rounded-[5px] justify-start items-center gap-2 flex text-white text-sm font-bold  mt-[24px] border-0 outline-none hover:cursor-pointer hover:shadow-md" onClick={formSubmit} >
               Login
             </button>
