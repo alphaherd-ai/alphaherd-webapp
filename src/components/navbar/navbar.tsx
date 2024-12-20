@@ -15,6 +15,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAppSelector } from '@/lib/hooks';
+import ClientPopup from '../database/client/newclientpopoup'
+import Popup from '../database/patient/newpatientpopup';
+import DistributorPopup from '../database/distributor/newdistributorpopup';
 import NotificationList from '../home/NotificationCard/NotificationList';
 //import NotificationPopUp from '../home/NotificationCard/NotificationPopUp';
 import DropdownMenu from './dropDownMenu/dropDownMenu';
@@ -69,7 +72,18 @@ const Navbar = () => {
     setEstimateCount(counts.estimateCount);
     setReturnCount(counts.returnCount);
   };
-
+  const [showPopup1, setShowPopup1] = React.useState(false);
+    const [showPopup2, setShowPopup2] = React.useState(false);
+    const [showPopup3, setShowPopup3] = React.useState(false);
+  const togglePopup1 = () => {
+      setShowPopup1(!showPopup1);
+  }
+  const togglePopup2 = () => {
+      setShowPopup2(!showPopup2);
+  }
+  const togglePopup3 = () => {
+      setShowPopup3(!showPopup3);
+  }
   const DrawerList = (
     <Box className='min-h-fit h-full' sx={{ width: 250 ,bgcolor: "black"  }} onClick={toggleDrawer(false)}>
       <div className="subheadbox px-2 pt-6 pb-2">
@@ -112,34 +126,34 @@ const Navbar = () => {
         <div className="subhead text-sm font-light text-white pl-4">Database</div>
         <List>
           <ListItem>
-            <Link className='no-underline flex item-center' href={{pathname:'/database/clients'}}>
-                <div className='text-base font-normal  text-white flex '>
-                  <div className='flex pr-2'>
-                    <Image src={Estimate} alt='Return' className='w-5 h-5 ' />
-                  </div>
-                  Client
+            <div className='no-underline flex item-center cursor-pointer' onClick={togglePopup1}>
+              <div className='text-base font-normal text-white flex'>
+                <div className='flex pr-2'>
+                  <Image src={Estimate} alt='Return' className='w-5 h-5' />
                 </div>
-            </Link>
+                Client
+              </div>
+            </div>
           </ListItem>
           <ListItem>
-            <Link className='no-underline flex item-center' href={{pathname:'/database/patient'}}>
+            <div className='no-underline flex item-center cursor-pointer' onClick={togglePopup2}>
                 <div className='text-base  text-white flex '>
                   <div className='flex pr-2'>
                     <Image src={Invoice} alt='Return' className='w-5 h-5 ' />
                   </div>
                   Patient
                 </div>
-            </Link>
+            </div>
           </ListItem>
           <ListItem>
-            <Link className='no-underline flex item-center' href={{pathname:'/database/distributor'}}>
+            <div className='no-underline flex item-center cursor-pointer' onClick={togglePopup3}>
                 <div className='text-base  text-white flex '>
                   <div className='flex pr-2'>
                     <Image src={Estimate} alt='Return' className='w-5 h-5 ' />
                   </div>
                   Distributors
                 </div>
-            </Link>
+            </div>
           </ListItem>
         </List>
       </div>
@@ -296,6 +310,9 @@ if (user.name === "" || currentRoute.startsWith("/auth"))return null;
             {DrawerList}
           </Drawer>
         </div>
+      {showPopup1 && <ClientPopup onClose={togglePopup1} />}
+      {showPopup2 && <Popup onClose={togglePopup2} clientData={undefined}/>}
+      {showPopup3 && <DistributorPopup onClose={togglePopup3} />}
         <Link className='no-underline py-5 px-10 border-0 border-r-2 border-solid border-gray-800' href={`/`}>
           <div className={currentRoute === "/" ? " text-white text-base font-medium leading-6 flex items-center justify-center" : " text-gray-400 text-base font-medium leading-6 flex items-center justify-center"}>
             <HomeIcon fill={currentRoute === "/" ? "#38F8E6" : "#A2A3A3"} />
