@@ -5,7 +5,7 @@ import { connectToDB } from '@/utils';
 import { UserState } from '@/lib/features/userSlice';
 import nodemailer from 'nodemailer';
 
-function htmlTemplate(userInviteString : String){
+function htmlTemplate(userInviteString: String) {
 
     let inviteLink = process.env.NEXT_PUBLIC_API_BASE_PATH + "/api/settings/invite?userInviteString=" + userInviteString;
 
@@ -67,7 +67,7 @@ export const POST = async (req: NextRequest) => {
 
     // console.log("inside API")
 
-    const { branchId, role, email} = await req.json();
+    const { branchId, role, email } = await req.json();
 
     const requestHeaders = new Headers(req.headers)
 
@@ -104,21 +104,21 @@ export const POST = async (req: NextRequest) => {
 
     let invitedUser = await prismaClient.user.findUnique({
         where: {
-            email : email
+            email: email
         }
     });
 
-    if(invitedUser){
+    if (invitedUser) {
         const orgBranchUserRole = await prismaClient.orgBranchUserRole.findFirst({
             where: {
                 userId: invitedUser?.id,
                 orgBranchId: branchId
             }
         });
-    
+
         // console.log(orgBranchUserRole)
-    
-        if(orgBranchUserRole){
+
+        if (orgBranchUserRole) {
             return new Response(JSON.stringify({ "message": "User is already part of the branch" }), {
                 status: 500,
                 headers: {
@@ -128,22 +128,17 @@ export const POST = async (req: NextRequest) => {
         }
 
     }
-    
-    
+
+
     let userInviteString = await encrypt({ branchId, role, email }, "7 day");
-    
+
     const transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
         service: "gmail",
-        secure: false,
-        port: 587,
         auth: {
-            user: process.env.AUTOMATED_GMAIL,
-            pass: process.env.AUTOMATED_GMAIL_APP_PASSWORD
+            user: process.env.CUSTOMCONNSTR_AUTOMATED_GMAIL,
+            pass: process.env.CUSTOMCONNSTR_AUTOMATED_GMAIL_APP_PASSWORD,
         },
-        tls: {
-            rejectUnauthorized: true,
-        },
+        
     });
 
     await transporter.verify();
@@ -152,7 +147,7 @@ export const POST = async (req: NextRequest) => {
 
     const message = "Hi there, you were emailed me through nodemailer"
     const options = {
-        from: process.env.AUTOMATED_GMAIL, // sender address
+        from: process.env.CUSTOMCONNSTR_AUTOMATED_GMAIL, // sender address
         to: email, // receiver email
         subject: "Invitation to join Organization: Alphaherd", // Subject line
         text: message,
@@ -169,5 +164,6 @@ export const POST = async (req: NextRequest) => {
             }
         });
     });
+
     return new Response(JSON.stringify({ message: 'Email sent successfully' }));
 }
