@@ -17,17 +17,20 @@ import { FinanceCreationType } from "@prisma/client"
 import axios from "axios"
 import { header } from "express-validator"
 import { mutate } from "swr"
-
+import AmountnotMatchedPopup from "./totalTransactionPopup"
 const CreateGrnBottomBar = ({ orderData }: any) => {
+    const [isSaving, setSaving] = useState(false);
     const { headerData, tableData, totalAmountData, transactionsData } = useContext(DataContext);
+    console.log(orderData);
     const appState = useAppSelector((state) => state.app);
     const url = useSearchParams();
+    const [showPopup,setShowPopup] = useState(false);
     const id = url.get('id');
-    const [isSaving, setSaving] = useState(false);
     const router = useRouter();
-    //console.log(headerData);
     const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
-
+    const togglePopup = () =>{
+        setShowPopup(!showPopup);
+    }
     const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
     //console.log(orderData);
 
@@ -35,6 +38,39 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
     const newCreditedToken =totalAmountData.totalCost >= headerData.distributor?.creditedToken ? 0 : headerData.distributor?.creditedToken;
     
     const handleSubmit = async () => {
+        const totalGrnAmountInput = document.querySelector('.totalgnr') as HTMLInputElement;
+        const errorMessage = document.getElementById('errormess');
+        const totalgnrinput = document.getElementById('totalgnrinput');
+        const totalgnrhead = document.getElementById('totalgnrhead');
+        console.log(totalGrnAmountInput.value);
+        const value = totalGrnAmountInput.value.replace(/,/g, '');
+        const isValidNumber = !isNaN(parseFloat(value)) && isFinite(Number(value));
+        console.log(value);
+        console.log('hi');
+        if(totalgnrinput && totalgnrhead){
+            if (!totalGrnAmountInput.value || !isValidNumber) {
+                if (errorMessage) {
+                    errorMessage.style.display = 'block';
+                    totalgnrinput.style.borderColor = 'red';
+                    totalgnrhead.style.color = 'red';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+                return;
+            } else {
+                if (errorMessage) {
+                    errorMessage.style.display = 'none';
+                    totalgnrinput.style.borderColor = '#6B7E7D';
+                    totalgnrhead.style.color = '#6B7E7D';
+                }
+                console.log('here error');
+            }
+        }
+        const totalCost = parseFloat(totalAmountData.totalCost);
+        if (parseFloat(value) !== totalCost && !showPopup) {
+            togglePopup();
+            return;
+        }
+
         if(id===null) tableData.pop();
         const allData = { headerData, tableData, totalAmountData, transactionsData };
         let totalQty = 0;
@@ -51,9 +87,13 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             expiry: data.expiry,
             batchNumber: data.batchNumber,
             hsnCode: data.barCode,
+
+            location:data.location,
+
             isApproved: appState.isCurrentOrgAdmin ? true : false,
             costPrice: Number(data.unitPrice)
         }));
+        console.log("item is :", items);
         const data = {
             distributor: (id === null) ? allData.headerData.distributor.value : orderData.distributor,
             distributorId: (id === null) ? allData.headerData.distributor.distributorId : orderData.distributorId,
@@ -67,16 +107,15 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             overallDiscount: (id === null) ? allData.totalAmountData.overallDiscount : orderData.overallDiscount,
             totalQty: totalQty,
             recordTransaction: {
-                create: allData.transactionsData
+                create: allData.transactionsData,
             },
             status: balanceDue <= -1 ? `You’re owed: ₹${parseFloat((-1 * balanceDue).toString()).toFixed(2)}` : balanceDue >= 1 ? `You owe: ₹${parseFloat((balanceDue).toString()).toFixed(2)}` : 'Closed',
             type: FinanceCreationType.Purchase_Order,
             items: {
                 create: items
             }
-
         }
-        // console.log(JSON.stringify(data))
+
         try {
             setSaving(true);
             const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Invoice}?branchId=${appState.currentBranchId}`, data)
@@ -84,6 +123,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             //     router.back();
             // }, 2000)
             const response = await responsePromise;
+            console.log("resposnse is :",response);
             if (!response.data) {
                 throw new Error('Network response was not ok');
             }
@@ -91,18 +131,17 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             router.back();
         } catch (error) {
             console.error('Error:', error);
-        }
-        finally {
+        } finally {
             setSaving(false);
         }
     };
 
 
-    const isDisabled = headerData?.customer ? (!headerData?.customer) : (!orderData?.distributor) || id === null ? tableData.length === 1 : tableData.length === 0
+   const isDisabled = !headerData.distributor || tableData.length === 0 
+    //const isDisabled = headerData?.customer ? (!headerData?.customer) : (!orderData?.distributor) || id === null ? tableData.length === 1 : tableData.length === 0
+
     return (
         <>
-
-
             <div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
                 <div className="flex justify-between items-center gap-4 pl-4">
                     <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
@@ -119,10 +158,6 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
                     </div>
                 </div>
                 <div className="flex justify-between items-center gap-4 pr-4">
-                    {/* <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
-                        <Image src={drafticon} alt="draft"></Image>
-                        <div>Save as Draft</div>
-                    </Button> */}
                     <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
                         }`}
                         onClick={handleSubmit} disabled={isDisabled}>
@@ -130,12 +165,10 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
                         <div>{isSaving ? <Loading2 /> : "Save"}</div>
                     </Button>
                 </div>
-
+                {showPopup && <AmountnotMatchedPopup onClose={togglePopup} handleSubmit={handleSubmit} isSaving={isSaving}/>}
             </div>
-
-
         </>
     )
 }
 
-export default CreateGrnBottomBar
+export default CreateGrnBottomBar;

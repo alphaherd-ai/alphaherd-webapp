@@ -96,7 +96,7 @@ const AdminProfile = () => {
 
   const handleLogout = async () => {
     setLoading(true);
-
+console.log("logout called");
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/logout`, {
         method: "POST",
@@ -301,7 +301,8 @@ const AdminProfile = () => {
                    
                         </div>
                         <div>
-                        <Button className="cursor-pointer outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+                        <Button className="cursor-pointer outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex" onClick={handleLogout}
+                        >
         
         <div className="w-6 h-6">
         <Image src={logoutIcon} alt="download" />

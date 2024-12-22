@@ -329,7 +329,7 @@ const OrgSetup = () => {
               {
                 activeTab === formElements.length - 1 ? <button className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0 cursor-pointer" onClick={formSubmit}>
                   <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
-                    <img src={createAccountLogo?.src}></img>
+                    <Image src={createAccountLogo?.src} alt=""></Image>
                     <div className="text-white text-sm font-bold cursor-pointer ">
                       Create Account
                     </div>

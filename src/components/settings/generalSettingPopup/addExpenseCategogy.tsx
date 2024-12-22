@@ -11,25 +11,26 @@ import { useAppSelector } from '@/lib/hooks';
 
 
 
-const AddItemUnit = ({onClose}:any) => {
+const AddExpenseCategory = ({onClose}:any) => {
     const [inputs, setInputs] = useState<string[]>(['']);
-    const appState = useAppSelector((state) => state.app)
-    const [existingUnit, setExistingUnit] = useState<string[]>([]);
+    const appState = useAppSelector((state) => state.app);
+    const [existingCategory, setExistingCategory] = useState<string[]>([]);
     const [errors, setErrors] = useState<string[]>([]);
 
     useEffect(() => {
         const fetchExistingItems = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemUnit/getAll?branchId=${appState.currentBranchId}`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/expenseCategory/getAll?branchId=${appState.currentBranchId}`);
                 const data = await response.json();
                 const names = data.map((item: { name: any[]; }) => item.name[0]); 
-                setExistingUnit(names);
+                setExistingCategory(names);
                 
                 console.log('Existing reasons fetched:', names); 
             } catch (error) {
                 console.error('Error fetching existing items:', error);
             }
         };
+
         fetchExistingItems();
     }, [appState.currentBranchId]);
 
@@ -55,32 +56,38 @@ const AddItemUnit = ({onClose}:any) => {
 
     const handleSave = async () => {
         const newErrors = [...errors];
-        let hasError = false;
+    let hasError = false;
 
-        inputs.forEach((input, index) => {
-            const trimmedInput = input.trim();
+    // Define default expense categories
+    const defaultExpenseCategories = ['Rent',' Payroll', 'Utilities', 'Transport', 'Medical Equipment', 'Repair and Maintenance', 'Other'];
+    const allExistingCategories = [...existingCategory, ...defaultExpenseCategories];
+
+    inputs.forEach((input, index) => {
+        const trimmedInput = input.trim();
+        
         if (!trimmedInput) {
-            newErrors[index] = 'Unit cannot be empty.'
+            newErrors[index] = 'Expense Category cannot be empty.'
+            console.log("empty");
             hasError = true;
-            
+            return;
         }
-           else if (existingUnit.includes(trimmedInput)) {
-                newErrors[index] = 'This Reason already exists';
-                hasError = true;
-                console.log(`Duplicate Reason detected: ${trimmedInput}`);
-            } else {
-                newErrors[index] = '';
-            }
-        });
+       else if (allExistingCategories.includes(trimmedInput)) {
+            newErrors[index] = 'This Expense Category already exists';
+            hasError = true;
+            console.log(`Duplicate Expense Category detected: ${trimmedInput}`);
+        } else {
+            newErrors[index] = '';
+        }
+    });
 
-        setErrors(newErrors);
+    setErrors(newErrors);
 
         if (hasError) {
             console.log('Error found, not saving.'); 
             return; 
         }
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemUnit/create?branchId=${appState.currentBranchId}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/expenseCategory/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -90,9 +97,10 @@ const AddItemUnit = ({onClose}:any) => {
                 }),
             });
             if (response.ok) {
-                console.log('Data saved successfully');
-                onClose();
-                window.dispatchEvent(new FocusEvent('focus'));
+                const result = await response.json();
+                window.location.reload();
+                // console.log('Payment methods saved:', result);
+                onClose(); 
             } else {
                 console.error('Failed to save data:', response.statusText);
             }
@@ -108,9 +116,9 @@ const AddItemUnit = ({onClose}:any) => {
                     <Image src={closeicon} alt="close"></Image>
                 </div>
                 <div className="flex-col justify-start items-start gap-2 flex w-full">
-                    <div className="text-gray-500 text-xl font-medium">Add Unit</div>
+                    <div className="text-gray-500 text-xl font-medium">Add Expense</div>
                     <div className='w-full flex justify-between '>
-                        <div className="text-neutral-400 text-base font-medium">Add and configure your inventory item units</div>
+                        <div className="text-neutral-400 text-base font-medium">Add and configure your Expense categories</div>
                     </div>
                 </div>
                 <div className="w-full flex items-center gap-[6rem] ">
@@ -119,7 +127,7 @@ const AddItemUnit = ({onClose}:any) => {
                         {inputs.map((input, index) => (
                             <div key={index} className="w-full ">
                                 <div className='flex  items-center'>
-                                <div className="text-gray-500 text-base font-medium w-[12rem]">Unit Items</div>
+                                <div className="text-gray-500 text-base font-medium w-[12rem]">Expense Category</div>
                                 <input
                                     className="ml-[5rem] w-[80%] border border-solid border-borderGrey outline-none h-11 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                     type="text"
@@ -156,4 +164,4 @@ const AddItemUnit = ({onClose}:any) => {
 }
 
 
-export default AddItemUnit
+export default AddExpenseCategory

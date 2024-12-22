@@ -17,7 +17,7 @@ const formSchema = z.object({
     phoneNo: z.string().length(10, 'Invalid Phone No.'),
     name: z.string(),
     email: z.string().email('Invalid Email Address'),
-    altPhoneNo: z.string(),
+    altPhoneNo: z.string().length(10, 'Invalid Phone No.'),
     password: z.string().min(4, 'Password must be at least 4 characters'),
     rePassword: z.string().min(4, 'Password must be at least 4 characters')
 }).superRefine((data, ctx) => {
