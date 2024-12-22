@@ -13,8 +13,8 @@ export const POST = async (req: NextRequest)=>{
     const transport = nodemailer.createTransport({
         service:"gmail",
         auth:{
-            user: AUTOMATED_GMAIL,
-            pass: AUTOMATED_GMAIL_APP_PASSWORD
+            user: process.env.CUSTOMCONNSTR_AUTOMATED_GMAIL,
+            pass: process.env.CUSTOMCONNSTR_AUTOMATED_GMAIL_APP_PASSWORD
         },
         
 
@@ -24,7 +24,7 @@ export const POST = async (req: NextRequest)=>{
     console.log("emailMessage is :", emailMessage);
     console.log("email is :", email);
     const result = {
-        from: AUTOMATED_GMAIL,
+        from: process.env.CUSTOMCONNSTR_AUTOMATED_GMAIL,
         to: email,
         subject: 'Billing',
         message: emailMessage, 
