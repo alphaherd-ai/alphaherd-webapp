@@ -167,6 +167,7 @@ model InventorySection {
   itemCategory    ItemCategory[]
   itemUnit        ItemUnit[]
   serviceCategory ServiceCategory[]
+  expenseCategory ExpenseCategory[]
   location        Location[]
   reason          Reason[]
   taxType         TaxType[]
@@ -220,7 +221,6 @@ model Clients {
   DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
   databaseSectionId Int?
   creditedToken     Float?           @default(0)
-
   @@index([databaseSectionId])
   @@map("client")
 }
@@ -274,6 +274,7 @@ model Products {
   totalQuantity       Int?
   minStock            Int?
   maxStock            Int?
+  location         String?
   lastOutOfStockNotif DateTime?
   lastExpiryNotif     DateTime? // Last expired notification sent
   lastExpiringNotif   DateTime? // Last expiring soon notification sent
@@ -523,6 +524,7 @@ model InventoryTimeline {
   service            Services?         @relation(fields: [serviceId], references: [id])
   InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId Int?
+  deliveryStatus   String?
 
   @@index([inventorySectionId, productId, serviceId, createdAt])
 }
@@ -570,6 +572,12 @@ model Reason {
   InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId Int?
 }
+model ExpenseCategory {
+  id                 Int               @id @default(autoincrement())
+  name               String[]
+  InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
+  inventorySectionId Int?
+}
 
 model Species {
   id                Int              @id @default(autoincrement())
@@ -610,7 +618,7 @@ model Inventorytransfer {
 
 model Location {
   id                 Int               @id @default(autoincrement())
-  name               String[]
+  name               String?
   InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId Int?
 }

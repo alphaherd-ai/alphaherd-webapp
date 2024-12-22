@@ -14,6 +14,7 @@ import OrganisationNavbar from "../navbar/navbar";
 import useSWR from 'swr';
 import { useAppSelector } from "@/lib/hooks";
 import Loading2 from "@/app/loading2";
+import { current } from "@reduxjs/toolkit";
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 export default function UsersAndRolesSettings() {
@@ -22,6 +23,7 @@ export default function UsersAndRolesSettings() {
     console.log("appstate is :",appState);
     const [branchUsers,setBranchUsers]=useState<any[]>([]);
     // console.log(appState.isCurrentOrgAdmin)
+    
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true})
     useEffect(()=>{
         if (data && !error && !isLoading) {

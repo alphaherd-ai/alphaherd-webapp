@@ -291,6 +291,16 @@ const FilterDropdwonCard = () => {
               />
               <div className="text-textGrey2 font-medium text-base">Manual Update</div>
             </div>
+
+            <div className="w-full flex gap-2 items-center">
+              <input
+                type="checkbox"
+                checked={selectedInvoiceTypes.includes("Transfer")}
+                onChange={() => handleInvoiceTypeSelect("Transfer")}
+              />
+              <div className="text-textGrey2 font-medium text-base">Transfer</div>
+            </div>
+            
             
           </div>
         </div>
