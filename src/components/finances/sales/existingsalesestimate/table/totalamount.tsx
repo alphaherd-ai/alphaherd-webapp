@@ -133,43 +133,43 @@ const ExistingsaleEstimateTotalAmout = ({ otherData, items, isLoading }: any) =>
 
     const handleSave = async () => {
         try {
-          // Format the date field to ensure it's in ISO-8601 format
-          const formattedTransaction = {
-            ...editRecordTransaction,
-            date: new Date(editRecordTransaction.date).toISOString(), // Ensure ISO-8601 format
-          };
-      
-          console.log("Saving updated transaction: ", formattedTransaction);
-      
-          // Call the API with the formatted transaction
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/paymentTransaction/${formattedTransaction.id}?branchId=${appState.currentBranchId}`,
-            {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(formattedTransaction),
+            // Format the date field to ensure it's in ISO-8601 format
+            const formattedTransaction = {
+                ...editRecordTransaction,
+                date: new Date(editRecordTransaction.date).toISOString(), // Ensure ISO-8601 format
+            };
+
+            console.log("Saving updated transaction: ", formattedTransaction);
+
+            // Call the API with the formatted transaction
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/paymentTransaction/${formattedTransaction.id}?branchId=${appState.currentBranchId}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(formattedTransaction),
+                }
+            );
+
+            // Handle API response
+            if (!response.ok) {
+                throw new Error("Failed to save transaction");
             }
-          );
-      
-          // Handle API response
-          if (!response.ok) {
-            throw new Error("Failed to save transaction");
-          }
-      
-          const result = await response.json();
-          console.log("Transaction successfully updated:", result);
-      
-          // Success feedback
-          alert("Transaction saved successfully");
-          setEditPopupVisible(false); // Close the popup on success
+
+            const result = await response.json();
+            console.log("Transaction successfully updated:", result);
+
+            // Success feedback
+            alert("Transaction saved successfully");
+            setEditPopupVisible(false); // Close the popup on success
         } catch (error) {
-          console.error("Failed to save transaction:", error);
-          alert("Failed to save transaction");
+            console.error("Failed to save transaction:", error);
+            alert("Failed to save transaction");
         }
-      };
-      
+    };
+
 
 
 
@@ -235,8 +235,7 @@ const ExistingsaleEstimateTotalAmout = ({ otherData, items, isLoading }: any) =>
                                         <div className="text-textGrey2  text-base font-bold  w-1/3 py-4">Advance Paid</div>
                                         <div className="text-textGrey1 text-base font-medium  w-1/3 py-4">{formatDateAndTime(transaction.date).formattedDate}</div>
                                         <div className='text-gray-500 text-md font-medium mr-4'>#{transaction?.receiptNo}</div>
-                                        <div className="text-textGrey1 text-base font-medium  w-1/3 py-4">{formatDateAndTime(transaction.date).formattedDate}</div>
-                                        <div className='text-gray-500 text-md font-medium mr-4'>#{transaction?.receiptNo}</div>
+                                        
                                         <div className="text-textGrey1 text-base font-medium  w-1/3 py-4 flex  items-center">
                                             <div className='flex pr-2'>
                                                 <Image src={Cash} alt='Cash' className='w-4 h-4 ' />
@@ -274,6 +273,7 @@ const ExistingsaleEstimateTotalAmout = ({ otherData, items, isLoading }: any) =>
                                     !transaction.isAdvancePayment &&
                                     (
                                         <div key={index} className='w-full px-6 flex items-center justify-between border-0 border-b border-solid border-borderGrey'>
+                                            <div className="text-textGrey2  text-base font-bold  w-1/3 py-4">Paid on</div>
                                             <div className="text-textGrey1 text-base font-medium  w-1/3 py-4">{formatDateAndTime(transaction.date).formattedDate}</div>
                                             <div className='text-gray-500 text-md font-medium mr-4'>#{transaction?.receiptNo}</div>
 

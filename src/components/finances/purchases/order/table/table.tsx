@@ -347,12 +347,12 @@ const NewPurchasesTable = () => {
         const url = `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll?branchId=${appState.currentBranchId}`;
         
         // Use mutate to refresh the distributor list from the API
-        mutate(url, async () => {
-            const response = await fetch(url);
-            const updatedDistributors = await response.json();
-            setDistributorData(updatedDistributors); // Update distributorData in DataContext
-            return updatedDistributors;
-        });
+        // mutate(url, async () => {
+        //     const response = await fetch(url);
+        //     const updatedDistributors = await response.json();
+        //     setDistributorData(updatedDistributors); // Update distributorData in DataContext
+        //     return updatedDistributors;
+        // });
     };
     
     const customStyles = {

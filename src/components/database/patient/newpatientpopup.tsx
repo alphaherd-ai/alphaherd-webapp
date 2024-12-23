@@ -322,7 +322,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                     value: speciesEntry.id,
                     label: speciesEntry.name
                 }));
-                console.log(speciesList);
+                //console.log(speciesList);
                 setSpecies(speciesList);
             } catch (error) {
                 console.log('Error fetching species', error);
@@ -338,7 +338,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 const response = await axios.get(
                     `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/breed/getAll?branchId=${appState.currentBranchId}`
                 );
-
+                //console.log(response.data);
                 const breedList: any[] = response.data.map((breedEntry: Breed) => ({
                     value: breedEntry.id,
                     label: breedEntry.name,
