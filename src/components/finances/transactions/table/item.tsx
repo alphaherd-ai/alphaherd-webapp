@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Tooltip, Button } from "@nextui-org/react";
 import Image from 'next/image';
 import { format, parseISO } from 'date-fns';
-import Menu from '@/assets/icons/finance/Menu.svg';
+import Menu from '../../../../assets/icons/finance/Menu.svg';
 import Cash from "../../../../assets/icons/finance/Cash.svg";
 import UPI from "../../../../assets/icons/finance/image 559.svg";
 import { useAppSelector } from '@/lib/hooks';
