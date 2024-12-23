@@ -17,8 +17,8 @@ import capitalizeFirst from "@/utils/capitiliseFirst";
 import Loading2 from "@/app/loading2";
 type PopupProps = {
     onClose: () => void;
-    setNewClient?:any;
-    setIsNewClientClicked?:any
+    setNewClient?: any;
+    setIsNewClientClicked?: any
 }
 
 // const clientSchema = z.object({
@@ -32,15 +32,15 @@ type PopupProps = {
 
 
 
-const ClientPopup: React.FC<PopupProps> = ({ onClose,setNewClient,setIsNewClientClicked }: any) => {
+const ClientPopup: React.FC<PopupProps> = ({ onClose, setNewClient, setIsNewClientClicked }: any) => {
     const [formData, setFormData] = useState<any>({});
     const [showPopup, setShowPopup] = React.useState(false);
     const appState = useAppSelector((state) => state.app)
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [isSaveDisabled, setIsSaveDisabled] = useState(true);
     const [savingData, setSavingData] = useState(false);
-    const [isClientSaved,setClientStatus]=useState<any>(false);
-    let addAnotherPatient=false;
+    const [isClientSaved, setClientStatus] = useState<any>(false);
+    let addAnotherPatient = false;
     const togglePopup = () => {
         setShowPopup(!showPopup);
     }
@@ -109,18 +109,20 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setNewClient,setIsNewClient
             });
             if (response.ok) {
                 const clientData = await response.json();
-                if(clientData){
-                    setIsNewClientClicked((prev:any)=>!prev);
+                if (clientData) {
+                    setIsNewClientClicked((prev: any) => !prev);
                     setNewClient(clientData);
                 }
                 console.log('Data saved successfully');
-                if(!addAnotherPatient){ onClose();
-                     addAnotherPatient = false;}
-                else{
-                    togglePopup();
-                    addAnotherPatient=false;
+                if (!addAnotherPatient) {
+                    onClose();
+                    addAnotherPatient = false;
                 }
-                
+                else {
+                    togglePopup();
+                    addAnotherPatient = false;
+                }
+
                 window.dispatchEvent(new FocusEvent('focus'));
             } else {
                 console.error('Failed to save data', response.statusText);
@@ -131,7 +133,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setNewClient,setIsNewClient
             console.error('Error while saving data:', error);
         }
         finally {
-            
+
             setSavingData(false);
         }
     };
@@ -199,13 +201,13 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setNewClient,setIsNewClient
 
     ]
 
-    const handleNewPatientPopUp=()=>{
-        addAnotherPatient=true
-        if(!isClientSaved) handleSaveClick();
+    const handleNewPatientPopUp = () => {
+        addAnotherPatient = true
+        if (!isClientSaved) handleSaveClick();
         else togglePopup();
     }
 
-    
+
 
     return <>
 
@@ -221,12 +223,12 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setNewClient,setIsNewClient
                 <div className="flex items-center">
                     <div className="text-gray-500 text-base font-medium  w-[8rem]">Client Name<span className="text-[red]">*</span></div>
                     <div>
-                        <input className="w-[447px] h-9 text-textGrey2 text-base  font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="clientName" 
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            e.target.value = value.charAt(0).toUpperCase() + value.slice(1);
-                            handleChange("clientName", e.target.value);
-                        }} required />
+                        <input className="w-[447px] h-9 text-textGrey2 text-base  font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="clientName"
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                e.target.value = value.charAt(0).toUpperCase() + value.slice(1);
+                                handleChange("clientName", e.target.value);
+                            }} required />
                         {errors.clientName && (
                             <div className="text-[red] error">{errors.clientName}</div>
                         )}
@@ -310,18 +312,18 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setNewClient,setIsNewClient
                     {/* <button className="px-4 py-2.5 bg-greenButton border-none rounded-[5px] justify-start items-center gap-2 flex"onClick={togglePopup}>
                         <div className="text-white text-base font-bold ">Add Patient</div>
                     </button> */}
-                    <div 
-  className={`h-11 px-4 py-2.5 rounded-[5px] flex items-center gap-2 
+                    <div
+                        className={`h-11 px-4 py-2.5 rounded-[5px] flex items-center gap-2 
               ${isSaveDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-teal-400 cursor-pointer'}`}
-  onClick={!isSaveDisabled && !isClientSaved ? handleNewPatientPopUp : undefined}
->
-  <div className="w-6 h-7">
-    <Image src={Paws} alt="Paws" className="w-6 h-6" />
-  </div>
-  <div className="text-gray-100 text-base font-medium">
-    Add Patient
-  </div>
-</div>
+                        onClick={!isSaveDisabled && !isClientSaved ? handleNewPatientPopUp : undefined}
+                    >
+                        <div className="w-6 h-7">
+                            <Image src={Paws} alt="Paws" className="w-6 h-6" />
+                        </div>
+                        <div className="text-gray-100 text-base font-medium">
+                            Add Patient
+                        </div>
+                    </div>
 
                     {/* <button className="px-4 py-2 bg-black rounded-[5px] justify-start items-center gap-2 flex" onClick={handleSaveClick}>
                         <div className="text-white border-none text-base font-bold ">Save</div>
@@ -338,7 +340,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setNewClient,setIsNewClient
                         <Image src={arrowicon} alt="arrow"></Image>
                     </button>)} */}
                     <div
-                        className={`h-11 px-4 py-2.5 rounded-[5px]  justify-start items-center gap-2 flex  ${isSaveDisabled  ? 'bg-gray-400 cursor-not-allowed' : 'bg-zinc-900 cursor-pointer'
+                        className={`h-11 px-4 py-2.5 rounded-[5px]  justify-start items-center gap-2 flex  ${isSaveDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-zinc-900 cursor-pointer'
                             }`}
                         onClick={isSaveDisabled || isClientSaved ? undefined : handleSaveClick}
                     >
@@ -349,7 +351,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setNewClient,setIsNewClient
                                 </div>
                             </div>
                         )}
-                        <div className="text-gray-100 text-base font-bold">{savingData  ? <Loading2 /> : "Save"}</div>
+                        <div className="text-gray-100 text-base font-bold">{savingData ? <Loading2 /> : "Save"}</div>
                     </div>
                 </div>
             </div>

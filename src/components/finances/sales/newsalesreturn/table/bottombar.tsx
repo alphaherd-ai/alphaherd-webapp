@@ -84,15 +84,15 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
         try {
             setSaving(true);
             const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Return}?branchId=${appState.currentBranchId}`, data)
-            // setTimeout(() => {
-            //     router.back();
-            // }, 2000)
+            setTimeout(() => {
+                router.back();
+            }, 2000)
             const response = await responsePromise;
             if (!response.data) {
                 throw new Error('Network response was not ok');
 
             }
-            mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`,(currData:any = [])=>[...currData,response.data?.sales],false);
+            //mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`,(currData:any = [])=>[...currData,response.data?.sales],false);
             router.back();
         } catch (error) {
             console.error('Error:', error);

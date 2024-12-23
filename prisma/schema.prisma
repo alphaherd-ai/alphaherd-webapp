@@ -524,6 +524,7 @@ model InventoryTimeline {
   service            Services?         @relation(fields: [serviceId], references: [id])
   InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId Int?
+  deliveryStatus   String?
 
   @@index([inventorySectionId, productId, serviceId, createdAt])
 }
