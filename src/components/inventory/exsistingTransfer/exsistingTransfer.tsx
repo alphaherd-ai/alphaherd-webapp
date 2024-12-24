@@ -180,14 +180,14 @@ const InventoryTransfer = () => {
                             </Button>
 
                         </div>
-                        <div className="flex justify-between items-center gap-4 pr-4">
+                        {/* <div className="flex justify-between items-center gap-4 pr-4">
 
                             <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer bg-zinc-900`}
                             >
                                 <Image src={checkicon} alt="check"></Image>
                                 <div>{"Save"}</div>
                             </Button>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             }

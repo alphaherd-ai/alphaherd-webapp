@@ -45,7 +45,7 @@ export const UserAccountSetup = (props: any) => {
                                 //@ts-ignore
                                 setResource(result?.info.secure_url);
                                 console.log(result) // { public_id, secure_url, etc }
-                                props.handlePicChange(result.info, "adminPicUrl")
+                                props.handlePicChange(result.info, "imageUrl")
                                 widget.close();
                             }}
                         >

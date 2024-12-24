@@ -91,8 +91,10 @@ const InventoryTransfer = () => {
         const productData = products.find((e: any) => e?.value?.id === product?.value?.id)?.value;
         if (productData) {
             const batchesData = batches?.filter((batch: any) => batch?.value?.productId === productData?.id);
-            setSelectedBatch(batchesData);
-
+            const sortedbatchesdata = batchesData.sort((a: any, b: any) => new Date(a?.value?.expiry).getTime() - new Date(b?.value?.expiry).getTime());
+            const newItems = [...items];
+            newItems[index].batch = sortedbatchesdata[0]?.value;
+            setSelectedBatch(sortedbatchesdata);
         }
         const newItems = [...items];
         newItems[index].product = product?.value;

@@ -45,7 +45,7 @@ interface InventoryTimeline {
   party: string;
   productBatch: ProductBatch;
   createdAt: string;
-
+  deliveryStatus:string;
 }
 
 const ProductAllItem = ({ sortOrder, sortKey }: any) => {
@@ -228,7 +228,7 @@ const ProductAllItem = ({ sortOrder, sortKey }: any) => {
             </div>
             <div className='w-[8rem] flex  items-center  text-neutral-400 text-base font-medium flex-col'>
               <div className='text-gray-500 text-xs'>{inventory?.invoiceNo?.startsWith('IT') ? "" : inventory?.productBatch?.batchNumber}</div>
-              <div className='text-neutral-400 text-[13px] font-medium'>{formatDateAndTime(inventory?.invoiceNo?.startsWith('IT') ? "" : inventory?.productBatch?.expiry).formattedDate}</div>
+              <div className='text-neutral-400 text-[13px] font-medium'>{inventory?.invoiceNo?.startsWith('IT') ? inventory?.deliveryStatus : formatDateAndTime(inventory?.productBatch?.expiry).formattedDate}</div>
             </div>
             <div className='w-[12rem] flex  items-center  text-neutral-400 text-base font-medium'>{inventory?.invoiceNo?.startsWith('IT') ? inventory?.party : inventory?.productBatch?.product.providers[0]}</div>
             <div className='w-[8rem] px-1 flex  items-center justify-center text-gray-500 text-[0.65rem] font-medium  py-1.5 bg-gray-200 rounded-md'>{inventory.invoiceType}</div>

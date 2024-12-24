@@ -69,14 +69,14 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
         try {
             setSaving(true);
             const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Return}?branchId=${appState.currentBranchId}`,data)
-            // setTimeout(()=>{
-            //     router.back();
-            // },2000);
+            setTimeout(()=>{
+                router.back();
+            },2000);
             const response= await responsePromise;
             if (!response.data) {
                 throw new Error('Network response was not ok');
             }
-            mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/getAll?branchId=${appState.currentBranchId}`,(currState:any = [])=>[...currState,response?.data?.purchases],false);
+            //mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/getAll?branchId=${appState.currentBranchId}`,(currState:any = [])=>[...currState,response?.data?.purchases],false);
             router.back();
     
         } catch (error) {

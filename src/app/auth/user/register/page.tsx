@@ -11,13 +11,13 @@ import createAccountLogo from '@/assets/icons/loginsignup/CreateAccount.svg'
 import { Bounce, ToastContainer, toast } from 'react-toastify';
 import { z } from 'zod';
 import { setValidationErrorsForForm } from '@/utils/setValidationErrorForForm';
-import { useAppSelector } from '@/lib/hooks';
 
 const formSchema = z.object({
     phoneNo: z.string().length(10, 'Invalid Phone No.'),
     name: z.string(),
     email: z.string().email('Invalid Email Address'),
     altPhoneNo: z.string().length(10, 'Invalid Phone No.'),
+    imageUrl: z.string(),
     password: z.string().min(4, 'Password must be at least 4 characters'),
     rePassword: z.string().min(4, 'Password must be at least 4 characters')
 }).superRefine((data, ctx) => {
@@ -44,6 +44,7 @@ export default function UserAccountSetupPage() {
         phoneNo: "",
         altPhoneNo: "",
         password: "",
+        imageUrl: "",
         rePassword: ""
     });
 
@@ -166,6 +167,7 @@ export default function UserAccountSetupPage() {
                     body: JSON.stringify({
                         name: data.name,
                         email: data.email,
+                        imageUrl: data.imageUrl,
                         phoneNo: data.phoneNo,
                         altPhoneNo: data.altPhoneNo,
                         password: data.password

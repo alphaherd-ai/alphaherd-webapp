@@ -9,7 +9,7 @@ export const GET = async (req: NextRequest) => {
 
   try {
     const inventoryId= await fetchInventoryId(req);
-    const itemCategory = await prismaClient.expenseCategory.findMany({
+    const itemCategory = await (prismaClient as any).expenseCategory.findMany({
       where:{
         inventorySectionId:inventoryId
       },

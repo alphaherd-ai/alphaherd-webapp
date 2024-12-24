@@ -184,6 +184,7 @@ export const POST = async (req: NextRequest) => {
                 inventorySectionId: inventoryId,
                 invoiceNo: body?.invoiceNumber,
                 party:transferringBranch,
+                deliveryStatus:body?.status,
             }
         })
 
@@ -196,6 +197,7 @@ export const POST = async (req: NextRequest) => {
                 inventorySectionId: inventorySectionId,
                 invoiceNo: body?.invoiceNumber,
                 party:transferringBranch,
+                deliveryStatus:body?.status,
             }
         })
 
