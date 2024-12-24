@@ -26,11 +26,17 @@ export function notifications(data: any) {
         return `Batch ${data.batchNumber} under ${data.productName} has reached expiry. Evaluate your current inventory needs and consider adjusting levels accordingly.`
     }
     if(data.source ===Notif_Source.Inventory_Update_Approval_Request){
-        return `${data.name} is trying to update stocks. Approve or Deny.`
+        return `${data.name} wants to stock out ${data.totalItems} units of ${data.itemName}.`
     }
-    // if(data.source ===Notif_Source.Purchase_Order_Due){
-    //     return `You owe ${(data.totalCost.toFixed(2))} to ${data.distributor}. This invoice expires on ${formatDateAndTime(data.dueDate).formattedDate}.`
-    // }
+     if(data.source ===Notif_Source.Purchase_Order_Due){
+        return `${data.purchaseReference} to ${data.distributor}. This invoice expires on ${formatDateAndTime(data.dueDate).formattedDate}.`
+    }
+    if(data.source ===Notif_Source.Product_Edit_Approval_Request){
+        return `${data.user} wants to edit ${data.partyName}'s payment receipt #${data.receipt}. `
+    }
+    if(data.source ===Notif_Source.Product_Edit_Approval_Request){
+        return `${data.user} wants to cancel ${data.partyName}'s payment receipt #${data.receipt}. `
+    }
     
   }
   

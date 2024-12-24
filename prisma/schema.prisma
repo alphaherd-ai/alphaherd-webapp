@@ -21,9 +21,12 @@ enum Notif_Source {
   Inventory_Product_Expiry
   Inventory_Product_MaxStock
   Inventory_Update_Approval_Request
+  Product_Edit_Approval_Request
+  Product_Delete_Approval_Request
   Inventory_ProductBatch
   Sales_Invoice
   Expense_Invoice
+  Purchase_Order_Due
 }
 
 enum Sales_Status {
@@ -400,6 +403,7 @@ model Purchases {
   distributorInvoiceNo String?
   grnNo                String?
   notes                String?
+  lastDueNotif         DateTime?
   shipping             Float?
   adjustment           Float?
   totalCost            Float?
@@ -524,6 +528,7 @@ model InventoryTimeline {
   service            Services?         @relation(fields: [serviceId], references: [id])
   InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId Int?
+  deliveryStatus   String?
 
   @@index([inventorySectionId, productId, serviceId, createdAt])
 }
