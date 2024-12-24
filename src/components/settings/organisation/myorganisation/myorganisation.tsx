@@ -8,7 +8,7 @@ import branchlogo from "../../../../assets/icons/settings/branchlogo.png"
 import React, { useState, useEffect } from 'react';
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
 import OrganisationNavbar from "../navbar/navbar"
-
+import fare from "../../../../assets/icons/settings/corporate_fare.svg"
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import Link from "next/link"
 import AddBranchPopup from "../addBranchPopup"
@@ -195,19 +195,18 @@ export const MyOrganisationSettings = () => {
                                     <div className="text-gray-500 text-base font-bold ">Linked Branches</div>
                                     <div className="text-neutral-400 text-base font-medium ">Link a new branch with your Organisation</div>
                                 </div>
-                                <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '>
                                     <Button
                                         variant="solid"
-                                        className="capitalize flex border-none bg-black text-white rounded-lg hover:cursor-pointer " onClick={togglePopup}> Add Branch</Button>
-
-                                </div>
+                                        className="capitalize flex border-none bg-black text-white rounded-lg hover:cursor-pointer font-bold " onClick={togglePopup}>
+                                            <Image className="w-4 h-4 relative" src={fare} alt="sms" />
+                                             Add Branch</Button>
                             </div>
                             <div className="w-full h-full">
                                 <div className="w-full h-full rounded-[10px] border border-stone-300 justify-start items-start flex flex-col">
                                     <div className='flex  w-full  items-center box-border bg-gray-100  h-12 py-4 border-b border-neutral-400 text-gray-500'>
                                         <div className='flex text-gray-500 text-base font-medium px-6 w-5/12'>Branch Name</div>
                                     </div>
-                                    <div className='flex  items-center w-full  box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                                    <div className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 overflow-x-scroll'>
                                         {
                                             orgBranches.map((branch : any,index:number) => {
                                                 return <div key={index+1} className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>

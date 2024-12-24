@@ -100,7 +100,7 @@ const OrgBranchRoleManage = () => {
                         <div className='flex text-gray-500 text-base font-medium px-6 w-6/12'>Role</div>
                         <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'></div>
                     </div>
-                    <div className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                    <div className='flex  items-center w-full  box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
                         <div className='w-6/12 px-6 flex items-center text-neutral-400 text-base font-medium'>Raniumari@gmail.com</div>
                         <div className='w-6/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-2'>
                             <div className="w-[73px] h-7 px-2 py-1.5 bg-violet-100 rounded-[5px] justify-center items-center gap-2 flex text-indigo-600 text-sm font-medium ">Manager</div>

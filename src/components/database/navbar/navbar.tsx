@@ -7,6 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import PatientIcon from './icons/patientIcon';
+import DistIcon from './icons/distributoricon';
 import ClientIcon from './icons/clientIcon';
 import { useAppSelector } from '@/lib/hooks';
 import useSWR from 'swr';
@@ -155,7 +156,7 @@ const DatabaseNavbar = () => {
                     </Link>
                     <Link className='no-underline ' href='/database/distributor'>
                         <div  style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }} className={currentRoute.startsWith("/database/distributor") ? " flex items-center text-white  text-base bg-black px-4 py-2.5 border-r-0 rounded-tr-lg rounded-br-lg " : "rounded-tr-lg rounded-br-lg  flex items-center text-gray-400 bg-white px-4 py-2.5 text-base   border-r-0"}>
-                            <div className='flex mr-2'><PatientIcon fill={currentRoute.startsWith("/database/distributor")
+                            <div className='flex mr-2'><DistIcon fill={currentRoute.startsWith("/database/distributor")
                                 ? "#38F8E6"
                                 : "#A2A3A3"} /></div>
                            Distributors

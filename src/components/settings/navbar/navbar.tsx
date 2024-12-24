@@ -16,7 +16,6 @@ import lefticon from "../../../assets/icons/settings/left_icon.svg"
 
 
 const SettingsNavbar = () => {
-
     const currentRoute = usePathname();
     const router= useRouter();
 

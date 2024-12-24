@@ -91,11 +91,9 @@ export const POST = async (req: NextRequest) => {
             adminOrganizations: {}
         }
     });
-
     // if (!adminUser) {
     //     return new Response(JSON.stringify({"message" : "Not Admin"}), { status: 400 });
     // }
-
     // let isAdmin = (adminUser.adminOrganizations.length === 0 ? false : (adminUser.adminOrganizations.find(e => e.id === orgBranch?.orgId)))
 
     // if (!isAdmin && !orgBranch) {
@@ -128,15 +126,15 @@ export const POST = async (req: NextRequest) => {
         }
 
     }
-
+    
 
     let userInviteString = await encrypt({ branchId, role, email }, "7 day");
 
     const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-            user: process.env.CUSTOMCONNSTR_AUTOMATED_GMAIL,
-            pass: process.env.CUSTOMCONNSTR_AUTOMATED_GMAIL_APP_PASSWORD,
+            user: process.env.AUTOMATED_GMAIL,
+            pass: process.env.AUTOMATED_GMAIL_APP_PASSWORD,
         },
         
     });
@@ -147,7 +145,7 @@ export const POST = async (req: NextRequest) => {
 
     const message = "Hi there, you were emailed me through nodemailer"
     const options = {
-        from: process.env.CUSTOMCONNSTR_AUTOMATED_GMAIL, // sender address
+        from: process.env.AUTOMATED_GMAIL, // sender address
         to: email, // receiver email
         subject: "Invitation to join Organization: Alphaherd", // Subject line
         text: message,

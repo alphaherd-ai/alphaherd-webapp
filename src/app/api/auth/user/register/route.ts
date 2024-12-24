@@ -24,7 +24,6 @@ export const POST = async (req : NextRequest) => {
         let data = await req.json();
 
         data.email = email; // someone can khowingly send other email in payload
-
         // console.log(data);
 
         const hashedPassword = await bcrypt.hash(data.password, 10);
