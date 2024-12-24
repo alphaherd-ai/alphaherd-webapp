@@ -1,3 +1,4 @@
+
 "use client"
 import axios from 'axios';
 import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
@@ -150,43 +151,65 @@ const CreateGrnTable = () => {
         }
     }, [disableButton]);
 
-
     const [location1, setLocation] = useState<any[]>([]);
+
     useEffect(() => {
+
         const fetchlocation = async () => {
+
             try {
+
                 const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/LocationCategory/getAll?branchId=${appState.currentBranchId}`);
+
                 const locationList: any[] = response.data.reduce((acc: any[], locationEntry: LocationList) => {
+
                     if (Array.isArray(locationEntry.name)) {
+
                         locationEntry.name.forEach((name: string) => {
+
                             acc.push({ value: locationEntry.id, label: name });
+
                         });
+
                     } else {
+
                         acc.push({ value: locationEntry.id, label: locationEntry.name });
+
                     }
+
                     return acc;
+
                 }, []);
+
                 setLocation(locationList);
+
             } catch (error) {
+
                 console.log("Error fetching location", error);
+
             }
+
         };
+
         fetchlocation();
+
     }, [appState.currentBranchId]);
+
+
 
     const handleLocationSelect = (selectedLocation: { value: number; label: string }, index: number) => {
         const updatedItems = [...items];
         updatedItems[index] = {
             ...updatedItems[index],
             location: selectedLocation.label // Update the location
+
         };
         console.log("updated items is :",updatedItems);
         setItems(updatedItems);
         setTableData(updatedItems); 
         console.log("table data is :",tableData);
-        // Ensure the table data context is updated
-    };
 
+    };
 
     const { fetchedProducts, isLoading, error } = useProductfetch(appState.currentBranchId);
     useEffect(() => {
@@ -450,10 +473,11 @@ const handleAddItem = useCallback(() => {
         return number.includes('.') ? `${formattedNumber}.${decimalPart}` : formattedNumber;
     }
     // console.log("otherdatatattatata", otherData)
+
     return (
         <>
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
-                <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-between items-center gap-6 flex">
+                <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-end items-center gap-6 flex">
                 <div className="left flex gap-3 items-center ">
                     <h2 className="headd text-[#6B7E7D] " id="totalgnrhead">
                         Total GRN Amount
@@ -465,6 +489,9 @@ const handleAddItem = useCallback(() => {
 
                     <p className="errormess text-red-500 text-sm hidden" id="errormess">*Please fill in the total GRN amount from the invoice to continue</p>
                 </div>
+
+
+
                     <Button
                         variant="solid"
                         className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer" onClick={togglePopup}>
@@ -480,6 +507,7 @@ const handleAddItem = useCallback(() => {
                                 <div className="text-gray-500 text-xl font-medium ">
                                     Items
                                 </div>
+
 
                                 {/* <div className="flex items-center justify-center ">
 
@@ -513,7 +541,6 @@ const handleAddItem = useCallback(() => {
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Discount %</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Discount Amt.</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Location</div>
-
 
                                     </div>
 
@@ -710,7 +737,6 @@ const handleAddItem = useCallback(() => {
                                                 />
                                                 %
                                             </div>
-
                                             <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
                                                 ₹
                                                 <input
@@ -722,39 +748,29 @@ const handleAddItem = useCallback(() => {
                                                 />
                                             </div>
                                             <div className=' flex text-textGrey2 text-base font-medium w-[14rem] '>
+                                                 <Select
+                                                     className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0 absolute"
+                                                     classNamePrefix="select"
+                                                     isClearable={false}
+                                                   isSearchable={true}
+                                                     name="Location"
+                                                     options={location1}
+                                                     onChange={(selectedOption) => handleLocationSelect(selectedOption, index)}
+                                                      //value={ location1.find(location => location.label === item.location)}
+                                                     menuPortalTarget={document.body}
 
-                                                
-
-                                                    <Select
-
-                                                        className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0 absolute"
-
-                                                        classNamePrefix="select"
-
-                                                        isClearable={false}
-                                                     isSearchable={true}
-                                                        name="Location"
-                                                        options={location1}
-                                                        onChange={(selectedOption) => handleLocationSelect(selectedOption, index)}
-                                                         //value={ location1.find(location => location.label === item.location)}
-                                                        menuPortalTarget={document.body}
-
-                                                        styles={customStyles}
-
+                                                     styles={customStyles}
                                                     />
 
-
-
-
-
-
-
                                             </div>
-                                           
-                                                {/* <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
+                                            {/* <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[20px] justify-end pr-4'>
+                                                <button className="border-0 bg-transparent cursor-pointer">
+                                                    <Image className='w-5 h-5' src={sellicon} alt="sell" ></Image>
+                                                </button>
+                                                <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
                                                     <Image className='w-5 h-5' src={delicon} alt="delete" ></Image>
-                                                </button> */}
-                                            
+                                                </button>
+                                            </div> */}
                                         </div>
                                     ))}
 

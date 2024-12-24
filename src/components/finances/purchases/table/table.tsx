@@ -1,9 +1,9 @@
 "use client";
 import React, { useEffect, useMemo, useState } from 'react'
 import FinancesPurchasesTableBottombar from './bottombar'
-
+import axios from 'axios';
 import FinancesPurchasesTableHeader from './header'
-
+import { Notif_Source } from "@prisma/client";
 import FinancesPurchasesTableItem from './item'
 import useSWR from 'swr';
 import { useAppSelector } from '@/lib/hooks';
@@ -59,7 +59,7 @@ useEffect(()=>{
     if (startDate || endDate) {
       filteredData = filteredData.filter((item: any) => {
         const itemDate = new Date(item.date);
-        console.log(itemDate)
+      //  console.log(itemDate)
         if (startDate && itemDate < startDate) return false;
         if (endDate && itemDate > endDate) return false;
         return true;
@@ -77,6 +77,69 @@ useEffect(()=>{
     setPurchases(filteredData?.slice(0,TOTAL_VALUES_PER_PAGE));
   }
 },[data,error,isLoading,setPurchases,startDate, endDate, selectedParties])
+
+const sendDueDateNotification = async (notifData: any, purchaseID: number) => {
+  try {
+  //  console.log("due date notif ",notifData);
+    
+    // Create notification
+    await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData);
+
+    // Update last notification date for the purchase
+    await axios.patch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/updateLastNotif`, {
+      id: purchaseID,
+      lastDueNotif: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("Failed to send due date notification:", error);
+  }
+};
+
+const isOlderThanOneWeek = (dateString: string | undefined) => {
+  if (!dateString) return true;
+  const lastNotifDate = new Date(dateString);
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+  return lastNotifDate < oneWeekAgo;
+};
+
+useEffect(() => {
+  const currentDate = new Date();
+  const oneWeekFromNow = new Date();
+ // console.log("current date :" , currentDate);
+  oneWeekFromNow.setDate(currentDate.getDate() + 7);
+ // console.log("one week date :" , oneWeekFromNow);
+  const filteredPurchases = purchases?.filter((purchase) => {
+    const dueDate = new Date(purchase.dueDate);
+    const purchaseID = purchase.id;
+  //  console.log("due date is  ",dueDate);
+   // console.log("purchase is : ",purchase)
+
+    // Check if due date is within the next week
+    if (dueDate <= oneWeekFromNow && dueDate >= currentDate) {
+  //    console.log("isOlderThanOneWeek(purchase.lastDueNotif   ",isOlderThanOneWeek(purchase.lastDueNotif));
+      if (isOlderThanOneWeek(purchase.lastDueNotif)) {
+        const notifData = {
+          source: Notif_Source.Purchase_Order_Due,
+          orgId: appState.currentOrgId,
+          purchaseReference: purchase.status,
+          dueDate: purchase.dueDate,
+          distributor: purchase.distributor,
+         
+          url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/finance/purchases/all`,
+        };
+       // console.log("notif data is : ",notifData)
+        sendDueDateNotification(notifData, purchaseID);
+      }
+      return true;
+    }
+    return false;
+  });
+
+  
+}, [purchases]);
+
+
 
   const [invoiceCount, setInvoiceCount] = useState(0);
   const [orderCount, setOrderCount] = useState(0);

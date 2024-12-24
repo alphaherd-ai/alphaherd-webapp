@@ -137,8 +137,8 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
     };
 
 
-   const isDisabled = !headerData.distributor || tableData.length === 0 
-    //const isDisabled = headerData?.customer ? (!headerData?.customer) : (!orderData?.distributor) || id === null ? tableData.length === 1 : tableData.length === 0
+   //const isDisabled = !headerData.distributor || tableData.length === 0 
+   const isDisabled = headerData?.customer ? (!headerData?.customer) : (!orderData?.distributor) || id === null ? tableData.length === 1 : tableData.length === 0
 
     return (
         <>
