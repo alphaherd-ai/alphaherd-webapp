@@ -48,7 +48,7 @@ const PopupEmailInput: React.FC<PopupEmailInputProps> = ({
           <div className="text-gray-500 text-xl font-medium">Client email is missing</div>
           <div className="w-full flex justify-between">
             <div className="text-neutral-400 text-base font-medium">
-              We couldn't complete your request because the client's email address is not available. Please add the email to continue!
+            {"We couldn't complete your request because the client's email address is not available. Please add the email to continue!"}
             </div>
           </div>
         </div>
