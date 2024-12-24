@@ -90,19 +90,19 @@ const FinancesTransactionsTableHeader = ({transactions}:any) => {
           
 <div className='flex w-full bg-white h-20  p-4 px-6  justify-between  border-t-0.5 rounded-tl-[5px] rounded-tr-[5px]'>
 
-<div className='flex  text-gray-500 items-center max-w-5/12 rounded-md overflow-hidden border border-solid border-gray-300 h-fit my-auto'>
+<div className='flex  text-gray-500 items-center max-w-5/12 rounded-md overflow-hidden border border-solid border-gray-300 h-fit my-auto border-[0.5]'>
 
     <Link className='no-underline flex item-center' href={{pathname:'/finance/transactions/all',query:{type:'all'}}}>
 
     <div className={currentRoute.startsWith("/finance/transactions/all")
-        ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white  rounded-tl-md rounded-bl-md"
-        : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500  rounded-tl-md rounded-bl-md"}>All Transactions</div>
+        ? " flex items-center p-1 px-2 text-sm bg-black text-white  rounded-tl-md rounded-bl-md"
+        : " flex items-center p-1 px-2 text-sm bg-gray-200 text-gray-500  rounded-tl-md rounded-bl-md"}>All Transactions</div>
     </Link>
     {existingPaymentMethods.map((method, index) => (
         <Link key={index} className='no-underline flex item-center' href={{ pathname: `/finance/transactions/${method.toLowerCase()}`, query: { type: method } }}>
             <div className={currentRoute.startsWith(`/finance/transactions/${method.toLowerCase()}`)
-                ? "flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white"
-                : "flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}>
+                ? "flex items-center border-l border-solid border-gray-300 border-t-0 border-b-0 border-r-0 p-1 px-2 text-sm bg-black text-white"
+                : "flex items-center border-l border-solid border-gray-300 border-t-0 border-b-0 border-r-0 p-1 px-2 text-sm bg-gray-200 text-gray-500"}>
                 {method}
             </div>
         </Link>
