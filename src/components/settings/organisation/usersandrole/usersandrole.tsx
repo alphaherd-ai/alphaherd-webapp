@@ -11,19 +11,28 @@ import downicon from "../../../../assets/icons/settings/downicon.svg"
 import opticon from "../../../../assets/icons/settings/opticon.svg"
 import React, { useState, useEffect } from 'react';
 import OrganisationNavbar from "../navbar/navbar";
-import useSWR from 'swr';
+import useSWR,{mutate} from 'swr';
 import { useAppSelector } from "@/lib/hooks";
 import Loading2 from "@/app/loading2";
+import RemoveUserPopup from "./removeUserPopup";
 import { current } from "@reduxjs/toolkit";
+import { useRadio } from "@nextui-org/react";
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 export default function UsersAndRolesSettings() {
-
+    const userState = useAppSelector((state) => state.user);
     const appState = useAppSelector((state) => state.app);
+    console.log("userstate is :",userState);
     console.log("appstate is :",appState);
     const [branchUsers,setBranchUsers]=useState<any[]>([]);
+    const userrole = userState.userRoles
+    .filter((role: any) => role.orgBranchId === appState.currentBranchId)
+    .map((role: any) => role.role)[0];
     // console.log(appState.isCurrentOrgAdmin)
-    
+    const [removeUser, setRemoveUser] = useState(false);
+    const [makeAdmin, setMakeAdmin] = useState(false);
+    const [removeAdmin, setRemoveAdmin] = useState(false);
+    const [removeData, setRemoveData] = useState<any>(null);
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true})
     useEffect(()=>{
         if (data && !error && !isLoading) {
@@ -87,6 +96,18 @@ export default function UsersAndRolesSettings() {
             }
         }
     };
+    const toggleRemove = (user:any) => {
+        setRemoveUser(!removeUser);
+        setRemoveData(user);
+    }
+    const toggleMakeAdmin = (user:any) => {
+        setMakeAdmin(!makeAdmin);
+        setRemoveData(user);
+    }
+    const toggleRemoveAdmin = (user:any) => {
+        setRemoveAdmin(!removeAdmin);
+        setRemoveData(user);
+    }
     const handleMakeAdmin = async (email: string) => {
         try {
             const branchId = appState.currentBranchId;
@@ -119,6 +140,38 @@ export default function UsersAndRolesSettings() {
         }
     };
 
+    const handleRemoveAdmin = async (email: string) => {
+        try {
+            const branchId = appState.currentBranchId;
+            const newRole = "Staff"; // Assuming the default role is 'staff'
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/updateRole`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, branchId, newRole })
+            });
+
+            if (response.ok) {
+                const updatedUser = await response.json();
+
+                // Update local state with the new role
+                const updatedUsers = branchUsers.map(user =>
+                    user.user.email === email ? { ...user, role: 'Admin' } : user
+                );
+                setBranchUsers(updatedUsers);
+
+                console.log(`Admin privileges removed for user with email ${email}`);
+            } else {
+                const errorData = await response.json();
+                console.error("Failed to update user role:", errorData.message);
+            }
+        } catch (error) {
+            console.error("An error occurred:", error);
+        }
+    };
+
   
     return (
 
@@ -132,9 +185,9 @@ export default function UsersAndRolesSettings() {
 
                             <div className='flex  w-full  box-border bg-gray-100  h-12 justify-evenly items-center border-0 border-b border-solid border-borderGrey text-gray-500 rounded-t-lg '>
                                 <div className='flex text-gray-500 text-base font-medium px-4 w-3/12'>Name</div>
-                                <div className='flex text-gray-500 text-base font-medium w-3/12'>Role</div>
+                                <div className='flex text-gray-500 text-base font-medium w-[16%]'>Role</div>
                                 <div className='flex text-gray-500 text-base font-medium w-2/12'>Phone No.</div>
-                                <div className='flex text-gray-500 text-base font-medium w-4/12'>Email</div>
+                                <div className='flex text-gray-500 text-base font-medium w-[40%]'>Email</div>
                             </div>
                             {isLoading && <Loading2 />}
                             {branchUsers?.map((user:any,index:number)=>(
@@ -148,37 +201,71 @@ export default function UsersAndRolesSettings() {
                                 </div>
 
 
-                                <div className='w-3/12 px-6 flex items-center text-neutral-400 text-base font-medium gap-2'>
+                                <div className='w-[16%] pr-6 flex items-center text-neutral-400 text-base font-medium gap-2'>
                                     <div className="text-indigo-600 text-sm font-medium  px-2 py-1.5 bg-violet-100 rounded-[5px] justify-center items-center gap-2 flex">{user.role}</div>
                                     {user.role==='Manager' && (<div className="text-teal-400 text-sm font-medium  px-2 py-1.5 bg-emerald-50 rounded-[5px] justify-center items-center gap-2 flex">Admin</div>)}
                                     
                                 </div>
                                 <div className='w-2/12 flex items-center text-textGrey2 text-base font-medium'>{user.user.phoneNo}</div>
-                                <div className='w-4/12 flex items-center text-textGrey2 text-base font-medium gap-3'>
+                                <div className='w-[40%] flex items-center text-textGrey2 text-base font-medium gap-3'>
                                     <div>{user.user.email}</div>
                                     
 
 
                                     <div className="flex gap-2">
-                                            {user.role !== 'Admin' && (
+                                            {(userrole=='Manager' && (user.role!='Admin' && user.role!='Manager')) && (
                                                 <button 
-                                                    onClick={() => handleMakeAdmin(user.user.email)} 
+                                                    onClick={() => toggleMakeAdmin(user.user)} 
                                                     className="px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex border-none cursor-pointer"
                                                 >
                                                     <Image className="w-4 h-4 relative" src={adminicon} alt="admin" />
                                                     <div className="text-neutral-400 text-sm font-medium">Make Admin</div>
                                                 </button>
                                             )}
-                                            <button className="px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex border-none cursor-pointer">
-                                                <Image className="w-4 h-4 relative" src={removeusericon} alt="admin" />
-                                                <div className="text-neutral-400 text-sm font-medium">Remove User</div>
-                                            </button>
+                                            {(userrole === 'Manager' && user.role === 'Admin') && (
+                                                <button 
+                                                onClick={() => toggleRemoveAdmin(user.user)} 
+                                                className="px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex border-none cursor-pointer"
+                                            >
+                                                    <Image className="w-4 h-4 relative" src={adminicon} alt="admin" />
+                                                    <div className="text-neutral-400 text-sm font-medium">Remove Admin Privileges</div>
+                                                </button>
+                                            )}
+                                            {((userrole === 'Manager' || userrole === 'Admin') || (user.role=='Manager' && appState.isCurrentOrgAdmin )) && (
+                                                <button 
+                                                    className="px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex border-none cursor-pointer" 
+                                                    onClick={() => toggleRemove(user.user)}
+                                                >
+                                                    <Image className="w-4 h-4 relative" src={removeusericon} alt="admin" />
+                                                    <div className="text-neutral-400 text-sm font-medium">Remove User</div>
+                                                </button>
+                                            )}
                                         </div>
                                 </div>
                                 </div>
                                 ))}
 
                         </div>
+                    {removeUser && <RemoveUserPopup 
+                                user={removeData} 
+                                onClose={toggleRemove} 
+                                mutate={() => mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/getAll?branchId=${appState.currentBranchId}`)}
+                                action="removeUser"
+                            />}        
+                    {makeAdmin && <RemoveUserPopup 
+                                user={removeData} 
+                                onClose={toggleMakeAdmin} 
+                                mutate={() => mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/getAll?branchId=${appState.currentBranchId}`)}
+                                onSubmit={handleMakeAdmin}
+                                action="makeAdmin"
+                            />}
+                    {removeAdmin && <RemoveUserPopup 
+                                user={removeData} 
+                                onClose={toggleRemoveAdmin} 
+                                mutate={() => mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/getAll?branchId=${appState.currentBranchId}`)}
+                                onSubmit={handleRemoveAdmin}
+                                action="removeAdmin"
+                            />}
                             
                             
                     {/* <div className="w-full p-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
