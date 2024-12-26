@@ -13,7 +13,11 @@ export const GET = async(req:NextRequest)=>{
             where: {
                 databaseSectionId: databaseId
             },
+            include: {
+                breed: true 
+            }
         });
+        console.log("species in getall",species );
         return new Response(JSON.stringify(species),{
             status: 201,
             headers: {

@@ -24,6 +24,7 @@ export const POST = async (req: NextRequest)=>{
                 },
             },
         });
+        console.log("breed is : ", breed);
         
         return new Response(JSON.stringify(breed),{
             status: 201,
