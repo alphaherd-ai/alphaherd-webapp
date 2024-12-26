@@ -8,13 +8,16 @@ import Cash from "../../../../assets/icons/finance/Cash.svg";
 import UPI from "../../../../assets/icons/finance/image 559.svg";
 import { useAppSelector } from '@/lib/hooks';
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
-
+import axios from 'axios';
+import { Notif_Source } from "@prisma/client";
 const FinancesTransactionsTableItem = ({ transactions, isLoading }: any) => {
   const appState = useAppSelector((state) => state.app);
 
   const [isEditPopupVisible, setEditPopupVisible] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
   const [editTransaction, setEditTransaction] = useState<any>({});
+  const userState= useAppSelector((state)=>state.user)
+  const [value, setValue] = useState<string>(String(userState.name));
 
   // Handle edit button click and show popup
   const handleEditClick = (transaction: any) => {
@@ -32,30 +35,59 @@ const FinancesTransactionsTableItem = ({ transactions, isLoading }: any) => {
 
   // Handle the save action with backend integration
   const handleSave = async () => {
-    try {
-      console.log("Saving updated transaction: ", editTransaction);
+    if (appState.isCurrentOrgAdmin)
+      {
+        try {
+          console.log("Saving updated transaction: ", editTransaction);
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/${editTransaction?.id}?branchId=${appState.currentBranchId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(editTransaction),
-      });
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/${editTransaction?.id}?branchId=${appState.currentBranchId}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(editTransaction),
+          });
 
-      if (!response.ok) {
-        throw new Error('Failed to save transaction');
+          if (!response.ok) {
+            throw new Error('Failed to save transaction');
+          }
+
+          const result = await response.json();
+          console.log('Transaction successfully updated:', result);
+
+          alert('Transaction saved successfully');
+          setEditPopupVisible(false); // Close popup on success
+        } catch (error) {
+          console.error('Failed to save transaction: ', error);
+          alert('Failed to save transaction');
+        }
       }
-
-      const result = await response.json();
-      console.log('Transaction successfully updated:', result);
-
-      alert('Transaction saved successfully');
-      setEditPopupVisible(false); // Close popup on success
-    } catch (error) {
-      console.error('Failed to save transaction: ', error);
-      alert('Failed to save transaction');
-    }
+      else
+      {
+        {
+          
+            console.log("current org is not admin",editTransaction);
+            const notifData = {
+               source: Notif_Source.Payment_Edit_Approval_Request,
+               user : value,
+               partyName : editTransaction.partyName,
+               receipt : editTransaction.receiptNo,
+               orgId: appState.currentOrgId,
+              
+                 data: {
+                    body : editTransaction,
+               },
+           }
+           console.log("nnotifs data : ",notifData);
+           const notifPromise = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
+           setTimeout(() => {
+            setEditPopupVisible(false);
+        }, 2000)
+           
+           const [ notif] = await Promise.all([ notifPromise]);
+            
+       }
+      }
   };
 
   if (isLoading) return (<div>Loading...</div>);
@@ -89,7 +121,7 @@ const FinancesTransactionsTableItem = ({ transactions, isLoading }: any) => {
             </Tooltip>
           </div>
           <div className='absolute right-16'>
-            {appState.isCurrentOrgAdmin ? (
+            { (
               <Popover placement="bottom" showArrow offset={10}>
                 <PopoverTrigger>
                   <Button variant="solid" className="capitalize flex border-none text-gray rounded-lg">
@@ -111,7 +143,7 @@ const FinancesTransactionsTableItem = ({ transactions, isLoading }: any) => {
                   </div>
                 </PopoverContent>
               </Popover>
-            ) : null}
+            ) }
           </div>
         </div>
       ))}
@@ -203,11 +235,12 @@ const FinancesTransactionsTableItem = ({ transactions, isLoading }: any) => {
                 <input
                   type="date"
                   className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
-                  value={editTransaction?.date || ""}
+                  value={editTransaction?.date ? editTransaction.date.split("T")[0] : ""} 
+                  // Show only the date part in the input field
                   onChange={(e) =>
                     setEditTransaction({
                       ...editTransaction,
-                      date: e.target.value,
+                      date: `${e.target.value}T00:00:00.000Z`, // Convert to ISO 8601 format
                     })
                   }
                 />

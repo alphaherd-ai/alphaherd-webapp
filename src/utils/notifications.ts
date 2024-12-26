@@ -31,10 +31,10 @@ export function notifications(data: any) {
      if(data.source ===Notif_Source.Purchase_Order_Due){
         return `${data.purchaseReference} to ${data.distributor}. This invoice expires on ${formatDateAndTime(data.dueDate).formattedDate}.`
     }
-    if(data.source ===Notif_Source.Product_Edit_Approval_Request){
+    if(data.source ===Notif_Source.Payment_Edit_Approval_Request){
         return `${data.user} wants to edit ${data.partyName}'s payment receipt #${data.receipt}. `
     }
-    if(data.source ===Notif_Source.Product_Edit_Approval_Request){
+    if(data.source ===Notif_Source.Payment_Delete_Approval_Request){
         return `${data.user} wants to cancel ${data.partyName}'s payment receipt #${data.receipt}. `
     }
     
