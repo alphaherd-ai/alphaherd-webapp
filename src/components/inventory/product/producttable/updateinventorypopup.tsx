@@ -313,14 +313,16 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                 const data = products.find((product) => product.value.id === selectedProduct.value.id);
                 // console.log(data);
                 setSelectedProduct(data);
+                console.log("data of selected is  ",data);
                 const updatedInventory = [...inventory];
                 updatedInventory[index] = {
                     ...updatedInventory[index],
                     quantity: selectedOption === Stock.StockIN ? 0 : data.value.quantity,
                     productId: data.value.id,
-                    hsnCode: data.value.hsnCode
+                    hsnCode: data.value.hsnCode,
+                    itemName : data.value.itemName
                 };
-              //  console.log("updatedInventory:  ",updatedInventory);
+               console.log("updatedInventory:  ",updatedInventory);
                 setInventory(updatedInventory);
                 const productBatches = batches?.filter((batch) => batch.value.productId === selectedProduct.value.id).sort((a, b) => a.value.id - b.value.id);
                 setFilteredBatches(productBatches);
@@ -335,7 +337,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                                 expiry: defaultBatch?.value?.expiry,
                                 sellingPrice: defaultBatch?.value?.sellingPrice,
                                 costPrice: defaultBatch?.value?.costPrice,
-                                
+                             //   itemName : defaultBatch?.value?.itemName,
                                 distributors: defaultBatch?.value?.distributors,
                                 totalCost: defaultBatch?.value?.totalCost,
                                 maxQuantity: defaultBatch?.value?.quantity,
@@ -363,6 +365,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                 updatedInventory[index] = {
                     ...updatedInventory[index],
                     id: data?.value?.id,
+                    itemName : data.value.itemName,
                     date: data?.value?.date,
                     time: data?.value?.time,
                     quantity: selectedOption === Stock.StockIN ? 0 : data?.value?.quantity,
@@ -407,11 +410,11 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
         try {
             inventory.pop();
             for (const item of inventory) {
-                const { id, date, quantity, batchNumber, distributors, productId, maxRetailPrice, isApproved } = item;
+                const { id, date, quantity, batchNumber, distributors, productId, maxRetailPrice, isApproved , itemName } = item;
                 const invoiceType = "Manual";
                 const location = newlocation;
 
-                
+                console.log("item name is " ,item);
                 let { expiry, costPrice, sellingPrice } = item;
                 console.log(sellingPrice);
                 // // console.log("here is the product", productId)
@@ -464,14 +467,19 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                        // const responsePromise = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/create?branchId=${appState.currentBranchId}`, body);
                       //   console.log("here's the response", responsePromise);
                         // console.log("current org is not admin");
+                        
                         const notifData = {
                             source: Notif_Source.Inventory_Update_Approval_Request,
                             orgId: appState.currentOrgId,
                             name : value,
+                            totalItems: body.quantity,
+                            itemName : itemName,
                               data: {
                                 body1 : body,
                                 // newBatchId: responsePromise.data.productBatch.id,
                                 productId: id,
+                                
+                              //  productName : product.product?.itemName,
                                 // inventoryId: responsePromise.data.inventory.id,
                                 // branchId: appState.currentBranchId,
                                // quantity: responsePromise.data.inventory.quantityChange
@@ -491,7 +499,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                 else if (selectedOption === Stock.StockIN) {
                     console.log(body);
                     console.log("saving new batch :" , body)
-                    if (appState.isCurrentOrgAdmin) {
+                    {
                     const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/create?branchId=${appState.currentBranchId}`, body);
                     const notifData = {
                         totalItems: body.quantity,
@@ -506,31 +514,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                     const [response, notif] = await Promise.all([responsePromise, notifPromise]);
                   //  console.log('Created New Batch Item:', response.data);
                 }
-                else {
-                    //const responsePromise = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/create?branchId=${appState.currentBranchId}`, body);
-                    // console.log("here's the response", responsePromise);
-                     //console.log("current org is not admin");
-                    const notifData = {
-                        source: Notif_Source.Inventory_Update_Approval_Request,
-                        orgId: appState.currentOrgId,
-                        name : value,
-                          data: {
-                            body1 : body,
-                            // newBatchId: responsePromise.data.productBatch.id,
-                            productId: id,
-                            // inventoryId: responsePromise.data.inventory.id,
-                            // branchId: appState.currentBranchId,
-                            //quantity: responsePromise.data.inventory.quantityChange
-                        },
-                    }
-                    console.log("nnotifs data : ",notifData);
-                    const notifPromise = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
-                    setTimeout(() => {
-                        onClose();
-                    }, 2000)
-                    const [ notif] = await Promise.all([ notifPromise]);
-                  //   console.log('Updated inventory item:', response.data);
-                }
+              
             }
 
             }
