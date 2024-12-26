@@ -45,7 +45,7 @@ export const UserAccountSetup = (props: any) => {
                                 //@ts-ignore
                                 setResource(result?.info.secure_url);
                                 console.log(result) // { public_id, secure_url, etc }
-                                props.handlePicChange(result.info, "adminPicUrl")
+                                props.handlePicChange(result.info, "imageUrl")
                                 widget.close();
                             }}
                         >
@@ -72,8 +72,7 @@ export const UserAccountSetup = (props: any) => {
                         <div className="flex items-center justify-between gap-12">
                             <div className="text-gray-500 text-base font-medium ">Email*</div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
-
-                                <input className="w-[645px] h-11 bg-white text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="email" value={props.data.email} onChange={props.handleChange} placeholder="example@gmail.com" />
+                                <input className="w-[645px] h-11 bg-white text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="email" value={props.data.email} readOnly />
                                 {props.validationErrors.email && (
                                     <div className="text-[red] error">{props.validationErrors.email}</div>
                                 )}

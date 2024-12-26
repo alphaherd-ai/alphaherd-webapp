@@ -164,7 +164,7 @@ const ExistingsalesReturnTable = () => {
                             </div>
                             {!isLoading ? items?.map((item, index) => (
                                 <div key={item.id} className="flex flex-col">
-                                    <div className='flex justify-evenly items-center w-full  box-border  bg-white  border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-400   '>
+                                    <div className='flex py-2 justify-evenly items-center w-full  box-border  bg-white  border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-400   '>
                                         <div className='w-[3rem] flex items-center text-textGrey2 text-base font-medium '>{index + 1}</div>
                                         <div className='w-[12rem] flex items-center text-textGrey2 text-base font-medium '>{item.itemName}</div>
                                         <div className='w-[10rem] flex-col items-center text-textGrey2 text-base font-medium '>

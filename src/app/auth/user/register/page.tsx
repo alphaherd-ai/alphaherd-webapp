@@ -1,23 +1,22 @@
 "use client"
 import { UserAccountSetup } from "@/components/auth/user/userLogin";
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import 'react-toastify/dist/ReactToastify.css';
 import OrgNameSetup from '@/components/auth/admin/orgNameSetup';
 import OrgDetailsSetup from '@/components/auth/admin/orgDetailsSetup';
 import OrgAdminSetup from '@/components/auth/admin/orgAdminSetup';
 import { useRouter } from 'next/navigation';
-
 import createAccountLogo from '@/assets/icons/loginsignup/CreateAccount.svg'
 import { Bounce, ToastContainer, toast } from 'react-toastify';
 import { z } from 'zod';
 import { setValidationErrorsForForm } from '@/utils/setValidationErrorForForm';
-import { useAppSelector } from '@/lib/hooks';
 
 const formSchema = z.object({
     phoneNo: z.string().length(10, 'Invalid Phone No.'),
     name: z.string(),
     email: z.string().email('Invalid Email Address'),
     altPhoneNo: z.string().length(10, 'Invalid Phone No.'),
+    imageUrl: z.string(),
     password: z.string().min(4, 'Password must be at least 4 characters'),
     rePassword: z.string().min(4, 'Password must be at least 4 characters')
 }).superRefine((data, ctx) => {
@@ -44,6 +43,7 @@ export default function UserAccountSetupPage() {
         phoneNo: "",
         altPhoneNo: "",
         password: "",
+        imageUrl: "",
         rePassword: ""
     });
 
@@ -51,7 +51,9 @@ export default function UserAccountSetupPage() {
         ["name"], ["email"], ["phoneNo"], ["altPhoneNo"], ["password"], ["rePassword"]
     ];
     const [validationErrors, setValidationErrors] = useState(data);
-
+    useEffect(() => {
+        getmail();
+    }, []);
     const handlePicChange = (imageUrl: any, source: string) => {
         let name = source, value = imageUrl.secure_url;
         console.log(name, value)
@@ -150,7 +152,42 @@ export default function UserAccountSetupPage() {
             }
         }
     };
-
+    const getmail = async () => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/getmail${userInviteString ? "?userInviteString=" + userInviteString : ""}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            let json = await res.json();
+            if (res.ok) {
+                console.log(json);
+                setData((prevData) => ({
+                    ...prevData,
+                    email: json.email,
+                }));
+                console.log(data);
+            }
+            else {
+                throw new Error(json.message);
+            }
+        }
+        catch (err: any) {
+            toast.error(err.message, {
+                position: "bottom-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+                transition: Bounce,
+            });
+        }
+    }
+   
     const formSubmit = async (e:React.FormEvent) => {
         e.preventDefault();
         console.log("form button")
@@ -166,6 +203,7 @@ export default function UserAccountSetupPage() {
                     body: JSON.stringify({
                         name: data.name,
                         email: data.email,
+                        imageUrl: data.imageUrl,
                         phoneNo: data.phoneNo,
                         altPhoneNo: data.altPhoneNo,
                         password: data.password

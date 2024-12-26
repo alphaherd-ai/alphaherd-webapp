@@ -10,6 +10,9 @@ export const GET=async (req:NextRequest,{params}:{params:{id:number}})=>{
         const invoices=await prismaClient.purchases.findMany({
             where:{
                 distributorId:Number(params.id)
+            },
+            orderBy:{
+                date:'desc'
             }
         })
         return new Response(JSON.stringify(invoices),{

@@ -8,8 +8,11 @@ import previewicon from "../../../assets/icons/settings/previewicon.svg"
 import lefticon from "../../../assets/icons/settings/left_icon.svg"
 import downicon from "../../../assets/icons/settings/downicon.svg"
 import smsicon from "../../../assets/icons/settings/smsicon.svg"
+import smsicong from "../../../assets/icons/settings/sms_gray.svg"
 import whatshapicon from "../../../assets/icons/settings/whatshapicon.svg"
+import whatshapiconw from "../../../assets/icons/settings/whatsapp_white.svg"
 import mailicon from "../../../assets/icons/settings/mailicon.svg"
+import mailiconw from "../../../assets/icons/settings/mess_white.svg"
 import tickicon from "../../../assets/icons/settings/tickicon.svg"
 import crossicon from "../../../assets/icons/settings/crossicon.svg"
 import addicon from "../../../assets/icons/settings/addicon.svg"
@@ -721,35 +724,31 @@ console.log("location data is :", locationCategory);
                         <div>
                             <div className="text-gray-500 text-base font-medium ">Automatically send invoices and receipts to customer via:</div>
                             <div className="flex gap-2">
-                                {smsToggle && (<button onClick={smsToggleHandler}><div className="w-[73px] h-7 p-2 bg-teal-400 rounded-[5px] border border-white justify-start items-center gap-2 flex">
+                                {smsToggle && (<button onClick={smsToggleHandler} className="bg-teal-400 rounded-[5px] border-teal-400 border outline-none" ><div className="w-[73px] h-7 p-2  justify-start items-center gap-2 flex">
                                     <Image className="w-4 h-4 relative" src={smsicon} alt="sms" />
                                     <div className="text-white text-sm font-bold ">SMS</div>
                                 </div></button>)}
-                                {!smsToggle && (<button onClick={smsToggleHandler}><div className="w-[67px] h-7 p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
-                                    <Image className="w-4 h-4 relative" src={smsicon} alt="sms" />
+                                {!smsToggle && (<button onClick={smsToggleHandler} className="bg-white rounded-[5px] border-teal-400 border" ><div className="w-[73px] h-7 p-2 justify-start items-center gap-2 flex">
+                                    <Image className="w-4 h-4 relative" src={smsicong} alt="sms" />
                                     <div className="text-neutral-400 text-sm font-bold ">SMS</div>
                                 </div></button>)}
-                                {mailToggle && (<button onClick={mailToggleHandler}><div className="w-[73px] h-7 p-2 bg-teal-400 rounded-[5px] border border-white justify-start items-center gap-2 flex">
-                                    <Image className="w-4 h-4 relative" src={mailicon} alt="sms" />
+                                {mailToggle && (<button onClick={mailToggleHandler} className="bg-teal-400 rounded-[5px] border-teal-400 border" ><div className="w-[73px] h-7 p-2 justify-start items-center gap-2 flex">
+                                    <Image className="w-4 h-4 relative" src={mailiconw} alt="sms" />
                                     <div className="text-white text-sm font-bold ">Mail</div>
                                 </div></button>)}
-                                {!mailToggle && (<button onClick={mailToggleHandler}><div className="w-[73px] h-7 p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
+                                {!mailToggle && (<button onClick={mailToggleHandler} className=" rounded-[5px] border-teal-400 border bg-white" ><div className="w-[73px] h-7 p-2   justify-start items-center gap-2 flex">
                                     <Image className="w-4 h-4 relative" src={mailicon} alt="sms" />
                                     <div className="text-neutral-400 text-sm font-bold ">Mail</div>
                                 </div></button>)}
-                                {whatsappToggle && (<button onClick={whatsappToggleHandler}><div className="w-[111px] h-7 p-2 bg-teal-400 rounded-[5px] border border-white justify-start items-center gap-2 flex">
-                                    <Image className="w-4 h-4 relative" src={whatshapicon} alt="sms" />
+                                {whatsappToggle && (<button onClick={whatsappToggleHandler} className="bg-teal-400 rounded-[5px] border-teal-400 border" ><div className="w-[111px] h-7 p-2  justify-start items-center gap-2 flex">
+                                    <Image className="w-4 h-4 relative" src={whatshapiconw} alt="sms" />
                                     <div className="text-white text-sm font-bold ">WhatsApp</div>
                                 </div></button>)}
-                                {!whatsappToggle && (<button onClick={whatsappToggleHandler}><div className="w-[111px] h-7 p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex">
+                                {!whatsappToggle && (<button onClick={whatsappToggleHandler} className=" bg-white rounded-[5px] border-teal-400 border" ><div className="w-[111px] h-7 p-2  justify-start items-center gap-2 flex">
                                     <Image className="w-4 h-4 relative" src={whatshapicon} alt="sms" />
                                     <div className="text-neutral-400 text-sm font-bold ">WhatsApp</div>
                                 </div></button>)}
                             </div>
-                            <button onClick={handleSaveClick}><div className="w-[111px] h-7 p-2 bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-2 flex cursor-pointer" >
-                                
-                                <div className="text-neutral-400 text-sm font-bold ">Save</div>
-                            </div></button>
                         </div>
                         
                     </div>
