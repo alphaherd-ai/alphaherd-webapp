@@ -43,6 +43,7 @@ const ExistingsaleEstimateTable = () => {
                 itemType:item.itemType,
                 quantity: item.quantity,
                 sellingPrice: item.sellingPrice,
+                defaultUnit:item.itemType==='product'?item.products.defaultUnit : "",
                 expiry: item.itemType === 'product' ? item.productBatch.expiry : "",
                 batchNumber: item.itemType === 'product' ? item.productBatch.batchNumber : "",
                 tax: item.taxAmount,
@@ -124,7 +125,7 @@ const ExistingsaleEstimateTable = () => {
                             </div>
                             {!isLoading ? items.map((item, index) => (
                                 <div key={item.id} className="flex flex-col">
-                                    <div className='flex justify-evenly items-center w-full  box-border  bg-white  border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-400   '>
+                                    <div className='flex py-2 justify-evenly items-center w-full  box-border  bg-white  border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-400   '>
                                         <div className='w-[3rem] flex items-center text-textGrey2 text-base font-medium '>{index + 1}</div>
                                         <div className='w-[15rem] flex items-center text-textGrey2  text-base font-medium'>{item.itemName}</div>
                                         <div className='w-[10rem] flex-col items-center text-textGrey2  text-base font-medium '>
@@ -140,7 +141,7 @@ const ExistingsaleEstimateTable = () => {
                                         <div className='w-1/12  flex items-center text-textGrey2 text-base font-medium gap-[12px] '>
                                             {item.lowQty === 0 && item.highQty === 0 ?
                                                 (<div>{item.quantity}</div>) :
-                                                (<div>{item.lowQty} Strips</div>)
+                                                (<div>{item.lowQty} {item?.defaultUnit}</div>)
                                             }
 
 
@@ -148,7 +149,7 @@ const ExistingsaleEstimateTable = () => {
 
                                         <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[12px] '>
 
-                                            <div>{item.highQty} Strips</div>
+                                            <div>{item.highQty} {item?.defaultUnit}</div>
 
                                         </div>
 

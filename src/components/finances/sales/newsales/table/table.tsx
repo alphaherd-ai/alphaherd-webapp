@@ -37,6 +37,7 @@ interface Products {
     hsnCode: string,
     quantity: number
     tax: number,
+    defaultUnit:number,
 }
 interface ProductBatch {
     id: number;
@@ -127,6 +128,7 @@ const NewsalesTable = () => {
                 serviceId: item.itemType === "product" ? null : item.serviceId,
                 itemName: item.name,
                 quantity: item.quantity,
+                defaultUnit:item.itemType==='product'?item.products.defaultUnit : "",
                 sellingPrice: item.sellingPrice,
                 expiry: item.itemType === 'product' ? item.productBatch.expiry : "",
                 batchNumber: item.itemType === 'product' ? item.productBatch.batchNumber : "",
@@ -187,7 +189,8 @@ const NewsalesTable = () => {
                     id: product.id,
                     quantity: product.quantity,
                     itemName: product.itemName,
-                    tax: product.tax
+                    tax: product.tax,
+                    defaultUnit:product.defaultUnit,
                 },
                 label: product.itemName,
             }));
@@ -393,12 +396,13 @@ const NewsalesTable = () => {
                     //console.log(formattedProviders);
                     setFilteredProviders(formattedProviders);
                 }
-                //console.log(productdata,servicedata);
+                //console.log(productdata);
                 setSelectedProduct(productdata ? productdata : servicedata);
                 const updatedItems = [...items];
                 updatedItems[index] = {
                     ...updatedItems[index],
                     quantity: 1,
+                    defaultUnit:productdata ? selectedProduct?.value?.defaultUnit : "",
                     itemType: productdata ? "product" : "service",
                     productId: productdata ? selectedProduct.value.id : null,
                     serviceId: servicedata ? selectedProduct.value.id : null,
@@ -746,7 +750,7 @@ const NewsalesTable = () => {
                                             <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
                                                 <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                             </button>
-                                        </div>
+                                        </div> {item?.defaultUnit}
                                     </div>
 
                                     <div className='w-[6rem] justify-center flex items-center text-neutral-400 text-base font-medium'>
