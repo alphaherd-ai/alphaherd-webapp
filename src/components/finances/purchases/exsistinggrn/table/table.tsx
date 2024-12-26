@@ -55,6 +55,7 @@ const ExsistingGrnTable = () => {
             quantity:item.quantity,
             unitPrice:item.productBatch?.costPrice,
             tax:item.taxAmount,
+            defaultUnit:item.products?.defaultUnit,
             discount:item.discount,
             expiry:item.productBatch?.expiry,
             batchNumber:item.productBatch?.batchNumber,
@@ -217,7 +218,7 @@ useEffect(() => {
                                         <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                     </button>
                                 </div>  */}
-                                <span className="text-textGrey2 font-medium text-base">Strips</span>
+                                <span className="text-textGrey2 font-medium text-base">{item?.defaultUnit}</span>
                             </div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[20rem] items-center gap-2'>
                                {item.freeQuantity||0} {/* <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>

@@ -56,6 +56,7 @@ const ExistingsalesReturnTable = () => {
                 itemName:item.name,
                 itemType:item.itemType,
                 quantity:item.quantity,
+                defaultUnit:item.itemType==='product'?item.products.defaultUnit : "",
                 sellingPrice:item.sellingPrice,
                 expiry:item.itemType==='product' ? item.productBatch.expiry:"",
                 batchNumber:item.itemType==='product'?item.productBatch.batchNumber:"",
@@ -173,7 +174,7 @@ const ExistingsalesReturnTable = () => {
                                         </div>
                                         <div className='w-[12rem] flex items-center text-textGrey2 text-base font-medium gap-[12px] '>
 
-                                            <div>{item.quantity}</div>
+                                            <div>{item.quantity} {item?.defaultUnit}</div>
 
                                         </div>
                                         <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium '>{item.returnReason}</div>

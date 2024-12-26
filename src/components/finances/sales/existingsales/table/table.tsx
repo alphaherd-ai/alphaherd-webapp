@@ -46,6 +46,7 @@ const ExistingsalesTable = () => {
                 id: item.itemType==='product' ? item.productBatch.productId: item.serviceId,
                 itemName:item.name,
                 quantity:item.quantity,
+                defaultUnit:item.itemType==='product'?item.products.defaultUnit : "",
                 sellingPrice:item.sellingPrice,
                 expiry:item.itemType==='product' ? item.productBatch.expiry:"",
                 batchNumber:item.itemType==='product'?item.productBatch.batchNumber:"",
@@ -171,7 +172,7 @@ const ExistingsalesTable = () => {
                                         </div>
                                         <div className='w-1/12 flex items-center text-[#6B7E7D] text-base font-medium gap-[12px]'>
 
-                                            <div>{item.quantity}</div>
+                                            <div>{item.quantity} {item?.defaultUnit}</div>
 
                                         </div>
 

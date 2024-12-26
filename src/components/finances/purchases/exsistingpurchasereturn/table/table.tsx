@@ -382,6 +382,7 @@ const ExsistingPurcaseReturnTable = () => {
         productId: item.productId,
         itemName: item.name,
         quantity: item.quantity,
+        defaultUnit:item.products?.defaultUnit,
         unitPrice: item.productBatch?.costPrice,
         tax: item.taxAmount,
         discount: item.discount,
@@ -465,7 +466,7 @@ const ExsistingPurcaseReturnTable = () => {
 
                         <div className=" flex text-textGrey2 text-base  w-[20rem] items-center gap-2">
                           {item.quantity}
-                          <span className="text-textGrey2  text-base">Strips</span>
+                          <span className="text-textGrey2  text-base">{item?.defaultUnit}</span>
                         </div>
 
                         <div className=" flex text-gray-500 text-base  w-[12rem]">

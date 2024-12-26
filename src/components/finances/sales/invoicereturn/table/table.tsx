@@ -98,6 +98,7 @@ const InvoiceReturnTable = () => {
                 itemType: item.itemType,
                 itemName: item.name,
                 quantity: item.quantity,
+                defaultUnit:item.itemType==='product'?item.products.defaultUnit : "",
                 unitPrice: item.itemType === 'product' ? item.productBatch?.costPrice : item.sellingPrice,
                 tax: item.taxAmount,
                 discount: item.discount,
@@ -335,7 +336,7 @@ const InvoiceReturnTable = () => {
                                                         <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                                     </button>
                                                 </div>
-                                                <span className="text-textGrey2  text-base">Strips</span>
+                                                <span className="text-textGrey2  text-base">{item?.defaultUnit}</span>
                                             </div>
 
                                             <div className=' flex text-gray-500 text-base  w-[12rem]'>

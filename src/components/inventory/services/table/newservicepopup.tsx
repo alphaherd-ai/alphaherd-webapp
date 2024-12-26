@@ -35,7 +35,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
     const [nameError, setNameError] = useState('');
     const [serviceCostError, setServiceCostError] = useState('');
     const [taxError, setTaxError] = useState('');
-
+    const [loading,setLoading]=useState(false);
     const [selectedProducts, setSelectedProducts] = useState<any>([]);
     const [productOptions, setProductOptions] = useState([]);
     const { data:serviceData, error:serviceError, isLoading:serviceLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true })
@@ -153,6 +153,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
             return; // Stop the function from proceeding if validation fails
         }
         try {
+            setLoading(true);
             // setButtonDisabled(true);
             // console.log("Form data is valid:", formData);
             // const selectedProviders = formData.providers.map((provider:any) => provider.label);
@@ -194,6 +195,9 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
             }
         } catch (error) {
             console.error('Error while saving data:', error);
+        }
+        finally{
+            setLoading(false);
         }
     };
     const handleChange = (field: string, value: any) => {
@@ -470,12 +474,12 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
                     <div className="self-end items-start gap-6 flex">
                     <button
                             onClick={handleSaveClick}
-                            disabled={!formData.serviceCharge || !formData.tax}
+                            disabled={!formData.serviceCharge || !formData.tax || loading}
                             className={`px-4 py-2.5 rounded-[5px] justify-start items-center gap-1 flex border-0 outline-none cursor-pointer ${formData.name ? "bg-zinc-900" : "bg-gray-500"
                                 }`}
                         >
                             <div className={`text-base font-bold ${(formData.serviceCharge && formData.tax) ? "text-white" : "text-neutral-200 cursor-not-allowed"}`}>
-                                Save
+                                {loading ? <Loading2 /> : "Save"}
                             </div>
                             {(formData.serviceCharge && formData.tax) && (
                                 <div className="w-6 h-6">

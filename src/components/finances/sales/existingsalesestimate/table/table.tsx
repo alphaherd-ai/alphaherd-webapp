@@ -43,6 +43,7 @@ const ExistingsaleEstimateTable = () => {
                 itemType:item.itemType,
                 quantity: item.quantity,
                 sellingPrice: item.sellingPrice,
+                defaultUnit:item.itemType==='product'?item.products.defaultUnit : "",
                 expiry: item.itemType === 'product' ? item.productBatch.expiry : "",
                 batchNumber: item.itemType === 'product' ? item.productBatch.batchNumber : "",
                 tax: item.taxAmount,
@@ -140,7 +141,7 @@ const ExistingsaleEstimateTable = () => {
                                         <div className='w-1/12  flex items-center text-textGrey2 text-base font-medium gap-[12px] '>
                                             {item.lowQty === 0 && item.highQty === 0 ?
                                                 (<div>{item.quantity}</div>) :
-                                                (<div>{item.lowQty} Strips</div>)
+                                                (<div>{item.lowQty} {item?.defaultUnit}</div>)
                                             }
 
 
@@ -148,7 +149,7 @@ const ExistingsaleEstimateTable = () => {
 
                                         <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[12px] '>
 
-                                            <div>{item.highQty} Strips</div>
+                                            <div>{item.highQty} {item?.defaultUnit}</div>
 
                                         </div>
 

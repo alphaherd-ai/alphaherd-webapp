@@ -14,6 +14,9 @@ export  const GET=async (req: NextRequest)=> {
         const services = await prismaClient.services.findMany({
           where:{
             inventorySectionId:inventoryId
+          },
+          orderBy:{
+            createdAt:'desc'
           }
         });
         return new Response(JSON.stringify(services), {

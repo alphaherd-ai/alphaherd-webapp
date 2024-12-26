@@ -46,6 +46,7 @@ const ExsistingPurchasesTable = () => {
                 id: item.productId,
                 itemName:item.name,
                 quantity:item.quantity,
+                defaultUnit:item.products?.defaultUnit,
                 sellingPrice:item.sellingPrice,
                 tax:item.taxAmount,
                 discount:item.discount
@@ -144,7 +145,7 @@ const ExsistingPurchasesTable = () => {
                             <div key={item.id} className='flex justify-evenly items-center w-[125%] box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-gray-200 text-gray-400 h-12'>
                                 <div className=' flex text-gray-500 text-base font-medium px-[10px] w-[5rem]'>{index+1}</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[13rem]'>{item.itemName}</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[8rem]'>{item.quantity}</div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[8rem]'>{item.quantity} {item?.defaultUnit}</div>
 
 
 
