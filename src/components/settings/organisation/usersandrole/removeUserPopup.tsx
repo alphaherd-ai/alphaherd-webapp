@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import closeicon from "../../../../assets/icons/inventory/closeIcon.svg";
 import Image from "next/image";
 import DeleteIcon from './deleteicon';
@@ -58,17 +58,17 @@ const RemoveUserPopup = ({ onClose, user, mutate,action,onSubmit }: any) => {
                     )}
                 {action === "removeUser" && (
                     <div className="text-sm text-[#A2A3A3]">
-                        You're about to remove this user from the organisation. Once removed, they will no longer have access to the system. Are you sure you want to continue?
+                        You&apos;re about to remove this user from the organisation. Once removed, they will no longer have access to the system. Are you sure you want to continue?
                     </div>
                 )}
                 {action === "makeAdmin" && (
                     <div className="text-sm text-[#A2A3A3]">
-                        You're about to provide this user with admin privileges. They will have administrative access to the system. Are you sure you want to continue?
+                        You&apos;re about to provide this user with admin privileges. They will have administrative access to the system. Are you sure you want to continue?
                     </div>
                 )}
                 {action === "removeAdmin" && (
                     <div className="text-sm text-[#A2A3A3]">
-                        You're about to revoke this user's admin privileges. They will no longer have access to administrative features. Are you sure you want to continue?
+                        You&apos;re about to revoke this user&apos;s admin privileges. They will no longer have access to administrative features. Are you sure you want to continue?
                     </div>
                 )}
                 </div>
