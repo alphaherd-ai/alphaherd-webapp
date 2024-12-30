@@ -318,9 +318,7 @@ const NewsalesReturnTable = () => {
     // };
 
 
-    const handleAddItem = useCallback(() => {
-        setItems([...items, {}]);
-    }, [items]);
+    
 
 
 
