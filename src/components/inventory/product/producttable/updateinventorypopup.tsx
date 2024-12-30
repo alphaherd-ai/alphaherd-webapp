@@ -20,8 +20,10 @@ import { Notif_Source } from "@prisma/client";
 import { useAppSelector } from "@/lib/hooks";
 import useSWR from 'swr';
 import { ConversationContextImpl } from "twilio/lib/rest/conversations/v1/conversation";
-
+import Loading2 from "@/app/loading2";
 import {UserState } from '@/lib/features/userSlice';
+import { set } from "date-fns";
+import Loading from "@/app/loading";
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 type PopupProps = {
@@ -37,7 +39,8 @@ interface Products {
     itemName: string,
     productBatch: ProductBatch[],
     hsnCode: string,
-    quantity: number
+    quantity: number,
+    providers:string[]
 }
 
 interface Reason {
@@ -96,6 +99,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
     const [selectedProductDetails, setSelectedProduct] = useState<Products>()
     const [isChecked, setChecked] = useState(false);
     const [products, setProducts] = useState<any[]>([]);
+    const [updating,setUpdating]=useState<boolean>(false);
     const [batches, setBatches] = useState<any[]>([]);
     const [filteredBatches, setFilteredBatches] = useState<any[]>([]);
     const [inventory, setInventory] = useState<any[]>([]);
@@ -193,13 +197,15 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
         }
     }, [individualSelectedProduct, products])
     useEffect(() => {
-        if (!isLoading && products && !error) {
+        if (!isLoading && fetchedProducts && !error) {
+            //console.log(fetchedProducts);
             const formattedProducts = fetchedProducts.map((product: Products) => ({
                 value: {
                     id: product.id,
                     quantity: product.quantity,
                     itemName: product.itemName,
                     hsnCode: product.hsnCode,
+                    provider:product?.providers[0]
                 },
                 label: product.itemName,
             }));
@@ -284,13 +290,13 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
     const handleInputChange = useCallback((index: number, field: string, value: string | number) => {
 
         const updatedInventory = [...inventory];
-        updatedInventory[index][field] = value;
+        updatedInventory[index][field] = value; 
         if (field === 'quantity' || field === 'costPrice') {
             updatedInventory[index].sellingPrice = 
                 (updatedInventory[index]?.quantity || 0) * (updatedInventory[index]?.costPrice || 0);
         }
         setInventory(updatedInventory);
-      //  console.log("updatedInventory:  ",updatedInventory);
+        console.log("updatedInventory:  ",updatedInventory);
     }, [inventory]);
 
 
@@ -311,7 +317,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
         if (selectedProduct.value) {
             try {
                 const data = products.find((product) => product.value.id === selectedProduct.value.id);
-                // console.log(data);
+                //console.log(data);
                 setSelectedProduct(data);
                 console.log("data of selected is  ",data);
                 const updatedInventory = [...inventory];
@@ -320,7 +326,10 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                     quantity: selectedOption === Stock.StockIN ? 0 : data.value.quantity,
                     productId: data.value.id,
                     hsnCode: data.value.hsnCode,
-                    itemName : data.value.itemName
+
+                    itemName : data.value.itemName,
+                    providers:data.value.provider
+
                 };
                console.log("updatedInventory:  ",updatedInventory);
                 setInventory(updatedInventory);
@@ -408,6 +417,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
 
     const handleUpdateInventory = useCallback(async () => {
         try {
+            setUpdating(true);
             inventory.pop();
             for (const item of inventory) {
                 const { id, date, quantity, batchNumber, distributors, productId, maxRetailPrice, isApproved , itemName } = item;
@@ -522,6 +532,9 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
         } catch (error) {
             console.error("Error updating inventory:", error);
             alert('Error updating inventory. Please try again.');
+        }
+        finally{
+            setUpdating(false);
         }
     }, [inventory]);
 
@@ -789,6 +802,9 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                                         isSearchable={true}
                                         options={distributor}
                                         isMulti={false}
+                                        value={
+                                            distributor.find((option) => option.label === inventory[index]?.providers) || null
+                                        }
                                         name={`providers-${index}`}
                                         onChange={(e) => handleInputChange(index, 'providers', e?.label)}
                                         styles={customStyles}
@@ -844,8 +860,8 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                             <div className="flex-grow"></div>
                             <div className="bg-black px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer">
                                 <Image src={checkicon} alt="add" />
-                                <button className="text-white text-base font-bold bg-transparent border-0 cursor-pointer" onClick={handleUpdateInventory}>
-                                    Update Inventory
+                                <button className="text-white text-base font-bold bg-transparent border-0 cursor-pointer" onClick={handleUpdateInventory} disabled={updating}>
+                                    {updating ? <Loading2/>: "Update Inventory"}
                                 </button>
                             </div>
                         </div>

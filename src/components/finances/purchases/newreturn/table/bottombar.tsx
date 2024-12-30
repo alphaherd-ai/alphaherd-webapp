@@ -84,7 +84,7 @@ const NewPurchaseReturnNewBottomBar = ({ invoiceData }: any) => {
                 throw new Error('Network response was not ok');
             }
             //mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/getAll?branchId=${appState.currentBranchId}`,(currState:any = [])=>[...currState,response?.data?.purchases],false);
-            router.back();
+            //router.back();
 
         } catch (error) {
             console.error('Error:', error);

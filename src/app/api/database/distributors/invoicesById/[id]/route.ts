@@ -2,14 +2,17 @@ import prismaClient from "../../../../../../../prisma";
 import { NextRequest } from "next/server";
 import { fetchFinanceId } from '@/utils/fetchBranchDetails';
 
-export const GET=async(req:NextRequest,{params}:{params:{id:number}})=>{
+export const GET=async (req:NextRequest,{params}:{params:{id:number}})=>{
     try{
         if(req.method!=='GET'){
             return new Response('Method not allowed',{status:405});
         }
-        const invoices=await prismaClient.sales.findMany({
+        const invoices=await prismaClient.purchases.findMany({
             where:{
-                clientId:Number(params.id)
+                distributorId:Number(params.id)
+            },
+            orderBy:{
+                date:'desc'
             }
         })
         return new Response(JSON.stringify(invoices),{

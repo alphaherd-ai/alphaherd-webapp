@@ -34,7 +34,8 @@ interface Products{
     productBatch:ProductBatch[],
     hsnCode:string,
     quantity:number,
-    tax:number
+    tax:number,
+    defaultUnit:string,
 }
 interface ProductBatch {
     id: number;
@@ -148,7 +149,8 @@ const NewPurchaseReturnNewTable = () => {
                 id: product.id,
                 quantity:product.quantity,
                 itemName:product.itemName,
-                tax:product.tax
+                tax:product.tax,
+                defaultUnit:product.defaultUnit,
             },
              label: product.itemName,
          }));
@@ -267,6 +269,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
         updatedItems[index] = {
           ...updatedItems[index],
           quantity: data.value.quantity,
+          defaultUnit:selectedProduct.value.defaultUnit,
           productId: selectedProduct.value.id,
           itemName: data.value.itemName,
           gst:data.value.tax
@@ -529,6 +532,7 @@ const customStyles = {
                                     <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
                                         <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                     </button>
+                                    {item?.defaultUnit}
                                 </div>
                                 </div>
                                 
