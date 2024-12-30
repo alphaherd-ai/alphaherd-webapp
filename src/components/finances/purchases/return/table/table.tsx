@@ -61,6 +61,15 @@ function DataFromGRN(id:number|null,branchId:number|null){
        error
     }
 }
+function useProductBatchfetch(id:number|null){
+    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll/?branchId=${id}`,fetcher,{revalidateOnFocus:true});
+    return {
+        fetchedBathces:data,
+        isBatchLoading:isLoading,
+        batchError:error
+    }
+}
+
 interface CheckedItems {
     [key: number]: boolean;
 }
@@ -73,6 +82,8 @@ const NewPurchaseReturnTable = () => {
     const appState = useAppSelector((state) => state.app)
     // const { tableData: items, setTableData: setItems } = useContext(DataContext);
     const [items,setItems]=useState<any[]>([]);   
+    const [batches,setBatches] = useState<any[]>([]);
+    const [filteredBatches,setFilteredBatches]=useState<any[]>([]);
     const [discountStates, setDiscountStates] = useState(new Array(items.length).fill(false));
     const url= useSearchParams();
     const id=url.get('id');
@@ -83,6 +94,39 @@ const NewPurchaseReturnTable = () => {
         isgrnDataError=error;
         isgrnDataLoading=isLoading;        
     }
+    const {fetchedProducts,isLoading,error}=useProductfetch(appState.currentBranchId);
+    const {fetchedBathces,isBatchLoading,batchError}=useProductBatchfetch(appState.currentBranchId);
+
+    useEffect(()=>{
+        if(!isLoading&&products&&!error){
+            const formattedProducts = fetchedProducts.map((product: Products) => ({
+                value:{
+                   id: product.id,
+                   quantity:product.quantity,
+                   itemName:product.itemName,
+                   tax:product.tax
+               },
+                label: product.itemName,
+            }));
+           //  console.log(formattedProducts)
+            setProducts(formattedProducts);
+        }
+        if(!batchError&&!isBatchLoading&&fetchedBathces){
+           const formattedProductBatches=fetchedBathces.map((product:ProductBatch)=>({
+               value:{
+                   id:product.id,
+                   productId:product.productId,
+                   quantity:1 ,
+                   batchNumber: product.batchNumber,
+                   expiry:  product.expiry,
+                   sellingPrice:  product.sellingPrice,
+               },
+               label:product.batchNumber
+           }));
+           // console.log(formattedProductBatches)
+           setBatches(formattedProductBatches)
+       }
+       },[fetchedProducts,fetchedBathces])
 
     useEffect(()=>{
             if (!isgrnDataLoading && grnData && !isgrnDataError) {
@@ -316,7 +360,49 @@ const NewPurchaseReturnTable = () => {
         });
     }, [items]);
 
+const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
+    // console.log(selectedProduct);
+    if (selectedProduct.value) {
+        if (index === items.length - 1) {
+            items.push({
+                productId: null,
+                serviceId: null,
+                itemName: "",
+            });
+            setItems(items);
+        }
+      try {
+        const data = products.find((product) => product.value.id === selectedProduct.value.id);
+        setSelectedProduct(data);
+        const updatedItems = [...items];
+        updatedItems[index] = {
+          ...updatedItems[index],
+          quantity: data.value.quantity,
+          productId: selectedProduct.value.id,
+          itemName: data.value.itemName,
+          gst:data.value.tax
+        };
+        setItems(updatedItems);
 
+      
+        const productBatches = batches?.filter((batch) => batch.value.productId === selectedProduct.value.id).sort((a, b) => a.value.id - b.value.id);
+        setFilteredBatches(productBatches);
+        const defaultBatch = productBatches?.[0];
+        setItems((prevItems) =>
+          prevItems.map((item, itemIndex) =>
+            itemIndex === index ? { ...item, id: defaultBatch?.value?.id,
+                quantity: defaultBatch?.value?.quantity ,
+                batchNumber: defaultBatch?.value?.batchNumber,
+                expiry:  defaultBatch?.value?.expiry,
+                sellingPrice:  defaultBatch?.value?.sellingPrice,
+                productId:defaultBatch?.value?.productId } : item
+          )
+        );
+      } catch (error) {
+        console.error("Error fetching product details from API:", error);
+      }
+    }
+  }, [items, products]);
 
 
     return (

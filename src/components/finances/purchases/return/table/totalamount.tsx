@@ -146,7 +146,7 @@ const NewPurchaseReturnTotalAmount = () => {
   useEffect(() => {
     updateGrandTotal();
   }, [totalAmount, selectedDiscountPer, discountInput, discountMethod, shipping, adjustment]);
-  console.log("total amount data is :", totalAmountData);
+  //console.log("total amount data is :", totalAmountData);
 
 
   const customStyles = {
