@@ -19,6 +19,7 @@ interface Products {
   itemName: string;
   category: string;
   providers: string[];
+  minStock?:number;
 }
 
 const ProductAllItem = ({sortOrder,sortKey}:any) => {
@@ -36,6 +37,7 @@ const ProductAllItem = ({sortOrder,sortKey}:any) => {
   const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${appState.currentBranchId}`, fetcher)
   useEffect(() => {
     if (!isLoading && data && !error) {
+      //console.log(data);
       let filteredData = data;
       if (selectedParties.length > 0) {
         filteredData = filteredData.filter((item: any) =>
@@ -73,6 +75,7 @@ const ProductAllItem = ({sortOrder,sortKey}:any) => {
         setProducts(sortedData);
         return ;
       }
+      //console.log(filteredData);
       setProducts(filteredData);
     }
   }, [data, isLoading, error, selectedCategories, sortOrder,sortKey, selectedParties, selectedInvoices]);
@@ -84,7 +87,7 @@ const ProductAllItem = ({sortOrder,sortKey}:any) => {
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
-
+  //console.log(currentProducts);
   const paginate = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
@@ -102,7 +105,7 @@ const ProductAllItem = ({sortOrder,sortKey}:any) => {
                 {product?.itemName}
               </Link>
             </div>
-            <div className='w-1/4 flex items-center px-6 text-base font-medium text-red-500'>{product.totalQuantity}</div>
+            <div className={`w-1/4 flex items-center px-6 text-base font-medium ${product.totalQuantity <= (product?.minStock ?? 0) ?'text-red-500' :'text-gray-400' }`}>{product.totalQuantity}</div>
             <div className='w-1/4 flex items-center px-6 text-base font-medium'>{product.providers}</div>
             <div className='w-1/4 flex  items-center  text-base font-medium px-6'>
               <Tooltip content={product.category} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>

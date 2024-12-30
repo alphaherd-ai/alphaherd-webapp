@@ -46,6 +46,7 @@ const ExistingsalesTable = () => {
                 id: item.itemType==='product' ? item.productBatch.productId: item.serviceId,
                 itemName:item.name,
                 quantity:item.quantity,
+                defaultUnit:item.itemType==='product'?item.products.defaultUnit : "",
                 sellingPrice:item.sellingPrice,
                 expiry:item.itemType==='product' ? item.productBatch.expiry:"",
                 batchNumber:item.itemType==='product'?item.productBatch.batchNumber:"",
@@ -161,7 +162,7 @@ const ExistingsalesTable = () => {
 
                             {!isLoading ? items.map((item, index) => (
                                 <div key={item.id} className="flex flex-col">
-                                    <div className='flex justify-evenly items-center w-full  box-border  bg-white  border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-400   '>
+                                    <div className='flex justify-evenly py-2 items-center w-full  box-border  bg-white  border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-400   '>
                                         <div className='w-[3rem] flex items-center text-[#6B7E7D] text-base font-medium'>{index + 1}</div>
                                         <div className='w-[15rem] flex items-center text-[#6B7E7D] text-base font-medium'>{item.itemName}</div>
                                         <div className='w-[10rem] flex-col items-center text-[#6B7E7D] text-base font-medium'>
@@ -171,7 +172,7 @@ const ExistingsalesTable = () => {
                                         </div>
                                         <div className='w-1/12 flex items-center text-[#6B7E7D] text-base font-medium gap-[12px]'>
 
-                                            <div>{item.quantity}</div>
+                                            <div>{item.quantity} {item?.defaultUnit}</div>
 
                                         </div>
 

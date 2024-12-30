@@ -93,7 +93,7 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
 
             }
             //mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`,(currData:any = [])=>[...currData,response.data?.sales],false);
-            router.back();
+            //router.back();
         } catch (error) {
             console.error('Error:', error);
         }

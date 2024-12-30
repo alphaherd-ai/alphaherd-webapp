@@ -98,7 +98,7 @@ const ExistingsaleEstimateBottomBar = ({ existingSalesData }: any) => {
                 invoiceData: existingSalesData,
             });
             if (response.status === 200) {
-                alert("Invoice sent successfully");
+                console.log("Invoice sent successfully");
 
 
 
@@ -142,7 +142,9 @@ const ExistingsaleEstimateBottomBar = ({ existingSalesData }: any) => {
               }
             );
             if (shareResponse.status === 200) {
+
                 alert("Invoice sent successfully");
+
               setIsPopupOpen(false); // Close the popup
             }
           }

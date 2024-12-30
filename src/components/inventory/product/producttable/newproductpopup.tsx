@@ -19,6 +19,7 @@ import { setValidationErrorsForForm } from '@/utils/setValidationErrorForForm';
 import capitalizeFirst from "@/utils/capitiliseFirst";
 import Popup2 from "./updateinventorypopup";
 import { ItemUnit } from "@prisma/client";
+import Loading2 from "@/app/loading2";
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 type PopupProps = {
@@ -80,7 +81,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     const [activeTab, setActiveTab] = useState(0);
     const [errors, setErrors] = useState<any>({});
     const appState = useAppSelector((state) => state.app);
-    
+    const [loading,setLoading]=useState(false);
     const customStyles = {
         control: (provided: any, state: any) => ({
             ...provided,
@@ -217,7 +218,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     const handleSaveClick = async () => {
         // console.log("Submit button");
         try {
-
+            setLoading(true);
             let selectedProviders = [formData.providers];
 
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/create?branchId=${appState.currentBranchId}`, {
@@ -245,14 +246,17 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                     itemName: formData.itemName,
                     providers: selectedProviders,
                 });
-                //onClose();
+                onClose();
                 //window.dispatchEvent(new FocusEvent('focus'));
-                setShowPopup2(true);
+                
                 } else {
                 console.error('Failed to save data:', response.statusText);
             }
         } catch (error) {
             console.error('Error while saving data:', error);
+        }
+        finally{
+            setLoading(false);
         }
     };
 
@@ -509,11 +513,13 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                             <Button
                                 onClick={handleSaveClick}
                                 className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none"
+                                disabled={loading}
                             >
+                            
                                 <div className="w-6 h-6">
                                     <Image src={Check} alt="Check" className="mr-4" />
                                 </div>
-                                <div className="text-white text-base font-bold">Save</div>
+                                <div className="text-white text-base font-bold">{loading ?<Loading2/> :"Save"}</div>
                             </Button>
                         </div>
                     </div>
@@ -521,12 +527,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                 </div>
 
             )}
-            {showPopup2 && (
-                <Popup2
-                    onClose={() => setShowPopup2(false)}
-                // productData={productData}
-                />
-            )}
+           
 
         </>
     );

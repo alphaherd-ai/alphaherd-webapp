@@ -35,7 +35,8 @@ interface Products {
     productBatch: ProductBatch[],
     hsnCode: string,
     quantity: number,
-    tax: number
+    tax: number,
+    defaultUnit:string,
 }
 interface ProductBatch {
     id: number;
@@ -136,7 +137,8 @@ const NewsaleEstimateTable = () => {
                     id: product.id,
                     quantity: product.quantity,
                     itemName: product.itemName,
-                    tax: product.tax
+                    tax: product.tax,
+                    defaultUnit:product.defaultUnit,
                 },
                 label: product.itemName,
             }));
@@ -342,6 +344,7 @@ const NewsaleEstimateTable = () => {
                 updatedItems[index] = {
                     ...updatedItems[index],
                     quantity: 1,
+                    defaultUnit:productdata ? selectedProduct?.value?.defaultUnit : "",
                     itemType: productdata ? "product" : "service",
                     productId: productdata ? selectedProduct.value.id : null,
                     serviceId: servicedata ? selectedProduct.value.id : null,
@@ -652,7 +655,7 @@ const NewsaleEstimateTable = () => {
                                                     {/* {item.quantity} */}
                                                     <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
                                                         <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
-                                                    </button>
+                                                    </button>{item?.defaultUnit}
                                                 </div>
                                             </div>
                                         )}
@@ -694,6 +697,7 @@ const NewsaleEstimateTable = () => {
                                                         <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick2(item.id)}>
                                                             <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                                         </button>
+                                                        {item?.defaultUnit}
                                                     </div>
                                                 </div>
                                             </>

@@ -16,6 +16,11 @@ export const GET = async (req: NextRequest, { params }: { params: { id: number }
         items: {
           include: {
             productBatch: true,
+            products:{
+              select:{
+                defaultUnit:true
+              }
+            }
           },
         },
         recordTransaction: true,

@@ -32,8 +32,11 @@ interface Products {
     productBatch: ProductBatch[],
     hsnCode: string,
     quantity: number,
-    tax: number
+    tax: number,
+    defaultUnit:string,
 }
+
+
 interface Popup1Props {
     onClose: () => void;
     setNewDistributor?: Dispatch<any>; // Add this if it's optional
@@ -197,7 +200,8 @@ const NewPurchasesTable = () => {
                     id: product.id,
                     quantity: product.quantity,
                     itemName: product.itemName,
-                    tax: product.tax
+                    tax: product.tax,
+                    defaultUnit:product.defaultUnit,
                 },
                 label: product.itemName,
             }));
@@ -326,6 +330,7 @@ const NewPurchasesTable = () => {
                     const updatedItems = [...items];
                     updatedItems[index] = {
                         ...updatedItems[index],
+                        defaultUnit:selectedProduct.value.defaultUnit,
                         quantity: data.value.quantity || 1,
                         productId: selectedProduct.value.id,
                         itemName: data.value.itemName,
@@ -520,8 +525,9 @@ const NewPurchasesTable = () => {
                                                         <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.productId)}>
                                                             <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                                         </button>
+                                                        {item?.defaultUnit}
                                                     </div>
-                                                    <span className="text-textGrey2 font-medium text-base">Strips</span>
+                                                   
                                                 </div>
 
                                                 <div className=' flex text-textGrey2 text-base font-medium w-[10rem] items-center gap-1'>

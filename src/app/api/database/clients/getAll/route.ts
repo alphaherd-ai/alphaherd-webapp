@@ -13,6 +13,7 @@ export  const GET=async (req: NextRequest)=> {
           where:{
             databaseSectionId:databaseId
           },
+          
           include:{
             patients:true,
           },

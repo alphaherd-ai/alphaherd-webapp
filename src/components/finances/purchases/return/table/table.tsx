@@ -138,6 +138,7 @@ const NewPurchaseReturnTable = () => {
                 productId:item.productId,
                 itemName:item.name,
                 quantity:item.quantity,
+                defaultUnit:item.products.defaultUnit,
                 originalQuantity : item.quantity,
                 unitPrice:item.productBatch.costPrice,
                 tax:item.taxAmount,
@@ -489,7 +490,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                                         <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                     </button>
                                 </div>
-                                <span className="text-textGrey2  text-base">Strips</span>
+                                <span className="text-textGrey2  text-base">{item?.defaultUnit}</span>
                             </div>
 
                                     <div className=' flex text-gray-500 text-base  w-[12rem]'>

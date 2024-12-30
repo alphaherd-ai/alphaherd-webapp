@@ -24,6 +24,11 @@ import RecordTransactionPopup from "./multipleInvoiceTransactionPopup"
 import { Record } from "twilio/lib/twiml/VoiceResponse"
 import ClearInvoices from "../clearInvoices"
 import Loading2 from "@/app/loading2"
+import formatDateAndTime from "@/utils/formateDateTime"
+import { getStatusStyles } from '@/utils/getStatusStyles';
+import LeftArrow from '../../../../assets/icons/finance/leftArrow.svg';
+import RightArrow from '../../../../assets/icons/finance/rightArrow.svg';
+import Loading from "@/app/loading"
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json());
 
@@ -36,6 +41,7 @@ const ClientDetails = () => {
     });
     const [client, setClient] = useState<any | null>(null);
     const [invoiceList, setInvoiceList] = useState<any | null>(null);
+    const [clientTimeLine,setClientTimeLine]=useState<any | null>(null);
     const url = useSearchParams();
     const appState = useAppSelector((state) => state.app)
     const id = url.get('id');
@@ -57,12 +63,37 @@ const ClientDetails = () => {
             error
         }
     }
+    //setting up pagination
+    const [currentPageNumber, setCurrentPageNumber] = useState(1);
+    const [startInd, setStartInd] = useState(0);
+    const [endInd, setEndInd] = useState(0);
+    const [totalLen, setTotalLen] = useState(0);
+    const TOTAL_VALUES_PER_PAGE = 50;
+    const goOnPrevPage = () => {
+        if (currentPageNumber === 1) return;
+        setCurrentPageNumber((prev) => prev - 1);
+    };
+    const goOnNextPage = () => {
+        //console.log(currentPageNumber,data.length/TOTAL_VALUES_PER_PAGE);
+        if (currentPageNumber === Math.ceil((totalLen) / TOTAL_VALUES_PER_PAGE)) return;
+        setCurrentPageNumber((prev) => prev + 1);
+    };
+    useEffect(()=>{
+          const start=(currentPageNumber-1)*TOTAL_VALUES_PER_PAGE;
+          const end=currentPageNumber*TOTAL_VALUES_PER_PAGE;
+          setStartInd(start)
+          setEndInd(end);
+          setClientTimeLine(invoiceList?.slice(start,end));
+    },[currentPageNumber,invoiceList])
+
+    if(endInd > totalLen) setEndInd(totalLen);
 
     useEffect(() => {
         if (id) {
             const getAllInvoices = async () => {
-                const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/invoicesByName/${id}`);
+                const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/invoicesById/${id}`);
                 console.log(res.data);
+                setTotalLen(res.data?.length)
                 setInvoiceList(res.data);
             }
             getAllInvoices();
@@ -331,28 +362,62 @@ const ClientDetails = () => {
 
                         </div>
                         <div>
-                            <div className='flex justify-evenly  w-full  items-center box-border bg-gray-100  h-12 py-4 border-b border-borderGrey text-gray-500'>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/8'>Date</div>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/8'>Type</div>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/8'>Invoice No. </div>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/8'>Total Cost</div>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/8'>Total Qty.</div>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/8'>Due Date</div>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-1/8'>Status</div>
-                                <div className='flex text-gray-500 text-base font-medium px-6 w-2/8'></div>
+                            <div className='flex w-full  items-center box-border bg-gray-100  h-12 py-4 border-b border-borderGrey text-gray-500'>
+                                <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'>Date</div>
+                                <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'>Type</div>
+                                <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'>Invoice No. </div>
+                                <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'>Total Qty.</div>
+                                <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'>Due Date</div>
+                                <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'>Status</div>
+
                             </div>
 
-                            {/* {client.patients?.map((item, index) => (
-                        <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-borderGrey text-gray-400 border-t-0.5  '>
-                            <div className='w-1/8 px-6 flex items-center text-textGrey2 text-base font-medium'>{item.quantity} Strips</div>
-                            <div className='w-1/8 px-6 flex items-center text-textGrey2 text-base font-medium'>providers</div>
-                            <div className='w-1/8 px-6 flex items-center text-textGrey2 text-base font-medium'>{item.batchNumber}</div>
-                            <div className='w-1/8 px-6 flex items-center text-textGrey2 text-base font-medium'>{formatDateAndTime(item.expiry).formattedDate}</div>
-                            <div className='w-1/8 px-6 flex items-center text-textGrey2 text-base font-medium'>{item.hsnCode}</div>
-                            <div className='w-1/8 px-6 flex items-center text-textGrey2 text-base font-medium'>{item.costPrice}</div>
-                            <div className='w-1/8 px-6 flex items-center text-textGrey2 text-base font-medium'>₹399</div>
-                        </div>
-                        ))} */}
+                            {!clientTimeLine ? <Loading/> :  clientTimeLine?.map((item: any, index: number) => (
+                                <div key={item.id} className='flex   items-center w-full  box-border py-4   bg-white border border-solid border-borderGrey text-gray-400 border-t-0.5  '>
+                                    <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{formatDateAndTime(item.date).formattedDate}</div>
+                                    <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{item.type}</div>
+                                    <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{item.invoiceNo}</div>
+                                    <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{item.totalQty} items</div>
+                                    <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{formatDateAndTime(item.dueDate).formattedDate}</div>
+                                    <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>
+                                        {
+                                            (() => {
+                                                const statusParts = item.status.split('|').map((part: string) => part.trim());
+                                                //console.log(statusParts);
+                                                if (!statusParts.length) {
+                                                    return (
+                                                        <span className="text-[#6B7E7D] bg-[#EDEDED] px-2 py-1.5 text-sm font-medium rounded-[5px]">
+                                                            No Status
+                                                        </span>
+                                                    );
+                                                }
+                                                return statusParts.map((status: any, index: any) => {
+                                                    const styles = getStatusStyles(status);
+                                                    return (
+                                                        <span key={index} className={`${styles?.textColor} ${styles?.bgColor} px-2 mr-2 py-1.5 text-sm font-medium rounded-[5px]`}>
+                                                            {status}
+                                                        </span>
+                                                    )
+                                                })
+                                            })
+                                                ()}
+                                    </div>
+
+                                </div>
+                            ))}
+
+                            <div className='flex w-full  justify-between  h-12 px-6 py-3 bg-white rounded-bl-lg rounded-br-lg'>
+
+
+                                <div className='flex h-full'>
+
+                                    <div className='flex items-center   '>
+                                        <div className='flex  pl-2'><Image src={LeftArrow} alt='LeftArrow' className='w-6 h-6 ' onClick={goOnPrevPage} /></div>
+                                        <div className='flex  pl-2'><Image src={RightArrow} alt='RightArrow' className='w-6 h-6 '  onClick={goOnNextPage} /></div>
+                                        <div className='text-sm   text-gray-500'>{startInd+1}-{endInd} of {totalLen}</div>
+                                    </div>
+                                </div>
+                            </div >
                         </div>
                     </div>
                 </div>

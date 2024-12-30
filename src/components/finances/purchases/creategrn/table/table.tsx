@@ -38,7 +38,8 @@ interface Products {
     productBatch: ProductBatch[],
     hsnCode: string,
     quantity: number,
-    tax: number
+    tax: number,
+    defaultUnit:string
 }
 interface ProductBatch {
     id: number;
@@ -110,6 +111,7 @@ const CreateGrnTable = () => {
                 productId: item.productId,
                 itemName: item.name,
                 quantity: item.quantity,
+                defaultUnit:item.products.defaultUnit,
                 unitPrice: item.sellingPrice,
                 gst: item.taxAmount,
                 discountPercent: item.discount*100,
@@ -219,7 +221,8 @@ const CreateGrnTable = () => {
                     id: product.id,
                     quantity: product.quantity,
                     itemName: product.itemName,
-                    tax: product.tax
+                    tax: product.tax,
+                    defaultUnit: product.defaultUnit
                 },
                 label: product.itemName,
             }));
@@ -365,6 +368,7 @@ const handleAddItem = useCallback(() => {
             const updatedItems = [...items];
             updatedItems[index] = {
               ...updatedItems[index],
+              defaultUnit:selectedProduct?.value?.defaultUnit,
               quantity: data.value.quantity,
               productId: selectedProduct.value.id,
               itemName: data.value.itemName,
@@ -644,9 +648,9 @@ const handleAddItem = useCallback(() => {
                                                     {/* {item.quantity} */}
                                                     <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.productId)}>
                                                         <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
-                                                    </button>
+                                                    </button>{item?.defaultUnit}
                                                 </div>
-                                                <span className="text-textGrey2 font-medium text-base">Strips</span>
+                                                
                                             </div>
                                             <div className=' flex text-textGrey2 text-base font-medium w-[18rem] items-center gap-2'>
                                                 <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>

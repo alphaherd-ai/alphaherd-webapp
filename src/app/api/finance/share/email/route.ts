@@ -9,7 +9,7 @@ export const POST = async (req: NextRequest)=>{
     const {email} = await req.json();
     console.log("email is :",email);
     const requestHeaders = new Headers(req.headers);
-    const {AUTOMATED_GMAIL,AUTOMATED_GMAIL_APP_PASSWORD} = process.env;
+   // const {AUTOMATED_GMAIL,AUTOMATED_GMAIL_APP_PASSWORD} = process.env;
     const transport = nodemailer.createTransport({
         service:"gmail",
         auth:{

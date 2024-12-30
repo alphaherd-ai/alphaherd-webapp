@@ -18,6 +18,7 @@ import { useAppSelector } from '@/lib/hooks';
 import ClientPopup from '../database/client/newclientpopoup'
 import Popup from '../database/patient/newpatientpopup';
 import DistributorPopup from '../database/distributor/newdistributorpopup';
+import Distrib from '../../assets/icons/finance/storefront.svg';
 import NotificationList from '../home/NotificationCard/NotificationList';
 //import NotificationPopUp from '../home/NotificationCard/NotificationPopUp';
 import DropdownMenu from './dropDownMenu/dropDownMenu';
@@ -149,7 +150,7 @@ const Navbar = () => {
             <div className='no-underline flex item-center cursor-pointer' onClick={togglePopup3}>
                 <div className='text-base  text-white flex '>
                   <div className='flex pr-2'>
-                    <Image src={Estimate} alt='Return' className='w-5 h-5 ' />
+                    <Image src={Distrib} alt='Return' className='w-5 h-5 ' />
                   </div>
                   Distributors
                 </div>
