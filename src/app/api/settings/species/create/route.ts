@@ -24,8 +24,6 @@ export const POST = async (req: NextRequest) => {
                
             },
         });
-        
-        console.log("species in create ", species);
         return new Response(JSON.stringify(species), {
             status: 201,
             headers: {

@@ -11,7 +11,7 @@ import formatDateAndTime from '@/utils/formateDateTime';
 import RecordOrderTransaction from './recordOrderTransaction';
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 
-const NewPurchasesTotalAmount = () => {
+const NewPurchasesTotalAmount = ({ orderData }: any) => {
 
 
     const { tableData, headerData } = useContext(DataContext);
@@ -176,7 +176,7 @@ const NewPurchasesTotalAmount = () => {
 
             <div className="flex gap-4 pt-[20px] pb-[20px]">
 
-                <RecordOrderTransaction headerdata={headerData} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} setCount={setCount} totalAmount={totalAmountData} balanceDue={balanceDue} />
+                <RecordOrderTransaction headerdata={headerData} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} setCount={setCount} totalAmount={totalAmountData} balanceDue={balanceDue} orderData= {orderData} />
                 <div className="w-1/2 rounded-md">
                     <div className="w-full  bg-white ">
                         <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">

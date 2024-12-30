@@ -23,7 +23,7 @@ const NewPurchaseReturnTotalAmount = () => {
     totalAmount +=
       (data.quantity * Number(data.unitPrice) +
         data.quantity * data.tax * Number(data.unitPrice) -
-        (data.quantity * data.discount * Number(data.unitPrice) || 0)) || 0;
+        (data.quantity * data.discount/100 * Number(data.unitPrice) || 0)) || 0;
   });
   //const { totalAmountData, setTotalAmountData } = useContext(DataContext);
 

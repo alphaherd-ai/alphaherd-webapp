@@ -121,7 +121,7 @@ useEffect(() => {
                             <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Batch No.</div>
 
                             <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Bar Code</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[15rem] px-2'>Exipry Date</div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[15rem] px-2'>Expiry Date</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[20rem]'>Quantity</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[20rem]'>Free Quantity</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Unit Price</div>
