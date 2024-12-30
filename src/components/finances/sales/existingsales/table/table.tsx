@@ -1,13 +1,11 @@
 "use client"
-import Download from '../../../../../assets/icons/finance/download.svg';
+
 
 import React, { useState, useEffect } from 'react';
-import Select from 'react-select';
+
 import { useRef } from "react"
-import Image from "next/image"
-import Link from "next/link"
+
 import ExistingsalesHeader from "./header"
-import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
 import ExistingsalesBottomBar from './bottombar';
 import ExistingsalesTotalAmout from './totalamount';
 import { useSearchParams } from 'next/navigation';
@@ -15,7 +13,7 @@ import { useAppSelector } from '@/lib/hooks';
 import useSWR from 'swr';
 import formatDateAndTime from '@/utils/formateDateTime';
 import Loading2 from '@/app/loading2';
-import { set } from 'date-fns';
+
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 

@@ -1,15 +1,12 @@
 "use client";
 import Image from "next/image";
 import React, { useState } from 'react';
-import { Tooltip, Button } from "@nextui-org/react";
-import Link from 'next/link';
+import { Button } from "@nextui-org/react";
+
 import closeicon from "../../assets/icons/inventory/closeIcon.svg";
-import link from "../../assets/icons/settings/link.svg"
-import arrowicon from "../../../assets/icons/inventory/arrow.svg";
-import Select from 'react-select';
-import Attachment from "../../../assets/icons/finance/attachment.svg"
+
 import mailIcon from "@/assets/icons/settings/cash=Mail.svg"
-import deleteicon from "../../assets/icons/loginsignup/delete.svg"
+
 import { useAppSelector } from "@/lib/hooks";
 import { Bounce, ToastContainer, toast } from 'react-toastify';
 

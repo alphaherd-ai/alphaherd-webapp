@@ -1,14 +1,14 @@
 "use client";
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import FinancesIcon from './icons/financesIcon';
 import notification from '../../assets/icons/navbar/notification.svg';
-import alphaherd from '../../assets/icons/navbar/alphaherdLogo.svg';
+
 import setting from '../../assets/icons/settings/settingicon.svg';
 import PatientlistIcon from './icons/patientlistIcon';
 import InventoryIcon from './icons/inventoryIcon';
 import HomeIcon from './icons/homeIcon';
-import Settings from '../../assets/icons/finance/Settings.svg'
+
 import ProfileIcon from "../../assets/icons/settings/pfpcion.jpeg";
 import addIcon from '../../assets/icons/home/add2.svg';
 import Image from 'next/image';
@@ -23,31 +23,28 @@ import NotificationList from '../home/NotificationCard/NotificationList';
 //import NotificationPopUp from '../home/NotificationCard/NotificationPopUp';
 import DropdownMenu from './dropDownMenu/dropDownMenu';
 import DropdownIcon from './icons/dropdownIcon';
-import { updateApp } from '@/lib/features/appSlice';
-import { RootState } from '@/lib/store';
-import { useDispatch, useSelector } from 'react-redux';
-import { isAdminOfOrg, isManagerOfBranch } from '@/utils/stateChecks';
+
+import { useDispatch } from 'react-redux';
+
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
-import zIndex from '@mui/material/styles/zIndex';
+
 import useSWR from "swr";
 import { boolean } from 'zod';
 import Invoice from '../../assets/icons/finance/invoice.svg';
 import Expense from '../../assets/icons/finance/request_quote.svg';
 import Payment from '../../assets/icons/finance/Cash.svg';
 import Estimate from "../../assets/icons/finance/list_alt.svg"
-import add_Icon from '../../assets/icons/finance/1. Icons-24.svg';
+
 import Return from '../../assets/icons/finance/return.svg';
 
 
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
-import Button from '@mui/material/Button';
+
 import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
+
 import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
+
 
 
 

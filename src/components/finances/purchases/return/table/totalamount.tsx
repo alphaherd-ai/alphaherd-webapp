@@ -1,15 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react'
-import Rupee from "../../../../../assets/icons/finance/rupee.svg"
+
 import Image from "next/image"
-import { Button } from "@nextui-org/react";
+
 import calicon from "../../../../../assets/icons/finance/calendar_today.svg"
 
 import DatePicker from "react-datepicker"
 import 'react-datepicker/dist/react-datepicker.css';
 import { DataContext } from './DataContext';
-import { Tax } from '@prisma/client';
+
 import Select from 'react-select';
-import { dark } from '@mui/material/styles/createPalette';
+
 import Popup from "./recordpurchase"
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 

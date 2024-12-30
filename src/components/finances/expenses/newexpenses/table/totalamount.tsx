@@ -2,14 +2,10 @@
 
 
 import React, { useState, useEffect, useContext } from 'react';
-import DownArrow from '../../../../../assets/icons/finance/downArrow.svg';
-import Invoice from '../../../../../assets/icons/finance/invoice.svg';
-import Link from "next/link"
-import Rupee from "../../../../../assets/icons/finance/rupee.svg"
-import Image from "next/image"
+
 import Select from 'react-select';
 import Popup from "../table/recordexpensetransaction"
-import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
+
 import { DataContext } from './DataContext';
 import { Tax } from '@prisma/client';
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';

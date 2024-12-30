@@ -7,9 +7,7 @@ import sellicon from "../../../../../assets/icons/finance/sell.svg"
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Select from 'react-select';
 import Image from "next/image"
-import ExsistingRecurringHeader from "./header";
-import ExsistingRecurringTotalAmount from "./totalamount";
-import ExsistingRecurringBottomBar from "./bottombar";
+
 import NewRecurringBottomBar from "./bottombar";
 import NewRecurringTotalAmount from "./totalamount";
 import NewRecurringHeader from "./header";

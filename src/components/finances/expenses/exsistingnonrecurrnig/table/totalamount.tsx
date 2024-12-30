@@ -1,10 +1,10 @@
 'use client'
-import React, { use, useEffect, useState } from 'react'
-import Rupee from "../../../../../assets/icons/finance/rupee.svg"
+import React, {  useEffect, useState } from 'react'
+
 import Image from "next/image"
-import Select from 'react-select';
+
 import Cash from "../../../../../assets/icons/finance/Cash.svg"
-import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
+
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 import formatDateAndTime from '@/utils/formateDateTime';
 import Loading2 from '@/app/loading2';

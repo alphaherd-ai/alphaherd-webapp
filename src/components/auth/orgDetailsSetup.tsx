@@ -1,9 +1,6 @@
 import Image from "next/image";
-import { Formik, Field, Form, ErrorMessage } from 'formik';
 import updatelogo from "../../assets/icons/loginsignup/update_logo.png";
 import React, { useState } from 'react';
-import upload from "../../assets/icons/loginsignup/upload.svg"
-import { Textarea } from "@nextui-org/react";
 import { CldUploadButton } from "next-cloudinary";
 import { useAppSelector } from "@/lib/hooks";
 

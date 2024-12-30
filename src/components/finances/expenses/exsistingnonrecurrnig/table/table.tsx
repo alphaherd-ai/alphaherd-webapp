@@ -1,19 +1,16 @@
 "use client"
 
-import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
-import addicon from "../../../../../assets/icons/finance/add.svg"
-import sellicon from "../../../../../assets/icons/finance/sell.svg"
+
 
 import React, { useEffect, useState } from 'react';
-import Select from 'react-select';
-import Image from "next/image"
+
 import ExsistingNonRecurringHeader from "./header";
 import ExsistingNonRecurringTotalAmount from "./totalamount";
 import ExsistingNonRecurringBottomBar from "./bottombar";
 import { useSearchParams } from "next/navigation";
 import { useAppSelector } from "@/lib/hooks";
 import useSWR from "swr";
-import Loading from '@/app/loading';
+
 import Loading2 from "@/app/loading2";
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())

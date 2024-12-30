@@ -3,9 +3,9 @@ import printicon from "../../../../../assets/icons/finance/print.svg"
 import shareicon from "../../../../../assets/icons/finance/share.svg"
 import drafticon from "../../../../../assets/icons/finance/draft.svg"
 import checkicon from "../../../../../assets/icons/finance/check.svg"
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import downloadicon from "../../../../../assets/icons/finance/download.svg"
-import Link from "next/link"
+
 import Image from "next/image"
 import { DataContext } from './DataContext'
 import { FinanceCreationType } from '@prisma/client'
@@ -15,7 +15,7 @@ import { useSearchParams } from "next/navigation"
 import { Button } from "@nextui-org/react"
 import { useRouter } from "next/navigation"
 import Loading2 from "@/app/loading2"
-import { mutate } from "swr"
+
 
 const InvoiceReturnBottomBar = ({invoiceData}:any) => {
     const { headerData, tableData, totalAmountData,transactionsData } = useContext(DataContext);

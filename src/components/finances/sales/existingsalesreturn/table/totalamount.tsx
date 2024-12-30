@@ -2,14 +2,11 @@
 
 
 import React, { useState, useEffect } from 'react';
-import DownArrow from '../../../../../assets/icons/finance/downArrow.svg';
-import Invoice from '../../../../../assets/icons/finance/invoice.svg';
-import Rupee from "../../../../../assets/icons/finance/rupee.svg"
+
 import Cash from "../../../../../assets/icons/finance/Cash.svg"
-import Link from "next/link";
+
 import Image from "next/image"
-import Select from 'react-select';
-import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
+
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 import formatDateAndTime from '@/utils/formateDateTime';
 import Popup from "./recordexsistingreturnpopup"

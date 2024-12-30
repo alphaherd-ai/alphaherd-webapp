@@ -1,13 +1,13 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import lefticon from "../../../assets/icons/inventory/left_icon.svg"
 import Image from 'next/image';
-import { Button } from '@mui/material';
+
 import check from '../../../assets/icons/finance/check.svg'
-import { preconnect } from 'react-dom';
+
 import { useAppSelector } from '@/lib/hooks';
-import { receiveMessageOnPort } from 'worker_threads';
+
 import Loading2 from '@/app/loading2';
 
 const ClearInvoices = ({ invoiceList, setOpen, formData }: any) => {
@@ -16,38 +16,44 @@ const ClearInvoices = ({ invoiceList, setOpen, formData }: any) => {
     const appState = useAppSelector((state) => state.app)
     const router = useRouter();
     const [checkedInvoiceList, setCheckedInvoiceList] = useState<any[]>([]);
-    const [toPayAmt,setToPay]=useState<any>(0);
+    const [totalSum, setTotalSum] = useState(0);
+    
+
 
     useEffect(() => {
         if (invoiceList?.length > 0) {
-            let toPay=0;
+            let selectedInvoices:any[]=[];
+            let cummulative:number=0;
+            let calculatedTotalSum: number = 0;
             invoiceList.forEach((invoice: any) => {
-                if (invoice.status.includes("You owe")) {
-                    const match = invoice.status.match(/[\d.]+/g);
-                    if (match) {
-                        toPay += parseFloat(match[0]);
+               
+                if (invoice.status.includes("You’re owed")) {
+                    const match = invoice.status.match(/You’re owed: [₹₹]?\s?([\d.]+)/);
+                    if (match && match[1]) {
+                        invoice.toBePaid = parseFloat(match[1]); // Extracted amount
+                        calculatedTotalSum += invoice.toBePaid;
+                
+                        if (cummulative  <= Number(formData?.amountPaid)) {
+                            cummulative += invoice.toBePaid;
+                            console.log(cummulative, Number(formData?.amountPaid));
+                            selectedInvoices.push(invoice);
+                        }
+                    } else {
+                        invoice.toBePaid = 0; // Default to 0 if no match
                     }
-                    else {
-                        invoice.toBePaid = 0;
-                    }
-                }
-                else if (invoice.status.includes("You’re owed")) {
-                    const match = invoice.status.match(/[\d.]+/g);
-                    if (match) {
-                        invoice.toBePaid = parseFloat(match[0]);
-                    }
-                    else {
-                        invoice.toBePaid = 0;
-                    }
-                }
-                else {
+                } else {
                     invoice.toBePaid = 0;
                 }
-                setToPay(toPay);
+                //setToPay(toPay);
 
             });
+            setCheckedInvoiceList(selectedInvoices);
+            setTotalSum(calculatedTotalSum);
         }
     }, [invoiceList])
+
+   
+    
 
 
     const handleCheckboxChange = (invoiceId: number, invoice: any) => {
@@ -221,8 +227,8 @@ const ClearInvoices = ({ invoiceList, setOpen, formData }: any) => {
             </div>
             <div className='mt-8 w-full overflow-y-scroll flex flex-col h-[90vh]  rounded-[20px] bg-white border mx-0  border-solid border-borderGrey'>
                 <div className='flex'>
-                    <div className='bg-[#E7F5EE] text-[#0F9D58] px-2 py-2 text-xl rounded-md ml-4 mt-4 '>₹{Number(formData?.amountPaid).toFixed(2) || 0} to be paid</div>
-                    <div className='bg-[#FFF0E9] text-[#FC6E20] px-2 py-2 text-xl rounded-md ml-4 mt-4'>₹{(toPayAmt).toFixed(2)} to pay</div>
+                    <div className='bg-[#E7F5EE] text-[#0F9D58] px-2 py-2 text-xl rounded-md ml-4 mt-4 '>₹{Number(formData?.amountPaid).toFixed(2) || 0} Paying</div>
+                    <div className='bg-[#FFF0E9] text-[#FC6E20] px-2 py-2 text-xl rounded-md ml-4 mt-4'>₹{Number(totalSum-formData?.amountPaid).toFixed(2)} to pay</div>
                 </div>
                 <div className='mt-4   box-border flex  w-full  items-center  bg-gray-100  h-12 py-4 border-b border-solid border-t border-borderGrey text-gray-500'>
                     <div className='w-[40px]'></div>
@@ -234,7 +240,7 @@ const ClearInvoices = ({ invoiceList, setOpen, formData }: any) => {
                     <div className='flex text-gray-500 text-base font-medium px-2  w-2/12'>Due Date</div>
                     <div className='flex text-gray-500 text-base font-medium px-2  w-2/12'>Status</div>
                 </div>
-                {invoiceList?.length > 0 && invoiceList.filter((invoice: any) => invoice.status.includes('You’re owed')).map((invoice: any) => (
+                {invoiceList?.length > 0 && invoiceList.sort((a:any,b:any)=>new Date(b.date).getSeconds()-new Date(a.date).getSeconds()).filter((invoice: any) => invoice.status.includes('You’re owed')).map((invoice: any) => (
                     <div key={invoice?.id} className='box-border flex justify-between  w-full  items-center border-0 border-b border-solid border-borderGrey   h-12 py-8  text-gray-500'>
                         <input
                             className='w-[40px]'

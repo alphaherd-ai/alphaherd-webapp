@@ -2,22 +2,18 @@
 
 
 import React, { useState, useEffect, useContext } from 'react';
-import DownArrow from '../../../../../assets/icons/finance/downArrow.svg';
-import Invoice from '../../../../../assets/icons/finance/invoice.svg';
-import Rupee from "../../../../../assets/icons/finance/rupee.svg"
-import Link from "next/link"
+
 import Image from "next/image"
 import Select from 'react-select';
 import Popup from "../table/recordedTransactionPopup"
-import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
+
 import { DataContext } from './DataContext';
-import { Tax } from '@prisma/client';
-import useSWR from 'swr'
+
 import { useAppSelector } from '@/lib/hooks';
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 import Cash from "../../../../../assets/icons/finance/Cash.svg"
 import formatDateAndTime from '@/utils/formateDateTime';
-import { header } from 'express-validator';
+
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 interface Transactions {

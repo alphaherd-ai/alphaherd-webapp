@@ -11,7 +11,7 @@ import { addAmount } from '@/lib/features/transactionAmount/transactionAmountSli
 
 import calicon from "../../../../../assets/icons/finance/calendar_today.svg";
 
-import closeicon from "../../../../../assets/icons/inventory/closeIcon.svg";
+
 import Select from 'react-select';
 import { Button } from '@nextui-org/react';
 import { useAppSelector } from '@/lib/hooks';

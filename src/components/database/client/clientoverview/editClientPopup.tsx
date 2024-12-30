@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Image from "next/image";
-import { useAppSelector } from '@/lib/hooks';
+
 import Loading2 from "@/app/loading2";
 import closeicon from "../../../../assets/icons/inventory/closeIcon.svg";
 import Check from "../../../../assets/icons/database/check.svg";

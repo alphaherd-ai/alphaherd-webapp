@@ -1,20 +1,19 @@
 "use client";
 import Image from "next/image";
 import React, { useEffect, useState } from 'react';
-import { Tooltip, Button } from "@nextui-org/react";
-import Link from 'next/link';
+
 import closeicon from "../../../assets/icons/inventory/closeIcon.svg";
-import arrowicon from "../../../assets/icons/inventory/arrow.svg";
-import Select, { MultiValue } from 'react-select';
-import CretableSelect from "react-select/creatable"
+
+import Select from 'react-select';
+
 import calicon from "../../../assets/icons/finance/calendar_today.svg"
 import Paws from "../../../assets/icons/database/1. Icons-24 (12).svg"
 import Check from "../../../assets/icons/database/check.svg"
-import { response } from "express";
+
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useAppSelector } from "@/lib/hooks";
-import { useRouter } from "next/navigation";
+
 import axios from "axios";
 import Creatable from "react-select/creatable";
 import Loading2 from "@/app/loading2";
@@ -248,15 +247,14 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
 
         try {setSavingData(true);
             setIsSaveDisabled(true);
-            console.log("Form data is valid", formData);
-            console.log('Form Data Species:', formData.species);
-            console.log('Form Data Breed:', formData.breed);
+            let selectedBreed=null;
 
-            const selectedBreed = Array.isArray(formData.breed.label) && formData.breed.label.length > 0
+            if(formData.breed !==undefined && formData.breed!==null) {selectedBreed = Array.isArray(formData.breed.label) && formData.breed.label.length > 0
                 ? formData.breed.label[0]
-                : formData.breed.label;
+                : formData.breed.label;}
 
-            console.log('selected breed', selectedBreed);
+
+            //console.log('selected breed', selectedBreed);
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/patients/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
@@ -264,9 +262,9 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 },
                 body: JSON.stringify({
                     patientName: formData.patientName,
-                    clientId: clientData === undefined ? formData.clientName.value : null,
-                    species: formData.species ? formData.species.label : undefined,
-                    breed: selectedBreed,
+                    clientId: clientData === undefined ? formData.clientName.value : clientData.id,
+                    species: formData.species ? formData.species.label : "unknown",
+                    breed: selectedBreed ? selectedBreed: "unknown",
                     dateOfBirth: formData.dateOfBirth,
                     age: formatAgeString(age),
                     gender: selectedGender,
@@ -386,6 +384,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                                 e.target.value = value.charAt(0).toUpperCase() + value.slice(1);
                                 handleChange("patientName", e.target.value);
                             }}
+                            value={formData?.patientName || ''}
                         />
                         {errors.patientName && (
                             <div className="text-[red] error">{errors.patientName}</div>
@@ -402,12 +401,13 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                                 isClearable={false}
                                 isSearchable={true}
                                 name="clientName"
+                                value={clients.find((client) => client.label === clientData?.clientName)}
                                 options={clients}
                                 onChange={(selectedClient: any) => handleChange("clientName", selectedClient)}
                                 styles={customStyles}
                             />
                         ) : (
-                            clientData.clientName
+                            <span className="text-textGrey2 text-base font-medium  w-[25rem] border-0 boxShadow-0">{clientData.clientName}</span>
                         )}
 
                     </div>
@@ -431,6 +431,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                                     handleChange("species", selectedSpecies);
                                 }}
                                 styles={customStyles}
+                                value={formData?.species}
                             />
                         </div>
                     </div>
@@ -448,7 +449,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                             name="breed"
                             onChange={(selectedBreed: any) => handleChange("breed", selectedBreed)}
                             styles={customStyles}
-
+                            value={formData?.breed}
                         />
                     </div>
                 </div>

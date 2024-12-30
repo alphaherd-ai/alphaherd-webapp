@@ -1,33 +1,30 @@
 'use client';
-import DownArrow from '../../../../../assets/icons/finance/downArrow.svg';
-import subicon from "../../../../../assets/icons/finance/1. Icons-26.svg"
+
 import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
 import Subtract from "../../../../../assets/icons/finance/Subtract.svg"
 import ClientPopup from '@/components/database/client/newclientpopoup';
 import Add from "../../../../../assets/icons/finance/add (2).svg"
 import addicon from "../../../../../assets/icons/finance/add.svg"
-import add1icon from "../../../../../assets/icons/finance/add1.svg"
+
 import sellicon from "../../../../../assets/icons/finance/sell.svg"
-import Invoice from '../../../../../assets/icons/finance/invoice.svg';
+
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import Select from 'react-select';
 import { useRef } from "react"
 import Image from "next/image"
-import Link from "next/link"
+
 import NewsalesReturnHeader from "./header"
-import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import NewsalesReturnBottomBar from './bottombar';
 import NewsalesReturnTotalAmout from './totalamount';
-import axios from 'axios';
+
 import { DataContext } from './DataContext';
 import { useAppSelector } from "@/lib/hooks";
 import { Tax } from '@prisma/client';
 import formatDateAndTime from '@/utils/formateDateTime';
 import useSWR from 'swr';
 import { useSearchParams } from 'next/navigation';
-import { ConversationContextImpl } from 'twilio/lib/rest/conversations/v1/conversation';
-import { M_PLUS_1 } from 'next/font/google';
-import { useRouter } from 'next/router';
+
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 

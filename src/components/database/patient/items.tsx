@@ -1,14 +1,12 @@
 'use client';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link';
-import { useAppSelector } from '@/lib/hooks';
-import { Spinner} from '@nextui-org/react';
-import useSWR from 'swr';
+
 import Loading from '@/app/loading';
 import Loading2 from '@/app/loading2';
 import DatabasePatientBottombar from './bottombar';
 //@ts-ignore
-const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
+const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 interface Clients {
     id: number;
     clientName: string;
@@ -24,7 +22,7 @@ interface Patients {
     gender: string;
 }
 
-const DatabasePatientTableItem = ({ patients, clients, isPatientLoading }:any) => {
+const DatabasePatientTableItem = ({ patients, clients, isPatientLoading }: any) => {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage] = useState(50);
@@ -32,38 +30,41 @@ const DatabasePatientTableItem = ({ patients, clients, isPatientLoading }:any) =
         setCurrentPage(pageNumber);
     };
 
+
     const indexOfLastProduct = currentPage * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
     const currentPatients = patients.slice(indexOfFirstProduct, indexOfLastProduct);
 
     const formatSpeciesAndBreed = (species: string | null, breed: string | null): string => {
         if (!species && !breed) {
-          return ''; // Both are null
+            return ''; // Both are null
         }
         if (species && breed) {
-          return `${species} & ${breed}`;
+            return `${species} & ${breed}`;
         }
-        return species || breed || ''; 
-      };
-      
-if(isPatientLoading)return (<Loading/>)
+        return species || breed || '';
+    };
+
+    if (isPatientLoading) return (<Loading />)
 
     // console.log(patients)
 
     return (
         <>
-            {currentPatients?.map((patient:any) => (
+            {currentPatients?.map((patient: any) => (
                 <div key={patient.id} className='flex  w-full  box-border h-16 justify-evenly items-center bg-white   border-0 border-b border-solid border-borderGrey  hover:bg-gray-200 text-textGrey1  hover:text-textGrey2  transition'>
                     <div className='w-1/6 flex items-center  px-6   text-base font-medium'>
-                        <Link className='transition-colors duration-300 text-gray-400 no-underline hover:underline hover:text-teal-400 ' href='#'>
+                        <Link className='transition-colors duration-300 text-gray-400 no-underline hover:underline hover:text-teal-400 ' href={`/database/clients/overview?id=${patient.clientId}`}>
                             {patient.patientName}
                         </Link>
                     </div>
-                    <div className='w-1/6 flex  items-center  px-6  text-base font-medium'>
-                        {clients[patient.clientId] || <Loading2 />}
+                    <div className='w-1/6 flex box-border   items-center  px-6  text-base font-medium hover:text-teal-400  cursor-pointer'>
+                        <Link className='transition-colors duration-300 text-gray-400 no-underline hover:underline hover:text-teal-400 ' href={`/database/clients/overview?id=${patient.clientId}`} >
+                            {clients[patient.clientId]}
+                        </Link>
                     </div>
                     <div className='w-1/6 flex  items-center  px-6  text-base font-medium'>
-                    {formatSpeciesAndBreed(patient.species, patient.breed)}
+                        {formatSpeciesAndBreed(patient.species, patient.breed)}
                     </div>
                     <div className='w-1/6 flex  items-center  px-6  text-base font-medium'>
                         {patient.age}
@@ -73,7 +74,7 @@ if(isPatientLoading)return (<Loading/>)
                     </div>
                 </div>
             ))}
-                        {patients.length > 0 && (
+            {patients.length > 0 && (
                 <DatabasePatientBottombar
                     productsPerPage={productsPerPage}
                     totalProducts={patients.length}

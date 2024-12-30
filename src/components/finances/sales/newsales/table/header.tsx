@@ -5,11 +5,11 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Image from 'next/image';
 import { DataContext } from './DataContext';
-import editicon from "../../../../../assets/icons/finance/1. Icons-25.svg";
+
 import calicon from "../../../../../assets/icons/finance/calendar_today.svg";
 import formatDateAndTime from '@/utils/formateDateTime';
 import { useSearchParams } from 'next/navigation';
-import { previousDay } from 'date-fns';
+
 import useSWR from 'swr';
 import { useAppSelector } from '@/lib/hooks';
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';

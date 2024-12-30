@@ -1,38 +1,28 @@
 "use client";
 import Image from "next/image";
-import React, { useEffect, useState } from 'react';
-import { Tooltip, Button, toggle } from "@nextui-org/react";
-import Link from 'next/link';
+import React, {  useState } from 'react';
+
 import closeicon from "../../../assets/icons/inventory/closeIcon.svg";
-import arrowicon from "../../../assets/icons/inventory/arrow.svg";
+
 import Paws from "../../../assets/icons/database/1. Icons-24 (12).svg"
 import Check from "../../../assets/icons/database/check.svg"
-import { z, ZodError, ZodType } from "zod"
+
 import Select from 'react-select';
 import PatientPopup from '../patient/newpatientpopup'
-import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
+
 import { useAppSelector } from '@/lib/hooks';
-import { Bounce, ToastContainer, toast } from 'react-toastify';
-import capitalizeFirst from "@/utils/capitiliseFirst";
+
 import Loading2 from "@/app/loading2";
 type PopupProps = {
     onClose: () => void;
-    setNewClient?: any;
-    setIsNewClientClicked?: any
+    
 }
 
-// const clientSchema = z.object({
-//   clientName: z.string().min(1,'Provide Client Name'),
-//   email: z.string().email('Invalid email address').optional(),
-//   contact: z.string().length(10,'Invalid Phone number format'),
-//   address: z.string().min(1,'Provide Address').optional(),
-//   city: z.string().min(1,"Select City to continue").optional(),
-//   pinCode: z.string().length(5,'Pin code must be exactly 5 digits').optional(),
-// });
 
 
 
-const ClientPopup: React.FC<PopupProps> = ({ onClose, setNewClient, setIsNewClientClicked }: any) => {
+
+const ClientPopup: React.FC<PopupProps> = ({ onClose }: any) => {
     const [formData, setFormData] = useState<any>({});
     const [showPopup, setShowPopup] = React.useState(false);
     const appState = useAppSelector((state) => state.app)
@@ -40,6 +30,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose, setNewClient, setIsNewClie
     const [isSaveDisabled, setIsSaveDisabled] = useState(true);
     const [savingData, setSavingData] = useState(false);
     const [isClientSaved, setClientStatus] = useState<any>(false);
+    const [clientData,setNewClientData]=useState<any>({})
     let addAnotherPatient = false;
     const togglePopup = () => {
         setShowPopup(!showPopup);
@@ -85,8 +76,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose, setNewClient, setIsNewClie
     };
 
     const handleSaveClick = async () => {
-        // console.log("Save button");
-        console.log(addAnotherPatient);
+       
         try {
             setIsSaveDisabled(true);
             setSavingData(true);
@@ -109,10 +99,11 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose, setNewClient, setIsNewClie
             });
             if (response.ok) {
                 const clientData = await response.json();
-                if (clientData) {
-                    setIsNewClientClicked((prev: any) => !prev);
-                    setNewClient(clientData);
+                console.log(clientData);
+                if(clientData){
+                    setNewClientData(clientData);
                 }
+
                 console.log('Data saved successfully');
                 if (!addAnotherPatient) {
                     onClose();
@@ -143,7 +134,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose, setNewClient, setIsNewClie
         setFormData((prevFormData: any) => {
             const updatedFormData = { ...prevFormData, [field]: value };
 
-            // Validate fields to enable or disable the Save button
+            
             const isFormValid =
                 updatedFormData.clientName !== '' &&
                 updatedFormData.contact &&
@@ -155,7 +146,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose, setNewClient, setIsNewClie
             return updatedFormData;
         });
 
-        // Optional: Handle errors for specific fields
+        
         if (field === 'contact') {
             if (value.length > 10) {
                 setErrors((prevErrors) => ({
@@ -183,7 +174,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose, setNewClient, setIsNewClie
         }
     };
 
-    // console.log(formData)
+   
 
     const countryCode = [
         { value: 'IN', label: '+91' },
@@ -264,11 +255,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose, setNewClient, setIsNewClie
                             <input className="w-full h-9 text-textGrey2 text-base font-medium   focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" placeholder="  Enter address or Google Maps link" type="text" name="address" onChange={(e) => handleChange("address", e.target.value)} />
 
                         </div>
-                        {/* <div className=" ml-1  w-9 h-9 ">
-                    <button  className="w-full h-full rounded-[5px] justify-center text-2xl items-center gap-2 flex border-borderText border border-solid bg-white outline-none">
-                        <div className="text-textGrey2 text-lg">+</div>
-                    </button>
-                    </div> */}
+                      
                     </div>
                 </div>
                 <div className="flex  w-full gap-[65px] justify-between">
@@ -325,20 +312,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose, setNewClient, setIsNewClie
                         </div>
                     </div>
 
-                    {/* <button className="px-4 py-2 bg-black rounded-[5px] justify-start items-center gap-2 flex" onClick={handleSaveClick}>
-                        <div className="text-white border-none text-base font-bold ">Save</div>
-                    </button>  */}
-                    {/* {!isSaveDisabled ? (<div className="h-11 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer"  onClick={handleSaveClick} >
-                        <div className="w-6 h-6 relative">
-                            <div className="w-6 h-6 left-0 top-0 absolute" >
-                                <Image src={Check} alt="Check" />
-                            </div>
-                        </div>
-                        <div className="text-gray-100 text-base font-bold ">Save</div>
-                        </div>) : (<button className="px-4 py-2.5 bg-gray-200 rounded-[5px]  justify-start items-center gap-2 flex border-0 outline-none cursor-not-allowed">
-                        <div className="text-textGrey1 text-base font-bold ">Save</div>
-                        <Image src={arrowicon} alt="arrow"></Image>
-                    </button>)} */}
+                    
                     <div
                         className={`h-11 px-4 py-2.5 rounded-[5px]  justify-start items-center gap-2 flex  ${isSaveDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-zinc-900 cursor-pointer'
                             }`}
@@ -357,7 +331,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose, setNewClient, setIsNewClie
             </div>
         </div>
 
-        {showPopup && <PatientPopup onClose={togglePopup} clientData={formData} />}
+        {showPopup && <PatientPopup onClose={togglePopup} clientData={clientData} />}
     </>;
 
 }

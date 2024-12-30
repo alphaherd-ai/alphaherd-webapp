@@ -7,7 +7,7 @@ import DatePicker from 'react-datepicker';
 
 import check from "../../../../assets/icons/finance/check.svg"
 import { useDispatch } from 'react-redux';
-import { addAmount } from '@/lib/features/transactionAmount/transactionAmountSlice';
+
 import { useSearchParams } from 'next/navigation';
 import 'react-datepicker/dist/react-datepicker.css';
 

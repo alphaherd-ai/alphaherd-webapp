@@ -3,12 +3,11 @@ import React from 'react'
 
 import Sort from '../../../../assets/icons/finance/sort.svg';
 import Filter from '../../../../assets/icons/finance/filter.svg';
-import Chart from '../../../../assets/icons/finance/chart.svg';
+
 import Download from '../../../../assets/icons/finance/download.svg';
-import DownArrow from '../../../../assets/icons/finance/downArrow.svg';
-import Invoice from '../../../../assets/icons/finance/invoice.svg';
+
 import Expense from "../../../../assets/icons/finance/request_quote.svg"
-import Return from '../../../../assets/icons/finance/return.svg';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';

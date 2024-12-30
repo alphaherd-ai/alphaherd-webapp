@@ -8,12 +8,12 @@ import calicon from "../../../../../assets/icons/finance/calendar_today.svg"
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { useRef } from "react"
-import Link from "next/link"
+
 import Image from "next/image"
 import DatePicker from "react-datepicker"
 import 'react-datepicker/dist/react-datepicker.css';
 import { Button } from "@nextui-org/react";
-import { useSearchParams } from "next/navigation";
+
 
 const NewRecurringHeader = () => {
 

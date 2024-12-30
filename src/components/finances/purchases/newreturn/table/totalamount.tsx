@@ -1,14 +1,14 @@
 'use client';
 import React, { useContext, useEffect, useState } from 'react'
-import Rupee from "../../../../../assets/icons/finance/rupee.svg"
+
 import Image from "next/image"
-import { Button } from "@nextui-org/react";
+
 import calicon from "../../../../../assets/icons/finance/calendar_today.svg"
 import Select from 'react-select';
 import DatePicker from "react-datepicker"
 import 'react-datepicker/dist/react-datepicker.css';
 import { DataContext } from './DataContext';
-import { Tax } from '@prisma/client';
+
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 import formatDateAndTime from '@/utils/formateDateTime';
 import Popup from "./recordPurchaseRetrunTransaction"

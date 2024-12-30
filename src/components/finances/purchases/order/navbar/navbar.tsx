@@ -1,7 +1,7 @@
 "use client"
 
 import lefticon from "../../../../../assets/icons/finance/left_icon.svg"
-import Link from "next/link"
+
 import closeIcon from '../../../../../assets/icons/finance/closeIcon.svg';
 import minimiseIcon from '../../../../../assets/icons/finance/minimiseIcon.svg';
 import Image from "next/image"

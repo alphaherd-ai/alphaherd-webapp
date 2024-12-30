@@ -15,7 +15,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import { FinanceCreationType } from '@prisma/client';
 import DownloadPopup from './downloadSalesPopup';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
-import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
+import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 import FilterDropdwonCard from './FilterDropDownCard';
 
 

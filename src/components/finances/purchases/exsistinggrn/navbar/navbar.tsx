@@ -3,7 +3,7 @@
 import lefticon from "../../../../../assets/icons/finance/left_icon.svg"
 import Link from "next/link"
 import Menu from '../../../../../assets/icons/finance/menu.svg'
-import Attachment from "../../../../../assets/icons/finance/attachment.svg"
+
 import Image from "next/image"
 import { Button, Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react"
 import { useRouter } from "next/navigation";

@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react'
-import Settings from '../../../assets/icons/finance/Settings.svg';
-import Search from '../../../assets/icons/finance/Search.svg';
+
 import Add from '../../../assets/icons/inventory/add.svg';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -122,6 +121,7 @@ const DatabaseNavbar = () => {
       const togglePopup1 = () => {
         setShowPopup1(!showPopup1);
     }
+    
     const togglePopup2 = () => {
         setShowPopup2(!showPopup2);
     }

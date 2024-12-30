@@ -1,16 +1,14 @@
 "use client";
 import Image from "next/image";
 import React, { useState } from 'react';
-import { Tooltip, Button } from "@nextui-org/react";
-import Link from 'next/link';
+
 import closeicon from "../../../assets/icons/inventory/closeIcon.svg";
-import arrowicon from "../../../assets/icons/inventory/arrow.svg";
+
 import Select from 'react-select';
-import Attachment from "../../../assets/icons/finance/attachment.svg"
+
 import Check from "../../../assets/icons/database/check.svg"
 import { useAppSelector } from "@/lib/hooks";
-import { z } from "zod"
-import capitalizeFirst from "@/utils/capitiliseFirst";
+
 import Loading2 from "@/app/loading2";
 type PopupProps = {
     onClose: () => void;

@@ -1,9 +1,8 @@
 "use client";
 import Image from "next/image";
 import React, { useEffect, useState } from 'react';
-import { Tooltip, Button } from "@nextui-org/react";
-import Link from 'next/link';
-import arrow from "../../../../assets/icons/inventory/cash=Right, Color=Green.svg"
+import {  Button } from "@nextui-org/react";
+
 import closeicon from "../../../../assets/icons/inventory/closeIcon.svg";
 import arrowicon from "../../../../assets/icons/inventory/arrow.svg";
 import Check from "../../../../assets/icons/database/check.svg"
@@ -13,13 +12,12 @@ import { useAppSelector } from "@/lib/hooks";
 import useSWR from 'swr';
 import axios from "axios";
 import Distributors from "@/app/database/distributor/page";
-import { z } from 'zod';
-import { ZodError } from 'zod';
-import { setValidationErrorsForForm } from '@/utils/setValidationErrorForForm';
-import capitalizeFirst from "@/utils/capitiliseFirst";
-import Popup2 from "./updateinventorypopup";
+
+
 import { ItemUnit } from "@prisma/client";
 import Loading2 from "@/app/loading2";
+
+
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 type PopupProps = {
@@ -221,8 +219,10 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
             setLoading(true);
             let selectedProviders = [formData.providers];
 
+            
+
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/create?branchId=${appState.currentBranchId}`, {
-                method: 'POST',
+               method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -240,13 +240,16 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                 }),
             });
 
+            
+
             if (response.ok) {
-                console.log('Data saved successfully');
+               
                 setProductData({
                     itemName: formData.itemName,
                     providers: selectedProviders,
                 });
                 onClose();
+                window.location.reload();
                 //window.dispatchEvent(new FocusEvent('focus'));
                 
                 } else {
@@ -273,7 +276,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
              console.log(updatedFormData);
             const isProductNameValid = updatedFormData.itemName !== '' ;
             const isTaxValid = updatedFormData.tax !== undefined;
-            const isProductExist=fetchedProducts?.some((item:any)=>item.itemName===updatedFormData.itemName);
+            const isProductExist=fetchedProducts?.some((item:any)=>(item.itemName).toLowerCase()===(updatedFormData.itemName).toLowerCase());
             // Update the errors state directly
             const updatedErrors = { ...errors };
             if (!isProductNameValid) {
@@ -360,7 +363,6 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                 {errors.itemName && (
                                     <div className="text-[red] text-sm mt-2 error">{errors.itemName}</div>
                                 )}
-
                             </div>
                         </div>
                         <div className="flex items-center justify-between w-full">
