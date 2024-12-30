@@ -326,8 +326,10 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                     quantity: selectedOption === Stock.StockIN ? 0 : data.value.quantity,
                     productId: data.value.id,
                     hsnCode: data.value.hsnCode,
+
                     itemName : data.value.itemName,
                     providers:data.value.provider
+
                 };
                console.log("updatedInventory:  ",updatedInventory);
                 setInventory(updatedInventory);

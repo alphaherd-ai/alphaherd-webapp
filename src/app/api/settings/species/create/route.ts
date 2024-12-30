@@ -9,7 +9,7 @@ export const POST = async (req: NextRequest) => {
     console.log("create called");
     try {
         const body = await req.json();
-
+        const databaseSectionId = await fetchDatabaseId(req);
         // Ensure name is a string, not an array or other type
         if (!body.name || typeof body.name !== 'string') {
             return new Response('Invalid data: name should be a string.', { status: 400 });
@@ -18,11 +18,12 @@ export const POST = async (req: NextRequest) => {
         const species = await prismaClient.species.create({
             data: {
                 name: body.name,
+                DatabaseSection : {
+                    connect : { id : databaseSectionId}
+                },
                
             },
         });
-        
-        console.log("species in create ", species);
         return new Response(JSON.stringify(species), {
             status: 201,
             headers: {

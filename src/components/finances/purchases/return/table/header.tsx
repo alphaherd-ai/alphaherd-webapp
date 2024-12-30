@@ -38,7 +38,7 @@ const NewPurchaseReturnHeader = ({existingHeaderData}:any) => {
     const [dueDate, setDueDate] = useState(new Date());
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
   
-    console.log("data in purchase return header is :", data);
+    ////console.log("data in purchase return header is :", data);
     useEffect(() => {
         if (!disableButton && inputRef.current) {
             inputRef.current.focus();
@@ -58,7 +58,7 @@ const NewPurchaseReturnHeader = ({existingHeaderData}:any) => {
     useEffect(()=>{
         if(id){
             setHeaderData(existingHeaderData)
-            // console.log("this is header data",headerData)
+            // ////console.log("this is header data",headerData)
         }
      else{
         setHeaderData((prevData)=>({...prevData,invoiceNo:invoiceNo}))}

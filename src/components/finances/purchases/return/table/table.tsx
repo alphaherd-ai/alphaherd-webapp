@@ -61,6 +61,15 @@ function DataFromGRN(id:number|null,branchId:number|null){
        error
     }
 }
+function useProductBatchfetch(id:number|null){
+    const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll/?branchId=${id}`,fetcher,{revalidateOnFocus:true});
+    return {
+        fetchedBathces:data,
+        isBatchLoading:isLoading,
+        batchError:error
+    }
+}
+
 interface CheckedItems {
     [key: number]: boolean;
 }
@@ -73,6 +82,8 @@ const NewPurchaseReturnTable = () => {
     const appState = useAppSelector((state) => state.app)
     // const { tableData: items, setTableData: setItems } = useContext(DataContext);
     const [items,setItems]=useState<any[]>([]);   
+    const [batches,setBatches] = useState<any[]>([]);
+    const [filteredBatches,setFilteredBatches]=useState<any[]>([]);
     const [discountStates, setDiscountStates] = useState(new Array(items.length).fill(false));
     const url= useSearchParams();
     const id=url.get('id');
@@ -83,6 +94,39 @@ const NewPurchaseReturnTable = () => {
         isgrnDataError=error;
         isgrnDataLoading=isLoading;        
     }
+    const {fetchedProducts,isLoading,error}=useProductfetch(appState.currentBranchId);
+    const {fetchedBathces,isBatchLoading,batchError}=useProductBatchfetch(appState.currentBranchId);
+
+    useEffect(()=>{
+        if(!isLoading&&products&&!error){
+            const formattedProducts = fetchedProducts.map((product: Products) => ({
+                value:{
+                   id: product.id,
+                   quantity:product.quantity,
+                   itemName:product.itemName,
+                   tax:product.tax
+               },
+                label: product.itemName,
+            }));
+           //  console.log(formattedProducts)
+            setProducts(formattedProducts);
+        }
+        if(!batchError&&!isBatchLoading&&fetchedBathces){
+           const formattedProductBatches=fetchedBathces.map((product:ProductBatch)=>({
+               value:{
+                   id:product.id,
+                   productId:product.productId,
+                   quantity:1 ,
+                   batchNumber: product.batchNumber,
+                   expiry:  product.expiry,
+                   sellingPrice:  product.sellingPrice,
+               },
+               label:product.batchNumber
+           }));
+           // console.log(formattedProductBatches)
+           setBatches(formattedProductBatches)
+       }
+       },[fetchedProducts,fetchedBathces])
 
     useEffect(()=>{
             if (!isgrnDataLoading && grnData && !isgrnDataError) {
@@ -98,7 +142,7 @@ const NewPurchaseReturnTable = () => {
                 originalQuantity : item.quantity,
                 unitPrice:item.productBatch.costPrice,
                 tax:item.taxAmount,
-                discount:item.discount,
+                discount:item.discount*100,
                 expiry:item.productBatch.expiry,
                 batchNumber:item.productBatch.batchNumber,
                 freeQuantity:item.freeQuantity,
@@ -107,7 +151,7 @@ const NewPurchaseReturnTable = () => {
               setItems(itemData);
 
             //   console.log("These are the items",items)
-              
+　　 　 　 　
             }
           }, [grnData]); 
     const taxOptions = [
@@ -147,12 +191,16 @@ const NewPurchaseReturnTable = () => {
         setItems((prevItems : any) => {
             const updatedItems = prevItems.map((item: any) => {
                 if (item.id === itemId && item.quantity > 0) {
-                    return { ...item, quantity: item.quantity - 1 };
+                    const newQuantity = item.quantity - 1;
+                    const updatedDiscountAmt = (item.unitPrice * newQuantity * item.discount) / 100 || 0;
+                    return { ...item, quantity: newQuantity, discountAmount: updatedDiscountAmt };
+                    //return { ...item, quantity: item.quantity - 1 };
                 }
                 return item;
             });
             const filteredItems = updatedItems.filter((item: any) => item.quantity > 0);
             setTableData(filteredItems);
+            console.log("hvuyvyu",updatedItems);
             return updatedItems;
     });
     };
@@ -163,7 +211,10 @@ const NewPurchaseReturnTable = () => {
                 if (item.id === itemId) {
                     // Ensure quantity does not exceed purchased or original quantity
                     if ( item.quantity < item.originalQuantity) {
-                        return { ...item, quantity: item.quantity + 1 };
+                        const newQuantity = item.quantity + 1;
+                        const updatedDiscountAmt = (item.unitPrice * newQuantity * item.discount) / 100 || 0;
+                        return { ...item, quantity: newQuantity, discountAmount: updatedDiscountAmt };
+                        //return { ...item, quantity: item.quantity + 1 };
                     }
                 }
                 return item;
@@ -171,6 +222,7 @@ const NewPurchaseReturnTable = () => {
     
             const filteredItems = updatedItems.filter((item: any) => item.quantity > 0);
             setTableData(filteredItems);
+            console.log("hvuyvyu",updatedItems);
             return updatedItems;
         });
     };
@@ -181,14 +233,21 @@ const NewPurchaseReturnTable = () => {
     const handleInputChange = (itemId: number, value: string) => {
         const quantity = parseInt(value, 10);
         if (!isNaN(quantity) && quantity >= 0) {
-            setItems((prevItems:any) =>
-                prevItems.map((item:any) => {
+            setItems((prevItems:any) => {
+                const updatedItems = prevItems.map((item:any) => {
                     if (item.id === itemId) {
-                        return { ...item, quantity };
+                        const newQuantity = quantity;
+                        const updatedDiscountAmt = (item.unitPrice * newQuantity * item.discount) / 100 || 0;
+                        return { ...item, quantity: newQuantity, discountAmount: updatedDiscountAmt };
+                        //return { ...item, quantity };
                     }
                     return item;
                 })
-            );
+                const filteredItems = updatedItems.filter((item: any) => item.quantity > 0);
+                setTableData(filteredItems);
+                console.log("hvuyvyu",updatedItems);
+                return updatedItems;
+        });
         }
     };
  
@@ -208,8 +267,85 @@ const NewPurchaseReturnTable = () => {
     }, [id, items]);
 
 
+    // const handleDiscountSelect= (selectedDiscount:number,index:number)=>{
+    //     const updatedItems=[...tableData];
+         
+    //     updatedItems[index]={
+    //         ...updatedItems[index],
+    //         discount: selectedDiscount,
+    //         discountAmount: Number(selectedDiscount / 100) * updatedItems[index].unitPrice * updatedItems[index].quantity
+    //     };
+    //     console.log("hvuyvyu",updatedItems);
+    //     setTableData(updatedItems);
+    //     return updatedItems;
+    // }
+    const handleDiscountChange = (itemId: number, value: number) => {
+        setItems((prevItems: any) => {
+            const updatedItems = prevItems.map((item: any) => {
+                if (item.id === itemId) {
+                    const discountAmount = (value / 100) * item.unitPrice * item.quantity;
+                    return { ...item, discount: value, discountAmount: parseFloat(discountAmount.toFixed(2)) };
+                }
+                return item;
+            });
+            const filteredItems = updatedItems.filter((item: any) => item.quantity > 0);
+            setTableData(filteredItems);
+            console.log("hvuyvyu",updatedItems);
+            return updatedItems;
+           
+            
+        });
+    };
 
+    const handleDiscountAmountChange = (itemId: number, value: number) => {
+        setItems((prevItems: any) => {
+            const updatedItems = prevItems.map((item: any) => {
+                if (item.id === itemId) {
+                    const discountPercent = (value / (item.unitPrice * item.quantity)) * 100;
+                    return { ...item, discountAmount: value, discount: parseFloat(discountPercent.toFixed(2)) };
+                }
+                return item;
+            });
+            const filteredItems = updatedItems.filter((item: any) => item.quantity > 0);
+            setTableData(filteredItems);
+            console.log("hvuyvyu",updatedItems);
+            return updatedItems;
+            
+            
+        });
+    };
 
+    const handleUnitPriceChange = (itemId: number, value: number) => {
+        setItems((prevItems: any) => {
+            const updatedItems = prevItems.map((item: any) => {
+                if (item.id === itemId) {
+                        const newPrice = value;
+                        const updatedDiscountAmt = (item.quantity * newPrice * item.discount) / 100 || 0;
+                        return { ...item, unitPrice: value, discountAmount: updatedDiscountAmt };
+                    //return { ...item, unitPrice: value };
+                }
+                return item;
+            });
+            const filteredItems = updatedItems.filter((item: any) => item.quantity > 0);
+            setTableData(filteredItems);
+            console.log("hvuyvyu",updatedItems);
+            return updatedItems;
+            
+        });
+    };
+
+    const handleAmountChange = (itemId: number, value: number) => {
+        setItems((prevItems: any) => {
+            const updatedItems = prevItems.map((item: any) => {
+                if (item.id === itemId) {
+                    const newQuantity = value / item.unitPrice;
+                    return { ...item, quantity: newQuantity };
+                }
+                return item;
+            });
+            return updatedItems;
+        });
+    };
 
     const handleCheckboxChange = useCallback((id: number) => {
         setCheckedItems(prevState => {
@@ -225,7 +361,49 @@ const NewPurchaseReturnTable = () => {
         });
     }, [items]);
 
+const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
+    // console.log(selectedProduct);
+    if (selectedProduct.value) {
+        if (index === items.length - 1) {
+            items.push({
+                productId: null,
+                serviceId: null,
+                itemName: "",
+            });
+            setItems(items);
+        }
+      try {
+        const data = products.find((product) => product.value.id === selectedProduct.value.id);
+        setSelectedProduct(data);
+        const updatedItems = [...items];
+        updatedItems[index] = {
+          ...updatedItems[index],
+          quantity: data.value.quantity,
+          productId: selectedProduct.value.id,
+          itemName: data.value.itemName,
+          gst:data.value.tax
+        };
+        setItems(updatedItems);
 
+      
+        const productBatches = batches?.filter((batch) => batch.value.productId === selectedProduct.value.id).sort((a, b) => a.value.id - b.value.id);
+        setFilteredBatches(productBatches);
+        const defaultBatch = productBatches?.[0];
+        setItems((prevItems) =>
+          prevItems.map((item, itemIndex) =>
+            itemIndex === index ? { ...item, id: defaultBatch?.value?.id,
+                quantity: defaultBatch?.value?.quantity ,
+                batchNumber: defaultBatch?.value?.batchNumber,
+                expiry:  defaultBatch?.value?.expiry,
+                sellingPrice:  defaultBatch?.value?.sellingPrice,
+                productId:defaultBatch?.value?.productId } : item
+          )
+        );
+      } catch (error) {
+        console.error("Error fetching product details from API:", error);
+      }
+    }
+  }, [items, products]);
 
 
     return (
@@ -263,14 +441,16 @@ const NewPurchaseReturnTable = () => {
                             <div className=' flex text-textGreen text-base font-bold w-[12rem]'>Unit Price</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Batch No.</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Bar Code</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[15rem] px-2'>Exipry Date</div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[15rem] px-2'>Expiry Date</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Subtotal</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>MRP</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Tax %</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Tax Amt.</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Discount %</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Discount Amt.</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-1/12'></div>
+                            <div className='w-1/12 flex items-center text-neutral-400 text-base  gap-[12px]'>
+                                    
+                            </div>
                         
                         </div>
                         
@@ -314,11 +494,12 @@ const NewPurchaseReturnTable = () => {
                             </div>
 
                                     <div className=' flex text-gray-500 text-base  w-[12rem]'>
-                                    ₹ {item.unitPrice}
-                                        {/* <input
+                                        <input
                                             type="number"
-                                            className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                        /> */}
+                                            value={item.unitPrice}
+                                            onChange={(e) => handleUnitPriceChange(item.id, e.target.valueAsNumber)}
+                                            className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                        />
                                     </div>
                                     
                                     <div className=' flex text-gray-500 text-base  w-[15rem]'>
@@ -369,25 +550,27 @@ const NewPurchaseReturnTable = () => {
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                     /> */}
                             </div>
-                            <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                             {item.discount*100}
-                                {/* <input
-                                        type="number"
-                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    /> */}
-                            %
+                            <div className=' flex text-gray-500 text-base  w-[12rem]'>
+                                <input
+                                    type="number"
+                                    value={item.discount}
+                                    onChange={(e) => handleDiscountChange(item.id, e.target.valueAsNumber)}
+                                    className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                    step="0.01"
+                                />
                             </div>
-                            
-                            <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                            ₹ {item.discount*item.unitPrice*item.quantity}
-                                {/* <input
-                                        type="number"
-                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    /> */}
+                            <div className=' flex text-gray-500 text-base  w-[12rem]'>
+                                <input
+                                    type="number"
+                                    value={item.discountAmount}
+                                    onChange={(e) => handleDiscountAmountChange(item.id, e.target.valueAsNumber)}
+                                    className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                    step="0.01"
+                                />
                             </div>
-                                <div className='w-1/12 flex items-center text-neutral-400 text-base  gap-[12px]'>
+                            <div className='w-1/12 flex items-center text-neutral-400 text-base  gap-[12px]'>
                                     
-                                </div>
+                            </div>
                 </div>
             ))}
                     
@@ -410,8 +593,9 @@ const NewPurchaseReturnTable = () => {
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) =>  checkedItems[item.id] ?acc + (item.tax)*(item.quantity*Number(item.unitPrice)) :acc , 0).toFixed(2) ||
                                                 0}</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => checkedItems[item.id] ? acc + (item.discount)*(item.quantity*Number(item.unitPrice)) :acc , 0).toFixed(2) ||
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => checkedItems[item.id] ? acc + (item.discount/100)*(item.quantity*Number(item.unitPrice)) :acc , 0).toFixed(2) ||
                                                 0}</div>
+                            {/* <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{isNaN(items.reduce((acc, item) => acc + (item.discountPercent/100)*(item.quantity*Number(item.unitPrice)) , 0)) ? 0 : items.reduce((acc, item) => acc + (item.discountPercent/100)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2)}</div> */}
                             <div className=' flex text-gray-500 text-base font-bold w-1/12'></div>
                         
                     </div>
@@ -422,12 +606,13 @@ const NewPurchaseReturnTable = () => {
                     </div>
                     {items.map((item:any,index:number) => (
                     <div key={item.id} className="flex items-center justify-center  w-[10rem] box-border bg-white text-gray-500 border-t-0 border-r-0 border-l border-b border-solid border-gray-200 h-12">
-                        <div className=' flex text-gray-500 text-base font-medium'>{ checkedItems[item.id]?((item.tax-item.discount+1)*(item.quantity*Number(item.unitPrice))).toFixed(2):0||
+                        <div className=' flex text-gray-500 text-base font-medium'>{ checkedItems[item.id]?((item.tax-item.discount/100+1)*(item.quantity*Number(item.unitPrice))).toFixed(2):0||
                                                 0}</div>
                     </div>
                     ))}
-                    <div className=' flex text-textGreen text-base font-bold w-[10rem] h-12 items-center justify-center'>₹{items.reduce((acc, item) =>  checkedItems[item.id]?acc + (item.tax-item.discount+1)*(item.quantity*Number(item.unitPrice)):acc , 0).toFixed(2) ||
+                    <div className=' flex text-textGreen text-base font-bold w-[10rem] h-12 items-center justify-center'>₹{items.reduce((acc, item) =>  checkedItems[item.id]?acc + (item.tax-item.discount/100+1)*(item.quantity*Number(item.unitPrice)):acc , 0).toFixed(2) ||
                                                 0}</div>
+                                                
                     </div>
                     </div>
                     

@@ -19,7 +19,6 @@ export const POST=async(req: NextRequest,res:Response)=> {
             data:body.data
         }
       })
-        
         return new Response(JSON.stringify(notifs), {
           status: 201,
           headers: {

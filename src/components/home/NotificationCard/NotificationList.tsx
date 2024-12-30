@@ -30,26 +30,51 @@ const NotificationList =  ({ notifs, isLoading }) => {
   const handleAction = async (notifId: number, action: string, notifData: any) => {
     try {
       if (notifData && action === 'accept') {
-        const stockStatus = notifData.body1.stockStatus;
-        const productId = notifData.productId;
-        notifData.body1.isApproved = true;
-      //  console.log(`Extracted Product ID: ${productId}`);
-  
-        if (stockStatus === 'StockOUT' && productId) {
-          console.log("stock out");
-          await axios.put(
-            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${productId}?branchId=${appState.currentBranchId}`,
-            notifData.body1
-          );
-          console.log("Approved");
-        } else if (stockStatus === 'StockIN') {
-          console.log("stock in");
-          await axios.post(
-            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/create?branchId=${appState.currentBranchId}`,
-            notifData.body1
-          );
-          console.log("Approved");
-        }
+        console.log("notif data inside list ",notifData);
+        if(notifData.source == Notif_Source.Inventory_Update_Approval_Request){
+              const stockStatus = notifData.data.body1.stockStatus;
+              const productId = notifData.data.body1.productId;
+              notifData.data.body1.isApproved = true;
+              console.log(`Extracted Product ID: ${productId}`);
+        
+              if (stockStatus === 'StockOUT' && productId) {
+                console.log("stock out");
+                await axios.put(
+                  `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${productId}?branchId=${appState.currentBranchId}`,
+                  notifData.body.body1
+                );
+                console.log("Approved");
+              } 
+            }
+          else if(notifData.source == Notif_Source.Payment_Edit_Approval_Request)
+          {
+            const editTrans = notifData.data.body;
+            console.log("edit transcation is : ",editTrans);
+            try {
+              console.log("Saving updated transaction: ", editTrans);
+    
+              const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/${editTrans?.id}?branchId=${appState.currentBranchId}`, {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(editTrans),
+              });
+    
+              if (!response.ok) {
+                throw new Error('Failed to save transaction');
+              }
+    
+              const result = await response.json();
+              console.log('Transaction successfully updated:', result);
+    
+              alert('Transaction saved successfully');
+               // Close popup on success
+            } catch (error) {
+              console.error('Failed to save transaction: ', error);
+              alert('Failed to save transaction');
+            }
+          }
       } else {
         console.log("Approval Denied");
       }
@@ -78,7 +103,7 @@ const NotificationList =  ({ notifs, isLoading }) => {
     <>
       {notifs?.map((notif: any, index: number) => (
         <div key={notif.id}>
-          {notif.source == Notif_Source.Inventory_Update_Approval_Request && isAdmin  ?  (
+          {(notif.source == Notif_Source.Inventory_Update_Approval_Request || notif.source == Notif_Source.Payment_Edit_Approval_Request || notif.source == Notif_Source.Payment_Delete_Approval_Request) && isAdmin  ?  (
 
             
             <div className="w-[443px] h-[130px] px-5 py-4 bg-neutral-700 border border-neutral-700 rounded-[10px] justify-start items-start gap-4 inline-flex relative z-100">
@@ -101,13 +126,13 @@ const NotificationList =  ({ notifs, isLoading }) => {
                 </div>
                 <div className="flex gap-5 mt-2">
                   <button
-                    onClick={() => handleAction(notif.id, "accept",notif.data)}
+                    onClick={() => handleAction(notif.id, "accept",notif)}
                     className="px-4 py-2 bg-teal-500 text-white rounded-md cursor-pointer  border-none"
                   >
                     Approve
                   </button>
                   <button
-                    onClick={() => handleAction(notif.id, "deny",notif.data)}
+                    onClick={() => handleAction(notif.id, "deny",notif)}
                     className="px-4 py-2 bg-gray-600 text-white rounded-md cursor-pointer  border-none"
                   >
                     Deny

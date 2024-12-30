@@ -439,7 +439,7 @@ const ExsistingPurcaseReturnTable = () => {
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>Unit Price</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Batch No.</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Bar Code</div>
-                            <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Exipry Date</div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Expiry Date</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Subtotal</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>MRP</div>
                             <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Tax %</div>

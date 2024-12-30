@@ -287,16 +287,14 @@ const CreateGrnHeader = ({existingHeaderData}:any) => {
                 <div className="px-6 py-1  bg-white rounded-[10px] justify-between items-center gap-4 flex w-full ">
                     <div className="flex gap-[16px] items-center w-full">
                         <div className="text-gray-500 text-base font-bold py-3">Notes:</div>
-                        {id===null?(
+                        
                         <input
                             type="text"
-                            value={headerData.notes}
+                            value={id===null ? headerData.notes : existingHeaderData.notes}
                             className=" w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
                             placeholder="..."
                             onChange={(e) => setHeaderData((prevData) => ({ ...prevData, notes: e.target.value }))}
-                        />    ):(
-                            existingHeaderData.notes
-                        )}             
+                        />                
                         </div>
                 </div>
             </div>

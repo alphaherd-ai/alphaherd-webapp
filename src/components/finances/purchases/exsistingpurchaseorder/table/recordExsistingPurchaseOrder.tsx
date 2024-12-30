@@ -82,7 +82,7 @@ const ExsistingRecordTransactionPopup: React.FC<PopupProps> = ({setCount, header
     ]
 
     const [startDate, setStartDate] = useState(new Date());
-    const [transactionType, setTransactionType] = useState<string | null>("Money In");
+    const [transactionType, setTransactionType] = useState<string | null>("Money Out");
 
 
     const handleDateChange = (date: any) => {
