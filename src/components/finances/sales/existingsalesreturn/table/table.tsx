@@ -1,26 +1,21 @@
 "use client"
-import Download from '../../../../../assets/icons/finance/download.svg';
-import DownArrow from '../../../../../assets/icons/finance/downArrow.svg';
-import Invoice from '../../../../../assets/icons/finance/invoice.svg';
-import subicon from "../../../../../assets/icons/finance/1. Icons-26.svg"
-import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
-import addicon from "../../../../../assets/icons/finance/add.svg"
-import add1icon from "../../../../../assets/icons/finance/add1.svg"
-import sellicon from "../../../../../assets/icons/finance/sell.svg"
 
-import React, { useState, useEffect, useCallback } from 'react';
-import Select from 'react-select';
+import addicon from "../../../../../assets/icons/finance/add.svg"
+
+
+import React, { useState, useEffect } from 'react';
+
 import { useRef } from "react"
 import Image from "next/image"
-import Link from "next/link"
+
 import ExistingsalesReturnHeader from "./header"
-import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import ExistingsalesReturnBottomBar from './bottombar';
 import ExistingsalesReturnTotalAmout from './totalamount';
-import axios from 'axios';
+
 import { useSearchParams } from 'next/navigation';
 import { useAppSelector } from "@/lib/hooks"
-import { Sales } from '@prisma/client';
+
 import useSWR from 'swr';
 import formatDateAndTime from '@/utils/formateDateTime';
 import Loading2 from '@/app/loading2';

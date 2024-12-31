@@ -1,12 +1,12 @@
 "use client"
 import Image from "next/image"
-import { useAppDispatch, useAppSelector, useAppStore } from '@/lib/hooks';
+import { useAppDispatch} from '@/lib/hooks';
 // import hosimage from "../../assets/icons/loginsignup/hos.png";
 import { useState } from "react";
 import { Bounce, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react"
+
 import { updateUser, UserState } from "@/lib/features/userSlice";
 import placeicon from "../../../assets/icons/loginsignup/Placeholder logo.png"
 

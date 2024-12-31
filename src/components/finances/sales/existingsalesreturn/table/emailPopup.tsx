@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import check from "../../../../../assets/icons/finance/check.svg";
-import { Button } from "@nextui-org/react";
+
 import Image from "next/image";
 
 interface PopupEmailInputProps {

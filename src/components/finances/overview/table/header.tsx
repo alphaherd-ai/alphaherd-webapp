@@ -1,34 +1,25 @@
 "use client";
-import React, { useState } from 'react'
+import React from 'react'
 
 import Sort from '../../../../assets/icons/finance/sort.svg';
 import Filter from '../../../../assets/icons/finance/filter.svg';
-import Chart from '../../../../assets/icons/finance/chart.svg';
+
 import Download from '../../../../assets/icons/finance/download.svg';
-import DownArrow from '../../../../assets/icons/finance/downArrow.svg';
-import Invoice from '../../../../assets/icons/finance/invoice.svg';
-import Return from '../../../../assets/icons/finance/return.svg';
-import Estimate from "../../../../assets/icons/finance/list_alt.svg"
-import Expense from "../../../../assets/icons/finance/request_quote.svg"
-import Payments from "../../../../assets/icons/finance/Cash.svg"
+
 import Image from 'next/image';
-import Link from 'next/link';
+
 import useSWR from 'swr';
-import { format } from 'date-fns';
+
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { useAppSelector } from '@/lib/hooks';
-import Loading from '@/app/loading';
+
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
-import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
+import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 import FilterDropdwonCard from './FilterDropdowmCard';
 import DownloadPopup from './downloadTimeline';
-import { useSearchParams } from 'next/navigation';
-import formatDateAndTime from '@/utils/formateDateTime';
-import { date } from 'zod';
-
 
 
 const FinacesOverviewTableHeader = ({timeline}:any) => {
@@ -675,7 +666,7 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
                     </div>
 
                       
-                        <Popover placement="bottom-end" showArrow offset={10}>
+                        {/* <Popover placement="bottom-end" showArrow offset={10}>
                             <PopoverTrigger>
                                 <Button 
                                     variant="solid"
@@ -745,7 +736,7 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
                                 </div>
 
                             </PopoverContent>
-                        </Popover>
+                        </Popover> */}
 
 
 

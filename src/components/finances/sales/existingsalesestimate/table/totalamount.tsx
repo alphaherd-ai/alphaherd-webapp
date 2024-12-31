@@ -3,16 +3,16 @@
 
 import React, { useState, useEffect } from 'react';
 import RecordTransactionPopup from './recordTransactionpopup';
-import Link from "next/link"
+
 import Image from "next/image"
-import Select from 'react-select';
+
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 import formatDateAndTime from '@/utils/formateDateTime';
 import Cash from "../../../../../assets/icons/finance/Cash.svg"
 import Loading2 from '@/app/loading2';
 import { Button } from '@nextui-org/react';
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
-import { Menu } from 'react-feather';
+
 import { useAppSelector } from '@/lib/hooks';
 
 const ExistingsaleEstimateTotalAmout = ({ otherData, items, isLoading }: any) => {

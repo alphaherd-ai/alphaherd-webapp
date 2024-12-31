@@ -14,7 +14,7 @@ import Select from 'react-select';
 import { Button } from '@nextui-org/react';
 import { useAppSelector } from '@/lib/hooks';
 import useSWR from 'swr';
-import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
+
 import Loading2 from '@/app/loading2';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())

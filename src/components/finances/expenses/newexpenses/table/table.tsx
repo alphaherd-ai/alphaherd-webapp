@@ -1,32 +1,28 @@
 
 'use client';
-import DownArrow from '../../../../../assets/icons/finance/downArrow.svg';
-import subicon from "../../../../../assets/icons/finance/1. Icons-26.svg"
+
 import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
-import Subtract from "../../../../../assets/icons/finance/Subtract.svg"
-import Add from "../../../../../assets/icons/finance/add (2).svg"
+
 import Popup from '../../../../finances/expenses/newexpenses/table/newPartyPopup';
 import addicon from "../../../../../assets/icons/finance/add.svg"
-import add1icon from "../../../../../assets/icons/finance/add1.svg"
-import sellicon from "../../../../../assets/icons/finance/sell.svg"
-import Invoice from '../../../../../assets/icons/finance/invoice.svg';
+
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import Select from 'react-select';
 import { useRef } from "react"
 import Image from "next/image"
-import Link from "next/link"
+
 import NewExpensesHeader from "./header"
-import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
+import {  Button } from "@nextui-org/react";
 import NewExpensesBottomBar from './bottombar';
 import NewExpensesTotalAmout from './totalamount';
 import axios from 'axios';
 import { DataContext } from './DataContext';
 import { useAppSelector } from "@/lib/hooks";
 import { Tax } from '@prisma/client';
-import formatDateAndTime from '@/utils/formateDateTime';
+
 import { useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
-import capitalizeFirst from '@/utils/capitiliseFirst';
+
 
 interface expenseList {
     id: string,

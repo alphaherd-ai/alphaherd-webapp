@@ -2,11 +2,11 @@
 
 
 import React, { useState, useEffect, useContext } from 'react';
-import Link from "next/link"
+
 import Image from "next/image"
 import Select from 'react-select';
 import { DataContext } from './DataContext';
-import { Tax } from '@prisma/client';
+
 import Cash from "../../../../../assets/icons/finance/Cash.svg"
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 import RecordTransactionPopup from './recordTransactionPopup';

@@ -239,7 +239,7 @@ model Patients {
   age               String?
   gender            String?
   isInpatient       Boolean?
-  date              DateTime?        @default(now())
+  date              DateTime?          @default(now())
   clients           Clients?         @relation(fields: [clientId], references: [id])
   DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
   databaseSectionId Int?

@@ -1,8 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import Settings from '../../../assets/icons/finance/Settings.svg';
-import Search from '../../../assets/icons/finance/Search.svg';
-import Image from 'next/image';
+
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import ExpensesIcon from './icons/expensesIcon';

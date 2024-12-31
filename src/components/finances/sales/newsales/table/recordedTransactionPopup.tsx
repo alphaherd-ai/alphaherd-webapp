@@ -12,7 +12,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 import calicon from "../../../../../assets/icons/finance/calendar_today.svg";
 
-import closeicon from "../../../../../assets/icons/inventory/closeIcon.svg";
+
 import Select from 'react-select';
 import { Button } from '@nextui-org/react';
 import { useAppSelector } from '@/lib/hooks';
@@ -20,7 +20,7 @@ import Loading2 from '@/app/loading2';
 import useSWR from 'swr';
 import { useContext } from 'react';
 import { DataContext } from './DataContext';
-import { header } from 'express-validator';
+
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 

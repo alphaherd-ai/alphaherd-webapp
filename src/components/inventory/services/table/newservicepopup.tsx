@@ -3,11 +3,11 @@ import Image from "next/image";
 import React, { useEffect, useState } from 'react';
 import closeicon from "../../../../assets/icons/inventory/closeIcon.svg";
 import Select from 'react-select';
-import CreatableSelect from 'react-select/creatable';
+
 import { useAppSelector } from '@/lib/hooks';
 import Arrow from "../../../../assets/icons/inventory/arrow.svg"
 import Loading2 from "@/app/loading2";
-import capitalizeFirst from "@/utils/capitiliseFirst";
+
 import axios from 'axios';
 import useSWR from "swr";
 const fetcher = (...args: [RequestInfo, RequestInit?]) => fetch(...args).then(res => res.json())
@@ -203,10 +203,10 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
     const handleChange = (field: string, value: any) => {
         setFormData((prevState: any) => {
             const updatedFormData = { ...prevState, [field]: value };
-
+            console.log(serviceList);
             // Validation
             if (field === 'name') {
-                const isServiceExists = serviceList?.some((service: any) => service.name === value);
+                const isServiceExists = serviceList?.some((service: any) => (service.name).toLowerCase() === (value).toLowerCase());
                 console.log(isServiceExists);
                 setNameError(isServiceExists ? 'The service name  you are trying to add already exists' : value ? '' : 'Service name is required');
                 

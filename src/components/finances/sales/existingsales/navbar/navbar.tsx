@@ -2,10 +2,9 @@
 "use client"
 
 import lefticon from "../../../../../assets/icons/finance/left_icon.svg"
-import Link from "next/link"
+
 import Image from "next/image"
-import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
-import Menu from '@/assets/icons/finance/menu.svg';
+
 import { useRouter } from "next/navigation"
 
 const ExistingsalesNavbar = () => {

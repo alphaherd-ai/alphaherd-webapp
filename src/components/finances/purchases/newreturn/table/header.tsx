@@ -1,28 +1,28 @@
 "use client"
 
 
-import editicon from "../../../../../assets/icons/finance/1. Icons-25.svg"
+
 
 import calicon from "../../../../../assets/icons/finance/calendar_today.svg"
 
 import React, { useState, useEffect, useContext } from 'react';
 import Select from 'react-select';
 import { useRef } from "react"
-import Link from "next/link"
+
 import Image from "next/image"
 import DatePicker from "react-datepicker"
 import 'react-datepicker/dist/react-datepicker.css';
-import { Button } from "@nextui-org/react";
+
 import useSWR from 'swr';
 import { useAppSelector } from '@/lib/hooks';
 import { DataContext } from "./DataContext";
 import { useSearchParams } from "next/navigation";
 import formatDateAndTime from "@/utils/formateDateTime";
 import { generateInvoiceNumber } from "@/utils/generateInvoiceNo";
-import { custom } from "zod";
+
 import Loading2 from "@/app/loading2";
 import { useRouter } from 'next/navigation';
-import SalesInvoice from '@/app/finance/purchases/invoice/page';
+
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 const NewPurchaseReturnNewHeader = ({existingHeaderData}:any) => {
@@ -51,7 +51,7 @@ const NewPurchaseReturnNewHeader = ({existingHeaderData}:any) => {
     useEffect(() => {
         if (!purchaseError && !purchaseLoading && purchaseData) {
             const filteredOptions = purchaseData.filter((item: any) => (
-                item.invoiceNo.includes('PI')
+                item.type.includes('Purchase_Invoice')
             ))
 
             const options = filteredOptions.map((item: any) => (
@@ -61,7 +61,7 @@ const NewPurchaseReturnNewHeader = ({existingHeaderData}:any) => {
                 }
             ))
             setSearchOptions(options)
-            //console.log(options);
+            //console.log(purchaseData);
         }
     }, [purchaseData, purchaseLoading, purchaseError])
     useEffect(() => {
@@ -105,12 +105,18 @@ const NewPurchaseReturnNewHeader = ({existingHeaderData}:any) => {
             setDistributors(distributors);
 
         }
-        if (headerData.distributor && headerData.distributor.value?.invoiceNo) {
-            const invoices = headerData.distributor.value.invoiceNo.map((distributor: any) => ({
-                value: distributor,
-                label: distributor
-            }))
-            setInvoiceOptions(invoices);
+        if (headerData.distributor) {
+            const invoices = purchaseData.filter((item: { type: string; distributorId: number }) => 
+                item.type === 'Purchase_Invoice' && item.distributorId === headerData.distributor.distributorId
+            );
+            console.log(invoices);
+            const options = invoices.map((item: any) => (
+                {
+                    label: item.invoiceNo,
+                    value: item
+                }
+            ))
+            setSearchOptions(options)
         }
 
     }, [data, headerData])

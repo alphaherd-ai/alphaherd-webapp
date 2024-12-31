@@ -3,12 +3,11 @@ import React, { useState } from 'react'
 
 import Sort from '../../../../assets/icons/finance/sort.svg';
 import Filter from '../../../../assets/icons/finance/filter.svg';
-import Chart from '../../../../assets/icons/finance/chart.svg';
+
 import Download from '../../../../assets/icons/finance/download.svg';
-import DownArrow from '../../../../assets/icons/finance/downArrow.svg';
+
 import FilterDropDownCard from './FilterDropDownCard';
-import Update from '../../../../assets/icons/inventory/update.svg';
-import Add from '../../../../assets/icons/inventory/add.svg';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';

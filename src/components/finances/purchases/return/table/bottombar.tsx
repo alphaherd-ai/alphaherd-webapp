@@ -1,13 +1,10 @@
 "use client"
 
-import printicon from "../../../../../assets/icons/finance/print.svg"
-import shareicon from "../../../../../assets/icons/finance/share.svg"
-import drafticon from "../../../../../assets/icons/finance/draft.svg"
-import checkicon from "../../../../../assets/icons/finance/check.svg"
-import React, { useState, useEffect, useContext } from 'react';
-import downloadicon from "../../../../../assets/icons/finance/download.svg"
 
-import Link from "next/link"
+import checkicon from "../../../../../assets/icons/finance/check.svg"
+import React, { useState, useContext } from 'react';
+
+
 import Image from "next/image"
 import { Button } from '@nextui-org/react'
 import { DataContext } from "./DataContext"
@@ -15,7 +12,7 @@ import { useAppSelector } from "@/lib/hooks"
 import { useRouter, useSearchParams } from "next/navigation"
 import { FinanceCreationType } from "@prisma/client"
 import axios from "axios"
-import { mutate } from "swr"
+
 
 const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
     const { headerData, tableData, totalAmountData } = useContext(DataContext);

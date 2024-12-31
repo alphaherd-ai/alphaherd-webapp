@@ -1,12 +1,12 @@
 'use client';
 import React, { useEffect, useMemo, useState } from 'react'
 import FinancesSalesTableBottombar from './bottombar'
-import FinacesOverviewTableBottombar from './bottombar'
+
 import FinancesSalesTableHeader from './header'
-import FinacesOverviewTableHeader from './header'
+
 import { FinanceCreationType } from '@prisma/client';
 import FinancesSalesTableItem from './item'
-import FinacesOverviewTableItem from './item'
+
 import { useAppSelector } from '@/lib/hooks';
 import { useSearchParams } from 'next/navigation';
 import useSWR from 'swr';

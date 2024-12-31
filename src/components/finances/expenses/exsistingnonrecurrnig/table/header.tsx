@@ -1,7 +1,7 @@
 "use client"
 import formatDateAndTime from '@/utils/formateDateTime';
 import React, { useEffect, useRef, useState } from 'react'
-import editicon from "../../../../../assets/icons/finance/1. Icons-25.svg"
+
 import Loading2 from '@/app/loading2';
 
 const ExsistingNonRecurringHeader = ({ otherData, isLoading }: any) => {

@@ -1,11 +1,10 @@
 
 import React, { useEffect, useState } from 'react'
-import Rupee from "../../../../../assets/icons/finance/rupee.svg"
+
 import Image from "next/image"
-import { Button } from "@nextui-org/react";
-import calicon from "../../../../../assets/icons/finance/calendar_today.svg"
+
 import Cash from "../../../../../assets/icons/finance/Cash.svg"
-import DatePicker from "react-datepicker"
+
 import 'react-datepicker/dist/react-datepicker.css';
 import formatDateAndTime from '@/utils/formateDateTime';
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';

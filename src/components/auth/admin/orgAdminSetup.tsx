@@ -1,16 +1,16 @@
 "use client"
 import Image from "next/image"
-import { CldUploadButton, CldUploadWidget } from 'next-cloudinary';
+import { CldUploadButton } from 'next-cloudinary';
 import upload from "../../../assets/icons/loginsignup/upload.svg";
 import backBtn from '@/assets/icons/loginsignup/backBtn.svg';
-import continuebutton from "../../assets/icons/loginsignup/1. Icons-24.svg"
+
 import eyeicon from "../../../assets/icons/loginsignup/1. Icons-24 (4).svg"
 
 import eyeicon1 from "../../../assets/icons/loginsignup/1. Icons-24 (5).svg"
 
 
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 
 const OrgAdminSetup = (props: any, { handleFileUpload }: any) => {
 
