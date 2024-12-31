@@ -21,7 +21,6 @@ enum Notif_Source {
   Inventory_Product_Expiry
   Inventory_Product_MaxStock
   Inventory_Update_Approval_Request
-
   Payment_Edit_Approval_Request
   Payment_Delete_Approval_Request
   Inventory_ProductBatch
@@ -485,6 +484,8 @@ model Items {
   category          String?
   sellingPrice      Int?
   quantity          Int?
+  transactionId     String?
+  invoiceNo         String?
   lowQty            Int?
   highQty           Int?
   discount          Float?

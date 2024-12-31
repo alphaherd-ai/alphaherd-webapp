@@ -479,7 +479,7 @@ const handleAddItem = useCallback(() => {
     return (
         <>
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
-                <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-end items-center gap-6 flex">
+                <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-between items-center gap-6 flex">
                 <div className="left flex gap-3 items-center ">
                     <h2 className="headd text-[#6B7E7D] " id="totalgnrhead">
                         Total GRN Amount
@@ -813,9 +813,9 @@ const handleAddItem = useCallback(() => {
                         </div>
                     </div>
 
-                    <CreateGrnTotalAmount orderData={orderData} />
+                    <CreateGrnTotalAmount orderData={otherData}/>
                 </div>
-                <CreateGrnBottomBar orderData={orderData} />
+                <CreateGrnBottomBar orderData={otherData} />
             </div>
             {showPopup && <Popup onClose={togglePopup} />}
 

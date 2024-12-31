@@ -65,7 +65,22 @@ const CreateGrnTotalAmount = ({ orderData }: any) => {
     const handleSelectChange = (selectedOption: any) => {
         setDiscountMethod(selectedOption.value);
     };
-
+    useEffect(() => {
+            if (orderData.recordTransaction) {
+                for (let i = 0; i < orderData.recordTransaction.length; i++) {
+                    const formData = orderData.recordTransaction[i];
+                    const newTransaction = {
+                        amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1 * formData.amountPaid, 10) || (balanceDue),
+                        date: formData.date || new Date(),
+                        isAdvancePayment: formData.isAdvancePayment,
+                        mode: formData.mode,
+                        moneyChange: formData.moneyChange,
+                        receiptNo: formData?.receiptNo,
+                    };
+                    setTransactionsData((prevTransactions: any) => [...prevTransactions, newTransaction]);
+                };
+            }
+        }, [orderData.recordTransaction]);
     const [discountInput, setDiscountInput] = useState(0);
     const [selectedDiscountPer, setDiscountPer] = useState(0);
     const handleDiscountChange = (value: number) => {
@@ -123,6 +138,7 @@ const CreateGrnTotalAmount = ({ orderData }: any) => {
             lastDateOfReturn: date
         }))
     }
+
     // const updateGrandTotal = () => {
     //     const discountedAmount = (totalAmount - totalAmount * overAllDiscount)||0;
     //     const shippingValue = parseFloat(shipping) || 0;

@@ -44,19 +44,21 @@ const NewExpensesBottomBar = ({ expenseData }: any) => {
             totalQty += 1 || 0;
         });
         const items = tableData.map(data => ({
-            sellingPrice: data.sellingPrice,
-            taxAmount: data.gst,
+            sellingPrice: data.cost,
+            // taxAmount: data.gst,
+            invoiceNo: data.invoiceNo,
+            transactionId: data.transactionId,
             name: data.itemName,
             category: data.category
         }));
         const data = {
-            party: (id === null) ? allData.headerData.customer.value : expenseData.party,
+            party: (id === null) ? allData.headerData.title.value : expenseData.party,
             notes: (id === null) ? allData.headerData.notes : expenseData.notes,
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo: (id === null) ? allData.headerData.invoiceNo : expenseData.invoiceNo,
             dueDate: (id === null) ? (allData.headerData.dueDate) || new Date(Date.now()) : expenseData.dueDate,
-            shipping: allData.totalAmountData.shipping,
-            adjustment: allData.totalAmountData.adjustment,
+            // shipping: allData.totalAmountData.shipping,
+            // adjustment: allData.totalAmountData.adjustment,
             totalCost: allData.totalAmountData.totalCost,
             overallDiscount: allData.totalAmountData.gst?.value,
             totalQty: totalQty,
@@ -106,7 +108,7 @@ const NewExpensesBottomBar = ({ expenseData }: any) => {
     }
 
 
-    const isDisabled = !(headerData.customer || expenseData?.party) || (id===null) ? tableData.length===1 : tableData.length===0;
+    const isDisabled = !(headerData.title || expenseData?.party) || (id===null) ? tableData.length===1 : tableData.length===0;
     console.log(isDisabled);
     return (
         <>
