@@ -103,8 +103,12 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
                 console.log(clientData);
                 if(clientData){
                     setNewClientData(clientData);
-                    setIsNewClientClicked((prev: any) => !prev);
-                    setNewClient(clientData);
+                    if (setIsNewClientClicked) {
+                        setIsNewClientClicked((prev: any) => !prev);
+                    }
+                    if (setNewClient) {
+                        setNewClient(clientData);
+                    }
                 }
 
                 console.log('Data saved successfully');
