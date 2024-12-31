@@ -87,7 +87,22 @@ const NewsalesTotalAmout = ({ otherData }: { otherData: any }) => {
 
     const { totalAmountData, setTotalAmountData } = useContext(DataContext);
     const { transactionsData, setTransactionsData } = useContext(DataContext);
-
+    useEffect(() => {
+        if (otherData.recordTransaction) {
+            for (let i = 0; i < otherData.recordTransaction.length; i++) {
+                const formData = otherData.recordTransaction[i];
+                const newTransaction = {
+                    amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1 * formData.amountPaid, 10) || (balanceDue),
+                    date: formData.date || new Date(),
+                    isAdvancePayment: formData.isAdvancePayment,
+                    mode: formData.mode,
+                    moneyChange: formData.moneyChange,
+                    receiptNo: formData?.receiptNo,
+                };
+                setTransactionsData((prevTransactions: any) => [...prevTransactions, newTransaction]);
+            };
+        }
+    }, [otherData.recordTransaction]);
     const [grandAmt, setGrandAmt] = useState(totalAmount);
 
     const gstOptions = [
@@ -165,12 +180,6 @@ const NewsalesTotalAmout = ({ otherData }: { otherData: any }) => {
     useEffect(() => {
         updateGrandTotal();
     }, [totalAmount, selectedDiscountPer, discountInput, discountMethod, shipping, adjustment]);
-
-
-
-
-
-
     const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
     const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out' && !item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
@@ -269,38 +278,42 @@ const NewsalesTotalAmout = ({ otherData }: { otherData: any }) => {
                                 </div>
 
                             </div>}
-                        {transactionsData && transactionsData.map((transaction, index) => (
-                            transaction.isAdvancePayment &&
-                            (<div key={index} className="w-full   px-6 py-2 bg-white justify-between items-center gap-6 flex  border border-t-0 border-solid border-borderGrey">
-                                <div className="text-gray-500 text-md font-medium ">Advance Paid on  {formatDateAndTime(transaction.date).formattedDate}</div>
-                                <div className='text-gray-500 text-md font-medium'>#{transaction?.receiptNo}</div>
-                                <div className='flex items-center h-9 px-4  justify-between rounded-lg '>
-                                    <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
-                                        ₹ {transaction.amountPaid > 0 ? transaction.amountPaid : -1 * transaction.amountPaid}
-                                    </div>
-                                </div>
-                            </div>)
-                        ))
-                        }
+                        <div className="w-full  bg-white  justify-between items-center  flex">
+                            <div className='w-full h-[9.6rem] flex flex-col overflow-auto container'>
+                                {transactionsData && transactionsData.map((transaction, index) => (
+                                    transaction.isAdvancePayment &&
+                                    (<div key={index} className="w-full   px-6 py-2 bg-white justify-between items-center gap-6 flex  border border-t-0 border-solid border-borderGrey">
+                                        <div className="text-gray-500 text-md font-medium ">Advance Paid on  {formatDateAndTime(transaction.date).formattedDate}</div>
+                                        <div className='text-gray-500 text-md font-medium'>#{transaction?.receiptNo}</div>
+                                        <div className='flex items-center h-9 px-4  justify-between rounded-lg '>
+                                            <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
+                                                ₹ {transaction.amountPaid > 0 ? transaction.amountPaid : -1 * transaction.amountPaid}
+                                            </div>
+                                        </div>
+                                    </div>)
+                                ))
+                                }
 
-                        {transactionsData && transactionsData.map((transaction, index) => (
-                            !transaction.isAdvancePayment &&
-                            (<div key={index} className="w-full  px-6 py-2 bg-white flex justify-between items-center gap-6  border border-t-0 border-solid border-borderGrey">
-                                <div className="text-gray-500 text-md font-medium ">Paid on {formatDateAndTime(transaction.date).formattedDate}</div>
-                                <div className='text-gray-500 text-md font-medium'>#{transaction?.receiptNo}</div>   
-                                <div className="text-textGrey2 text-base font-medium  w-1/3 py-4 flex  items-center">
-                                    <div className='flex pr-2'>
-                                        <Image src={Cash} alt='Cash' className='w-4 h-4 ' />
-                                    </div>
-                                    {transaction.mode}
-                                </div>
-                                <div className="text-textGrey2 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid > 0 ? transaction.amountPaid : -1 * transaction.amountPaid)?.toFixed(2)}
-                                    {transaction.moneyChange === 'Out' && <span className="px-2 py-1 rounded-md bg-[#FFEAEA] text-[#FF3030] text-sm font-medium ml-[5px]">Out</span>}
-                                    {transaction.moneyChange === 'In' && <span className="px-2 py-1 rounded-md bg-[#E7F5EE] text-[#0F9D58] text-sm font-medium ml-[5px]">In</span>}
-                                </div>
-                            </div>)
-                        ))
-                        }
+                                {transactionsData && transactionsData.map((transaction, index) => (
+                                    !transaction.isAdvancePayment &&
+                                    (<div key={index} className="w-full  px-6 py-2 bg-white flex justify-between items-center gap-6  border border-t-0 border-solid border-borderGrey">
+                                        <div className="text-gray-500 text-md font-medium ">Paid on {formatDateAndTime(transaction.date).formattedDate}</div>
+                                        <div className='text-gray-500 text-md font-medium'>#{transaction?.receiptNo}</div>   
+                                        <div className="text-textGrey2 text-base font-medium  w-1/3 py-4 flex  items-center">
+                                            <div className='flex pr-2'>
+                                                <Image src={Cash} alt='Cash' className='w-4 h-4 ' />
+                                            </div>
+                                            {transaction.mode}
+                                        </div>
+                                        <div className="text-textGrey2 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid > 0 ? transaction.amountPaid : -1 * transaction.amountPaid)?.toFixed(2)}
+                                            {transaction.moneyChange === 'Out' && <span className="px-2 py-1 rounded-md bg-[#FFEAEA] text-[#FF3030] text-sm font-medium ml-[5px]">Out</span>}
+                                            {transaction.moneyChange === 'In' && <span className="px-2 py-1 rounded-md bg-[#E7F5EE] text-[#0F9D58] text-sm font-medium ml-[5px]">In</span>}
+                                        </div>
+                                    </div>)
+                                ))
+                                }
+                            </div>
+                        </div>
 
                         <div className="w-full  px-6 bg-white rounded-bl-md rounded-br-md justify-between items-center flex border border-t-0 border-solid border-borderGrey">
 
