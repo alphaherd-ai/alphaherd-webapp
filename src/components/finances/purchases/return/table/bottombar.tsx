@@ -16,7 +16,7 @@ import axios from "axios"
 
 const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
     const { headerData, tableData, totalAmountData } = useContext(DataContext);
-    console.log("invoice data is :",invoiceData);
+    //console.log("invoice data is :",invoiceData);
     const appState = useAppSelector((state) => state.app);
     const url = useSearchParams();
     const id = url.get('id');
@@ -27,7 +27,7 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
     const handleSubmit = async () => {
         
         const allData = {headerData, tableData, totalAmountData};
-        console.log(allData)
+        //console.log(allData)
         let totalQty=0;
         tableData.forEach(data => {
             totalQty+=(data.quantity)||0;
@@ -38,7 +38,7 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
             sellingPrice:Number(data.maxRetailPrice),
             taxAmount:data.tax,
             name:data.itemName,
-            discount:data.discount,
+            discount:data.discount/100,
             productBatchId:data.id
     }));
         const data={
@@ -60,9 +60,9 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
             }
             
         }
-        console.log("bottom bar data is : ",data);
+        //console.log("bottom bar data is : ",data);
         
-        console.log(JSON.stringify(data))
+        //console.log(JSON.stringify(data))
         try {
             setSaving(true);
             const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Return}?branchId=${appState.currentBranchId}`,data)

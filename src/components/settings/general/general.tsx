@@ -223,7 +223,7 @@ const GeneralSettings = () => {
                 );
 
                 if (missingPaymentMethods.length > 0) {
-                    console.log('Adding missing payment methods:', missingPaymentMethods);
+                    //console.log('Adding missing payment methods:', missingPaymentMethods);
                     
                     try {
                         for (const method of missingPaymentMethods) {
@@ -247,7 +247,7 @@ const GeneralSettings = () => {
                         console.error('Error while adding default payment methods:', error);
                     }
                 } else {
-                    console.log('All default payment methods already exist');
+                    //console.log('All default payment methods already exist');
                     setPaymentMethod(data); 
                 }
             }
@@ -278,7 +278,7 @@ const GeneralSettings = () => {
                 );
 
                 if (missingCategories.length > 0) {
-                    console.log('Adding missing categories:', missingCategories);
+                    //console.log('Adding missing categories:', missingCategories);
                     try {
                         await fetch(
                             `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemCategory/create?branchId=${appState.currentBranchId}`,
@@ -296,7 +296,7 @@ const GeneralSettings = () => {
                         console.error('Error while adding default categories:', error);
                     }
                 } else {
-                    console.log('All default categories already exist');
+                    //console.log('All default categories already exist');
                 }
             }
         };
@@ -325,7 +325,7 @@ const GeneralSettings = () => {
                 );
 
                 if (missingUnit.length > 0) {
-                    console.log('Adding missing categories:', missingUnit);
+                    //console.log('Adding missing categories:', missingUnit);
                     try {
                         await fetch(
                             `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemUnit/create?branchId=${appState.currentBranchId}`,
@@ -343,7 +343,7 @@ const GeneralSettings = () => {
                         console.error('Error while adding default categories:', error);
                     }
                 } else {
-                    console.log('All default categories already exist');
+                    //console.log('All default categories already exist');
                 }
             }
         };
@@ -352,7 +352,7 @@ const GeneralSettings = () => {
             setItemUnits(itemUnitsData); 
         }
     }, [itemUnitsData, itemUnitsError, isLoadingItemUnits]);
-    console.log("item categories is :",itemUnits);
+    //console.log("item categories is :",itemUnits);
     // const [species, setspecies] = useState([]);
     // const {data: speciesData, error: speciesError, isLoading: isLoadingspecies} = useSWR(
     //     `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`,
@@ -361,7 +361,7 @@ const GeneralSettings = () => {
     // );
     // useEffect(() => {
     //     if (!isLoadingspecies && !speciesError && speciesData) {
-    //         console.log("species data is :",species);
+    //         //console.log("species data is :",species);
     //         setspecies(speciesData); 
     //     }
     // }, [speciesData, speciesError, isLoadingspecies]);
@@ -383,7 +383,7 @@ const GeneralSettings = () => {
                 );
 
                 if (missingReasons.length > 0) {
-                    console.log('Adding missing reasons:', missingReasons);
+                    //console.log('Adding missing reasons:', missingReasons);
                     try {
                         await fetch(
                             `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/reason/create?branchId=${appState.currentBranchId}`,
@@ -400,7 +400,7 @@ const GeneralSettings = () => {
                         console.error('Error while adding default categories:', error);
                     }
                 } else {
-                    console.log('All default categories already exist');
+                    //console.log('All default categories already exist');
                 }
             }
         };
@@ -429,7 +429,7 @@ const GeneralSettings = () => {
                 );
 
                 if (missingTaxTypes.length > 0) {
-                    console.log('Adding missing tax types:', missingTaxTypes);
+                    //console.log('Adding missing tax types:', missingTaxTypes);
                     try {
                         await fetch(
                             `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/taxType/create?branchId=${appState.currentBranchId}`,
@@ -447,7 +447,7 @@ const GeneralSettings = () => {
                         console.error('Error while adding default tax types:', error);
                     }
                 } else {
-                    console.log('All default tax types already exist');
+                    //console.log('All default tax types already exist');
                 }
             }
         };
@@ -479,7 +479,7 @@ const GeneralSettings = () => {
                 );
 
                 if (missingServiceCategory.length > 0) {
-                    console.log('Adding missing reasons:', missingServiceCategory);
+                    //console.log('Adding missing reasons:', missingServiceCategory);
                     try {
                         await fetch(
                             `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/serviceCategory/create?branchId=${appState.currentBranchId}`,
@@ -496,7 +496,7 @@ const GeneralSettings = () => {
                         console.error('Error while adding default categories:', error);
                     }
                 } else {
-                    console.log('All default categories already exist');
+                    //console.log('All default categories already exist');
                 }
             }
         };
@@ -525,7 +525,7 @@ const GeneralSettings = () => {
                 );
 
                 if (missingExpenseCategory.length > 0) {
-                    console.log('Adding missing reasons:', missingExpenseCategory);
+                    //console.log('Adding missing reasons:', missingExpenseCategory);
                     try {
                         await fetch(
                             `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/expenseCategory/create?branchId=${appState.currentBranchId}`,
@@ -542,7 +542,7 @@ const GeneralSettings = () => {
                         console.error('Error while adding default categories:', error);
                     }
                 } else {
-                    console.log('All default categories already exist');
+                    //console.log('All default categories already exist');
                 }
             }
         };
@@ -563,6 +563,7 @@ const GeneralSettings = () => {
         fetcher,
         { revalidateOnFocus: true }
     );
+    //console.log("species data is :" ,speciesData);
 
     // Fetch breed data
     const { data: breedData, error: breedError, isLoading: isLoadingBreed } = useSWR(
@@ -570,6 +571,7 @@ const GeneralSettings = () => {
         fetcher,
         { revalidateOnFocus: true }
     );
+    //console.log("breed data is :" ,breedData);
 
     useEffect(() => {
         const initializeSpeciesAndBreeds = async () => {
@@ -582,7 +584,9 @@ const GeneralSettings = () => {
                     if (existingSpecies) {
                         for (const breed of defaultSpecies.breed) {
                             const breedExists = breedData.some(
-                                (b: any) => JSON.stringify(b.name) === JSON.stringify([breed]) && b.speciesId === existingSpecies.id
+                                (b: any) => Array.isArray(b.name) &&
+                                b.name.includes(breed) &&
+                                b.speciesId === existingSpecies.id
                             );
     
                             if (!breedExists) {
@@ -603,7 +607,9 @@ const GeneralSettings = () => {
     
                         const speciesBreeds = breedData
                             .filter((b: any) => b.speciesId === existingSpecies.id)
-                            .map((b: any) => ({ name: b.name[0] })); // Convert breed to object with name property
+                            .map((b: any) => ({
+                                name: Array.isArray(b.name) ? b.name[0] : b.name,
+                              })); // Convert breed to object with name property
     
                         speciesWithBreeds.push({ ...existingSpecies, breed: speciesBreeds });
                     } else {
@@ -653,7 +659,7 @@ const {data: locationCategoryData, error: locationCategoryError, isLoading: isLo
     fetcher,
     { revalidateOnFocus: true } 
 );
-//console.log("location category data is :",locationCategoryData);
+////console.log("location category data is :",locationCategoryData);
 useEffect(() => {
     const addDefaultLocationCategory = async () => {
         if (locationCategoryData && locationCategoryData.length===0) {
@@ -664,7 +670,7 @@ useEffect(() => {
             const missingLocationCategory = defaultLocationCategory;
 
             if (missingLocationCategory.length > 0) {
-                console.log('Adding missing reasons:', missingLocationCategory);
+                //console.log('Adding missing reasons:', missingLocationCategory);
                 try {
                     await fetch(
                         `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/LocationCategory/create?branchId=${appState.currentBranchId}`,
@@ -681,7 +687,7 @@ useEffect(() => {
                     console.error('Error while adding default categories:', error);
                 }
             } else {
-                console.log('All default categories already exist');
+                //console.log('All default categories already exist');
             }
         }
     };
@@ -691,16 +697,17 @@ useEffect(() => {
     }
 }, [locationCategoryData, locationCategoryError, isLoadinglocationCategory]);
 
-console.log("location data is :", locationCategory);
+//console.log("location data is :", locationCategory);
 
     // Toggle species expansion to show/hide breeds
     const handleExpandSpecies = (speciesId: number) => {
+        //console.log("specie id si : " , speciesId);
         setExpandedSpecies(expandedSpecies === speciesId ? null : speciesId);
     };
-    // console.log('item categories: ', itemCategories);
-    // console.log('Tax Type',taxType);
-    // console.log('Species: ', species);
-    // console.log('Breed',expandedSpecies);
+    // //console.log('item categories: ', itemCategories);
+    // //console.log('Tax Type',taxType);
+   //console.log('Species: ', species);
+    // //console.log('Breed',expandedSpecies);
 
 
 
@@ -812,7 +819,7 @@ console.log("location data is :", locationCategory);
                                         
                                     </div>
                                     
-                                    <div className="w-full  max-h-[15rem] overflow-y-auto">
+                                   
                                     {/* {isLoadingspecies && <Loading />}
                                     {species.map((item: any,index:any) =>(
                                         <div key={index} className='w-full'>
@@ -834,7 +841,8 @@ console.log("location data is :", locationCategory);
                                     ))
                                     }  */}
                                     {isLoadingSpecies && <Loading />}
-                                        {species.map((item: any, index: number) => (
+                                         <div className="w-full  max-h-[15rem] overflow-y-auto">
+                                        {speciesData?.map((item: any, index: number) => (
                                             <div key={index} className="w-full">
                                                 {/* Display species name */}
                                                 <div
@@ -853,7 +861,7 @@ console.log("location data is :", locationCategory);
                                                             {item.breed && Array.isArray(item.breed) && item.breed.length > 0 ? (
                                                                 item.breed.map((breedItem: any, breedIndex: number) => (
                                                                     <div key={breedIndex} className="text-gray-500 text-sm font-medium py-1">
-                                                                        {/* Display breed name */}
+                                                                        
                                                                         {breedItem.name}
                                                                     </div>
                                                                 ))

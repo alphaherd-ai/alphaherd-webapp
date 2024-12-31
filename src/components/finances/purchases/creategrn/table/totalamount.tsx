@@ -169,7 +169,7 @@ const CreateGrnTotalAmount = ({ orderData }: any) => {
     }, [count]);
 
 
-    // console.log(headerData)
+     console.log(headerData)
 
     const customStyles = {
         control: (provided: any, state: any) => ({

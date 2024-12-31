@@ -112,7 +112,7 @@ const CreateGrnTable = () => {
                 defaultUnit:item.products.defaultUnit,
                 unitPrice: item.sellingPrice,
                 gst: item.taxAmount,
-                discountPercent: item.discount,
+                discountPercent: item.discount*100,
                 location :item.location
             }));
             setItems(itemData);
@@ -320,7 +320,7 @@ const handleAddItem = useCallback(() => {
         updatedItems[index] = {
             ...updatedItems[index],
             discountAmount: discount,
-            discountPercent: Number((discount / Number(updatedItems[index]['unitPrice'] * updatedItems[index]['quantity'])).toFixed(4)) * 100
+            discountPercent: Number((discount / Number(updatedItems[index]['unitPrice'] * updatedItems[index]['quantity'])).toFixed(2)) * 100
         };
         setTableData(updatedItems);
     }
@@ -532,7 +532,7 @@ const handleAddItem = useCallback(() => {
                                         <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Batch No.</div>
 
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Bar Code</div>
-                                        <div className=' flex text-gray-500 text-base font-medium w-[15rem] '>Exipry Date</div>
+                                        <div className=' flex text-gray-500 text-base font-medium w-[15rem] '>Expiry Date</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[18rem]'>Quantity</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[18rem]'>Free Quantity</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Unit Price</div>
@@ -813,7 +813,7 @@ const handleAddItem = useCallback(() => {
                         </div>
                     </div>
 
-                    <CreateGrnTotalAmount />
+                    <CreateGrnTotalAmount orderData={orderData} />
                 </div>
                 <CreateGrnBottomBar orderData={orderData} />
             </div>

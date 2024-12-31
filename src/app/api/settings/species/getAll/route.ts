@@ -13,6 +13,9 @@ export const GET = async(req:NextRequest)=>{
             where: {
                 databaseSectionId: databaseId
             },
+            include: {
+                breed: true 
+            }
         });
         return new Response(JSON.stringify(species),{
             status: 201,

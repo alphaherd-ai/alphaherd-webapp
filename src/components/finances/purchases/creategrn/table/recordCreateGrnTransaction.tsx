@@ -37,8 +37,7 @@ type PopupProps = {
     orderData: any;
 }
 
-
-const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount,orderData, headerdata, transactionsData, setTransactionsData, initialInvoiceNo, totalAmount, balanceDue }) => {
+const RecordTransactionPopup: React.FC<PopupProps> = ({ orderData, headerdata,setCount, transactionsData, setTransactionsData, initialInvoiceNo, totalAmount, balanceDue }) => {
 
     const dispatch = useDispatch();
     const {headerData}=useContext(DataContext);
@@ -200,7 +199,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount,orderData, head
         menuPortal: (base: any) => ({ ...base, zIndex: 9999 })
     };
 
-    //console.log(headerdata,orderData);
+    console.log(headerdata,orderData);
 
     const isDisabled = !(headerData?.distributor ? headerdata?.distributor?.label: orderData?.distributor) || !(formData.amountPaid) || !selectedMode
 

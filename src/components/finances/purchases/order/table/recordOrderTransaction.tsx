@@ -31,10 +31,11 @@ type PopupProps = {
     totalAmount: any;
     balanceDue: any;
     setCount:any;
+    orderData :any;
 }
 
 
-const RecordOrderTransaction: React.FC<PopupProps> = ({ headerdata, transactionsData, setCount, setTransactionsData, initialInvoiceNo, totalAmount, balanceDue }) => {
+const RecordOrderTransaction: React.FC<PopupProps> = ({ headerdata, transactionsData, setCount, setTransactionsData, initialInvoiceNo, totalAmount, balanceDue , orderData }) => {
 
     const dispatch = useDispatch();
 
@@ -44,7 +45,7 @@ const RecordOrderTransaction: React.FC<PopupProps> = ({ headerdata, transactions
     });
     const appState = useAppSelector((state) => state.app)
     const [isAdvancePayment, setIsAdvancePayment] = useState(false);
-
+    console.log("orderdata is : ",orderData);
     const Mode = [
         { value: "Cash", label: "Cash" },
         { value: "UPI", label: "UPI" },
@@ -84,7 +85,7 @@ const RecordOrderTransaction: React.FC<PopupProps> = ({ headerdata, transactions
     ]
 
     const [startDate, setStartDate] = useState(new Date());
-    const [transactionType, setTransactionType] = useState<string | null>("Money In");
+    const [transactionType, setTransactionType] = useState<string | null>("Money Out");
 
 
     const handleDateChange = (date: any) => {
@@ -249,7 +250,7 @@ const RecordOrderTransaction: React.FC<PopupProps> = ({ headerdata, transactions
                     </div>
 
                     <div>
-                        <div className="w-[440px] flex items-center h-9 rounded-[5px] text-textGrey2 bg-white text-base font-medium px-2 py-6  outline-none border border-solid border-gray-300 ">{headerdata ? headerdata?.distributor?.label : ""}
+                        <div className="w-[440px] flex items-center h-9 rounded-[5px] text-textGrey2 bg-white text-base font-medium px-2 py-6  outline-none border border-solid border-gray-300 ">{headerdata?.distributor ? headerdata?.distributor?.label : orderData?.distributor}
                             <div >
                                 {balanceDue < 0 ? <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5  bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
                                     You’re owed ₹{totalAmount.subTotal ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}

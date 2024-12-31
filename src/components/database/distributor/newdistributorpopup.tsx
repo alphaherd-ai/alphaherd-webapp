@@ -354,7 +354,7 @@ const DistributorPopup: React.FC<PopupProps> = ({ onClose }: any) => {
 
                 </div>
 
-                <div className=" justify-between items-start gap-6 flex w-full">
+                <div className=" justify-end gap-6 flex w-full">
                     {/* <div className=" h-11 px-6 py-2.5 rounded-[5px]  justify-center items-center inline-flex border border-borderGrey border-dashed ">
                         <div className="self-stretch justify-start items-center gap-2 inline-flex">
                             <div className="w-6 h-6 flex justify-center items-center"> <Image src={Attachment} alt='Attachment' className='w-6 h-6 ' /></div>

@@ -98,7 +98,9 @@ const ExistingsalesReturnBottomBar = ({existingSalesData}:any) => {
               }
             );
             if (shareResponse.status === 200) {
-              console.log("Invoice sent successfully");
+
+              alert("Invoice sent successfully");
+
               setIsPopupOpen(false); // Close the popup
             }
           }

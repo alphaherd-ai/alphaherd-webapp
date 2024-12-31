@@ -77,6 +77,8 @@ const NewPurchasesTable = () => {
     const { tableData, setTableData } = useContext(DataContext);
     const { setDistributorData } = useContext(DataContext);
     const [selectedProductDetails,setSelectedProduct]= useState<Products>()
+    const [discountPercent, setDiscountPercent] = useState<any>();
+    const [discountAmt, setDiscountAmt] = useState<any>();
     const [products, setProducts] = useState<any[]>([]);
     const [otherData, setOtherData] = useState({});
     const appState = useAppSelector((state) => state.app)
@@ -143,7 +145,7 @@ const NewPurchasesTable = () => {
                 quantity: item.quantity,
                 unitPrice: item.sellingPrice,
                 gst: item.taxAmount,
-                discountPercent: item.discount
+                discountPercent: item.discount*100
             }));
             setItems((prev: any[]) => [...itemData, ...prev,]);
 
@@ -224,7 +226,7 @@ const NewPurchasesTable = () => {
                     if (item.productId === itemId && item.quantity >= 1) {
                         const newQuantity = item.quantity - 1;
                         const updatedDiscountAmt = (item.unitPrice * newQuantity * item.discountPercent) / 100 || 0;
-                        return { ...item, quantity: newQuantity, discountAmount: updatedDiscountAmt };
+                        return { ...item, quantity: newQuantity, discountAmt: updatedDiscountAmt };
                     }
 
                     return item;
@@ -239,7 +241,7 @@ const NewPurchasesTable = () => {
                     if (item.productId === itemId && item.quantity >= 0) {
                         const newQuantity = item.quantity + 1;
                         const updatedDiscountAmt = (item.unitPrice * newQuantity * item.discountPercent) / 100 || 0;
-                        return { ...item, quantity: newQuantity, discountAmount: updatedDiscountAmt };
+                        return { ...item, quantity: newQuantity, discountAmt: updatedDiscountAmt };
                     }
 
                     return item;
@@ -257,25 +259,46 @@ const NewPurchasesTable = () => {
                 })
             );
         }, []);
-        const handleDiscountSelect = (selectedDiscount: number, index: number) => {
+        // const handleDiscountPercentChange = (selectedDiscount: number, index: number) => {
+        //     const updatedItems = [...tableData];
+        //     console.log(selectedDiscount);
+        //     updatedItems[index] = {
+        //         ...updatedItems[index],
+        //         discountPercent: selectedDiscount,
+        //         discountAmount: Number(selectedDiscount / 100) * updatedItems[index]['unitPrice'] * updatedItems[index]['quantity']
+        //     };
+        //     setTableData(updatedItems);
+        // }
+        const handleDiscountPercentChange = (index: number, value: any) => {
             const updatedItems = [...tableData];
-            console.log(selectedDiscount);
-            updatedItems[index] = {
-                ...updatedItems[index],
-                discountPercent: selectedDiscount,
-                discountAmount: Number(selectedDiscount / 100) * updatedItems[index]['unitPrice'] * updatedItems[index]['quantity']
-            };
+            console.log("updated item is : ",updatedItems);
+            updatedItems[index].discountPercent = parseFloat(value) || 0;
+            updatedItems[index].discountAmt = (((updatedItems[index].unitPrice * updatedItems[index].quantity) * updatedItems[index].discountPercent) / 100);
+            setDiscountAmt(updatedItems[index].discountAmt);
+            setDiscountPercent(value);
+            handleInputChange(index, updatedItems[index].discountAmt, 'discountAmt');
+            handleInputChange(index, updatedItems[index].discountPercent, 'discountPercent')
             setTableData(updatedItems);
-        }
-        const handleDiscountChange = (discount: number, index: number) => {
+        };
+        // const handleDiscountAmtChange = (discount: number, index: number) => {
+        //     const updatedItems = [...tableData];
+        //     updatedItems[index] = {
+        //         ...updatedItems[index],
+        //         discountAmount: discount,
+        //         discountPercent: Number((discount / Number(updatedItems[index]['unitPrice'] * updatedItems[index]['quantity'])).toFixed(4)) * 100
+        //     };
+        //     setTableData(updatedItems);
+        // }
+        const handleDiscountAmtChange = (index: number, value: any) => {
             const updatedItems = [...tableData];
-            updatedItems[index] = {
-                ...updatedItems[index],
-                discountAmount: discount,
-                discountPercent: Number((discount / Number(updatedItems[index]['unitPrice'] * updatedItems[index]['quantity'])).toFixed(4)) * 100
-            };
+            updatedItems[index].discountAmt = parseFloat(value) || 0;
+            updatedItems[index].discountPercent = ((updatedItems[index].discountAmt / (updatedItems[index].unitPrice * updatedItems[index].quantity)) * 100).toFixed(2);
+            setDiscountAmt(value);
+            setDiscountPercent(updatedItems[index].discountPercent)
+            handleInputChange(index, updatedItems[index].discountAmt, 'discountAmt');
+            handleInputChange(index, updatedItems[index].discountPercent, 'discountPercent')
             setTableData(updatedItems);
-        }
+        };
         const handleInputChange = useCallback((index: number, value: any, field: string) => {
             const updatedItems = [...items];
             updatedItems[index][field] = Number(value);
@@ -558,7 +581,7 @@ const NewPurchasesTable = () => {
                                                         type="number"
                                                         value={item.discountPercent ? item.discountPercent : 0}
                                                         className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                                        onChange={(e) => handleDiscountSelect(Number(e.target.value), index)}
+                                                        onChange={(e) =>  handleDiscountPercentChange(index, e.target.value)}
                                                         name={`discountPercent-${index + 1}`}
                                                     />
                                                     %
@@ -568,9 +591,9 @@ const NewPurchasesTable = () => {
                                                     ₹
                                                     <input
                                                         type="number"
-                                                        value={(item.discountAmount ? item.discountAmount : 0)}
+                                                        value={(item.discountAmt ? item.discountAmt : 0)}
                                                         className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                                        onChange={(e) => handleDiscountChange(Number(e.target.value), index)}
+                                                        onChange={(e) => handleDiscountAmtChange(index, e.target.value)}
                                                         name={`discountAmount-${index + 1}`}
                                                     />
                                                 </div>
@@ -633,7 +656,7 @@ const NewPurchasesTable = () => {
                             </div>
                         </div>
 
-                <NewPurchasesTotalAmount />
+                <NewPurchasesTotalAmount orderData={orderData} />
             </div>
             <NewPurchasesBottomBar orderData={orderData}/>
         </div>

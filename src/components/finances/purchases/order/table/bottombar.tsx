@@ -52,7 +52,7 @@ const NewPurchasesBottomBar = ({ orderData }: any) => {
         }));
         const data = {
             distributor: (id === null) ? allData.headerData.distributor.value : orderData.distributor,
-            distributorId: (id === null) ? allData.headerData.distributor.distributorId : null,
+            distributorId: (id === null) ? allData.headerData.distributor.distributorId : orderData.distributorId,
             email: (id === null) ? allData.headerData.distributor.email : "",
             notes: (id === null) ? allData.headerData.notes : orderData.notes,
             invoiceNo: allData.headerData.invoiceNo,
@@ -73,7 +73,7 @@ const NewPurchasesBottomBar = ({ orderData }: any) => {
         // userEmail = data.email;
         // console.log("email is (inside) :",data.email);
         // console.log("header data in bottom bar is : ",headerData);
-        console.log(data)
+        console.log("data to save : ",data);
 
         try {
             setSaving(true);
@@ -116,7 +116,8 @@ const NewPurchasesBottomBar = ({ orderData }: any) => {
         }
     };
 
-    const isDisabled = !headerData.distributor || tableData.length === 1;
+    const isDisabled = (!headerData.distributor && !orderData?.distributor) || tableData.length === 1;
+
     return (
         <>
 

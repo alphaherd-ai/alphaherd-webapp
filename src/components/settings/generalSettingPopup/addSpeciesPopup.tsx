@@ -40,7 +40,7 @@ const handleChange = (field: string, value: any) => {
     }
 
     const handleSave = async () => {
-        const trimmedInput = formData.paymentMethod?.trim(); // Access and trim the 'paymentMethod'
+        const trimmedInput = formData.species?.trim(); // Access and trim the 'species'
         if (!trimmedInput) {
             setError('Specie cannot be empty.');
             console.log("Empty Field");
@@ -64,7 +64,7 @@ const handleChange = (field: string, value: any) => {
                 }),
             });
             if (response.ok) {
-                // console.log('Data saved successfully');
+                console.log('Data saved successfully');
                 onClose();
                 window.dispatchEvent(new FocusEvent('focus'));
             } else {

@@ -15,14 +15,15 @@ import { useAppSelector } from '@/lib/hooks';
 import Loading2 from "@/app/loading2";
 type PopupProps = {
     onClose: () => void;
-    
+    setIsNewClientClicked?:any;
+    setNewClient?:any;
 }
 
 
 
 
 
-const ClientPopup: React.FC<PopupProps> = ({ onClose }: any) => {
+const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNewClient }: any) => {
     const [formData, setFormData] = useState<any>({});
     const [showPopup, setShowPopup] = React.useState(false);
     const appState = useAppSelector((state) => state.app)
@@ -102,6 +103,8 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose }: any) => {
                 console.log(clientData);
                 if(clientData){
                     setNewClientData(clientData);
+                    setIsNewClientClicked((prev: any) => !prev);
+                    setNewClient(clientData);
                 }
 
                 console.log('Data saved successfully');
