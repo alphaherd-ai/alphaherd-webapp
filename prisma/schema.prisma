@@ -97,16 +97,25 @@ model Organization {
 }
 
 model OrgBranch {
-  id                 Int                 @id @default(autoincrement())
-  branchName         String
-  org                Organization        @relation(fields: [orgId], references: [id])
-  orgId              Int
-  assignedUsers      User[]
-  orgBranchUserRoles OrgBranchUserRole[]
-  inventories        InventorySection[]
-  finances           FinanceSection[]
-  databases          DatabaseSection[]
-
+  id                    Int                 @id @default(autoincrement())
+  branchName            String
+  org                   Organization        @relation(fields: [orgId], references: [id])
+  orgId                 Int
+  phoneNo               String?
+  altphoneNo            String?
+  address               String?
+  panNo                 String?
+  state                 String?
+  pinCode               Int?
+  gstNo                 String?
+  email                 String?
+  description           String?
+  website               String?
+  assignedUsers         User[]
+  orgBranchUserRoles    OrgBranchUserRole[]
+  inventories           InventorySection[]
+  finances              FinanceSection[]
+  databases             DatabaseSection[]
   @@index([branchName, orgId])
 }
 
