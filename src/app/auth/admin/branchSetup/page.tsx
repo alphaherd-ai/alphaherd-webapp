@@ -1,5 +1,5 @@
 "use client";
-import OrgNameSetup from "@/components/auth/admin/orgNameSetup";
+// import OrgNameSetup from "@/components/auth/admin/orgNameSetup";
 import OrgDetailsSetup from "@/components/auth/orgBranchSetup";
 import Image from "next/image";
 import React, { useState } from "react";
@@ -16,12 +16,14 @@ const formSchema = z.object({
     orgEmail: z.string().email('Invalid Email Address'),
     gstNo: z.string().length(15, 'Invalid GST No.'),
     phoneNo: z.string().length(10, 'Invalid Phone No.'),
+    altphoneNo:z.string().length(10,'Invalid Phone No.'),
+    website:z.string(),
+    panNo:z.string(),
     address: z.string(),
     state: z.string(),
     pincode: z.string()
     .regex(/^\d{6}$/, 'Invalid Pincode - must be exactly 6 numeric digits'),
     description: z.string(),
-   
   });
 
 const OrgEdit = () => {
@@ -30,8 +32,9 @@ const OrgEdit = () => {
     console.log("appstate is :",appState)
     const searchParams = useSearchParams();
     const router = useRouter();
-
-    const branchName = searchParams.get("branchName");
+    console.log(appState.currentBranch);
+    const branchName = searchParams.get('branchName');
+    console.log("branch name is :",branchName);
 
     // Use branch name in data (if available)
     
@@ -42,21 +45,33 @@ const OrgEdit = () => {
         orgImgUrl:'',
         gstNo: '',
         phoneNo: "",
+        altphoneNo:"",
+        website:'',
+        panNo:'',
         address: '',
         state: '',
         pincode: '',
         description: '',
-       
       }
     
       var stepFields = [
         ["orgName"],
-        ["orgEmail","orgImgUrl","gstNo","phoneNo","branchName","address","state","pincode","description"]
+        ["orgEmail","orgImgUrl","gstNo","phoneNo",,"branchName","address","state","pincode","description"]
       ];
 
     const [validationErrors, setValidationErrors] = useState(initialErrors);
     const [data, setData] = useState({
-        ...formSchema.parse(appState.currentOrg),
+        orgName: appState.currentOrg.orgName || '',
+        orgEmail: appState.currentOrg.orgEmail || '',
+        gstNo: appState.currentOrg.gstNo || '',
+        phoneNo: appState.currentOrg.phoneNo || '',
+        altphoneNo: appState.currentOrg.altphoneNo || '',
+        website: appState.currentOrg.website || '',
+        panNo: appState.currentOrg.panNo || '',
+        address: appState.currentOrg.address || '',
+        state: appState.currentOrg.state || '',
+        pincode: appState.currentOrg.pincode || '',
+        description: appState.currentOrg.description || '',
         branchName: branchName || '', // Pre-fill branch name if available
     });
     console.log("data is :", data);
@@ -189,44 +204,32 @@ const OrgEdit = () => {
     const formSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
       try {
-          formSchema.parse(data);
+        console.log('your data',data);
+        formSchema.parse(data);
 
-          // Update Organization
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/admin/orgEdit?orgId=${appState.currentOrgId}`, {
-              method: 'PATCH',
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/admin/addBranch?orgId=${appState.currentOrgId}`, {
+              method: 'POST',
               headers: {
                   'Content-Type': "application/json"
               },
               body: JSON.stringify({
-                  orgName: data.orgName,
-                  orgEmail: data.orgEmail,
+                  email: data.orgEmail,
                   gstNo: data.gstNo,
                   phoneNo: data.phoneNo,
                   address: data.address,
+                  altphoneNo: data.altphoneNo,
+                  website: data.website,
+                  panNo: data.panNo,
                   state: data.state,
-                  pincode: data.pincode,
+                  pinCode: parseInt(data.pincode),
                   description: data.description,
+                  orgId: appState.currentOrgId,
+                  branchName: data.branchName,
               })
           });
 
           let json = await res.json();
           if (res.ok) {
-              
-              if (data.branchName) {
-                  const branchRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/admin/orgEdit`, {
-                      method: 'PATCH',
-                      headers: {
-                          'Content-Type': "application/json"
-                      },
-                      body: JSON.stringify({
-                          orgId: appState.currentOrgId,
-                          branchName: data.branchName,
-                      })
-                  });
-                  const branchJson = await branchRes.json();
-                  if (!branchRes.ok) throw new Error(branchJson.message);
-              }
-
               toast.success(json.message, {
                   position: "bottom-right",
                   autoClose: 5000,
