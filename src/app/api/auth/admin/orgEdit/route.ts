@@ -7,15 +7,19 @@ export const PATCH = async (req: NextRequest) => {
   }
 
   try {
-    const url = new URL(req.url);
-    const body = await req.json();
-    const orgId = url.searchParams.get('orgId');
+    const { orgDetails, branchDetails,branchId,orgId } = await req.json();
 
     await prismaClient.organization.update({
         where: {
             id: Number(orgId)
         },
-        data: body
+        data: orgDetails
+    });
+    await prismaClient.orgBranch.update({
+        where: {
+            id: Number(branchId)
+        },
+        data: branchDetails
     });
     
     return new Response(JSON.stringify({ "message" : "Organization data updated successfully"}), {

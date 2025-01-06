@@ -16,10 +16,14 @@ const formSchema = z.object({
     orgEmail: z.string().email('Invalid Email Address'),
     gstNo: z.string().length(15, 'Invalid GST no. - must be 15 digits'),
     phoneNo: z.string().length(10, 'Invalid Phone No.'),
-    address: z.string(),
+    altphoneNo: z.string(),
+    orgImgUrl: z.string(),
+    address: z.string().min(1, "Enter Company Address to continue"),
+    website: z.string(),
+    branchName: z.string().min(4, 'Branch Name must be at least 4 characters'),
+    panNo:z.string(),
     state: z.string(),
-    pincode: z.string()
-    .regex(/^\d{6}$/, 'Invalid Pincode - must be exactly 6 numeric digits'),
+    pinCode: z.number().int().min(100000, 'Invalid Pincode - must be exactly 6 numeric digits').max(999999, 'Invalid Pincode - must be exactly 6 numeric digits'),
     description: z.string()
   });
 
@@ -34,21 +38,33 @@ const OrgEdit = () => {
         orgEmail: '',
         orgImgUrl:'',
         gstNo: '',
+        altphoneNo: "",
+        branchName: "",
+        website: '',
+        panNo: '',
         phoneNo: "",
         address: '',
         state: '',
-        pincode: '',
+        pinCode: '',
         description: ''
       }
     
       var stepFields = [
         ["orgName"],
-        ["orgEmail","orgImgUrl","gstNo","phoneNo","branchName","address","state","pincode","description"]
+        ["orgEmail","orgImgUrl","gstNo","phoneNo","altPhoneNo","website","panNo","branchName","address","state","pinCode","description"]
       ];
 
    
-
-    const [data, setData] = useState(formSchema.parse(appState.currentOrg));
+    // console.log(appState);
+    const [data, setData] = useState(() => {
+      const initialData = {
+        ...appState.currentBranch,
+        orgEmail: appState.currentOrg.orgEmail,
+        orgImgUrl: appState.currentOrg.orgImgUrl,
+        orgName: appState.currentOrg.orgName
+      };
+      return formSchema.parse(initialData);
+    });
     const [validationErrors, setValidationErrors] = useState(initialErrors);
 
     // console.log(validationErrors);
@@ -193,7 +209,34 @@ const OrgEdit = () => {
               headers: {
                 'Content-Type': "application/json"
               },
-              body: JSON.stringify(data)
+              body: JSON.stringify({
+                "orgDetails": {
+                  "orgEmail": data.orgEmail,
+                  "orgName": data.orgName,
+                  "orgImgUrl": data.orgImgUrl,
+                  "gstNo": data.gstNo,
+                  "address": data.address,
+                  "state": data.state,
+                  "pincode": (data.pinCode).toString(),
+                  "description": data.description,
+                  "phoneNo": data.phoneNo
+                },
+                "branchDetails": {
+                  email: data.orgEmail,
+                  gstNo: data.gstNo,
+                  phoneNo: data.phoneNo,
+                  address: data.address,
+                  altphoneNo: data.altphoneNo,
+                  website: data.website,
+                  panNo: data.panNo,
+                  state: data.state,
+                  pinCode: data.pinCode,
+                  description: data.description,
+                  branchName: data.branchName,
+                },
+                "orgId": appState.currentOrgId,
+                "branchId": appState.currentBranchId
+              })
             }
           )
           // console.log(res);
@@ -264,7 +307,7 @@ const OrgEdit = () => {
                           className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0 cursor-pointer" disabled={activeTab === 0 ? true : false}
                           onClick={() => setActiveTab(prev => prev - 1)}>
                           <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
-                              <div className="text-white text-sm font-bold font-['Satoshi'] cursor-pointer">
+                              <div className="text-white text-sm font-bold  cursor-pointer">
                                   Prev
                               </div>
                               <div className="w-6 h-6 relative">

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAppSelector } from "@/lib/hooks";
-
+import customStyles from '@/utils/customStyle';
+import Select from 'react-select';
 const OrgDetailsSetup = (props: any) => {
     const stateOptions = [
         { value: 'Andhra Pradesh', label: 'Andhra Pradesh' },
@@ -219,21 +220,37 @@ const OrgDetailsSetup = (props: any) => {
                         </div>
                     </div>
                     <div className="self-stretch justify-start items-start gap-10 inline-flex">
-                        <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
+                    <div className="self-stretch justify-start items-start gap-10 inline-flex">
+                        <div className="grow shrink basis-0  justify-start items-center gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium">Select State*</div>
-                            <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
-                                <input
-                                    type="text"
-                                    className="text-neutral-400 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-emerald-200"
-                                    id="state"
-                                    name="state"
-                                    onChange={props.handleChange}
-                                    onFocus={() => setFocused4(true)}
-                                    value={props.data.state}
-                                />
-                                {focused4 && props.data.state.length <= 1 && (
-                                    <div className="text-red-500 text-sm">State is required.</div>
-                                )}
+
+                            <Select
+                                className="text-textGrey2 text-base font-medium  w-full border-0 boxShadow-0 p-0 grow shrink basis-0"
+
+                                styles={customStyles}
+
+                                isClearable={false}
+                                isMulti={false}
+                                isSearchable={true}
+                                name="state"
+                                options={stateOptions}
+                                onChange={props.handleChange}
+                                value={stateOptions.find(option => option.value === props.data.state)}
+                            />
+
+
+                            {/* <input
+                        type="text"
+                        className="text-textGrey2 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
+                        id="state"
+                        name="state"
+                        onChange={props.handleChange}
+                        value={props.data.state}
+                    /> */}
+                            {props.validationErrors.state && (
+                                <div className="text-[red] error">{props.validationErrors.state}</div>
+                            )}
+
                             </div>
                         </div>
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">

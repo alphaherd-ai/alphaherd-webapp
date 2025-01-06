@@ -29,6 +29,9 @@ export default function UsersAndRolesSettings() {
     .filter((role: any) => role.orgBranchId === appState.currentBranchId)
     .map((role: any) => role.role)[0];
     // console.log(appState.isCurrentOrgAdmin)
+    const isAdmin = userState.adminOrganizations
+        .map((org: any) => org.id)
+        .includes(appState.currentOrgId);
     const [removeUser, setRemoveUser] = useState(false);
     const [makeAdmin, setMakeAdmin] = useState(false);
     const [removeAdmin, setRemoveAdmin] = useState(false);
@@ -213,7 +216,7 @@ export default function UsersAndRolesSettings() {
 
 
                                     <div className="flex gap-2">
-                                            {(userrole=='Manager' && (user.role!='Admin' && user.role!='Manager')) && (
+                                            {(user.userId != userState.id) && ((userrole=='Manager'||isAdmin) && (user.role!='Admin' && user.role!='Manager')) && (
                                                 <button 
                                                     onClick={() => toggleMakeAdmin(user.user)} 
                                                     className="px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex border-none cursor-pointer"
@@ -222,7 +225,7 @@ export default function UsersAndRolesSettings() {
                                                     <div className="text-neutral-400 text-sm font-medium">Make Admin</div>
                                                 </button>
                                             )}
-                                            {(userrole === 'Manager' && user.role === 'Admin') && (
+                                            { (user.userId != userState.id) &&  (userrole === 'Manager' && user.role === 'Admin') && (
                                                 <button 
                                                 onClick={() => toggleRemoveAdmin(user.user)} 
                                                 className="px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex border-none cursor-pointer"
@@ -231,7 +234,7 @@ export default function UsersAndRolesSettings() {
                                                     <div className="text-neutral-400 text-sm font-medium">Remove Admin Privileges</div>
                                                 </button>
                                             )}
-                                            {((userrole === 'Manager' || userrole === 'Admin') || (user.role=='Manager' && appState.isCurrentOrgAdmin )) && (
+                                            {(user.userId != userState.id) && ((isAdmin && user.role!='Admin') || (appState.isCurrentOrgAdmin )) && (
                                                 <button 
                                                     className="px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex border-none cursor-pointer" 
                                                     onClick={() => toggleRemove(user.user)}

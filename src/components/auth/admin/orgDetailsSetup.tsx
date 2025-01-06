@@ -44,9 +44,9 @@ const OrgDetailsSetup = (props: any) => {
         { value: 'Delhi', label: 'Delhi' },
         { value: 'Lakshadweep', label: 'Lakshadweep' },
         { value: 'Puducherry', label: 'Puducherry' }
-      ];
+    ];
     //   console.log("this is props",props.data.state)
-      const [resource, setResource] = useState<any>();
+    const [resource, setResource] = useState<any>();
 
     return (
         <div className="w-[1016px] h-fit px-10 py-8 rounded-[30px] border border-stone-300  justify-center  inline-flex">
@@ -100,7 +100,7 @@ const OrgDetailsSetup = (props: any) => {
                         <div className="text-textGrey2 text-base font-medium ">Enter your organisation details</div>
                     </div>
                 </div>
-                <div className="self-stretch h-[432px] flex-col justify-start items-start gap-6 flex">
+                <div className="self-stretch flex-col justify-start items-start gap-6 flex">
                     <div className="self-stretch justify-start items-start gap-10 inline-flex">
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium ">Name*</div>
@@ -114,6 +114,75 @@ const OrgDetailsSetup = (props: any) => {
                                 <input type="text" className="h-full w-full text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" id="branchName" name="branchName" value={props.data.branchName} onChange={props.handleChange} />
                                 {props.validationErrors.branchName && (
                                     <div className="text-[red] error">{props.validationErrors.branchName}</div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="self-stretch justify-start items-start gap-10 inline-flex">
+                        <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
+                            <div className="w-[136px] text-gray-500 text-base font-medium">Phone Number*</div>
+                            <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
+                                <input
+                                    type="number"
+                                    className="text-textGrey2 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
+                                    id="phoneNo"
+                                    name="phoneNo"
+                                    onChange={props.handleChange}
+                                    value={props.data.phoneNo}
+                                />
+                                {props.validationErrors.phoneNo && (
+                                    <div className="text-[red] error">{props.validationErrors.phoneNo}</div>
+                                )}
+                            </div>
+                        </div>
+                        <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
+                            <div className="w-[136px] text-gray-500 text-base font-medium">Alt Phone Number</div>
+                            <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
+                                <input
+                                    type="number"
+                                    className="text-textGrey2 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
+                                    id="altPhoneNo"
+                                    name="altPhoneNo"
+                                    onChange={props.handleChange}
+                                    value={props.data.altPhoneNo}
+                                />
+                                {props.validationErrors.altPhoneNo && (
+                                    <div className="text-[red] error">{props.validationErrors.altPhoneNo}</div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="self-stretch justify-start items-start gap-10 inline-flex">
+                        <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
+                            <div className="w-[136px] text-gray-500 text-base font-medium">Company Email*</div>
+                            <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
+                                <input
+                                    type="email"
+                                    className="text-textGrey2 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
+                                    id="orgEmail"
+                                    name="orgEmail"
+                                    onChange={props.handleChange}
+                                    value={props.data.orgEmail}
+                                    placeholder=""
+                                />
+                                {props.validationErrors.orgEmail && (
+                                    <div className="text-[red] error">{props.validationErrors.orgEmail}</div>
+                                )}
+                            </div>
+                        </div>
+                        <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
+                            <div className="w-[136px] text-gray-500 text-base font-medium">Website Link</div>
+                            <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
+                                <input
+                                    type="text"
+                                    className="text-textGrey2 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
+                                    id="websiteLink"
+                                    name="websiteLink"
+                                    onChange={props.handleChange}
+                                    value={props.data.websiteLink}
+                                />
+                                {props.validationErrors.websiteLink && (
+                                    <div className="text-[red] error">{props.validationErrors.websiteLink}</div>
                                 )}
                             </div>
                         </div>
@@ -135,58 +204,37 @@ const OrgDetailsSetup = (props: any) => {
                                 )}
                             </div>
                         </div>
-
-
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
-                            <div className="w-[136px] text-gray-500 text-base font-medium">Phone Number*</div>
-                            <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
-                                <input
-                                    type="number"
-                                    className="text-textGrey2 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
-                                    id="phoneNo"
-                                    name="phoneNo"
-                                    onChange={props.handleChange}
-                                    value={props.data.phoneNo}
-                                />
-                                {props.validationErrors.phoneNo && (
-                                    <div className="text-[red] error">{props.validationErrors.phoneNo}</div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                    <div className="self-stretch justify-start items-start gap-10 inline-flex">
-                        <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
-                            <div className="w-[136px] text-gray-500 text-base font-medium">Org. Email*</div>
-                            <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
-                                <input
-                                    type="email"
-                                    className="text-textGrey2 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
-                                    id="orgEmail"
-                                    name="orgEmail"
-                                    onChange={props.handleChange}
-                                    value={props.data.orgEmail}
-                                    placeholder=""
-                                />
-                                {props.validationErrors.orgEmail && (
-                                    <div className="text-[red] error">{props.validationErrors.orgEmail}</div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                    <div className="self-stretch justify-start items-start gap-10 inline-flex">
-                        <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
-                            <div className="w-[140px] text-gray-500 text-base font-medium">Org. Address*</div>
+                            <div className="w-[136px] text-gray-500 text-base font-medium">Pan No.</div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
                                 <input
                                     type="text"
                                     className="text-textGrey2 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
+                                    id="panNo"
+                                    name="panNo"
+                                    onChange={props.handleChange}
+                                    value={props.data.panNo}
+                                />
+                                {props.validationErrors.panNo && (
+                                    <div className="text-[red] error">{props.validationErrors.panNo}</div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="self-stretch justify-start items-start gap-10 inline-flex">
+                        <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
+                            <div className="w-[136px] text-gray-500 text-base font-medium">Business Address*</div>
+                            <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
+                                <input
+                                    type="text"
+                                    className="text-textGrey2 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-emerald-200"
                                     id="address"
                                     name="address"
                                     onChange={props.handleChange}
                                     value={props.data.address}
                                 />
                                 {props.validationErrors.address && (
-                                    <div className="text-[red] error">{props.validationErrors.address}</div>
+                                    <div className="text-red-500 text-sm">Address is required.</div>
                                 )}
                             </div>
                         </div>
@@ -195,29 +243,29 @@ const OrgDetailsSetup = (props: any) => {
                         <div className="grow shrink basis-0  justify-start items-center gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium">Select State*</div>
 
-                            <Select 
-                            className="text-textGrey2 text-base font-medium  w-full border-0 boxShadow-0 p-0 grow shrink basis-0"
+                            <Select
+                                className="text-textGrey2 text-base font-medium  w-full border-0 boxShadow-0 p-0 grow shrink basis-0"
 
-                            styles={customStyles}
+                                styles={customStyles}
 
-                            isClearable={false}
-                            isMulti={false}
-                            isSearchable={true}
-                            name="state"
-                            options={stateOptions}
-                            onChange={props.handleChange}
-                            value={stateOptions.find(option => option.value === props.data.state)}
+                                isClearable={false}
+                                isMulti={false}
+                                isSearchable={true}
+                                name="state"
+                                options={stateOptions}
+                                onChange={props.handleChange}
+                                value={stateOptions.find(option => option.value === props.data.state)}
                             />
 
 
                             {/* <input
-                                    type="text"
-                                    className="text-textGrey2 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
-                                    id="state"
-                                    name="state"
-                                    onChange={props.handleChange}
-                                    value={props.data.state}
-                                /> */}
+                        type="text"
+                        className="text-textGrey2 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
+                        id="state"
+                        name="state"
+                        onChange={props.handleChange}
+                        value={props.data.state}
+                    /> */}
                             {props.validationErrors.state && (
                                 <div className="text-[red] error">{props.validationErrors.state}</div>
                             )}
@@ -243,11 +291,10 @@ const OrgDetailsSetup = (props: any) => {
                     <div className="self-stretch h-[92px] justify-start items-start gap-10 inline-flex">
                         <div className="grow shrink basis-0 h-[92px] self-stretch justify-start items-start gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium ">Description</div>
-                            <textarea className="px-2 py-2 w-full h-full ml-6 text-textGrey2 text-base focus:outline-none border border-solid border-borderGrey  rounded-[5px]  focus:border focus:border-[#35BEB1]" id="description" name="description" value={props.data.description} onChange={props.handleChange} placeholder="What services does your clinic provide?" />
+                            <textarea className="px-2 py-2 w-full h-full ml-6 text-textGrey2 text-base focus:outline-none border border-solid border-borderGrey  rounded-[5px]  focus:border focus:border-[#35BEB1]" id="description" name="description" value={props.data.description} onChange={props.handleChange} />
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     );
