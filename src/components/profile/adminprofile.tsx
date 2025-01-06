@@ -12,6 +12,7 @@ import { CldUploadButton } from 'next-cloudinary';
 import axios from 'axios';
 import { updateUser, UserState } from '@/lib/features/userSlice';
 import { Button } from '@nextui-org/react';
+import addicon from '../../assets/icons/home/add2icon.svg'
 import logoutIcon from "../../assets/icons/profile/logout.svg"
 import pencil from "../../assets/icons/profile/pencil.svg"
 interface UserRole {
@@ -126,6 +127,7 @@ const AdminProfile = () => {
     const currentBranchRole = userRoles.find(
       (role) => role.orgBranchId === appState.currentBranchId
     );
+    console.log('currentBranchRole:', currentBranchRole);
     setActiveRole(currentBranchRole?.role || '');
   }, [userRoles, appState.currentBranchId]);
 
@@ -190,7 +192,7 @@ const AdminProfile = () => {
                 <div className="text-white text-base font-medium">Logout</div>
               </Button>
               {!editable ? (
-                <button className="text-sm px-4 py-2 border-0 cursor-pointer rounded-sm" onClick={handleEditClick}>
+                <button className="text-sm px-4 py-2 cursor-pointer rounded-lg bg-white" style={{ border: '1px solid #a8a29e' }} onClick={handleEditClick}>
                   <Image src={pencil} alt="edit" />
                 </button>
               ) : (
@@ -204,12 +206,29 @@ const AdminProfile = () => {
           <div className="w-full p-4 bg-gray-100 justify-start items-start gap-6 flex">
             <div className="w-[275px] h-[275px] relative bg-white rounded-[10px] border border-stone-300 flex justify-end">
               {userState.imageUrl ? (
-                <Image className="relative rounded-[10px] border border-neutral-400" src={String(userState.imageUrl)} alt="photo" width={275} height={275} />
+                <>
+                  <Image className="relative rounded-[10px] border border-neutral-400" src={String(userState.imageUrl)} alt="photo" width={275} height={275} />
+                  <CldUploadButton
+                    className="absolute top-4 right-8 rounded-full border-none"
+                    options={{
+                      sources: ['local', 'url'],
+                      multiple: false,
+                      maxFiles: 1
+                    }}
+                    uploadPreset={process.env.CUSTOMCONNSTR_NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+                    onSuccess={(result, { widget }) => {
+                      // @ts-ignore
+                      setResource(result?.info?.secure_url);
+                      handleUpdatePic(result.info);
+                      widget.close();
+                    }}
+                  >
+                    <Image className="absolute cursor-pointer" src={editicon} alt="edit" />
+                  </CldUploadButton>
+                </>
               ) : (
-                <Image className="relative rounded-[10px] border border-neutral-400" src={profilepic} alt="photo" width={275} height={275} />
-              )}
-              <CldUploadButton
-                className="absolute top-4 right-8 rounded-full border-none"
+                <CldUploadButton
+                className="addimg rounded-[10px] border-0 h-[275px] w-[275px] flex flex-col items-center justify-center cursor-pointer bg-white"
                 options={{
                   sources: ['local', 'url'],
                   multiple: false,
@@ -223,8 +242,14 @@ const AdminProfile = () => {
                   widget.close();
                 }}
               >
-                <Image className="absolute cursor-pointer" src={editicon} alt="edit" />
+                {/* <div className="addimg rounded-[10px] border border-neutral-400 h-[275px] w-[275px] flex flex-col items-center justify-center cursor-pointer"> */}
+                <Image width={40} src={addicon} alt="edit" />
+                  <div className="text-gray-500 text-base font-medium">Add Profile Image</div>
+
+                {/* </div> */}
               </CldUploadButton>
+                // <Image className="relative rounded-[10px] border border-neutral-400" src={profilepic} alt="photo" width={275} height={275} />
+              )}
             </div>
             <div className="w-full flex-col justify-start items-start gap-4 flex">
               <div className="w-full justify-start items-start gap-4 flex">

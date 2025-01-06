@@ -13,12 +13,23 @@ export const GET = async (req: NextRequest) => {
   let orgBranches = await prismaClient.orgBranch.findMany({
     where: {
       orgId: Number(orgId)
+    },
+    include: {
+      assignedUsers: true
     }
   });
 
-  // console.log(orgBranches);
+  orgBranches = orgBranches.map(branch => ({
+    ...branch,
+    assignedUsersCount: branch.assignedUsers.length
+  }));
+  const allorgBranches = orgBranches.map(branch => {
+    const { assignedUsers, ...rest } = branch;
+    return rest;
+  });
+  // console.log(allorgBranches);
 
-  return new Response(JSON.stringify({ "branches" : orgBranches}), {
+  return new Response(JSON.stringify({ "branches" : allorgBranches}), {
     status: 201,
     headers: {
       'Content-Type': 'application/json',

@@ -44,7 +44,7 @@ export const MyOrganisationSettings = () => {
             orgImgUrl: String(imageInfo.secure_url),
           },
         };
-      
+        
         
         const updatedAppState = {
           ...appState,
@@ -174,47 +174,47 @@ export const MyOrganisationSettings = () => {
                                 </div>
                                 <div className="w-full h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                     <div className="text-gray-500 text-base font-bold ">Address:</div>
-                                    <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.address}</div>
+                                    <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentBranch.address}</div>
                                 </div>
                                 <div className="w-full h-14 rounded-[10px] justify-start items-center gap-2 flex">
                                     <div className="w-6/12 h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center  gap-4 flex">
                                         <div className="text-gray-500 text-base font-bold ">State:</div>
-                                        <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.state}</div>                                </div>
+                                        <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentBranch.state}</div>                                </div>
                                     <div className="w-6/12 h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center  gap-4 flex">
                                         <div className="text-gray-500 text-base font-bold ">Pincode:</div>
-                                        <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.pincode}</div>                                </div>
+                                        <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentBranch.pinCode}</div>                                </div>
                                 </div>
                                 <div className="w-full h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center  gap-4 flex">
                                     <div className="text-gray-500 text-base font-bold ">Email:</div>
-                                    <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.orgEmail}</div>                            </div>
+                                    <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentBranch.email}</div>                            </div>
                             </div>
                         </div>
                         <div className="flex flex-col gap-2 w-full">
                             <div className="w-full h-14 rounded-[10px] justify-start items-center gap-2 flex">
                                 <div className="w-6/12 h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center  gap-4 flex">
                                     <div className="text-gray-500 text-base font-bold ">Phone No.:</div>
-                                    <div className="w-8/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.phoneNo}</div>                            </div>
+                                    <div className="w-8/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentBranch.phoneNo}</div>                            </div>
                                 <div className="w-6/12 h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                     <div className="text-gray-500 text-base font-bold ">Alternate Phone No.:</div>
-                                    <div className="w-6/12 h-8 border-0 p-1 text-gray-500 text-base"  >{appState.currentOrg.phoneNo}</div>
+                                    <div className="w-6/12 h-8 border-0 p-1 text-gray-500 text-base"  >{appState.currentBranch.altphoneNo}</div>
                                 </div>
                             </div>
                             <div className="w-full h-14 rounded-[10px] justify-start items-center gap-2 flex">
                                 <div className="w-6/12 h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                     <div className="text-gray-500 text-base font-bold ">GSTIN:</div>
-                                    <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.gstNo}</div>                            </div>
+                                    <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentBranch.gstNo}</div>                            </div>
                                 <div className="w-6/12 h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                     <div className="text-gray-500 text-base font-bold ">PAN Number:</div>
-                                    <div className="w-8/12 h-8 border-0 p-1 text-gray-500 text-base" > DRMGW0000H </div>
+                                    <div className="w-8/12 h-8 border-0 p-1 text-gray-500 text-base" > {appState.currentBranch.panNo} </div>
                                 </div>
                             </div>
                             <div className="w-full h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                 <div className="text-gray-500 text-base font-bold ">Website:</div>
-                                <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"  >petfirst.com </div>
+                                <div className="w-10/12 h-8 border-0 p-1 text-gray-500 text-base"  >{appState.currentBranch.website} </div>
                             </div>
                             <div className="w-full min-h-14 px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                                 <div className="text-gray-500 text-base font-bold ">Description:</div>
-                                <div className="w-10/12 min-h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentOrg.description}</div>                        </div>
+                                <div className="w-10/12 min-h-8 border-0 p-1 text-gray-500 text-base"> {appState.currentBranch.description}</div>                        </div>
                         </div>
                         <div className="w-full px-6 pt-4 pb-6 bg-white rounded-[10px] border border-stone-300 flex-col justify-start items-start gap-6 flex">
                             <div className="flex items-center justify-between w-full gap-2">
@@ -253,7 +253,7 @@ export const MyOrganisationSettings = () => {
                                             onClick={() => handleOrgBranchSelect(branch)}
                                             >
                                                 <div className='w-[15rem] text-base font-medium'>{branch.branchName}</div>
-                                                <div className='w-[12rem] text-base font-medium text-center'>0</div>
+                                                <div className='w-[12rem] text-base font-medium text-center'>{branch.assignedUsersCount}</div>
                                                 <div className='w-[10rem] text-base font-medium'>{branch.phoneNo}</div>
                                                 <div className='w-[15rem] text-base font-medium'>{branch.email}</div>
                                             </div>
