@@ -12,7 +12,7 @@ import { DataContext } from './DataContext';
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 import formatDateAndTime from '@/utils/formateDateTime';
 import Popup from "./recordPurchaseRetrunTransaction"
-import Cash from "../../../../../assets/icons/finance/cash.svg"
+import Cash from "../../../../../assets/icons/finance/Cash.svg"
 
 
 
