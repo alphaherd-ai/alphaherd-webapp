@@ -20,7 +20,11 @@ const formSchema = z.object({
     .transform((value) => capitalizeFirst(value)),
   gstNo: z.string().length(15, 'Invalid GST no. - must be 15 digits'),
   phoneNo: z.string().length(10, 'Invalid Phone No.'),
+  orgEmail: z.string().email('Invalid Email Address'),
+  altPhoneNo: z.string(),
   address: z.string().min(1, "Enter Company Address to continue"),
+  website: z.string(),
+  panNo:z.string(),
   state: z.string().min(1, "Select State to continue").optional(),
   pincode: z.string()
   .regex(/^\d{6}$/, 'Invalid Pincode - must be exactly 6 digits'),
@@ -59,6 +63,9 @@ const OrgSetup = () => {
     orgImgUrl: '',
     gstNo: '',
     phoneNo: "",
+    altPhoneNo: "",
+    website: '',
+    panNo: '',
     branchName: "",
     adminName: '',
     adminEmail: '',
@@ -75,7 +82,7 @@ const OrgSetup = () => {
 
   var stepFields = [
     ["orgName"],
-    ["orgEmail", "orgImgUrl", "gstNo", "phoneNo", "branchName", "address", "state", "pincode", "description"],
+    ["orgEmail", "orgImgUrl", "gstNo", "phoneNo","altPhoneNo","website","panNo",  "branchName", "address", "state", "pincode", "description"],
     ["adminName", "adminEmail", "adminPhoneNo", "adminAltPhoneNo", "adminPassword", "reAdminPassword", "adminPicUrl"]
   ];
 
@@ -200,7 +207,7 @@ const OrgSetup = () => {
     try {
 
       formSchema.parse(data);
-
+      console.log('data is here',data);
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/admin/orgRegister`,
         {
           method: 'POST',
@@ -219,14 +226,26 @@ const OrgSetup = () => {
               "description": data.description,
               "phoneNo": data.phoneNo
             },
+            "branchDetails": {
+              email: data.orgEmail,
+              gstNo: data.gstNo,
+              phoneNo: data.phoneNo,
+              address: data.address,
+              altphoneNo: data.altPhoneNo,
+              website: data.website,
+              panNo: data.panNo,
+              state: data.state,
+              pinCode: parseInt(data.pincode),
+              description: data.description,
+              branchName: data.branchName,
+            },
             "adminUserDetails": {
               "name": data.adminName,
               "email": data.adminEmail,
               "password": data.adminPassword,
               "phoneNo": data.adminPhoneNo,
               "imageUrl": data.adminPicUrl
-            },
-            "branchName": data.branchName
+            }
           })
         }
       )

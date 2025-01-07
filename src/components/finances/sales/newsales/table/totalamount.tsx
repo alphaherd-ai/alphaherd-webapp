@@ -112,7 +112,22 @@ const NewsalesTotalAmout = ({ otherData }: { otherData: any }) => {
 
     const { totalAmountData, setTotalAmountData } = useContext(DataContext);
     const { transactionsData, setTransactionsData } = useContext(DataContext);
-
+    useEffect(() => {
+        if (otherData.recordTransaction) {
+            for (let i = 0; i < otherData.recordTransaction.length; i++) {
+                const formData = otherData.recordTransaction[i];
+                const newTransaction = {
+                    amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1 * formData.amountPaid, 10) || (balanceDue),
+                    date: formData.date || new Date(),
+                    isAdvancePayment: formData.isAdvancePayment,
+                    mode: formData.mode,
+                    moneyChange: formData.moneyChange,
+                    receiptNo: formData?.receiptNo,
+                };
+                setTransactionsData((prevTransactions: any) => [...prevTransactions, newTransaction]);
+            };
+        }
+    }, [otherData.recordTransaction]);
     const [grandAmt, setGrandAmt] = useState(totalAmount);
 
     const gstOptions = [
@@ -190,12 +205,6 @@ const NewsalesTotalAmout = ({ otherData }: { otherData: any }) => {
     useEffect(() => {
         updateGrandTotal();
     }, [totalAmount, selectedDiscountPer, discountInput, discountMethod, shipping, adjustment]);
-
-
-
-
-
-
     const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
     const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out' && !item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);

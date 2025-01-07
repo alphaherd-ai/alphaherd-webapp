@@ -101,7 +101,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
             });
             if (response.ok) {
                 const clientData = await response.json();
-                console.log(clientData);
+                //console.log(clientData);
                 if(clientData){
                     setNewClientData(clientData);
                     if (setIsNewClientClicked) {

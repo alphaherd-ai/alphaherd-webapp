@@ -124,13 +124,17 @@ const NewsalesTable = () => {
         isEstimateDataError = error;
         isEstimateDataLoading = isLoading;
     }
-
+    useEffect(() => {
+        items.push({
+            productId: null,
+            serviceId: null,
+            itemName: "",
+        });
+    },[])
     useEffect(() => {
         if (!isEstimateDataLoading && estimateData && !isEstimateDataError) {
             const { items, ...otherData } = estimateData;
-            // eslint-disable-next-line react-hooks/rules-of-hooks
-            setOtherData(otherData)
-            console.log(estimateData);
+            setOtherData(otherData);
             const shallowDataCopy = [...items];
             const itemData = shallowDataCopy.map((item: any) => ({
                 itemType: item.itemType,
@@ -146,9 +150,16 @@ const NewsalesTable = () => {
                 id: item.itemType === 'product' ? item.productBatch.id : item.serviceId,
                 provider: item.itemType === 'product' ? "" : item.serviceProvider
             }));
-            console.log(itemData);
-            setItems((prev: any[]) => [...itemData, ...prev,]);
-
+            setItems((prevItems: any) => [...prevItems, ...itemData]);
+            setItems((prevItems: any) => [
+                ...prevItems,
+                {
+                    productId: null,
+                    serviceId: null,
+                    itemName: "",
+                },
+            ]);
+            console.log('all the data is stored',itemData);
         }
     }, [estimateData, id,isEstimateDataLoading,isEstimateDataError]);
 
@@ -396,17 +407,6 @@ const NewsalesTable = () => {
 
 
 
-
-    useEffect(() => {
-
-        items.push({
-            productId: null,
-            serviceId: null,
-            itemName: "",
-        });
-        setItems(items);
-
-    }, [])
 
     useEffect(() => {
         if (tableData.length === 0) {
@@ -779,9 +779,6 @@ const NewsalesTable = () => {
                                                     />
                                             )
                                         )}
-
-
-
 
                                         {item.expiry && formatDateAndTime(item.expiry).formattedDate && (
                                             <div className="text-textGrey2 text-[13px] font-medium  px-2">{formatDateAndTime(item.expiry).formattedDate}</div>

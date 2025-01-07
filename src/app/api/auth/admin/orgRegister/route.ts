@@ -10,7 +10,7 @@ export const POST = async (req: NextRequest) => {
 
   try {
     const url = new URL(req.url);
-    const { orgDetails, adminUserDetails, branchName } = await req.json();
+    const { orgDetails, adminUserDetails, branchDetails } = await req.json();
     const hashedPassword = await bcrypt.hash(adminUserDetails.password, 10);
     // console.log("here here");
     let duplicateOrg = await prismaClient.organization.findUnique({
@@ -55,10 +55,9 @@ export const POST = async (req: NextRequest) => {
     let newOrg = await prismaClient.organization.create({
       data: orgDetails
     });
-
     let orgNewBranch = await prismaClient.orgBranch.create({
       data : {
-        branchName,
+        ...branchDetails,
         orgId: newOrg.id
       }
     })
