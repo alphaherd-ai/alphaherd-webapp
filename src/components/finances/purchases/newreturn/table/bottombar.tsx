@@ -22,15 +22,16 @@ const NewPurchaseReturnNewBottomBar = ({ invoiceData }: any) => {
     const router = useRouter();
     const [isSaving, setSaving] = useState(false);
 
-    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
-    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
-
-
-    const balanceDue = totalAmountData.totalCost - totalPaidAmount + totalAmountToPay;
 
 
     const handleSubmit = async () => {
+        const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+        const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+
+        const balanceDue = totalAmountData.totalCost - totalPaidAmount + totalAmountToPay;
         tableData.pop();
         const allData = { headerData, tableData, totalAmountData, transactionsData };
         console.log(allData)
@@ -49,7 +50,7 @@ const NewPurchaseReturnNewBottomBar = ({ invoiceData }: any) => {
         }));
         const data = {
             distributor: (id === null) ? allData.headerData.distributor.value : invoiceData.distributor,
-            distributorId:(id===null) ? allData.headerData.distributor.distributorId : null,    
+            distributorId: (id === null) ? allData.headerData.distributor.distributorId : null,
             notes: (id === null) ? allData.headerData.notes : invoiceData.notes,
             invoiceNo: (id === null) ? allData.headerData.invoiceNo : invoiceData.invoiceNo,
             dueDate: (id === null) ? allData.headerData.dueDate : invoiceData.dueDate,
@@ -61,7 +62,7 @@ const NewPurchaseReturnNewBottomBar = ({ invoiceData }: any) => {
             recordTransaction: {
                 create: allData.transactionsData
             },
-            status:allData.totalAmountData.totalCost === balanceDue ? `Debited:₹${parseFloat(balanceDue).toFixed(2)}` :balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
+            status: allData.totalAmountData.totalCost === balanceDue ? `Debited:₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
             type: FinanceCreationType.Purchase_Return,
             items: {
                 create: items
@@ -96,9 +97,9 @@ const NewPurchaseReturnNewBottomBar = ({ invoiceData }: any) => {
         <>
 
 
-<div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
-<div className="flex justify-between items-center gap-4 pl-4">
-                                {/* <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
+            <div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
+                <div className="flex justify-between items-center gap-4 pl-4">
+                    {/* <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                                     <Image src={printicon} alt="print"></Image>
                                     <div>Print</div>
                                 </div>
@@ -110,16 +111,15 @@ const NewPurchaseReturnNewBottomBar = ({ invoiceData }: any) => {
                                     <Image src={shareicon} alt="share"></Image>
                                     <div>Share editable sheet</div>
                                 </div> */}
-                            </div>
-                            <div className="flex justify-between items-center gap-4 pr-4">
+                </div>
+                <div className="flex justify-between items-center gap-4 pr-4">
                     {/* <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
                         <Image src={drafticon} alt="draft"></Image>
                         <div>Save as Draft</div>
                     </Button> */}
-                    <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${
-                        isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
-                    }`}
-                    onClick={handleSubmit} disabled={isDisabled}>
+                    <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
+                        }`}
+                        onClick={handleSubmit} disabled={isDisabled}>
                         <Image src={checkicon} alt="check"></Image>
                         <div>{isSaving ? <Loading2></Loading2> : "Save"}</div>
                     </Button>

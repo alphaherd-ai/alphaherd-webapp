@@ -664,10 +664,7 @@ const NewsalesTable = () => {
                                 <div className='flex text-gray-500 text-base font-medium w-[12rem]'>Name</div>
                                 <div className='flex text-gray-500 text-base font-medium w-[8rem]'>Batch No./Provider</div>
                                 <div className='flex text-gray-500 text-base font-medium w-[7rem]'>Selling Price</div>
-
                                 <div className='flex text-gray-500 justify-center text-base font-medium w-[8rem]'>Quantity</div>
-
-
                                 <div className='flex justify-center text-gray-500 text-base font-medium w-[6rem]'>Tax %</div>
                                 <div className='flex text-gray-500 justify-center text-base font-medium  w-[10rem]'>Tax Amt.</div>
                                 <div className='flex text-gray-500 text-base font-medium w-[6rem] mr-4'>Discount %</div>

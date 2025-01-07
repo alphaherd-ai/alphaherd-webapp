@@ -24,6 +24,7 @@ type PopupProps = {
 
 
 const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNewClient }: any) => {
+    //console.log(setIsNewClientClicked);
     const [formData, setFormData] = useState<any>({});
     const [showPopup, setShowPopup] = React.useState(false);
     const appState = useAppSelector((state) => state.app)
@@ -77,7 +78,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
     };
 
     const handleSaveClick = async () => {
-       
+        
         try {
             setIsSaveDisabled(true);
             setSavingData(true);
@@ -103,8 +104,12 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
                 console.log(clientData);
                 if(clientData){
                     setNewClientData(clientData);
-                    setIsNewClientClicked((prev: any) => !prev);
-                    setNewClient(clientData);
+                    if (setIsNewClientClicked) {
+                        setIsNewClientClicked((prev: any) => !prev);
+                    }
+                    if (setNewClient) {
+                        setNewClient(clientData);
+                    }
                 }
 
                 console.log('Data saved successfully');
@@ -113,6 +118,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
                     addAnotherPatient = false;
                 }
                 else {
+                    console.log("Here")
                     togglePopup();
                     addAnotherPatient = false;
                 }

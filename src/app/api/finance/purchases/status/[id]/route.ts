@@ -3,8 +3,6 @@ import { NextRequest } from 'next/server';
 import { fetchFinanceId } from '@/utils/fetchBranchDetails';
 
 export const PUT = async (req: NextRequest, { params }: { params: { id: number } }) => {
-
-    console.log("I am in paymentTransaction");
     if (req.method !== 'PUT') {
       return new Response('Method not allowed', { status: 405 });
     }
@@ -14,15 +12,14 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: number }
       const financeId=await fetchFinanceId(req);
       const body = await req.json();
       const status=body.status;
-      if (body.amountPaid) {
-        body.amountPaid = parseInt(body.amountPaid, 10); // Ensure it's an integer
-      }
-      const updatedRecordTransaction = await prismaClient.recordTransaction.update({
-        where: { id: Number(params.id)},
-        data: body,
+      const purchases = await prismaClient.purchases.update({
+        where: { id: Number(params.id),financeSectionId:financeId},
+        data: {
+          status:status,
+        }, 
       });
   
-      return new Response(JSON.stringify(updatedRecordTransaction), {
+      return new Response(JSON.stringify(purchases), {
         status: 201,
         headers: {
           'Content-Type': 'application/json',

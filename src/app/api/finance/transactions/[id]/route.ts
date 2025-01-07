@@ -27,7 +27,8 @@ export const GET = async (req: NextRequest, { params }: { params: { id: number }
 };
 
 export const PUT = async (req: NextRequest, { params }: { params: { id: number } }) => {
-  console.log("I am in route.ts of transaction/id");
+  //console.log("I am in route.ts of transaction/id");
+
     if (req.method !== 'PUT') {
       return new Response('Method not allowed', { status: 405 });
     }
@@ -35,8 +36,9 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: number }
     try {
       const financeId= await fetchFinanceId(req);
       const body = await req.json();
+      //console.log(body);
       if (body.amountPaid) {
-        body.amountPaid = parseInt(body.amountPaid, 10); // Ensure it's an integer
+        body.amountPaid = parseInt(body.amountPaid, 10); 
       }
       const transactions = await prismaClient.transactions.update({
         where: { id: Number(params.id),financeSectionId:financeId },

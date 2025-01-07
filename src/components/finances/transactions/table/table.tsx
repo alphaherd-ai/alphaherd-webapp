@@ -80,7 +80,7 @@ const FinancesTransactionsTable = () => {
   return (
     <div className='flex flex-col w-full box-border  border border-solid border-borderGrey rounded-[5px] mt-6'>
       <FinancesTransactionsTableHeader transactions={transactions} />
-      <div className='flex  w-full  box-border bg-gray-100  h-12 items-center justify-evenly border-0 border-t border-b border-solid border-borderGrey text-textGrey2'>
+      <div className='flex px-2 w-full  box-border bg-gray-100  h-12 items-center justify-evenly border-0 border-t border-b border-solid border-borderGrey text-textGrey2'>
         <div className=' flex text-textGrey2 text-base font-medium  w-[6rem] '>Date</div>
         <div className=' flex text-textGrey2 text-base font-medium  w-[6rem] '>Time</div>
         <div className=' flex text-textGrey2 text-base font-medium  w-[12rem]'>Party</div>

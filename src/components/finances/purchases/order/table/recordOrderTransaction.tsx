@@ -18,6 +18,7 @@ import { Button } from '@nextui-org/react';
 import { useAppSelector } from '@/lib/hooks';
 import Loading2 from '@/app/loading2';
 import useSWR from 'swr';
+import { header } from 'express-validator';
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
@@ -97,7 +98,7 @@ const RecordOrderTransaction: React.FC<PopupProps> = ({ headerdata, transactions
         setTransactionType(type);
     };
 
-    
+    //console.log(headerdata?.distributor?.value);
 
     const handleSaveClick = async () => {
         setSaving(true);
@@ -136,6 +137,7 @@ const RecordOrderTransaction: React.FC<PopupProps> = ({ headerdata, transactions
             isAdvancePayment: isAdvancePayment,
             mode: selectedMode,
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
+            receiptNo: initialInvoiceNo,
         };
 
         dispatch(addAmount({
