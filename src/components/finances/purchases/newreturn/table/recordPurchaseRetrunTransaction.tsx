@@ -96,7 +96,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    partyName: headerdata?.customer?.label,
+                    partyName: headerdata?.distributor.value,
                     invoiceLink: headerdata.invoiceNo,
                     receiptNo: initialInvoiceNo,
                     date: formData.date || new Date(),
@@ -123,6 +123,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
             date: formData.date || new Date(),
             isAdvancePayment: isAdvancePayment,
             mode: selectedMode,
+            receiptNo: initialInvoiceNo,
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
         };
 

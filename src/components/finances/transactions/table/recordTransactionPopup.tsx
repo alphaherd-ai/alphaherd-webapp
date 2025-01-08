@@ -22,6 +22,7 @@ const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 type PopupProps = {
     onClose: () => void;
     initialInvoiceNo: any;
+    editTransaction?: any;
 }
 interface ProductOption {
     value: string;
@@ -45,7 +46,7 @@ interface ServiceOption {
     maxRetailPrice:number;
 }
 
-const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo}:any) => {
+const RecordTransactionPopup: React.FC<PopupProps> = ({onClose, initialInvoiceNo,editTransaction}:any) => {
 
     const dispatch = useDispatch();
 

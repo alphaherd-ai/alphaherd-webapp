@@ -25,18 +25,19 @@ const NewPurchasesBottomBar = ({ orderData }: any) => {
     const id = url.get('id');
     const [isSaving, setSaving] = useState(false);
 
-    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
-
-    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
 
-    const balanceDue = totalAmountData.totalCost + totalPaidAmount - totalAmountToPay;
-    console.log(balanceDue);
 
     var userEmail = "";
     const handleSubmit = async () => {
+        const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+        const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+    
+    
+        const balanceDue = totalAmountData.totalCost + totalPaidAmount - totalAmountToPay;
         tableData.pop();
-        const allData = { headerData, tableData, totalAmountData };
+        const allData = { headerData, tableData, totalAmountData,transactionsData };
         console.log(allData)
         let totalQty = 0;
         tableData.forEach(data => {
@@ -66,7 +67,10 @@ const NewPurchasesBottomBar = ({ orderData }: any) => {
             type: FinanceCreationType.Purchase_Order,
             items: {
                 create: items
-            }
+            },
+            recordTransaction: {
+                create: allData.transactionsData,
+            },
 
 
         }

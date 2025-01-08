@@ -135,6 +135,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ orderData, headerdata,se
             date: formData.date || new Date(),
             isAdvancePayment: isAdvancePayment,
             mode: selectedMode,
+            receiptNo: initialInvoiceNo,
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
         };
 

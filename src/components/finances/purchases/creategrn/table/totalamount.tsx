@@ -11,8 +11,13 @@ import { DataContext } from './DataContext';
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 import formatDateAndTime from '@/utils/formateDateTime';
 import Popup from "./recordCreateGrnTransaction"
-
 import Cash from '../../../../../assets/icons/finance/Cash.svg'
+import { Tooltip, Button } from "@nextui-org/react";
+import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
+import Menu from '../../../../../assets/icons/finance/menu.svg'
+import EditRecordTransactionPopup from '@/components/finances/editTransaction/editTransaction';
+import CancellationPopup from '@/components/finances/cancelTransaaction/cancelTransaction';
+
 const CreateGrnTotalAmount = ({ orderData }: any) => {
     const { tableData, headerData } = useContext(DataContext);
     let totalAmount = 0;
@@ -23,6 +28,26 @@ const CreateGrnTotalAmount = ({ orderData }: any) => {
 
     const { totalAmountData, setTotalAmountData } = useContext(DataContext);
     const { transactionsData, setTransactionsData } = useContext(DataContext);
+
+    const [popup, setPopup] = useState(false);
+
+    const onClose = () => {
+        setPopup((prev: any) => !prev);
+    }
+
+    const [showConfirmation, setShowConfirmation] = useState(false);
+
+    const [transaction, setTransaction] = useState<any>();
+
+    const handleSelectedTransaction = (transaction: any) => {
+        const updatedTransaction = {
+            partyName: headerData?.distributor.value,
+            invoiceLink: headerData.invoiceNo,
+            ...transaction
+        }
+        setTransaction(updatedTransaction);
+    }
+
 
     const [grandAmt, setGrandAmt] = useState(totalAmount);
 
@@ -128,7 +153,7 @@ const CreateGrnTotalAmount = ({ orderData }: any) => {
             totalCost: newGrandTotal,
             shipping: shippingValue,
             adjustment: adjustmentValue,
-            
+
         }));
     };
     const handleDateChange = (date: any) => {
@@ -185,7 +210,7 @@ const CreateGrnTotalAmount = ({ orderData }: any) => {
     }, [count]);
 
 
-     console.log(headerData)
+    console.log(headerData)
 
     const customStyles = {
         control: (provided: any, state: any) => ({
@@ -352,11 +377,35 @@ const CreateGrnTotalAmount = ({ orderData }: any) => {
                             transaction.isAdvancePayment &&
                             (<div key={index} className="w-full  px-6 py-2 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
                                 <div className="text-gray-500 text-md font-medium ">Advance Paid on  {formatDateAndTime(transaction.date).formattedDate}</div>
+                                <div className='text-gray-500 text-md font-medium'>#{transaction?.receiptNo}</div>
                                 <div className='flex items-center h-9 px-4  justify-between rounded-lg '>
                                     <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
                                         ₹ {transaction.amountPaid > 0 ? transaction.amountPaid : -1 * transaction.amountPaid}
                                     </div>
                                 </div>
+                                {(!(transaction.moneyChange === "Cancelled") &&
+                                    <Popover placement="bottom" showArrow offset={10}>
+                                        <PopoverTrigger>
+                                            <Button variant="solid" className="capitalize flex border-none text-gray rounded-lg">
+                                                <div className='flex items-center'>
+                                                    <Image src={Menu} alt='Menu' className='w-5 h-5' />
+                                                </div>
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="text-gray-500 bg-white text-sm p-2 font-medium flex flex-row items-start rounded-lg border-2 mt-2.5">
+                                            <div className="flex flex-col">
+                                                <div className='flex flex-col'>
+                                                    <div className='text-gray-500 text-sm p-3 font-medium flex hover:cursor-pointer' onClick={() => { setPopup((prev: any) => !prev); handleSelectedTransaction(transaction) }} >
+                                                        Edit
+                                                    </div>
+                                                    <div className='text-gray-500 text-sm p-3 font-medium flex hover:cursor-pointer' onClick={() => { setShowConfirmation((prev: boolean) => !prev); handleSelectedTransaction(transaction) }}>
+                                                        Cancel
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </PopoverContent>
+                                    </Popover>
+                                )}
                             </div>)
                         ))
                         }
@@ -365,11 +414,40 @@ const CreateGrnTotalAmount = ({ orderData }: any) => {
                             !transaction.isAdvancePayment &&
                             (<div key={index} className="w-full  px-6 py-2 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
                                 <div className="text-gray-500 text-md font-medium ">Paid on {formatDateAndTime(transaction.date).formattedDate}</div>
-                                <div className='flex items-center h-9 px-4  justify-between rounded-lg '>
-                                    <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
-                                        ₹ {transaction.amountPaid > 0 ? transaction.amountPaid : -1 * transaction.amountPaid}
+                                <div className='text-gray-500 text-md font-medium'>#{transaction?.receiptNo}</div>
+                                <div className="text-textGrey2 text-base font-medium  w-1/3 py-4 flex  items-center">
+                                    <div className='flex pr-2'>
+                                        <Image src={Cash} alt='Cash' className='w-4 h-4 ' />
                                     </div>
+                                    {transaction.mode}
                                 </div>
+                                <div className="text-textGrey2 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid > 0 ? transaction.amountPaid : -1 * transaction.amountPaid)?.toFixed(2)}
+                                {(transaction.moneyChange === 'Out' || transaction.moneyChange === 'Cancelled') && <span className="px-2 py-1 rounded-md bg-[#FFEAEA] text-[#FF3030] text-sm font-medium ml-[5px]">{transaction.moneyChange}</span>}
+                                    {transaction.moneyChange === 'In' && <span className="px-2 py-1 rounded-md bg-[#E7F5EE] text-[#0F9D58] text-sm font-medium ml-[5px]">In</span>}
+                                </div>
+                                {(!(transaction.moneyChange === "Cancelled") &&
+                                    <Popover placement="bottom" showArrow offset={10}>
+                                        <PopoverTrigger>
+                                            <Button variant="solid" className="capitalize flex border-none text-gray rounded-lg">
+                                                <div className='flex items-center'>
+                                                    <Image src={Menu} alt='Menu' className='w-5 h-5' />
+                                                </div>
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="text-gray-500 bg-white text-sm p-2 font-medium flex flex-row items-start rounded-lg border-2 mt-2.5">
+                                            <div className="flex flex-col">
+                                                <div className='flex flex-col'>
+                                                    <div className='text-gray-500 text-sm p-3 font-medium flex hover:cursor-pointer' onClick={() => { setPopup((prev: any) => !prev); handleSelectedTransaction(transaction) }} >
+                                                        Edit
+                                                    </div>
+                                                    <div className='text-gray-500 text-sm p-3 font-medium flex hover:cursor-pointer' onClick={() => { setShowConfirmation((prev: boolean) => !prev); handleSelectedTransaction(transaction) }}>
+                                                        Cancel
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </PopoverContent>
+                                    </Popover>
+                                )}
                             </div>)
                         ))
                         }
@@ -392,6 +470,8 @@ const CreateGrnTotalAmount = ({ orderData }: any) => {
                         </div>
                     </div>
                 </div>
+                {popup && <EditRecordTransactionPopup onClose={onClose} editTransaction={transaction} transactionsData={transactionsData} type={"invoice"} />}
+                {showConfirmation && <CancellationPopup setShowConfirmation={setShowConfirmation} editTransaction={transaction} transactionsData={transactionsData} type={"invoice"} />}
             </div>
 
 
