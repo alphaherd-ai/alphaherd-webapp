@@ -118,7 +118,16 @@ const CreateGrnTable = () => {
                 location :item.location
             }));
             setItems(itemData);
-
+           // setItems((prevItems: any) => [...prevItems, ...itemData]);
+            setItems((prevItems: any) => [
+                ...prevItems,
+                {
+                    productId: null,
+                    serviceId: null,
+                    itemName: "",
+                },
+            ]);
+            console.log('all the data is stored',itemData);
         }
     }, [orderData]);
     const taxOptions = [
@@ -531,10 +540,9 @@ const handleAddItem = useCallback(() => {
                                     <div className='flex w-[180%] justify-evenly items-center box-border bg-gray-100 h-12  text-gray-500 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey'>
                                         <div className=' flex text-gray-500 text-base font-medium pl-2  w-[5rem]'>No.</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[18rem]'>Name</div>
-                                        <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Batch No.</div>
-
+                                        <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Batch No. <span className="text-[red] ml-1 block">*</span></div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Bar Code</div>
-                                        <div className=' flex text-gray-500 text-base font-medium w-[15rem] '>Expiry Date</div>
+                                        <div className=' flex text-gray-500 text-base font-medium w-[15rem] '>Expiry Date <span className="text-[red] ml-1 block">*</span></div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[18rem]'>Quantity</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[18rem]'>Free Quantity</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Unit Price</div>
@@ -556,7 +564,7 @@ const handleAddItem = useCallback(() => {
                                                     <Select
                                                         className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0 absolute"
                                                         classNamePrefix="select"
-                                                        // value={products.find((prod) => prod.value.id === item.productId)}
+                                                        //value={products.find((prod) => prod.value.id === item.productId)}
                                                         isClearable={false}
                                                         isSearchable={true}
                                                         name="itemName"
@@ -565,8 +573,20 @@ const handleAddItem = useCallback(() => {
                                                         menuPortalTarget={document.body}
                                                         styles={customStyles}
                                                     />) : (
-                                                    item.itemName
+                                                        <Select
+                                                        className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0 absolute"
+                                                        classNamePrefix="select"
+                                                        value={products.find((prod) => prod.value.id === item.productId)}
+                                                        isClearable={false}
+                                                        isSearchable={true}
+                                                        name="itemName"
+                                                        options={products}
+                                                        onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
+                                                        menuPortalTarget={document.body}
+                                                        styles={customStyles}
+                                                    />
                                                 )}
+                                                
                                             </div>
 
                                     <div
@@ -588,9 +608,6 @@ const handleAddItem = useCallback(() => {
                         }}
                         name={`batchNumber-${index + 1}`}
                     />
-                     {!item.batchNumber && (
-                    <div className="text-red-500 text-sm mt-1">Batch No. is Required.</div>
-                )}
                 </div>
                                     <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>
                                     <input
@@ -745,7 +762,7 @@ const handleAddItem = useCallback(() => {
                                                 ₹
                                                 <input
                                                     type="number"
-                                                    value={item.discountAmount}
+                                                    value={item.discountAmount.toFixed(2)}
                                                     className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                                     onChange={(e) => handleDiscountChange(Number(e.target.value), index)}
                                                     name={`discountAmount-${index + 1}`}
@@ -786,15 +803,15 @@ const handleAddItem = useCallback(() => {
 
                             <div className=' flex text-gray-500 text-base font-medium w-[12rem]'></div>
                             <div className=' flex text-gray-500 text-base font-medium w-[15rem] '></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[18rem]'>{items.reduce((acc, item) => acc + item.quantity, 0) ||0} Items</div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[18rem]'>{items.reduce((acc, item) => acc + item.freeQuantity, 0) ||0} Items</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[18rem]'>{(items.reduce((acc: any, item: any) => { if (!item.itemName) return acc; return acc + item.quantity }, 0)) || 0} Items</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[18rem]'>{(items.reduce((acc: any, item: any) => { if (!item.itemName) return acc; return acc + item.freeQuantity }, 0)) || 0} Items</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{isNaN(items.reduce((acc, item) => acc + (item.quantity*Number(item.unitPrice)) , 0)) ? 0 : items.reduce((acc, item) => acc + (item.quantity*Number(item.unitPrice)) , 0).toFixed(2)}</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{isNaN(items.reduce((acc, item) => { if (!item.itemName) return acc; return acc + (item.quantity*Number(item.unitPrice)) }, 0)) ? 0 : items.reduce((acc, item) => {if (!item.itemName) return acc; return acc + (item.quantity*Number(item.unitPrice))} , 0).toFixed(2)}</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{isNaN(items.reduce((acc, item) => acc + (item.gst)*(item.quantity*Number(item.unitPrice)) , 0)) ? 0 : items.reduce((acc, item) => acc + (item.gst)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2)}</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{isNaN(items.reduce((acc, item) => { if (!item.itemName) return acc; return acc + (item.gst)*(item.quantity*Number(item.unitPrice))} , 0)) ? 0 : items.reduce((acc, item) => { if (!item.itemName) return acc; return acc + (item.gst)*(item.quantity*Number(item.unitPrice))} , 0).toFixed(2)}</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{isNaN(items.reduce((acc, item) => acc + (item.discountPercent/100)*(item.quantity*Number(item.unitPrice)) , 0)) ? 0 : items.reduce((acc, item) => acc + (item.discountPercent/100)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2)}</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{isNaN(items.reduce((acc, item) => { if (!item.itemName) return acc; return acc + (item.discountPercent/100)*(item.quantity*Number(item.unitPrice))} , 0)) ? 0 : items.reduce((acc, item) => {if (!item.itemName) return acc; return acc + (item.discountPercent/100)*(item.quantity*Number(item.unitPrice)) }, 0).toFixed(2)}</div>
                             <div className=' flex text-gray-500 text-base font-bold w-1/12'></div>
                         </div>
                     </div>
@@ -807,7 +824,7 @@ const handleAddItem = useCallback(() => {
                         <div className=' flex text-gray-500 text-base font-medium'>₹{isNaN(((item.gst-item.discountPercent/100+1)*(item.quantity*Number(item.unitPrice)))) ? 0 : ((item.gst-item.discountPercent/100+1)*(item.quantity*Number(item.unitPrice))).toFixed(2)}</div>
                     </div>
                     ))}
-                    <div className=' flex text-textGreen text-base font-bold w-[10rem] h-12 items-center justify-center'>₹{isNaN(items.reduce((acc, item) => acc + (item.gst-item.discountPercent/100+1)*(item.quantity*Number(item.unitPrice)) , 0)) ? 0 : items.reduce((acc, item) => acc + (item.gst-item.discountPercent/100+1)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2)}</div>
+                    <div className=' flex text-textGreen text-base font-bold w-[10rem] h-12 items-center justify-center'>₹{isNaN(items.reduce((acc, item) => {if (!item.itemName) return acc; return acc + (item.gst-item.discountPercent/100+1)*(item.quantity*Number(item.unitPrice)) }, 0)) ? 0 : items.reduce((acc, item) => {if (!item.itemName) return acc; return acc + (item.gst-item.discountPercent/100+1)*(item.quantity*Number(item.unitPrice))} , 0).toFixed(2)}</div>
                     </div>
                     </div>
                     

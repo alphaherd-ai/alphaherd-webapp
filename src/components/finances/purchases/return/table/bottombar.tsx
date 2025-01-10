@@ -63,8 +63,8 @@ const NewPurchaseReturnBottomBar = ({invoiceData}:any) => {
             }
             
         }
-        //console.log("bottom bar data is : ",data);
         
+        tableData.pop();
         //console.log(JSON.stringify(data))
         try {
             setSaving(true);

@@ -290,7 +290,7 @@ useEffect(() => {
                                     /> */}
                             </div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
-                            {(item.discount)?.toFixed(2)}
+                            {(item.discount*100)?.toFixed(2)}
                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
@@ -325,11 +325,11 @@ useEffect(() => {
                             <div className=' flex text-gray-500 text-base font-bold w-[20rem]'>{items.reduce((acc, item) => acc + item.freeQuantity, 0) ||
                                                 0} Items</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => acc + (item.quantity*Number(item.maxRetailPrice)) , 0).toFixed(2) ||
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => acc + (item.quantity*Number(item.unitPrice)) , 0).toFixed(2) ||
                                                 0}</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => acc + (item.tax)*(item.quantity*Number(item.maxRetailPrice)) , 0).toFixed(2) ||
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => acc + (item.tax)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2) ||
                                                 0}</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => acc + (item.discount)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2) ||
@@ -343,7 +343,7 @@ useEffect(() => {
                     </div>
                     {items.map((item:any,index:number) => (
                     <div key={item.id} className="flex items-center justify-center  w-[10rem] box-border bg-white text-gray-500 border-t-0 border-r-0 border-l border-b border-solid border-gray-200 h-12">
-                        <div className=' flex text-gray-500 text-base font-medium'>{((item.tax-item.discount+1)*(item.quantity*Number(item.maxRetailPrice))).toFixed(2)||
+                        <div className=' flex text-gray-500 text-base font-medium'>{((item.tax-item.discount+1)*(item.quantity*Number(item.unitPrice))).toFixed(2)||
                                                 0}</div>
                     </div>
                     ))}
