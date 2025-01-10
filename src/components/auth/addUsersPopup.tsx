@@ -9,8 +9,9 @@ import mailIcon from "@/assets/icons/settings/cash=Mail.svg"
 
 import { useAppSelector } from "@/lib/hooks";
 import { Bounce, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const Popup = ({ onClose }:any) => {
+const Popup = ({ onClose }: any) => {
 
     const appState = useAppSelector((state) => state.app);
 
@@ -31,16 +32,16 @@ const Popup = ({ onClose }:any) => {
             setEmailError('');
         }
     };
-    const validateEmail = (email:any) => {
+    const validateEmail = (email: any) => {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(String(email).toLowerCase());
     };
     const handleSendInvite = async () => {
-        if(!isEmailValid) return;
-        try{
+        if (!isEmailValid) return;
+        try {
             if (emailInput.trim() !== '') {
                 setLoading(true);
-                console.log('Currently invite sent with orgId:'+ appState.currentBranchId)
+                console.log('Currently invite sent with orgId:' + appState.currentBranchId)
                 let resp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/invite/create?branchId=${appState.currentBranchId}`, {
                     method: 'POST',
                     headers: {
@@ -54,8 +55,7 @@ const Popup = ({ onClose }:any) => {
                     })
                 });
                 let json = await resp.json();
-                if(!resp.ok){
-                    // console.log(json);
+                if (!resp.ok) {
                     throw new Error(json.message);
                 }
                 toast.success(json.message, {
@@ -68,11 +68,11 @@ const Popup = ({ onClose }:any) => {
                     progress: undefined,
                     theme: "colored",
                     transition: Bounce,
-                  });
-                setTimeout(() => {onClose(),setLoading(false);},0)
+                });
+                setTimeout(() => { onClose(), setLoading(false); }, 0)
             }
         }
-        catch(err : any){
+        catch (err: any) {
             toast.error(err.message, {
                 position: "bottom-right",
                 autoClose: 5000,
@@ -83,14 +83,14 @@ const Popup = ({ onClose }:any) => {
                 progress: undefined,
                 theme: "colored",
                 transition: Bounce,
-              });
-              setTimeout(() => {onClose(),setLoading(false);},0)
-              
+            });
+            setTimeout(() => { setLoading(false) }, 0)
+
         }
     };
 
     return <>
-    <ToastContainer />
+        <ToastContainer />
         <div className="w-full h-full flex justify-center items-center  top-0 left-0 fixed inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
             <div className="w-[640px] p-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400/opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 inline-flex">
                 <div className="self-stretch justify-start items-start gap-6 inline-flex">
@@ -139,32 +139,7 @@ const Popup = ({ onClose }:any) => {
                                 </div>
                             </div>)}
                         </div>
-                        {/* <div className="grow shrink basis-0 self-stretch justify-end items-center gap-2.5 flex">
-                <div className="w-6 h-6 relative">
-                    <div className="w-6 h-6 left-0 top-0 absolute">
-                        <Image src={link} alt="link" />
                     </div>
-                </div>
-                <div className="text-teal-400 text-base  ">Copy invite link</div>
-            </div> */}
-                    </div>
-                    {/* <div className="w-[600px] h-11 justify-start items-center flex">
-            <div className="pr-5 justify-start items-center flex">
-                <div className="text-gray-500 text-base  ">Select Branch</div>
-            </div>
-            <div className="w-[28.6rem]">
-
-                <Select
-                            className="text-gray-500 text-base h-[100%]"
-                            placeholder="Pets First Kalyan Nagar Branch"
-                            isClearable={false}
-                            isSearchable={true}
-                            options={gstOptions}
-                            isMulti={true}
-                        />
-
-            </div>
-        </div> */}
                     <div className="self-stretch justify-start items-center gap-2 inline-flex">
                         <div className="grow shrink basis-0 h-11 py-[13px] bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-4 flex">
                             <input type="email" name="" id="" className="text-neutral-400 text-base  h-11 px-4 py-[13px] w-[100%] bg-white rounded-[5px] border border-neutral-400 justify-start items-center gap-4 flex" placeholder="Enter Email" value={emailInput}
@@ -177,40 +152,9 @@ const Popup = ({ onClose }:any) => {
                     </div>
                     {emailError && <div className="text-red-500 text-sm mt-2">{emailError}</div>}
                 </div>
-                {/* <div className="overflow-auto max-h-[300px] w-[36rem]">
-    <div className="self-stretch rounded-[5px] border border-stone-300 justify-start items-start flex">
-        <div className="grow shrink basis-0 flex-col justify-start items-start inline-flex">
-            <div className="flex justify-start gap-[38%] w-[100%]">
-            <div className="self-stretch h-12 p-4 bg-gray-100 border-b border-neutral-400 justify-start items-center gap-2 inline-flex">
-                <div className="text-gray-500 text-base">Email</div>
-            </div>
-            <div className="self-stretch h-12 p-4 bg-gray-100 border-b border-neutral-400 justify-start items-center gap-2 inline-flex">
-                <div className="text-gray-500 text-base  ">Role</div>
-            </div>
-            </div>
-            
-            {emails.map((emailObj, index) => (
-                                <div key={index} className="self-stretch h-16 p-4 bg-white border-b border-stone-300 justify-start items-center gap-[20%] inline-flex">
-                                    <div className="w-[178px] text-gray-500 text-base border-b-4 border-stone-800">{emailObj.email}</div>
-                                    <div className="min-w-[61px] h-7 px-2 py-1.5 bg-violet-100 rounded-[5px] justify-center items-center gap-2 inline-flex">
-                                        <div className="text-indigo-600 text-xs">{emailObj.role}</div>
-                                    </div>
-                                </div>
-                            ))}
-        </div>
-        
-    </div>
-    </div>
-    <div className="self-stretch justify-end items-center gap-2.5 inline-flex">
-        <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex hover:cursor-pointer" onClick={onClose}>
-            <div className="text-white text-base  ">Finish</div>
-        </div>
-    </div> */}
             </div>
         </div>
     </>;
 }
 
 export default Popup;
-
-

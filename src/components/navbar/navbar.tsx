@@ -8,7 +8,7 @@ import setting from '../../assets/icons/settings/settingicon.svg';
 import PatientlistIcon from './icons/patientlistIcon';
 import InventoryIcon from './icons/inventoryIcon';
 import HomeIcon from './icons/homeIcon';
-import ProfileIcon from "../../assets/icons/settings/pfpcion.jpeg";
+import profileicon from "../../assets/icons/navbar/default.svg";
 import addIcon from '../../assets/icons/home/add2.svg';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -385,7 +385,7 @@ if (user.name === "" || currentRoute.startsWith("/auth"))return null;
           <Link className='no-underline flex pl-6' href='/profile'>
             <div className='text-sm flex items-center justify-center rounded-full overflow-hidden border border-solid border-gray-300'>
               {user.imageUrl?<Image className='w-7 h-7 relative rounded-full border border-neutral-400 object-cover' src={String(user?.imageUrl)} width={80} height={80} alt='profilePic' />:
-              <Image className='w-7 h-7 relative rounded-full border border-neutral-400' src={ProfileIcon} width={80} height={80} alt='profilePic' />
+              <Image className='w-7 h-7 relative rounded-full border border-neutral-400' src={profileicon} width={80} height={80} alt='profilePic' />
               }
               
             </div>

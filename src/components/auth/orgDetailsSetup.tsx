@@ -242,34 +242,25 @@ const OrgDetailsSetup = (props: any) => {
                     <div className="self-stretch justify-start items-start gap-10 inline-flex">
                         <div className="grow shrink basis-0  justify-start items-center gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium">Select State*</div>
+                                <div className="grow shrink basis-0  rounded-[5px] border border-neutral-400">
+                                    <Select
+                                        className="text-textGrey2 text-base font-medium  w-full border-0 boxShadow-0 p-0 grow shrink basis-0"
 
-                            <Select
-                                className="text-textGrey2 text-base font-medium  w-full border-0 boxShadow-0 p-0 grow shrink basis-0"
+                                        styles={customStyles}
 
-                                styles={customStyles}
+                                        isClearable={false}
+                                        isMulti={false}
+                                        isSearchable={true}
+                                        name="state"
+                                        options={stateOptions}
+                                        onChange={props.handleChange}
+                                        value={stateOptions.find(option => option.value === props.data.state)}
+                                    />
+                                    {props.validationErrors.state && (
+                                        <div className="text-[red] error">{props.validationErrors.state}</div>
+                                    )}
 
-                                isClearable={false}
-                                isMulti={false}
-                                isSearchable={true}
-                                name="state"
-                                options={stateOptions}
-                                onChange={props.handleChange}
-                                value={stateOptions.find(option => option.value === props.data.state)}
-                            />
-
-
-                            {/* <input
-                        type="text"
-                        className="text-textGrey2 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
-                        id="state"
-                        name="state"
-                        onChange={props.handleChange}
-                        value={props.data.state}
-                    /> */}
-                            {props.validationErrors.state && (
-                                <div className="text-[red] error">{props.validationErrors.state}</div>
-                            )}
-
+                            </div>
                         </div>
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium">Pincode*</div>
