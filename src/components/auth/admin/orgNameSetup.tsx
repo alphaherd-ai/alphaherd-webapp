@@ -5,7 +5,7 @@ import placeicon from "../../../assets/icons/loginsignup/Placeholder logo.png"
 import placelogo from "../../../assets/icons/loginsignup/Group 2749.svg"
 
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 const OrgNameSetup = (props: any) => {
     return (

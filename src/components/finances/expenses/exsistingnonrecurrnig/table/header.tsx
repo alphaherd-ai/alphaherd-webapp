@@ -1,7 +1,7 @@
 "use client"
 import formatDateAndTime from '@/utils/formateDateTime';
 import React, { useEffect, useRef, useState } from 'react'
-import editicon from "../../../../../assets/icons/finance/1. Icons-25.svg"
+
 import Loading2 from '@/app/loading2';
 
 const ExsistingNonRecurringHeader = ({ otherData, isLoading }: any) => {
@@ -50,7 +50,7 @@ const ExsistingNonRecurringHeader = ({ otherData, isLoading }: any) => {
             <div className="flex justify-between w-full pb-[16px]">
                 <div className="px-6  bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                     <div className="flex gap-[16px] items-center w-full">
-                        <div className="text-gray-500 text-base font-bold ">Customer:</div>
+                        <div className="text-gray-500 text-base font-bold ">Title:</div>
                         <div className={`text-textGrey2 text-base font-medium  border-0 bg-inherit`}>{!isLoading ? otherData.party : <Loading2 />}</div>
                     </div>
                 </div>

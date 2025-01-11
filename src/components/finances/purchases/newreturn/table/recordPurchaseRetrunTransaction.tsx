@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux';
 import { addAmount } from '@/lib/features/transactionAmount/transactionAmountSlice';
 import 'react-datepicker/dist/react-datepicker.css';
 import calicon from "../../../../../assets/icons/finance/calendar_today.svg";
-import closeicon from "../../../../../assets/icons/inventory/closeIcon.svg";
+
 import Select from 'react-select';
 import { Button } from '@nextui-org/react';
 import Loading2 from '@/app/loading2';
@@ -96,7 +96,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    partyName: headerdata?.customer?.label,
+                    partyName: headerdata?.distributor.value,
                     invoiceLink: headerdata.invoiceNo,
                     receiptNo: initialInvoiceNo,
                     date: formData.date || new Date(),
@@ -123,6 +123,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
             date: formData.date || new Date(),
             isAdvancePayment: isAdvancePayment,
             mode: selectedMode,
+            receiptNo: initialInvoiceNo,
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
         };
 

@@ -1,16 +1,14 @@
 "use client";
 import Image from "next/image";
 import React, { useState } from 'react';
-import { Tooltip, Button } from "@nextui-org/react";
-import Link from 'next/link';
+
 import closeicon from "../../../assets/icons/inventory/closeIcon.svg";
-import arrowicon from "../../../assets/icons/inventory/arrow.svg";
+
 import Select from 'react-select';
-import Attachment from "../../../assets/icons/finance/attachment.svg"
+
 import Check from "../../../assets/icons/database/check.svg"
 import { useAppSelector } from "@/lib/hooks";
-import { z } from "zod"
-import capitalizeFirst from "@/utils/capitiliseFirst";
+
 import Loading2 from "@/app/loading2";
 type PopupProps = {
     onClose: () => void;
@@ -356,7 +354,7 @@ const DistributorPopup: React.FC<PopupProps> = ({ onClose }: any) => {
 
                 </div>
 
-                <div className=" justify-between items-start gap-6 flex w-full">
+                <div className=" justify-end gap-6 flex w-full">
                     {/* <div className=" h-11 px-6 py-2.5 rounded-[5px]  justify-center items-center inline-flex border border-borderGrey border-dashed ">
                         <div className="self-stretch justify-start items-center gap-2 inline-flex">
                             <div className="w-6 h-6 flex justify-center items-center"> <Image src={Attachment} alt='Attachment' className='w-6 h-6 ' /></div>

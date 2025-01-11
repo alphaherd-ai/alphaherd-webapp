@@ -12,7 +12,7 @@ import { useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 import { useAppSelector } from '@/lib/hooks';
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
-import { custom } from 'zod';
+
 import Loading2 from '@/app/loading2';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
@@ -27,7 +27,7 @@ const NewExpensesHeader = ({existingHeaderData}:any) => {
     const [isSearchable, setIsSearchable] = useState(true);
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
-    const [customers,setCustomers]=useState<any[]>([]);
+    const [titles,settitles]=useState<any[]>([]);
     const appState = useAppSelector((state) => state.app)
     const [dueDate, setDueDate] = useState(new Date());
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`,fetcher,{revalidateOnFocus:true});
@@ -65,7 +65,7 @@ const NewExpensesHeader = ({existingHeaderData}:any) => {
                 value:client.clientName,
                 label:`${client.clientName}\u00A0\u00A0\u00A0\u00A0\u00A0${client.contact}`
             }))
-            setCustomers(clients);
+            settitles(clients);
 
         }
     },[data])
@@ -115,25 +115,17 @@ const NewExpensesHeader = ({existingHeaderData}:any) => {
 <div className="flex justify-between w-full pb-[16px]">
                 <div className="px-6 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                     <div className="flex gap-[16px] items-center w-full">
-                        <div className="text-gray-500 text-base font-bold ">Customer:</div>
+                        <div className="text-gray-500 text-base font-bold ">Title:</div>
                         
-                        { id===null?(
-                            isLoading?<Loading2/>:(
-                                <Select
-                                className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
-                                classNamePrefix="select"
-                                isClearable={isClearable}
-                                isSearchable={isSearchable}
-                                name="color"
-                                value={headerData.customer}
-                                options={customers}
-                                styles={customStyles}
-                                onChange={(selectedOption) => setHeaderData((prevData) => ({ ...prevData, customer: selectedOption }))}
-                                />
-                        )):(
+                        {id === null ? (
+                            <input
+                                className="w-full h-9 text-neutral-400 text-base font-medium px-2 outline-none rounded-[5px] border border-solid border-[#35BEB1] bg-inherit"
+                                value={headerData.title?.label || ''}
+                                onChange={(e) => setHeaderData((prevData) => ({ ...prevData, title: { label: e.target.value, value: e.target.value } }))}
+                            />
+                        ) : (
                             existingHeaderData.party
                         )}
-                       
                     </div>
                 </div>
                 <div className="px-6 py-1 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full">

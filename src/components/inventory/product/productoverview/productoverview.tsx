@@ -2,8 +2,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import lefticon from "../../../../assets/icons/inventory/left_icon.svg"
-import aiicon from "../../../../assets/icons/inventory/Group 2749.svg"
-import infoicon from "../../../../assets/icons/inventory/Icons16.svg"
+
 import addicon from "../../../../assets/icons/inventory/bar_chart.svg"
 import optionicon from "../../../../assets/icons/inventory/more_vert.svg"
 import downloadicon from "../../../../assets/icons/inventory/1. Icons-24.svg"
@@ -11,15 +10,15 @@ import baricon from "../../../../assets/icons/inventory/bar_chart.svg"
 import expandicon from "../../../../assets/icons/inventory/expand_content.svg"
 import tuneicon from "../../../../assets/icons/inventory/bar_chart.svg"
 import downarrow from "../../../../assets/icons/inventory/Icons16.svg"
-import optionarrow from "../../../../assets/icons/inventory/more_vert.svg"
+
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
 import formatDateAndTime from "@/utils/formateDateTime";
-import Slider from '@mui/material/Slider';
+
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from "next/navigation"
-import { response } from "express"
+
 import { useAppSelector } from "@/lib/hooks"
 import Popup2 from '../../product/producttable/updateinventorypopup';
 import useSWR from "swr"

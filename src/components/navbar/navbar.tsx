@@ -1,14 +1,13 @@
 "use client";
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import FinancesIcon from './icons/financesIcon';
 import notification from '../../assets/icons/navbar/notification.svg';
-import alphaherd from '../../assets/icons/navbar/alphaherdLogo.svg';
+
 import setting from '../../assets/icons/settings/settingicon.svg';
 import PatientlistIcon from './icons/patientlistIcon';
 import InventoryIcon from './icons/inventoryIcon';
 import HomeIcon from './icons/homeIcon';
-import Settings from '../../assets/icons/finance/Settings.svg'
 import ProfileIcon from "../../assets/icons/settings/pfpcion.jpeg";
 import addIcon from '../../assets/icons/home/add2.svg';
 import Image from 'next/image';
@@ -20,34 +19,25 @@ import Popup from '../database/patient/newpatientpopup';
 import DistributorPopup from '../database/distributor/newdistributorpopup';
 import Distrib from '../../assets/icons/finance/storefront.svg';
 import NotificationList from '../home/NotificationCard/NotificationList';
-//import NotificationPopUp from '../home/NotificationCard/NotificationPopUp';
 import DropdownMenu from './dropDownMenu/dropDownMenu';
 import DropdownIcon from './icons/dropdownIcon';
-import { updateApp } from '@/lib/features/appSlice';
-import { RootState } from '@/lib/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { isAdminOfOrg, isManagerOfBranch } from '@/utils/stateChecks';
 import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/react';
-import zIndex from '@mui/material/styles/zIndex';
+
 import useSWR from "swr";
-import { boolean } from 'zod';
 import Invoice from '../../assets/icons/finance/invoice.svg';
 import Expense from '../../assets/icons/finance/request_quote.svg';
 import Payment from '../../assets/icons/finance/Cash.svg';
 import Estimate from "../../assets/icons/finance/list_alt.svg"
-import add_Icon from '../../assets/icons/finance/1. Icons-24.svg';
+import ClientIcon from "../database/navbar/icons/clientIcon"
+import PatientIcon from "../database/navbar/icons/patientIcon"
 import Return from '../../assets/icons/finance/return.svg';
-
-
+import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
-import Button from '@mui/material/Button';
 import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
+import ExpensePopup from '../finances/transactions/table/recordTransactionPopup';
 
 
 
@@ -74,8 +64,10 @@ const Navbar = () => {
     setReturnCount(counts.returnCount);
   };
   const [showPopup1, setShowPopup1] = React.useState(false);
-    const [showPopup2, setShowPopup2] = React.useState(false);
-    const [showPopup3, setShowPopup3] = React.useState(false);
+  const [showPopup2, setShowPopup2] = React.useState(false);
+  const [showPopup3, setShowPopup3] = React.useState(false);
+  const [showPopup4, setShowPopup4] = React.useState(false);
+  
   const togglePopup1 = () => {
       setShowPopup1(!showPopup1);
   }
@@ -85,6 +77,24 @@ const Navbar = () => {
   const togglePopup3 = () => {
       setShowPopup3(!showPopup3);
   }
+  const togglePopup4 = () => {
+      setShowPopup4(!showPopup4);
+  }
+  const [count, setCount] = useState(0);
+      const [initialInvoiceNo, setInitialInvoiceNo] = useState('');
+    
+      useEffect(() => {
+        if (showPopup4) {
+          setCount((prevCount) => prevCount + 1);
+        }
+      }, [showPopup4]);
+    
+      useEffect(() => {
+        if (showPopup4) {
+          const newInvoiceNo = generateInvoiceNumber(count);
+          setInitialInvoiceNo(newInvoiceNo);
+        }
+      }, [count, showPopup4]);
   const DrawerList = (
     <Box className='min-h-fit h-full' sx={{ width: 250 ,bgcolor: "black"  }} onClick={toggleDrawer(false)}>
       <div className="subheadbox px-2 pt-6 pb-2">
@@ -130,7 +140,7 @@ const Navbar = () => {
             <div className='no-underline flex item-center cursor-pointer' onClick={togglePopup1}>
               <div className='text-base font-normal text-white flex'>
                 <div className='flex pr-2'>
-                  <Image src={Estimate} alt='Return' className='w-5 h-5' />
+                  <ClientIcon fill="#38F8E6"/>
                 </div>
                 Client
               </div>
@@ -140,7 +150,7 @@ const Navbar = () => {
             <div className='no-underline flex item-center cursor-pointer' onClick={togglePopup2}>
                 <div className='text-base  text-white flex '>
                   <div className='flex pr-2'>
-                    <Image src={Invoice} alt='Return' className='w-5 h-5 ' />
+                    <PatientIcon fill="#38F8E6"/>
                   </div>
                   Patient
                 </div>
@@ -215,14 +225,14 @@ const Navbar = () => {
         <div className="subhead text-sm font-light text-white pl-4">Payments</div>
         <List>
           <ListItem>
-            <Link className='no-underline flex item-center' href={{pathname:'/finance/sales/newsales'}}>
+            <div className='no-underline flex item-center cursor-pointer' onClick={togglePopup4}>
                 <div className='text-base font-normal  text-white flex '>
                   <div className='flex pr-2'>
                     <Image src={Payment} alt='Return' className='w-5 h-5 ' />
                   </div>
                   Record Payment
                 </div>
-            </Link>
+            </div>
           </ListItem>
         </List>
       </div>
@@ -314,6 +324,7 @@ if (user.name === "" || currentRoute.startsWith("/auth"))return null;
       {showPopup1 && <ClientPopup onClose={togglePopup1} />}
       {showPopup2 && <Popup onClose={togglePopup2} clientData={undefined}/>}
       {showPopup3 && <DistributorPopup onClose={togglePopup3} />}
+      {showPopup4 && <ExpensePopup onClose={togglePopup4} initialInvoiceNo={initialInvoiceNo} />}
         <Link className='no-underline py-5 px-10 border-0 border-r-2 border-solid border-gray-800' href={`/`}>
           <div className={currentRoute === "/" ? " text-white text-base font-medium leading-6 flex items-center justify-center" : " text-gray-400 text-base font-medium leading-6 flex items-center justify-center"}>
             <HomeIcon fill={currentRoute === "/" ? "#38F8E6" : "#A2A3A3"} />

@@ -1,27 +1,23 @@
 "use client"
-import printicon from "../../../../../assets/icons/finance/print.svg"
-import shareicon from "../../../../../assets/icons/finance/share.svg"
-import drafticon from "../../../../../assets/icons/finance/draft.svg"
+
 import checkicon from "../../../../../assets/icons/finance/check.svg"
-import React, { useState, useEffect, useContext } from 'react';
-import downloadicon from "../../../../../assets/icons/finance/download.svg"
-import Link from "next/link"
+import React, { useState, useContext } from 'react';
+
 import Image from "next/image"
 import { DataContext } from './DataContext'
 import { FinanceCreationType, Notif_Source } from '@prisma/client'
 import axios from "axios"
 import { useAppSelector } from '@/lib/hooks';
-import { redirect, useSearchParams } from "next/navigation"
-import { getTime } from "date-fns"
+import { useSearchParams } from "next/navigation"
+
 import { Button } from "@nextui-org/react"
-import formatDateAndTime from "@/utils/formateDateTime"
+
 import { generatePdfForInvoice } from "@/utils/salesPdf"
-import { generatePdfForInvoiceAndUpload } from "@/utils/uploadPdf"
+
 import { useRouter } from "next/navigation"
-import { create } from "domain"
+
 import Loading2 from "@/app/loading2"
-import { header } from "express-validator"
-import { mutate } from "swr"
+
 
 const NewsalesBottomBar = ({ estimateData }: any) => {
     const { headerData, tableData, totalAmountData, transactionsData } = useContext(DataContext);
@@ -31,15 +27,18 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
     const router = useRouter();
     const [isSaving, setSaving] = useState(false);
 
-    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
-
-    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
 
-    const balanceDue = totalAmountData?.totalCost >= headerData?.customer?.value?.creditedToken ? (totalAmountData?.totalCost - totalPaidAmount + totalAmountToPay - headerData?.customer?.value?.creditedToken) : totalAmountData?.totalCost - totalPaidAmount + totalAmountToPay;
-    const newCreditedToken = totalAmountData.totalCost >= headerData?.customer?.value?.creditedToken ? 0 :  headerData?.customer?.value?.creditedToken;
+
     //console.log(balanceDue);
     const handleSubmit = async () => {
+
+        const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+        const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+        const balanceDue = totalAmountData?.totalCost >= headerData?.customer?.value?.creditedToken ? (totalAmountData?.totalCost - totalPaidAmount + totalAmountToPay - headerData?.customer?.value?.creditedToken) : totalAmountData?.totalCost - totalPaidAmount + totalAmountToPay;
+        const newCreditedToken = totalAmountData.totalCost >= headerData?.customer?.value?.creditedToken ? 0 : headerData?.customer?.value?.creditedToken;
+
+
         console.log(newCreditedToken);
         if (!headerData.customer && !estimateData.customer) {
             alert('Customer is required');
@@ -49,7 +48,7 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
         tableData.pop();
         //console.log(tableData);
         const allData = { headerData, tableData, totalAmountData, transactionsData };
-        console.log("this is all data", allData,balanceDue)
+        console.log("this is all data", allData, balanceDue)
         //console.log(tableData);
         let totalQty = 0;
         tableData.forEach(data => {
@@ -84,7 +83,7 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
             recordTransaction: {
                 create: allData.transactionsData
             },
-            status: (id===null) ? headerData.customer?.value?.creditedToken >= balanceDue ? balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed' : balanceDue - headerData?.customer?.value?.creditedToken >= 1 ? `You’re owed: ₹${parseFloat((balanceDue - headerData?.customer?.value?.creditedToken).toFixed(2))}` : balanceDue - headerData?.customer?.value?.creditedToken <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue - headerData?.customer?.value?.creditedToken).toFixed(2))}` : 'Closed' :balanceDue >=1 ? `You’re owed: ₹${parseFloat((balanceDue).toString()).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1*balanceDue).toString()).toFixed(2)}` : 'Closed',
+            status: (id === null) ? headerData.customer?.value?.creditedToken >= balanceDue ? balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed' : balanceDue - headerData?.customer?.value?.creditedToken >= 1 ? `You’re owed: ₹${parseFloat((balanceDue - headerData?.customer?.value?.creditedToken).toFixed(2))}` : balanceDue - headerData?.customer?.value?.creditedToken <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue - headerData?.customer?.value?.creditedToken).toFixed(2))}` : 'Closed' : balanceDue >= 1 ? `You’re owed: ₹${parseFloat((balanceDue).toString()).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toString()).toFixed(2)}` : 'Closed',
             type: FinanceCreationType.Sales_Invoice,
             items: {
                 create: items
@@ -103,22 +102,22 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
         //console.log(JSON.stringify(data))
         //console.log("this is notif data", notifData)
         try {
-            setSaving(true); 
-            const responsePromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Invoice}?branchId=${appState.currentBranchId}`, data)
-            const notifPromise =  axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
+            setSaving(true);
+            const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Invoice}?branchId=${appState.currentBranchId}`, data)
+            const notifPromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
 
-            setTimeout(()=>{
+            setTimeout(() => {
                 router.back();
-            },2000);
+            }, 2000);
 
-            const [response,notif]=await Promise.all([responsePromise,notifPromise])
+            const [response, notif] = await Promise.all([responsePromise, notifPromise])
 
             if (!response.data) {
                 throw new Error('Network response was not ok');
             }
             console.log(response.status);
             // if(response.status===201){
-                
+
             // }
             //mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`,(currData:any = [])=>[...currData,response.data?.sales],false)
             //router.back();
@@ -126,12 +125,17 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
         } catch (error) {
             console.error('Error:', error);
         }
-        finally{
+        finally {
             setSaving(false)
-         }
+        }
     };
 
     const downloadPdf = async () => {
+        const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+        const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+        const balanceDue = totalAmountData?.totalCost >= headerData?.customer?.value?.creditedToken ? (totalAmountData?.totalCost - totalPaidAmount + totalAmountToPay - headerData?.customer?.value?.creditedToken) : totalAmountData?.totalCost - totalPaidAmount + totalAmountToPay;
+       
+
         const allData = { headerData, tableData, totalAmountData };
         // console.log("this is all data", allData)
         let totalQty = 0;

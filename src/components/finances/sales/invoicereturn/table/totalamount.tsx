@@ -2,23 +2,47 @@
 
 
 import React, { useState, useEffect, useContext } from 'react';
-import DownArrow from '../../../../../assets/icons/finance/downArrow.svg';
-import Invoice from '../../../../../assets/icons/finance/invoice.svg';
-import Link from "next/link"
-import Rupee from "../../../../../assets/icons/finance/rupee.svg"
+
 import Image from "next/image"
 import Select from 'react-select';
-import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
+
 import { DataContext } from './DataContext';
-import { Tax } from '@prisma/client';
+
 import RecordTransactionPopup from './recordTransactionPopup';
 import formatDateAndTime from '@/utils/formateDateTime';
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 import Cash from "../../../../../assets/icons/finance/Cash.svg"
-const InvoiceReturnTotalAmount = ({otherData}:{otherData:any}) => {
-    const { tableData,headerData } = useContext(DataContext);
+import { Tooltip, Button } from "@nextui-org/react";
+import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
+import Menu from '../../../../../assets/icons/finance/menu.svg'
+import EditRecordTransactionPopup from '@/components/finances/editTransaction/editTransaction';
+import CancellationPopup from '@/components/finances/cancelTransaaction/cancelTransaction';
+
+const InvoiceReturnTotalAmount = ({ otherData }: { otherData: any }) => {
+    const { tableData, headerData } = useContext(DataContext);
     const { transactionsData, setTransactionsData } = useContext(DataContext);
     const [selectedDiscount, setDiscount] = useState(0);
+
+    const [popup, setPopup] = useState(false);
+
+    const onClose = () => {
+        setPopup((prev: any) => !prev);
+    }
+
+    const [showConfirmation, setShowConfirmation] = useState(false);
+
+    const [transaction, setTransaction] = useState<any>();
+
+    const handleSelectedTransaction = (transaction: any) => {
+        const updatedTransaction = {
+            partyName: headerData?.customer?.label,
+            invoiceLink: headerData.invoiceNo,
+            ...transaction
+        }
+        setTransaction(updatedTransaction);
+    }
+
+
     let totalAmount = 0;
     tableData.forEach(data => {
         totalAmount += (data.quantity * data.unitPrice * Number(-data.discount / 100 + data.tax + 1)) || 0;
@@ -76,14 +100,14 @@ const InvoiceReturnTotalAmount = ({otherData}:{otherData:any}) => {
             updateGrandTotal();
         }
     };
-    console.log(totalAmount,tableData);
+    console.log(totalAmount, tableData);
     const updateGrandTotal = () => {
         const discountedAmount = (totalAmount - (discountMethod === 'amount' ? discountInput : totalAmount * selectedDiscountPer)) || 0;
         const shippingValue = parseFloat(shipping) || 0;
         const adjustmentValue = parseFloat(adjustment) || 0;
         const newGrandTotal = discountedAmount + shippingValue + adjustmentValue;
         setGrandAmt(newGrandTotal);
-       // console.log(newGrandTotal,shippingValue,discountedAmount);
+        // console.log(newGrandTotal,shippingValue,discountedAmount);
         setTotalAmountData((prevData) => ({
             ...prevData,
             subTotal: totalAmount,
@@ -161,7 +185,7 @@ const InvoiceReturnTotalAmount = ({otherData}:{otherData:any}) => {
 
 
             <div className="flex gap-4  pt-[20px] pb-[20px]">
-                <RecordTransactionPopup headerdata={headerData} setCount={setCount} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} balanceDue={balanceDue} otherData={otherData}/>
+                <RecordTransactionPopup headerdata={headerData} setCount={setCount} transactionsData={transactionsData} setTransactionsData={setTransactionsData} initialInvoiceNo={initialInvoiceNo} totalAmount={totalAmountData} balanceDue={balanceDue} otherData={otherData} />
                 <div className='w-1/2 rounded-md'>
 
                     <div className="w-full bg-white ">
@@ -221,23 +245,47 @@ const InvoiceReturnTotalAmount = ({otherData}:{otherData:any}) => {
                         </div>
                         {transactionsData && transactionsData.map((transaction, index) => (
                             transaction.isAdvancePayment &&
-                            (<div key={index} className="w-full  px-6 py-2 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
+                            (<div key={index} className="w-full   px-6 py-2 bg-white justify-between items-center gap-6 flex  border border-t-0 border-solid border-borderGrey">
                                 <div className="text-gray-500 text-md font-medium ">Advance Paid on  {formatDateAndTime(transaction.date).formattedDate}</div>
-                                <div className='text-gray-500 text-md font-medium mr-4'>#{transaction?.receiptNo}</div>
+                                <div className='text-gray-500 text-md font-medium'>#{transaction?.receiptNo}</div>
                                 <div className='flex items-center h-9 px-4  justify-between rounded-lg '>
                                     <div className="text-gray-500 text-base font-bold flex gap-2 items-center">
                                         ₹ {transaction.amountPaid > 0 ? transaction.amountPaid : -1 * transaction.amountPaid}
                                     </div>
                                 </div>
+                                {(!(transaction.moneyChange === "Cancelled") &&
+                                    <Popover placement="bottom" showArrow offset={10}>
+                                        <PopoverTrigger>
+                                            <Button variant="solid" className="capitalize flex border-none text-gray rounded-lg">
+                                                <div className='flex items-center'>
+                                                    <Image src={Menu} alt='Menu' className='w-5 h-5' />
+                                                </div>
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="text-gray-500 bg-white text-sm p-2 font-medium flex flex-row items-start rounded-lg border-2 mt-2.5">
+                                            <div className="flex flex-col">
+                                                <div className='flex flex-col'>
+                                                    <div className='text-gray-500 text-sm p-3 font-medium flex hover:cursor-pointer' onClick={() => { setPopup((prev: any) => !prev); handleSelectedTransaction(transaction) }} >
+                                                        Edit
+                                                    </div>
+                                                    <div className='text-gray-500 text-sm p-3 font-medium flex hover:cursor-pointer' onClick={() => { setShowConfirmation((prev: boolean) => !prev); handleSelectedTransaction(transaction) }}>
+                                                        Cancel
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </PopoverContent>
+                                    </Popover>
+                                )}
                             </div>)
+
                         ))
                         }
 
                         {transactionsData && transactionsData.map((transaction, index) => (
                             !transaction.isAdvancePayment &&
-                            (<div key={index} className="w-full  px-2 py-2 bg-white justify-between items-center gap-6 flex border border-t-0 border-solid border-borderGrey">
+                            (<div key={index} className="w-full  px-6 py-2 bg-white flex justify-between items-center gap-6  border border-t-0 border-solid border-borderGrey">
                                 <div className="text-gray-500 text-md font-medium ">Paid on {formatDateAndTime(transaction.date).formattedDate}</div>
-                                <div className='text-gray-500 text-md font-medium mr-4'>#{transaction?.receiptNo}</div>
+                                <div className='text-gray-500 text-md font-medium'>#{transaction?.receiptNo}</div>
                                 <div className="text-textGrey2 text-base font-medium  w-1/3 py-4 flex  items-center">
                                     <div className='flex pr-2'>
                                         <Image src={Cash} alt='Cash' className='w-4 h-4 ' />
@@ -245,9 +293,32 @@ const InvoiceReturnTotalAmount = ({otherData}:{otherData:any}) => {
                                     {transaction.mode}
                                 </div>
                                 <div className="text-textGrey2 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid > 0 ? transaction.amountPaid : -1 * transaction.amountPaid)?.toFixed(2)}
-                                    {transaction.moneyChange === 'Out' && <span className="px-2 py-1 rounded-md bg-[#FFEAEA] text-[#FF3030] text-sm font-medium ml-[5px]">Out</span>}
+                                    {(transaction.moneyChange === 'Out' || transaction.moneyChange === 'Cancelled') && <span className="px-2 py-1 rounded-md bg-[#FFEAEA] text-[#FF3030] text-sm font-medium ml-[5px]">{transaction.moneyChange}</span>}
                                     {transaction.moneyChange === 'In' && <span className="px-2 py-1 rounded-md bg-[#E7F5EE] text-[#0F9D58] text-sm font-medium ml-[5px]">In</span>}
                                 </div>
+                                {(!(transaction.moneyChange === "Cancelled") &&
+                                    <Popover placement="bottom" showArrow offset={10}>
+                                        <PopoverTrigger>
+                                            <Button variant="solid" className="capitalize flex border-none text-gray rounded-lg">
+                                                <div className='flex items-center'>
+                                                    <Image src={Menu} alt='Menu' className='w-5 h-5' />
+                                                </div>
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="text-gray-500 bg-white text-sm p-2 font-medium flex flex-row items-start rounded-lg border-2 mt-2.5">
+                                            <div className="flex flex-col">
+                                                <div className='flex flex-col'>
+                                                    <div className='text-gray-500 text-sm p-3 font-medium flex hover:cursor-pointer' onClick={() => { setPopup((prev: any) => !prev); handleSelectedTransaction(transaction) }} >
+                                                        Edit
+                                                    </div>
+                                                    <div className='text-gray-500 text-sm p-3 font-medium flex hover:cursor-pointer' onClick={() => { setShowConfirmation((prev: boolean) => !prev); handleSelectedTransaction(transaction) }}>
+                                                        Cancel
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </PopoverContent>
+                                    </Popover>
+                                )}
                             </div>)
                         ))
                         }
@@ -266,7 +337,8 @@ const InvoiceReturnTotalAmount = ({otherData}:{otherData:any}) => {
                         </div>
                     </div>
                 </div>
-
+                {popup && <EditRecordTransactionPopup onClose={onClose} editTransaction={transaction} transactionsData={transactionsData} type={"invoice"} />}
+                {showConfirmation && <CancellationPopup setShowConfirmation={setShowConfirmation} editTransaction={transaction} transactionsData={transactionsData} type={"invoice"} />}
 
             </div>
 

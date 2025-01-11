@@ -1,30 +1,27 @@
 'use client';
-import DownArrow from '../../../../../assets/icons/finance/downArrow.svg';
-import subicon from "../../../../../assets/icons/finance/1. Icons-26.svg"
-import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
+
 import Subtract from "../../../../../assets/icons/finance/Subtract.svg"
 import ClientPopup from '@/components/database/client/newclientpopoup';
 import Add from "../../../../../assets/icons/finance/add (2).svg"
 import addicon from "../../../../../assets/icons/finance/add.svg"
-import add1icon from "../../../../../assets/icons/finance/add1.svg"
-import sellicon from "../../../../../assets/icons/finance/sell.svg"
-import Invoice from '../../../../../assets/icons/finance/invoice.svg';
+
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import Select from 'react-select';
 import { useRef } from "react"
 import Image from "next/image"
-import Link from "next/link"
+
 import NewPurchaseReturnNewHeader from "./header"
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
 import NewPurchaseReturnNewBottomBar from './bottombar';
 import NewPurchaseReturnNewTotalAmount from './totalamount';
-import axios from 'axios';
+
 import { DataContext } from './DataContext';
 import { useAppSelector } from "@/lib/hooks";
 import { Tax } from '@prisma/client';
 import formatDateAndTime from '@/utils/formateDateTime';
 import useSWR from 'swr';
 import { useSearchParams } from 'next/navigation';
+import StockConfirmationPopup from '@/utils/stockConfirmationpopup';
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
 
@@ -85,6 +82,14 @@ const NewPurchaseReturnNewTable = () => {
     const appState = useAppSelector((state) => state.app)
     const url= useSearchParams();
     const id=url.get('id');
+
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [confirmAction, setAction] = useState<string>('idle');
+    const [selectedBatchQuantity, setSelectedBatchQuantity] = useState<number>(0);
+    const [selectedBatch, setSelectedBatch] = useState<any>();
+    const [currIndex, setCurrIndex] = useState<number>(0);
+
+
     let invoiceData:any=null,isInvoiceDataLoading=false,isInvoiceDataError=false;
     const { tableData: items, setTableData: setItems } = useContext(DataContext);   
     if(id){
@@ -93,6 +98,48 @@ const NewPurchaseReturnNewTable = () => {
         isInvoiceDataError=error;
         isInvoiceDataLoading=isLoading;        
     }
+
+    useEffect(() => {
+            if (confirmAction === 'idle' || confirmAction === 'Save') {
+                return;
+            }
+            else {
+                const nextBatches = batches.filter((batch) => batch.value.productId === selectedBatch.value.productId).sort((a, b) => a.value.id - b.value.id);
+    
+                const nextBatch = nextBatches.find(
+                    (batch, index) =>
+                        batch.value.id > selectedBatch.value.id &&
+                        (index === 0 || nextBatches[index - 1].value.id === selectedBatch.value.id)
+                );
+    
+                const defaultBatch = (nextBatch || nextBatches[nextBatches.length - 1]);
+                setSelectedBatch(defaultBatch);
+                setSelectedBatchQuantity(defaultBatch?.value?.originalQuantity || 0);
+                
+                setItems((prevItems) =>
+                    prevItems.map((item, itemIndex) =>
+                        itemIndex === currIndex ? {
+                            ...item,
+                            id: defaultBatch.value.id,
+                            quantity: defaultBatch.value.quantity,
+                            batchNumber: defaultBatch.value.batchNumber,
+                            expiry: defaultBatch.value.expiry,
+                            sellingPrice: defaultBatch.value.sellingPrice,
+                            productId: defaultBatch.value.productId
+                        } :
+                            item,
+                    )
+                );
+                if(defaultBatch?.value?.originalQuantity <= 0){
+                    setShowConfirmation(true);    
+                }
+                setAction('idle');
+                
+    
+            }
+    
+    
+        }, [confirmAction])
 
     useEffect(()=>{
             if (!isInvoiceDataLoading && invoiceData && !isInvoiceDataError) {
@@ -166,6 +213,7 @@ const NewPurchaseReturnNewTable = () => {
                 batchNumber: product.batchNumber,
                 expiry:  product.expiry,
                 sellingPrice:  product.sellingPrice,
+                originalQuantity:product.quantity
             },
             label:product.batchNumber
         }));
@@ -290,11 +338,20 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                 productId:defaultBatch?.value?.productId } : item
           )
         );
+        setSelectedBatch(defaultBatch);
+        setSelectedBatchQuantity(defaultBatch?.value?.originalQuantity || 0);
+        setCurrIndex(index);
+        if (defaultBatch?.value?.originalQuantity <= 0) {
+            setShowConfirmation(true);
+        }
+
       } catch (error) {
         console.error("Error fetching product details from API:", error);
       }
     }
   }, [items, products]);
+
+
 const handleBatchSelect = useCallback(async (selectedProduct: any, index: number) => {
     if (selectedProduct.value) {
         try {
@@ -314,6 +371,12 @@ const handleBatchSelect = useCallback(async (selectedProduct: any, index: number
             // console.log("these are updated",updatedItems)
             setItems(updatedItems);
             setTableData(updatedItems);
+            setSelectedBatch(data);
+            setSelectedBatchQuantity(data?.value?.originalQuantity || 0);
+            setCurrIndex(index);
+            if (data?.value?.originalQuantity <= 0) {
+                setShowConfirmation(true);
+            }
                 // const updatedProducts = products.filter((product) => product.value !== selectedProduct.value);
                 // setProducts(updatedProducts);
         } catch (error) {
@@ -395,6 +458,7 @@ const customStyles = {
     return (
         <>
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
+            {showConfirmation && <StockConfirmationPopup quantity={selectedBatchQuantity} setAction={setAction} setShowConfirmation={setShowConfirmation} />}
             <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-between items-center gap-6 flex">
                     <div className='rounded-md px-2 py-2' >
                         

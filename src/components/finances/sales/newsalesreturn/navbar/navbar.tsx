@@ -4,11 +4,9 @@
 import lefticon from "../../../../../assets/icons/finance/left_icon.svg"
 import closeIcon from '../../../../../assets/icons/finance/closeIcon.svg';
 import minimiseIcon from '../../../../../assets/icons/finance/minimiseIcon.svg';
-import Attachment from "../../../../../assets/icons/finance/attachment.svg"
-import Menu from '@/assets/icons/finance/menu.svg';
-import Link from "next/link"
+
 import Image from "next/image"
-import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
+
 import { DataContext } from "../table/DataContext";
 import { useRouter } from "next/navigation"
 import { useContext } from "react";

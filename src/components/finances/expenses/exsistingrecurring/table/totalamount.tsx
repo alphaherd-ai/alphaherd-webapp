@@ -1,7 +1,5 @@
 import React from 'react'
-import Rupee from "../../../../../assets/icons/finance/rupee.svg"
-import Image from "next/image"
-import { Button } from "@nextui-org/react";
+
 
 const ExsistingRecurringTotalAmount = ({ otherData }: any) => {
 

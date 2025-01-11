@@ -15,7 +15,7 @@ import NewPurchaseReturnHeader from "./header"
 import { useAppSelector } from "@/lib/hooks";
 import Select from 'react-select';
 import formatDateAndTime from '@/utils/formateDateTime';
-import { Tax } from '@prisma/client';
+
 import useSWR from 'swr';
 import { DataContext } from "./DataContext"
 import { useSearchParams } from "next/navigation"

@@ -2,23 +2,25 @@
 
 
 import React, { useState, useEffect } from 'react';
-import DownArrow from '../../../../../assets/icons/finance/downArrow.svg';
-import Invoice from '../../../../../assets/icons/finance/invoice.svg';
-import Rupee from "../../../../../assets/icons/finance/rupee.svg"
+
 import Cash from "../../../../../assets/icons/finance/Cash.svg"
-import Link from "next/link";
+
 import Image from "next/image"
-import Select from 'react-select';
-import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
+
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 import formatDateAndTime from '@/utils/formateDateTime';
 import Popup from "./recordexsistingreturnpopup"
 import Loading2 from '@/app/loading2';
+import { Tooltip, Button } from "@nextui-org/react";
+import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
+import Menu from '../../../../../assets/icons/finance/menu.svg'
+import EditRecordTransactionPopup from '@/components/finances/editTransaction/editTransaction';
+import CancellationPopup from '@/components/finances/cancelTransaaction/cancelTransaction';
 
 const ExistingsalesReturnTotalAmout = ({ otherData, isLoading }: any) => {
 
 
-    
+
 
 
     const totalPaidAmount = otherData?.recordTransaction?.reduce((acc: any, transaction: any) => {
@@ -44,13 +46,34 @@ const ExistingsalesReturnTotalAmout = ({ otherData, isLoading }: any) => {
     const [count, setCount] = useState(0);
     const [initialInvoiceNo, setInitialInvoiceNo] = useState('');
 
-    
+    const [popup, setPopup] = useState(false);
+
+    const onClose = () => {
+        setPopup((prev: any) => !prev);
+    }
+
+    const [showConfirmation, setShowConfirmation] = useState(false);
+
+    const [transaction, setTransaction] = useState<any>();
+
+    const handleSelectedTransaction = (transaction: any) => {
+        const updatedTransaction = {
+            partyName: otherData.customer,
+            invoiceLink: otherData.invoiceNo,
+            ...transaction
+        }
+        setTransaction(updatedTransaction);
+    }
+
+
+
+
 
     useEffect(() => {
-       
-            const newInvoiceNo = generateInvoiceNumber(count);
-            setInitialInvoiceNo(newInvoiceNo);
-        
+
+        const newInvoiceNo = generateInvoiceNumber(count);
+        setInitialInvoiceNo(newInvoiceNo);
+
     }, [count]);
 
 
@@ -115,7 +138,30 @@ const ExistingsalesReturnTotalAmout = ({ otherData, isLoading }: any) => {
                                             </div>
                                             {transaction.mode}
                                         </div>
-                                        <div className="text-textGrey1 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid > 0 ?transaction.amountPaid : -1*transaction.amountPaid)?.toFixed(2)}</div>
+                                        <div className="text-textGrey1 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid > 0 ? transaction.amountPaid : -1 * transaction.amountPaid)?.toFixed(2)}</div>
+                                        {(!(transaction.moneyChange === "Cancelled") &&
+                                            <Popover placement="bottom" showArrow offset={10}>
+                                                <PopoverTrigger>
+                                                    <Button variant="solid" className="capitalize flex border-none text-gray rounded-lg">
+                                                        <div className='flex items-center'>
+                                                            <Image src={Menu} alt='Menu' className='w-5 h-5' />
+                                                        </div>
+                                                    </Button>
+                                                </PopoverTrigger>
+                                                <PopoverContent className="text-gray-500 bg-white text-sm p-2 font-medium flex flex-row items-start rounded-lg border-2 mt-2.5">
+                                                    <div className="flex flex-col">
+                                                        <div className='flex flex-col'>
+                                                            <div className='text-gray-500 text-sm p-3 font-medium flex hover:cursor-pointer' onClick={() => { setPopup((prev: any) => !prev); handleSelectedTransaction(transaction) }} >
+                                                                Edit
+                                                            </div>
+                                                            <div className='text-gray-500 text-sm p-3 font-medium flex hover:cursor-pointer' onClick={() => { setShowConfirmation((prev: boolean) => !prev); handleSelectedTransaction(transaction) }}>
+                                                                Cancel
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </PopoverContent>
+                                            </Popover>
+                                        )}
                                     </div>)
                                 ))}
                                 {otherData && otherData.recordTransaction && otherData.recordTransaction.map((transaction: any, index: any) => (
@@ -129,10 +175,33 @@ const ExistingsalesReturnTotalAmout = ({ otherData, isLoading }: any) => {
                                             </div>
                                             {transaction.mode}
                                         </div>
-                                        <div className="text-textGrey1 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid > 0 ?transaction.amountPaid : -1*transaction.amountPaid)?.toFixed(2)}
-                                            {transaction.moneyChange === 'Out' && <span className="px-2 py-1 rounded-md bg-[#FFEAEA] text-[#FF3030] text-sm font-medium ml-[5px]">Out</span>}
+                                        <div className="text-textGrey1 text-base font-medium  w-1/3 py-4 ">₹ {(transaction.amountPaid > 0 ? transaction.amountPaid : -1 * transaction.amountPaid)?.toFixed(2)}
+                                            {(transaction.moneyChange === 'Out' || transaction.moneyChange === 'Cancelled') && <span className="px-2 py-1 rounded-md bg-[#FFEAEA] text-[#FF3030] text-sm font-medium ml-[5px]">{transaction.moneyChange}</span>}
                                             {transaction.moneyChange === 'In' && <span className="px-2 py-1 rounded-md bg-[#E7F5EE] text-[#0F9D58] text-sm font-medium ml-[5px]">In</span>}
                                         </div>
+                                        {(!(transaction.moneyChange === "Cancelled") &&
+                                            <Popover placement="bottom" showArrow offset={10}>
+                                                <PopoverTrigger>
+                                                    <Button variant="solid" className="capitalize flex border-none text-gray rounded-lg">
+                                                        <div className='flex items-center'>
+                                                            <Image src={Menu} alt='Menu' className='w-5 h-5' />
+                                                        </div>
+                                                    </Button>
+                                                </PopoverTrigger>
+                                                <PopoverContent className="text-gray-500 bg-white text-sm p-2 font-medium flex flex-row items-start rounded-lg border-2 mt-2.5">
+                                                    <div className="flex flex-col">
+                                                        <div className='flex flex-col'>
+                                                            <div className='text-gray-500 text-sm p-3 font-medium flex hover:cursor-pointer' onClick={() => { setPopup((prev: any) => !prev); handleSelectedTransaction(transaction) }} >
+                                                                Edit
+                                                            </div>
+                                                            <div className='text-gray-500 text-sm p-3 font-medium flex hover:cursor-pointer' onClick={() => { setShowConfirmation((prev: boolean) => !prev); handleSelectedTransaction(transaction) }}>
+                                                                Cancel
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </PopoverContent>
+                                            </Popover>
+                                        )}
                                     </div>)
                                 ))}
                             </div>
@@ -154,6 +223,8 @@ const ExistingsalesReturnTotalAmout = ({ otherData, isLoading }: any) => {
                     </div>
 
                 </div>
+                {popup && <EditRecordTransactionPopup onClose={onClose} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue} />}
+                {showConfirmation && <CancellationPopup setShowConfirmation={setShowConfirmation} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue} />}
             </div>
 
 

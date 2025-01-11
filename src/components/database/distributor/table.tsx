@@ -1,11 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import DatabaseDistributorBottombar from './bottombar'
-import RightArrow from '../../../assets/icons/finance/rightArrow.svg';
-import IncrementIcon from '../../../assets/icons/finance/increment_icon.svg';
 
-import Image from 'next/image';
-import Link from 'next/link';
 import DatabaseDistributorHeader from './header'
 import DatabaseDistributorTableItem from './items'
 import useSWR from 'swr';

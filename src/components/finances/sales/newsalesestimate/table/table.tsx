@@ -1,31 +1,32 @@
 "use client"
 
-import DownArrow from '../../../../../assets/icons/finance/downArrow.svg';
-import subicon from "../../../../../assets/icons/finance/1. Icons-26.svg";
+
 import delicon from '../../../../../assets/icons/finance/1. Icons-27.svg';
 import ClientPopup from '@/components/database/client/newclientpopoup';
 import Subtract from "../../../../../assets/icons/finance/Subtract.svg"
 import Add from "../../../../../assets/icons/finance/add (2).svg"
 import addicon from '../../../../../assets/icons/finance/add.svg';
-import add1icon from '../../../../../assets/icons/finance/add1.svg';
+
 import sellicon from '../../../../../assets/icons/finance/sell.svg';
-import Invoice from '../../../../../assets/icons/finance/invoice.svg';
+
 import React, { useState, useEffect, useContext, useRef, useCallback } from 'react';
 import Select from 'react-select';
 import Image from 'next/image';
-import Link from 'next/link';
+
 import NewsaleEstimateHeader from './header';
-import { Popover, PopoverTrigger, PopoverContent, Button, useCalendar } from '@nextui-org/react';
+import { Button } from '@nextui-org/react';
 import NewsaleEstimateBottomBar from './bottombar';
 import NewsaleEstimateTotalAmout from './totalamount';
-import { FinanceCreationType } from '@prisma/client';
+
 import { DataContext } from './DataContext';
-import axios from 'axios';
+
 import { useAppSelector } from "@/lib/hooks";
 import formatDateAndTime from '@/utils/formateDateTime';
 import { Tax } from '@prisma/client';
 import useSWR from 'swr';
 import { useSearchParams } from 'next/navigation';
+import StockConfirmationPopup from '@/utils/stockConfirmationpopup';
+
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
@@ -36,7 +37,7 @@ interface Products {
     hsnCode: string,
     quantity: number,
     tax: number,
-    defaultUnit:string,
+    defaultUnit: string,
 }
 interface ProductBatch {
     id: number;
@@ -94,6 +95,56 @@ const NewsaleEstimateTable = () => {
     const [discountStates, setDiscountStates] = useState(new Array(items.length).fill(false));
     const url = useSearchParams();
     const id = url.get('id');
+
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [confirmAction, setAction] = useState<string>('idle');
+    const [selectedBatchQuantity, setSelectedBatchQuantity] = useState<number>(0);
+    const [selectedBatch, setSelectedBatch] = useState<any>();
+    const [currIndex, setCurrIndex] = useState<number>(0);
+
+    useEffect(() => {
+        if (confirmAction === 'idle' || confirmAction === 'Save') {
+            return;
+        }
+        else {
+            const nextBatches = batches.filter((batch) => batch.value.productId === selectedBatch.value.productId).sort((a, b) => a.value.id - b.value.id);
+
+            const nextBatch = nextBatches.find(
+                (batch, index) =>
+                    batch.value.id > selectedBatch.value.id &&
+                    (index === 0 || nextBatches[index - 1].value.id === selectedBatch.value.id)
+            );
+
+            const defaultBatch = (nextBatch || nextBatches[nextBatches.length - 1]);
+            setSelectedBatch(defaultBatch);
+            setSelectedBatchQuantity(defaultBatch?.value?.originalQuantity || 0);
+
+            setItems((prevItems) =>
+                prevItems.map((item, itemIndex) =>
+                    itemIndex === currIndex ? {
+                        ...item,
+                        id: defaultBatch.value.id,
+                        quantity: defaultBatch.value.quantity,
+                        batchNumber: defaultBatch.value.batchNumber,
+                        expiry: defaultBatch.value.expiry,
+                        sellingPrice: defaultBatch.value.sellingPrice,
+                        productId: defaultBatch.value.productId
+                    } :
+                        item,
+                )
+            );
+            if (defaultBatch?.value?.originalQuantity <= 0) {
+                setShowConfirmation(true);
+            }
+            setAction('idle');
+
+
+        }
+
+
+    }, [confirmAction])
+
+
     const taxOptions = [
         { value: 'Tax excl.', label: 'Tax excl.' },
         { value: 'Tax incl.', label: 'Tax incl.' }
@@ -138,7 +189,7 @@ const NewsaleEstimateTable = () => {
                     quantity: product.quantity,
                     itemName: product.itemName,
                     tax: product.tax,
-                    defaultUnit:product.defaultUnit,
+                    defaultUnit: product.defaultUnit,
                 },
                 label: product.itemName,
             }));
@@ -153,6 +204,7 @@ const NewsaleEstimateTable = () => {
                     batchNumber: product.batchNumber,
                     expiry: product.expiry,
                     sellingPrice: product.sellingPrice,
+                    originalQuantity: product.quantity
                 },
                 label: product.batchNumber
             }));
@@ -223,7 +275,7 @@ const NewsaleEstimateTable = () => {
         setItems((prevItems) =>
             prevItems.map((item) => ({
                 ...item,
-                quantity: item.quantity ,
+                quantity: item.quantity,
                 lowQty: item.quantity,
                 highQty: item.quantity,
 
@@ -344,7 +396,7 @@ const NewsaleEstimateTable = () => {
                 updatedItems[index] = {
                     ...updatedItems[index],
                     quantity: 1,
-                    defaultUnit:productdata ? selectedProduct?.value?.defaultUnit : "",
+                    defaultUnit: productdata ? selectedProduct?.value?.defaultUnit : "",
                     itemType: productdata ? "product" : "service",
                     productId: productdata ? selectedProduct.value.id : null,
                     serviceId: servicedata ? selectedProduct.value.id : null,
@@ -372,6 +424,12 @@ const NewsaleEstimateTable = () => {
                             } : item
                         )
                     );
+                    setSelectedBatch(defaultBatch);
+                    setSelectedBatchQuantity(defaultBatch?.value?.originalQuantity || 0);
+                    setCurrIndex(index);
+                    if (defaultBatch?.value?.originalQuantity <= 0) {
+                        setShowConfirmation(true);
+                    }
                 }
                 else if (servicedata) {
                     console.log('updation here service', index)
@@ -412,6 +470,12 @@ const NewsaleEstimateTable = () => {
                 };
                 setItems(updatedItems);
                 setTableData(updatedItems);
+                setSelectedBatch(data);
+                setSelectedBatchQuantity(data?.value?.originalQuantity || 0);
+                setCurrIndex(index);
+                if (data?.value?.originalQuantity <= 0) {
+                    setShowConfirmation(true);
+                }
                 // const updatedProducts = products.filter((product) => product.value !== selectedProduct.value);
                 // setProducts(updatedProducts);
             } catch (error) {
@@ -420,9 +484,9 @@ const NewsaleEstimateTable = () => {
         }
     }, [items, products]);
 
-    
 
-    
+
+
 
 
 
@@ -497,6 +561,7 @@ const NewsaleEstimateTable = () => {
     return (
         <>
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
+                {showConfirmation && <StockConfirmationPopup quantity={selectedBatchQuantity} setAction={setAction} setShowConfirmation={setShowConfirmation} />}
                 <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-between items-center gap-6 flex">
                     <div></div>
                     <Button
@@ -548,7 +613,7 @@ const NewsaleEstimateTable = () => {
                                     <div className='flex justify-center text-gray-500 text-base font-medium w-[8rem]'>High Quantity</div>
                                 )}
                                 <div className='flex justify-center text-gray-500 text-base font-medium w-[6rem]'>Tax %</div>
-                                
+
 
                                 <div className='flex justify-center text-gray-500 text-base font-medium w-[10rem]'>Tax Amt.</div>
                                 <div className='flex justify-center text-gray-500 text-base font-medium w-[6rem] mr-4'>Discount %</div>
@@ -593,7 +658,7 @@ const NewsaleEstimateTable = () => {
                                                     <Select
                                                         className="text-gray-500 text-base font-medium  w-[100%] border-0 boxShadow-0"
                                                         classNamePrefix="select"
-                                                        value={filteredBatches.find((prod) => prod.value.id === item.id)}
+                                                        value={batches.find((prod) => prod.value.id === item.id)}
                                                         isClearable={false}
                                                         isSearchable={true}
                                                         name={`batchNumber=${index}`}
@@ -722,7 +787,7 @@ const NewsaleEstimateTable = () => {
                                             {item.gst * 100 || 0} %
                                             {/* )} */}
                                         </div>
-                                       
+
                                         <div className='w-[10rem] justify-center flex items-center text-neutral-400 text-base font-medium'>
                                             {isChecked ? (
                                                 '₹' +
@@ -887,7 +952,7 @@ const NewsaleEstimateTable = () => {
                                 </div>
                                 <div className='flex text-gray-500 text-base font-medium w-[6rem]'>
                                 </div>
-                               
+
 
                                 <div className='flex justify-center ml-4 text-gray-500 text-base font-bold w-[8rem]'>{isChecked ? (
                                     <>

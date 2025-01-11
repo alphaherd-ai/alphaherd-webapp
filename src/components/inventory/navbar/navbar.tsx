@@ -1,7 +1,6 @@
 "use client";
-import React, { useContext, useEffect, useRef, useState } from 'react'
-import Settings from '../../../assets/icons/finance/Settings.svg';
-import Search from '../../../assets/icons/finance/Search.svg';
+import React, {  useEffect, useState } from 'react'
+
 import Update from '../../../assets/icons/inventory/update.svg';
 import Add from '../../../assets/icons/inventory/add.svg';
 
@@ -13,7 +12,7 @@ import ProductsIcon from './icons/productsIcon';
 import useSWR from 'swr';
 import { useAppSelector } from '@/lib/hooks';
 import Select from 'react-select';
-import { FinanceCreationType } from '@prisma/client';
+
 import Popup from '../product/producttable/newproductpopup';
 import Popup2 from '../product/producttable/updateinventorypopup';
 import Popup3 from '../services/table/newservicepopup';

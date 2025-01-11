@@ -1,21 +1,17 @@
 "use client";
-import React from 'react'
+import React,{useState} from 'react'
 
 import Sort from '../../../assets/icons/finance/sort.svg';
 import Filter from '../../../assets/icons/finance/filter.svg';
-import Chart from '../../../assets/icons/finance/chart.svg';
-import Download from '../../../assets/icons/finance/download.svg';
-import DownArrow from '../../../assets/icons/finance/downArrow.svg';
 
-import Update from '../../../assets/icons/inventory/update.svg';
-import Add from '../../../assets/icons/inventory/add.svg';
+import Download from '../../../assets/icons/finance/download.svg';
+
 import Image from 'next/image';
-import Link from 'next/link';
+
 import { usePathname } from 'next/navigation';
 
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
-import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
-import Popup from './newpatientpopup';
+
 import DownloadPopup from './downloadPatientPopup';
 
 
@@ -35,8 +31,8 @@ const DatabasePatientHeader = ({ patients, clients, onSortChange }: any) => {
         [selectedCategory]
     );
 
-    const [selectedSort, setSelectedSort] = React.useState("patientName");
-    const [sortOrder, setSortOrder] = React.useState("asc");
+    const [selectedSort, setSelectedSort] = useState<string>("patientName");
+    const [sortOrder, setSortOrder] = useState<string>("asc");
     const handleSortChange = (key: string) => {
         if (key === selectedSort) {
             setSortOrder(sortOrder === "asc" ? "desc" : "asc");

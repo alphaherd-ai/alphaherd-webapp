@@ -2,12 +2,12 @@
 
 import printicon from "../../../../../assets/icons/finance/print.svg"
 import shareicon from "../../../../../assets/icons/finance/share.svg"
-import drafticon from "../../../../../assets/icons/finance/draft.svg"
+
 import checkicon from "../../../../../assets/icons/finance/check.svg"
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState,  useContext } from 'react';
 import downloadicon from "../../../../../assets/icons/finance/download.svg"
 import Loading2 from '@/app/loading2';
-import Link from "next/link"
+
 import Image from "next/image"
 import { Button } from '@nextui-org/react'
 import { DataContext } from "./DataContext"
@@ -15,8 +15,7 @@ import { useAppSelector } from "@/lib/hooks"
 import { useRouter, useSearchParams } from "next/navigation"
 import { FinanceCreationType } from "@prisma/client"
 import axios from "axios"
-import { header } from "express-validator"
-import { mutate } from "swr"
+
 import AmountnotMatchedPopup from "./totalTransactionPopup"
 const CreateGrnBottomBar = ({ orderData }: any) => {
     const [isSaving, setSaving] = useState(false);
@@ -27,17 +26,22 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
     const [showPopup,setShowPopup] = useState(false);
     const id = url.get('id');
     const router = useRouter();
-    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
     const togglePopup = () =>{
         setShowPopup(!showPopup);
     }
+    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+    
     const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
-    //console.log(orderData);
+   
 
     const balanceDue = totalAmountData?.totalCost >= headerData.distributor?.creditedToken ? (totalAmountData?.totalCost + totalPaidAmount - totalAmountToPay - headerData.distributor?.creditedToken) : totalAmountData?.totalCost + totalPaidAmount - totalAmountToPay;
     const newCreditedToken =totalAmountData.totalCost >= headerData.distributor?.creditedToken ? 0 : headerData.distributor?.creditedToken;
     
     const handleSubmit = async () => {
+        const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+        const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+        const balanceDue = totalAmountData?.totalCost >= headerData.distributor?.creditedToken ? (totalAmountData?.totalCost + totalPaidAmount - totalAmountToPay - headerData.distributor?.creditedToken) : totalAmountData?.totalCost + totalPaidAmount - totalAmountToPay;
+        const newCreditedToken =totalAmountData.totalCost >= headerData.distributor?.creditedToken ? 0 : headerData.distributor?.creditedToken;
         const totalGrnAmountInput = document.querySelector('.totalgnr') as HTMLInputElement;
         const errorMessage = document.getElementById('errormess');
         const totalgnrinput = document.getElementById('totalgnrinput');

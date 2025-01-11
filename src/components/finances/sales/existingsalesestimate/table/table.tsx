@@ -1,18 +1,17 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import Select from 'react-select';
+
 import { useRef } from "react"
-import Image from "next/image"
-import Link from "next/link"
+
 import ExistingsaleEstimateHeader from "./header"
-import { Popover, PopoverTrigger, PopoverContent, Button, Spinner } from "@nextui-org/react";
+
 import ExistingsaleEstimateBottomBar from './bottombar';
 import ExistingsaleEstimateTotalAmout from './totalamount';
 import { useSearchParams } from 'next/navigation';
 import { useAppSelector } from '@/lib/hooks';
 import formatDateAndTime from '@/utils/formateDateTime';
 import useSWR from 'swr';
-import Loading from '@/app/loading';
+
 import Loading2 from '@/app/loading2';
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())

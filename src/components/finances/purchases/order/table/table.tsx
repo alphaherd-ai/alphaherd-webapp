@@ -1,8 +1,8 @@
 "use client"
 
-import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
+
 import addicon from "../../../../../assets/icons/finance/add.svg"
-import sellicon from "../../../../../assets/icons/finance/sell.svg"
+
 import addicon1 from "../../../../../assets/icons/finance/add (3).svg"
 
 import Subtract from "../../../../../assets/icons/finance/Subtract.svg"
@@ -15,13 +15,11 @@ import NewPurchasesHeader from "./header";
 import NewPurchasesBottomBar from "./bottombar";
 import NewPurchasesTotalAmount from "./totalamount";
 import { useAppSelector } from "@/lib/hooks";
-import formatDateAndTime from '@/utils/formateDateTime';
-import { Tax } from '@prisma/client';
-import useSWR, { mutate } from 'swr';
+
+import useSWR from 'swr';
 import { DataContext } from "./DataContext"
 import Popup from '../../../../inventory/product/producttable/newproductpopup';
-import DistributorPopup from "@/components/database/distributor/newdistributorpopup"
-import Popup1 from "@/components/database/distributor/newdistributorpopup"
+
 import { useSearchParams } from "next/navigation"
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())

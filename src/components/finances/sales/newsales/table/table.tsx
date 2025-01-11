@@ -1,14 +1,13 @@
 'use client';
-import DownArrow from '../../../../../assets/icons/finance/downArrow.svg';
-import subicon from "../../../../../assets/icons/finance/1. Icons-26.svg"
+
 import Subtract from "../../../../../assets/icons/finance/Subtract.svg"
 import Add from "../../../../../assets/icons/finance/add (2).svg"
 import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
 import addicon from "../../../../../assets/icons/finance/add.svg"
-import add1icon from "../../../../../assets/icons/finance/add1.svg"
+
 import sellicon from "../../../../../assets/icons/finance/sell.svg"
 import { Tax } from '@prisma/client';
-import Invoice from '../../../../../assets/icons/finance/invoice.svg';
+
 import formatDateAndTime from '@/utils/formateDateTime';
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import Select from 'react-select';
@@ -16,17 +15,19 @@ import { useRef } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import NewsalesHeader from "./header"
-import { Popover, PopoverTrigger, PopoverContent, Button, Spinner, select } from "@nextui-org/react";
+import { Button} from "@nextui-org/react";
 import NewsalesBottomBar from './bottombar';
 import NewsalesTotalAmout from './totalamount';
-import axios from 'axios';
+
 import ClientPopup from '@/components/database/client/newclientpopoup';
 import { DataContext } from './DataContext';
 import { useAppSelector } from "@/lib/hooks";
 import { useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
+import StockConfirmationPopup from '@/utils/stockConfirmationpopup';
 
 import { table } from 'console';
+import { original } from '@reduxjs/toolkit';
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
@@ -37,7 +38,7 @@ interface Products {
     hsnCode: string,
     quantity: number
     tax: number,
-    defaultUnit:number,
+    defaultUnit: number,
 }
 interface ProductBatch {
     id: number;
@@ -105,6 +106,15 @@ const NewsalesTable = () => {
     const appState = useAppSelector((state) => state.app)
     const url = useSearchParams();
     const id = url.get('id');
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [confirmAction, setAction] = useState<string>('idle');
+    const [selectedBatchQuantity, setSelectedBatchQuantity] = useState<number>(0);
+    const [selectedBatch, setSelectedBatch] = useState<any>();
+    const [currIndex, setCurrIndex] = useState<number>(0);
+
+
+
+
 
     let estimateData: any = null, isEstimateDataLoading = false, isEstimateDataError = false;
     const { tableData: items, setTableData: setItems } = useContext(DataContext);
@@ -114,13 +124,17 @@ const NewsalesTable = () => {
         isEstimateDataError = error;
         isEstimateDataLoading = isLoading;
     }
-
+    useEffect(() => {
+        items.push({
+            productId: null,
+            serviceId: null,
+            itemName: "",
+        });
+    },[])
     useEffect(() => {
         if (!isEstimateDataLoading && estimateData && !isEstimateDataError) {
             const { items, ...otherData } = estimateData;
-            // eslint-disable-next-line react-hooks/rules-of-hooks
-            setOtherData(otherData)
-            console.log(estimateData);
+            setOtherData(otherData);
             const shallowDataCopy = [...items];
             const itemData = shallowDataCopy.map((item: any) => ({
                 itemType: item.itemType,
@@ -128,7 +142,7 @@ const NewsalesTable = () => {
                 serviceId: item.itemType === "product" ? null : item.serviceId,
                 itemName: item.name,
                 quantity: item.quantity,
-                defaultUnit:item.itemType==='product'?item.products.defaultUnit : "",
+                defaultUnit: item.itemType === 'product' ? item.products.defaultUnit : "",
                 sellingPrice: item.sellingPrice,
                 expiry: item.itemType === 'product' ? item.productBatch.expiry : "",
                 batchNumber: item.itemType === 'product' ? item.productBatch.batchNumber : "",
@@ -136,11 +150,62 @@ const NewsalesTable = () => {
                 id: item.itemType === 'product' ? item.productBatch.id : item.serviceId,
                 provider: item.itemType === 'product' ? "" : item.serviceProvider
             }));
-            console.log(itemData);
-            setItems((prev: any[]) => [...itemData, ...prev,]);
+            setItems((prevItems: any) => [...prevItems, ...itemData]);
+            setItems((prevItems: any) => [
+                ...prevItems,
+                {
+                    productId: null,
+                    serviceId: null,
+                    itemName: "",
+                },
+            ]);
+            console.log('all the data is stored',itemData);
+        }
+    }, [estimateData, id,isEstimateDataLoading,isEstimateDataError]);
+
+    useEffect(() => {
+        if (confirmAction === 'idle' || confirmAction === 'Save') {
+            return;
+        }
+        else {
+            const nextBatches = batches.filter((batch) => batch.value.productId === selectedBatch.value.productId).sort((a, b) => a.value.id - b.value.id);
+
+            const nextBatch = nextBatches.find(
+                (batch, index) =>
+                    batch.value.id > selectedBatch.value.id &&
+                    (index === 0 || nextBatches[index - 1].value.id === selectedBatch.value.id)
+            );
+
+            const defaultBatch = (nextBatch || nextBatches[nextBatches.length - 1]);
+            setSelectedBatch(defaultBatch);
+            setSelectedBatchQuantity(defaultBatch?.value?.originalQuantity || 0);
+            
+            setItems((prevItems) =>
+                prevItems.map((item, itemIndex) =>
+                    itemIndex === currIndex ? {
+                        ...item,
+                        id: defaultBatch.value.id,
+                        quantity: defaultBatch.value.quantity,
+                        batchNumber: defaultBatch.value.batchNumber,
+                        expiry: defaultBatch.value.expiry,
+                        sellingPrice: defaultBatch.value.sellingPrice,
+                        productId: defaultBatch.value.productId
+                    } :
+                        item,
+                )
+            );
+            if(defaultBatch?.value?.originalQuantity <= 0){
+                setShowConfirmation(true);    
+            }
+            setAction('idle');
+            
 
         }
-    }, [estimateData, id]);
+
+
+    }, [confirmAction])
+
+
 
     const [discountStates, setDiscountStates] = useState(new Array(items.length).fill(false));
     const discountOptions = [
@@ -190,7 +255,7 @@ const NewsalesTable = () => {
                     quantity: product.quantity,
                     itemName: product.itemName,
                     tax: product.tax,
-                    defaultUnit:product.defaultUnit,
+                    defaultUnit: product.defaultUnit,
                 },
                 label: product.itemName,
             }));
@@ -207,6 +272,7 @@ const NewsalesTable = () => {
                     batchNumber: product.batchNumber,
                     expiry: product.expiry,
                     sellingPrice: product.sellingPrice,
+                    originalQuantity: product.quantity
                 },
                 label: product.batchNumber
             }));
@@ -343,17 +409,6 @@ const NewsalesTable = () => {
 
 
     useEffect(() => {
-
-        items.push({
-            productId: null,
-            serviceId: null,
-            itemName: "",
-        });
-        setItems(items);
-
-    }, [])
-
-    useEffect(() => {
         if (tableData.length === 0) {
             setSelectedProduct(undefined);
         }
@@ -402,7 +457,7 @@ const NewsalesTable = () => {
                 updatedItems[index] = {
                     ...updatedItems[index],
                     quantity: 1,
-                    defaultUnit:productdata ? selectedProduct?.value?.defaultUnit : "",
+                    defaultUnit: productdata ? selectedProduct?.value?.defaultUnit : "",
                     itemType: productdata ? "product" : "service",
                     productId: productdata ? selectedProduct.value.id : null,
                     serviceId: servicedata ? selectedProduct.value.id : null,
@@ -430,6 +485,12 @@ const NewsalesTable = () => {
                             } : item
                         )
                     );
+                    setSelectedBatch(defaultBatch);
+                    setSelectedBatchQuantity(defaultBatch?.value?.originalQuantity || 0);
+                    setCurrIndex(index);
+                    if (defaultBatch?.value?.originalQuantity <= 0) {
+                        setShowConfirmation(true);
+                    }
                     console.log(items);
                 }
                 else if (servicedata) {
@@ -474,6 +535,12 @@ const NewsalesTable = () => {
                 // console.log("these are updated",updatedItems)
                 setItems(updatedItems);
                 setTableData(updatedItems);
+                setSelectedBatch(data);
+                setSelectedBatchQuantity(data?.value?.originalQuantity || 0);
+                setCurrIndex(index);
+                if (data?.value?.originalQuantity <= 0) {
+                    setShowConfirmation(true);
+                }
                 // const updatedProducts = products.filter((product) => product.value !== selectedProduct.value);
                 // setProducts(updatedProducts);
             } catch (error) {
@@ -552,6 +619,7 @@ const NewsalesTable = () => {
     return (
         <>
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
+                {showConfirmation && <StockConfirmationPopup quantity={selectedBatchQuantity} setAction={setAction} setShowConfirmation={setShowConfirmation} />}
                 <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-between items-center gap-6 flex">
                     <div>
 
@@ -596,10 +664,7 @@ const NewsalesTable = () => {
                                 <div className='flex text-gray-500 text-base font-medium w-[12rem]'>Name</div>
                                 <div className='flex text-gray-500 text-base font-medium w-[8rem]'>Batch No./Provider</div>
                                 <div className='flex text-gray-500 text-base font-medium w-[7rem]'>Selling Price</div>
-
                                 <div className='flex text-gray-500 justify-center text-base font-medium w-[8rem]'>Quantity</div>
-
-
                                 <div className='flex justify-center text-gray-500 text-base font-medium w-[6rem]'>Tax %</div>
                                 <div className='flex text-gray-500 justify-center text-base font-medium  w-[10rem]'>Tax Amt.</div>
                                 <div className='flex text-gray-500 text-base font-medium w-[6rem] mr-4'>Discount %</div>
@@ -662,7 +727,7 @@ const NewsalesTable = () => {
                                                 <Select
                                                     className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
                                                     classNamePrefix="select"
-                                                    value={filteredBatches.find((prod) => prod.value.id === item.id)}
+                                                    value={batches.find((prod) => prod.value.id === item.id)}
                                                     isClearable={false}
                                                     isSearchable={true}
                                                     name={`batchNumber=${index}`}
@@ -672,16 +737,16 @@ const NewsalesTable = () => {
                                                 />
                                             ) : (
                                                 item.batchNumber ? item.batchNumber : <Select
-                                                className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
-                                                classNamePrefix="select"
-                                                value={filteredBatches.find((prod) => prod.value.id === item.id)}
-                                                isClearable={false}
-                                                isSearchable={true}
-                                                name={`batchNumber=${index}`}
-                                                options={filteredBatches}
-                                                onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
-                                                styles={customStyles}
-                                            />
+                                                    className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
+                                                    classNamePrefix="select"
+                                                    value={filteredBatches.find((prod) => prod.value.id === item.id)}
+                                                    isClearable={false}
+                                                    isSearchable={true}
+                                                    name={`batchNumber=${index}`}
+                                                    options={filteredBatches}
+                                                    onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
+                                                    styles={customStyles}
+                                                />
                                             )
                                         )}
 
@@ -714,9 +779,6 @@ const NewsalesTable = () => {
                                                     />
                                             )
                                         )}
-
-
-
 
                                         {item.expiry && formatDateAndTime(item.expiry).formattedDate && (
                                             <div className="text-textGrey2 text-[13px] font-medium  px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
@@ -818,7 +880,7 @@ const NewsalesTable = () => {
                             </div>
                         </div>
                     </div>
-                    <NewsalesTotalAmout otherData={otherData}/>
+                    <NewsalesTotalAmout otherData={otherData} />
                 </div>
                 <NewsalesBottomBar estimateData={otherData} />
             </div>
