@@ -2,7 +2,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import useSWR from 'swr'
-import { Spinner, Tooltip } from '@nextui-org/react'
+import {  Tooltip } from '@nextui-org/react'
 import formatDateAndTime from '@/utils/formateDateTime'
 import { useAppSelector } from '@/lib/hooks';
 import Loading from '@/app/loading';

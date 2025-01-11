@@ -4,7 +4,7 @@ import RightArrow from '../../../assets/icons/finance/rightArrow.svg';
 import LeftArrow from '../../../assets/icons/finance/leftArrow.svg';
 
 import Image from 'next/image';
-import Link from 'next/link';
+
 
 
 interface BottombarProps {

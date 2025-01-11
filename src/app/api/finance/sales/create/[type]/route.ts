@@ -15,19 +15,13 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
 
   try {
     const {newCreditedToken,...otherBody}: any = await req.json();
-    //console.log(body.items);
     const inventoryId = await fetchInventoryId(req);
-    const financeId = await fetchFinanceId(req);
-    // console.log(financeId);
-    //console.log("Here's the client id",clientId)
+    const financeId = await fetchFinanceId(req);    
     console.log(otherBody);
-    const [sales, items,client] = await prismaClient.$transaction([
-
-      
+    const [sales, items,client] = await Promise.all([
       prismaClient.sales.create({
         data: {
           ...otherBody,
-         
           type: params.type,
           FinanceSection: {
             connect: {
@@ -50,7 +44,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
         }
       })
     ]);
-     console.log("sales done",sales)
+     
     const finance = await prismaClient.financeTimeline.create({
       data: {
         type: params.type,
@@ -65,16 +59,18 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
     });
 
     if (params.type === FinanceCreationType.Sales_Invoice) {
-      if(newCreditedToken>=0){
+      
+      if (newCreditedToken >= 0) {
         await prismaClient.clients.update({
-          where:{
-            id:Number(otherBody.clientId)
+          where: {
+            id: Number(otherBody.clientId)
           },
-          data:{
-            creditedToken:newCreditedToken
+          data: {
+            creditedToken: newCreditedToken
           }
-        })
+        });
       }
+
       await Promise.all(
         otherBody.items.create.map(async (item: any) => {
           if(item.itemType==='product'){
@@ -87,7 +83,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
             });
             console.log(batch);
   
-            await prismaClient.$transaction([
+            await Promise.all([
               prismaClient.productBatch.update({
                 where: { id: batch?.id, inventorySectionId: inventoryId },
                 data: {
@@ -138,7 +134,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
               cacheStrategy: { ttl: 60 },
             });
 
-            await prismaClient.$transaction([
+            await Promise.all([
               prismaClient.inventoryTimeline.create({
                 data: {
                   stockChange: Stock.StockOUT,
@@ -189,7 +185,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
               cacheStrategy: { ttl: 60 },
             });
 
-            await prismaClient.$transaction([
+            await Promise.all([
               prismaClient.productBatch.update({
                 where: { id: batch?.id, inventorySectionId: inventoryId },
                 data: {
@@ -240,7 +236,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
               cacheStrategy: { ttl: 60 },
             });
 
-            await prismaClient.$transaction([
+            await Promise.all([
               prismaClient.inventoryTimeline.create({
                 data: {
                   stockChange: Stock.StockIN,

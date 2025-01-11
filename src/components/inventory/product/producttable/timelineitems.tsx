@@ -19,10 +19,10 @@ interface Products {
   itemName: string;
   category: string;
   providers: string[];
-  minStock?:number;
+  minStock?: number;
 }
 
-const ProductAllItem = ({sortOrder,sortKey}:any) => {
+const ProductAllItem = ({ sortOrder, sortKey }: any) => {
 
   const { allData, setAllData } = useContext(DataContext)
 
@@ -34,7 +34,7 @@ const ProductAllItem = ({sortOrder,sortKey}:any) => {
   const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
   const selectedCategories = useMemo(() => urlSearchParams.getAll('selectedCategories'), [urlSearchParams]);
   const selectedInvoices = useMemo(() => urlSearchParams.getAll('selectedInvoiceTypes'), [urlSearchParams]);
-  const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${appState.currentBranchId}`, fetcher)
+  const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${appState.currentBranchId}`,fetcher)
   useEffect(() => {
     if (!isLoading && data && !error) {
       //console.log(data);
@@ -55,7 +55,7 @@ const ProductAllItem = ({sortOrder,sortKey}:any) => {
           selectedInvoices.includes(item.invoiceType)
         )
       }
-     
+
       if (sortOrder && sortKey) {
         console.log(sortOrder, sortKey);
         const sortedData = [...filteredData].sort((a, b) => {
@@ -68,17 +68,17 @@ const ProductAllItem = ({sortOrder,sortKey}:any) => {
               return sortOrder === 'asc' ? valueA.getTime() - valueB.getTime() : valueB.getTime() - valueA.getTime();
             }
           }
-          
+
           return 0;
         });
         //console.log(sortedData);
         setProducts(sortedData);
-        return ;
+        return;
       }
       //console.log(filteredData);
       setProducts(filteredData);
     }
-  }, [data, isLoading, error, selectedCategories, sortOrder,sortKey, selectedParties, selectedInvoices]);
+  }, [data, isLoading, error, selectedCategories, sortOrder, sortKey, selectedParties, selectedInvoices]);
 
 
   // console.log("xcxcxcxcxc")
@@ -105,7 +105,7 @@ const ProductAllItem = ({sortOrder,sortKey}:any) => {
                 {product?.itemName}
               </Link>
             </div>
-            <div className={`w-1/4 flex items-center px-6 text-base font-medium ${product.totalQuantity <= (product?.minStock ?? 0) ?'text-red-500' :'text-gray-400' }`}>{product.totalQuantity}</div>
+            <div className={`w-1/4 flex items-center px-6 text-base font-medium ${product.totalQuantity <= (product?.minStock ?? 0) ? 'text-red-500' : 'text-gray-400'}`}>{product.totalQuantity}</div>
             <div className='w-1/4 flex items-center px-6 text-base font-medium'>{product.providers}</div>
             <div className='w-1/4 flex  items-center  text-base font-medium px-6'>
               <Tooltip content={product.category} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>

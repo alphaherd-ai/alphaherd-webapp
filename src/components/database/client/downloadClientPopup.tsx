@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { CSVLink } from 'react-csv';
-import DatePicker from 'react-datepicker';
+
 import 'react-datepicker/dist/react-datepicker.css';
 import { format } from 'date-fns';
 import closeicon from "../../../assets/icons/inventory/closeIcon.svg";
 import Image from 'next/image';
-import calenderIcon from "../../../assets/icons/finance/calendar_today.svg";
+
 import download from "../../../assets/icons/finance/downloadGreen.svg";
 import { Button } from '@nextui-org/react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import logo from "../../../assets/icons/finance/pfpimg.png";
+
 import { useAppSelector } from '@/lib/hooks';
 
 const DownloadPopup = ({ onClose, clients }:any) => {

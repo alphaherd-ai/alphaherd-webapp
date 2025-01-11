@@ -1,12 +1,9 @@
 "use client"
 
 import lefticon from "../../../../../assets/icons/finance/left_icon.svg"
-import Link from "next/link"
-import Image from "next/image"
-import Attachment from "../../../../../assets/icons/finance/attachment.svg"
 
-import Menu from '@/assets/icons/finance/menu.svg';
-import { Button, Popover, PopoverContent, PopoverTrigger } from "@nextui-org/react"
+import Image from "next/image"
+
 import { useRouter } from "next/navigation"
 
 

@@ -3,8 +3,8 @@
 import printicon from "../../../../../assets/icons/finance/print.svg"
 import shareicon from "../../../../../assets/icons/finance/share.svg"
 import drafticon from "../../../../../assets/icons/finance/draft.svg"
-import checkicon from "../../../../../assets/icons/finance/check.svg"
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import downloadicon from "../../../../../assets/icons/finance/download.svg"
 import axios from "axios"
 import Link from "next/link"

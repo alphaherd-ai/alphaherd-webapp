@@ -12,7 +12,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 import calicon from "../../../../../assets/icons/finance/calendar_today.svg";
 
-import closeicon from "../../../../../assets/icons/inventory/closeIcon.svg";
+
 import Select from 'react-select';
 import { Button } from '@nextui-org/react';
 import { useAppSelector } from '@/lib/hooks';
@@ -135,6 +135,7 @@ const ExsistingRecordTransactionPopup: React.FC<PopupProps> = ({setCount, header
             date: formData.date || new Date(),
             isAdvancePayment: isAdvancePayment,
             mode: selectedMode,
+            receiptNo: initialInvoiceNo,
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
         };
 

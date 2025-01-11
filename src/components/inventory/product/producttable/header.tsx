@@ -3,24 +3,22 @@ import React, { useContext } from 'react'
 
 import Sort from '../../../../assets/icons/finance/sort.svg';
 import Filter from '../../../../assets/icons/finance/filter.svg';
-import Chart from '../../../../assets/icons/finance/chart.svg';
-import Download from '../../../../assets/icons/finance/download.svg';
-import DownArrow from '../../../../assets/icons/finance/downArrow.svg';
-import Popup from '../../../inventory/product/producttable/newproductpopup';
+
+
 
 
 import { DataContext } from './DataContext';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import Popup2 from '../../product/producttable/updateinventorypopup';
+
 
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
-import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
+import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 import FilterDropdwonCard from './FilterDropDownCard';
 import FilterDropdownProductsCard from './FilterDropDownProductsCard';
 import DownloadPopup from './downloadProductPopup';
-import { Products } from '@prisma/client';
+
 
 
 

@@ -1,12 +1,9 @@
 "use client"
 
-import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
-import addicon from "../../../../../assets/icons/finance/add.svg"
-import sellicon from "../../../../../assets/icons/finance/sell.svg"
+
 
 import React, { useEffect, useState } from 'react';
-import Select from 'react-select';
-import Image from "next/image"
+
 import ExsistingRecurringHeader from "./header";
 import ExsistingRecurringTotalAmount from "./totalamount";
 import ExsistingRecurringBottomBar from "./bottombar";

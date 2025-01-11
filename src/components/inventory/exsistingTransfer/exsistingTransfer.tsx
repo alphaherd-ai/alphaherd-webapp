@@ -6,20 +6,15 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from "@nextui-org/react"
 import printicon from "../../../assets/icons/finance/print.svg"
 import shareicon from "../../../assets/icons/finance/share.svg"
-import drafticon from "../../../assets/icons/finance/draft.svg"
-import checkicon from "../../../assets/icons/finance/check.svg"
+
 import downloadicon from "../../../assets/icons/finance/download.svg"
-import { generateInvoiceNumber } from '@/utils/generateInvoiceNo'
-import delicon from "../../../assets/icons/finance/1. Icons-27.svg"
+
+
 import Loading from '@/app/loading'
-import { useAppSelector } from '@/lib/hooks'
-import axios from 'axios';
-import Select from 'react-select';
+
 import useSWR from 'swr'
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import calicon from "../../../assets/icons/finance/calendar_today.svg";
-import Loading2 from '@/app/loading2'
+
 const fetcher = (...args: [RequestInfo, RequestInit?]) => fetch(...args).then(res => res.json())
 
 

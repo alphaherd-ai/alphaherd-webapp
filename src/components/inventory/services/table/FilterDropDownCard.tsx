@@ -1,13 +1,11 @@
-import DatePicker from 'react-datepicker';
+
 import 'react-datepicker/dist/react-datepicker.css';
 import React, { useEffect, useState } from "react";
-import calicon from "../../../../assets/icons/finance/calendar_today.svg";
+
 import useSWR from 'swr';
 import { useAppSelector } from '@/lib/hooks';
-import Loading from '@/app/loading';
-import { FinanceCreationType } from '@prisma/client';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { SalesStatus } from '@/utils/statusType';
+
+import { useRouter } from 'next/navigation';
 
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json());

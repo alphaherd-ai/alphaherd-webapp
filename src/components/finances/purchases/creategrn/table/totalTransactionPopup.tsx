@@ -2,7 +2,7 @@
 import Image from "next/image"
 import closeicon from "../../../../../assets/icons/inventory/closeIcon.svg";
 import check from "../../../../../assets/icons/navbar/check.svg"
-import { useState } from "react";
+
 import Loading2 from "@/app/loading2";
 const AmountnotMatchedPopup = ({ onClose, handleSubmit, isSaving }: { onClose: () => void, handleSubmit: () => void, isSaving: boolean }) => {
     // const [isSaving, setSaving] = useState(false);

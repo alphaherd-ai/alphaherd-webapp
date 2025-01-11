@@ -7,14 +7,14 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Subtract from "../../../../../assets/icons/finance/Subtract.svg"
 import Add from "../../../../../assets/icons/finance/add (2).svg"
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import Select from 'react-select';
+
 import Image from "next/image"
 import NewPurchaseReturnBottomBar from "./bottombar"
 import NewPurchaseReturnTotalAmount from "./totalamount"
 import NewPurchaseReturnHeader from "./header"
 import { useAppSelector } from "@/lib/hooks";
 import formatDateAndTime from '@/utils/formateDateTime';
-import { Tax } from '@prisma/client';
+
 import useSWR from 'swr';
 import { DataContext } from "./DataContext"
 import { useSearchParams } from "next/navigation"

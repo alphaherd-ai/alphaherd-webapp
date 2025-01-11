@@ -1,27 +1,25 @@
 "use client"
 import Image from "next/image"
-import Link from "next/link"
+
 import lefticon from "../../../../assets/icons/inventory/left_icon.svg"
-import righticon from "../../../../assets/icons/finance/right_icon.svg"
+
 import addicon from "../../../../assets/icons/inventory/bar_chart.svg"
 import optionicon from "../../../../assets/icons/inventory/more_vert.svg"
 import downloadicon from "../../../../assets/icons/inventory/1. Icons-24.svg"
-import selecttab from "../../../../assets/icons/finance/SelectedTab.svg"
-import icn_icon from "../../../../assets/icons/finance/inc_icon.svg"
+
 import EditClientPopup from "./editClientPopup"
-import optionarrow from "../../../../assets/icons/inventory/more_vert.svg"
+
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
-import { ThemeProvider } from '@mui/material/styles';
-import theme from './theme';
+
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from "next/navigation"
-import { response } from "express"
+
 import { useAppSelector } from "@/lib/hooks"
 import useSWR from "swr"
 import axios from "axios"
-import { set } from "date-fns"
+
 import RecordTransactionPopup from "./multipleInvoiceTransactionPopup"
-import { Record } from "twilio/lib/twiml/VoiceResponse"
+
 import ClearInvoices from "../clearInvoices"
 import Loading2 from "@/app/loading2"
 import formatDateAndTime from "@/utils/formateDateTime"
@@ -355,7 +353,7 @@ const ClientDetails = () => {
                                         <Image src={addicon} alt="add"></Image>
                                     </div>
                                     <div className="text-white text-sm font-medium cursor-pointer">
-                                        Record Payment:Clear Multiple Invoices
+                                        Record Payment : Clear Multiple Invoices
                                     </div>
                                 </div>
                             </div>

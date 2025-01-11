@@ -1,11 +1,7 @@
 "use client"
-import printicon from "../../../../../assets/icons/finance/print.svg"
-import shareicon from "../../../../../assets/icons/finance/share.svg"
-import drafticon from "../../../../../assets/icons/finance/draft.svg"
+
 import checkicon from "../../../../../assets/icons/finance/check.svg"
-import React, { useState, useEffect, useContext } from 'react';
-import downloadicon from "../../../../../assets/icons/finance/download.svg"
-import Link from "next/link"
+import React, { useState, useContext } from 'react';
 import Image from "next/image"
 import { DataContext } from './DataContext'
 import { FinanceCreationType } from '@prisma/client'
@@ -16,7 +12,7 @@ import { Button } from "@nextui-org/react"
 import { useRouter } from "next/navigation"
 import { generatePdfForInvoice } from "@/utils/salesPdf"
 import Loading2 from "@/app/loading2"
-import { mutate } from "swr"
+
 
 const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
     const { headerData, tableData, totalAmountData, transactionsData } = useContext(DataContext);
@@ -25,14 +21,16 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
     const id = url.get('id');
     const router = useRouter();
     const [isSaving, setSaving] = useState(false);
-    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
-
-    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
 
-    const balanceDue = totalAmountData.totalCost - totalPaidAmount + totalAmountToPay;
-    
     const handleSubmit = async () => {
+        const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+        const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+
+
+        const balanceDue = totalAmountData.totalCost - totalPaidAmount + totalAmountToPay;
+
         if (!headerData.customer) {
             alert('Customer is required');
             return;
@@ -47,7 +45,7 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
         });
         const items = tableData.map(data => ({
             productId: data.productId,
-            serviceProvider:data.provider,
+            serviceProvider: data.provider,
             serviceId: data.serviceId,
             productBatchId: data.productId ? data.id : null,
             quantity: data.quantity,
@@ -56,11 +54,11 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
             name: data.itemName,
             itemType: data.itemType,
         }));
-        const data={
-            customer: (id===null)?allData.headerData.customer.value.clientName :invoiceData.customer,
-            clientId: (id===null)?allData.headerData.customer.value.clientId :"",
-            email:(id=== null)?allData.headerData.customer.value.email:"",
-            notes: (id===null)?allData.headerData.notes:invoiceData.notes,
+        const data = {
+            customer: (id === null) ? allData.headerData.customer.value.clientName : invoiceData.customer,
+            clientId: (id === null) ? allData.headerData.customer.value.clientId : "",
+            email: (id === null) ? allData.headerData.customer.value.email : "",
+            notes: (id === null) ? allData.headerData.notes : invoiceData.notes,
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo: (id === null) ? allData.headerData.invoiceNo : invoiceData.invoiceNo,
             dueDate: (id === null) ? allData.headerData.dueDate : invoiceData.dueDate,
@@ -72,7 +70,7 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
             recordTransaction: {
                 create: allData.transactionsData
             },
-            status:allData.totalAmountData.totalCost === balanceDue ? `Credited:₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
+            status: allData.totalAmountData.totalCost === balanceDue ? `Credited:₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
             type: FinanceCreationType.Sales_Return,
             items: {
                 create: items
@@ -115,13 +113,13 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
             sellingPrice: data.sellingPrice,
             taxAmount: data.gst,
             name: data.itemName,
-            discount:data.discountPer,
+            discount: data.discountPer,
         }));
         const data = {
 
-            customer: (id===null)?allData.headerData.customer.value.clientName :invoiceData.customer,
-            email:(id=== null)?allData.headerData.customer.value.email:"",
-            notes: (id===null)?allData.headerData.notes:invoiceData.notes,
+            customer: (id === null) ? allData.headerData.customer.value.clientName : invoiceData.customer,
+            email: (id === null) ? allData.headerData.customer.value.email : "",
+            notes: (id === null) ? allData.headerData.notes : invoiceData.notes,
 
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo: (id === null) ? allData.headerData.invoiceNo : invoiceData.invoiceNo,
@@ -188,7 +186,7 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
                 },
                 body: JSON.stringify({
 
-                    email:headerData.customer.value.email,
+                    email: headerData.customer.value.email,
 
                 })
             });
@@ -198,7 +196,7 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
         }
     };
 
-    const isDisabled = tableData.length === 1 || !headerData?.customer ;
+    const isDisabled = tableData.length === 1 || !headerData?.customer;
 
     return (
 
@@ -239,7 +237,7 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
                     }`}
                     onClick={handleSubmit} disabled={isDisabled || isSaving}>
                     <Image src={checkicon} alt="check"></Image>
-                    <div>{isSaving ? <Loading2/>: "Save"}</div>
+                    <div>{isSaving ? <Loading2 /> : "Save"}</div>
                 </Button>
             </div>
         </div>

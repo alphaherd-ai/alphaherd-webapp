@@ -1,19 +1,16 @@
 "use client"
 
-import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
-import addicon from "../../../../../assets/icons/finance/add.svg"
-import sellicon from "../../../../../assets/icons/finance/sell.svg"
+
 
 import React, { useEffect, useState } from 'react';
-import Select from 'react-select';
-import Image from "next/image"
+
 import ExsistingNonRecurringHeader from "./header";
 import ExsistingNonRecurringTotalAmount from "./totalamount";
 import ExsistingNonRecurringBottomBar from "./bottombar";
 import { useSearchParams } from "next/navigation";
 import { useAppSelector } from "@/lib/hooks";
 import useSWR from "swr";
-import Loading from '@/app/loading';
+
 import Loading2 from "@/app/loading2";
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
@@ -40,8 +37,9 @@ const ExsistingNonRecurringTable = () => {
               const itemData = shallowDataCopy.map((item: any) => ({
                 id: item.id,
                 itemName:item.name,
-                sellingPrice:item.sellingPrice,
-                tax:item.taxAmount,
+                cost:item.sellingPrice,
+                transactionId:item.transactionId,
+                invoiceNo:item.invoiceNo,
                 category:item.category
               }));
               setItems(itemData);
@@ -163,13 +161,9 @@ const ExsistingNonRecurringTable = () => {
                         <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12  text-textGrey2 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey'>
                             <div className=' flex text-textGrey2 text-base font-medium w-[3rem]'>No.</div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[15rem]'>Name</div>
-                            <div className=' flex text-textGrey2 text-base font-medium w-[12rem]'>Price</div>
-
-
-
-                            <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>Tax %</div>
-                            <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>Tax Amt.</div>
-                            <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>Total</div>
+                            <div className=' flex text-textGrey2 text-base font-medium w-[12rem]'>Cost</div>
+                            <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>Transaction ID</div>
+                            <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>Invoice No.</div>
                             <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>Category</div>
                             {/* <div className=' flex text-textGrey2 text-base font-medium w-1/12'></div> */}
                         </div>
@@ -178,20 +172,16 @@ const ExsistingNonRecurringTable = () => {
                          <div className='w-[3rem] flex items-center text-textGrey2 text-base font-medium'>{index+1}.</div>
                          <div className='w-[15rem] flex items-center text-textGrey2 text-base font-medium'>{item.itemName}</div>
                          <div className='w-[12rem] flex items-center text-textGrey2 text-base font-medium gap-6'>
-                             <div className="w-1/12 flex items-center text-textGrey2 text-base font-medium">₹{item.sellingPrice}</div>
+                             <div className="w-1/12 flex items-center text-textGrey2 text-base font-medium">₹{item.cost}</div>
                              {/* <div className="text-textGrey2 text-[12px]  font-medium  "> Tax inc</div> */}
                          </div>
                          <div className='w-[10rem] flex-col items-center text-textGrey2 text-base font-medium'>
-                         <div className="text-[#6B7E7D] text-base  font-medium  ">{item.tax*100}%</div>
+                         <div className="text-[#6B7E7D] text-base  font-medium  ">{item.transactionId}</div>
                          </div>
 
-                         <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium gap-[12px]'>
-
-                             <div>₹ {(item.tax*item.sellingPrice).toFixed(2)}</div>
-
+                         <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium'>
+                            {item.invoiceNo}
                          </div>
-
-                         <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium'>₹ {(item.tax*item.sellingPrice+item.sellingPrice).toFixed(2)}</div>
 
                          <div className='w-[10rem] flex-col items-center text-textGrey2 text-base font-medium'>
                              <div>{item.category}</div>
@@ -206,19 +196,7 @@ const ExsistingNonRecurringTable = () => {
                         
                         <div className='flex  w-full justify-evenly items-center box-border bg-gray-100 h-12 border border-solid border-gray-200 py-5  text-textGrey2'>
                         <div className=' flex text-textGrey2 text-base font-medium  w-[3rem]'></div>
-                                <div className=' flex text-textGrey2 text-base font-bold  w-[15rem]'> Total</div>
-                                <div className=' flex text-textGrey2 text-base font-bold  w-[12rem]'></div>
-                                <div className=' flex text-textGrey2 text-base font-bold  w-[10rem]'></div>
-                                {/* <div className=' flex text-textGrey2 text-base font-bold  w-[10rem]'> </div> */}
-                              
                                 
-                            
-                                
-                                <div className=' flex text-textGrey2 text-base font-bold  w-[10rem]'>{`₹${items.reduce((acc, item) => acc + item.sellingPrice * item.tax, 0).toFixed(2)}`}</div>
-                                <div className=' flex text-textGrey2 text-base font-bold  w-[10rem]'>{`₹${items.reduce((acc, item) => acc + item.sellingPrice * item.tax+item.sellingPrice, 0).toFixed(2)}`}</div>
-                                <div className=' flex text-textGrey2 text-base font-bold  w-[10rem]'>
-                                <div className="text-textGrey2 text-base  font-bold   "></div>
-                                </div>
                         </div>
                     </div>
 

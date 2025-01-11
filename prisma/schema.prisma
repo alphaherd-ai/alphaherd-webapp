@@ -21,7 +21,6 @@ enum Notif_Source {
   Inventory_Product_Expiry
   Inventory_Product_MaxStock
   Inventory_Update_Approval_Request
-
   Payment_Edit_Approval_Request
   Payment_Delete_Approval_Request
   Inventory_ProductBatch
@@ -98,16 +97,25 @@ model Organization {
 }
 
 model OrgBranch {
-  id                 Int                 @id @default(autoincrement())
-  branchName         String
-  org                Organization        @relation(fields: [orgId], references: [id])
-  orgId              Int
-  assignedUsers      User[]
-  orgBranchUserRoles OrgBranchUserRole[]
-  inventories        InventorySection[]
-  finances           FinanceSection[]
-  databases          DatabaseSection[]
-
+  id                    Int                 @id @default(autoincrement())
+  branchName            String
+  org                   Organization        @relation(fields: [orgId], references: [id])
+  orgId                 Int
+  phoneNo               String?
+  altphoneNo            String?
+  address               String?
+  panNo                 String?
+  state                 String?
+  pinCode               Int?
+  gstNo                 String?
+  email                 String?
+  description           String?
+  website               String?
+  assignedUsers         User[]
+  orgBranchUserRoles    OrgBranchUserRole[]
+  inventories           InventorySection[]
+  finances              FinanceSection[]
+  databases             DatabaseSection[]
   @@index([branchName, orgId])
 }
 
@@ -239,7 +247,7 @@ model Patients {
   age               String?
   gender            String?
   isInpatient       Boolean?
-  date              DateTime?        @default(now())
+  date              DateTime?          @default(now())
   clients           Clients?         @relation(fields: [clientId], references: [id])
   DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
   databaseSectionId Int?
@@ -485,6 +493,8 @@ model Items {
   category          String?
   sellingPrice      Int?
   quantity          Int?
+  transactionId     String?
+  invoiceNo         String?
   lowQty            Int?
   highQty           Int?
   discount          Float?

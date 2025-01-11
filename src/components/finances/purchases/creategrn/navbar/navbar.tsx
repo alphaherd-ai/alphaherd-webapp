@@ -3,9 +3,8 @@
 import lefticon from "../../../../../assets/icons/finance/left_icon.svg"
 import closeIcon from '../../../../../assets/icons/finance/closeIcon.svg';
 import minimiseIcon from '../../../../../assets/icons/finance/minimiseIcon.svg';
-import Link from "next/link"
+
 import Image from "next/image"
-import Attachment from "../../../../../assets/icons/finance/attachment.svg"
 import { useRouter } from "next/navigation"
 import { DataContext } from "../table/DataContext";
 import { useContext } from "react";

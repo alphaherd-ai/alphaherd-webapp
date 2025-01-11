@@ -3,13 +3,12 @@
 import lefticon from "../../../../../assets/icons/finance/left_icon.svg";
 import closeIcon from '../../../../../assets/icons/finance/closeIcon.svg';
 import minimiseIcon from '../../../../../assets/icons/finance/minimiseIcon.svg';
-import Link from "next/link"
+
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useContext } from "react";
 import { DataContext } from "../table/DataContext";
-import { table } from "console";
-import PreviousMap from "postcss/lib/previous-map";
+
 
 const NewsaleNavbar = () => {
     const { headerData, tableData, totalAmountData, transactionsData, setTableData, setHeaderData, setTotalAmountData, setTransactionsData } = useContext(DataContext);

@@ -1,15 +1,14 @@
 
 "use client"
 import axios from 'axios';
-import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
+
 import addicon from "../../../../../assets/icons/finance/add.svg"
-import sellicon from "../../../../../assets/icons/finance/sell.svg"
-import addicon1 from "../../../../../assets/icons/finance/add (3).svg"
+
 import calicon from "../../../../../assets/icons/finance/calendar_today.svg"
 
 import DatePicker from "react-datepicker"
 import 'react-datepicker/dist/react-datepicker.css';
-import AmountnotMatchedPopup from "./totalTransactionPopup"
+
 
 import Subtract from "../../../../../assets/icons/finance/Subtract.svg"
 import Add from "../../../../../assets/icons/finance/add (2).svg"
@@ -21,14 +20,13 @@ import CreateGrnBottomBar from "./bottombar"
 import CreateGrnTotalAmount from "./totalamount"
 import CreateGrnHeader from "./header"
 import { useAppSelector } from "@/lib/hooks";
-import formatDateAndTime from '@/utils/formateDateTime';
-import { Tax } from '@prisma/client';
+
 import useSWR from 'swr';
 import { DataContext } from "./DataContext"
 import { useSearchParams } from "next/navigation"
 import Popup from '../../../../inventory/product/producttable/newproductpopup';
 
-import { custom } from "zod"
+
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
@@ -490,7 +488,7 @@ const handleAddItem = useCallback(() => {
     return (
         <>
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
-                <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-end items-center gap-6 flex">
+                <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-between items-center gap-6 flex">
                 <div className="left flex gap-3 items-center ">
                     <h2 className="headd text-[#6B7E7D] " id="totalgnrhead">
                         Total GRN Amount
@@ -832,9 +830,9 @@ const handleAddItem = useCallback(() => {
                         </div>
                     </div>
 
-                    <CreateGrnTotalAmount orderData={orderData} />
+                    <CreateGrnTotalAmount orderData={otherData}/>
                 </div>
-                <CreateGrnBottomBar orderData={orderData} />
+                <CreateGrnBottomBar orderData={otherData} />
             </div>
             {showPopup && <Popup onClose={togglePopup} />}
 
