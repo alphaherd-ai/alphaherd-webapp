@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import prismaClient from "../../../../../prisma";
+import prismaClient from "../../../../../../prisma";
 import { fetchFinanceId } from "@/utils/fetchBranchDetails";
 
 export const POST = async(req: NextRequest) => {
