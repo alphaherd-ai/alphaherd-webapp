@@ -62,12 +62,13 @@ const OrganisationNavbar = () => {
                   <span>Change Organization</span>
                   </Button>
                             </div>
-                    <div className="border border-solid border-borderGrey rounded-[10px] p-1">
                     {appState.isCurrentOrgAdmin ?
-                        <Link href={`/auth/admin/orgEdit`}>
-                            <Image src={editicon}  alt={""}>
-                            </Image></Link> : null}
-                    </div>
+                        <div className="border border-solid border-borderGrey rounded-[10px] p-1">
+                            <Link href={`/auth/admin/orgEdit`}>
+                                <Image src={editicon}  alt={""}>
+                                </Image></Link> 
+                        </div>
+                    : null}
 
               
                   </div>
