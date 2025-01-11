@@ -7,12 +7,13 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Subtract from "../../../../../assets/icons/finance/Subtract.svg"
 import Add from "../../../../../assets/icons/finance/add (2).svg"
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import Select from 'react-select';
+
 import Image from "next/image"
 import NewPurchaseReturnBottomBar from "./bottombar"
 import NewPurchaseReturnTotalAmount from "./totalamount"
 import NewPurchaseReturnHeader from "./header"
 import { useAppSelector } from "@/lib/hooks";
+import Select from 'react-select';
 import formatDateAndTime from '@/utils/formateDateTime';
 import { Tax } from '@prisma/client';
 import useSWR from 'swr';
@@ -523,7 +524,6 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                     </div>
                     <div className=' flex text-textGrey2 text-base  px-[10px] w-[5rem]'>{index+1}.</div>
                                     <div className=' flex text-textGrey2 text-base  w-[18rem] '>
-                                    {/* {item.itemName} */}
                                     <Select
                                                         className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0 absolute"
                                                         classNamePrefix="select"
@@ -535,7 +535,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                                                         onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
                                                         menuPortalTarget={document.body}
                                                         styles={customStyles}
-                                                    />
+                                        />
                                     </div>
 
                                     <div className=' flex text-textGrey2 text-base  w-[20rem] items-center gap-2'>
