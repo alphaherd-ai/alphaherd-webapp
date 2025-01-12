@@ -35,7 +35,7 @@ const NotificationPopUp = (newnotifs: any ) => {
           </div>
           <div className="self-stretch">
             <span className="text-stone-300 text-sm font-bold ">
-              {newnotifs.newnotifs.message}
+              {newnotifs?.newnotifs?.message}
               <br />
               <br />
               <br />

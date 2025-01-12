@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 import closeicon from "../../../assets/icons/inventory/closeIcon.svg";
 import Image from "next/image";
 import { useAppSelector } from '@/lib/hooks';
+import checkicon from "../../../assets/icons/finance/check.svg"
+import Loading2 from "@/app/loading2"
 
 const AddLocation = ({ onClose }: any) => {
     const [input, setInput] = useState<string>('');
     const appState = useAppSelector((state) => state.app);
     const [existingCategory, setExistingCategory] = useState<string[]>([]);
     const [error, setError] = useState<string>('');
-
+    const [isSaving, setSaving] = useState(false);
     useEffect(() => {
         const fetchExistingItems = async () => {
             try {
@@ -52,6 +54,7 @@ const AddLocation = ({ onClose }: any) => {
         }
 
         try {
+            setSaving(true);
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/LocationCategory/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
@@ -73,6 +76,9 @@ const AddLocation = ({ onClose }: any) => {
         } catch (error) {
             console.error('Error while saving location:', error);
         }
+        finally{
+            setSaving(false)
+         }
     };
 
     return (
@@ -107,9 +113,12 @@ const AddLocation = ({ onClose }: any) => {
                         </div>
                     </div>
                 </div>
-                <div className="w-full flex justify-end mt-[5px] cursor-pointer">
-                    <button className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer" onClick={handleSave}>
-                        <div className="text-white text-base font-bold">Save</div>
+                <div className="w-full flex justify-end mt-[5px] ">
+                    <button className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer" onClick={handleSave} disabled={isSaving}>
+                    <Image src={checkicon} alt="check"></Image>
+                    <div className="text-white text-base font-bold "> 
+                        <div>{isSaving ? <Loading2 /> : "Save"}</div>
+                    </div>
                     </button>
                 </div>
             </div>

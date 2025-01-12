@@ -169,7 +169,8 @@ const ExsistingPurchasesTable = () => {
                                         <div className=' flex text-gray-500 text-base font-bold w-[13rem]'>Total</div>
                                         <div className=' flex text-gray-500 text-base font-bold w-[8rem]'>{items.reduce((acc, item) => acc + item.quantity, 0) ||
                                             0} Items</div>
-                                        <div className=' flex text-gray-500 text-base font-bold w-[10rem]'> Items</div>
+                                        <div className=' flex text-gray-500 text-base font-bold w-[10rem]'>{items.reduce((acc, item) => acc + item.freequantity, 0) ||
+                                            0} Items</div>
 
 
                                         <div className=' flex text-gray-500 text-base font-bold w-[10rem]'></div>

@@ -49,9 +49,41 @@ const defaultReason = ['Damaged','Expired','Wrong Item','Quality Issues'];
 const defaultSpeciesandBreed = [
     { name: 'Dog', breed: ['Labrador Retriever','German Shepherd','Golden Retriever','Beagle','Pug','Indian Mastiff','Husky','Dashshund','Shi Tzu'] },
     { name: 'Cat', breed: ['Domestic Short Hair','Bombay','Himalayan','Persian','Bengal', 'Siamese'] },
-    { name: 'Bird', breed: [] }, 
-    { name: 'Fish', breed: [] },  
+     
 ];
+
+interface LocationCategory {
+    id: string; // or `number` if `id` is a number in your database
+    name: string;
+}
+interface PaymentMethod {
+    id: string; 
+    name: string;
+}
+interface ItemCategory {
+    id: string; 
+    name: string;
+}
+interface Reason {
+    id: string; 
+    name: string;
+}
+interface ServiceCategory {
+    id: string; 
+    name: string;
+}
+interface ExpenseCategory {
+    id: string; 
+    name: string;
+}
+interface ItemUnit {
+    id: string; 
+    name: string;
+}
+interface TaxType {
+    id: string; 
+    name: string;
+}
 
 
   
@@ -206,10 +238,10 @@ const GeneralSettings = () => {
       
     
       
-    const [paymentMethod, setPaymentMethod] = useState([]);
+    const [paymentMethod, setPaymentMethod] = useState<PaymentMethod[]>([]);
     const appState  = useAppSelector((state) => state.app)
     const { data, error, isLoading } = useSWR(
-        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/paymentMethod/getAll?branchId=${appState.currentBranchId}`,
         fetcher,
         { revalidateOnFocus: true }
     );
@@ -223,12 +255,12 @@ const GeneralSettings = () => {
                 );
 
                 if (missingPaymentMethods.length > 0) {
-                    //console.log('Adding missing payment methods:', missingPaymentMethods);
+                    ////console.log('Adding missing payment methods:', missingPaymentMethods);
                     
                     try {
                         for (const method of missingPaymentMethods) {
                             await fetch(
-                                `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/create?branchId=${appState.currentBranchId}`,
+                                `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/paymentMethod/create?branchId=${appState.currentBranchId}`,
                                 {
                                     method: 'POST',
                                     headers: {
@@ -239,7 +271,7 @@ const GeneralSettings = () => {
                             );
                         }
                         const response = await fetch(
-                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`
+                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/paymentMethod/getAll?branchId=${appState.currentBranchId}`
                         );
                         const updatedData = await response.json();
                         setPaymentMethod(updatedData);
@@ -247,7 +279,7 @@ const GeneralSettings = () => {
                         console.error('Error while adding default payment methods:', error);
                     }
                 } else {
-                    //console.log('All default payment methods already exist');
+                    ////console.log('All default payment methods already exist');
                     setPaymentMethod(data); 
                 }
             }
@@ -261,7 +293,7 @@ const GeneralSettings = () => {
     }, [data, isLoading, error]);
     
     //item categories
-    const [itemCategories, setItemCategories] = useState([]);
+    const [itemCategories, setItemCategories] = useState<ItemCategory[]>([]);
     const {data: itemCategoryData, error: itemCategoryError, isLoading: isLoadingItemCategories} = useSWR(
         `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemCategory/getAll?branchId=${appState.currentBranchId}`,
         fetcher,
@@ -278,7 +310,7 @@ const GeneralSettings = () => {
                 );
 
                 if (missingCategories.length > 0) {
-                    //console.log('Adding missing categories:', missingCategories);
+                    ////console.log('Adding missing categories:', missingCategories);
                     try {
                         await fetch(
                             `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemCategory/create?branchId=${appState.currentBranchId}`,
@@ -296,7 +328,7 @@ const GeneralSettings = () => {
                         console.error('Error while adding default categories:', error);
                     }
                 } else {
-                    //console.log('All default categories already exist');
+                    ////console.log('All default categories already exist');
                 }
             }
         };
@@ -308,7 +340,7 @@ const GeneralSettings = () => {
     }, [itemCategoryData, isLoadingItemCategories, itemCategoryError]);
 
     //item Units
-    const [itemUnits, setItemUnits] = useState([]);
+    const [itemUnits, setItemUnits] = useState<ItemUnit[]>([]);
     const {data: itemUnitsData, error: itemUnitsError, isLoading: isLoadingItemUnits} = useSWR(
         `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemUnit/getAll?branchId=${appState.currentBranchId}`,
         fetcher,
@@ -325,7 +357,7 @@ const GeneralSettings = () => {
                 );
 
                 if (missingUnit.length > 0) {
-                    //console.log('Adding missing categories:', missingUnit);
+                    ////console.log('Adding missing categories:', missingUnit);
                     try {
                         await fetch(
                             `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemUnit/create?branchId=${appState.currentBranchId}`,
@@ -343,7 +375,7 @@ const GeneralSettings = () => {
                         console.error('Error while adding default categories:', error);
                     }
                 } else {
-                    //console.log('All default categories already exist');
+                    ////console.log('All default categories already exist');
                 }
             }
         };
@@ -352,7 +384,7 @@ const GeneralSettings = () => {
             setItemUnits(itemUnitsData); 
         }
     }, [itemUnitsData, itemUnitsError, isLoadingItemUnits]);
-    //console.log("item categories is :",itemUnits);
+    ////console.log("item categories is :",itemUnits);
     // const [species, setspecies] = useState([]);
     // const {data: speciesData, error: speciesError, isLoading: isLoadingspecies} = useSWR(
     //     `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`,
@@ -361,12 +393,12 @@ const GeneralSettings = () => {
     // );
     // useEffect(() => {
     //     if (!isLoadingspecies && !speciesError && speciesData) {
-    //         //console.log("species data is :",species);
+    //         ////console.log("species data is :",species);
     //         setspecies(speciesData); 
     //     }
     // }, [speciesData, speciesError, isLoadingspecies]);
     //Reasons
-    const [reasons, setReasons] = useState([]);
+    const [reasons, setReasons] = useState<Reason[]>([]);
     const {data: reasonsData, error: reasonsError, isLoading: isLoadingreasons} = useSWR(
         `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/reason/getAll?branchId=${appState.currentBranchId}`,
         fetcher,
@@ -383,7 +415,7 @@ const GeneralSettings = () => {
                 );
 
                 if (missingReasons.length > 0) {
-                    //console.log('Adding missing reasons:', missingReasons);
+                    ////console.log('Adding missing reasons:', missingReasons);
                     try {
                         await fetch(
                             `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/reason/create?branchId=${appState.currentBranchId}`,
@@ -400,7 +432,7 @@ const GeneralSettings = () => {
                         console.error('Error while adding default categories:', error);
                     }
                 } else {
-                    //console.log('All default categories already exist');
+                    ////console.log('All default categories already exist');
                 }
             }
         };
@@ -411,7 +443,7 @@ const GeneralSettings = () => {
     }, [reasonsData, reasonsError, isLoadingreasons]);
 
     //tax type
-    const [taxType, settaxType] = useState([]);
+    const [taxType, settaxType] = useState<TaxType[]>([]);
     const {data: taxTypeData, error: taxTypeError, isLoading: isLoadingtaxType} = useSWR(
         `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/taxType/getAll?branchId=${appState.currentBranchId}`,
         fetcher,
@@ -429,7 +461,7 @@ const GeneralSettings = () => {
                 );
 
                 if (missingTaxTypes.length > 0) {
-                    //console.log('Adding missing tax types:', missingTaxTypes);
+                    ////console.log('Adding missing tax types:', missingTaxTypes);
                     try {
                         await fetch(
                             `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/taxType/create?branchId=${appState.currentBranchId}`,
@@ -447,7 +479,7 @@ const GeneralSettings = () => {
                         console.error('Error while adding default tax types:', error);
                     }
                 } else {
-                    //console.log('All default tax types already exist');
+                    ////console.log('All default tax types already exist');
                 }
             }
         };
@@ -461,7 +493,7 @@ const GeneralSettings = () => {
     }, [taxTypeData, taxTypeError, isLoadingtaxType]);
 
     //serviceCategory
-    const [serviceCategory, setserviceCategory] = useState([]);
+    const [serviceCategory, setserviceCategory] = useState<ServiceCategory[]>([]);
     const {data: serviceCategoryData, error: serviceCategoryError, isLoading: isLoadingserviceCategory} = useSWR(
         `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/serviceCategory/getAll?branchId=${appState.currentBranchId}`,
         fetcher,
@@ -479,7 +511,7 @@ const GeneralSettings = () => {
                 );
 
                 if (missingServiceCategory.length > 0) {
-                    //console.log('Adding missing reasons:', missingServiceCategory);
+                    ////console.log('Adding missing reasons:', missingServiceCategory);
                     try {
                         await fetch(
                             `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/serviceCategory/create?branchId=${appState.currentBranchId}`,
@@ -496,7 +528,7 @@ const GeneralSettings = () => {
                         console.error('Error while adding default categories:', error);
                     }
                 } else {
-                    //console.log('All default categories already exist');
+                    ////console.log('All default categories already exist');
                 }
             }
         };
@@ -507,7 +539,7 @@ const GeneralSettings = () => {
     }, [serviceCategoryData, serviceCategoryError, isLoadingserviceCategory]);
 
     //ExpenseCategory
-    const [expenseCategory, setexpenseCategory] = useState([]);
+    const [expenseCategory, setexpenseCategory] = useState<ExpenseCategory[]>([]);
     const {data: expenseCategoryData, error: expenseCategoryError, isLoading: isLoadingexpenseCategory} = useSWR(
         `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/expenseCategory/getAll?branchId=${appState.currentBranchId}`,
         fetcher,
@@ -525,7 +557,7 @@ const GeneralSettings = () => {
                 );
 
                 if (missingExpenseCategory.length > 0) {
-                    //console.log('Adding missing reasons:', missingExpenseCategory);
+                    ////console.log('Adding missing reasons:', missingExpenseCategory);
                     try {
                         await fetch(
                             `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/expenseCategory/create?branchId=${appState.currentBranchId}`,
@@ -542,7 +574,7 @@ const GeneralSettings = () => {
                         console.error('Error while adding default categories:', error);
                     }
                 } else {
-                    //console.log('All default categories already exist');
+                    ////console.log('All default categories already exist');
                 }
             }
         };
@@ -571,7 +603,7 @@ const GeneralSettings = () => {
         fetcher,
         { revalidateOnFocus: true }
     );
-    //console.log("breed data is :" ,breedData);
+   //console.log("breed data is :" ,breedData);
 
     useEffect(() => {
         const initializeSpeciesAndBreeds = async () => {
@@ -653,13 +685,13 @@ const GeneralSettings = () => {
 
 //    Location Category
 
-const [locationCategory, setlocationCategory] = useState([]);
+const [locationCategory, setlocationCategory] = useState<LocationCategory[]>([]);
 const {data: locationCategoryData, error: locationCategoryError, isLoading: isLoadinglocationCategory} = useSWR(
     `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/LocationCategory/getAll?branchId=${appState.currentBranchId}`,
     fetcher,
     { revalidateOnFocus: true } 
 );
-////console.log("location category data is :",locationCategoryData);
+//////console.log("location category data is :",locationCategoryData);
 useEffect(() => {
     const addDefaultLocationCategory = async () => {
         if (locationCategoryData && locationCategoryData.length===0) {
@@ -670,7 +702,7 @@ useEffect(() => {
             const missingLocationCategory = defaultLocationCategory;
 
             if (missingLocationCategory.length > 0) {
-                //console.log('Adding missing reasons:', missingLocationCategory);
+                ////console.log('Adding missing reasons:', missingLocationCategory);
                 try {
                     await fetch(
                         `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/LocationCategory/create?branchId=${appState.currentBranchId}`,
@@ -687,7 +719,7 @@ useEffect(() => {
                     console.error('Error while adding default categories:', error);
                 }
             } else {
-                //console.log('All default categories already exist');
+                ////console.log('All default categories already exist');
             }
         }
     };
@@ -696,19 +728,217 @@ useEffect(() => {
         setlocationCategory(locationCategoryData); 
     }
 }, [locationCategoryData, locationCategoryError, isLoadinglocationCategory]);
+const deleteLocation = async (id: string) => {
+    try {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/LocationCategory/delete?id=${id}`,
+            {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
 
-//console.log("location data is :", locationCategory);
+        if (response.ok) {
+            // Update the state after deletion
+            setlocationCategory(prevCategories =>
+                prevCategories.filter(category => category.id !== id)
+            );
+        } else {
+            console.error('Failed to delete category');
+        }
+    } catch (error) {
+        console.error('Error while deleting category:', error);
+    }
+};
+
+const deletePayment = async (id: string) => {
+    try {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/paymentMethod/delete?id=${id}`,
+            {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+
+        if (response.ok) {
+            // Update the state after deletion
+            setPaymentMethod(prevCategories =>
+                prevCategories.filter(category => category.id !== id)
+            );
+        } else {
+            console.error('Failed to delete category');
+        }
+    } catch (error) {
+        console.error('Error while deleting category:', error);
+    }
+};
+
+const deleteItemCategory = async (id: string) => {
+    try {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemCategory/delete?id=${id}`,
+            {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+
+        if (response.ok) {
+            // Update the state after deletion
+            setItemCategories(prevCategories =>
+                prevCategories.filter(category => category.id !== id)
+            );
+        } else {
+            console.error('Failed to delete category');
+        }
+    } catch (error) {
+        console.error('Error while deleting category:', error);
+    }
+};
+const deleteServiceCategory = async (id: string) => {
+    try {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/serviceCategory/delete?id=${id}`,
+            {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+
+        if (response.ok) {
+            setserviceCategory(prevCategories =>
+                prevCategories.filter(category => category.id !== id)
+            );
+        } else {
+            console.error('Failed to delete category');
+        }
+    } catch (error) {
+        console.error('Error while deleting category:', error);
+    }
+};
+const deleteReason = async (id: string) => {
+    try {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/reason/delete?id=${id}`,
+            {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+
+        if (response.ok) {
+            setReasons(prevCategories =>
+                prevCategories.filter(category => category.id !== id)
+            );
+        } else {
+            console.error('Failed to delete category');
+        }
+    } catch (error) {
+        console.error('Error while deleting category:', error);
+    }
+};
+const deleteExpenseCategory = async (id: string) => {
+    try {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/expenseCategory/delete?id=${id}`,
+            {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+
+        if (response.ok) {
+            setexpenseCategory(prevCategories =>
+                prevCategories.filter(category => category.id !== id)
+            );
+        } else {
+            console.error('Failed to delete category');
+        }
+    } catch (error) {
+        console.error('Error while deleting category:', error);
+    }
+};
+const deleteItemUnit = async (id: string) => {
+    try {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemUnit/delete?id=${id}`,
+            {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+
+        if (response.ok) {
+            setItemUnits(prevCategories =>
+                prevCategories.filter(category => category.id !== id)
+            );
+        } else {
+            console.error('Failed to delete category');
+        }
+    } catch (error) {
+        console.error('Error while deleting category:', error);
+    }
+};
+const deleteTaxType= async (id: string) => {
+    try {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/taxType/delete?id=${id}`,
+            {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+
+        if (response.ok) {
+            settaxType(prevCategories =>
+                prevCategories.filter(category => category.id !== id)
+            );
+        } else {
+            console.error('Failed to delete category');
+        }
+    } catch (error) {
+        console.error('Error while deleting category:', error);
+    }
+};
+
+
+
+////console.log("location data is :", locationCategory);
 
     // Toggle species expansion to show/hide breeds
     const handleExpandSpecies = (speciesId: number) => {
-        //console.log("specie id si : " , speciesId);
+        ////console.log("specie id si : " , speciesId);
         setExpandedSpecies(expandedSpecies === speciesId ? null : speciesId);
     };
-    // //console.log('item categories: ', itemCategories);
-    // //console.log('Tax Type',taxType);
-   //console.log('Species: ', species);
-    // //console.log('Breed',expandedSpecies);
-
+    // ////console.log('item categories: ', itemCategories);
+    // ////console.log('Tax Type',taxType);
+   ////console.log('Species: ', species);
+    // ////console.log('Breed',expandedSpecies);
+    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+    const [hoveredIndex1, setHoveredIndex1] = useState<number | null>(null);
+    const [hoveredIndex2, setHoveredIndex2] = useState<number | null>(null);
+    const [hoveredIndex3, setHoveredIndex3] = useState<number | null>(null);
+    const [hoveredIndex4, setHoveredIndex4] = useState<number | null>(null);
+    const [hoveredIndex5, setHoveredIndex5] = useState<number | null>(null);
+    const [hoveredIndex6, setHoveredIndex6] = useState<number | null>(null);
+    const [hoveredIndex7, setHoveredIndex7] = useState<number | null>(null);
 
 
     return (
@@ -731,27 +961,33 @@ useEffect(() => {
                         <div>
                             <div className="text-gray-500 text-base font-medium ">Automatically send invoices and receipts to customer via:</div>
                             <div className="flex gap-2">
-                                {smsToggle && (<button onClick={smsToggleHandler} className="bg-teal-400 rounded-[5px] border-teal-400 border outline-none" ><div className="w-[73px] h-7 p-2  justify-start items-center gap-2 flex">
+                                {smsToggle && (<button onClick={smsToggleHandler} className="bg-[#35BEB1] rounded-[5px] border-0 outline-none" ><div className="w-[73px] h-7 p-2  justify-start items-center gap-2 flex">
                                     <Image className="w-4 h-4 relative" src={smsicon} alt="sms" />
                                     <div className="text-white text-sm font-bold ">SMS</div>
                                 </div></button>)}
-                                {!smsToggle && (<button onClick={smsToggleHandler} className="bg-white rounded-[5px] border-teal-400 border" ><div className="w-[73px] h-7 p-2 justify-start items-center gap-2 flex">
+                                {!smsToggle && (<button onClick={smsToggleHandler} className="bg-white rounded-[5px] border-[#A2A3A3] " 
+                                style={{ border: '0.5px solid rgba(209, 213, 219, 220)' }}
+                                 ><div className="w-[73px] h-7 p-2 justify-start items-center gap-2 flex">
                                     <Image className="w-4 h-4 relative" src={smsicong} alt="sms" />
                                     <div className="text-neutral-400 text-sm font-bold ">SMS</div>
                                 </div></button>)}
-                                {mailToggle && (<button onClick={mailToggleHandler} className="bg-teal-400 rounded-[5px] border-teal-400 border" ><div className="w-[73px] h-7 p-2 justify-start items-center gap-2 flex">
+                                {mailToggle && (<button onClick={mailToggleHandler} className="bg-[#35BEB1] rounded-[5px] border-0 outline-none" ><div className="w-[73px] h-7 p-2 justify-start items-center gap-2 flex">
                                     <Image className="w-4 h-4 relative" src={mailiconw} alt="sms" />
                                     <div className="text-white text-sm font-bold ">Mail</div>
                                 </div></button>)}
-                                {!mailToggle && (<button onClick={mailToggleHandler} className=" rounded-[5px] border-teal-400 border bg-white" ><div className="w-[73px] h-7 p-2   justify-start items-center gap-2 flex">
+                                {!mailToggle && (<button onClick={mailToggleHandler}
+                                 className="bg-white rounded-[5px] border-[#A2A3A3] " 
+                                 style={{ border: '0.5px solid rgba(209, 213, 219, 220)' }} ><div className="w-[73px] h-7 p-2   justify-start items-center gap-2 flex">
                                     <Image className="w-4 h-4 relative" src={mailicon} alt="sms" />
                                     <div className="text-neutral-400 text-sm font-bold ">Mail</div>
                                 </div></button>)}
-                                {whatsappToggle && (<button onClick={whatsappToggleHandler} className="bg-teal-400 rounded-[5px] border-teal-400 border" ><div className="w-[111px] h-7 p-2  justify-start items-center gap-2 flex">
+                                {whatsappToggle && (<button onClick={whatsappToggleHandler} className="bg-[#35BEB1] rounded-[5px] border-0 outline-none" ><div className="w-[111px] h-7 p-2  justify-start items-center gap-2 flex">
                                     <Image className="w-4 h-4 relative" src={whatshapiconw} alt="sms" />
                                     <div className="text-white text-sm font-bold ">WhatsApp</div>
                                 </div></button>)}
-                                {!whatsappToggle && (<button onClick={whatsappToggleHandler} className=" bg-white rounded-[5px] border-teal-400 border" ><div className="w-[111px] h-7 p-2  justify-start items-center gap-2 flex">
+                                {!whatsappToggle && (<button onClick={whatsappToggleHandler} 
+                                className="bg-white rounded-[5px] border-[#A2A3A3] " 
+                                style={{ border: '0.5px solid rgba(209, 213, 219, 220)' }}><div className="w-[111px] h-7 p-2  justify-start items-center gap-2 flex">
                                     <Image className="w-4 h-4 relative" src={whatshapicon} alt="sms" />
                                     <div className="text-neutral-400 text-sm font-bold ">WhatsApp</div>
                                 </div></button>)}
@@ -779,16 +1015,28 @@ useEffect(() => {
                                     </div>
                                     {isLoading && <Loading />}
                                     <div className="w-full  max-h-[15rem] overflow-y-auto">
-                                    {paymentMethod.map((item:any) => (
-                                        <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
-                                        <div  className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                            <Image className="w-[22px] h-[22px] relative" src={cashicon} alt="cash" />
-                                            <div className="text-gray-500 text-base font-medium ">{item.name}</div>
+                                    {paymentMethod.map((item: any, index: number) => (
+                                        <div
+                                            key={index}
+                                            className="flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 relative"
+                                            onMouseEnter={() => setHoveredIndex(index)}
+                                            onMouseLeave={() => setHoveredIndex(null)}
+                                        >
+                                            <div className="w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium">
+                                                <Image className="w-[22px] h-[22px] relative" src={cashicon} alt="cash" />
+                                                <div className="text-gray-500 text-base font-medium">{item.name}</div>
+                                            </div>
+                                            {hoveredIndex === index && (
+                                                <div
+                                                    className="absolute right-4 h-full flex items-center cursor-pointer"
+                                                    onClick={() => deletePayment(item.id)}
+                                                >
+                                                    <Image className="w-6 h-6" src={deleteicon} alt="delete" />
+                                                </div>
+                                            )}
                                         </div>
-                                        
-                                    </div>
-                                    ))
-                                    } 
+                                    ))}
+ 
                                     </div>      
                                         
                                 </div>
@@ -898,18 +1146,31 @@ useEffect(() => {
                                     </div>
                                     {isLoadingItemCategories && <Loading />}
                                     <div className="w-full  max-h-[15rem] overflow-y-auto">
-                                    {itemCategories.map((item: any,index: any) =>(
-                                        <div key={index} className='w-full'>
+                                    {itemCategories.map((item: any, index: number) => (
+                                        <div key={index} className="w-full">
                                             {Array.isArray(item.name) && item.name.map((nameItem: string, nameIndex: number) => (
-                                                <div key={nameIndex} className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
-                                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                                    <div className="text-gray-500 text-base font-medium">{nameItem}</div>
+                                                <div
+                                                    key={nameIndex}
+                                                    className="flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 relative"
+                                                    onMouseEnter={() => setHoveredIndex1(nameIndex)}
+                                                    onMouseLeave={() => setHoveredIndex1(null)}
+                                                >
+                                                    <div className="w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium">
+                                                        <div className="text-gray-500 text-base font-medium">{nameItem}</div>
                                                     </div>
+                                                    {hoveredIndex1 === nameIndex && (
+                                                        <div
+                                                            className="absolute right-4 h-full flex items-center cursor-pointer"
+                                                            onClick={() => deleteItemCategory(item.id)}
+                                                        >
+                                                            <Image className="w-6 h-6" src={deleteicon} alt="delete" />
+                                                        </div>
+                                                    )}
                                                 </div>
-                                            ))}
-                                        </div>
-                                    ))
-                                    } 
+                                                ))}
+                                            </div>
+                                        ))}
+
                                     </div>   
                                 </div>
                             </div>
@@ -936,11 +1197,25 @@ useEffect(() => {
                                     {itemUnits.map((item: any,index: any) =>(
                                         <div key={index} className='w-full'>
                                             {Array.isArray(item.name) && item.name.map((nameItem: string, nameIndex: number) => (
-                                                <div key={nameIndex} className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
-                                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                                <div
+                                                key={nameIndex}
+                                                className="flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 relative"
+                                                onMouseEnter={() => setHoveredIndex2(nameIndex)}
+                                                onMouseLeave={() => setHoveredIndex2(null)}
+                                            >
+                                                <div className="w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium">
                                                     <div className="text-gray-500 text-base font-medium">{nameItem}</div>
-                                                    </div>
                                                 </div>
+                                                {hoveredIndex2 === nameIndex && (
+                                                    <div
+                                                        className="absolute right-4 h-full flex items-center cursor-pointer"
+                                                        onClick={() => deleteItemUnit(item.id)}
+                                                    >
+                                                        <Image className="w-6 h-6" src={deleteicon} alt="delete" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            
                                             ))}
                                         </div>
                                     ))
@@ -973,11 +1248,25 @@ useEffect(() => {
                                     {serviceCategory.map((item: any,index: any) =>(
                                         <div key={index} className='w-full'>
                                             {Array.isArray(item.name) && item.name.map((nameItem: string, nameIndex: number) => (
-                                                <div key={nameIndex} className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
-                                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                                <div
+                                                key={nameIndex}
+                                                className="flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 relative"
+                                                onMouseEnter={() => setHoveredIndex3(nameIndex)}
+                                                onMouseLeave={() => setHoveredIndex3(null)}
+                                            >
+                                                <div className="w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium">
                                                     <div className="text-gray-500 text-base font-medium">{nameItem}</div>
-                                                    </div>
                                                 </div>
+                                                {hoveredIndex3 === nameIndex && (
+                                                    <div
+                                                        className="absolute right-4 h-full flex items-center cursor-pointer"
+                                                        onClick={() => deleteServiceCategory(item.id)}
+                                                    >
+                                                        <Image className="w-6 h-6" src={deleteicon} alt="delete" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            
                                             ))}
                                         </div>
                                     ))
@@ -1010,13 +1299,25 @@ useEffect(() => {
                                         <div key={index} className='w-full'>
                                             {Array.isArray(item.name) && item.name.length > 0 ? (
                                             item.name.map((taxValue: number, taxIndex: number) => (
-                                                <div key={taxIndex} className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
-                                                <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                                    <div className="text-gray-500 text-base font-medium">
-                                                    {`${taxValue}% GST`}
+                                                <div
+                                                    key={taxIndex}
+                                                    className="flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 relative"
+                                                    onMouseEnter={() => setHoveredIndex4(taxIndex)}
+                                                    onMouseLeave={() => setHoveredIndex4(null)}
+                                                >
+                                                    <div className="w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium">
+                                                        <div className="text-gray-500 text-base font-medium">{`${taxValue}% GST`}</div>
                                                     </div>
+                                                    {hoveredIndex4 === taxIndex && (
+                                                        <div
+                                                            className="absolute right-4 h-full flex items-center cursor-pointer"
+                                                            onClick={() => deleteTaxType(item.id)}
+                                                        >
+                                                            <Image className="w-6 h-6" src={deleteicon} alt="delete" />
+                                                        </div>
+                                                    )}
                                                 </div>
-                                                </div>
+                                                
                                             ))
                                             ) : (
                                             <div className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
@@ -1058,11 +1359,25 @@ useEffect(() => {
                                     {reasons.map((item: any,index: any) =>(
                                         <div key={index} className='w-full'>
                                             {Array.isArray(item.name) && item.name.map((nameItem: string, nameIndex: number) => (
-                                                <div key={nameIndex} className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
-                                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                                <div
+                                                key={nameIndex}
+                                                className="flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 relative"
+                                                onMouseEnter={() => setHoveredIndex5(nameIndex)}
+                                                onMouseLeave={() => setHoveredIndex5(null)}
+                                            >
+                                                <div className="w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium">
                                                     <div className="text-gray-500 text-base font-medium">{nameItem}</div>
-                                                    </div>
                                                 </div>
+                                                {hoveredIndex5 === nameIndex && (
+                                                    <div
+                                                        className="absolute right-4 h-full flex items-center cursor-pointer"
+                                                        onClick={() => deleteReason(item.id)}
+                                                    >
+                                                        <Image className="w-6 h-6" src={deleteicon} alt="delete" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            
                                             ))}
                                         </div>
                                     ))
@@ -1091,18 +1406,27 @@ useEffect(() => {
                                     </div>
                                     {isLoadinglocationCategory && <Loading />}
                                     <div className="w-full  max-h-[15rem] overflow-y-auto">
-                                    {locationCategory.map((item: any,index: any) =>(
-                                        <div key={index} className='w-full'>
-                                            
-                                                <div className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
-                                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                                    <div className="text-gray-500 text-base font-medium">{item.name}</div>
-                                                    </div>
-                                                </div>
-                                          
+                                    {locationCategory.map((item: any, index: any) => (
+                                        <div
+                                        key={index}
+                                        className="flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 relative"
+                                        onMouseEnter={() => setHoveredIndex6(index)}
+                                        onMouseLeave={() => setHoveredIndex6(null)}
+                                    >
+                                        <div className="w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium">
+                                            <Image className="w-[22px] h-[22px] relative" src={cashicon} alt="cash" />
+                                            <div className="text-gray-500 text-base font-medium">{item.name}</div>
                                         </div>
-                                    ))
-                                    } 
+                                        {hoveredIndex6 === index && (
+                                            <div
+                                                className="absolute right-4 h-full flex items-center cursor-pointer"
+                                                onClick={() => deleteLocation(item.id)}
+                                            >
+                                                <Image className="w-6 h-6" src={deleteicon} alt="delete" />
+                                            </div>
+                                        )}
+                                    </div>
+                    ))}
                                     </div>  
                                     
                                 </div>
@@ -1133,11 +1457,25 @@ useEffect(() => {
                                     {expenseCategory.map((item: any,index: any) =>(
                                         <div key={index} className='w-full'>
                                             {Array.isArray(item.name) && item.name.map((nameItem: string, nameIndex: number) => (
-                                                <div key={nameIndex} className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
-                                                    <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
+                                                <div
+                                                key={nameIndex}
+                                                className="flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 relative"
+                                                onMouseEnter={() => setHoveredIndex7(nameIndex)}
+                                                onMouseLeave={() => setHoveredIndex7(null)}
+                                            >
+                                                <div className="w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium">
                                                     <div className="text-gray-500 text-base font-medium">{nameItem}</div>
-                                                    </div>
                                                 </div>
+                                                {hoveredIndex7 === nameIndex && (
+                                                    <div
+                                                        className="absolute right-4 h-full flex items-center cursor-pointer"
+                                                        onClick={() => deleteExpenseCategory(item.id)}
+                                                    >
+                                                        <Image className="w-6 h-6" src={deleteicon} alt="delete" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            
                                             ))}
                                         </div>
                                     ))

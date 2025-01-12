@@ -60,7 +60,12 @@ const NewPurchaseReturnBottomBar = ({ invoiceData }: any) => {
             }
 
         }
+
+        
+        tableData.pop();
+
         //console.log("bottom bar data is : ",data);
+
 
         //console.log(JSON.stringify(data))
         try {

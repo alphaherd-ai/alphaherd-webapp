@@ -75,7 +75,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             return;
         }
 
-        if(id===null) tableData.pop();
+        tableData.pop();
         const allData = { headerData, tableData, totalAmountData, transactionsData };
         let totalQty = 0;
         tableData.forEach(data => {
@@ -102,7 +102,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             distributor: (id === null) ? allData.headerData.distributor.value : orderData.distributor,
             distributorId: (id === null) ? allData.headerData.distributor.distributorId : orderData.distributorId,
             newCreditedToken: (id === null) ? newCreditedToken : -1,
-            notes: (id === null) ? allData.headerData.notes : orderData.notes,
+            notes:  allData.headerData.notes ,
             invoiceNo: (id === null) ? allData.headerData.invoiceNo : orderData.invoiceNo,
             dueDate: (id === null) ? allData.headerData.dueDate : orderData.dueDate,
             shipping: allData.totalAmountData.shipping,

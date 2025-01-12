@@ -13,6 +13,7 @@ import NewPurchaseReturnBottomBar from "./bottombar"
 import NewPurchaseReturnTotalAmount from "./totalamount"
 import NewPurchaseReturnHeader from "./header"
 import { useAppSelector } from "@/lib/hooks";
+import Select from 'react-select';
 import formatDateAndTime from '@/utils/formateDateTime';
 
 import useSWR from 'swr';
@@ -149,6 +150,15 @@ const NewPurchaseReturnTable = () => {
                 maxRetailPrice:item.productBatch.sellingPrice
               }));
               setItems(itemData);
+              setItems((prevItems: any) => [
+                ...prevItems,
+                {
+                    productId: null,
+                    serviceId: null,
+                    itemName: "",
+                },
+            ]);
+            console.log('all the data is stored',itemData);
 
             //   console.log("These are the items",items)
 　　 　 　 　
@@ -284,18 +294,24 @@ const NewPurchaseReturnTable = () => {
             const updatedItems = prevItems.map((item: any) => {
                 if (item.id === itemId) {
                     const discountAmount = (value / 100) * item.unitPrice * item.quantity;
-                    return { ...item, discount: value, discountAmount: parseFloat(discountAmount.toFixed(2)) };
+                    return {
+                        ...item,
+                        discount: value, // Update discount
+                        discountAmount: parseFloat(discountAmount.toFixed(2)), // Calculate discount amount
+                    };
                 }
                 return item;
             });
+    
+            // Filter items with quantity > 0 and update table data
             const filteredItems = updatedItems.filter((item: any) => item.quantity > 0);
             setTableData(filteredItems);
-            console.log("hvuyvyu",updatedItems);
-            return updatedItems;
-           
-            
+    
+            console.log("Updated Items:", updatedItems);
+            return updatedItems; // Update state with new items
         });
     };
+    
 
     const handleDiscountAmountChange = (itemId: number, value: number) => {
         setItems((prevItems: any) => {
@@ -404,6 +420,45 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
       }
     }
   }, [items, products]);
+  const customStyles = {
+    control: (provided: any, state: any) => ({
+        ...provided,
+        width: '100%',
+        maxWidth: '100%',
+        border: state.isFocused ? '1px solid #35BEB1' : 'none',
+        '&:hover': {
+            borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4',
+        },
+        boxShadow: state.isFocused ? 'none' : 'none',
+    }),
+    valueContainer: (provided: any) => ({
+        ...provided,
+        width: '100%',
+        maxWidth: '100%',
+    }),
+    singleValue: (provided: any, state: any) => ({
+        ...provided,
+        width: '100%',
+        maxWidth: '100%',
+        color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+    }),
+    menu: (provided: any) => ({
+        ...provided,
+        backgroundColor: 'white',
+        width: '100%',
+        maxWidth: '100%',
+    }),
+    option: (provided: any, state: any) => ({
+        ...provided,
+        backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+        color: state.isFocused ? 'white' : '#6B7E7D',
+        '&:hover': {
+            backgroundColor: '#35BEB1',
+            color: 'white',
+        },
+    }),
+};
+
 
 
     return (
@@ -469,7 +524,18 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                     </div>
                     <div className=' flex text-textGrey2 text-base  px-[10px] w-[5rem]'>{index+1}.</div>
                                     <div className=' flex text-textGrey2 text-base  w-[18rem] '>
-                                    {item.itemName}
+                                    <Select
+                                                        className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0 absolute"
+                                                        classNamePrefix="select"
+                                                        value={products.find((prod) => prod.value.id === item.productId)}
+                                                        isClearable={false}
+                                                        isSearchable={true}
+                                                        name="itemName"
+                                                        options={products}
+                                                        onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
+                                                        menuPortalTarget={document.body}
+                                                        styles={customStyles}
+                                        />
                                     </div>
 
                                     <div className=' flex text-textGrey2 text-base  w-[20rem] items-center gap-2'>
@@ -527,7 +593,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                                     </div>
                                     </div>
                             <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                            ₹ {item.quantity*item.unitPrice}
+                            ₹ {item.quantity*item.unitPrice?.toFixed(2)}
                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
@@ -551,19 +617,19 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                                     /> */}
                             </div>
                             <div className=' flex text-gray-500 text-base  w-[12rem]'>
-                                <input
-                                    type="number"
-                                    value={item.discount}
-                                    onChange={(e) => handleDiscountChange(item.id, e.target.valueAsNumber)}
-                                    className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    step="0.01"
-                                />
+                            <input
+                                type="number"
+                                value={item.discount !== undefined ? item.discount : ""}
+                                onChange={(e) => handleDiscountChange(item.id, e.target.valueAsNumber || 0)}
+                                className="w-[80%] border border-solid border-borderGrey outline-none h-8 rounded-md text-textGrey2 text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                step="0.01"
+                            />
                             </div>
                             <div className=' flex text-gray-500 text-base  w-[12rem]'>
                                 <input
                                     type="number"
                                     value={item.discountAmount}
-                                    onChange={(e) => handleDiscountAmountChange(item.id, e.target.valueAsNumber)}
+                                    onChange={(e) => handleDiscountAmountChange(item.id, e.target.valueAsNumber|| 0)}
                                     className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                     step="0.01"
                                 />
@@ -579,21 +645,21 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                             <div className=' flex text-gray-500 text-base font-bold px-[10px] w-[5rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[18rem]'>Total</div>
 
-                            <div className=' flex text-gray-500 text-base font-bold w-[20rem]'>{items.reduce((acc, item) => checkedItems[item.id] ? acc + item.quantity : acc , 0) ||
+                            <div className=' flex text-gray-500 text-base font-bold w-[20rem]'>{items.reduce((acc, item) =>  { if (!item.itemName) return acc; return checkedItems[item.id] ? acc + item.quantity : acc }, 0) ||
                                                 0} Items</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[15rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[15rem] px-2'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => checkedItems[item.id] ? acc + (item.quantity*Number(item.unitPrice)):acc , 0).toFixed(2) ||
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => { if (!item.itemName) return acc; return checkedItems[item.id] ? acc + (item.quantity*Number(item.unitPrice)):acc } , 0).toFixed(2) ||
                                                 0}</div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => checkedItems[item.id] ? acc + Number(item.maxRetailPrice) :acc , 0).toFixed(2) ||
-                                                0}</div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) =>  checkedItems[item.id] ?acc + (item.tax)*(item.quantity*Number(item.unitPrice)) :acc , 0).toFixed(2) ||
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => { if (!item.itemName) return acc; return checkedItems[item.id] ? acc + Number(item.maxRetailPrice) :acc }, 0).toFixed(2) ||
                                                 0}</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => checkedItems[item.id] ? acc + (item.discount/100)*(item.quantity*Number(item.unitPrice)) :acc , 0).toFixed(2) ||
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => { if (!item.itemName) return acc; return checkedItems[item.id] ?acc + (item.tax)*(item.quantity*Number(item.unitPrice)) :acc } , 0).toFixed(2) ||
+                                                0}</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => { if (!item.itemName) return acc; return checkedItems[item.id] ? acc + (item.discount/100)*(item.quantity*Number(item.unitPrice)) :acc} , 0).toFixed(2) ||
                                                 0}</div>
                             {/* <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{isNaN(items.reduce((acc, item) => acc + (item.discountPercent/100)*(item.quantity*Number(item.unitPrice)) , 0)) ? 0 : items.reduce((acc, item) => acc + (item.discountPercent/100)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2)}</div> */}
                             <div className=' flex text-gray-500 text-base font-bold w-1/12'></div>
@@ -610,7 +676,7 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                                                 0}</div>
                     </div>
                     ))}
-                    <div className=' flex text-textGreen text-base font-bold w-[10rem] h-12 items-center justify-center'>₹{items.reduce((acc, item) =>  checkedItems[item.id]?acc + (item.tax-item.discount/100+1)*(item.quantity*Number(item.unitPrice)):acc , 0).toFixed(2) ||
+                    <div className=' flex text-textGreen text-base font-bold w-[10rem] h-12 items-center justify-center'>₹{items.reduce((acc, item) =>  { if (!item.itemName) return acc; return checkedItems[item.id]?acc + (item.tax-item.discount/100+1)*(item.quantity*Number(item.unitPrice)):acc }, 0).toFixed(2) ||
                                                 0}</div>
                                                 
                     </div>
