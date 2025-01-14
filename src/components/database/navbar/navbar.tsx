@@ -38,7 +38,7 @@ const DatabaseNavbar = () => {
     
           const clientOptions = clients.flatMap((item: any) =>
             item.patients.map((patient: any) => ({
-                label: `${item?.clientName || ''}---${item?.contact || ''}---${patient.patientName || ''}`,
+                label: `${item?.clientName || ''}-${patient.patientName || ''}(${item?.contact || ''})---`,
                 value: {
                 clientId: item.id,
                 clientName: item.clientName,

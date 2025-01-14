@@ -188,6 +188,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
         }
         fetchTax();
     }, [appState.currentBranchId]);
+
+    
     useEffect(() => {
 
         const fetchDistributors = async () => {

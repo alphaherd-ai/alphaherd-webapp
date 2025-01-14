@@ -273,7 +273,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                     expiry: product.expiry,
                     sellingPrice: product.sellingPrice,
                     costPrice: product.costPrice,
-                    distributors: product.distributors,
+                    distributors: product.distributors[0],
                     totalCost: product.totalCost,
                     maxQuantity: product.quantity,
                     maxRetailPrice: product.maxRetailPrice
@@ -489,7 +489,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
             setUpdating(true);
             inventory.pop();
             for (const item of inventory) {
-                const { id, date, quantity, batchNumber, distributors, productId, maxRetailPrice, isApproved, itemName } = item;
+                const { id, date, quantity, batchNumber, providers, productId, maxRetailPrice, isApproved, itemName } = item;
                 const invoiceType = "Manual";
                 const location = newlocation;
 
@@ -517,7 +517,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                     costPrice,
                     maxRetailPrice,
                     sellingPrice,
-                    distributors,
+                    distributors:[providers],
                     location,
                     productId,
                     isApproved: appState.isCurrentOrgAdmin ? true : false
@@ -555,13 +555,10 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                             itemName: itemName,
                             data: {
                                 body1: body,
-                                // newBatchId: responsePromise.data.productBatch.id,
+                                
                                 productId: id,
 
-                                //  productName : product.product?.itemName,
-                                // inventoryId: responsePromise.data.inventory.id,
-                                // branchId: appState.currentBranchId,
-                                // quantity: responsePromise.data.inventory.quantityChange
+                                
                             },
                         }
                         console.log("nnotifs data : ", notifData);
@@ -814,7 +811,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                                 </div>
                                 <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
                                     <DatePicker
-                                        // showIcon
+                                        
                                         className="w-[90%] rounded-[5px] border border-solid border-borderGrey outline-none  focus:border focus:border-textGreen px-1 py-2"
                                         selected={item.expiry}
                                         placeholderText="MM/DD/YYYY"
@@ -822,17 +819,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                                             handleInputChange(index, "expiry", date)
                                         }}
                                         calendarClassName="react-datepicker-custom"
-                                    // value={startDate.toLocaleDateString()}
-                                    // customInput={
-                                    //     // <div className="relative">
-                                    //     //     <input
-                                    //     //         className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border border-solid border-borderText focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                    //     //         value={startDate.toLocaleDateString()}
-
-                                    //     //     />
-
-                                    //     // </div>
-                                    // }
+                                    
                                     />
                                     {item.expiry && selectedOption !== Stock.StockIN && (
                                         <div>{formatDateAndTime(item.expiry).formattedDate}</div>
