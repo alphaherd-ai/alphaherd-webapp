@@ -203,7 +203,7 @@ const InventoryNavbar = () => {
 
 
 
-                <div className='flex w-4/12 h-full items-center'>
+                <div className='flex h-full items-center'>
 
 
                     <div className="relative h-full w-full items-center z-[1]">

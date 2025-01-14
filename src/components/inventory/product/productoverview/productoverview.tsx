@@ -27,6 +27,7 @@ const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
 function useProductfetch(id: string | null, branchId: number | null) {
     const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${id}?branchId=${branchId}`, fetcher, { revalidateOnFocus: true });
+    console.log("data is : ", data);
     return {
         fetchedProduct: data,
         isLoading,
@@ -58,6 +59,7 @@ const ProductDetails = () => {
     const id = url.get('id');
     const appState = useAppSelector((state) => state.app)
     const { fetchedProduct, isLoading, error } = useProductfetch(id, appState.currentBranchId);
+
     const { fetchedProductBatches } = useProductbatches(id, appState.currentBranchId);
     const [showEditPopup, setShowEditPopup] = useState(false);
     const [showDeletePopup, setShowDeletePopup] = useState(false);
@@ -649,30 +651,27 @@ const ProductDetails = () => {
                             <div className='flex justify-center text-textGrey2 text-base font-medium w-1/12'>Code</div>
                             <div className='flex text-textGrey2 text-base font-medium w-1/12 '>Cost per item</div>
                             <div className='flex text-textGrey2 text-base font-medium w-1/12 pl-4'>MRP</div>
-                            <div className='flex text-textGrey2 text-base font-medium w-1/12'>Selling Price</div>
                             <div className='flex justify-center text-textGrey2 text-base font-medium w-1/12'>Margin</div>
                             <div className='flex justify-center text-textGrey2 text-base font-medium w-2/12'>Location</div>
                             <div className='flex text-textGrey2 text-base font-medium w-1/12'></div>
                         </div>
 
-                        {product?.productBatches?.map((item: any) => (
-                            <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                        {product?.productBatches?.sort((a: any, b: any) => a.id - b.id).map((item: any) => (
+                            <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 justify-evenly '>
                                 <div className='px-2 w-1/12  flex items-center text-borderGrey text-base font-medium'>{item.quantity} Strips</div>
                                 <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>providers</div>
                                 <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>{item.batchNumber}</div>
-                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>{formatDateAndTime(item.expiry).formattedDate}</div>
+                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>{item.expiry ? formatDateAndTime(item.expiry).formattedDate : ''}</div>
                                 <div className='w-1/12 justify-center flex items-center text-borderGrey text-base font-medium'>{item.hsnCode}</div>
-                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>{item.costPrice}</div>
-                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium pl-4'>₹399</div>
-                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>{item.sellingPrice}</div>
-                                <div className='w-1/12 justify-center  flex items-center text-borderGrey text-base font-medium'>{(item.quantity / item.maxStock) * 100}%</div>
+                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>₹{item.costPrice}</div>
+                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium pl-4'>₹{item.sellingPrice}</div>
+                                <div className='w-1/12 justify-center  flex items-center text-borderGrey text-base font-medium'>{((((item.sellingPrice) - (item.costPrice)) / (item.sellingPrice)) * 100).toFixed(2)}%</div>
                                 <div className="w-2/12 justify-center  flex items-center gap-2">
                                     <div className="w-fit flex items-center text-orange-500 text-[0.8rem] font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center ">{item.location}</div>
                                     <div className="w-fit flex items-center text-orange-500 text-[0.8rem] font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center ">Shelf A2</div>
                                 </div>
                                 <div className="w-1/12 px-6 flex items-center gap-2">
                                     <div className='w-6 h-6 p-1 bg-gray-100 rounded-[5px] justify-start items-center flex '>
-
                                         <Popover placement="left" showArrow offset={10}>
                                             <PopoverTrigger>
                                                 <Button
@@ -680,12 +679,9 @@ const ProductDetails = () => {
                                                     className="capitalize flex border-none  text-gray rounded-lg ">
                                                     <div className='w-4 h-4 px-[11px] py-2.5 bg-white rounded-[5px] border border-solid border-borderGrey justify-center items-center gap-2 flex'>   <Image src={optionicon} alt="option"></Image></div></Button>
                                             </PopoverTrigger>
-                                            <PopoverContent className="p-5 text-gray-500 bg-white text-sm p-2 font-medium flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
-
+                                            <PopoverContent className="text-gray-500 bg-white text-sm p-2 font-medium flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
                                                 <div className="flex flex-col ">
-
                                                     <div className='flex flex-col'>
-
                                                         <Link className='no-underline flex item-center' href='/finance/overview'>
                                                             <div className='text-gray-500 text-sm p-3 font-medium flex '>
                                                                 gtr</div>
@@ -698,21 +694,13 @@ const ProductDetails = () => {
                                                             <div className='text-gray-500 text-sm p-3 font-medium flex '>
                                                                 gtrt</div>
                                                         </Link>
-
                                                     </div>
                                                 </div>
-
-
                                             </PopoverContent>
                                         </Popover>
-
-
-
                                     </div>
-
                                 </div>
                             </div>
-
                         ))}
                     </div>
                 </div>
