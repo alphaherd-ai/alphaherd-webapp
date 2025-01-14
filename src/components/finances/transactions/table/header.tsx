@@ -57,7 +57,7 @@ const FinancesTransactionsTableHeader = ({transactions}:any) => {
     useEffect(() => {
             const fetchExistingPaymentMethods = async () => {
                 try {
-                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`);
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/paymentMethod/getAll?branchId=${appState.currentBranchId}`);
                     const data: { name: string }[] = await response.json();
                     const paymentMethodNames = Array.from(new Set(data.map((item: { name: string }) => item.name)));
                     setExistingPaymentMethods(paymentMethodNames);

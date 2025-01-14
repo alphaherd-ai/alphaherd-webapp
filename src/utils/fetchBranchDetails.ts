@@ -25,7 +25,6 @@ export const fetchInventoryId = async (request:NextRequest) => {
     console.log(searchParams);
     const branchId = searchParams.get("branchId")!;  
     
-    console.log("here's the final branchID",branchId)
     if (!branchId) {
         throw new Error("Branch ID not found in request");
     }
@@ -35,7 +34,6 @@ export const fetchInventoryId = async (request:NextRequest) => {
         },
         cacheStrategy:{ttl:30}
     });
-    console.log(orgBranch)
     let inventorySection = await prismaClient.inventorySection.findUnique({
         where: {
             branchId: Number(branchId),
@@ -52,7 +50,6 @@ export const fetchInventoryId = async (request:NextRequest) => {
             }
         })
     }
-    console.log(inventorySection?.id, "hererer")
     return inventorySection?.id;
 }
 

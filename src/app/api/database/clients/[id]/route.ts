@@ -40,7 +40,7 @@ export const PUT = async (
 ) => {
     try {
         // Parse and validate the request body
-        console.log("i am in the route.ts,put section");
+        // console.log("i am in the route.ts,put section");
         
         const body = await req.json();
         const validatedData = ClientSchema.safeParse(body);
@@ -54,7 +54,7 @@ export const PUT = async (
 
         // Fetch database section ID (ensure this function is reliable)
         const databaseId = await fetchDatabaseId(req);
-        console.log('Database ID:', databaseId);
+        // console.log('Database ID:', databaseId);
 
 
         if (!databaseId) {
@@ -99,10 +99,10 @@ export const PUT = async (
 
 
 export const DELETE = async (req: NextRequest, { params }: { params: { id: number } }) => {
-    console.log("Headers:", req.headers);  // Log all incoming headers
+    // console.log("Headers:", req.headers);  // Log all incoming headers
 
     const branchId = req.headers.get('branch-id'); // Ensure the header key is lowercase
-    console.log("Branch ID:", branchId);  // Log the specific 'branch-id' header
+    // console.log("Branch ID:", branchId);  // Log the specific 'branch-id' header
 
     if (req.method !== 'DELETE') {
         return new Response('Method not allowed', { status: 405 });
@@ -110,7 +110,7 @@ export const DELETE = async (req: NextRequest, { params }: { params: { id: numbe
 
     const cleanedBranchId = branchId ? branchId.replace(/\s+/g, '') : null;
 
-    console.log("Cleaned Branch ID:",cleanedBranchId);  // Log the cleaned value
+    // console.log("Cleaned Branch ID:",cleanedBranchId);  // Log the cleaned value
 
     if (!cleanedBranchId) {
         return new Response('Branch ID not found in request', { status: 400 }); // Check for empty or undefined Branch ID

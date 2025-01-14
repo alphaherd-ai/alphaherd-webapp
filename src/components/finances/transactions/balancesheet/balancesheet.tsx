@@ -30,7 +30,7 @@ const FinancesTransactionSheet = () => {
 
     const [paymentMethod, setPaymentMethod] = useState([]);
     const appState = useAppSelector((state) => state.app)
-    const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
+    const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/paymentMethod/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
     useEffect(() => {
         if (!isLoading && !error && data) {
             setPaymentMethod(data)

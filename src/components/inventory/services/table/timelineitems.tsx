@@ -144,7 +144,7 @@ const ServicesTimelineItem = ({ sortOrder, sortKey }: any) => {
                         </div>
                         <div className='w-[8rem] flex  items-center   text-neutral-400 text-base font-medium '>{inventory.quantityChange}</div>
                         <div className='w-[8rem] flex  items-center   text-neutral-400 text-base font-medium'>{inventory.party}</div>
-                        <div className='w-[8rem] flex  items-center   text-neutral-400 text-base font-medium'>{inventory.service?.serviceCharge}</div>
+                        <div className='w-[10rem] flex justify-center items-center text-neutral-400 text-base font-medium '>{inventory.service?.serviceCharge}</div>
 
                         <div className='w-[8rem] flex  items-center   text-neutral-400 text-base font-medium '><span className='px-1'>
                             <Tooltip content="message" className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
