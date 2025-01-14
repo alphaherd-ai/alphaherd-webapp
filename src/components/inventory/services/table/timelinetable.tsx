@@ -34,7 +34,7 @@ const InventoryServicesTimelineTable = () => {
                 <div className=' flex text-gray-500 text-base font-medium  w-[8rem] '>Service Name</div>
                 <div className=' flex text-gray-500 text-base font-medium  w-[8rem] '>Qty. (units)</div>
                 <div className=' flex text-gray-500 text-base font-medium  w-[8rem] '>Client</div>
-                <div className=' flex text-gray-500 text-base font-medium  w-[8rem] '>Selling Price </div>
+                <div className=' flex text-gray-500 text-base font-medium  w-[10rem] '>Total Cost of Products </div>
                 <div className=' flex text-gray-500 text-base font-medium  w-[8rem] '>Source</div>
                 <div className=' flex text-gray-500 text-base font-medium  w-[10rem] '>Ref</div>
               </div>

@@ -8,7 +8,8 @@ import { z } from 'zod';
 import { ZodError } from 'zod'; 
 import { setValidationErrorsForForm } from '@/utils/setValidationErrorForForm';
 import { useAppSelector } from '@/lib/hooks';
-
+import checkicon from "../../../assets/icons/finance/check.svg"
+import Loading2 from "@/app/loading2"
 
 const AddSpeciesPopup = ({onClose}:any) => {
     const appState = useAppSelector((state) => state.app);
@@ -16,7 +17,7 @@ const AddSpeciesPopup = ({onClose}:any) => {
     const [formData, setFormData] = useState<any>("");
     const [existingSpecies, setExistingSpecies] = useState<string[]>([]);
     const [error, setError] = useState<string | null>(null);
-
+    const [isSaving, setSaving] = useState(false);
     useEffect(()=>{
         const fetchSpecies = async() => {
             try{
@@ -54,6 +55,7 @@ const handleChange = (field: string, value: any) => {
             setError(null);
         }
         try {
+            setSaving(true);
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
@@ -73,6 +75,9 @@ const handleChange = (field: string, value: any) => {
         } catch (error) {
             console.error('Error while saving data:', error);
         }
+        finally{
+            setSaving(false)
+         }
     }
 
     return (
@@ -108,9 +113,12 @@ const handleChange = (field: string, value: any) => {
                             </div>
                     </div>
                 </div>
-                <div className="w-full flex justify-between mt-[5px] cursor-pointer">
-                    <button className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none" onClick={handleSave}>
-                        <div className="text-white text-base font-bold ">Save</div>
+                <div className="w-full flex justify-between mt-[5px] ">
+                    <button className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer" onClick={handleSave} disabled={isSaving}>
+                    <Image src={checkicon} alt="check"></Image>
+                    <div className="text-white text-base font-bold "> 
+                        <div>{isSaving ? <Loading2 /> : "Save"}</div>
+                    </div>
                     </button>
                 </div>
             </div>

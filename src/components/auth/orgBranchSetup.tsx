@@ -40,19 +40,12 @@ const OrgDetailsSetup = (props: any) => {
         { value: 'Puducherry', label: 'Puducherry' }
     ];
 
-    console.log("this is props", props.data);
-    console.log("user data received :", props.data);
+    // console.log("this is props", props.data);
+    // console.log("user data received :", props.data);
     const [resource, setResource] = useState<any>();
-
-    const [focused, setFocused] = useState(false);
-    const [focused1, setFocused1] = useState(false);
-    const [focused2, setFocused2] = useState(false);
-    const [focused3, setFocused3] = useState(false);
-    const [focused4, setFocused4] = useState(false);
-    const [focused5, setFocused5] = useState(false);
     const appState = useAppSelector((state) => state.app);
-
-    console.log("app state data is : ", appState);
+    
+    // console.log("app state data is : ", appState);
 
     return (
         <div className="w-[1016px] h-[759px] p-10 rounded-[30px] border border-stone-300 backdrop-blur-[190.90px] justify-center items-center inline-flex">
@@ -84,7 +77,6 @@ const OrgDetailsSetup = (props: any) => {
                                     id="branchName"
                                     name="branchName"
                                     onChange={props.handleChange}
-                                    onFocus={() => setFocused(true)}
                                     value={props.data.branchName}
                                     />
                                 {props.validationErrors.branchName && (
@@ -103,11 +95,10 @@ const OrgDetailsSetup = (props: any) => {
                                     id="phoneNo"
                                     name="phoneNo"
                                     onChange={props.handleChange}
-                                    onFocus={() => setFocused1(true)}
                                     value={props.data.phoneNo}
                                 />
-                                {focused1 && props.data.phoneNo.length == 9 && (
-                                    <div className="text-red-500 text-sm">Valid Phone Number is required.</div>
+                                {props.validationErrors.phoneNo && (
+                                    <div className="text-red-500 text-sm">{props.validationErrors.phoneNo}</div>
                                 )}
                             </div>
                         </div>
@@ -120,11 +111,10 @@ const OrgDetailsSetup = (props: any) => {
                                     id="altphoneNo"
                                     name="altphoneNo"
                                     onChange={props.handleChange}
-                                    onFocus={() => setFocused2(true)}
                                     value={props.data.altphoneNo}
                                 />
-                                {focused2 && props.data.altphoneNo.length == 9 && (
-                                    <div className="text-red-500 text-sm">Valid Alt Phone Number is required.</div>
+                                {props.validationErrors.altphoneNo && (
+                                    <div className="text-red-500 text-sm">{props.validationErrors.altphoneNo}</div>
                                 )}
                             </div>
                         </div>
@@ -139,7 +129,6 @@ const OrgDetailsSetup = (props: any) => {
                                     id="orgEmail"
                                     name="orgEmail"
                                     onChange={props.handleChange}
-                                    onFocus={() => setFocused3(true)}
                                     value={props.data.orgEmail}
                                 />
                                 {props.validationErrors.orgEmail && (
@@ -156,7 +145,6 @@ const OrgDetailsSetup = (props: any) => {
                                     id="website"
                                     name="website"
                                     onChange={props.handleChange}
-                                    onFocus={() => setFocused4(true)}
                                     value={props.data.website}
                                 />
                                 {/* {props.data.website.length <= 1 && (
@@ -174,11 +162,11 @@ const OrgDetailsSetup = (props: any) => {
                                     className="text-neutral-400 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-emerald-200"
                                     id="gstNo"
                                     name="gstNo"
-                                    onFocus={() => setFocused(true)}
+                                    onChange={props.handleChange}
                                     value={props.data.gstNo}
                                 />
-                                {focused && props.data.gstNo.length <= 1 && (
-                                    <div className="text-red-500 text-sm">GST No. is required.</div>
+                                {props.validationErrors.gstNo && (
+                                    <div className="text-red-500 text-sm">{props.validationErrors.gstNo}</div>
                                 )}
                             </div>
                         </div>
@@ -191,12 +179,11 @@ const OrgDetailsSetup = (props: any) => {
                                     id="panNo"
                                     name="panNo"
                                     onChange={props.handleChange}
-                                    onFocus={() => setFocused5(true)}
                                     value={props.data.panNo}
                                 />
-                                {/* {props.data.panNo.length <= 1 && (
-                                    <div className="text-red-500 text-sm">PAN No. is required.</div>
-                                )} */}
+                                {props.validationErrors.panNo && (
+                                    <div className="text-red-500 text-sm">{props.validationErrors.panNo}</div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -210,16 +197,14 @@ const OrgDetailsSetup = (props: any) => {
                                     id="address"
                                     name="address"
                                     onChange={props.handleChange}
-                                    onFocus={() => setFocused3(true)}
                                     value={props.data.address}
                                 />
-                                {focused3 && props.data.address.length <= 1 && (
-                                    <div className="text-red-500 text-sm">Address is required.</div>
+                                {props.validationErrors.address && (
+                                    <div className="text-red-500 text-sm">{props.validationErrors.address}</div>
                                 )}
                             </div>
                         </div>
                     </div>
-                    <div className="self-stretch justify-start items-start gap-10 inline-flex">
                     <div className="self-stretch justify-start items-start gap-10 inline-flex">
                         <div className="grow shrink basis-0  justify-start items-center gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium">Select State*</div>
@@ -252,7 +237,6 @@ const OrgDetailsSetup = (props: any) => {
                             )}
 
                             </div>
-                        </div>
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium">Pincode*</div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border 1px border-neutral-400">
@@ -262,7 +246,6 @@ const OrgDetailsSetup = (props: any) => {
                                     id="pincode"
                                     name="pincode"
                                     onChange={props.handleChange}
-                                    onFocus={() => setFocused5(true)}
                                     value={props.data.pincode}
                                 />
                                 {props.validationErrors.pincode && (
@@ -274,7 +257,14 @@ const OrgDetailsSetup = (props: any) => {
                     <div className="self-stretch h-[92px] justify-start items-start gap-10 inline-flex">
                         <div className="grow shrink basis-0 h-[92px] self-stretch justify-start items-start gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium ">Description</div>
-                            <textarea className="px-2 py-2 w-full h-full ml-6 text-neutral-400 text-base focus:outline-none border border-solid border-[#A2A3A3]  rounded-[5px]  focus:border focus:border-emerald-200" id="description" name="description" value={props.data.description} onChange={props.handleChange} />
+                            <textarea
+                                className="px-2 py-2 w-full h-full ml-6 text-neutral-400 text-base focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-emerald-200"
+                                id="description"
+                                name="description"
+                                placeholder="..."
+                                value={props.data.description}
+                                onChange={props.handleChange}
+                            />
                         </div>
                     </div>
                 </div>

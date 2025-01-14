@@ -28,7 +28,7 @@ export const getVerifyOrgandBranch= async(userId:number,branchId:number,request:
         const orgBranch= await prismaClient.orgBranch.findUnique({
             where:{id:branchId}
         });
-        // //console.log(orgBranch)
+        console.log(orgBranch)
         const org=await prismaClient.organization.findUnique({
             where:{
                 id:orgBranch?.orgId

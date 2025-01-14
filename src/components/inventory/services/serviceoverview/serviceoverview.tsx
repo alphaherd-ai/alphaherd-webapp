@@ -311,7 +311,7 @@ const ServiceDetails = () => {
     };
 
 
-
+    console.log("service",service)
     return <>
         <div className="w-full h-full relative  rounded-[20px] pr-[16px] pl-[16px] z-1">
             <div className="w-full flex items-center justify-between">
@@ -648,7 +648,7 @@ const ServiceDetails = () => {
                         <div className="w-full flex gap-2 items-center p-6 h-3/12">
                             <div className="text-textGrey2 text-base font-medium ">Providers:</div>
                             <div className="px-2 py-1.5 bg-gray-100 rounded-[5px] justify-center items-center gap-2 flex">
-                                <div className="text-textGrey2 text-base font-medium ">{isLoading ? <Loading2 /> : service?.providers}</div>
+                                <div className="text-textGrey2 text-base font-medium ">{isLoading ? <Loading2 /> : service?.providers?.join(", ")}</div>
                             </div>
 
                         </div>

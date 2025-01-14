@@ -357,7 +357,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
 
                             <Select
                                 className="w-[157px] text-neutral-400 text-base font-medium border border-solid border-borderGrey rounded-[5px]"
-                                // defaultValue={gstOptions[0]}
+                                defaultValue={taxType[0]}
                                 isClearable={false}
                                 isSearchable={true}
                                 options={taxType}

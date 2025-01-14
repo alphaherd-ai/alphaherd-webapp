@@ -147,7 +147,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     }, [appState.currentBranchId]);
 
     const { fetchedProducts, isLoading, error } = useProductfetch(appState.currentBranchId);
-
+    console.log("fetchproducts",fetchedProducts)
     useEffect(() => {
         // Handle successful product fetch (all conditions met)
         if (!isLoading && !error && fetchedProducts) {
@@ -275,10 +275,9 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
 
         setFormData((prevFormData: any) => {
             const updatedFormData = { ...prevFormData, [field]: value };
-             console.log(updatedFormData);
             const isProductNameValid = updatedFormData.itemName !== '' ;
             const isTaxValid = updatedFormData.tax !== undefined;
-            const isProductExist=fetchedProducts?.some((item:any)=>(item.itemName).toLowerCase()===(updatedFormData.itemName).toLowerCase());
+            const isProductExist = fetchedProducts?.some((item: any) => item.itemName?.toLowerCase() === updatedFormData.itemName?.toLowerCase()) || false;
             // Update the errors state directly
             const updatedErrors = { ...errors };
             if (!isProductNameValid) {

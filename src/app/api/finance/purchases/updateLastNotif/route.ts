@@ -5,7 +5,7 @@ export async function PATCH(req: Request) {
   try {
     // Parse the request body
     const { id, lastDueNotif } = await req.json();
-    console.log("Request Body:", { id, lastDueNotif });
+    // console.log("Request Body:", { id, lastDueNotif });
 
     // Validate `id` and `lastDueNotif`
     if (!id || !lastDueNotif) {

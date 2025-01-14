@@ -599,22 +599,6 @@ const InventoryTransfer = () => {
 
             <div className="flex justify-between items-center h-14 w-full  box-border  bg-white  border border-t-0 border-solid border-neutral-400 text-gray-400 py- rounded-b-lg">
                 <div className="flex justify-between items-center gap-4 pl-4">
-                    <Button className="p-2 bg-white rounded-md border border-solid  border-borderGrey  justify-start items-center gap-2 flex cursor-pointer">
-                        <Image src={printicon} alt="print"></Image>
-                        <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all">Print</div>
-                    </Button>
-                    <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
-
-                        <Image src={downloadicon} alt="download" />
-                        <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all">Download</div>
-
-                    </Button>
-                    <Button className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
-
-                        <Image src={shareicon} alt="download" />
-                        <div className="text-textGrey1 text-sm hover:text-textGrey2 transition-all">Share editable sheet</div>
-
-                    </Button>
 
                 </div>
                 <div className="flex justify-between items-center gap-4 pr-4">

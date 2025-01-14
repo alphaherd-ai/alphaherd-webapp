@@ -8,7 +8,8 @@ import { z } from 'zod';
 import { ZodError } from 'zod'; 
 import { setValidationErrorsForForm } from '@/utils/setValidationErrorForForm';
 import { useAppSelector } from '@/lib/hooks';
-
+import checkicon from "../../../assets/icons/finance/check.svg"
+import Loading2 from "@/app/loading2"
 
 
 const AddItemUnit = ({onClose}:any) => {
@@ -16,7 +17,7 @@ const AddItemUnit = ({onClose}:any) => {
     const appState = useAppSelector((state) => state.app)
     const [existingUnit, setExistingUnit] = useState<string[]>([]);
     const [errors, setErrors] = useState<string[]>([]);
-
+    const [isSaving, setSaving] = useState(false);
     useEffect(() => {
         const fetchExistingItems = async () => {
             try {
@@ -80,6 +81,7 @@ const AddItemUnit = ({onClose}:any) => {
             return; 
         }
         try {
+            setSaving(true);
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemUnit/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
@@ -99,6 +101,9 @@ const AddItemUnit = ({onClose}:any) => {
         } catch (error) {
             console.error('Error while saving data:', error);
         }
+        finally{
+            setSaving(false)
+         }
     }
 
     return (
@@ -143,11 +148,17 @@ const AddItemUnit = ({onClose}:any) => {
                     </div>
                     
                 </div>
-                <div className="w-full flex justify-between mt-[5px] cursor-pointer">
-                <div className="text-white text-base font-normal bg-black p-2 rounded-md py-2.5" onClick={handleAddInput}>Add another</div>
+                <div className="w-full flex justify-between mt-[5px] ">
+                <div className="px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer" onClick={handleAddInput}>
+                                    <Image className="w-6 h-6 relative rounded-[5px]" src={addicon} alt="preview" />
+                                    <div className="text-white text-base font-bold ">Add Another</div>
+                                </div>
 
-                    <button className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer" onClick={handleSave}>
-                        <div className="text-white text-base font-bold ">Save</div>
+                    <button className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer" onClick={handleSave} disabled={isSaving}>
+                    <Image src={checkicon} alt="check"></Image>
+                    <div className="text-white text-base font-bold "> 
+                        <div>{isSaving ? <Loading2 /> : "Save"}</div>
+                    </div>
                     </button>
                 </div>
             </div>

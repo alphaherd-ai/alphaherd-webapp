@@ -4,11 +4,13 @@ import Image from "next/image";
 import { Bounce, ToastContainer, toast } from 'react-toastify';
 import addicon from "../../../assets/icons/settings/addicon.svg";
 import delicon from "../../../assets/icons/settings/deleteicon.svg";
+import checkicon from "../../../assets/icons/finance/check.svg"
 import { z } from 'zod';
 import { ZodError } from 'zod';
 import { setValidationErrorsForForm } from '@/utils/setValidationErrorForForm';
 import axios from 'axios';
 import { useAppSelector } from '@/lib/hooks';
+import Loading2 from "@/app/loading2"
 
 const AddPaymentPopup = ({ onClose }: any) => {
     const appState = useAppSelector((state) => state.app);
@@ -16,11 +18,11 @@ const AddPaymentPopup = ({ onClose }: any) => {
     const [formData, setFormData] = useState<any>("");
     const [existingPaymentMethods, setExistingPaymentMethods] = useState<string[]>([]);
     const [error, setError] = useState<string | null>(null); 
-    
+    const [isSaving, setSaving] = useState(false);
     useEffect(() => {
         const fetchExistingPaymentMethods = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/paymentMethod/getAll?branchId=${appState.currentBranchId}`);
                 const data = await response.json();
                 const paymentMethodNames = data.map((item: { name: string }) => item.name); 
                 setExistingPaymentMethods(paymentMethodNames);
@@ -55,8 +57,9 @@ const handleChange = (field: string, value: any) => {
             setError(null);
         }
         try {
+            setSaving(true);
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/create?branchId=${appState.currentBranchId}`,
+                `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/paymentMethod/create?branchId=${appState.currentBranchId}`,
                 {
                     method: 'POST',
                     headers: {
@@ -78,6 +81,9 @@ const handleChange = (field: string, value: any) => {
         } catch (error) {
             console.error('Error while saving payment method:', error);
         }
+        finally{
+            setSaving(false)
+         }
     };
     
 
@@ -114,9 +120,12 @@ const handleChange = (field: string, value: any) => {
                             </div>
                     </div>
                 </div>
-                <div className="w-full flex justify-between mt-[5px] cursor-pointer">
-                    <button className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none" onClick={handleSave}>
-                        <div className="text-white text-base font-bold ">Save</div>
+                <div className="w-full flex justify-between mt-[5px] ">
+                    <button className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none cursor-pointer" onClick={handleSave} disabled={isSaving}>
+                    <Image src={checkicon} alt="check"></Image>
+                    <div className="text-white text-base font-bold "> 
+                        <div>{isSaving ? <Loading2 /> : "Save"}</div>
+                    </div>
                     </button>
                 </div>
             </div>

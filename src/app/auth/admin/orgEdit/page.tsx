@@ -4,31 +4,33 @@ import OrgDetailsSetup from "@/components/auth/orgDetailsSetup";
 import Image from "next/image";
 import React, { useState } from "react";
 import { Bounce, ToastContainer, toast } from 'react-toastify';
-import continuebutton from "../../../../assets/icons/loginsignup/1. Icons-24.svg"
+import continuebutton from "../../../../assets/icons/loginsignup/1. Icons-24.svg" 
+import { useAppDispatch } from "@/lib/hooks";
 import {z} from 'zod';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from "next/navigation";
 import { setValidationErrorsForForm } from "@/utils/setValidationErrorForForm";
 import { useAppSelector } from "@/lib/hooks";
-
+import Loading from "@/app/loading2"
+import { updateCurrentOrg, updateCurrentBranch } from "@/lib/features/appSlice";
 const formSchema = z.object({
-    orgName: z.string().min(4, 'Org Name must be at least 4 characters'),
-    orgEmail: z.string().email('Invalid Email Address'),
-    gstNo: z.string().length(15, 'Invalid GST no. - must be 15 digits'),
-    phoneNo: z.string().length(10, 'Invalid Phone No.'),
-    altphoneNo: z.string(),
-    orgImgUrl: z.string(),
-    address: z.string().min(1, "Enter Company Address to continue"),
-    website: z.string(),
-    branchName: z.string().min(4, 'Branch Name must be at least 4 characters'),
-    panNo:z.string(),
-    state: z.string(),
-    pinCode: z.number().int().min(100000, 'Invalid Pincode - must be exactly 6 numeric digits').max(999999, 'Invalid Pincode - must be exactly 6 numeric digits'),
-    description: z.string()
-  });
+  orgName: z.string(),
+  orgEmail: z.string().email('Invalid Email Address'),
+  gstNo: z.string().length(15, 'Invalid GST no. - must be 15 digits'),
+  phoneNo: z.string().length(10, 'Invalid Phone No.'),
+  altphoneNo: z.string(),
+  orgImgUrl: z.string(),
+  address: z.string().min(1, "Enter Company Address to continue"),
+  website: z.string(),
+  branchName: z.string().min(4, 'Branch Name must be at least 4 characters'),
+  panNo: z.string().length(10, 'PAN ID must have 10 characters'),
+  state: z.string().min(1, "Select State to continue"),
+  pinCode: z.string().regex(/^\d{6}$/, 'Invalid Pincode - must be exactly 6 numeric digits'),
+  description: z.string()
+});
 
 const OrgEdit = () => {
-
+    const dispatch = useAppDispatch();
     const appState = useAppSelector((state) => state.app);
 
     const router = useRouter();
@@ -54,21 +56,30 @@ const OrgEdit = () => {
         ["orgEmail","orgImgUrl","gstNo","phoneNo","altPhoneNo","website","panNo","branchName","address","state","pinCode","description"]
       ];
 
-   
+    
     // console.log(appState);
     const [data, setData] = useState(() => {
-      const initialData = {
-        ...appState.currentBranch,
-        orgEmail: appState.currentOrg.orgEmail,
-        orgImgUrl: appState.currentOrg.orgImgUrl,
-        orgName: appState.currentOrg.orgName
+      return {
+        orgName: appState.currentOrg.orgName || '',
+        orgEmail: appState.currentOrg.orgEmail || '',
+        gstNo: appState.currentBranch.gstNo || '',
+        phoneNo: appState.currentBranch.phoneNo || '',
+        altphoneNo: appState.currentBranch.altphoneNo || '',
+        orgImgUrl: appState.currentOrg.orgImgUrl || '',
+        address: appState.currentBranch.address || '',
+        website: appState.currentBranch.website || '',
+        branchName: appState.currentBranch.branchName || '',
+        panNo: appState.currentBranch.panNo || '',
+        state: appState.currentBranch.state || '',
+        pinCode: (appState.currentBranch.pinCode) || 0,
+        description: appState.currentBranch.description || ''
       };
-      return formSchema.parse(initialData);
     });
     const [validationErrors, setValidationErrors] = useState(initialErrors);
 
     // console.log(validationErrors);
 
+    const [savingData, setSavingData] = useState(false);
     const [activeTab, setActiveTab] = useState(0);
     const handlePicChange=(imageUrl:any,source:string)=>{
       let name=source,value=imageUrl.secure_url;
@@ -200,9 +211,39 @@ const OrgEdit = () => {
         // console.log("form button")
     
         try {
-    
+          setSavingData(true);
           formSchema.parse(data);
-    
+            const updatedOrg = {
+            ...appState.currentOrg,
+            orgEmail: data.orgEmail,
+            orgName: data.orgName,
+            orgImgUrl: data.orgImgUrl,
+            gstNo: data.gstNo,
+            address: data.address,
+            state: data.state,
+            pincode: data.pinCode,
+            description: data.description,
+            phoneNo: data.phoneNo
+            };
+
+            const updatedBranch = {
+            ...appState.currentBranch,
+            email: data.orgEmail,
+            gstNo: data.gstNo,
+            phoneNo: data.phoneNo,
+            address: data.address,
+            altphoneNo: data.altphoneNo,
+            website: data.website,
+            panNo: data.panNo,
+            state: data.state,
+            pinCode: parseInt(data.pinCode),
+            description: data.description,
+            branchName: data.branchName
+            };
+
+          //   // Update the state using a state management library or context
+          dispatch(updateCurrentOrg(updatedOrg));
+          dispatch(updateCurrentBranch(updatedBranch));
           const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/admin/orgEdit?orgId=${appState.currentOrgId}`,
             {
               method: 'PATCH',
@@ -217,7 +258,7 @@ const OrgEdit = () => {
                   "gstNo": data.gstNo,
                   "address": data.address,
                   "state": data.state,
-                  "pincode": (data.pinCode).toString(),
+                  "pincode": data.pinCode,
                   "description": data.description,
                   "phoneNo": data.phoneNo
                 },
@@ -230,7 +271,7 @@ const OrgEdit = () => {
                   website: data.website,
                   panNo: data.panNo,
                   state: data.state,
-                  pinCode: data.pinCode,
+                  pinCode: parseInt(data.pinCode),
                   description: data.description,
                   branchName: data.branchName,
                 },
@@ -253,7 +294,7 @@ const OrgEdit = () => {
               theme: "colored",
               transition: Bounce,
             });
-            router.push(`/auth/login`)
+            router.push(`/settings/organisation/myorg`)
           }
           else {
             throw new Error(json.message);
@@ -264,6 +305,7 @@ const OrgEdit = () => {
           // console.log(typeof(err))
           if (err instanceof z.ZodError) {
             // console.log(err.flatten());
+            console.log("inside zod error");
             setValidationErrorsForForm(err,setValidationErrors,activeTab,stepFields);
           } else {
             console.error('Error:', err);
@@ -279,7 +321,10 @@ const OrgEdit = () => {
               transition: Bounce,
             });
           }
-        }
+        }finally {
+
+          setSavingData(false);
+      }
     }
     const formElements = [
       <OrgNameSetup key="orgName" data={data} handleChange={handleChange} validationErrors={validationErrors} />,
@@ -334,7 +379,7 @@ const OrgEdit = () => {
                             activeTab === formElements.length - 1 ? <button className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0 cursor-pointer" onClick={formSubmit}>
                                 <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
                                     <div className="text-white text-sm font-bold ">
-                                        Submit Details
+                                    {savingData ? <Loading/> : "Submit Details"}
                                     </div>
                                 </div>
                             </button> : null
