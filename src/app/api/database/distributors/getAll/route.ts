@@ -13,7 +13,8 @@ export  const GET=async (req: NextRequest)=> {
         
         const distributors = await prismaClient.distributors.findMany({
           where:{
-            databaseSectionId:databaseId
+            databaseSectionId:databaseId,
+            isDeleted:false
           }
         });
         return new Response(JSON.stringify(distributors), {

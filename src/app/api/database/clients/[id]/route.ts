@@ -5,9 +5,6 @@ import { NextRequest } from 'next/server';
 
 export const GET = async (req: NextRequest,
     { params }: { params: { id: number; } }) => {
-    // console.log("i am in get request of clients/id");
-    // const branchId = req.headers.get('Branch-ID'); // Example header
-    // console.log("Branch ID:", branchId);
     if (req.method !== 'GET') {
         return new Response('Method not allowed', { status: 405 });
     }
@@ -16,7 +13,11 @@ export const GET = async (req: NextRequest,
         const client = await prismaClient.clients.findUnique({
             where: { id: Number(params.id), databaseSectionId: databaseId },
             include: {
-                patients: true
+                patients: {
+                    orderBy: {
+                        date: "desc"
+                    }
+                }
             }
         });
 
@@ -26,6 +27,8 @@ export const GET = async (req: NextRequest,
                 'Content-Type': 'application/json',
             },
         });
+
+
     } catch (error) {
         return new Response("Internal server error", { status: 500 });
     } finally {
@@ -40,21 +43,21 @@ export const PUT = async (
 ) => {
     try {
         // Parse and validate the request body
-        // console.log("i am in the route.ts,put section");
-        
-        const body = await req.json();
-        const validatedData = ClientSchema.safeParse(body);
+        //console.log("i am in the route.ts,put section");
 
-        if (!validatedData.success) {
-            return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
-                status: 422,
-                headers: { 'Content-Type': 'application/json' },
-            });
-        }
+        const body = await req.json();
+        // const validatedData = ClientSchema.safeParse(body);
+
+        // if (!validatedData.success) {
+        //     return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
+        //         status: 422,
+        //         headers: { 'Content-Type': 'application/json' },
+        //     });
+        // }
 
         // Fetch database section ID (ensure this function is reliable)
         const databaseId = await fetchDatabaseId(req);
-        // console.log('Database ID:', databaseId);
+        //console.log('Database ID:', databaseId);
 
 
         if (!databaseId) {
@@ -79,11 +82,11 @@ export const PUT = async (
                 id: clientId,
                 databaseSectionId: databaseId, // Ensure this condition is valid
             },
-            data: validatedData.data, // Use validated data
+            data: body, // Use validated data
         });
 
         return new Response(JSON.stringify(client), {
-            status: 200,
+            status: 201,
             headers: { 'Content-Type': 'application/json' },
         });
     } catch (error: any) {
@@ -99,28 +102,22 @@ export const PUT = async (
 
 
 export const DELETE = async (req: NextRequest, { params }: { params: { id: number } }) => {
-    // console.log("Headers:", req.headers);  // Log all incoming headers
 
-    const branchId = req.headers.get('branch-id'); // Ensure the header key is lowercase
-    // console.log("Branch ID:", branchId);  // Log the specific 'branch-id' header
 
     if (req.method !== 'DELETE') {
         return new Response('Method not allowed', { status: 405 });
     }
 
-    const cleanedBranchId = branchId ? branchId.replace(/\s+/g, '') : null;
 
-    // console.log("Cleaned Branch ID:",cleanedBranchId);  // Log the cleaned value
-
-    if (!cleanedBranchId) {
-        return new Response('Branch ID not found in request', { status: 400 }); // Check for empty or undefined Branch ID
-    }
 
 
     try {
         const databaseId = await fetchDatabaseId(req);
-        await prismaClient.clients.delete({
+        await prismaClient.clients.update({
             where: { id: Number(params.id), databaseSectionId: databaseId },
+            data: {
+                isDeleted: true
+            }
         });
 
         return new Response(`Client with id: ${Number(params.id)} deleted successfully`, { status: 200 });

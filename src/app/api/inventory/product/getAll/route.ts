@@ -14,6 +14,7 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
     
     const products = await prismaClient.products.findMany({
       where: { inventorySectionId: inventoryId,
+        isDeleted:false
       },
       orderBy:{
         createdAt:'desc'

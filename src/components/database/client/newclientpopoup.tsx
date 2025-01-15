@@ -118,7 +118,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
                     addAnotherPatient = false;
                 }
                 else {
-                    console.log("Here")
+                    //console.log("Here")
                     togglePopup();
                     addAnotherPatient = false;
                 }

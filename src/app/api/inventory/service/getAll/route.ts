@@ -13,7 +13,8 @@ export  const GET=async (req: NextRequest)=> {
         
         const services = await prismaClient.services.findMany({
           where:{
-            inventorySectionId:inventoryId
+            inventorySectionId:inventoryId,
+            isDeleted:false
           },
           orderBy:{
             createdAt:'desc'

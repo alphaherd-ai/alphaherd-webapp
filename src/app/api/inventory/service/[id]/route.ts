@@ -37,17 +37,21 @@ export const PUT=async (req: NextRequest,
         try {
             
             const body=await req.json();
-            const validatedData = ServiceSchema.safeParse(body);
+            // const validatedData = ServiceSchema.safeParse(body);
 
-            if (!validatedData.success) {
-              return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
-                status: 422,
-              });
-            }
+            // if (!validatedData.success) {
+            //   return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
+            //     status: 422,
+            //   });
+            // }
+
+
            const service= await prismaClient.services.update({
                 where: { id: Number(params.id) },
                 data:body,
             });     
+
+            
             return new Response(JSON.stringify(service), {
                 status: 201,
                 headers: {
@@ -68,8 +72,11 @@ export const DELETE=async (req: NextRequest,
             } 
             try {
                 
-                await prismaClient.services.deleteMany({
+                await prismaClient.services.update({
                     where: { id: Number(params.id) },
+                    data:{
+                        isDeleted:true
+                    }
                 });
               
                             
