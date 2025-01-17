@@ -631,7 +631,7 @@ const handleAddItem = useCallback(() => {
                                                             <div className='relative'>
                                                                 <input
                                                                     className="w-full h-8 text-textGrey2 text-base font-medium px-2 rounded border border-solid border-borderGrey   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                                    value={(item.expiry)?.toLocaleDateString()}
+                                                                    value={(item.expiry)?.toLocaleDateString('en-GB')}
                                                                     readOnly
                                                                 />
                                                                 <Image
@@ -760,7 +760,7 @@ const handleAddItem = useCallback(() => {
                                                 ₹
                                                 <input
                                                     type="number"
-                                                    value={item.discountAmount.toFixed(2)}
+                                                    value={item.discountAmount}
                                                     className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                                     onChange={(e) => handleDiscountChange(Number(e.target.value), index)}
                                                     name={`discountAmount-${index + 1}`}
