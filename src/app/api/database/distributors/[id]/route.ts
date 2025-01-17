@@ -38,13 +38,13 @@ export const PUT = async (req: NextRequest,
   try {
     const databaseId = await fetchDatabaseId(req);
     const body = await req.json();
-    const validatedData = DistributorSchema.safeParse(body);
+    // const validatedData = DistributorSchema.safeParse(body);
 
-    if (!validatedData.success) {
-      return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
-        status: 422,
-      });
-    }
+    // if (!validatedData.success) {
+    //   return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
+    //     status: 422,
+    //   });
+    // }
     const distributor = await prismaClient.distributors.update({
       where: { id: Number(params.id), databaseSectionId: databaseId },
       data: body,
@@ -72,8 +72,9 @@ export const DELETE = async (
   try {
     const databaseId = await fetchDatabaseId(req);
 
-    await prismaClient.distributors.deleteMany({
+    await prismaClient.distributors.update({
       where: { id: Number(params.id), databaseSectionId: databaseId },
+      data: { isDeleted: true },
     });
 
     return new Response(

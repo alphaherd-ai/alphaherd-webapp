@@ -23,7 +23,7 @@ export const GET=async(req:NextRequest,{params}:{params:{id:number}})=>{
         })
 
     }catch(e){
-        console.log(e)
+        // console.log(e)
         return new Response('Internal server error',{status:500});
     }
     finally{

@@ -100,7 +100,7 @@ const ServicesAllItem = ({sortOrder,sortKey}:any) => {
 
           </div>
           <div className='w-5/12 flex items-center'>
-            {(service.linkProducts?.length===0 || !service.linkProducts)?<span className='bg-[#EDEDED] w-[10rem] ml-4 text-[#6B7E7D] px-2 py-1.5 rounded-md'>No Linked Products</span>:service.linkProducts?.map((product: any) => (
+            {(service?.linkProducts?.length===0 || !service?.linkProducts)?<span className='bg-[#EDEDED] w-[10rem] ml-4 text-[#6B7E7D] px-2 py-1.5 rounded-md'>No Linked Products</span>:service?.linkProducts?.map((product: any) => (
               <span key={product?.id} className='bg-[#EDEDED]  ml-4 text-[#6B7E7D] px-2 py-1.5 rounded-md'>{product.label.length > 10 ? product.label.slice(0,10) + "..." : product.label}</span>
             ))}
           </div>

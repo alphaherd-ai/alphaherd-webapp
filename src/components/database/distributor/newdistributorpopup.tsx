@@ -262,7 +262,7 @@ const DistributorPopup: React.FC<PopupProps> = ({ onClose }: any) => {
                     </div>
                 </div>
                 <div className="flex items-center gap-[40px]">
-                    <div className="text-gray-500 text-base font-medium w-[6rem]">Phone No.</div>
+                    <div className="text-gray-500 text-base font-medium w-[6rem]">Phone No.<span className="text-red-500">*</span></div>
                     <div>
                         <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="contact" onChange={(e) => handleChange("contact", e.target.value)} />
                         {errors.contact && <div className="text-red-500 text-sm">{errors.contact}</div>}

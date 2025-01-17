@@ -6,7 +6,7 @@ export const POST = async (req: NextRequest) => {
     if (req.method !== 'POST') {
         return new Response('Method not allowed', { status: 400 });
     }
-    console.log("create called");
+    //console.log("create called");
     try {
         const body = await req.json();
         const databaseSectionId = await fetchDatabaseId(req);
@@ -18,6 +18,14 @@ export const POST = async (req: NextRequest) => {
         const species = await prismaClient.species.create({
             data: {
                 name: body.name,
+                breed:{
+                    create:{
+                        name:["Unknown"],
+                        DatabaseSection:{
+                            connect:{id:databaseSectionId}
+                        }
+                    }
+                },
                 DatabaseSection : {
                     connect : { id : databaseSectionId}
                 },

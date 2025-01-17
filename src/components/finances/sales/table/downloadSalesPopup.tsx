@@ -181,36 +181,7 @@ const DownloadPopup = ({ onClose, sales, type }:any) => {
     <div className="flex flex-col items-start gap-6 mt-6">
         
             <div className="flex items-center gap-2">
-                {/* <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Custom' ? 'bg-textGreen' : 'bg-white'}`}
-                    onClick={() => handleOptionClick('Custom')}>
-                    <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Custom' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
-                        Custom
-                    </div>
-                </div> */}
-                {/* <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Day' ? 'bg-textGreen' : 'bg-white'}`}
-                    onClick={() => handleOptionClick('Day')}>
-                    <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Day' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
-                    Day
-                    </div>
-                </div>
-                <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Week' ? 'bg-textGreen' : 'bg-white'}`}
-                    onClick={() => handleOptionClick('Week')}>
-                    <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Week' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
-                    Week
-                    </div>
-                </div>
-                <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Month' ? 'bg-textGreen' : 'bg-white'}`}
-                    onClick={() => handleOptionClick('Month')}>
-                    <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Month' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
-                    Month
-                    </div>
-                </div>
-                <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Year' ? 'bg-textGreen' : 'bg-white'}`}
-                    onClick={() => handleOptionClick('Year')}>
-                    <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Year' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
-                    Year
-                    </div>
-                </div> */}
+                
             </div>
         
         

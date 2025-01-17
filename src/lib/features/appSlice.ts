@@ -30,6 +30,12 @@ export const appSlice = createSlice({
       const newState = { ...state, ...action.payload };
       return newState;
     },
+    updateCurrentBranch: (state, action: PayloadAction<any>) => {
+      state.currentBranch = { ...state.currentBranch, ...action.payload };
+    },
+    updateCurrentOrg: (state, action:PayloadAction<any>) => {
+      state.currentOrg = { ...state.currentOrg, ...action.payload };
+    },
     deleteApp: (state, action: PayloadAction<AppState>) => {
       // console.log("Inside Delete App");
       return initialState;
@@ -37,5 +43,5 @@ export const appSlice = createSlice({
   },
 });
 
-export const { updateApp } = appSlice.actions; // Export the new action
+export const { updateApp,updateCurrentBranch,updateCurrentOrg,deleteApp } = appSlice.actions; // Export the new action
 export default appSlice.reducer;
