@@ -207,7 +207,7 @@ const CreateGrnHeader = ({existingHeaderData}:any) => {
                                             <div className='relative '>
                                                 <input
                                                     className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={startDate.toLocaleDateString()}
+                                                    value={startDate.toLocaleDateString('en-GB')}
                                                     readOnly
                                                 />
                                                 <Image
@@ -257,7 +257,7 @@ const CreateGrnHeader = ({existingHeaderData}:any) => {
                                             <div className='relative'>
                                                 <input
                                                     className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={headerData?.dueDate?.toLocaleDateString() }
+                                                    value={headerData?.dueDate?.toLocaleDateString('en-GB') }
                                                     readOnly
                                                 />
                                                 <Image

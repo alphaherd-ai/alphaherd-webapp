@@ -106,7 +106,7 @@ const NotificationList =  ({ notifs, isLoading }) => {
           {(notif.source == Notif_Source.Inventory_Update_Approval_Request || notif.source == Notif_Source.Payment_Edit_Approval_Request || notif.source == Notif_Source.Payment_Delete_Approval_Request) && isAdmin  ?  (
 
             
-            <div className="w-[443px] h-[130px] px-5 py-4 bg-neutral-700 border border-neutral-700 rounded-[10px] justify-start items-start gap-4 inline-flex relative z-100">
+            <div className=" px-5 py-4 bg-neutral-700 border border-neutral-700 rounded-[10px] justify-start items-start gap-4 inline-flex relative z-100">
               <div className="p-[4.50px] bg-amber-400 rounded-[5px] justify-center items-center gap-[11.25px] flex">
                 <div className="w-[27px] h-[27px] ">
                   <div className="w-[27px] h-[27px] left-0 top-0 bg-white rounded-full" />
@@ -118,9 +118,10 @@ const NotificationList =  ({ notifs, isLoading }) => {
                     <div className="self-stretch text-emerald-50 text-base font-bold ">
                       {notif.message}
                     </div>
-                    <div className="text-neutral-400 text-xs font-medium ">
-                      {formatDateAndTime(notif.createdAt).formattedTime}
-                    </div>
+                    <div className="self-stretch text-neutral-400 text-xs font-medium flex justify-between items-center">
+                        <span>{formatDateAndTime(notif.createdAt).formattedTime}</span>
+                        <span>{formatDateAndTime(notif.createdAt).formattedDate}</span>
+                      </div>
                   </div>
                   <div className="w-2.5 h-2.5 bg-cyan-400 rounded-full" />
                 </div>
@@ -142,7 +143,7 @@ const NotificationList =  ({ notifs, isLoading }) => {
             </div>
           ) : (
             <Link href={notif.url || ""} passHref>
-              <div className="w-[443px] h-[116px] px-5 py-4 bg-neutral-700 border border-neutral-700 rounded-[10px] justify-start items-start gap-4 inline-flex relative z-100">
+              <div className=" px-5 py-4 bg-neutral-700 border border-neutral-700 rounded-[10px] justify-start items-start gap-4 inline-flex relative z-100">
                 <div className="p-[4.50px] bg-amber-400 rounded-[5px] justify-center items-center gap-[11.25px] flex">
                   <div className="w-[27px] h-[27px] ">
                     <div className="w-[27px] h-[27px] left-0 top-0 bg-white rounded-full" />
@@ -154,8 +155,9 @@ const NotificationList =  ({ notifs, isLoading }) => {
                       <div className="self-stretch text-emerald-50 text-base font-bold ">
                         {notif.message}
                       </div>
-                      <div className="text-neutral-400 text-xs font-medium ">
-                        {formatDateAndTime(notif.createdAt).formattedTime}
+                      <div className="self-stretch text-neutral-400 text-xs font-medium flex justify-between items-center">
+                        <span>{formatDateAndTime(notif.createdAt).formattedTime}</span>
+                        <span>{formatDateAndTime(notif.createdAt).formattedDate}</span>
                       </div>
                     </div>
                     <div className="w-2.5 h-2.5 bg-cyan-400 rounded-full" />
