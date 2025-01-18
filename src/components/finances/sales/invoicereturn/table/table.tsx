@@ -213,11 +213,29 @@ const InvoiceReturnTable = () => {
     const [checkedItemList, setCheckedItemList] = useState<any[]>([]);
 
     useEffect(() => {
-        if (id !== null) {
-            setItems(items);
-            if (checkedItemList.length > 0) setTableData(checkedItemList);
-        }
+        const timeout = setTimeout(() => {
+            if (id !== null) {
+                setItems(items);
+                if (checkedItemList.length > 0) setTableData(checkedItemList);
+            }
+        }, 50);
+    
+        return () => clearTimeout(timeout);
     }, [id, checkedItems, items]);
+    // useEffect(() => {
+    //     if (id !== null) {
+    //         setItems(items);
+    //         if(items.length==0){
+    //             console.log("no items found");
+    //         }
+    //         else{
+    //             console.log(items);
+    //         }
+    //         console.log(id);
+    //         if (checkedItemList.length > 0) setTableData(checkedItemList);
+    //     }
+    // }, [id, checkedItems, items]);
+    
 
 
 
@@ -289,7 +307,7 @@ const InvoiceReturnTable = () => {
                                         <div className=' flex text-textGreen text-base font-bold w-[12rem]'>Unit Price</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Batch No./Providers</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Bar Code</div>
-                                        <div className=' flex text-gray-500 text-base font-medium w-[15rem] px-2'>Exipry Date</div>
+                                        <div className=' flex text-gray-500 text-base font-medium w-[15rem] px-2'>Expiry Date</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Subtotal</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>MRP</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Tax %</div>

@@ -185,32 +185,9 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                     )
                 ])
 
-                // if (transactionResponse.status === 201 && recordResponse.status === 201) {
-                //     if (!(editTransaction?.invoiceLink.includes('SE'))) {
-                //         if (id) {
-                //             //console.log('Here')
-                //             const balanceStatus = balanceDue && (editTransaction?.invoiceLink.startsWith('S') || editTransaction?.invoiceLink.includes('PR')) ? (balanceDue + (editTransaction?.moneyChange === 'In' ? Number(editTransaction?.amountPaid) : -Number(editTransaction?.amountPaid)) + (transactionType === 'Money In' ? -1 * Number(formData.amountPaid) : Number(formData.amountPaid))) :  (balanceDue + (editTransaction?.moneyChange === 'In' ? -Number(editTransaction?.amountPaid) : Number(editTransaction?.amountPaid)) + (transactionType === 'Money In' ? Number(formData.amountPaid) : -Number(formData.amountPaid))) ;
-                //             //console.log(balanceDue,balanceStatus,editTransaction?.amountPaid, formData.amountPaid)
-                //             const baseURL=`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/${editTransaction?.invoiceLink.startsWith('S') ? 'sales' : 'purchases'}/status/${id}/?branchId=${appState.currentBranchId}`
-                //             const putResponse = await fetch(baseURL, {
-                //                 method: 'PUT',
-                //                 headers: {
-                //                     'Content-Type': 'application/json',
-                //                 },
-                //                 body: JSON.stringify({
-                //                     status: (editTransaction?.invoiceLink.startsWith('S') || editTransaction?.invoiceLink.includes('PR')) ? balanceStatus && (balanceStatus >= 1 ? `You’re owed: ₹${parseFloat((balanceStatus).toFixed(2))}` : balanceStatus <= -1 ? `You owe: ₹${parseFloat((-1 * balanceStatus).toFixed(2))}` : 'Closed'): balanceStatus <= -1 ? `You’re owed: ₹${parseFloat((-1 * balanceStatus).toString()).toFixed(2)}` : balanceStatus >= 1 ? `You owe: ₹${parseFloat((balanceStatus).toString()).toFixed(2)}` : 'Closed',
-                //                 })
-
-                //             })
-                //             if (putResponse.ok) {
-                //                 onClose();
-                //                 window.dispatchEvent(new FocusEvent('focus'))
-                //             } else {
-                //                 console.error('Failed to save data')
-                //             }
-                //         }
-                //     }
-                // }
+                if (transactionResponse.status === 201 && recordResponse.status === 201) {
+                    onClose();
+                }
             }
             catch (err) {
                 console.log(err);
