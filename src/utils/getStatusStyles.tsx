@@ -16,6 +16,10 @@ const STATUS_STYLES: Record<string, StatusStyles> = {
         textColor: "text-[#FF3030]",
         bgColor: "bg-[#FFEAEA]"
     },
+    "Cancelled": {
+        textColor: "text-[#FF3030]",
+        bgColor: "bg-[#FFEAEA]"
+    },
     "Pending": {
         textColor: "text-[#FC6E20]",
         bgColor: "bg-[#FFF0E9]"

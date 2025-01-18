@@ -2,14 +2,17 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import useSWR from 'swr'
-import {  Tooltip } from '@nextui-org/react'
+import {  Tooltip,Button } from '@nextui-org/react'
+import Image from 'next/image';
 import formatDateAndTime from '@/utils/formateDateTime'
+import Menu from '../../../../assets/icons/finance/menu.svg';
 import { useAppSelector } from '@/lib/hooks';
 import Loading from '@/app/loading';
 import { FinanceCreationType } from '@prisma/client';
 import { useSearchParams } from 'next/navigation';
 import { getStatusStyles } from '@/utils/getStatusStyles';
-
+import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
+import CancellationPopup from './cancellationPopup';
 // @ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
@@ -22,6 +25,7 @@ const FinancesExpensesTableItem = ({ onCountsChange, currentPageNumber, setCurre
   const endDate = useMemo(() => urlSearchParams.get('endDate') ? new Date(urlSearchParams.get('endDate')!) : null, [urlSearchParams]);
   const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
   const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
+  const [showConfirmation, setShowConfirmation] = useState(false);
   //Pagination in the table
 
   useEffect(() => {
@@ -147,7 +151,26 @@ const FinancesExpensesTableItem = ({ onCountsChange, currentPageNumber, setCurre
                     ()}
               </div >
             </Tooltip>
+            <Popover placement="left" showArrow offset={10}>
+              <PopoverTrigger>
+                <Button
+                  // color="gray-400"
+                  variant="solid"
+                  className="capitalize flex border-none  text-gray rounded-lg ">
+                  <div className='flex items-center '><Image src={Menu} alt='Menu' className='w-5  h-5' /></div></Button>
+              </PopoverTrigger>
+              <PopoverContent className="p-2 text-gray-500 bg-white text-sm  font-medium flex flex-row items-start rounded-lg border-2">
 
+                <div className='text-gray-500 cursor-pointer no-underline  item-center text-sm  font-medium flex ' onClick={() => setShowConfirmation(true)}>
+                  Cancel</div>
+
+
+              </PopoverContent>
+            </Popover>
+
+
+
+          {showConfirmation && <CancellationPopup setShowConfirmation={setShowConfirmation} expenseId={expense?.id}/>}
           </div>
 
         </div>
