@@ -12,34 +12,38 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: number }
     const financeId = await fetchFinanceId(req);
     const body = await req.json();
     const status = body.status;
-    const purchases = await prismaClient.purchases.update({
+    const sales = await prismaClient.sales.update({
       where: { id: Number(params.id), financeSectionId: financeId },
       data: {
         status: status,
       },
     });
+
     if (status === 'Cancelled') {
       await Promise.all([
         await prismaClient.recordTransaction.updateMany({
           where: {
-            purchasesId: Number(params.id),
+            salesId: Number(params.id),
           },
           data: {
             moneyChange: 'Cancelled',
           },
         }),
-        await prismaClient.transactions.updateMany({
+
+
+      await prismaClient.transactions.updateMany({
           where: {
-            invoiceLink: purchases.invoiceNo,
+            invoiceLink: sales.invoiceNo
           },
           data: {
             moneyChange: 'Cancelled',
           }
         })
       ])
+
     }
 
-    return new Response(JSON.stringify(purchases), {
+    return new Response(JSON.stringify(sales), {
       status: 201,
       headers: {
         'Content-Type': 'application/json',
