@@ -35,6 +35,7 @@ const FinancesSalesTableItem = ({ onCountsChange, data, sales, isLoading }: any)
   const [estimateCount, setEstimateCount] = useState(0);
   const [returnCount, setReturnCount] = useState(0);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [salesId, selectedSalesId] = useState<number | null>(null);
   useEffect(() => {
     if (data) {
 
@@ -133,7 +134,7 @@ const FinancesSalesTableItem = ({ onCountsChange, data, sales, isLoading }: any)
               </PopoverTrigger>
               <PopoverContent className="p-2 text-gray-500 bg-white text-sm  font-medium flex flex-row items-start rounded-lg border-2">
 
-                <div className='text-gray-500 cursor-pointer no-underline  item-center text-sm  font-medium flex ' onClick={() => setShowConfirmation(true)}>
+                <div className='text-gray-500 cursor-pointer no-underline  item-center text-sm  font-medium flex ' onClick={() => { setShowConfirmation(true); selectedSalesId(sale?.id) }}>
                   Cancel</div>
 
 
@@ -143,11 +144,11 @@ const FinancesSalesTableItem = ({ onCountsChange, data, sales, isLoading }: any)
 
 
           </div>
-          {showConfirmation && <CancellationPopup setShowConfirmation={setShowConfirmation} salesId={sale?.id}/>}
+
         </div>
 
       ))}
-
+      {showConfirmation && salesId !== null && <CancellationPopup setShowConfirmation={setShowConfirmation} salesId={salesId} />}
     </div>)
 }
 

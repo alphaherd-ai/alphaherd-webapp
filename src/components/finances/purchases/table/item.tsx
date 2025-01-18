@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react'
-import { Tooltip,Button } from "@nextui-org/react";
+import { Tooltip, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 import Link from 'next/link';
 import Image from 'next/image';
@@ -21,6 +21,7 @@ const FinancesPurchasesTableItem = ({ onCountsChange, purchases, data, isLoading
   const [invoiceCount, setInvoiceCount] = useState(0);
   const [orderCount, setOrderCount] = useState(0);
   const [returnCount, setReturnCount] = useState(0);
+  const [purchaseId, setPurchaseId] = useState<number>(0);
   useEffect(() => {
     if (data) {
       setInvoiceCount(data.filter((purchase: any) => purchase.type === FinanceCreationType.Purchase_Invoice).length);
@@ -66,22 +67,22 @@ const FinancesPurchasesTableItem = ({ onCountsChange, purchases, data, isLoading
           <div className='w-[8rem] flex  items-center  text-base font-medium'>{formatDateAndTime(purchase.dueDate).formattedDate}</div>
           <div className='w-[13rem] flex  items-center  text-base font-medium'>
             <Tooltip content={purchase.status} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
-            <div>
+              <div>
                 {
                   (() => {
                     const statusParts = purchase.status.split('|').map((part: string) => part.trim());
                     //console.log(statusParts);
-                     if (!statusParts.length) {
-                       return (
-                         <span className="text-[#6B7E7D] bg-[#EDEDED] px-2 py-1.5 text-sm font-medium rounded-[5px]">
-                           No Status
-                         </span>
-                       );
-                     }
+                    if (!statusParts.length) {
+                      return (
+                        <span className="text-[#6B7E7D] bg-[#EDEDED] px-2 py-1.5 text-sm font-medium rounded-[5px]">
+                          No Status
+                        </span>
+                      );
+                    }
                     return statusParts.map((status: any, index: any) => {
                       const styles = getStatusStyles(status);
                       return (
-                        <span  key={index} className={`${styles?.textColor} ${styles?.bgColor} px-2 mr-2 py-1.5 text-sm font-medium rounded-[5px]`}>
+                        <span key={index} className={`${styles?.textColor} ${styles?.bgColor} px-2 mr-2 py-1.5 text-sm font-medium rounded-[5px]`}>
                           {status}
                         </span>
                       )
@@ -94,29 +95,30 @@ const FinancesPurchasesTableItem = ({ onCountsChange, purchases, data, isLoading
           </div>
           <div className=' right-16'>
 
-<Popover placement="left" showArrow offset={10}>
-  <PopoverTrigger>
-    <Button
-      // color="gray-400"
-      variant="solid"
-      className="capitalize flex border-none  text-gray rounded-lg ">
-      <div className='flex items-center '><Image src={Menu} alt='Menu' className='w-5  h-5' /></div></Button>
-  </PopoverTrigger>
-  <PopoverContent className="p-2 text-gray-500 bg-white text-sm  font-medium flex flex-row items-start rounded-lg border-2">
+            <Popover placement="left" showArrow offset={10}>
+              <PopoverTrigger>
+                <Button
+                  // color="gray-400"
+                  variant="solid"
+                  className="capitalize flex border-none  text-gray rounded-lg ">
+                  <div className='flex items-center '><Image src={Menu} alt='Menu' className='w-5  h-5' /></div></Button>
+              </PopoverTrigger>
+              <PopoverContent className="p-2 text-gray-500 bg-white text-sm  font-medium flex flex-row items-start rounded-lg border-2">
 
-    <div className='text-gray-500 cursor-pointer no-underline  item-center text-sm  font-medium flex ' onClick={() => setShowConfirmation(true)}>
-      Cancel</div>
-
-
-  </PopoverContent>
-</Popover>
+                <div className='text-gray-500 cursor-pointer no-underline  item-center text-sm  font-medium flex ' onClick={() => {setShowConfirmation(true); setPurchaseId(purchase?.id)}}>
+                  Cancel</div>
 
 
+              </PopoverContent>
+            </Popover>
 
-</div>
-{showConfirmation && <CancellationPopup setShowConfirmation={setShowConfirmation} purchaseId={purchase?.id}/>}
+
+
+          </div>
+
         </div>
       )}
+                  {showConfirmation && purchaseId !== null && <CancellationPopup setShowConfirmation={setShowConfirmation} purchaseId={purchaseId} />}
     </div>
   )
 }

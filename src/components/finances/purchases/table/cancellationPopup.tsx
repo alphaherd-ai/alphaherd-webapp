@@ -18,7 +18,7 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ setShowConfirmati
     const appState = useAppSelector((state) => state.app);
 
 
-
+    
     const [loading, setLoading] = useState(false);
 
 
@@ -26,7 +26,7 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ setShowConfirmati
 
         try {
             setLoading(true);
-            const res = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/finance/purchases/status/${purchaseId}?branchId=${appState.currentBranchId}`, {
+            const res = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/status/${purchaseId}?branchId=${appState.currentBranchId}`, {
                 status: "Cancelled"
             }, {
                 headers: {
