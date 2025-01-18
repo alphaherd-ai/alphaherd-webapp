@@ -131,6 +131,7 @@ const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
         }
       });
 
+
       const mergedProducts = Array.from(productMap.values()).map(({ product, totalQuantity }) => ({
         ...product,
         quantity: totalQuantity,
@@ -190,11 +191,12 @@ const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
         } else if (activeTabValue === "Expiring") {
           if (expiryDate > currentDate && (expiryDate.getTime() - currentDate.getTime()) <= Number(30 * 24 * 60 * 60 * 1000)) {
             if (isOlderThanOneWeek(product.lastExpiringNotif)) {
+              const daysLeftForExpiry = Math.ceil((expiryDate.getTime() - currentDate.getTime()) / (24 * 60 * 60 * 1000));
               const notifData = {
                 source: Notif_Source.Inventory_Product_Expiry,
                 orgId: appState.currentOrgId,
                 totalItems: product.quantity,
-                expiry: product.expiry,
+                expiry :daysLeftForExpiry,
                 productName: product.product?.itemName,
                 url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/all`,
               };

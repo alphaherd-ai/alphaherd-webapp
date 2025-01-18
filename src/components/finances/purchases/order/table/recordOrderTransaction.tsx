@@ -291,7 +291,7 @@ const RecordOrderTransaction: React.FC<PopupProps> = ({ headerdata, transactions
                                     <div className='relative'>
                                         <input
                                             className="w-[10rem] border border-solid border-borderGrey h-9 text-textGrey1 text-base font-medium px-2 rounded   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                            value={startDate?.toLocaleDateString() || new Date().toLocaleDateString()}
+                                            value={startDate?.toLocaleDateString('en-GB') || new Date().toLocaleDateString('en-GB')}
                                             readOnly
                                         />
                                         <Image
