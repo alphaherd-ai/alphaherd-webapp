@@ -185,32 +185,32 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                     )
                 ])
 
-                if (transactionResponse.status === 201 && recordResponse.status === 201) {
-                    if (!(editTransaction?.invoiceLink.includes('SE'))) {
-                        if (id) {
-                            //console.log('Here')
-                            const balanceStatus = balanceDue && (editTransaction?.invoiceLink.startsWith('S') || editTransaction?.invoiceLink.includes('PR')) ? (balanceDue + (editTransaction?.moneyChange === 'In' ? Number(editTransaction?.amountPaid) : -Number(editTransaction?.amountPaid)) + (transactionType === 'Money In' ? -1 * Number(formData.amountPaid) : Number(formData.amountPaid))) :  (balanceDue + (editTransaction?.moneyChange === 'In' ? -Number(editTransaction?.amountPaid) : Number(editTransaction?.amountPaid)) + (transactionType === 'Money In' ? Number(formData.amountPaid) : -Number(formData.amountPaid))) ;
-                            //console.log(balanceDue,balanceStatus,editTransaction?.amountPaid, formData.amountPaid)
-                            const baseURL=`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/${editTransaction?.invoiceLink.startsWith('S') ? 'sales' : 'purchases'}/status/${id}/?branchId=${appState.currentBranchId}`
-                            const putResponse = await fetch(baseURL, {
-                                method: 'PUT',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({
-                                    status: (editTransaction?.invoiceLink.startsWith('S') || editTransaction?.invoiceLink.includes('PR')) ? balanceStatus && (balanceStatus >= 1 ? `You’re owed: ₹${parseFloat((balanceStatus).toFixed(2))}` : balanceStatus <= -1 ? `You owe: ₹${parseFloat((-1 * balanceStatus).toFixed(2))}` : 'Closed'): balanceStatus <= -1 ? `You’re owed: ₹${parseFloat((-1 * balanceStatus).toString()).toFixed(2)}` : balanceStatus >= 1 ? `You owe: ₹${parseFloat((balanceStatus).toString()).toFixed(2)}` : 'Closed',
-                                })
+                // if (transactionResponse.status === 201 && recordResponse.status === 201) {
+                //     if (!(editTransaction?.invoiceLink.includes('SE'))) {
+                //         if (id) {
+                //             //console.log('Here')
+                //             const balanceStatus = balanceDue && (editTransaction?.invoiceLink.startsWith('S') || editTransaction?.invoiceLink.includes('PR')) ? (balanceDue + (editTransaction?.moneyChange === 'In' ? Number(editTransaction?.amountPaid) : -Number(editTransaction?.amountPaid)) + (transactionType === 'Money In' ? -1 * Number(formData.amountPaid) : Number(formData.amountPaid))) :  (balanceDue + (editTransaction?.moneyChange === 'In' ? -Number(editTransaction?.amountPaid) : Number(editTransaction?.amountPaid)) + (transactionType === 'Money In' ? Number(formData.amountPaid) : -Number(formData.amountPaid))) ;
+                //             //console.log(balanceDue,balanceStatus,editTransaction?.amountPaid, formData.amountPaid)
+                //             const baseURL=`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/${editTransaction?.invoiceLink.startsWith('S') ? 'sales' : 'purchases'}/status/${id}/?branchId=${appState.currentBranchId}`
+                //             const putResponse = await fetch(baseURL, {
+                //                 method: 'PUT',
+                //                 headers: {
+                //                     'Content-Type': 'application/json',
+                //                 },
+                //                 body: JSON.stringify({
+                //                     status: (editTransaction?.invoiceLink.startsWith('S') || editTransaction?.invoiceLink.includes('PR')) ? balanceStatus && (balanceStatus >= 1 ? `You’re owed: ₹${parseFloat((balanceStatus).toFixed(2))}` : balanceStatus <= -1 ? `You owe: ₹${parseFloat((-1 * balanceStatus).toFixed(2))}` : 'Closed'): balanceStatus <= -1 ? `You’re owed: ₹${parseFloat((-1 * balanceStatus).toString()).toFixed(2)}` : balanceStatus >= 1 ? `You owe: ₹${parseFloat((balanceStatus).toString()).toFixed(2)}` : 'Closed',
+                //                 })
 
-                            })
-                            if (putResponse.ok) {
-                                onClose();
-                                window.dispatchEvent(new FocusEvent('focus'))
-                            } else {
-                                console.error('Failed to save data')
-                            }
-                        }
-                    }
-                }
+                //             })
+                //             if (putResponse.ok) {
+                //                 onClose();
+                //                 window.dispatchEvent(new FocusEvent('focus'))
+                //             } else {
+                //                 console.error('Failed to save data')
+                //             }
+                //         }
+                //     }
+                // }
             }
             catch (err) {
                 console.log(err);
@@ -422,7 +422,7 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                         <input className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2  outline-none border border-solid border-borderGrey focus:border-teal-500 " type="text" name="refNo" disabled={true} placeholder={editTransaction?.invoiceLink} />
                     </div>
                 </div> */}
-                <div className='w-full flex justify-between items-center mt-4'>
+                {/* <div className='w-full flex justify-between items-center mt-4'>
                     <div>
                         <span className='text-gray-500 text-base font-medium '>Link Service(s)</span>
                     </div>
@@ -512,7 +512,7 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                         <div className='w-[10rem] text-textGrey2 font-medium text-base'></div>
                         <div className='w-[3rem] text-textGrey2 font-medium text-base'></div>
                     </div>
-                </div>
+                </div> */}
 
                 <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Receipt No.</span></div>
