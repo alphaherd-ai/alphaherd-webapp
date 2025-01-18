@@ -2,7 +2,7 @@
 import Image from "next/image"
 import { useAppDispatch} from '@/lib/hooks';
 // import hosimage from "../../assets/icons/loginsignup/hos.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Bounce, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from "next/navigation";
@@ -18,7 +18,7 @@ import { fetchBranchDetailsById, isAdminOfOrg, isManagerOfBranch } from "@/utils
 const Login = () => {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false); 
-
+  const [staysignedin,setStaysignedin] = useState(false);
   let router = useRouter();
 
   const queryParams = new URLSearchParams(window.location.search);
@@ -52,7 +52,10 @@ const Login = () => {
         headers: {
           'Content-Type': "application/json"
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(
+          {"data":data,
+          "staysignedin":staysignedin,}
+        )
       }
     )
     // console.log(res);
@@ -78,22 +81,9 @@ const Login = () => {
       const currentBranchId = currentBranch.id;
       const isCurrentOrgAdmin = isAdminOfOrg(currentOrgId, user as UserState);
       const isCurrentBranchManager = isManagerOfBranch(currentBranchId, user as UserState);
-
-      // console.log(currentBranchUserRole);
-      // console.log(currentBranch);
-      // console.log(currentOrgId);
-      // console.log(currentBranchId);
-      // console.log(isCurrentOrgAdmin);
-      // console.log(isCurrentBranchManager);
-
-      //   const initialState : AppState = {
-      //     currentOrgId : null,
-      //     currentBranchId : null,
-      //     currentOrg : null,
-      //     isCurrentOrgAdmin: false,
-      //     isCurrentBranchManager: false
-      // }
-
+      if(staysignedin){
+        
+      }
       const appState : AppState = {
         currentOrgId,
         currentBranchId,
@@ -145,8 +135,13 @@ const Login = () => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-
-
+  const handlestay=()=>{
+    setStaysignedin((prev) => !prev);
+    console.log(staysignedin);
+  }
+  useEffect(() => {
+      console.log('Stay Signed In:', staysignedin);
+  }, [staysignedin]);
   return (
     <>
       <ToastContainer />
@@ -189,7 +184,9 @@ const Login = () => {
  
     <input
     type="checkbox"
-    className="appearance-none w-5 h-5 bg-white  checked:bg-teal-500 checked:border-teal-500 checked:after:content-['✔'] checked:after:text-white checked:after:block checked:after:text-center"></input>
+    className="appearance-none w-5 h-5 bg-white  checked:bg-teal-500 checked:border-teal-500 checked:after:content-['✔'] checked:after:text-white checked:after:block checked:after:text-center"
+    checked={staysignedin}
+    onClick={handlestay} />
  
   <div className="text-gray-500 text-base font-medium">Stay signed in</div>
 </div>

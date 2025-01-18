@@ -10,7 +10,6 @@ export const POST = async (req: NextRequest) => {
         const url = new URL(req.url);
         const branchDetails = await req.json();
         const orgId = url.searchParams.get("orgId");
-        console.log('details in api',branchDetails);
         let newBranch = await prismaClient.orgBranch.create({
         data: {
             ...branchDetails,
