@@ -203,8 +203,10 @@ const ExistingsaleEstimateTotalAmout = ({ otherData, items, isLoading }: any) =>
         <>
 
 
-            <div className="flex gap-4 pt-[20px] pb-[20px]">
-                <RecordTransactionPopup headerdata={otherData} setCount={setCount} initialInvoiceNo={initialInvoiceNo} balanceDue={balanceDue} />
+            < div className={`flex gap-4 ${otherData?.status === 'Cancelled' ? "justify-end" : ""}   pt-[20px] pb-[20px]`}>
+                {!(otherData?.status === 'Cancelled') &&
+                    <RecordTransactionPopup headerdata={otherData} setCount={setCount} initialInvoiceNo={initialInvoiceNo} balanceDue={balanceDue} />
+                }
                 <div className="w-full rounded-md">
                     <div className="w-full bg-white rounded-md ">
                         <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">
@@ -334,6 +336,7 @@ const ExistingsaleEstimateTotalAmout = ({ otherData, items, isLoading }: any) =>
                             </div>
 
                         </div>
+
                         <div className="w-full  px-6 bg-white rounded-bl-md rounded-br-md justify-between items-center flex  border border-t-0 border-solid border-borderGrey">
                             <div className="text-gray-500 text-base font-bold  w-1/3 py-4">Balance Due</div>
                             <div className="text-gray-500 text-lg font-medium  w-1/3 py-4 flex  items-center"></div>
@@ -349,11 +352,12 @@ const ExistingsaleEstimateTotalAmout = ({ otherData, items, isLoading }: any) =>
 
                     </div>
                 </div>
-
-                {popup && <EditRecordTransactionPopup onClose={onClose} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue} />}
-                {showConfirmation && <CancellationPopup setShowConfirmation={setShowConfirmation} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue} />}
-
+                {!(otherData?.status === 'Cancelled') && <>
+                    {popup && <EditRecordTransactionPopup onClose={onClose} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue} />}
+                    {showConfirmation && <CancellationPopup setShowConfirmation={setShowConfirmation} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue} />}
+                </>}
             </div>
+
 
 
         </>
