@@ -63,9 +63,8 @@ const FinancesTransactionsTableItem = ({ transactions, isLoading }: any) => {
             <div>
               <Image className='w-4 h-4 mt-1 mr-2' src={transaction.mode === "Cash" ? Cash : transaction.mode === "UPI" ? UPI : ""} alt='' />
             </div>
-            <Tooltip content={transaction.mode} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
+
               <div>{transaction.mode}</div>
-            </Tooltip>
           </div>
           <div className='absolute right-16'>
             {(!(transaction.moneyChange === "Cancelled") &&

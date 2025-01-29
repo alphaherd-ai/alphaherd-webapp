@@ -10,7 +10,7 @@ import formatDateAndTime from '@/utils/formateDateTime';
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 import Popup from "../table/recordexsistingpurchasereturpopup"
 import Loading2 from '@/app/loading2';
-import { Tooltip, Button } from "@nextui-org/react";
+import {  Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 import Menu from '../../../../../assets/icons/finance/menu.svg'
 import EditRecordTransactionPopup from '@/components/finances/editTransaction/editTransaction';

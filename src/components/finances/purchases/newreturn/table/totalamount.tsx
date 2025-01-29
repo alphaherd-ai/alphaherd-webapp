@@ -16,7 +16,7 @@ import Cash from "../../../../../assets/icons/finance/Cash.svg"
 
 
 
-import { Tooltip, Button } from "@nextui-org/react";
+import {  Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 import Menu from '../../../../../assets/icons/finance/menu.svg'
 import EditRecordTransactionPopup from '@/components/finances/editTransaction/editTransaction';

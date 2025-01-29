@@ -2,7 +2,6 @@
 import Loading from '@/app/loading';
 import { useAppSelector } from '@/lib/hooks';
 import formatDateAndTime from '@/utils/formateDateTime';
-import { Tooltip } from '@nextui-org/react';
 import { FinanceCreationType } from '@prisma/client';
 
 import Link from 'next/link';
@@ -86,18 +85,22 @@ const FinacesOverviewTableItem = ({currentPageNumber,setCurrentPageNumber,setSta
           <Link className='no-underline text-textGrey2' href={{
             pathname: data.type === FinanceCreationType.Sales_Estimate ? 'sales/existingsalesestimate' :
               data.type === FinanceCreationType.Sales_Invoice ? 'sales/existingsales' :
-                data.type === FinanceCreationType.Sales_Return ? 'sales/existingsalesreturn' : "",
-            query: { id: data.salesId }
+              data.type === FinanceCreationType.Sales_Return ? 'sales/existingsalesreturn' : 
+              data.type === FinanceCreationType.Purchase_Order ? 'purchases/exsistingpurchaseorder' :
+              data.type === FinanceCreationType.Purchase_Invoice ? 'purchases/exsistinggrn' :
+              data.type === FinanceCreationType.Purchase_Return ? 'purchases/exsistingpurchasereturn' : 
+              data.type === FinanceCreationType.Expense_NonRecurring ? 'expenses/exsistingnonrecurring' :
+              data.type === FinanceCreationType.Expense_Recurring ? 'expenses/exsistingrecurring' : "",
+              query: { id: data.salesId || data.purchasesId || data.expensesId }
           }}> <div className='w-[10rem] flex  items-center    text-base font-medium'>{data.type || data.expense?.type || "unknown"}</div></Link>
           <div className='w-[12rem] flex  items-center    text-base font-medium'>{data.sale?.customer || data.purchases?.distributor || data.expenses?.party || "unknown"}</div>
           <div className='w-[12rem] flex  items-center    text-base font-medium'>{data.sale?.invoiceNo || data.purchases?.invoiceNo || data.expenses?.invoiceNo}</div>
           <div className='w-[8rem] flex  items-center    text-base font-medium'>{(data.sale?.totalCost || data.purchases?.totalCost || data.expenses?.totalCost)?.toFixed(2)}</div>
-          <div className='w-[8rem] flex  items-center    text-base font-medium'>{data.sale?.totalQty || data.purchases?.totalQty || data.expenses?.totalQty}</div>
           <div className='w-[8rem] flex  items-center    text-base font-medium'>{formatDateAndTime(data.sale?.dueDate || data.purchases?.dueDate || data.expenses?.dueDate).formattedDate}</div>
 
-          <div className='w-[10rem] flex  items-center  text-base font-medium'>
-          <Tooltip content={data.sale?.status || data.expenses?.status || data.purchases?.status} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
-          <div>
+          <div className='w-[18rem] flex  items-center  text-base font-medium'>
+          {/* <Tooltip className='bg-black text-white p-1 px-3 text-xs rounded-lg'> */}
+          <div className='flex'>
                 {
                   (() => {
                     const statusParts = (data.sale?.status || data.expenses?.status || data.purchases?.status).split('|').map((part: string) => part.trim());
@@ -120,7 +123,7 @@ const FinacesOverviewTableItem = ({currentPageNumber,setCurrentPageNumber,setSta
                   })
                     ()}
               </div >
-            </Tooltip>
+            {/* </Tooltip> */}
           </div>
 
         </div>

@@ -95,7 +95,6 @@ const FinancesSalesTableItem = ({ onCountsChange, data, sales, isLoading }: any)
           {/* <div className='w-1/12 flex  items-center text-base font-medium'>{sale.totalQty}</div> */}
           <div className='w-1/12 flex  items-center  text-base font-medium'>{formatDateAndTime(sale.dueDate).formattedDate}</div>
           <div className='w-2/12 flex  items-center  text-base font-medium'>
-            <Tooltip content={sale.status} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
               <div>
                 {
                   (() => {
@@ -119,7 +118,6 @@ const FinancesSalesTableItem = ({ onCountsChange, data, sales, isLoading }: any)
                   })
                     ()}
               </div >
-            </Tooltip>
 
           </div>
           <div className=' right-16'>

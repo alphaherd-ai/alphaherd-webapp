@@ -32,10 +32,10 @@ const ConvertToRecurringPopup: React.FC<PopupProps> = ({ onClose }:any) => {
         setRecurringData((prevData)=>({...prevData,startDate:startDate,endDate:endDate}));
     },[])
     const Repeat = [
-        {value: "everyDay", label: "Every Day"},
-        {value: "everyWeek", label: "Every Week"},
-        {value: "everyMonth", label: "Every Month"},
-        {value: "everyYear", label: "Every Year"},
+        {value: "EveryDay", label: "Every Day"},
+        {value: "EveryWeek", label: "Every Week"},
+        {value: "EveryMonth", label: "Every Month"},
+        {value: "EveryYear", label: "Every Year"},
     ]
    
 
@@ -57,10 +57,7 @@ const ConvertToRecurringPopup: React.FC<PopupProps> = ({ onClose }:any) => {
             </div>
 
             <div className='w-full flex flex-col gap-6'>
-                <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Title</span></div>
-                    <div><input className="w-[440px] h-9 rounded-md text-gray-400 text-base font-medium p-2  outline-none border border-solid border-gray-300 focus:border-teal-500 " type="text" name="name"/></div>
-                </div>
+                
                 <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Repeat</span></div>
                     <div className='w-[440px]'>
@@ -140,10 +137,6 @@ const ConvertToRecurringPopup: React.FC<PopupProps> = ({ onClose }:any) => {
                         <span className='text-white text-base font-medium pr-2'>Save</span>
                     </Button>
             </div>
-            
-                
-            
-            
         </div>
 
     </div>        

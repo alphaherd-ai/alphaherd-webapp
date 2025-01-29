@@ -9,6 +9,8 @@ import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react'
 
 const ExsistingRecurringHeader = ({otherData}:any) => {
+    console.log("This is other data",otherData)
+    console.log("This is other date",new Date(otherData.recurringEndson).toLocaleDateString('en-GB'))
     const appState = useAppSelector((state) => state.app);
     const [startDate, setStartDate] = useState(new Date());
     const [isClearable, setIsClearable] = useState(true);
@@ -56,7 +58,7 @@ const ExsistingRecurringHeader = ({otherData}:any) => {
 <div className="flex justify-between w-full pb-[16px]">
                 <div className="px-6  bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                     <div className="flex gap-[16px] items-center w-full">
-                        <div className="text-gray-500 text-base font-bold ">Customer:</div>
+                        <div className="text-gray-500 text-base font-bold ">Title:</div>
                        {otherData.party}
                     </div>
                 </div>
@@ -113,7 +115,7 @@ const ExsistingRecurringHeader = ({otherData}:any) => {
                 </div>
                 <div className="px-6 py-2 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full ">
                     <div className="flex gap-[0.2rem] items-center w-full">
-                        <div className="text-gray-500 text-base font-bold  w-[12rem]">Delivery Due Date:</div>
+                        <div className="text-gray-500 text-base font-bold  w-[12rem]">Due Date:</div>
                         {/* <DatePicker
                             className={"text-gray-500 text-base font-medium  w-10/12 border-0 boxShadow-0"}
                             selected={startDate}
@@ -153,8 +155,12 @@ const ExsistingRecurringHeader = ({otherData}:any) => {
                         <div className="text-gray-500 text-base font-bold ">Recurring Expense</div>
                         <div className='w-full flex gap-8'>
                             <input type="text" className="w-[20rem] py-3  text-textGrey2 text-base font-medium px-2 rounded border border-solid border-borderGrey" defaultValue={otherData?.recurringRepeatType} disabled   />
-                            <input type="text" className="w-[20rem] py-3  text-textGrey2 text-base font-medium px-2 rounded border border-solid border-borderGrey" defaultValue={"Starts on" + " " +  new Date(otherData?.recurringStartedOn).toLocaleDateString('en-GB')}  disabled />
-                            <input type="text" className="w-[20rem] py-3  text-textGrey2 text-base font-medium px-2 rounded border border-solid border-borderGrey" defaultValue={"Ends on" + " " +  new Date(otherData?.recurringEndson).toLocaleDateString('en-GB')}  disabled />
+                            {otherData.recurringStartedOn && (
+                                <>
+                                    <input type="text" className="w-[20rem] py-3  text-textGrey2 text-base font-medium px-2 rounded border border-solid border-borderGrey" defaultValue={"Starts on" + " " + new Date(otherData.recurringStartedOn).toLocaleDateString('en-GB')} disabled />
+                                    <input type="text" className="w-[20rem] py-3  text-textGrey2 text-base font-medium px-2 rounded border border-solid border-borderGrey" defaultValue={"Ends on" + " " + (otherData.recurringEndson ? new Date(otherData.recurringEndson).toLocaleDateString('en-GB') : 'N/A')} disabled />
+                                </>
+                            )}
                         </div>
                     </div>
                     <div className='w-full'>
