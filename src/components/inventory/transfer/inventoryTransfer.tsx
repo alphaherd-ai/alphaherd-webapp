@@ -376,8 +376,10 @@ const InventoryTransfer = () => {
             </div>
 
             <div className='w-full  bg-gray-100 mt-10 rounded-t-md border border-solid border-neutral-400'>
-                <div className='w-full h-16  rounded-t-md rounded-b-none mb-8 border-t-0 border-r-0 border-l-0 border-b-[1px]  border-solid border-neutral-400   bg-white'></div>
-                <div className="flex justify-between w-full px-6 pb-[16px]">
+            <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-end items-center gap-6 flex">
+                    {/* <div className='flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'><Image src={Download} alt='Download' className='w-4  h-4' /></div> */}
+                </div>
+                <div className="flex justify-between w-full pr-[16px] pl-[16px] pt-[20px]">
                     <div className="px-6 bg-white rounded-[10px] h-14 justify-between items-center gap-4 flex w-full mr-[16px]">
                         <div className="flex gap-[16px] items-center w-full">
                             <div className="text-gray-500 text-base font-bold">Branch:</div>
@@ -414,7 +416,7 @@ const InventoryTransfer = () => {
                         </div>
                     </div>
                 </div>
-                <div className="flex px-6  justify-between w-full pb-[16px]">
+                <div className="flex px-[16px]  justify-between w-full pt-[16px] pb-[16px]">
                     <div className="px-6 h-14  bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                         <div className="flex gap-[0.8rem] items-center w-full">
                             <div className="text-gray-500 text-base font-bold  w-1/8">Date:</div>
@@ -457,7 +459,7 @@ const InventoryTransfer = () => {
                     </div>
 
                 </div>
-                <div className="flex h-14 px-6 justify-between w-full mt-1 pb-[16px]">
+                <div className="flex h-14 px-[16px] justify-between w-full mt-1 pb-[16px]">
                     <div className="px-6 py-1 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full">
                         <div className="flex gap-[16px] items-center w-full">
                             <div className="text-gray-500 text-base font-bold py-3">Notes:</div>
@@ -474,7 +476,7 @@ const InventoryTransfer = () => {
                     </div>
                 </div>
 
-                <div className='w-full h-fit  bg-gray-100 px-6 rounded-md '>
+                <div className='w-full h-fit  bg-gray-100 px-[16px] rounded-md '>
                     <div className='w-full h-14 bg-white flex rounded-t-md rounded-b-0 border border-solid border-neutral-400 items-center text-gray-500 text-md font-bold px-6'>Items</div>
                     <div className='flex px-4  w-full  box-border bg-gray-100  h-12 justify-evenly  items-center border-0 border-b border-l border-r  border-solid border-neutral-400 text-textGrey2'>
                         <div className=' flex text-gray-500 text-base font-medium   w-1/12 '>No</div>
@@ -564,7 +566,7 @@ const InventoryTransfer = () => {
 
                 </div>
 
-                <div className='w-full px-6 mt-4  h-12 mb-10  rounded-md'>
+                <div className='w-full px-[16px] mt-4  h-12 mb-10  rounded-md'>
                     <div className='px-2 w-full flex text-gray-500 text-base font-bold items-center h-full bg-white rounded-md'>
                         <p className='w-2/12'>Delivery Due Date:</p>
                         <div className="customDatePickerWidth">

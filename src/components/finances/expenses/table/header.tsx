@@ -88,37 +88,6 @@ const FinancesExpensesTableHeader = ({ recurringCount, nonrecurringCount }: any)
 
                         <div className='flex items-center justify-center w-7 h-7 border border-solid border-gray-300 border-0.5 rounded-md  p-1'><Image src={Chart} alt='Chart' className='w-4  h-4' /></div>
                     </Link> */}
-                    <div className='flex items-center justify-center h-7   mr-4 border border-solid border-gray-300 border-0.5 rounded-lg p-2'>
-                        <div className='flex '><Image src={Sort} alt='Sort' className='w-3 h-3 mr-2' /></div>
-
-                        <Dropdown>
-                            <DropdownTrigger className='z-0'>
-                                <Button
-                                    //   variant="bordered" 
-                                    variant="solid"
-                                    className="capitalize border-none  bg-transparent rounded-lg"
-                                >
-                                    {selectedSortValue}
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                aria-label="Single selection example"
-                                className=" text-base  text-gray-500 bg-gray-200 rounded-lg"
-                                variant="solid"
-                                disallowEmptySelection
-                                selectionMode="single"
-                                selectedKeys={selectedSort}
-                            // onChange={setselectedSort}
-                            >
-                                <DropdownItem
-                                    className=" p-2 text-base" key="Category:text">Sort:Recently Used</DropdownItem>
-                                <DropdownItem
-                                    className=" p-2 text-base" key="Category:number">Sort:Recently Used</DropdownItem>
-                                <DropdownItem
-                                    className=" p-2 text-base" key="Category:date">Date</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
-                    </div>
                     <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg bg-[#35BEB1]'>
 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => alert("cross icon clicked")} className='cursor-pointer'>
 <mask id="mask0_1198_18016" maskUnits="userSpaceOnUse" x="0" y="0" width="16" height="16">
