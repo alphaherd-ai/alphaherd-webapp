@@ -28,7 +28,7 @@ const FinancesNavbar = () => {
     useEffect(() => {
         if (!error && !isLoading && data) {
             const options = data.map((item: any) => ({
-                label: item.sale?(`${item.sale?.customer}------${item.sale?.invoiceNo}`):item.purchases?(`${item.purchases?.distributor}------${item.purchases?.invoiceNo}`):item.expenses?(`${item.expenses?.party}------${item.expenses?.invoiceNo}`):"",
+                label: item.sale?(`${item.sale?.invoiceNo}-${item.sale?.customer}`):item.purchases?(`${item.purchases?.invoiceNo}-${item.purchases?.distributor}`):item.expenses?(`${item.expenses?.invoiceNo}-${item.expenses?.party}`):"",
                 value: item
             }));
             setSearchData(data);

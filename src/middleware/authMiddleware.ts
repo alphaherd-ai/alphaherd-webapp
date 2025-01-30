@@ -21,6 +21,15 @@ export const nonApiMiddleware: NextMiddleware = async (request: NextRequest) => 
   
   try {
     const decryptedSession = await decrypt(session);
+    const currentTime = Math.floor(Date.now() / 1000);
+    if (decryptedSession.exp < currentTime) {
+      const loginPath = `${process.env.NEXT_PUBLIC_API_BASE_PATH}/auth/login`;
+      if (request.nextUrl.pathname !== '/auth/login') {
+      return NextResponse.redirect(loginPath);
+      } else {
+      return NextResponse.next();
+      }
+    }
     if(!decryptedSession.id){
       const loginPath = `${process.env.NEXT_PUBLIC_API_BASE_PATH}/auth/login`;
       if (request.nextUrl.pathname !== '/auth/login') {

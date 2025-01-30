@@ -66,7 +66,6 @@ const FinancesPurchasesTableItem = ({ onCountsChange, purchases, data, isLoading
           <div className='w-[8rem] flex  items-center  text-base font-medium'>{purchase.totalQty} items</div>
           <div className='w-[8rem] flex  items-center  text-base font-medium'>{formatDateAndTime(purchase.dueDate).formattedDate}</div>
           <div className='w-[13rem] flex  items-center  text-base font-medium'>
-            <Tooltip content={purchase.status} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
               <div>
                 {
                   (() => {
@@ -90,7 +89,7 @@ const FinancesPurchasesTableItem = ({ onCountsChange, purchases, data, isLoading
                   })
                     ()}
               </div >
-            </Tooltip>
+
 
           </div>
           <div className=' right-16'>

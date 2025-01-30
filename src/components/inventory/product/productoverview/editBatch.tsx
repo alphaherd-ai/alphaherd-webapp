@@ -9,6 +9,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
 import { useAppSelector } from '@/lib/hooks';
+import { toast, Bounce } from 'react-toastify';
 
 import Loading2 from "@/app/loading2";
 import { set } from "date-fns";
@@ -25,12 +26,12 @@ interface Distributors {
 
 
 const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch }) => {
-
+    console.log(editBatch);
     const [formData, setFormData] = useState<any>({});
     const [saving, isSaving] = useState(false);
     const appState = useAppSelector((state) => state.app);
     const [distributor, setDistributor] = useState<any>([]);
-
+    
     useEffect(() => {
 
         const fetchDistributors = async () => {
@@ -42,15 +43,36 @@ const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch }) => {
                 }));
                
                 setDistributor(filteredDistributors);
-            } catch (error) {
-               
+            } catch (err : any) {
+                toast.error(err.message, {
+                  position: "bottom-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "colored",
+                  transition: Bounce,
+                });
             }
         }
         fetchDistributors();
+        if(editBatch){
+            setFormData({
+                batchNumber: editBatch.batchNumber,
+                expiry: editBatch.expiry,
+                costPrice: editBatch.costPrice,
+                maxRetailPrice: editBatch.maxRetailPrice,
+                sellingPrice: editBatch.sellingPrice,
+                distributors: [editBatch.distributors[0]]
+            });
+        }
     }, []);
 
     const handleSave = async() => {
         const body=formData;
+        console.log('Body:', body);
         try{
             isSaving(true);
             const res=await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/edit/${editBatch.id}?branchId=${appState.currentBranchId}`,body,
@@ -64,8 +86,19 @@ const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch }) => {
             }
 
         }
-        catch(err){
-            console.log(err);
+        catch(err : any){
+            console.error('Error:', err);
+            toast.error(err.message, {
+              position: "bottom-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              transition: Bounce,
+            });
         }
         finally{
             isSaving(false);
@@ -115,10 +148,7 @@ const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch }) => {
             color: '#A2A3A3',
         }),
     };
-
-
-    
-
+    console.log(formData);
 
     return <>
 
@@ -132,29 +162,34 @@ const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch }) => {
                 <div className="text-gray-500 text-xl font-medium ">Edit Batch</div>
                 <div className="text-textGrey1 text-base font-medium ">Fill the respective Field to edit</div>
                 <div className="flex items-center">
+                    {distributor.length > 0 && (<>
                     <div className="text-gray-500 text-base font-medium  w-[8rem]">Distributor</div>
                     <div className="w-[448px]">
-                        <Select
-                            className="text-gray-500 text-base font-medium border-0 boxShadow-0"
-                            placeholder="Select"
-                            isClearable={false}
-                            isSearchable={true}
-                            options={distributor}
-                            isMulti={false}
-                            name={`providers`}
-                            onChange={(selectedOption: any) => setFormData((prev: any) => ({
-                                ...prev,
-                                distributors: [selectedOption ? selectedOption.label : '']
-                            }))}
-                            styles={customStyles}
-                        />
+                            <Select
+                                className="text-gray-500 text-base font-medium border-0 boxShadow-0"
+                                placeholder="Select"
+                                isClearable={false}
+                                isSearchable={true}
+                                options={distributor}
+                                isMulti={false}
+                                name={`providers`}
+                                defaultValue={distributor.find((d: any) => d.label === editBatch.distributors[0])}
+                                onChange={(selectedOption: any) => setFormData((prev: any) => ({
+                                    ...prev,
+                                    distributors: [selectedOption ? selectedOption.label : '']
+                                }))}
+                                styles={customStyles}
+                            />
                     </div>
+                    </>
+                        )}
                 </div>
 
                 <div className="flex items-center gap-[20px]">
                     <div className="text-gray-500 text-base font-medium ">Batch Number</div>
                     <div>
                         <input className="w-[448px] h-9  text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="string"
+                            defaultValue={editBatch.batchNumber}
                             onChange={(e) => setFormData((prev: any) => ({
                                 ...prev,
                                 batchNumber: (e.target.value)
@@ -168,18 +203,16 @@ const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch }) => {
                     <div className="text-gray-500 text-base font-medium  w-2/12">Expiry Date</div>
                     <div className="flex w-10/12">
                         <DatePicker
-
                             className="w-full rounded-[5px] text-gray-500 text-md border border-solid border-borderGrey outline-none  focus:border focus:border-textGreen px-1 py-2"
-                            selected={formData.expiry}
+                            selected={editBatch.expiry ? new Date(editBatch.expiry) : null}
                             placeholderText="MM/DD/YYYY"
                             onChange={(date: any) => {
                                 setFormData((prev: any) => ({
                                     ...prev,
-                                    expiry: date
+                                    expiry: date.toISOString()
                                 }))
                             }}
                             calendarClassName="react-datepicker-custom"
-
                         />
                     </div>
                 </div>
@@ -191,6 +224,7 @@ const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch }) => {
 
                         <div className="flex-1 ml-1">
                             <input className="w-full px-2 h-9 text-textGrey2 text-base font-medium   focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="number"
+                                defaultValue={editBatch.costPrice}
                                 onChange={(e) => setFormData((prev: any) => ({
                                     ...prev,
                                     costPrice: Number(e.target.value)
@@ -207,9 +241,10 @@ const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch }) => {
 
                         <div className="flex-1 ml-1">
                             <input className="w-full px-2 h-9 text-textGrey2 text-base font-medium   focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="number"
+                                defaultValue={editBatch.maxRetailPrice}
                                 onChange={(e) => setFormData((prev: any) => ({
                                     ...prev,
-                                    totalCost: Number(e.target.value)
+                                    maxRetailPrice: Number(e.target.value)
                                 }))} />
 
                         </div>
@@ -223,6 +258,7 @@ const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch }) => {
 
                         <div className="flex-1 ml-1">
                             <input className="w-full px-2 h-9 text-textGrey2 text-base font-medium   focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="number"
+                                defaultValue={editBatch.sellingPrice}
                                 onChange={(e) => setFormData((prev: any) => ({
                                     ...prev,
                                     sellingPrice: Number(e.target.value)

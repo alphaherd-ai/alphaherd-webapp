@@ -740,26 +740,26 @@ const ProductDetails = () => {
                             <div className='flex text-textGrey2 text-base font-medium w-2/12'>Distributor</div>
                             <div className='flex text-textGrey2 text-base font-medium w-1/12'>Batch Number</div>
                             <div className='flex text-textGrey2 text-base font-medium w-1/12'>Expiry Date</div>
+                            <div className='flex text-textGrey2 text-base font-medium w-1/12'>Bar Code</div>
 
                             <div className='flex text-textGrey2 text-base font-medium w-1/12 '>Cost per item</div>
                             <div className='flex text-textGrey2 text-base font-medium w-1/12 pl-4'>MRP</div>
-                            <div className='flex text-textGrey2 text-base font-medium w-1/12'>Selling Price</div>
                             <div className='flex justify-center text-textGrey2 text-base font-medium w-1/12'>Margin</div>
                             <div className='flex justify-center text-textGrey2 text-base font-medium w-2/12'>Location</div>
-                            <div className='flex text-textGrey2 text-base font-medium w-1/12'></div>
+                            <div className='flex text-textGrey2 text-base font-medium w-[3.5%]'></div>
                         </div>
 
-                        {product?.productBatches?.filter((item: any) => !item.isDeleted).map((item: any) => (
-                            <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                        {product?.productBatches?.sort((a: any, b: any) => a.id - b.id).map((item: any) => (
+                            <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 justify-evenly '>
                                 <div className='px-2 w-1/12  flex items-center text-borderGrey text-base font-medium'>{item.quantity} Strips</div>
                                 <div className='w-2/12  flex items-center text-borderGrey text-base font-medium'>{item.distributors[0]}</div>
                                 <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>{item.batchNumber}</div>
-                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>{formatDateAndTime(item.expiry).formattedDate}</div>
+                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>{item.expiry ? formatDateAndTime(item.expiry).formattedDate : ''}</div>
+                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>{product.hsnCode}</div>
 
-                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>{item.costPrice}</div>
-                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium pl-4'>₹399</div>
-                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>{item.sellingPrice}</div>
-                                <div className='w-1/12 justify-center  flex items-center text-borderGrey text-base font-medium'>{(item.quantity / item.maxStock) * 100}%</div>
+                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>₹{item.costPrice}</div>
+                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium pl-4'>₹{item.maxRetailPrice}</div>
+                                <div className='w-1/12 justify-center  flex items-center text-borderGrey text-base font-medium'>{((((item.maxRetailPrice) - (item.costPrice)) / (item.maxRetailPrice)) * 100).toFixed(2)}%</div>
                                 <div className="w-2/12 justify-center  flex items-center gap-2">
                                     <div className="w-fit flex items-center text-orange-500 text-[0.8rem] font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center ">{item?.location}</div>
                                 </div>
@@ -796,7 +796,7 @@ const ProductDetails = () => {
 
         </div>
         {showPopup2 && <Popup2 onClose={togglePopup2} individualSelectedProduct={product} />}
-        {isEditing && <EditBatchPopup setisEditing={setIsEditing} editBatch={isEditingBatch} />}
+        {isEditing && <EditBatchPopup setisEditing={setIsEditing} editBatch={isEditingBatch}  />}
         {isDeleting && <ConfirmationPopup setisDeleting={setIsDeleting} deleteBatch={isEditingBatch} />}
     </>
 }
