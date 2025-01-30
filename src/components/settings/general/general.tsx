@@ -944,8 +944,8 @@ const deleteTaxType= async (id: string) => {
     return (
     <>
         <div className="w-full h-full mt-4">
-            <div className="w-full flex-col justify-start items-start gap-[20px] flex">
-                <div className="w-full p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border border-neutral-400 flex-col justify-center items-start gap-6 flex text-gray-500 text-xl font-medium ">
+                    <div className="w-full flex-col justify-start items-start flex">
+                <div className="w-full p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border border-neutral-400 flex-col justify-center items-start text-gray-500 text-xl font-medium">
                     General Settings
                 </div>
                 <div className="w-full px-4 py-5 bg-gray-100 border border-neutral-400 flex-col justify-start items-start gap-4 flex">
