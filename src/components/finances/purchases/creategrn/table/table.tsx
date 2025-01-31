@@ -798,33 +798,56 @@ const CreateGrnTable = () => {
 
                                         <div className=' flex text-gray-500 text-base font-medium w-[15rem]'></div>
 
-                                        <div className=' flex text-gray-500 text-base font-medium w-[12rem]'></div>
-                                        <div className=' flex text-gray-500 text-base font-medium w-[15rem] '></div>
-                                        <div className=' flex text-gray-500 text-base font-bold w-[18rem]'>{(items.reduce((acc: any, item: any) => { if (!item.itemName) return acc; return acc + item.quantity }, 0)) || 0} Items</div>
-                                        <div className=' flex text-gray-500 text-base font-bold w-[18rem]'>{(items.reduce((acc: any, item: any) => { if (!item.itemName) return acc; return acc + item.freeQuantity }, 0)) || 0} Items</div>
-                                        <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
-                                        <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{isNaN(items.reduce((acc, item) => { if (!item.itemName) return acc; return acc + (item.quantity * Number(item.unitPrice)) }, 0)) ? 0 : items.reduce((acc, item) => { if (!item.itemName) return acc; return acc + (item.quantity * Number(item.unitPrice)) }, 0).toFixed(2)}</div>
-                                        <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
-                                        <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
-                                        <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{isNaN(items.reduce((acc, item) => { if (!item.itemName) return acc; return acc + (item.gst) * (item.quantity * Number(item.unitPrice)) }, 0)) ? 0 : items.reduce((acc, item) => { if (!item.itemName) return acc; return acc + (item.gst) * (item.quantity * Number(item.unitPrice)) }, 0).toFixed(2)}</div>
-                                        <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
-                                        <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{isNaN(items.reduce((acc, item) => { if (!item.itemName) return acc; return acc + (item.discountPercent / 100) * (item.quantity * Number(item.unitPrice)) }, 0)) ? 0 : items.reduce((acc, item) => { if (!item.itemName) return acc; return acc + (item.discountPercent / 100) * (item.quantity * Number(item.unitPrice)) }, 0).toFixed(2)}</div>
-                                        <div className=' flex text-gray-500 text-base font-bold w-1/12'></div>
-                                    </div>
-                                </div>
-                                <div className="flex-col shadow-left">
-                                    <div className="flex items-center justify-center  w-[10rem] h-12 text-gray-500 border-t-0 border-r-0 border-l border-b border-solid border-borderGrey">
-                                        <div className=' flex text-gray-500 text-base font-medium '>Total</div>
-                                    </div>
-                                    {items.map((item: any, index: number) => (
-                                        <div key={item.id} className="flex items-center justify-center  w-[10rem] box-border bg-white text-gray-500 border-t-0 border-r-0 border-l border-b border-solid border-gray-200 h-12">
-                                            <div className=' flex text-gray-500 text-base font-medium'>₹{isNaN(((item.gst - item.discountPercent / 100 + 1) * (item.quantity * Number(item.unitPrice)))) ? 0 : ((item.gst - item.discountPercent / 100 + 1) * (item.quantity * Number(item.unitPrice))).toFixed(2)}</div>
-                                        </div>
-                                    ))}
-                                    <div className=' flex text-textGreen text-base font-bold w-[10rem] h-12 items-center justify-center'>₹{isNaN(items.reduce((acc, item) => { if (!item.itemName) return acc; return acc + (item.gst - item.discountPercent / 100 + 1) * (item.quantity * Number(item.unitPrice)) }, 0)) ? 0 : items.reduce((acc, item) => { if (!item.itemName) return acc; return acc + (item.gst - item.discountPercent / 100 + 1) * (item.quantity * Number(item.unitPrice)) }, 0).toFixed(2)}</div>
-                                </div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[12rem]'></div>
+                            <div className=' flex text-gray-500 text-base font-medium w-[15rem] '></div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[18rem]'>{(items.reduce((acc: any, item: any) => { if (!item.itemName) return acc; return acc + item.quantity }, 0)) || 0} Items</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[18rem]'>{(items.reduce((acc: any, item: any) => { if (!item.itemName) return acc; return acc + item.freeQuantity }, 0)) || 0} Items</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{isNaN(items.reduce((acc, item) => { if (!item.itemName) return acc; return acc + (item.quantity*Number(item.unitPrice)) }, 0)) ? 0 : items.reduce((acc, item) => {if (!item.itemName) return acc; return acc + (item.quantity*Number(item.unitPrice))} , 0).toFixed(2)}</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{isNaN(items.reduce((acc, item) => { if (!item.itemName) return acc; return acc + (item.gst)*(item.quantity*Number(item.unitPrice))} , 0)) ? 0 : items.reduce((acc, item) => { if (!item.itemName) return acc; return acc + (item.gst)*(item.quantity*Number(item.unitPrice))} , 0).toFixed(2)}</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
+                            <div className='flex text-gray-500 text-base font-bold w-[12rem]'>
+                                ₹{
+                                    items.reduce((acc, item) => {
+                                        if (!item.itemName) return acc;
+                                        const discount = (item.discountPercent || 0) / 100; // Default to 0 if discountPercent is undefined
+                                        return acc + discount * (item.quantity * Number(item.unitPrice));
+                                    }, 0).toFixed(2)
+                                }
                             </div>
+                            <div className=' flex text-gray-500 text-base font-bold w-1/12'></div>
+                        </div>
+                    </div>
+                    <div className="flex-col shadow-left">
+                    <div className="flex items-center justify-center  w-[10rem] h-12 text-gray-500 border-t-0 border-r-0 border-l border-b border-solid border-borderGrey">
+                        <div className=' flex text-gray-500 text-base font-medium '>Total</div>
+                    </div>
+                    {items.map((item: any, index: number) => (
+                        <div key={item.id} className="flex items-center justify-center w-[10rem] box-border bg-white text-gray-500 border-t-0 border-r-0 border-l border-b border-solid border-gray-200 h-12">
+                            <div className='flex text-gray-500 text-base font-medium'>
+                                ₹{
+                                    isNaN(((item.gst - (item.discountPercent || 0) / 100 + 1) * (item.quantity * Number(item.unitPrice))))
+                                    ? 0 
+                                    : ((item.gst - (item.discountPercent || 0) / 100 + 1) * (item.quantity * Number(item.unitPrice))).toFixed(2)
+                                }
+                            </div>
+                        </div>
+                    ))}
 
+                <div className='flex text-textGreen text-base font-bold w-[10rem] h-12 items-center justify-center'>
+                    ₹{
+                        items.reduce((acc, item) => {
+                            if (!item.itemName) return acc;
+                            return acc + ((item.gst - (item.discountPercent || 0) / 100 + 1) * (item.quantity * Number(item.unitPrice)));
+                        }, 0).toFixed(2)
+                    }
+                </div>
+
+                    </div>
+                    </div>
+                    
 
                         </div>
                     </div>

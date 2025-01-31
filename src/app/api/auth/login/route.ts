@@ -17,14 +17,14 @@ export const POST = async (req: NextRequest) => {
   // console.log(userInviteString)
 
   try {
-    const { email, password } = await req.json();
-
+    const { data, staysignedin } = await req.json();
+    
     // adminOrganizations Organization[]
     // orgBranchId        Int?
     // userRoles          OrgBranchUserRole[]
 
     let user = await prismaClient.user.findUnique({
-      where: { email },
+      where: { email:data.email },
       include: {
         adminOrganizations: {
           select: {
@@ -51,26 +51,25 @@ export const POST = async (req: NextRequest) => {
       return new Response(JSON.stringify({ "message": 'User not found' }), { status: 404 });
     }
 
-    const validPassword = await bcrypt.compare(password, user.hashedPassword);
+    const validPassword = await bcrypt.compare(data.password, user.hashedPassword);
 
     if (!validPassword) {
       return new Response(JSON.stringify({ "message": 'Invalid password' }), { status: 401 });
     }
     const session = await encrypt({ id: user.id }, "36500d");
 
-    // Save the session in a cookie
+    console.log(staysignedin);
     cookies().set("session", session, {
-      httpOnly: true, // Cookie is accessible only through HTTP(S) requests
-      secure: process.env.NODE_ENV === 'production', // Cookie is sent only over HTTPS in production
-      sameSite: 'strict', // Cookie is not sent in cross-site requests
-      maxAge: 60 * 60 * 24 * 7, // Cookie expires in 7 days
-      path: '/', // Cookie is accessible from all paths in the domain
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: staysignedin ? 60 * 60 * 24 * 7 : undefined, // 7 days or session cookie
+      path: '/',
     });
     if (userInviteString) {
-      console.log("Inside the invite String");
+      // console.log("Inside the invite String");
       const { branchId, role, email } = await decrypt(userInviteString);
 
-      console.log(branchId, role, email);
       const orgBranchUserRole = await prismaClient.orgBranchUserRole.findFirst({
         where: {
           userId: user.id,
@@ -118,10 +117,6 @@ export const POST = async (req: NextRequest) => {
             },
           },
         });
-
-
-
-
       }
 
       await prismaClient.user.update({
@@ -132,8 +127,6 @@ export const POST = async (req: NextRequest) => {
           orgBranchId: Number(branchId)
         }
       });
-
-
       user = await prismaClient.user.findUnique({
         where: { email: email },
         include: {
@@ -147,12 +140,8 @@ export const POST = async (req: NextRequest) => {
           userRoles: {}
         }
       });
-
-
-
-
     }
-    console.log(user);
+    // console.log(user);
     return new Response(JSON.stringify({ user }), {
       status: 200,
       headers: {

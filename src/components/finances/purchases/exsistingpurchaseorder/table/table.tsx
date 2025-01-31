@@ -41,6 +41,7 @@ const ExsistingPurchasesTable = () => {
                 id: item.productId,
                 itemName: item.name,
                 quantity: item.quantity,
+                freequantity : item.freequantity,
                 defaultUnit: item.products?.defaultUnit,
                 sellingPrice: item.sellingPrice,
                 tax: item.taxAmount,

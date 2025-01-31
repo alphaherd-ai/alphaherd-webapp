@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Sort from '../../../../assets/icons/finance/sort.svg';
 import Filter from '../../../../assets/icons/finance/filter.svg';
 import Chart from '../../../../assets/icons/finance/chart.svg';
@@ -54,6 +54,18 @@ const FinancesTransactionsTableHeader = ({transactions}:any) => {
       }
     }, [count, showPopup]);
     const [existingPaymentMethods, setExistingPaymentMethods] = useState<string[]>([]);
+    const fetchExistingPaymentMethods = useCallback(async () => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/paymentMethod/getAll?branchId=${appState.currentBranchId}`);
+            const data: { name: string }[] = await response.json();
+            const paymentMethodNames = Array.from(new Set(data.map((item: { name: string }) => item.name)));
+            setExistingPaymentMethods(paymentMethodNames);
+            console.log('Existing Payment Methods fetched:', paymentMethodNames); 
+        } catch (error) {
+            console.error('Error fetching existing payment methods:', error);
+        }
+    },[existingPaymentMethods])
+
     useEffect(() => {
             const fetchExistingPaymentMethods = async () => {
                 try {

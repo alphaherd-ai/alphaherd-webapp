@@ -4,8 +4,12 @@ import prismaClient from '../../prisma';
 export const nonApiMiddleware: NextMiddleware = async (request: NextRequest) => {
   const session = request.cookies.get("session")?.value;
   const { pathname } = request.nextUrl;
-
   if (pathname.startsWith("/_next")) return NextResponse.next();
+  const assetExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.mp4', '.webm', '.ogg'];
+  
+  if (assetExtensions.some(ext => pathname.endsWith(ext))) {
+    return NextResponse.next();
+  }
   if (!session) {
     const loginPath = `${process.env.NEXT_PUBLIC_API_BASE_PATH}/auth/login`;
     if (request.nextUrl.pathname !== '/auth/login') {
@@ -17,6 +21,15 @@ export const nonApiMiddleware: NextMiddleware = async (request: NextRequest) => 
   
   try {
     const decryptedSession = await decrypt(session);
+    const currentTime = Math.floor(Date.now() / 1000);
+    if (decryptedSession.exp < currentTime) {
+      const loginPath = `${process.env.NEXT_PUBLIC_API_BASE_PATH}/auth/login`;
+      if (request.nextUrl.pathname !== '/auth/login') {
+      return NextResponse.redirect(loginPath);
+      } else {
+      return NextResponse.next();
+      }
+    }
     if(!decryptedSession.id){
       const loginPath = `${process.env.NEXT_PUBLIC_API_BASE_PATH}/auth/login`;
       if (request.nextUrl.pathname !== '/auth/login') {

@@ -90,13 +90,17 @@ const FinacesOverviewTableItem = ({ currentPageNumber, setCurrentPageNumber, set
           <Link className='no-underline text-textGrey2' href={{
             pathname: data.type === FinanceCreationType.Sales_Estimate ? 'sales/existingsalesestimate' :
               data.type === FinanceCreationType.Sales_Invoice ? 'sales/existingsales' :
-                data.type === FinanceCreationType.Sales_Return ? 'sales/existingsalesreturn' : "",
-            query: { id: data.salesId }
+              data.type === FinanceCreationType.Sales_Return ? 'sales/existingsalesreturn' : 
+              data.type === FinanceCreationType.Purchase_Order ? 'purchases/exsistingpurchaseorder' :
+              data.type === FinanceCreationType.Purchase_Invoice ? 'purchases/exsistinggrn' :
+              data.type === FinanceCreationType.Purchase_Return ? 'purchases/exsistingpurchasereturn' : 
+              data.type === FinanceCreationType.Expense_NonRecurring ? 'expenses/exsistingnonrecurring' :
+              data.type === FinanceCreationType.Expense_Recurring ? 'expenses/exsistingrecurring' : "",
+              query: { id: data.salesId || data.purchasesId || data.expensesId }
           }}> <div className='w-[10rem] flex  items-center    text-base font-medium'>{data.type || data.expense?.type || "unknown"}</div></Link>
           <div className='w-[12rem] flex  items-center    text-base font-medium'>{data.sale?.customer || data.purchases?.distributor || data.expenses?.party || "unknown"}</div>
           <div className='w-[12rem] flex  items-center    text-base font-medium'>{data.sale?.invoiceNo || data.purchases?.invoiceNo || data.expenses?.invoiceNo}</div>
           <div className='w-[8rem] flex  items-center    text-base font-medium'>{(data.sale?.totalCost || data.purchases?.totalCost || data.expenses?.totalCost)?.toFixed(2)}</div>
-          <div className='w-[8rem] flex  items-center    text-base font-medium'>{data.sale?.totalQty || data.purchases?.totalQty || data.expenses?.totalQty}</div>
           <div className='w-[8rem] flex  items-center    text-base font-medium'>{formatDateAndTime(data.sale?.dueDate || data.purchases?.dueDate || data.expenses?.dueDate).formattedDate}</div>
 
           <div className='w-[10rem] flex  items-center  text-base font-medium'>
