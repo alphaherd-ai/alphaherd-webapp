@@ -188,7 +188,7 @@ const ExistingsaleEstimateBottomBar = ({ existingSalesData }: any) => {
 
         <>
             {!(existingSalesData?.status === 'Cancelled') &&
-                <div>
+                <div className='w-full'>
                     <PopupEmailInput
                         isOpen={isPopupOpen}
                         email={email}

@@ -73,7 +73,7 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
             newCreditedToken: (id === null) ? newCreditedToken : -1,
             notes: (id === null) ? allData.headerData.notes : estimateData.notes,
             subTotal: allData.totalAmountData.subTotal,
-            invoiceNo: (id === null) ? allData.headerData.invoiceNo : estimateData.invoiceNo,
+            invoiceNo: allData.headerData.invoiceNo,
             dueDate: (id === null) ? allData.headerData.dueDate : estimateData.dueDate,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
@@ -219,7 +219,7 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
 
                 }),
             });
-            // console.log('Whatsapp Message sent successfully:', response);
+            
         } catch (error) {
             console.error('Error while sending message', error);
         }
@@ -287,7 +287,6 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
                 </div>
             </div>
         </>
-
     )
 };
 

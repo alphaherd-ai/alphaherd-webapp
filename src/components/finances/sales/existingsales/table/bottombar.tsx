@@ -118,7 +118,7 @@ const ExistingsalesBottomBar = ({ existingSalesData }: any) => {
   return (
     <>
       {!(existingSalesData?.status === 'Cancelled') &&
-        <div>
+        <div className="w-full">
           <PopupEmailInput
             isOpen={isPopupOpen}
             email={email}
@@ -142,6 +142,7 @@ const ExistingsalesBottomBar = ({ existingSalesData }: any) => {
                 <div>Share</div>
               </div>
             </div>
+
             <div className="flex justify-between items-center gap-4 pr-4">
               <Link href={{ pathname: 'newsales', query: { id: existingSalesData?.id } }} style={{ textDecoration: 'none', color: 'white' }}>
                 <div className="px-4 py-[0.78rem] bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">

@@ -2,6 +2,7 @@
   "name": "alphaherd-webapp",
   "version": "0.1.0",
   "private": true,
+  
   "scripts": {
     "dev": "npx prisma generate --no-engine && next dev",
     "build": "next build",
@@ -28,6 +29,7 @@
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
     "bull": "^4.16.0",
+    "bullmq": "^5.34.10",
     "chart.js": "^4.4.2",
     "cloudinary": "^2.0.0",
     "context-api": "^0.0.2",
@@ -42,6 +44,7 @@
     "framer-motion": "^11.0.15",
     "get-stream": "^9.0.1",
     "install": "^0.13.0",
+    "ioredis": "^5.4.2",
     "jsonwebtoken": "^9.0.2",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.2",

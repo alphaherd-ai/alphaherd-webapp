@@ -91,9 +91,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             expiry: data.expiry,
             batchNumber: data.batchNumber,
             hsnCode: data.barCode,
-
             location:data.location,
-
             isApproved: appState.isCurrentOrgAdmin ? true : false,
             costPrice: Number(data.unitPrice)
         }));
@@ -103,7 +101,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             distributorId: (id === null) ? allData.headerData.distributor.distributorId : orderData.distributorId,
             newCreditedToken: (id === null) ? newCreditedToken : -1,
             notes:  allData.headerData.notes ,
-            invoiceNo: (id === null) ? allData.headerData.invoiceNo : orderData.invoiceNo,
+            invoiceNo: allData.headerData.invoiceNo ,
             dueDate: (id === null) ? allData.headerData.dueDate : orderData.dueDate,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,

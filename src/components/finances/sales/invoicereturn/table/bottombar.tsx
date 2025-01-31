@@ -24,7 +24,7 @@ const InvoiceReturnBottomBar = ({ invoiceData }: any) => {
     const id = url.get('id');
     const router = useRouter();
     const [isSaving, setSaving] = useState(false);
-
+    //console.log(headerData);
 
 
 
@@ -59,7 +59,7 @@ const InvoiceReturnBottomBar = ({ invoiceData }: any) => {
             email: (id === null) ? allData.headerData.customer.value.email : "",
             notes: (id === null) ? allData.headerData.notes : invoiceData.notes,
             subTotal: allData.totalAmountData.subTotal,
-            invoiceNo: (id === null) ? allData.headerData.invoiceNo : invoiceData.invoiceNo,
+            invoiceNo:  allData.headerData.invoiceNo,
             dueDate: (id === null) ? allData.headerData.dueDate : invoiceData.dueDate,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,

@@ -115,7 +115,8 @@ const NewsalesHeader = ({ existingHeaderData, isNewClientClicked, newClient }: a
 
     useEffect(() => {
         if (id) {
-            setHeaderData(existingHeaderData)
+            const updatedHeaderData = { ...existingHeaderData, invoiceNo };
+            setHeaderData(updatedHeaderData);
         }
         else {
             setHeaderData((prevData) => ({ ...prevData, invoiceNo: invoiceNo, dueDate:dueDate }))
@@ -187,7 +188,7 @@ const NewsalesHeader = ({ existingHeaderData, isNewClientClicked, newClient }: a
                                     onChange={(e) => setHeaderData((prevData) => ({ ...prevData, invoiceNo: e.target.value }))}
                                 />
                             ) : (
-                                existingHeaderData.invoiceNo
+                                headerData.invoiceNo
                             )}
                             {/* <button onClick={handleEditButtonClick} className="border-0 mr-5">
                                 <Image src={editicon} alt="edit" />

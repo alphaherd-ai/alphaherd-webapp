@@ -19,7 +19,7 @@ export const PUT = async (req: NextRequest, { params }: { params: { invoice: str
         
         //console.log(receiptNo);
         if (otherData.amountPaid) {
-            otherData.amountPaid = parseInt(otherData.amountPaid, 10); // Ensure it's an integer
+            otherData.amountPaid = parseInt(otherData.amountPaid, 10); 
         }
 
 

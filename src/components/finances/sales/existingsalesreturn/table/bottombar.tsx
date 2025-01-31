@@ -159,7 +159,7 @@ const ExistingsalesReturnBottomBar = ({ existingSalesData }: any) => {
   return (
     <>
       {!(existingSalesData?.status === 'Cancelled') &&
-        <div>
+        <div className="w-full">
           <PopupEmailInput
             isOpen={isPopupOpen}
             email={email}

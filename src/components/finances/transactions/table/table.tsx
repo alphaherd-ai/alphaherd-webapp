@@ -83,8 +83,8 @@ const FinancesTransactionsTable = () => {
       <div className='flex px-2 w-full  box-border bg-gray-100  h-12 items-center justify-evenly border-0 border-t border-b border-solid border-borderGrey text-textGrey2'>
         <div className=' flex text-textGrey2 text-base font-medium  w-[6rem] '>Date</div>
         <div className=' flex text-textGrey2 text-base font-medium  w-[6rem] '>Time</div>
-        <div className=' flex text-textGrey2 text-base font-medium  w-[12rem]'>Party</div>
-        <div className=' flex text-textGrey2 text-base font-medium  w-[9rem] '>Receipt NO.</div>
+        <div className=' flex text-textGrey2 text-base font-medium  w-[12rem]'>Client/Distributor</div>
+        <div className=' flex text-textGrey2 text-base font-medium  w-[9rem] '>Receipt No.</div>
         <div className=' flex text-textGrey2 text-base font-medium  w-[10rem] '>Subject</div>
         <div className=' flex text-textGrey2 text-base font-medium  w-[9rem] '>Link Invoice</div>
         <div className=' flex text-textGrey2 text-base font-medium  w-1/12 '> Amount</div>

@@ -11,7 +11,6 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
 
   try {
     const {newCreditedToken,...otherData}: any = await req.json();
-    //console.log(otherData);
     const itemData=otherData.items.create;
     const allItemsData=itemData.map((data:any) => ({
       productId: data.productId,

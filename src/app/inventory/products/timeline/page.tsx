@@ -4,7 +4,7 @@ import React from 'react'
 
 import InventoryNavbar from '@/components/inventory/navbar/navbar';
 import InventoryProductStockTable from '@/components/inventory/product/stocks/table';
-import InventoryProductAllTable from '@/components/inventory/product/producttable/allproducttable';
+import InventoryProductTimelineTable from '@/components/inventory/product/producttable/timelinetable';
 import { DataProvider } from '@/components/inventory/product/producttable/DataContext';
 
 
@@ -15,7 +15,7 @@ const InventoryTimelineProductsTable = () => {
     <DataProvider>
     <InventoryNavbar/>
     <InventoryProductStockTable/>
-    <InventoryProductAllTable/>
+    <InventoryProductTimelineTable/>
     </DataProvider>
     </div>
     </>
