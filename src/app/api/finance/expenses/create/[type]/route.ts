@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import prismaClient from '../../../../../../../prisma';
 import { fetchFinanceId } from '@/utils/fetchBranchDetails';
-import recurringExpensesQueue from '@/lib/bull';
+import { recurringExpenses } from '@/lib/bull';
 import { calculateNextOccurrence } from '@/utils/calculateNextOccurrence';
 import { FinanceCreationType } from '@prisma/client';
 
@@ -43,12 +43,21 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
       },
     });
     // console.log(expense)
-    if(expense.type==FinanceCreationType.Expense_Recurring){
-      const nextDate = calculateNextOccurrence(expense.recurringStartedOn!, expense.recurringRepeatType!);
-      if (nextDate <= new Date(expense.recurringEndson!)) {
-        recurringExpensesQueue.add({ expenseId: expense.id }, { delay: nextDate.getTime() - Date.now() });
+    if (params.type === FinanceCreationType.Expense_Recurring) {
+      console.log(body);
+      const payload = {
+        body: body,
+        financeId: financeId,
       }
+      const schedule = {
+        startDate: body.recurringStartedOn,
+        endDate: body.recurringEndson,
+        repeatType: body.recurringRepeatType
+      }
+      //console.log(payload,schedule);
+      await recurringExpenses({ payload, schedule });
     }
+
     return new Response(JSON.stringify({ expense, finance }), {
       status: 201,
       headers: {

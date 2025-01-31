@@ -390,7 +390,7 @@ const ProductDetails = () => {
                                             </h2>
                                             <p className="text-sm text-gray-600">
                                                 Are you sure you want to permanently delete{" "}
-                                                <span className="font-medium text-gray-800">
+                                                <span className="font-medium text-gray-600">
                                                     {product?.itemName || "this product"}
                                                 </span>
                                                 ?

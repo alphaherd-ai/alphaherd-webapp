@@ -31,7 +31,7 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: number }
         }),
 
 
-      await prismaClient.transactions.updateMany({
+        await prismaClient.transactions.updateMany({
           where: {
             invoiceLink: sales.invoiceNo
           },
@@ -41,6 +41,82 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: number }
         })
       ])
 
+      if (sales.type==='Sales_Invoice') {
+        const items = await prismaClient.items.findMany({
+          where: {
+            salesId: sales.id
+          }
+        })
+        if (items) {
+          //console.log(items);
+          items.map(async (item) => {
+            const quantity = item.quantity;
+            if (item.productBatchId !== null && item.productId != null && quantity !== null) {
+              await Promise.all([
+                await prismaClient.productBatch.update({
+                  where: {
+                    id: item.productBatchId,
+                  },
+                  data: {
+                    quantity: {
+                      increment: quantity
+                    }
+                  }
+                }),
+                await prismaClient.products.update({
+                  where: {
+                    id: item.productId,
+                  },
+                  data: {
+                    totalQuantity: {
+                      increment: quantity
+                    }
+                  }
+                })
+              ])
+
+            }
+          })
+        }
+      }
+
+      if (sales.type==='Sales_Return') {
+        const items = await prismaClient.items.findMany({
+          where: {
+            salesId: sales.id
+          }
+        })
+        if (items) {
+          items.map(async (item) => {
+            const quantity = item.quantity;
+            if (item.productBatchId !== null && item.productId != null && quantity !== null) {
+              await Promise.all([
+                await prismaClient.productBatch.update({
+                  where: {
+                    id: item.productBatchId,
+                  },
+                  data: {
+                    quantity: {
+                      decrement: quantity
+                    }
+                  }
+                }),
+                await prismaClient.products.update({
+                  where: {
+                    id: item.productId,
+                  },
+                  data: {
+                    totalQuantity: {
+                      decrement: quantity
+                    }
+                  }
+                })
+              ])
+
+            }
+          })
+        }
+      }
     }
 
     return new Response(JSON.stringify(sales), {

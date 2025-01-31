@@ -37,6 +37,89 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: number }
           }
         })
       ])
+
+
+
+      if (purchases.type==='Purchase_Invoice') {
+        const items = await prismaClient.items.findMany({
+          where: {
+            purchasesId: purchases.id
+          }
+        })
+        if (items) {
+          //console.log(items);
+          items.map(async (item) => {
+            const quantity = item.quantity;
+            if (item.productBatchId !== null && item.productId != null && quantity !== null) {
+              await Promise.all([
+                await prismaClient.productBatch.update({
+                  where: {
+                    id: item.productBatchId,
+                  },
+                  data: {
+                    quantity: {
+                      decrement: quantity
+                    }
+                  }
+                }),
+                await prismaClient.products.update({
+                  where: {
+                    id: item.productId,
+                  },
+                  data: {
+                    totalQuantity: {
+                      decrement: quantity
+                    }
+                  }
+                })
+              ])
+
+            }
+          })
+        }
+      }
+
+
+      if (purchases.type==='Purchase_Return') {
+        const items = await prismaClient.items.findMany({
+          where: {
+            purchasesId: purchases.id
+          }
+        })
+        if (items) {
+          //console.log(items);
+          items.map(async (item) => {
+            const quantity = item.quantity;
+            if (item.productBatchId !== null && item.productId != null && quantity !== null) {
+              await Promise.all([
+                await prismaClient.productBatch.update({
+                  where: {
+                    id: item.productBatchId,
+                  },
+                  data: {
+                    quantity: {
+                      increment: quantity
+                    }
+                  }
+                }),
+                await prismaClient.products.update({
+                  where: {
+                    id: item.productId,
+                  },
+                  data: {
+                    totalQuantity: {
+                      increment: quantity
+                    }
+                  }
+                })
+              ])
+
+            }
+          })
+        }
+      }
+
+
     }
 
     return new Response(JSON.stringify(purchases), {

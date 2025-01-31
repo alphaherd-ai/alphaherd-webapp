@@ -96,7 +96,7 @@ const FinancesTransactionsTableHeader = ({transactions}:any) => {
 
     <div className={currentRoute.startsWith("/finance/transactions/all")
         ? " flex items-center p-1 px-2 text-sm bg-black text-white  rounded-tl-md rounded-bl-md"
-        : " flex items-center p-1 px-2 text-sm bg-gray-200 text-gray-500  rounded-tl-md rounded-bl-md"}>All Transactions</div>
+        : " flex items-center p-1 px-2 text-sm bg-gray-200 text-gray-500  rounded-tl-md rounded-bl-md"}>All Payments</div>
     </Link>
     {existingPaymentMethods.map((method, index) => (
         <Link key={index} className='no-underline flex item-center' href={{ pathname: `/finance/transactions/${method.toLowerCase()}`, query: { type: method } }}>

@@ -62,7 +62,7 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
 
 
     const [startDate, setStartDate] = useState(new Date());
-    const [transactionType, setTransactionType] = useState<string | null>("Money In");
+    const [transactionType, setTransactionType] = useState<string | null>(editTransaction?.moneyChange === 'In' ? 'Money In' : 'Money Out');
     const [selectedProducts, setSelectedProducts] = useState<ProductOption[]>([]);
     const [productOptions, setProductOptions] = useState([]);
     const [selectedServices, setSelectedServices] = useState<ServiceOption[]>([]);
@@ -70,7 +70,7 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
     const [batchOptions, setBatchOptions] = useState<Record<number, { value: number; label: string; sellingPrice: number; productId: number }[]>>({});
     const [selectedBatch, setSelectedBatch] = useState<any[]>([]);
     const [selectedInvoiceLinkID, setSelectedInvoiceLinkID] = useState([]);
-    const [selectedMode, setSelectedMode] = useState('');
+    const [selectedMode, setSelectedMode] = useState(editTransaction?.mode);
     const [modeOptions, setModeOptions] = useState<any>([]);
     const [linkInvoice, setLinkInvoice] = useState<any>([]);
     //const [batchFormData, setBatchFormData] = useState<any>([]);
@@ -95,7 +95,6 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                 moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
                 products: selectedProducts,
                 services: selectedServices,
-
             }
             setSaving(true);
             const response = await axios.put(
@@ -113,7 +112,7 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
             if (response.status === 201) {
 
 
-                //window.dispatchEvent(new FocusEvent('focus'))
+
             } else {
                 console.error('Failed to save data')
             }
@@ -121,7 +120,7 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
         } catch (error) {
             console.error('Error while saving data:', error)
         } finally {
-            //setSaving(false);
+
         }
 
         try {
@@ -340,13 +339,14 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
     const updatetotal = () => {
         const totalProductAmount = selectedBatch.reduce((sum: number, batch: any) => sum + batch.sellingPrice * (batch.quantity || 1), 0);
         const totalServiceAmount = selectedServices.reduce((sum, service) => sum + service.price * (service.quantity || 1), 0);
-        const totalAmount = totalProductAmount + totalServiceAmount;
+        const amountPaidOtherThanLinked=formData.amountPaidOtherThanLinked || 0;
+        const totalAmount = (Number(totalProductAmount) + Number(totalServiceAmount) + Number(amountPaidOtherThanLinked)).toString();
         setFormData((prevFormData: any) => ({ ...prevFormData, ProductamountPaid: totalProductAmount, ServiceamountPaid: totalServiceAmount, amountPaid: totalAmount }));
     }
 
     useEffect(() => {
         updatetotal();
-    }, [selectedProducts, selectedServices, selectedBatch])
+    }, [selectedProducts, selectedServices, selectedBatch,formData.amountPaidOtherThanLinked]);
 
 
 
@@ -437,13 +437,13 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
 
                 </div>
                 <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Party Name</span></div>
+                    <div><span className='text-gray-500 text-base font-medium '>Party Name <span className='text-red-600'>*</span></span></div>
                     <div>
                         <input className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2  outline-none border border-solid border-borderGrey focus:border-teal-500 " type="text" name="partyName" disabled={true} placeholder={editTransaction?.partyName} />
                     </div>
                 </div>
                 <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Subject*</span></div>
+                    <div><span className='text-gray-500 text-base font-medium '>Subject <span className='text-red-600'>*</span></span></div>
                     <div><input className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2  outline-none border border-solid border-borderGrey focus:border-teal-500 " type="text" name="subject" onChange={(e) => handleChange("subject", e.target.value)} /></div>
                 </div>
                 <div className='w-full flex justify-between items-center'>
@@ -630,7 +630,7 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                         <div><div className="w-[10rem] h-9 rounded-[5px] bg-white text-textGrey2 text-base font-medium p-2  border border-solid border-borderGrey flex items-center">#{editTransaction?.receiptNo}</div></div>
 
 
-                        <div><span className='text-gray-500 text-base font-medium '>Mode</span></div>
+                        <div><span className='text-gray-500 text-base font-medium '>Mode <span className='text-red-600'>*</span></span></div>
                         <div className='w-[10rem]'>
                             {/* <Select
                             className="text-neutral-400 text-base font-medium w-full"
@@ -652,6 +652,7 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                                     options={modeOptions}
                                     isMulti={false}
                                     name="mode"
+                                    value={modeOptions.find((option: any) => option.label === selectedMode)}
                                     onChange={(value) => handleModeSelect(value)}
                                     styles={customStyles}
                                 />
@@ -663,9 +664,17 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
 
                 </div>
                 <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Amount Paid</span></div>
+                    <div><span className='text-gray-500 text-base font-medium '>Other<span className='text-red-600'>*</span></span></div>
                     <div className='w-[440px] flex justify-between items-center'>
-                        <div><input className="w-[10rem] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2  outline-none border border-solid border-borderGrey focus:border-teal-500 " type="number" name="amountPaid" value={formData.amountPaid} onChange={(e) => handleChange("amountPaid", e.target.value)} /></div>
+                        <div>
+                            <input
+                                className="w-[10rem] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2 outline-none border border-solid border-borderGrey focus:border-teal-500"
+                                type="number"
+                                name="amountPaidOtherThanLinked"
+                                value={formData.amountPaidOtherThanLinked}
+                                onChange={(e) => handleChange("amountPaidOtherThanLinked", e.target.value)}
+                            />
+                        </div>
 
                         <div><span className='text-gray-500 text-base font-medium '>Date</span></div>
                         <div className='relative'>
@@ -694,7 +703,29 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                         </div>
                     </div>
 
+                    
+
                 </div>
+
+                <div className='w-full flex justify-between items-center'>
+                    <div><span className='text-gray-500 text-base font-medium '>Total <span className='text-red-600'>*</span></span></div>
+                    <div className='w-[440px] flex justify-between items-center'>
+                        <div>
+                            <input
+                                className="w-[10rem] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2 outline-none border border-solid border-borderGrey focus:border-teal-500"
+                                type="number"
+                                disabled={true}
+                                name="amountPaid"
+                                value={formData.amountPaid}
+                                onChange={(e) => handleChange("amountPaid", e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    
+
+                </div>
+
                 <div className='w-full flex justify-end'>
                     <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
                         }`} onClick={handleSaveClick} disabled={isDisabled || isSaving}>

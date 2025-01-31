@@ -92,7 +92,7 @@ const FilterDropdwonCard = () => {
   const handleTabChange = (tab: any) => {
     setActiveTab(tab);
   };
-  
+
   const url = useSearchParams();
   const type = url.get('type')
   const applyFilters = () => {
@@ -248,7 +248,10 @@ const FilterDropdwonCard = () => {
       <div className="w-full flex justify-between items-center">
 
         <div className="flex items-center gap-2">
-          <input type="checkbox" name="aditya" id="" />
+          <input type="checkbox" name="aditya" id="" onClick={() => {
+            const allStatus = SalesStatus.map((item: any) => item.status);
+            setSelectedStatus(allStatus);
+          }} />
           <div className="text-textGrey2 font-medium text-base">Select All</div>
         </div>
         <div className="px-3 py-3 bg-textGreen cursor-pointer text-white rounded-[5px] justify-start items-center" onClick={applyFilters}>Apply</div>

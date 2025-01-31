@@ -8,17 +8,17 @@ import { useAppSelector } from '@/lib/hooks';
 import Loading2 from '@/app/loading2';
 interface CancellationPopupProps {
     setShowConfirmation: any;
-    salesId: number;
+    selectedOverviewId:number;
+    selectedOverviewInvoice:any
 }
 
 
 
-const CancellationPopup: React.FC<CancellationPopupProps> = ({ setShowConfirmation, salesId }) => {
+const CancellationPopup: React.FC<CancellationPopupProps> = ({ setShowConfirmation, selectedOverviewId,selectedOverviewInvoice }) => {
 
     const appState = useAppSelector((state) => state.app);
-    console.log(salesId);
-
-
+    
+    console.log(selectedOverviewId,selectedOverviewInvoice);
     const [loading, setLoading] = useState(false);
 
 
@@ -26,17 +26,41 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ setShowConfirmati
 
         try {
             setLoading(true);
-            const res = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/status/${salesId}?branchId=${appState.currentBranchId}`, {
-                status: "Cancelled"
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
+            if(selectedOverviewInvoice.startsWith('S')){
+                const res=await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/status/${selectedOverviewId}?branchId=${appState.currentBranchId}`,{
+                    status:'Cancelled'
+                },{
+                    headers:{
+                        'Content-Type':'application/json'
+                    }
+                })
+                if(res.status===201){
+                    setShowConfirmation(false);
                 }
             }
-            )
-
-            if (res.status === 201) {
-                setShowConfirmation(false);
+            else if(selectedOverviewInvoice.startsWith('P')){
+                const res=await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/status/${selectedOverviewId}?branchId=${appState.currentBranchId}`,{
+                    status:'Cancelled'
+                },{
+                    headers:{
+                        'Content-Type':'application/json'
+                    }
+                })
+                if(res.status===201){
+                    setShowConfirmation(false);
+                }
+            }
+            else{
+                const res=await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/status/${selectedOverviewId}?branchId=${appState.currentBranchId}`,{
+                    status:'Cancelled'
+                },{
+                    headers:{
+                        'Content-Type':'application/json'
+                    }
+                })
+                if(res.status===201){
+                    setShowConfirmation(false);
+                }
             }
         }
         catch (err) {
@@ -57,7 +81,7 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ setShowConfirmati
                     onClick={() => setShowConfirmation(false)}
                 />
                 <p className='text-xl  text-[#6B7E7D]'>
-                    Are you sure you want to cancel this sales item?
+                    Are you sure you want to cancel this finance item?
                 </p>
 
                 <div className='flex justify-end gap-4 mt-8'>
@@ -75,6 +99,7 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ setShowConfirmati
                     </button>
                 </div>
             </div>
+            
         </div>
     )
 }

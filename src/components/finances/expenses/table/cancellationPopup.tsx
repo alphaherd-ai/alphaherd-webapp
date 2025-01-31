@@ -57,7 +57,7 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ setShowConfirmati
                     onClick={() => setShowConfirmation(false)}
                 />
                 <p className='text-xl  text-[#6B7E7D]'>
-                    Are you sure you want to cancel this transaction?
+                    Are you sure you want to cancel this expense item?
                 </p>
 
                 <div className='flex justify-end gap-4 mt-8'>
@@ -69,7 +69,7 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ setShowConfirmati
                         {loading ? <Loading2 /> :
                             <>
                                 <Image src={checkMark} alt="" />
-                                Cancel Transaction
+                                Cancel
                             </>
                         }
                     </button>

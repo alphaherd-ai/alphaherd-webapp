@@ -24,17 +24,10 @@ const NewPurchasesBottomBar = ({ orderData }: any) => {
     const url = useSearchParams();
     const id = url.get('id');
     const [isSaving, setSaving] = useState(false);
-
-
-
-
     var userEmail = "";
     const handleSubmit = async () => {
         const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
-
         const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
-    
-    
         const balanceDue = totalAmountData.totalCost + totalPaidAmount - totalAmountToPay;
         tableData.pop();
         const allData = { headerData, tableData, totalAmountData,transactionsData };
@@ -74,10 +67,6 @@ const NewPurchasesBottomBar = ({ orderData }: any) => {
 
 
         }
-        // userEmail = data.email;
-        // console.log("email is (inside) :",data.email);
-        // console.log("header data in bottom bar is : ",headerData);
-        console.log("data to save : ",data);
 
         try {
             setSaving(true);

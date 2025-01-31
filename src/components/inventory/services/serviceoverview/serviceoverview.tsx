@@ -257,7 +257,7 @@ const ServiceDetails = () => {
             if (response.ok) {
                 alert("Service deleted successfully!");
                 setShowDeletePopup(false);
-                //router.push('/inventory/services/timeline'); // Adjust the path as needed
+                router.push('/inventory/services/timeline'); // Adjust the path as needed
             } else {
                 alert("Failed to delete service!");
             }
@@ -347,7 +347,7 @@ const ServiceDetails = () => {
                                 {!(showDeletePopup || showEditPopup) ?
                                     <>
                                         <button
-                                            className="flex items-center gap-2 p-2 text-sm font-medium bg-teal-500 text-white rounded-lg shadow-md hover:shadow-lg hover:bg-teal-600 transition duration-300 ease-in-out border-none"
+                                            className="flex outline-none items-center gap-2 p-2 text-sm font-medium bg-teal-500 text-white rounded-lg shadow-md hover:shadow-lg hover:bg-teal-600 transition duration-300 ease-in-out border-none"
                                             onClick={() => setShowDeletePopup(true)} // Opens the delete popup
                                         >
 
@@ -373,20 +373,20 @@ const ServiceDetails = () => {
                                             </h2>
                                             <p className="text-sm text-gray-600">
                                                 Are you sure you want to permanently delete{" "}
-                                                <span className="font-medium text-gray-800">
+                                                <span className="font-medium text-gray-600">
                                                     {service?.name || "this service"}
                                                 </span>
                                                 ?
                                             </p>
                                             <div className="flex justify-end gap-4 mt-4">
                                                 <button
-                                                    className="px-4 py-2 outline-none border border-solid rounded-md bg-teal-500 text-white text-sm hover:bg-teal-600"
+                                                    className="px-4 py-2 outline-none border border-solid border-neutral-500 rounded-md bg-teal-500 text-white text-sm hover:bg-teal-600"
                                                     onClick={() => setShowDeletePopup(false)}
                                                 >
                                                     Cancel
                                                 </button>
                                                 <button
-                                                    className={`px-4 py-2 border border-solid outline-none rounded-md text-white text-sm ${isDeleting
+                                                    className={`px-4 py-2 border border-solid border-neutral-500 outline-none rounded-md text-white text-sm ${isDeleting
                                                         ? "bg-gray-400 cursor-not-allowed"
                                                         : "bg-black hover:bg-gray-800"
                                                         }`}

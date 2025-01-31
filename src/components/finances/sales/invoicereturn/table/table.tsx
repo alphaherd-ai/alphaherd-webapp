@@ -87,7 +87,7 @@ const InvoiceReturnTable = () => {
 
     useEffect(() => {
         if (!isinvoiceDataLoading && invoiceData && !isinvoiceDataError) {
-            console.log(invoiceData);
+            //console.log(invoiceData);
             const { items, ...otherData } = invoiceData;
             setOtherData(otherData)
             const shallowDataCopy = [...items];
@@ -110,7 +110,7 @@ const InvoiceReturnTable = () => {
             }));
             setItems(itemData);
 
-            console.log("These are the items", items)
+            //console.log("These are the items", items)
 
         }
     }, [invoiceData]);
@@ -480,7 +480,7 @@ const InvoiceReturnTable = () => {
 
                     <InvoiceReturnTotalAmount otherData={otherData} />
                 </div>
-                <InvoiceReturnBottomBar invoiceData={invoiceData} />
+                <InvoiceReturnBottomBar invoiceData={invoiceData}/>
             </div>
 
         </>
