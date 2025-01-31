@@ -403,7 +403,7 @@ if (user.name === "" || currentRoute.startsWith("/auth"))return null;
             <div className="text-gray-100 text-xl font-medium mb-2 px-6">
               Notifications
             </div>
-            <div className="notification-list-container overflow-auto h-[calc(50rem - 8.5rem)]"> {/* Adjust height as needed */}
+            <div className="notification-list-container overflow-auto h-[calc(50rem - 8.5rem)] no-scrollbar"> {/* Adjust height as needed */}
               <NotificationList notifs={notifs} isLoading={isLoading} />
             </div>
           </div>
