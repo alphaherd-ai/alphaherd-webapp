@@ -12,7 +12,7 @@ import { useAppSelector } from "@/lib/hooks"
 import { useRouter, useSearchParams } from "next/navigation"
 import { FinanceCreationType } from "@prisma/client"
 import axios from "axios"
-
+import Loading2 from "@/app/loading2"
 
 const NewPurchaseReturnBottomBar = ({ invoiceData }: any) => {
     const { headerData, tableData, totalAmountData } = useContext(DataContext);
@@ -114,7 +114,7 @@ const NewPurchaseReturnBottomBar = ({ invoiceData }: any) => {
                     </Button> */}
                     <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer" onClick={handleSubmit} disabled={isSaving}>
                         <Image src={checkicon} alt="check"></Image>
-                        <div>{isSaving ? "Saving..." : "Save"}</div>
+                        <div>{isSaving ? <Loading2></Loading2> : "Save"}</div>
                     </Button>
                 </div>
 

@@ -16,7 +16,7 @@ function useSalesFetch(id: number | null) {
   return { fetchedSales: data, fetchedLoading: isLoading, fetchedError: error }
 }
 
-const FilterDropdwonCard = () => {
+const FilterDropdownCard = () => {
   const router = useRouter();
   const appState = useAppSelector((state) => state.app);
   const [partyInfo, setPartyInfo] = useState<any[]>([]);
@@ -260,4 +260,4 @@ const FilterDropdwonCard = () => {
   );
 };
 
-export default FilterDropdwonCard;
+export default FilterDropdownCard;
