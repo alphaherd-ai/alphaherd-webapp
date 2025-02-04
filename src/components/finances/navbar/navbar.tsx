@@ -12,6 +12,8 @@ import useSWR from 'swr';
 import { useAppSelector } from '@/lib/hooks';
 import Select from 'react-select';
 import { FinanceCreationType } from '@prisma/client';
+import Image from 'next/image';
+import Search from '../../../assets/icons/home/search.png'
 
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json());
@@ -167,7 +169,28 @@ const FinancesNavbar = () => {
                         onChange={(selectedProduct: any) => handleSearch(selectedProduct)}
                         placeholder="Invoice no. or client/distributor name"
                         menuPortalTarget={document.body}
-                        styles={customStyles}
+                        styles={{
+                ...customStyles,
+                dropdownIndicator: (base) => ({
+                    ...base,
+                    display: "none", // Hides the dropdown arrow
+                }),
+                indicatorsContainer: (base) => ({
+                    ...base,
+                    position: "absolute",
+                    right: "10px",
+                    height: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                }),
+            }}
+            components={{
+                DropdownIndicator: (props) => (
+                    <div className="flex items-center pl-3 pr-3">
+                        <Image src={Search} alt="Search" className="w-5 h-5 transition duration-200 hover:scale-110 hover:text-gray-200" />
+                    </div>
+                ),
+            }}
                         />
                         {/* <div className="absolute inset-y-0 right-3 pl-2 flex items-center pointer-events-none">
                             <div className='flex items-center '>

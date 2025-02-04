@@ -12,7 +12,7 @@ import { SalesStatus } from '@/utils/statusType';
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json());
 
-const FilterDropdwonCard = () => {
+const FilterDropdownCard = () => {
   const router=useRouter();
   const appState = useAppSelector((state) => state.app);
   const [partyInfo, setPartyInfo] = useState<any[]>([]);
@@ -77,7 +77,7 @@ const FilterDropdwonCard = () => {
     });
   };
 
-  const [activeTab, setActiveTab] = useState("party");
+  const [activeTab, setActiveTab] = useState("dateRange");
 
   const handleTabChange = (tab: any) => {
     setActiveTab(tab);
@@ -106,7 +106,7 @@ const FilterDropdwonCard = () => {
   };
 
   return (
-    <div className="w-[420px] h-[541px] px-4 py-4 bg-white rounded-[10px] flex-col justify-start items-start gap-2 inline-flex shadow-lg">
+    <div className="w-[420px] h-[541px] min-h-fit px-4 py-4 bg-white rounded-[10px] flex-col justify-start items-start gap-2 inline-flex shadow-lg">
       <div className="items-start flex border border-solid border-borderGrey rounded-[5px] cursor-pointer">
        
         <div
@@ -118,9 +118,7 @@ const FilterDropdwonCard = () => {
           <div className={`text-sm font-bold ${activeTab === "dateRange" ? "text-white" : "text-neutral-400"}`}>
             Date Range
           </div>
-          <div className="w-4 h-4 p-2 bg-teal-400 rounded-[17px] flex-col justify-center items-center gap-2.5 inline-flex">
-            <div className="text-white text-[10px] font-medium">2</div>
-          </div>
+          
         </div>
         <div
           className={`px-2 py-1 ${
@@ -131,9 +129,7 @@ const FilterDropdwonCard = () => {
           <div className={`text-sm font-bold ${activeTab === "invoiceType" ? "text-white" : "text-neutral-400"}`}>
             Invoice Type
           </div>
-          <div className="w-4 h-4 p-2 bg-teal-400 rounded-[17px] flex-col justify-center items-center gap-2.5 inline-flex">
-            <div className="text-white text-[10px] font-medium">2</div>
-          </div>
+          
         </div>
         <div
           className={`px-2 py-1 ${
@@ -144,9 +140,7 @@ const FilterDropdwonCard = () => {
           <div className={`text-sm font-bold ${activeTab === "status" ? "text-white" : "text-neutral-400"}`}>
             Status
           </div>
-          <div className="w-4 h-4 p-2 bg-teal-400 rounded-[17px] flex-col justify-center items-center gap-2.5 inline-flex">
-            <div className="text-white text-[10px] font-medium">1</div>
-          </div>
+          
         </div>
       </div>
       {activeTab === "party" && (
@@ -326,4 +320,4 @@ const FilterDropdwonCard = () => {
   );
 };
 
-export default FilterDropdwonCard;
+export default FilterDropdownCard;
