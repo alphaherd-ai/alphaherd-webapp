@@ -77,7 +77,7 @@ const NewPurchasesTotalAmount = ({ orderData }: any) => {
     }, [totalAmountData])
 
     const handleShippingChange = (event: any) => {
-        //console.log(typeof event.target.value)
+        
         const value = event.target.value
         if (/^\d*\.?\d*$/.test(value)) {
             setShipping(value);
@@ -148,7 +148,7 @@ const NewPurchasesTotalAmount = ({ orderData }: any) => {
 
 
     const balanceDue = grandAmt + totalPaidAmount - totalAmountToPay;
-    console.log(-grandAmt,totalPaidAmount,totalAmountToPay);
+    //console.log(-grandAmt,totalPaidAmount,totalAmountToPay);
 
     useEffect(() => {
         updateGrandTotal();

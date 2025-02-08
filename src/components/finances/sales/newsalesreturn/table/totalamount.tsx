@@ -141,7 +141,7 @@ const NewsalesReturnTotalAmout = () => {
     const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
 
-    const balanceDue = grandAmt - totalPaidAmount + totalAmountToPay;
+    const balanceDue = grandAmt + totalPaidAmount - totalAmountToPay;
 
 
 
@@ -345,14 +345,14 @@ const NewsalesReturnTotalAmout = () => {
                         <div className="w-full  px-6 bg-white rounded-bl-md rounded-br-md justify-between items-center flex border border-t-0 border-solid border-borderGrey">
                             <div className="text-gray-500 text-base font-bold  w-1/3 py-4">Balance Due</div>
                             <div className="text-gray-500 text-lg font-medium  w-1/3 py-4 flex  items-center"></div>
-                            <div className="text-gray-500 text-base font-bold  w-1/3 py-4 ">₹{totalAmountData.subTotal ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
+                            <div className="text-gray-500 text-base font-bold  w-1/3 py-4 ">₹{totalAmountData.subTotal ? (balanceDue < 0 ? (-1 * balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
                                 {transactionsData.length === 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
                                     Credited
-                                </span> : balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                                </span> : balanceDue >= 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
                                     You owe
-                                </span> : balanceDue === 0 ? "" : <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                                </span> : balanceDue < 0 ?  <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
                                     You’re owed
-                                </span>}
+                                </span> : ""}
                             </div>
 
                         </div>
