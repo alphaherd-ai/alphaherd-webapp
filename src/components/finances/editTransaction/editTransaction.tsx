@@ -14,7 +14,7 @@ import Select from 'react-select';
 import { Button } from '@nextui-org/react';
 import { useAppSelector } from '@/lib/hooks';
 import useSWR from 'swr';
-
+import { usePathname } from 'next/navigation'
 import Loading2 from '@/app/loading2';
 import axios from 'axios';
 import { useSearchParams } from 'next/navigation';
@@ -54,22 +54,23 @@ interface ProductBatch {
 const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onClose, transactionsData, type, balanceDue }) => {
     const url = useSearchParams();
     const id = url.get('id');
-
-    console.log("EditTransaction", editTransaction);
+    //const pathName=usePathname();
+    //console.log(pathName);
+    //console.log(url);
     const [isSaving, setSaving] = useState(false);
-    const [formData, setFormData] = useState<any>({amountPaid:editTransaction?.amountPaid});
+    const [formData, setFormData] = useState<any>({ amountPaid: editTransaction?.amountPaid });
     const appState = useAppSelector((state) => state.app)
     const [startDate, setStartDate] = useState(new Date());
-    const [transactionType, setTransactionType] = useState<string | null>(editTransaction?.moneyChange==='In'?"Money In":"Money Out");
+    const [transactionType, setTransactionType] = useState<string | null>(editTransaction?.moneyChange === 'In' ? "Money In" : "Money Out");
     const [selectedProducts, setSelectedProducts] = useState<ProductOption[]>([]);
     const [productOptions, setProductOptions] = useState([]);
     const [selectedServices, setSelectedServices] = useState<ServiceOption[]>([]);
     const [serviceOptions, setServiceOptions] = useState([]);
-
+    const [isAdvancePayment, setIsAdvancePayment] = useState(editTransaction?.isAdvancePayment || false);
     const [selectedMode, setSelectedMode] = useState(editTransaction?.mode);
     const [modeOptions, setModeOptions] = useState<any>([]);
     const [linkInvoice, setLinkInvoice] = useState<any>([]);
-    
+
 
     const handleDateChange = (date: any) => {
         setStartDate(date);
@@ -120,6 +121,7 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                         if (transaction?.receiptNo === editTransaction.receiptNo) {
                             transaction.amountPaid = parseInt(formData.amountPaid, 10) || editTransaction?.amountPaid;
                             transaction.date = formData.date || new Date();
+                            transaction.isAdvancePayment=isAdvancePayment;
                             transaction.mode = selectedMode || editTransaction?.mode;
                             transaction.moneyChange = transactionType === 'Money In' ? 'In' : 'Out';
                         }
@@ -142,6 +144,7 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
 
                 const newTransaction = {
                     receiptNo: editTransaction?.receiptNo,
+                    isAdvancePayment:isAdvancePayment,
                     date: formData.date || new Date(),
                     amountPaid: parseInt(formData.amountPaid, 10) || editTransaction?.amountPaid,
                     mode: selectedMode || editTransaction?.mode,
@@ -259,7 +262,7 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
 
     }, [products, service, error, isLoading, serviceError, serviceLoading, modes, modesError, modesLoading, invoice, invoiceError, invoiceLoading]);
 
-   
+
 
 
 
@@ -287,7 +290,7 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
 
 
 
-    
+
     // useEffect(() => {
     //     const totalProductAmount = selectedProducts.reduce((sum, product) => sum + product.price, 0);
     //     const totalServiceAmount = selectedServices.reduce((sum, service) => sum + service.price, 0);
@@ -474,6 +477,17 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                         <Image src={check} alt='check' />
                         <span className='text-white text-base font-medium pr-2'>{isSaving ? <Loading2></Loading2> : "Save Payment"}</span>
                     </Button>
+                </div>
+
+                <div className='flex items-center gap-1'>
+                    <input
+                        type="checkbox"
+                        name="advancePayment"
+                        id="advancePayment"
+                        checked={isAdvancePayment}
+                        onChange={(e) => { setIsAdvancePayment(e.target.checked);}}
+                    />
+                    <span className='text-textGrey2 text-base font-medium'>Mark as advance payment</span>
                 </div>
 
             </div>
