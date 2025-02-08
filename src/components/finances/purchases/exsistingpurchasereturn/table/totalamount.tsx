@@ -29,14 +29,14 @@ const ExsistingPurcaseReturnTotalAmount = ({ otherData, isLoading }: any) => {
     // console.log("otherData", otherData)
 
     const totalPaidAmount = otherData?.recordTransaction?.reduce((acc: any, transaction: any) => {
-        if (transaction?.moneyChange === 'In' || transaction?.isAdvancePayment) {
+        if (transaction?.moneyChange === 'In') {
             return acc + transaction?.amountPaid;
         }
         return acc;
     }, 0);
 
     const totalAmountPay = otherData?.recordTransaction?.reduce((acc: any, transaction: any) => {
-        if (transaction?.moneyChange === 'Out') {
+        if (transaction?.moneyChange === 'Out'  || transaction?.isAdvancePayment) {
             return acc + transaction?.amountPaid;
         }
         return acc;
