@@ -139,7 +139,7 @@ const ExsistingRecordTransactionPopup: React.FC<PopupProps> = ({setCount, header
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
         };
 
-        const balanceStatus = balanceDue + (newTransaction?.moneyChange === "In" ? -1 * newTransaction.amountPaid : newTransaction.amountPaid)
+        const balanceStatus = balanceDue + (newTransaction?.moneyChange === "In" ?  newTransaction.amountPaid : -1*newTransaction.amountPaid)
         
         if (newTransaction) {
             try {
@@ -150,7 +150,7 @@ const ExsistingRecordTransactionPopup: React.FC<PopupProps> = ({setCount, header
                     },
                     body: JSON.stringify({
                         recordTransaction: [newTransaction],
-                        status: balanceStatus >= 1 ? `You’re owed: ₹${parseFloat(balanceStatus).toFixed(2)}` : balanceStatus <= -1 ? `You owe: ₹${parseFloat((-1 * balanceStatus).toFixed(2))}` : 'Closed',
+                        status: balanceStatus <= -1 ? `You’re owed: ₹${parseFloat((-1*balanceStatus).toFixed(2))}` : balanceStatus >= 1 ? `You owe: ₹${parseFloat((balanceStatus).toFixed(2))}` : 'Closed',
                     })
 
                 })

@@ -166,7 +166,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ onClose, initialInvoiceN
                 });
             }
         } catch (error) {
-            // console.log("Error while put request",error)
+           
         } finally {
             setSaving(false);
         }

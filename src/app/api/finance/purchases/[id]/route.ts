@@ -2,6 +2,7 @@ import { connectToDB } from '../../../../../utils/index';
 import prismaClient from '../../../../../../prisma';
 import { NextRequest } from 'next/server';
 import { fetchFinanceId } from '@/utils/fetchBranchDetails';
+import { stat } from 'fs';
 
 export const GET = async (req: NextRequest, { params }: { params: { id: number } }) => {
   if (req.method !== 'GET') {
@@ -49,6 +50,7 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: number }
       const financeId=await fetchFinanceId(req);
       const body = await req.json();
       const status=body.status;
+      //console.log(status);
       const newTransaction = body.recordTransaction[0];
       const purchases = await prismaClient.purchases.update({
         where: { id: Number(params.id),financeSectionId:financeId },
@@ -67,8 +69,10 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: number }
           recordTransaction: true,
           
         },
-        
       });
+
+      
+
   
       return new Response(JSON.stringify(purchases), {
         status: 201,
