@@ -344,7 +344,7 @@ const RecordOrderTransaction: React.FC<PopupProps> = ({ headerdata, transactions
                             name="advancePayment"
                             id="advancePayment"
                             checked={isAdvancePayment}
-                            onChange={(e) => setIsAdvancePayment(e.target.checked)}
+                            onChange={(e) => {setIsAdvancePayment(e.target.checked); setTransactionType('Money Out')}}
                         />
                         <span className='text-textGrey2 text-base font-medium'>Mark as advance payment</span>
                     </div>
