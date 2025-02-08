@@ -43,8 +43,9 @@ export const PUT = async (req: NextRequest, { params }: { params: { invoice: str
                     invoiceNo:invoice
                 }
             })
-
+            let statusString = exsistingInvoice?.status?.split('₹')[0]?.trim().replace(/:$/, '');
             let balanceDue=Number(exsistingInvoice?.status?.split('₹')[1]);
+            balanceDue=statusString==='You’re owed' ? balanceDue : -1*balanceDue;
             const balanceStatus = balanceDue && (balanceDue + (CheckRecordTransaction?.moneyChange === 'In' ? Number(CheckRecordTransaction?.amountPaid) : -Number(CheckRecordTransaction?.amountPaid)) + (otherData.moneyChange === 'In' ? -1 * Number(otherData.amountPaid) : Number(otherData.amountPaid)));
             const status = invoice.includes('SI') || invoice.includes('PR') ? balanceStatus && (balanceStatus >= 1 ? `You’re owed: ₹${parseFloat((balanceStatus).toFixed(2))}` : balanceStatus <= -1 ? `You owe: ₹${parseFloat((-1 * balanceStatus).toFixed(2))}` : 'Closed') : balanceStatus <= -1 ? `You’re owed: ₹${parseFloat((-1 * balanceStatus).toString()).toFixed(2)}` : balanceStatus >= 1 ? `You owe: ₹${parseFloat((balanceStatus).toString()).toFixed(2)}` : 'Closed';
             exsistingInvoice && await prismaClient.sales.update({
@@ -64,7 +65,9 @@ export const PUT = async (req: NextRequest, { params }: { params: { invoice: str
                     invoiceNo:invoice
                 }
             })
+            let statusString = exsistingInvoice?.status?.split('₹')[0]?.trim().replace(/:$/, '');
             let balanceDue=Number(exsistingInvoice?.status?.split('₹')[1]);
+            balanceDue=statusString==='You’re owed' ? balanceDue : -1*balanceDue;
             const balanceStatus = balanceDue && (balanceDue + (CheckRecordTransaction?.moneyChange === 'In' ? Number(CheckRecordTransaction?.amountPaid) : -Number(CheckRecordTransaction?.amountPaid)) + (otherData.moneyChange === 'In' ? -1 * Number(otherData.amountPaid) : Number(otherData.amountPaid)));
             const status = invoice.includes('SI') || invoice.includes('PR') ? balanceStatus && (balanceStatus >= 1 ? `You’re owed: ₹${parseFloat((balanceStatus).toFixed(2))}` : balanceStatus <= -1 ? `You owe: ₹${parseFloat((-1 * balanceStatus).toFixed(2))}` : 'Closed') : balanceStatus <= -1 ? `You’re owed: ₹${parseFloat((-1 * balanceStatus).toString()).toFixed(2)}` : balanceStatus >= 1 ? `You owe: ₹${parseFloat((balanceStatus).toString()).toFixed(2)}` : 'Closed';
             exsistingInvoice && await prismaClient.purchases.update({
@@ -83,7 +86,9 @@ export const PUT = async (req: NextRequest, { params }: { params: { invoice: str
                     invoiceNo:invoice
                 }
             })
+            let statusString = exsistingInvoice?.status?.split('₹')[0]?.trim().replace(/:$/, '');
             let balanceDue=Number(exsistingInvoice?.status?.split('₹')[1]);
+            balanceDue=statusString==='You’re owed' ? -1*balanceDue : balanceDue;
             const balanceStatus = balanceDue && (balanceDue + (CheckRecordTransaction?.moneyChange === 'In' ? -Number(CheckRecordTransaction?.amountPaid) : Number(CheckRecordTransaction?.amountPaid)) + (otherData.moneyChange === 'In' ? Number(otherData.amountPaid) : -Number(otherData.amountPaid))) 
             const status = invoice.includes('SI') || invoice.includes('PR') ? balanceStatus && (balanceStatus >= 1 ? `You’re owed: ₹${parseFloat((balanceStatus).toFixed(2))}` : balanceStatus <= -1 ? `You owe: ₹${parseFloat((-1 * balanceStatus).toFixed(2))}` : 'Closed') : balanceStatus <= -1 ? `You’re owed: ₹${parseFloat((-1 * balanceStatus).toString()).toFixed(2)}` : balanceStatus >= 1 ? `You owe: ₹${parseFloat((balanceStatus).toString()).toFixed(2)}` : 'Closed';
             exsistingInvoice && await prismaClient.sales.update({
@@ -104,8 +109,12 @@ export const PUT = async (req: NextRequest, { params }: { params: { invoice: str
                     invoiceNo:invoice
                 }
             })
+            let statusString = exsistingInvoice?.status?.split('₹')[0]?.trim().replace(/:$/, '');
             let balanceDue=Number(exsistingInvoice?.status?.split('₹')[1]);
-            const balanceStatus = balanceDue && (balanceDue + (CheckRecordTransaction?.moneyChange === 'In' ? Number(CheckRecordTransaction?.amountPaid) : -1*Number(CheckRecordTransaction?.amountPaid)) + (otherData.moneyChange === 'In' ? Number(otherData.amountPaid) : -Number(otherData.amountPaid))) 
+            //console.log(statusString);
+            balanceDue=(statusString==='You’re owed') ? -1*balanceDue : balanceDue;
+            const balanceStatus = balanceDue && (balanceDue + (CheckRecordTransaction?.moneyChange === 'In' ? -Number(CheckRecordTransaction?.amountPaid) : Number(CheckRecordTransaction?.amountPaid)) + (otherData.moneyChange === 'In' ? Number(otherData.amountPaid) : -Number(otherData.amountPaid))) 
+            //console.log(balanceDue,balanceStatus);
             const status = invoice.includes('SI') || invoice.includes('PR') ? balanceStatus && (balanceStatus >= 1 ? `You’re owed: ₹${parseFloat((balanceStatus).toFixed(2))}` : balanceStatus <= -1 ? `You owe: ₹${parseFloat((-1 * balanceStatus).toFixed(2))}` : 'Closed') : balanceStatus <= -1 ? `You’re owed: ₹${parseFloat((-1 * balanceStatus).toString()).toFixed(2)}` : balanceStatus >= 1 ? `You owe: ₹${parseFloat((balanceStatus).toString()).toFixed(2)}` : 'Closed';
             exsistingInvoice && await prismaClient.purchases.update({
                 where:{
