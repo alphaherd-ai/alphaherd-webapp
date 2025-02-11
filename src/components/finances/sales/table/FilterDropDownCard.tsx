@@ -94,7 +94,9 @@ const FilterDropdownCard = () => {
   };
 
   const url = useSearchParams();
-  const type = url.get('type')
+  const type = url.get('type');
+
+  
   const applyFilters = () => {
     const queryParams = new URLSearchParams();
     selectedParties.forEach((id) => queryParams.append('selectedParties', id));
@@ -107,9 +109,9 @@ const FilterDropdownCard = () => {
   };
 
   return (
-    <div className="w-[420px] h-[441px] px-4 py-6 bg-white rounded-[10px] flex-col justify-start items-start gap-4 inline-flex shadow-lg">
+    <div className="w-[420px] min-h-fit h-[441px] px-4 py-6 bg-white rounded-[10px] flex-col justify-start items-start gap-4 inline-flex shadow-lg">
       <div className="items-start flex border border-solid border-borderGrey rounded-[5px] cursor-pointer">
-        {/* <div
+        <div
           className={`px-2 py-1 ${
             activeTab === "party" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
           } rounded-tl-[5px] rounded-bl-[5px] border-0 border-r border-solid border-borderGrey justify-start items-center gap-1 flex`}
@@ -118,10 +120,8 @@ const FilterDropdownCard = () => {
           <div className={`text-sm font-bold ${activeTab === "party" ? "text-white" : "text-neutral-400"}`}>
             Party
           </div>
-          <div className="w-4 h-4 p-2 bg-teal-400 rounded-[17px] flex-col justify-center items-center gap-2.5 inline-flex">
-            <div className="text-white text-[10px] font-medium">2</div>
-          </div>
-        </div> */}
+         
+        </div>
         <div
           className={`px-2 py-1 ${activeTab === "dateRange" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
             }  border-0 border-r border-solid border-borderGrey justify-start items-center gap-1 flex`}
@@ -245,16 +245,11 @@ const FilterDropdownCard = () => {
           ))}
         </div>
       </div>}
-      <div className="w-full flex justify-between items-center">
-
-        <div className="flex items-center gap-2">
-          <input type="checkbox" name="aditya" id="" onClick={() => {
-            const allStatus = SalesStatus.map((item: any) => item.status);
-            setSelectedStatus(allStatus);
-          }} />
-          <div className="text-textGrey2 font-medium text-base">Select All</div>
+      <div className="w-full h-fit flex justify-between items-center">
+        <div className="w-full flex justify-between items-center">
+          <div className="flex items-center gap-2"></div>
+          <div className="px-3 py-3 bg-textGreen text-white rounded-[5px] justify-start items-center cursor-pointer" onClick={applyFilters}>Apply</div>
         </div>
-        <div className="px-3 py-3 bg-textGreen cursor-pointer text-white rounded-[5px] justify-start items-center" onClick={applyFilters}>Apply</div>
       </div>
     </div>
   );

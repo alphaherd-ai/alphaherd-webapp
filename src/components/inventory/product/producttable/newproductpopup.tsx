@@ -354,7 +354,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                         <div className="text-gray-500 text-xl font-medium">New Product</div>
                         <div className="text-neutral-400 text-base font-medium">Add a new product to your inventory</div>
                         <div className="flex items-center gap-[87px]">
-                            <div className="text-gray-500 text-base font-medium">Name*</div>
+                            <div className="text-gray-500 text-base font-medium">Name<span className="text-red-500">*</span></div>
                             <div>
                                 <input className="w-[440px] h-9 rounded-md  text-gray-400 text-base font-medium p-2 outline-none border border-solid border-gray-300" type="text" name="itemName" onChange={(e) => {
                                     const value = e.target.value;

@@ -5,13 +5,13 @@ import React, { useEffect, useState } from "react";
 import calicon from "../../../../assets/icons/finance/calendar_today.svg";
 import useSWR from 'swr';
 import { useAppSelector } from '@/lib/hooks';
-
-import {useRouter, useSearchParams} from 'next/navigation';
+import { PurchaseStatus } from '@/utils/statusType';
+import { useRouter, useSearchParams } from 'next/navigation';
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json());
 
 const FilterDropdownCard = () => {
-  const router=useRouter();
+  const router = useRouter();
   const appState = useAppSelector((state) => state.app);
   const [partyInfo, setPartyInfo] = useState<any[]>([]);
   const [selectedParties, setSelectedParties] = useState<any[]>([]);
@@ -40,7 +40,7 @@ const FilterDropdownCard = () => {
         },
       }));
 
-      const combinedOptions = [ ...distributorOptions];
+      const combinedOptions = [...distributorOptions];
       console.log(combinedOptions);
       setPartyInfo(combinedOptions);
     }
@@ -59,37 +59,49 @@ const FilterDropdownCard = () => {
       if (prevSelectedParties.includes(String(party))) {
         return prevSelectedParties.filter((partyName) => partyName !== String(party));
       } else {
-        return [...prevSelectedParties,String(party)];
+        return [...prevSelectedParties, String(party)];
       }
     });
   };
 
-  
+  const handleStatusChange = (status: any) => {
+    setSelectedStatus((prevSelectedStatus) => {
+      if (prevSelectedStatus.includes(String(status))) {
+        return prevSelectedStatus.filter((statusName) => statusName !== String(status));
+      } else {
+        return [...prevSelectedStatus, String(status)];
+      }
+    });
+  }
+
+
 
   const [activeTab, setActiveTab] = useState("party");
 
   const handleTabChange = (tab: any) => {
     setActiveTab(tab);
   };
-  const url= useSearchParams();
-  const type=url.get('type')
+
+
+  const url = useSearchParams();
+  const type = url.get('type')
   const applyFilters = () => {
     const queryParams = new URLSearchParams();
+    selectedStatus.forEach((status) => queryParams.append('selectedStatus', status));
     selectedParties.forEach((id) => queryParams.append('selectedParties', id));
     if (startDate) queryParams.set('startDate', startDate.toISOString());
     if (endDate) queryParams.set('endDate', endDate.toISOString());
     const queryString = queryParams.toString();
     router.push(`?type=${type}&${queryString}`);
-    
+
   };
 
   return (
     <div className="w-[420px] h-[441px] min-h-fit px-4 py-6 bg-white rounded-[10px] flex-col justify-start items-start gap-4 inline-flex shadow-lg">
       <div className="items-start flex border border-solid border-borderGrey rounded-[5px] cursor-pointer">
         <div
-          className={`px-2 py-1 ${
-            activeTab === "party" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
-          } rounded-tl-[5px] rounded-bl-[5px] border-0 border-r border-solid border-borderGrey justify-start items-center gap-1 flex`}
+          className={`px-2 py-1 ${activeTab === "party" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
+            } rounded-tl-[5px] rounded-bl-[5px] border-0 border-r border-solid border-borderGrey justify-start items-center gap-1 flex`}
           onClick={() => handleTabChange("party")}
         >
           <div className={`text-sm font-bold ${activeTab === "party" ? "text-white" : "text-neutral-400"}`}>
@@ -98,27 +110,25 @@ const FilterDropdownCard = () => {
 
         </div>
         <div
-          className={`px-2 py-1 ${
-            activeTab === "dateRange" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
-          }  border-0 border-r border-solid border-borderGrey justify-start items-center gap-1 flex`}
+          className={`px-2 py-1 ${activeTab === "dateRange" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
+            }  border-0 border-r border-solid border-borderGrey justify-start items-center gap-1 flex`}
           onClick={() => handleTabChange("dateRange")}
         >
           <div className={`text-sm font-bold ${activeTab === "dateRange" ? "text-white" : "text-neutral-400"}`}>
             Date Range
           </div>
-          
+
         </div>
-        
+
         <div
-          className={`px-2 py-1 ${
-            activeTab === "status" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
-          } rounded-tr-[5px] rounded-br-[5px] border justify-start items-center gap-1 flex`}
+          className={`px-2 py-1 ${activeTab === "status" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
+            } rounded-tr-[5px] rounded-br-[5px] border justify-start items-center gap-1 flex`}
           onClick={() => handleTabChange("status")}
         >
           <div className={`text-sm font-bold ${activeTab === "status" ? "text-white" : "text-neutral-400"}`}>
             Status
           </div>
-         
+
         </div>
       </div>
       {activeTab === "party" && (
@@ -203,14 +213,24 @@ const FilterDropdownCard = () => {
           </div>
         </div>
       )}
-      
-      {activeTab === "status" && <div className="w-full h-full"></div>}
-      <div className="w-full flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <input type="checkbox" name="" id="" />
-          <div className="text-textGrey2 font-medium text-base">Select All</div>
+
+      {activeTab === "status" && <div className="w-full h-full">
+        <div className="w-full flex flex-col gap-4">
+          {PurchaseStatus?.map((item: any) => (
+            <div key={item.id} className="w-full flex gap-2 items-center">
+              <input
+                type="checkbox"
+                checked={selectedStatus.includes(item.status)}
+                onChange={() => handleStatusChange(item.status)}
+              />
+              <div className="text-textGrey2 font-medium text-base">{item.status}</div>
+            </div>
+          ))}
         </div>
-        <div className="px-3 py-3 bg-textGreen text-white rounded-[5px] justify-start items-center" onClick={applyFilters}>Apply</div>
+      </div>}
+      <div className="w-full flex justify-between items-center">
+        <div className="flex items-center gap-2"></div>
+        <div className="px-3 py-3 bg-textGreen text-white rounded-[5px] justify-start items-center cursor-pointer" onClick={applyFilters}>Apply</div>
       </div>
     </div>
   );

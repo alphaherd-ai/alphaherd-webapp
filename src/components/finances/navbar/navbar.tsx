@@ -138,7 +138,7 @@ const FinancesNavbar = () => {
                             Purchases
                         </div>
                     </Link>
-                    <Link className='no-underline ' href='/finance/expenses/all'>
+                    <Link className='no-underline ' href={{pathname:'/finance/expenses/all', query:{type:'all'}}} >
                         <div style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }} className={currentRoute.startsWith("/finance/expenses") ? " flex items-center text-white  text-base bg-black px-4 py-2.5   border-r-0 " : " flex items-center text-gray-400 bg-white px-4 py-2.5 text-base   border-r-0"}>
                             <div className='flex mr-2'><ExpensesIcon fill={currentRoute.startsWith("/finance/expenses")
                                 ? "#38F8E6"
