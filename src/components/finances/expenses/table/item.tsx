@@ -16,81 +16,28 @@ import CancellationPopup from './cancellationPopup';
 // @ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
-const FinancesExpensesTableItem = ({ onCountsChange, currentPageNumber, setCurrentPageNumber, setStartInd, setEndInd, setTotalLen, pagevalue }: { onCountsChange: any, currentPageNumber: number, setCurrentPageNumber: React.Dispatch<React.SetStateAction<number>>, setStartInd: React.Dispatch<React.SetStateAction<number>>, setEndInd: React.Dispatch<React.SetStateAction<number>>, setTotalLen: React.Dispatch<React.SetStateAction<number>>, pagevalue: number }) => {
-  const [expenses, setExpenses] = useState<any[]>([]);
-  const [tableData, setTableData] = useState<any[]>([]);
-  const appState = useAppSelector((state) => state.app);
-  const urlSearchParams = useSearchParams();
-  const startDate = useMemo(() => urlSearchParams.get('startDate') ? new Date(urlSearchParams.get('startDate')!) : null, [urlSearchParams]);
-  const endDate = useMemo(() => urlSearchParams.get('endDate') ? new Date(urlSearchParams.get('endDate')!) : null, [urlSearchParams]);
-  const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
-  const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  //Pagination in the table
-
-  useEffect(() => {
-    const start = (currentPageNumber - 1) * pagevalue;
-    const end = currentPageNumber * pagevalue;
-    setStartInd(start);
-    setEndInd(end);
-    setExpenses(tableData.slice(start, end));
-  }, [currentPageNumber])
-
-  useEffect(() => {
-    if (!isLoading && data && !error) {
-
-      let filteredData = data;
-      if (startDate || endDate) {
-        filteredData = filteredData.filter((item: any) => {
-          const itemDate = new Date(item.date);
-          if (startDate && itemDate < startDate) return false;
-          if (endDate && itemDate > endDate) return false;
-          return true;
-        });
-      }
-
-      if (selectedParties.length > 0) {
-        filteredData = filteredData.filter((item: any) =>
-          selectedParties.includes(item.party)
-        );
-      }
-
-
-      const recurringExpenses = filteredData.filter((item: any) => item.type === FinanceCreationType.Expense_Recurring);
-      const allExpenses = [...filteredData];
-
-      recurringExpenses.forEach((expense: any) => {
-        const repeatInterval = getRepeatInterval(expense.recurringRepeatType);
-        // console.log("THIs is repeat type ", repeatInterval)
-        const frequency = calculateFrequency(expense.recurringStartedOn, expense.recurringEndson, repeatInterval);
-        // console.log("this is frequency",frequency)
-        for (let i = 0; i <= frequency; i++) {
-          const recurrenceDate = new Date(expense.recurringStartedOn);
-          recurrenceDate.setDate(recurrenceDate.getDate() + i * repeatInterval);
-          // console.log("this is recurrence date", recurrenceDate)
-
-          if ((!startDate || recurrenceDate >= startDate) && (!endDate || recurrenceDate <= endDate)) {
-            allExpenses.push({ ...expense, date: recurrenceDate });
-          }
-        }
-      });
-      setTotalLen(allExpenses.length);
-      setTableData(allExpenses);
-      setExpenses(allExpenses.slice(0, pagevalue));
-    }
-  }, [data, error, isLoading, setExpenses, startDate, endDate, selectedParties]);
-
-  const [nonrecurringCount, setNonRecurringCount] = useState(0);
+const FinancesExpensesTableItem = ({ onCountsChange,data,expenses,isLoading}:any) => {
   const [recurringCount, setRecurringCount] = useState(0);
-
+  const [nonrecurringCount, setNonrecurringCount] = useState(0);
+ 
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [expensesId, selectedExpensesId] = useState<number | null>(null);
   useEffect(() => {
     if (data) {
+
       setRecurringCount(data.filter((expense: any) => expense.type === FinanceCreationType.Expense_Recurring).length);
-      setNonRecurringCount(data.filter((expense: any) => expense.type === FinanceCreationType.Expense_NonRecurring).length);
+      setNonrecurringCount(data.filter((expense: any) => expense.type === FinanceCreationType.Expense_NonRecurring).length);
+      
     }
+    console.log("data is :", data);
   }, [data]);
 
+
+
+
+
   const handleCounts = () => {
+
     if (onCountsChange) {
       onCountsChange({
         recurringCount,
@@ -102,12 +49,13 @@ const FinancesExpensesTableItem = ({ onCountsChange, currentPageNumber, setCurre
   useEffect(() => {
     handleCounts();
   }, [expenses]);
+  
 
-  if (isLoading) return (<Loading />)
+  if (isLoading && !data) return (<Loading />)
 
   return (
     <div>
-      {expenses?.map((expense, index) =>
+      {expenses?.map((expense:any, index:number) =>
         <div key={index + 1} className='flex  w-full  box-border h-16 justify-evenly items-center bg-white   border-0 border-b border-solid border-borderGrey  hover:bg-gray-200 text-textGrey1  hover:text-textGrey2  transition'>
           <div className='w-[6rem] flex   text-base font-medium'>{formatDateAndTime(expense.date).formattedDate}</div>
           <div className='w-[6rem] flex   text-base font-medium'>{formatDateAndTime(expense.date).formattedTime}</div>

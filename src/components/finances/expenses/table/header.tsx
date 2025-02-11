@@ -15,13 +15,12 @@ import { usePathname } from 'next/navigation';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 import FilterDropdownCard from './FilterDropDownCard';
-
-
+import { useRouter } from 'next/navigation';
 
 
 const FinancesExpensesTableHeader = ({ recurringCount, nonrecurringCount }: any) => {
     const currentRoute = usePathname();
-
+    const router=useRouter();
     const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
     const [selectedSort, setselectedSort] = React.useState(new Set(["Category: text"]));
     const [showPopup, setShowPopup] = React.useState(false);
@@ -43,10 +42,6 @@ const FinancesExpensesTableHeader = ({ recurringCount, nonrecurringCount }: any)
     return (
 
         <>
-
-
-
-
 
             <div className='flex w-full bg-white h-20  p-4 px-6  justify-between border-0 border-b border-solid border-borderGrey rounded-tl-lg rounded-tr-lg'>
 
@@ -89,7 +84,7 @@ const FinancesExpensesTableHeader = ({ recurringCount, nonrecurringCount }: any)
                         <div className='flex items-center justify-center w-7 h-7 border border-solid border-gray-300 border-0.5 rounded-md  p-1'><Image src={Chart} alt='Chart' className='w-4  h-4' /></div>
                     </Link> */}
                     <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg bg-[#35BEB1]'>
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => alert("cross icon clicked")} className='cursor-pointer'>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => router.push('/finance/expenses/all?type=all')} className='cursor-pointer'>
                             <mask id="mask0_1198_18016" maskUnits="userSpaceOnUse" x="0" y="0" width="16" height="16">
                                 <rect width="16" height="16" fill="white" />
                             </mask>
@@ -112,7 +107,7 @@ const FinancesExpensesTableHeader = ({ recurringCount, nonrecurringCount }: any)
                                 <FilterDropdownCard />
                             </PopoverContent>
                         </Popover>
-                        <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => alert("cross icon clicked")} className='cursor-pointer'>
+                        <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => router.push('/finance/expenses/all?type=all')} className='cursor-pointer'>
                             <path d="M4.77561 12L4 11.2244L7.22439 8L4 4.77561L4.77561 4L8 7.22439L11.2244 4L12 4.77561L8.77561 8L12 11.2244L11.2244 12L8 8.77561L4.77561 12Z" fill="white" />
                         </svg>
                     </div>

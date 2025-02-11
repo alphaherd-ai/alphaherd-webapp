@@ -15,6 +15,8 @@ import Loading from '@/app/loading';
 import { getStatusStyles } from '@/utils/getStatusStyles';
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
+
+
 interface Sales {
   id: number;
   date: string;
@@ -63,9 +65,7 @@ const FinancesSalesTableItem = ({ onCountsChange, data, sales, isLoading }: any)
   useEffect(() => {
     handleCounts();
   }, [sales]);
-  console.log("invoice count is :", invoiceCount);
-  console.log("estimate count is :", estimateCount);
-  console.log("return count is :", returnCount);
+  
 
   if (isLoading && !data) return (<Loading />)
 

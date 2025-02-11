@@ -39,9 +39,7 @@ const FinancesSalesTable = () => {
   const selectedStatus = useMemo(() => urlSearchParams.getAll('selectedStatus'), [urlSearchParams]);
   const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`, fetcher, {revalidateOnFocus: true})
 
-  console.log("data is :" ,data);
-  console.log("is loading :",isLoading);
-  console.log("error is :",error);
+
   //Paginaton
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
     const [startInd, setStartInd] = useState(0);
@@ -104,7 +102,7 @@ const FinancesSalesTable = () => {
       setTableData(filteredData)
       setSales(filteredData?.slice(0,TOTAL_VALUES_PER_PAGE));
     }
-  }, [data, error, isLoading, setSales, startDate, endDate, selectedParties])
+  }, [data, error, isLoading, setSales, startDate, endDate, selectedParties,selectedStatus])
 
 
   const [invoiceCount, setInvoiceCount] = useState(0);
