@@ -46,7 +46,6 @@ const OrgDetailsSetup = (props: any) => {
         { value: 'Puducherry', label: 'Puducherry' }
     ];
     //   console.log("this is props",props.data.state)
-    const [resource, setResource] = useState<any>();
 
     return (
         <div className="w-[1016px] h-fit px-10 py-8 rounded-[30px] border border-stone-300  justify-center  inline-flex">
@@ -67,7 +66,7 @@ const OrgDetailsSetup = (props: any) => {
                                 uploadPreset={process.env.CUSTOMCONNSTR_NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
                                 onSuccess={(result, { widget }) => {
                                     //@ts-ignore
-                                    setResource(result?.info.secure_url);
+                                    props.setResource(result?.info.secure_url);
                                     console.log(result); // { public_id, secure_url, etc }
                                     props.handlePicChange(result.info, "orgImgUrl");
                                     widget.close();
@@ -79,10 +78,10 @@ const OrgDetailsSetup = (props: any) => {
                                             <div className="">
                                                 <div className="">
 
-                                                    {!resource ?
+                                                    {!props.resource ?
                                                         <Image src={updatelogo} alt="upload" />
                                                         :
-                                                        <Image className="w-8 h-8 rounded-full" src={resource} alt="Uploaded image" width={150} height={150} />
+                                                        <Image className="w-8 h-8 rounded-full" src={props.resource} alt="Uploaded image" width={150} height={150} />
                                                     }
 
                                                 </div>

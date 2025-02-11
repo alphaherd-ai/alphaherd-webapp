@@ -33,10 +33,10 @@ const OrgAdminSetup = (props: any, { handleFileUpload }: any) => {
 
     return (
         <>
-            <div className="w-[1016px] h-fit pl-[42px] pt-[40px] pb-[30px] pr-[40px] relative">
+            <div className="w-[1016px] h-fit pl-[42px] pt-[70px] pb-[30px] pr-[40px] relative">
                 {
                     props.activeTab != 0 && props.activeTab != 1 ? <button
-                        className=" bg-inherit rounded-[5px] absolute left-0 top-1 justify-start items-center gap-2 flex border-0 scale-125" disabled={props.activeTab === 0 || props.activeTab === 1 ? true : false}
+                        className=" bg-inherit rounded-[5px] absolute left-5 top-5 justify-start items-center gap-2 flex border-0 scale-125" disabled={props.activeTab === 0 || props.activeTab === 1 ? true : false}
                         onClick={() => props.setActiveTab((prev: number) => prev - 1)}>
                         <div className="h-[42px] px-4  rounded-[5px] justify-start items-center gap-2 flex ">
                             <div className="w-6 h-6.5 relative">
@@ -110,7 +110,7 @@ const OrgAdminSetup = (props: any, { handleFileUpload }: any) => {
                 </div>
                 <div className="flex items-center justify-between mt-[24px] mb-[24px]">
                     <div className="flex items-center justify-between gap-[18px]">
-                        <div className="w-[137px] text-gray-500 text-base font-medium ">Phone No.</div>
+                        <div className="w-[137px] text-gray-500 text-base font-medium ">Phone No.*</div>
                         <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
 
                             <input className="w-[304px] h-11 bg-white  text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" minLength={10} maxLength={10} name="adminPhoneNo" value={props.data.adminPhoneNo} onChange={props.handleChange} />
