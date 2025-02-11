@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# AlphaHerd WebApp
 
-## Getting Started
+## 📌 Getting Started
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### 🛠 Clone the Repository
+Clone the main branch of the repository using SSH:
+```sh
+git clone <SSH_LINK>
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Navigate into the project directory:
+```sh
+cd alphaherd-webapp
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 📦 Install Dependencies
+Install project dependencies with the following command:
+```sh
+npm i --legacy-peer-deps
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## ⚙️ Configuration
 
-## Learn More
+### Development Configuration
+Modify `next.config.js` for development:
+```js
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  images: {
+      domains: ['res.cloudinary.com'],
+    },
+  basePath: process.env.BASE_PATH,
+  env: {
+     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+  },
+  webpack(config) {
+    config.module.rules.push({
+      test: /\.mp3$/, // Match .mp3 files
+      type: 'asset/resource', // Handle as a resource
+      generator: {
+        filename: 'static/media/[name].[hash][ext]', // Output path for processed files
+      },
+    });
+    return config;
+  },
+  reactStrictMode: false,
+}
 
-To learn more about Next.js, take a look at the following resources:
+module.exports = nextConfig;
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Production Configuration
+Modify `next.config.js` for production:
+```js
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  images: {
+    domains: ['res.cloudinary.com'],
+  },
+  webpack(config) {
+    config.module.rules.push({
+      test: /\.mp3$/, // Match .mp3 files
+      type: 'asset/resource', // Handle as a resource
+      generator: {
+        filename: 'static/media/[name].[hash][ext]', // Output path for processed files
+      },
+    })
+    return config;
+  },
+}
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+module.exports = nextConfig;
+```
 
-## Deploy on Vercel
+## 🌍 Environment Variables
+Create a `.env` file in the project root and set up the following environment variables:
+```
+DIRECT_URL=
+DATABASE_URL=
+NEXT_PUBLIC_SECRET_KEY=
+BASE_PATH=
+NEXT_PUBLIC_API_BASE_PATH=
+AUTOMATED_GMAIL=
+AUTOMATED_GMAIL_APP_PASSWORD=
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=
+NEXT_PUBLIC_CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🚀 Running the Project
+To start the development server, run:
+```sh
+npm run dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Then, open the browser and go to:
+```
+http://localhost:3000/alphaherd/auth/login
+```
