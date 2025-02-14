@@ -224,7 +224,7 @@ const OrgSetup = () => {
               "state": data.state,
               "pincode": data.pincode,
               "description": data.description,
-              "phoneNo": data.phoneNo
+              "phoneNo": data.phoneNo,
             },
             "branchDetails": {
               email: data.orgEmail,
@@ -244,7 +244,8 @@ const OrgSetup = () => {
               "email": data.adminEmail,
               "password": data.adminPassword,
               "phoneNo": data.adminPhoneNo,
-              "imageUrl": data.adminPicUrl
+              "imageUrl": data.adminPicUrl,
+              "altPhoneNo": data.adminAltPhoneNo
             }
           })
         }

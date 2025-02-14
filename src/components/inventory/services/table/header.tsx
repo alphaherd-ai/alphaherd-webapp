@@ -13,10 +13,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
-import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
-import Popup from './newservicepopup';
-import Popup2 from '../../product/producttable/updateinventorypopup';
-
+import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 
 
 const InventoryServicesTableHeader = ({ onSortChange }: any) => {
