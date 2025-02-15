@@ -78,7 +78,8 @@ const FinancesExpensesTableItem = ({ onCountsChange,data,expenses,isLoading}:any
              <div>
                 {
                   (() => {
-                    const statusParts = (expense.status ?? "Status Unknown").split('|').map((part: string) => part.trim());
+                    const status = expense?.status || "";
+                    const statusParts = status.trim() ? status.split('|').map((part: string) => part.trim()) : ["Closed"];
                     //console.log(statusParts);
                      if (!statusParts.length) {
                        return (

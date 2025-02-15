@@ -98,7 +98,8 @@ const FinancesSalesTableItem = ({ onCountsChange, data, sales, isLoading }: any)
               <div>
                 {
                   (() => {
-                    const statusParts = sale.status.split('|').map((part: string) => part.trim());
+                    const status = sale?.status ||  "";
+                    const statusParts = status.trim() ? status.split('|').map((part: string) => part.trim()) : ["Closed"];
                     //console.log(statusParts);
                     if (!statusParts.length) {
                       return (
