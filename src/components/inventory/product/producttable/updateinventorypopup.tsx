@@ -556,8 +556,8 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                             onClose();
                         }, 2000)
                         const [response, notif] = await Promise.all([responsePromise, notifPromise]);
-
-                        // console.log('Updated inventory item:', response.data);
+                        // useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/product/{}?branchId=${appState.currentBranchId}`, fetcher);
+                        // console.log('Updated inventory item:', response.data);api/inventory/product/221?branchId=21
                     }
                     else {
                         // const responsePromise = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/create?branchId=${appState.currentBranchId}`, body);

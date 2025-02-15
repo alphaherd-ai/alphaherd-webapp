@@ -161,39 +161,7 @@ const DatabasePatientHeader = ({ patients, clients, onSortChange }: any) => {
                             <path d="M4.77561 12L4 11.2244L7.22439 8L4 4.77561L4.77561 4L8 7.22439L11.2244 4L12 4.77561L8.77561 8L12 11.2244L11.2244 12L8 8.77561L4.77561 12Z" fill="white" />
                         </svg>
                     </div>
-                    <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg '>
-                        <div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>
-
-                        <Dropdown>
-                            <DropdownTrigger className='z-0'>
-                                <Button
-                                    //   variant="bordered" 
-                                    // color="gray-400"
-                                    variant="solid"
-                                    className="capitalize border-none bg-transparent rounded-lg z-0"
-                                >
-                                    {selectedCategoryValue}
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                aria-label="Single selection example"
-                                // color="gray-500"
-                                className=" text-base bg-gray-200 rounded-lg"
-                                variant="solid"
-                                disallowEmptySelection
-                                selectionMode="single"
-                                selectedKeys={selectedCategory}
-                            // onSelectionChange={setSelectedCategory}
-                            >
-                                <DropdownItem
-                                    className=" p-2" key="Category:text">Category: Text</DropdownItem>
-                                <DropdownItem
-                                    className=" p-2" key="Category:number">Category: Number</DropdownItem>
-                                <DropdownItem
-                                    className=" p-2" key="Category:date">Date</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
-                    </div>
+                    
                 </div>
             </div >
             {showPopup1 && <DownloadPopup onClose={togglePopup1} clients={clients} patients={patients} />}

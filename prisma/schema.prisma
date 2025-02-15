@@ -255,6 +255,13 @@ model Patients {
   @@index([databaseSectionId, clientId])
 }
 
+model OTP{
+  id        Int     @id @default(autoincrement())
+  email     String
+  otp       String
+  createdAt DateTime @default(now())
+}
+
 model Distributors {
   id                Int              @id @default(autoincrement())
   distributorName   String?

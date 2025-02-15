@@ -268,7 +268,7 @@ const DistributorDetails = () => {
         <div className="flex items-center gap-4">
           <Popover placement="left" showArrow offset={10}>
             <PopoverTrigger>
-              <Button variant="solid" className="capitalize flex border-none text-gray rounded-lg">
+              <Button variant="solid" className="capitalize flex border-none text-gray rounded-lg overflow-visible">
                 <div className="w-12 h-12 p-2 bg-white rounded-[5px] border border-solid border-borderGrey flex items-center justify-center">
                   <Image src={optionicon} alt="Options" />
                 </div>
@@ -577,11 +577,11 @@ const DistributorDetails = () => {
 
 
           <div className="w-full border-b border-solid border-0 border-borderGrey flex  gap-8">
-            <div className="w-6/12 p-6 border-r border-solid border-0 border-borderGrey flex-col items-center justify-between">
+            <div className="w-full p-6 border-r border-solid border-0 border-borderGrey flex-col items-center justify-between">
               <div className="text-textGrey1 text-base font-medium ">GSTIN: </div>
               <div className="text-textGrey2 text-base font-medium ">{distributor ? distributor?.gstinNo : <Loading2 />}</div>
             </div>
-            <div className="w-6/12 p-6 flex-col items-center justify-between">
+            <div className="w-full p-6 flex-col items-center justify-between">
               <div className="text-textGrey1 text-base font-medium ">PAN Number: </div>
               <div className="text-textGrey2 text-base font-medium ">{distributor ? distributor?.panNo : <Loading2 />}</div>
             </div>

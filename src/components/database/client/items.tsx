@@ -82,9 +82,6 @@ const DatabaseClientTableItem: React.FC<DatabaseClientTableItemProps> = ({ clien
                         <div className="w-1/6 flex items-center px-6 text-base font-medium">
                             {client.email}
                         </div>
-                        <div className="w-1/6 flex items-center px-6 text-base font-medium">
-                            {client.city}
-                        </div>
                     </div>
                 ))}
 

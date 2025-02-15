@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { Bounce, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from "next/navigation";
-
+import tickicon from "../../../assets/icons/settings/tick.svg";
 import { updateUser, UserState } from "@/lib/features/userSlice";
 import placeicon from "../../../assets/icons/loginsignup/Placeholder logo.png"
 
@@ -180,18 +180,37 @@ const Login = () => {
                     onClick={togglePasswordVisibility} />)}
               </div>
             </div>
-            <div className="flex items-center mt-[16px] gap-2">
- 
-    <input
-    type="checkbox"
-    className="appearance-none w-5 h-5 bg-white  checked:bg-teal-500 checked:border-teal-500 checked:after:content-['✔'] checked:after:text-white checked:after:block checked:after:text-center"
-    checked={staysignedin}
-    onClick={handlestay} />
- 
-  <div className="text-gray-500 text-base font-medium">Stay signed in</div>
-</div>
+            {/* <div className="flex items-center mt-[16px] gap-2"> */}
+            <div className="flex items-center mb-4 mt-[16px]">
+              <input 
+              id="default-checkbox" 
+              type="checkbox" 
+              value="" 
+              className="w-5 h-5 appearance-none bg-gray-100 border border-gray-800 rounded-[3px] justify-center"
+              checked={staysignedin}
+              onChange={handlestay} 
+              style={{ border: '1px solid #A2A3A3' }}
+              />
+              {staysignedin && (
+              <Image
+              src={tickicon}
+              alt="Checked"
+              onClick={handlestay}
+              className="absolute w-5 h-5"
+              />
+              )}
+              <label htmlFor="default-checkbox" className="ms-2 text-sm font-medium text-gray-500">Stay signed in</label>
+            </div>
+            {/* <input
+                type="checkbox"
+                className="appearance-none w-5 h-5 bg-white  checked:bg-teal-500 checked:border-teal-500 checked:after:content-['✔'] checked:after:text-white checked:after:block checked:after:text-center"
+                checked={staysignedin}
+                onClick={handlestay} />
+            
+              <div className="text-gray-500 text-base font-medium">Stay signed in</div> */}
+            {/* </div> */}
 
-            <button className="w-[69px] h-[42px] px-4 py-2 bg-[#35BEB1] hover:bg-teal-500 transition-all rounded-[5px] justify-start items-center gap-2 flex text-white text-sm font-bold  mt-[24px] border-0 outline-none hover:cursor-pointer hover:shadow-md" onClick={formSubmit} >
+            <button className="w-[69px] h-[42px] px-4 py-2 bg-[#35BEB1] hover:bg-teal-500 transition-all rounded-[5px] justify-start items-center gap-2 flex text-white text-sm font-bold  mt-[18px] border-0 outline-none hover:cursor-pointer hover:shadow-md" onClick={formSubmit} >
               Login
             </button>
           </div>
