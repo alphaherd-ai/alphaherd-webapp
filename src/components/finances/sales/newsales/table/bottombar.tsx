@@ -48,7 +48,7 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
         tableData.pop();
         //console.log(tableData);
         const allData = { headerData, tableData, totalAmountData, transactionsData };
-        console.log("this is all data", allData, balanceDue)
+        //console.log("this is all data", allData, balanceDue)
         //console.log(tableData);
         let totalQty = 0;
         tableData.forEach(data => {
@@ -90,6 +90,7 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
             }
 
         }
+        console.log(data);    
         //console.log(data,balanceDue,headerData.customer?.value?.creditedToken);
         // console.log(appState.currentBranch)
         const notifData = {

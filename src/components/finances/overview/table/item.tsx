@@ -90,13 +90,13 @@ const FinacesOverviewTableItem = ({ currentPageNumber, setCurrentPageNumber, set
           <Link className='no-underline text-textGrey2' href={{
             pathname: data.type === FinanceCreationType.Sales_Estimate ? 'sales/existingsalesestimate' :
               data.type === FinanceCreationType.Sales_Invoice ? 'sales/existingsales' :
-              data.type === FinanceCreationType.Sales_Return ? 'sales/existingsalesreturn' : 
-              data.type === FinanceCreationType.Purchase_Order ? 'purchases/exsistingpurchaseorder' :
-              data.type === FinanceCreationType.Purchase_Invoice ? 'purchases/exsistinggrn' :
-              data.type === FinanceCreationType.Purchase_Return ? 'purchases/exsistingpurchasereturn' : 
-              data.type === FinanceCreationType.Expense_NonRecurring ? 'expenses/exsistingnonrecurring' :
-              data.type === FinanceCreationType.Expense_Recurring ? 'expenses/exsistingrecurring' : "",
-              query: { id: data.salesId || data.purchasesId || data.expensesId }
+                data.type === FinanceCreationType.Sales_Return ? 'sales/existingsalesreturn' :
+                  data.type === FinanceCreationType.Purchase_Order ? 'purchases/exsistingpurchaseorder' :
+                    data.type === FinanceCreationType.Purchase_Invoice ? 'purchases/exsistinggrn' :
+                      data.type === FinanceCreationType.Purchase_Return ? 'purchases/exsistingpurchasereturn' :
+                        data.type === FinanceCreationType.Expense_NonRecurring ? 'expenses/exsistingnonrecurring' :
+                          data.type === FinanceCreationType.Expense_Recurring ? 'expenses/exsistingrecurring' : "",
+            query: { id: data.salesId || data.purchasesId || data.expensesId }
           }}> <div className='w-[10rem] flex  items-center    text-base font-medium'>{data.type || data.expense?.type || "unknown"}</div></Link>
           <div className='w-[12rem] flex  items-center    text-base font-medium'>{data.sale?.customer || data.purchases?.distributor || data.expenses?.party || "unknown"}</div>
           <div className='w-[12rem] flex  items-center    text-base font-medium'>{data.sale?.invoiceNo || data.purchases?.invoiceNo || data.expenses?.invoiceNo}</div>
@@ -108,7 +108,8 @@ const FinacesOverviewTableItem = ({ currentPageNumber, setCurrentPageNumber, set
               <div>
                 {
                   (() => {
-                    const statusParts = (data.sale?.status || data.expenses?.status || data.purchases?.status).split('|').map((part: string) => part.trim());
+                    const status = data.sale?.status || data.expenses?.status || data.purchases?.status || "";
+                    const statusParts = status.trim() ? status.split('|').map((part: string) => part.trim()) : ["Closed"];
                     //console.log(statusParts);
                     if (!statusParts.length) {
                       return (
@@ -158,7 +159,7 @@ const FinacesOverviewTableItem = ({ currentPageNumber, setCurrentPageNumber, set
 
         </div>
       )}
-      {showConfirmation && overviewId !== null && <CancellationPopup setShowConfirmation={setShowConfirmation} selectedOverviewId={overviewId} selectedOverviewInvoice={selectedOverviewInvoice}/>}
+      {showConfirmation && overviewId !== null && <CancellationPopup setShowConfirmation={setShowConfirmation} selectedOverviewId={overviewId} selectedOverviewInvoice={selectedOverviewInvoice} />}
     </>
   );
 }
