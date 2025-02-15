@@ -15,6 +15,7 @@ import { setValidationErrorsForForm } from '@/utils/setValidationErrorForForm';
 import { useAppSelector } from '@/lib/hooks';
 import capitalizeFirst from '@/utils/capitiliseFirst';
 const formSchema = z.object({
+  orgImgUrl: z.string(),
   orgName: z.string()
     .min(4, 'Organization Name must be at least 4 characters')
     .transform((value) => capitalizeFirst(value)),
@@ -32,7 +33,7 @@ const formSchema = z.object({
   adminName: z.string(),
   adminEmail: z.string().email('Invalid Email Address'),
   adminPhoneNo: z.string().length(10, 'Invalid Phone No.'),
-  adminAltPhoneNo: z.string().length(10, 'Invalid Phone No.'),
+  adminAltPhoneNo: z.string(),
   adminPassword: z.string().min(4, 'Admin Password must be at least 4 characters'),
   reAdminPassword: z.string().min(4, 'Admin Password must be at least 4 characters')
 }).superRefine((data, ctx) => {
@@ -92,6 +93,7 @@ const OrgSetup = () => {
 
 
   const [activeTab, setActiveTab] = useState(0);
+  const [resource, setResource] = useState<any>();
   
 
   const handlePicChange = (imageUrl: any, source: string) => {
@@ -282,7 +284,7 @@ const OrgSetup = () => {
 
   const formElements = [
     <OrgNameSetup key="orgName" data={data} handleChange={handleChange} validationErrors={validationErrors} />,
-    <OrgDetailsSetup key="orgDetails" data={data} handleChange={handleChange} validationErrors={validationErrors} handlePicChange={handlePicChange} />,
+    <OrgDetailsSetup key="orgDetails" data={data} handleChange={handleChange} validationErrors={validationErrors} handlePicChange={handlePicChange} resource={resource} setResource={setResource} />,
     <OrgAdminSetup activeTab={activeTab} setActiveTab={setActiveTab} key="orgAdmin" data={data} handleChange={handleChange} validationErrors={validationErrors} handlePicChange={handlePicChange} />
   ];
 
@@ -298,7 +300,7 @@ const OrgSetup = () => {
             backgroundPosition: 'center',
           }}
           className='w-full min-h-screen bg-backgroundImg p-4 px-10 justify-center items-center flex'>
-          <div className="w-[1016px] bg-white bg-opacity-50 rounded-[30px] border border-solid border-stone-300">
+          <div className="w-[1016px] bg-[#F4F5F7] bg-opacity-50 rounded-[30px] border border-solid border-stone-300">
             {
               formElements[activeTab]
             }

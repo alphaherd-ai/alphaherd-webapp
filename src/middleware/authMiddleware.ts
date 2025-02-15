@@ -1,6 +1,9 @@
 import { NextMiddleware, NextRequest, NextResponse } from 'next/server';
 import { decrypt } from '../../auth';
 import prismaClient from '../../prisma';
+export const config = {
+  runtime: 'nodejs', // Specify Node.js runtime
+};
 export const nonApiMiddleware: NextMiddleware = async (request: NextRequest) => {
   const session = request.cookies.get("session")?.value;
   const { pathname } = request.nextUrl;
