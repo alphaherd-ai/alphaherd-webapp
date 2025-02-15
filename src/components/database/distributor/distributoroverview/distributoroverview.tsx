@@ -21,6 +21,7 @@ import axios from "axios"
 import LeftArrow from '../../../../assets/icons/finance/leftArrow.svg';
 import RightArrow from '../../../../assets/icons/finance/rightArrow.svg';
 import Loading from "@/app/loading"
+import { useRouter } from "next/navigation"
 import Loading2 from "@/app/loading2"
 import Rupee from '../../../../assets/icons/finance/rupee.svg';
 import RecordTransactionPopup from '../../../finances/transactions/table/recordTransactionPopup';
@@ -28,6 +29,7 @@ import RecordTransactionPopup from '../../../finances/transactions/table/recordT
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
 const DistributorDetails = () => {
+  const router=useRouter();
   const [distributor, setDistributor] = useState<any | null>(null);
   const [editDistributor, setEditDistributor] = useState<any | null>(null);
   const [transactionPopup, setTransactionPopup] = useState<boolean>(false);
@@ -172,7 +174,7 @@ const DistributorDetails = () => {
       if (response.ok) {
         alert("Distributor deleted successfully!");
         setShowDeletePopup(false);
-        window.location.href = "/alphaherd/database/distributor"; // Redirect to distributor list after deletion
+        router.push('/database/distributor'); // Redirect to distributor list after deletion
       } else {
         console.error("Failed to delete distributor");
         alert("Failed to delete distributor!");
