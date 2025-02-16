@@ -41,7 +41,6 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
     console.log(editPatient);
     const [formData, setFormData] = useState<any>({});
     const [clients, setClients] = useState<{ value: string; label: string }[]>([]);
-    const [prevPatients,setPrevPatients]=useState<any[]>([]);
     //const [startDate, setStartDate] = useState(new Date());
     const [selectedGender, setSelectedGender] = useState('unspecified');
     const appState = useAppSelector((state) => state.app)
@@ -618,7 +617,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
                     <div className="grow shrink basis-0 self-stretch justify-start items-center gap-2 flex">
                         <input
                             type="checkbox"
-                            className="appearance-none w-6 h-6 rounded-full bg-teal-500 border-2 border-teal-500 cursor-pointer"
+                            className="appearance-none w-5 h-5 bg-white border border-solid border-borderGrey  checked:bg-teal-500 checked:border-teal-500 checked:after:content-['✔'] checked:after:text-white checked:after:block checked:after:text-center"
                             style={{
                                 WebkitAppearance: 'none',
                                 MozAppearance: 'none',

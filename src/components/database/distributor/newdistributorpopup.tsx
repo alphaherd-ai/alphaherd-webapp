@@ -372,7 +372,7 @@ const DistributorPopup: React.FC<PopupProps> = ({ onClose }: any) => {
                         <div onClick={handleSaveClick} className="text-gray-100 text-base font-bold ">Save</div>
                     </div> */}
                     <div
-                        className={`h-11 px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer ${isSaveDisabled ? 'bg-[#17181A] cursor-not-allowed' : 'bg-zinc-900'
+                        className={`h-11 px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer ${isSaveDisabled ? 'bg-gray-500 cursor-not-allowed' : 'bg-zinc-900'
                             }`}
                         onClick={isSaveDisabled ? undefined : handleSaveClick}
                     >
