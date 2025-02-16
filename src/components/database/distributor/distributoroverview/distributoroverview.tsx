@@ -29,7 +29,7 @@ import RecordTransactionPopup from '../../../finances/transactions/table/recordT
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
 const DistributorDetails = () => {
-  const router=useRouter();
+  const router = useRouter();
   const [distributor, setDistributor] = useState<any | null>(null);
   const [editDistributor, setEditDistributor] = useState<any | null>(null);
   const [transactionPopup, setTransactionPopup] = useState<boolean>(false);
@@ -517,10 +517,10 @@ const DistributorDetails = () => {
       </div>
 
 
-      <div className="w-full mt-[24px] bg-white rounded-[10px] border border-solid border-borderGrey flex-col justify-start items-start flex">
+      <div className="w-full mt-[24px] bg-white rounded-md border box-border border-borderGrey flex-col justify-start items-start flex">
 
-        <div className="w-full justify-start items-start flex rounded-[10px]">
-          <div className="w-4/12 p-6 bg-white border-t border-solid border-0  border-r border-stone-300 flex-col justify-center items-start gap-4 flex ">
+        <div className="w-full justify-start items-start flex rounded-md">
+          <div className="w-4/12 p-6 bg-white border-b rounded-tl-md rounded-bl-md border-t border-solid border-0 border-l  border-r border-stone-300 flex-col justify-center items-start gap-4 flex ">
             <div className="w-fit bg-[#E7F5EE] py-2 px-2 rounded-md">
               <div className="text-[#0F9D58] text-[28px] font-bold ">₹{toBePaid}</div>
               <div className="text-[#0F9D58] text-base font-medium ">To be Paid</div>
@@ -531,7 +531,7 @@ const DistributorDetails = () => {
 
           </div>
 
-          <div className="w-4/12 p-6 bg-white border-t border-r border-solid border-0 border-stone-300 flex-col justify-center items-start gap-4 flex">
+          <div className="w-4/12 p-6 bg-white border-t border-b border-r border-solid border-0 border-stone-300 flex-col justify-center items-start gap-4 flex">
             <div className="w-fit bg-[#EBEDFF] py-2 px-2 rounded-md">
               <div className="text-[#3C50FF] text-[28px] font-bold ">₹{distributor?.creditedToken}</div>
               <div className="text-[#3C50FF] text-base font-medium ">Debit Note</div>
@@ -539,7 +539,7 @@ const DistributorDetails = () => {
 
           </div>
 
-          <div className="w-4/12 p-6  border-t border-solid border-0  border-stone-300 flex-col justify-center items-start gap-4 flex">
+          <div className="w-4/12 p-6 rounded-tr-md rounded-br-md  border-t border-solid border-0 border-r border-b border-stone-300 flex-col justify-center items-start gap-4 flex">
             <div className="w-fit bg-[#FFF0E9] py-2 px-2 rounded-md">
               <div className="text-[#FC6E20] text-[28px] font-bold ">25/12/2024</div>
               <div className="text-[#FC6E20] text-base font-medium ">Last Date for Item Returns</div>
@@ -605,9 +605,7 @@ const DistributorDetails = () => {
               <div className="text-textGrey2 text-xl font-medium ">
                 Ledger
               </div>
-              <div className="w-8 h-8 px-1.5 py-2 bg-white rounded-[5px] border border-solid  border-borderGrey justify-start items-center gap-2 flex">
-                <Image src={downloadicon} alt="download" className="w-5 h-5" />
-              </div>
+             
             </div>
           </div>
           <div className="w-full">
@@ -616,10 +614,10 @@ const DistributorDetails = () => {
         </div>
       </div>
       <div className="rounded-md">
-        <div className="w-full mt-[25px] rounded-[10px] border-borderGrey border border-solid  border-neutral-40  ">
-          <div className="w-full mt-[25px] rounded-md border-borderGrey border border-solid  border-neutral-40  ">
+        <div className="w-full mt-[25px] rounded-md border-borderGrey border border-solid  border-neutral-40  ">
+          <div className="w-full  border-neutral-40  ">
             <div>
-              <div className="w-full  h-[72px] px-6 py-4 bg-white border-b border-solid border-0 border-borderGrey justify-start items-center gap-4 flex">
+              <div className="w-full  h-[72px] px-6 py-4 bg-white border-b  rounded-tl-md rounded-tr-md border-solid border-0 border-borderGrey justify-start items-center gap-4 flex">
                 <div className="text-gray-500 text-xl font-medium ">
                   Timeline
                 </div>
@@ -635,8 +633,10 @@ const DistributorDetails = () => {
 
             </div>
           </div>
+
+          
           <div>
-            <div className='flex justify-evenly  w-full  items-center box-border bg-gray-100  h-12 py-4 border-b border-borderGrey text-textGrey2'>
+            <div className='flex justify-evenly  w-full  items-center border-solid box-border bg-gray-100  h-12 py-4 border-0 border-b border-borderGrey text-textGrey2'>
 
               <div className='flex text-textGrey2 text-base font-medium px-6 w-2/12'>Date</div>
               <div className='flex text-textGrey2 text-base font-medium px-6 w-2/12'>Type</div>
@@ -650,7 +650,7 @@ const DistributorDetails = () => {
 
 
             {!distributorTimeLine ? <Loading /> : distributorTimeLine?.map((item: any, index: number) => (
-              <div key={item.id} className='flex   items-center w-full  box-border py-4   bg-white border border-solid border-borderGrey text-gray-400 border-t-0.5  '>
+              <div key={item.id} className='flex   items-center w-full  box-border py-4   bg-white border-0 border-b border-solid border-borderGrey text-gray-400 border-t-0.5  '>
                 <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{formatDateAndTime(item.date).formattedDate}</div>
                 <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{item.type}</div>
                 <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{item.invoiceNo}</div>

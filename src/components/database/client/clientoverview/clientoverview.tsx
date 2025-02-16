@@ -390,7 +390,7 @@ const ClientDetails = () => {
                 </div>
                 <div className="rounded-md">
                     <div className="w-full mt-[25px] rounded-md border-borderGrey border border-solid  border-neutral-40  ">
-                        <div className="w-full h-[72px] px-6 py-4 bg-white border-b border-solid border-0 border-borderGrey justify-start items-center gap-4 flex">
+                        <div className="w-full h-[72px] px-6 py-4 bg-white rounded-tl-md rounded-tr-md border-b border-solid border-0 border-borderGrey justify-start items-center gap-4 flex">
                             <div className="text-gray-500 flex items-center gap-4 text-xl font-medium ">
                                 <p>Patients</p>
                                 <div className="h-12 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-center items-center gap-2 flex" onClick={() => setPatientPopup((prev: boolean) => !prev)}>
@@ -404,7 +404,7 @@ const ClientDetails = () => {
                             </div>
                         </div>
                         <div>
-                            <div className='flex justify-evenly  w-full  items-center box-border bg-gray-100  h-12  border-b border-borderGrey text-gray-500'>
+                            <div className='flex justify-evenly  w-full  items-center box-border border-solid bg-gray-100  h-12 border-0  border-b border-borderGrey text-gray-500'>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-1/6'>Name</div>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-1/6'>Species</div>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-1/6'>Breed</div>
@@ -415,7 +415,7 @@ const ClientDetails = () => {
 
                             {!patientList ? <Loading /> : patientList?.filter((patient: any) => !patient.isDeleted).map((patient: any) => (
 
-                                <div key={patient.id} className='flex items-center justify-evenly w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
+                                <div key={patient.id} className='flex items-center justify-evenly w-full border-0 border-b box-border py-4 bg-white  border-solid border-gray-300 text-gray-400 border-t-0.5'>
                                     <div className='w-1/6 px-6 flex items-center text-textGrey1 text-base font-medium'>{patient?.patientName} </div>
                                     <div className='w-1/6 px-6 flex items-center text-textGrey1 text-base font-medium'>{patient?.species}</div>
                                     <div className='w-1/6 px-6 flex items-center text-textGrey1 text-base font-medium'>{patient?.breed}</div>
@@ -454,8 +454,8 @@ const ClientDetails = () => {
                 <div className="rounded-md">
                     <div className="w-full mt-[25px] rounded-md border-borderGrey border border-solid  border-neutral-40  ">
                         <div>
-                            <div className="w-full  h-[72px] px-6 py-4 bg-white border-b border-solid border-0 border-borderGrey justify-start items-center gap-4 flex">
-                                <div className="text-gray-500 text-xl font-medium ">
+                            <div className="w-full  h-[72px] px-6 py-4 bg-white border-b border-solid border-0 rounded-tl-md rounded-tr-md border-borderGrey justify-start items-center gap-4 flex">
+                                <div className="text-gray-500 text-xl font-medium">
                                     Timeline
                                 </div>
                                 <div className="h-12 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-center items-center gap-2 flex" onClick={() => setRecordPaymentPopup((prev: boolean) => !prev)}>
@@ -470,7 +470,7 @@ const ClientDetails = () => {
 
                         </div>
                         <div>
-                            <div className='flex w-full  items-center box-border bg-gray-100  h-12 py-4 border-b border-borderGrey text-gray-500'>
+                            <div className='flex w-full  items-center border-solid box-border bg-gray-100  h-12 py-4 border-0 border-b border-borderGrey text-gray-500'>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'>Date</div>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'>Type</div>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'>Invoice No. </div>
@@ -481,7 +481,7 @@ const ClientDetails = () => {
                             </div>
 
                             {!clientTimeLine ? <Loading /> : clientTimeLine?.map((item: any, index: number) => (
-                                <div key={item.id} className='flex   items-center w-full  box-border py-4   bg-white border border-solid border-borderGrey text-gray-400 border-t-0.5  '>
+                                <div key={item.id} className='flex   items-center w-full  box-border py-4   bg-white border-0 border-b border-solid border-borderGrey text-gray-400 border-t-0.5  '>
                                     <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{formatDateAndTime(item.date).formattedDate}</div>
                                     <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{item.type}</div>
                                     <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{item.invoiceNo}</div>

@@ -319,11 +319,11 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
                         </button> */}
                         <button
                             onClick={handleContinueClick}
-                            disabled={!formData.name}
-                            className={`px-4 py-2.5 rounded-[5px] justify-start items-center gap-1 flex border-0 outline-none cursor-pointer ${formData.name ? "bg-zinc-900" : "bg-gray-500"
+                            disabled={!formData.name || (nameError==='The service name  you are trying to add already exists')}
+                            className={`px-4 py-2.5 rounded-[5px] justify-start items-center gap-1 flex border-0 outline-none cursor-pointer ${formData.name || (nameError !== 'The service name you are trying to add already exists') ? "bg-zinc-900" : "bg-gray-500"
                                 }`}
                         >
-                            <div className={`text-base font-bold ${formData.name ? "text-white" : "text-neutral-200 cursor-not-allowed"}`}>
+                            <div className={`text-base font-bold ${formData.name  || (nameError !== 'The service name you are trying to add already exists') ? "text-white" : "text-neutral-200 cursor-not-allowed"}`}>
                                 Continue
                             </div>
                             {formData.name && (

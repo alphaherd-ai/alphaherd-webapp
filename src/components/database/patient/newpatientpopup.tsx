@@ -21,8 +21,8 @@ type PopupProps = {
     onClose: () => void;
     clientData: any;
     editPatient?: any
-    setEditpatient?:any
-    
+    setEditpatient?: any
+
 }
 
 
@@ -37,10 +37,11 @@ interface Breed {
     name: string | string[],
 }
 
-const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient,setEditpatient }) => {
+const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, setEditpatient }) => {
     console.log(editPatient);
     const [formData, setFormData] = useState<any>({});
     const [clients, setClients] = useState<{ value: string; label: string }[]>([]);
+    const [prevPatients,setPrevPatients]=useState<any[]>([]);
     //const [startDate, setStartDate] = useState(new Date());
     const [selectedGender, setSelectedGender] = useState('unspecified');
     const appState = useAppSelector((state) => state.app)
@@ -163,7 +164,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient,s
         handleChange("days", calculatedAge.days);
     };
 
-   
+
 
     const handleAgeChange = (field: string, value: number) => {
         const safeValue = isNaN(value) ? 0 : value;
@@ -232,7 +233,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient,s
 
 
     const handleSaveClick = async () => {
-        
+
 
         if (editPatient) {
 
@@ -253,18 +254,18 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient,s
                     ...(formData.species && { species: formData.species.label }),
                     ...(selectedBreed && { breed: selectedBreed }),
                     ...(formData.dateOfBirth && { dateOfBirth: formData.dateOfBirth }),
-                    ...(!(age.days===0 && age.months===0 && age.years===0)  && { age: formatAgeString(age) }),
-                    ...(selectedGender!=='unspecified' && { gender: selectedGender }),
+                    ...(!(age.days === 0 && age.months === 0 && age.years === 0) && { age: formatAgeString(age) }),
+                    ...(selectedGender !== 'unspecified' && { gender: selectedGender }),
                     ...(formData.inPatient !== undefined && { inPatient: formData.inPatient }),
                 };
 
-                
+
 
 
                 const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/patients/${editPatient.id}?branchId=${appState.currentBranchId}`, body);
 
 
-                if (response.status===201) {
+                if (response.status === 201) {
                     setEditpatient(null);
                     if (!isAnotherPatient) onClose();
                     else {
@@ -293,7 +294,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient,s
                 alert("Please enter the age of the patient before saving details");
                 return;
             }
-    
+
             if (!startDate) {
                 alert("Date of Birth is required");
                 return;
@@ -431,7 +432,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient,s
                     </button>
                 </div>
                 <div className="text-gray-500 text-xl font-medium ">{(editPatient && !isAnotherPatient) ? "Edit Patient" : "Add Patient"}</div>
-                <div className="text-textGrey2 text-base font-medium ">{(editPatient && !isAnotherPatient) ? "Fill the inputs you want to edit" :"Ready to welcome a new pet? Enter their details below."}</div>
+                <div className="text-textGrey2 text-base font-medium ">{(editPatient && !isAnotherPatient) ? "Fill the inputs you want to edit" : "Ready to welcome a new pet? Enter their details below."}</div>
                 <div className="flex items-center gap-[48px] ">
                     <div className="w-[8rem] text-gray-500 text-base font-medium ">Patient Name<span className="text-[red]">*</span></div>
                     <div>
@@ -452,6 +453,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient,s
                 <div className="flex items-center gap-[48px]">
                     <div className="  w-[8rem] text-gray-500 text-base font-medium ">Client Name</div>
                     <div>
+
                         {clientData === undefined ? (
                             <Select
                                 className="text-textGrey2 text-base font-medium  w-[25rem] border-0 boxShadow-0 "
@@ -511,7 +513,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient,s
                         />
                     </div>
                 </div>
-                
+
                 {/* Date of Birth Field with Required Indicator */}
                 <div className="flex gap-[65px] items-center w-full">
                     <div className="text-gray-500 text-base font-medium w-[10rem]">
@@ -644,14 +646,16 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient,s
                 </div>
 
                 <div className=" justify-end items-start gap-6 flex w-full">
-                    <div className=" h-11 px-4 py-2.5 bg-teal-400 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer" onClick={isSaveDisabled ? undefined : handleAnotherpatient}>
+                    <div className={`h-11 px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex  ${!editPatient && isSaveDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-teal-500 cursor-pointer'
+                        }`}
+                        onClick={!editPatient && isSaveDisabled ? undefined : handleAnotherpatient}>
                         <div className="w-6 h-7"> <Image src={Paws} alt='Paws' className='w-6 h-6 ' /></div>
-                        <div className="text-gray-100 text-base font-medium ">Add another Patient</div>
+                        <div className="text-gray-100 text-base font-medium ">{savingData ? <Loading2/> : "Add another Patient"}</div>
                     </div>
                     <div
                         className={`h-11 px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex  ${!editPatient && isSaveDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-zinc-900 cursor-pointer'
                             }`}
-                        onClick={!editPatient &&   isSaveDisabled ? undefined : handleSaveClick}
+                        onClick={!editPatient && isSaveDisabled ? undefined : handleSaveClick}
                     >
                         {!editPatient && !isSaveDisabled && (
                             <div className="w-6 h-6 relative">

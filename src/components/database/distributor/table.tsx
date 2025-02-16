@@ -84,7 +84,7 @@ const DatabaseDistributorTable = () => {
         <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>Phone No</div>
         <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>GSTIN</div>
         <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>Email</div>
-        <div className=' flex text-gray-500 text-base font-medium px-6 w-1/6  '>Balance</div>
+        
 
       </div>
       <DatabaseDistributorTableItem distributors={sortedDistributor} isLoading={isLoading} />
