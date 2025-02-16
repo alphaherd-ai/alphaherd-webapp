@@ -139,6 +139,9 @@ const Login = () => {
     setStaysignedin((prev) => !prev);
     console.log(staysignedin);
   }
+  const forgetpassword=()=>{
+    router.push("/auth/user/resetPassword/verifyEmail");
+  }
   useEffect(() => {
       console.log('Stay Signed In:', staysignedin);
   }, [staysignedin]);
@@ -181,25 +184,28 @@ const Login = () => {
               </div>
             </div>
             {/* <div className="flex items-center mt-[16px] gap-2"> */}
-            <div className="flex items-center mb-4 mt-[16px]">
-              <input 
-              id="default-checkbox" 
-              type="checkbox" 
-              value="" 
-              className="w-5 h-5 appearance-none bg-gray-100 border border-gray-800 rounded-[3px] justify-center"
-              checked={staysignedin}
-              onChange={handlestay} 
-              style={{ border: '1px solid #A2A3A3' }}
-              />
-              {staysignedin && (
-              <Image
-              src={tickicon}
-              alt="Checked"
-              onClick={handlestay}
-              className="absolute w-5 h-5"
-              />
-              )}
-              <label htmlFor="default-checkbox" className="ms-2 text-sm font-medium text-gray-500">Stay signed in</label>
+            <div className="flex justify-between items-center mt-[16px] w-[353px]">
+              <div className="flex items-center ">
+                <input 
+                id="default-checkbox" 
+                type="checkbox" 
+                value="" 
+                className="w-5 h-5 appearance-none bg-gray-100 border border-gray-800 rounded-[3px] justify-center cursor-pointer"
+                checked={staysignedin}
+                onChange={handlestay} 
+                style={{ border: '1px solid #A2A3A3' }}
+                />
+                {staysignedin && (
+                <Image
+                src={tickicon}
+                alt="Checked"
+                onClick={handlestay}
+                className="absolute w-5 h-5 cursor-pointer"
+                />
+                )}
+                <label htmlFor="default-checkbox" className="ms-2 text-sm font-medium text-gray-500 cursor-pointer">Stay signed in</label>
+              </div>
+                <button className="text-gray-500 text-sm font-medium cursor-pointer hover:font-medium hover:text-[#35BEB1] border-none bg-transparent transition ease-in-out duration-500 " onClick={forgetpassword}>Forgot password?</button>
             </div>
             {/* <input
                 type="checkbox"
