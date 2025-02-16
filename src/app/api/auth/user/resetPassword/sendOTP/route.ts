@@ -31,7 +31,7 @@ const sendResetPasswordEmail = async (email: string, otp: string) => {
     await transporter.sendMail(mailOptions);
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export const POST = async (req: NextApiRequest, res: NextApiResponse)=> {
     if (req.method === 'POST') {
         const { email } = req.body;
 
