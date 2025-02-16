@@ -297,7 +297,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
             }
 
             setErrors(updatedErrors);
-            setIsSaveDisabled(!isProductNameValid || !isTaxValid || !updatedFormData.providers);
+            setIsSaveDisabled(!isProductNameValid || !isTaxValid || !updatedFormData.providers || isProductExist);
 
             return updatedFormData;
         });
