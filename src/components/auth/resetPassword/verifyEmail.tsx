@@ -108,7 +108,7 @@ const VerifyEmail = () => {
             <div className="w-[328px] mt-[146px] text-neutral-500 text-[28px] font-semibold ">
             Reset Password
             </div>
-            <div className="desc mt-3 ml-[1px] w-[328px] text-gray-500 text-base font-medium ">Enter your email address, we'll send you an OTP to make sure it's you.</div>
+            <div className="desc mt-3 ml-[1px] w-[328px] text-gray-500 text-base font-medium ">Enter your email address, we&apos;ll send you an OTP to make sure it&apos;s you.</div>
             <div className="flex flex-col items-start mt-[52px]">
               <div className="w-[120px] text-gray-500 text-base font-medium ">Email*</div>
               <input className="w-[353px] h-11 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="email" onChange={handleChange} onKeyDown={handleKeyDown}></input>
