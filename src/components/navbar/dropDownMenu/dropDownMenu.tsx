@@ -45,6 +45,7 @@ const DropdownMenu = ({ currBranch }: { currBranch: string }) => {
     return org ? org.allowedBranches : [];
   }, [data, error, isLoading, appState.currentOrgId]);
 
+  console.log(orgAndBranchMapping);
   function handleOrgBranchSelect(orgBranch : any){
 
     // console.log(orgBranch);
@@ -74,7 +75,6 @@ const DropdownMenu = ({ currBranch }: { currBranch: string }) => {
       <div className="w-fit min-w-60 px-6 py-2 h-fit bg-zinc-900 rounded-xl shadow-lg">
         {/* <p className="text-[#545556] text-sm">Select Branch</p> */}
         <hr className="text-[#545556] mt-2 mb-2" />
-        
         {orgAndBranchMapping.map((orgBranch: any) => {
           return (
             <div

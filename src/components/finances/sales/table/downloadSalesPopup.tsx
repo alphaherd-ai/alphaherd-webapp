@@ -45,126 +45,158 @@ const DownloadPopup = ({ onClose, sales, type }:any) => {
     }
   };
 
-  const convertImageToBase64 = (imageSrc:any, callback:any) => {
+  const convertImageToBase64 = (imageSrc: string, callback: (base64: string | null) => void) => {
+    if (!imageSrc) {
+      console.error("Image source is empty");
+      callback(null);
+      return;
+    }
+  
     const xhr = new XMLHttpRequest();
     xhr.onload = function () {
+      if (xhr.status !== 200) {
+        console.error("Failed to fetch image:", xhr.statusText);
+        callback(null);
+        return;
+      }
+  
       const reader = new FileReader();
       reader.onloadend = function () {
-        callback(reader.result);
+        callback(reader.result as string);
+      };
+      reader.onerror = function (error) {
+        console.error("Error reading image as base64:", error);
+        callback(null);
       };
       reader.readAsDataURL(xhr.response);
     };
-    xhr.open('GET', imageSrc);
-    xhr.responseType = 'blob';
+  
+    xhr.onerror = function () {
+      console.error("Error loading image from URL");
+      callback(null);
+    };
+  
+    xhr.open("GET", imageSrc);
+    xhr.responseType = "blob";
     xhr.send();
   };
 
-  const logo = appState?.currentOrg?.orgImgUrl;
+  const defaultImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAwAB/YPsxEAAAAAASUVORK5CYII=";
+
 
   const downloadPDF = () => {
-    convertImageToBase64(logo, (base64Image:any) => {
-    const doc = new jsPDF('landscape');
-    const tableColumn = ["Date", "Type", "Client", "Serial No.", "Total Cost", "Total Qty", "Due Date", "Status"];
-    const tableRows:any = [];
-
-    const typeCounts:any = {};
-
-
-    let totalAmount = 0;
-    let totalQuantity = 0;
-
-    data.forEach((item:any) => {
-        if (typeCounts[item.type]) {
-          typeCounts[item.type]++;
-        } else {
-          typeCounts[item.type] = 1;
-        }
-        if(item.totalCost){
-          totalAmount += item.totalCost;
-        }
-        if(item.totalQty){
-          totalQuantity += item.totalQty;
-        }
-    })  
-
+    const logo = appState?.currentOrg?.orgImgUrl;
   
-
-    data.forEach((item:any) => {
-      const salesData = [
-        format(new Date(item.date), 'dd-MM-yyyy'),
-        item.type,
-        item.customer,
-        item.invoiceNo,
-        item.totalCost,
-        item.totalQty,
-        formatDateAndTime(item?.dueDate).formattedDate,
-        item.status,
-      ];
-      tableRows.push(salesData);
-    });
-
-    doc.addImage(base64Image, 'PNG', 4, 4, 20, 20); 
-      doc.setFontSize(20);
-      doc.text(appState.currentOrg.orgName, 30, 10);
-      
-      doc.setFontSize(12);
-      const text = `${appState.currentOrg.address} ${appState.currentOrg.state}-${appState.currentOrg.pincode}`;
-      const maxWidth = 85;
-      const lines = doc.splitTextToSize(text, maxWidth);
-      doc.text(lines, 30, 15);
-
-
-
-      doc.setFontSize(13);
-      doc.text(`Gst No. :  ${appState.currentOrg.gstNo}`, 126, 12);
-      doc.setFontSize(13);
-      doc.text(`PAN No. :  5465465465465465`, 126, 18);
-
-      doc.setFontSize(13);
-      doc.text(`Email :  ${appState.currentOrg.orgEmail}`, 220, 12);
-      doc.setFontSize(13);
-      doc.text(`Phone No. :  ${appState.currentOrg.phoneNo}`, 220, 18);
-      doc.setFontSize(13);
-      doc.text(`Website :  XYZ.com`, 220, 24);
-
-
-      doc.setLineWidth(0.2);
-      doc.line(1, 26, 320, 26); 
-
-      doc.setFontSize(15);
-      doc.text("Sales Report", 8, 34);
-
-      doc.setFontSize(11);
-      doc.text(`Category : ${type}`, 60, 33);
-      doc.text(`Period : ${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'} - ${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}`, 60, 37);
-
+    convertImageToBase64(logo, (base64Image: string | null) => {
+      if (!base64Image) {
+        console.warn("Using default image due to image loading failure.");
+        base64Image = defaultImage;
+      }
   
-      doc.setFontSize(11);
-      let yPosition = 33;
-      Object.entries(typeCounts).forEach(([type, count]) => {
-        doc.text(`${type}: ${count}`, 140, yPosition);
-        yPosition += 5
-      })
-
-
-      doc.text(`Total Amount: ${totalAmount}`, 200, 33);
-      doc.text(`Total Quantity: ${totalQuantity}`, 200, 38);
-
-
-      doc.setLineWidth(0.5);
-      doc.line(1, 53, 320, 53); 
-
-
-    autoTable(doc, {
-      startY: 55,
-      head: [tableColumn],
-      body: tableRows,
+      try {
+        const doc = new jsPDF("landscape");
+  
+        // Table Headers
+        const tableColumn = ["Date", "Type", "Client", "Serial No.", "Total Cost", "Total Qty", "Due Date", "Status"];
+        const tableRows: any[] = [];
+  
+        const typeCounts: Record<string, number> = {};
+  
+        let totalAmount = 0;
+        let totalQuantity = 0;
+  
+        data.forEach((item: any) => {
+          typeCounts[item.type] = (typeCounts[item.type] || 0) + 1;
+          totalAmount += item.totalCost || 0;
+          totalQuantity += item.totalQty || 0;
+        });
+  
+        data.forEach((item: any) => {
+          const salesData = [
+            format(new Date(item.date), "dd-MM-yyyy"),
+            item.type,
+            item.customer,
+            item.invoiceNo,
+            item.totalCost,
+            item.totalQty,
+            formatDateAndTime(item?.dueDate).formattedDate,
+            item.status,
+          ];
+          tableRows.push(salesData);
+        });
+  
+        // Adding Organization Logo
+        if (base64Image) {
+          doc.addImage(base64Image, "PNG", 4, 4, 20, 20);
+        }
+  
+        // Organization Details
+        doc.setFontSize(20);
+        doc.text(appState.currentOrg.orgName, 30, 10);
+  
+        doc.setFontSize(12);
+        const text = `${appState.currentOrg.address} ${appState.currentOrg.state}-${appState.currentOrg.pincode}`;
+        const maxWidth = 85;
+        const lines = doc.splitTextToSize(text, maxWidth);
+        doc.text(lines, 30, 15);
+  
+        // GST, PAN, Contact Details
+        doc.setFontSize(13);
+        doc.text(`Gst No. :  ${appState.currentOrg.gstNo}`, 126, 12);
+        doc.text(`PAN No. :  5465465465465465`, 126, 18);
+        doc.text(`Email :  ${appState.currentOrg.orgEmail}`, 220, 12);
+        doc.text(`Phone No. :  ${appState.currentOrg.phoneNo}`, 220, 18);
+        doc.text(`Website :  ${appState.currentOrg.website ? appState.currentOrg.website : '-'}`, 220, 24);
+  
+        // Draw Separator Line
+        doc.setLineWidth(0.2);
+        doc.line(1, 26, 320, 26);
+  
+        // Report Title
+        doc.setFontSize(15);
+        doc.text("Sales Report", 8, 34);
+  
+        // Filters & Summary
+        doc.setFontSize(11);
+        doc.text(`Category : ${type}`, 60, 33);
+        doc.text(
+          `Period : ${startDate ? format(startDate, "dd-MM-yyyy") : "start"} - ${
+            endDate ? format(endDate, "dd-MM-yyyy") : "end"
+          }`,
+          60,
+          37
+        );
+  
+        // Type Counts
+        let yPosition = 33;
+        Object.entries(typeCounts).forEach(([type, count]) => {
+          doc.text(`${type}: ${count}`, 140, yPosition);
+          yPosition += 5;
+        });
+  
+        // Total Summary
+        doc.text(`Total Amount: ${totalAmount}`, 200, 33);
+        doc.text(`Total Quantity: ${totalQuantity}`, 200, 38);
+  
+        // Draw another separator line
+        doc.setLineWidth(0.5);
+        doc.line(1, 53, 320, 53);
+  
+        // Generate Table
+        autoTable(doc, {
+          startY: 55,
+          head: [tableColumn],
+          body: tableRows,
+        });
+  
+        // Generate File Name
+        const fileName = `sales_report_${startDate ? format(startDate, "dd-MM-yyyy") : "start"}_to_${endDate ? format(endDate, "dd-MM-yyyy") : "end"}.pdf`;
+        doc.save(fileName);
+      } catch (error) {
+        console.error("Error generating PDF:", error);
+      }
     });
-
-    const fileName = `sales_report_${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'}_to_${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}.pdf`;
-    doc.save(fileName);
-  })
-  }
+  };
 
 
   return (
@@ -181,36 +213,7 @@ const DownloadPopup = ({ onClose, sales, type }:any) => {
     <div className="flex flex-col items-start gap-6 mt-6">
         
             <div className="flex items-center gap-2">
-                {/* <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Custom' ? 'bg-textGreen' : 'bg-white'}`}
-                    onClick={() => handleOptionClick('Custom')}>
-                    <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Custom' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
-                        Custom
-                    </div>
-                </div> */}
-                {/* <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Day' ? 'bg-textGreen' : 'bg-white'}`}
-                    onClick={() => handleOptionClick('Day')}>
-                    <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Day' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
-                    Day
-                    </div>
-                </div>
-                <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Week' ? 'bg-textGreen' : 'bg-white'}`}
-                    onClick={() => handleOptionClick('Week')}>
-                    <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Week' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
-                    Week
-                    </div>
-                </div>
-                <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Month' ? 'bg-textGreen' : 'bg-white'}`}
-                    onClick={() => handleOptionClick('Month')}>
-                    <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Month' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
-                    Month
-                    </div>
-                </div>
-                <div className={` h-7 p-2 rounded-[5px] border border-white justify-start items-center gap-2 flex cursor-pointer ${selectedOption === 'Year' ? 'bg-textGreen' : 'bg-white'}`}
-                    onClick={() => handleOptionClick('Year')}>
-                    <div className={`h-[19px] justify-start items-center flex ${selectedOption === 'Year' ? 'text-white font-bold' : 'text-textGrey2 font-medium'}`}>
-                    Year
-                    </div>
-                </div> */}
+                
             </div>
         
         
