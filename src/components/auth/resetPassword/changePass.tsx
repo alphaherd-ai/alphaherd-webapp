@@ -32,11 +32,6 @@ const ChangePass = () => {
 //   }
 //   let [data, setData] = useState(initialData);
   const queryParams = new URLSearchParams(window.location.search);
-    useEffect(() => {
-        if (!queryParams.get('token')) {
-            router.push("/auth/login");
-        }
-    }, [queryParams]);
     let token = queryParams.get('token');
   let [data, setData] = useState({
     password: "",
@@ -213,7 +208,7 @@ const handleChange = (event: any) => {
               <div className="relative">
                 <input
                   className="w-[353px] h-11 text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]"
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword2 ? "text" : "password"}
                   name="confirmPassword"
                   value={data.confirmPassword}
                   onChange={handleChange}

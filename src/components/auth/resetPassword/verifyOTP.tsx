@@ -22,11 +22,6 @@ const VerifyEmail = () => {
   const queryParams = new URLSearchParams(window.location.search);
 
   const email = queryParams.get('email');
-    useEffect(() => {
-        if (!queryParams.get('email')) {
-            router.push("/auth/user/resetPassword/verifyEmail");
-        }
-    }, []);
   let [data, setData] = useState({
     otp: "",
   });
