@@ -114,12 +114,13 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
 
                 console.log('Data saved successfully');
                 if (!addAnotherPatient) {
-                    onClose();
+                    // onClose();
                     addAnotherPatient = false;
                 }
                 else {
-                    console.log("Here")
+                    //console.log("Here")
                     togglePopup();
+                    // onClose();
                     addAnotherPatient = false;
                 }
 
@@ -204,7 +205,11 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
     const handleNewPatientPopUp = () => {
         addAnotherPatient = true
         if (!isClientSaved) handleSaveClick();
-        else togglePopup();
+        else {
+            console.log("Client saved");
+            // onClose();
+            togglePopup();
+        }
     }
 
 
@@ -261,7 +266,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
                     <div className="flex w-10/12">
 
                         <div className="flex-1 ml-1">
-                            <input className="w-full h-9 text-textGrey2 text-base font-medium   focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" placeholder="  Enter address or Google Maps link" type="text" name="address" onChange={(e) => handleChange("address", e.target.value)} />
+                            <input className="w-full h-9 text-textGrey2 text-base font-medium   focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1] px-2" placeholder="Enter address or Google Maps link" type="text" name="address" onChange={(e) => handleChange("address", e.target.value)} />
 
                         </div>
                       
@@ -272,8 +277,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
 
                     <div className="flex items-center gap-[99px] ">
                         <div className="text-gray-500 text-base font-medium  w-2/12">City</div>
-                        <div className="flex w-10/12 h-11">
-
+                        <div className="flex w-10/12 border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]">
                             <Select
                                 className="text-textGrey2 w-[10rem] text-base font-medium "
                                 placeholder=""
@@ -285,10 +289,6 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
                                 onChange={(value) => handleChange("city", value?.label)}
                                 styles={customStyles}
                             />
-
-
-
-
                         </div>
                     </div>
                     <div className="flex items-center ">
@@ -340,7 +340,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
             </div>
         </div>
 
-        {showPopup && <PatientPopup onClose={togglePopup} clientData={clientData} />}
+        {showPopup && <PatientPopup onClose={onClose} clientData={clientData} />}
     </>;
 
 }

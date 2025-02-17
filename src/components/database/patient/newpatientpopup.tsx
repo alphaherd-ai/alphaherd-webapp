@@ -20,7 +20,12 @@ import Loading2 from "@/app/loading2";
 type PopupProps = {
     onClose: () => void;
     clientData: any;
+    editPatient?: any
+    setEditpatient?: any
+
 }
+
+
 interface Species {
     id: string,
     name: string | string[],
@@ -32,7 +37,8 @@ interface Breed {
     name: string | string[],
 }
 
-const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
+const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, setEditpatient }) => {
+    console.log(editPatient);
     const [formData, setFormData] = useState<any>({});
     const [clients, setClients] = useState<{ value: string; label: string }[]>([]);
     //const [startDate, setStartDate] = useState(new Date());
@@ -157,13 +163,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
         handleChange("days", calculatedAge.days);
     };
 
-    // const handleAgeChange = (field: string, value: number) => {
-    //     setAge((prevAge) => ({ ...prevAge, [field]: value }));
 
-    //     const newDateOfBirth = calculateDateOfBirth(value, field);
-    //     setStartDate(newDateOfBirth);
-    //     handleChange("dateOfBirth", newDateOfBirth);
-    // };
 
     const handleAgeChange = (field: string, value: number) => {
         const safeValue = isNaN(value) ? 0 : value;
@@ -232,62 +232,120 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
 
 
     const handleSaveClick = async () => {
-        if (!formData.patientName) {
-            alert("Please enter the name of the patient before saving details");
-            return;
-        } else if (!age) {
-            alert("Please enter the age of the patient before saving details");
-            return;
-        }
-
-        if (!startDate) {
-            alert("Date of Birth is required");
-            return;
-        }
-
-        try {setSavingData(true);
-            setIsSaveDisabled(true);
-            let selectedBreed=null;
-
-            if(formData.breed !==undefined && formData.breed!==null) {selectedBreed = Array.isArray(formData.breed.label) && formData.breed.label.length > 0
-                ? formData.breed.label[0]
-                : formData.breed.label;}
 
 
-            //console.log('selected breed', selectedBreed);
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/patients/create?branchId=${appState.currentBranchId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    patientName: formData.patientName,
-                    clientId: clientData === undefined ? formData.clientName.value : clientData.id,
-                    species: formData.species ? formData.species.label : "unknown",
-                    breed: selectedBreed ? selectedBreed: "unknown",
-                    dateOfBirth: formData.dateOfBirth,
-                    age: formatAgeString(age),
-                    gender: selectedGender,
-                    inPatient: formData.inPatient,
-                    clientData: clientData ? clientData : null
-                }),
-            });
+        if (editPatient) {
 
-            if (response.ok) {
-                if (!isAnotherPatient) onClose();
-                else {
-                    resetForm();
-                    isAnotherPatient = false;
+            try {
+                setSavingData(true);
+                setIsSaveDisabled(true);
+                let selectedBreed = null;
+
+                if (formData.breed !== undefined && formData.breed !== null) {
+                    selectedBreed = Array.isArray(formData.breed.label) && formData.breed.label.length > 0
+                        ? formData.breed.label[0]
+                        : formData.breed.label;
                 }
-                window.dispatchEvent(new FocusEvent('focus'));
-            } else {
-                console.error('Failed to save data:', response.statusText);
+
+
+                const body = {
+                    ...(formData.patientName && { patientName: formData.patientName }),
+                    ...(formData.species && { species: formData.species.label }),
+                    ...(selectedBreed && { breed: selectedBreed }),
+                    ...(formData.dateOfBirth && { dateOfBirth: formData.dateOfBirth }),
+                    ...(!(age.days === 0 && age.months === 0 && age.years === 0) && { age: formatAgeString(age) }),
+                    ...(selectedGender !== 'unspecified' && { gender: selectedGender }),
+                    ...(formData.inPatient !== undefined && { inPatient: formData.inPatient }),
+                };
+
+
+
+
+                const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/patients/${editPatient.id}?branchId=${appState.currentBranchId}`, body);
+
+
+                if (response.status === 201) {
+                    setEditpatient(null);
+                    if (!isAnotherPatient) onClose();
+                    else {
+                        resetForm();
+                        isAnotherPatient = false;
+                    }
+                    window.dispatchEvent(new FocusEvent('focus'));
+                } else {
+                    console.error('Failed to save data:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error while saving data:', error);
+            } finally {
+                setSavingData(false);
+                setIsSaveDisabled(false);
             }
-        } catch (error) {
-            console.error('Error while saving data:', error);
-        } finally {
-            setSavingData(false);
-            setIsSaveDisabled(false);
+
+        }
+
+        else {
+
+            if (!formData.patientName) {
+                alert("Please enter the name of the patient before saving details");
+                return;
+            } else if (!age) {
+                alert("Please enter the age of the patient before saving details");
+                return;
+            }
+
+            if (!startDate) {
+                alert("Date of Birth is required");
+                return;
+            }
+
+            try {
+                setSavingData(true);
+                setIsSaveDisabled(true);
+                let selectedBreed = null;
+
+                if (formData.breed !== undefined && formData.breed !== null) {
+                    selectedBreed = Array.isArray(formData.breed.label) && formData.breed.label.length > 0
+                        ? formData.breed.label[0]
+                        : formData.breed.label;
+                }
+
+
+                //console.log('selected breed', selectedBreed);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/patients/create?branchId=${appState.currentBranchId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        patientName: formData.patientName,
+                        clientId: clientData === undefined ? formData.clientName.value : clientData.id,
+                        species: formData.species ? formData.species.label : "unknown",
+                        breed: selectedBreed ? selectedBreed : "unknown",
+                        dateOfBirth: formData.dateOfBirth,
+                        age: formatAgeString(age),
+                        gender: selectedGender,
+                        inPatient: formData.inPatient,
+                        clientData: clientData ? clientData : null
+                    }),
+                });
+
+                if (response.ok) {
+                    if (!isAnotherPatient) onClose();
+                    else {
+                        resetForm();
+                        isAnotherPatient = false;
+                    }
+                    window.dispatchEvent(new FocusEvent('focus'));
+                } else {
+                    console.error('Failed to save data:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error while saving data:', error);
+            } finally {
+                setSavingData(false);
+                setIsSaveDisabled(false);
+            }
         }
     };
 
@@ -372,8 +430,8 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                         <Image src={closeicon} alt="close" />
                     </button>
                 </div>
-                <div className="text-gray-500 text-xl font-medium ">Add Patient</div>
-                <div className="text-textGrey2 text-base font-medium ">Ready to welcome a new pet? Enter their details below.</div>
+                <div className="text-gray-500 text-xl font-medium ">{(editPatient && !isAnotherPatient) ? "Edit Patient" : "Add Patient"}</div>
+                <div className="text-textGrey2 text-base font-medium ">{(editPatient && !isAnotherPatient) ? "Fill the inputs you want to edit" : "Ready to welcome a new pet? Enter their details below."}</div>
                 <div className="flex items-center gap-[48px] ">
                     <div className="w-[8rem] text-gray-500 text-base font-medium ">Patient Name<span className="text-[red]">*</span></div>
                     <div>
@@ -384,9 +442,9 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                                 e.target.value = value.charAt(0).toUpperCase() + value.slice(1);
                                 handleChange("patientName", e.target.value);
                             }}
-                            value={formData?.patientName || ''}
+                            value={formData?.patientName}
                         />
-                        {errors.patientName && (
+                        {!editPatient && errors.patientName && (
                             <div className="text-[red] error">{errors.patientName}</div>
                         )}
                     </div>
@@ -394,6 +452,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 <div className="flex items-center gap-[48px]">
                     <div className="  w-[8rem] text-gray-500 text-base font-medium ">Client Name</div>
                     <div>
+
                         {clientData === undefined ? (
                             <Select
                                 className="text-textGrey2 text-base font-medium  w-[25rem] border-0 boxShadow-0 "
@@ -453,82 +512,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                         />
                     </div>
                 </div>
-                {/* <div className="flex gap-[65px] items-center w-full">
-                        <div className="text-gray-500 text-base font-medium w-[10rem]">Date of Birth</div>
-                        <div className="w-full relative">
-                            <DatePicker
-                                peekNextMonth
-                                showMonthDropdown
-                                showYearDropdown
-                                dropdownMode="select"
-                                className="w-[25rem]"
-                                selected={startDate}
-                               // onChange={(date:any) => setStartDate(date as Date)}
-                               onChange={handleDateChange}
-                                calendarClassName="react-datepicker-custom"
-                                customInput={
-                                    <div className="relative">
-                                        <input
-                                            className="w-[25rem] h-9 text-textGrey2 text-base font-medium px-2 rounded border border-solid border-borderGrey focus:border focus:border-textGreen outline-none"
-                                            value={startDate ? startDate.toLocaleDateString() : ''}
-                                            readOnly
-                                        />
-                                        <Image
-                                            src={calicon}
-                                            alt="Calendar Icon"
-                                            className="absolute right-2 top-2 cursor-pointer"
-                                            width={50}
-                                            height={20}
-                                        />
-                                    </div>
-                                }
-                            />
-                        </div>
-                    </div>
-                <div className="flex items-center gap-[140px] w-full">
-                    <div className="text-gray-500 text-base font-medium ">Age<span className="text-[red]">*</span></div>
-                    <div className="flex gap-4">
-                        <div className="flex justify-start items-center gap-1">
-                            <div className="w-12 h-9 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
-                                <input
-                                    className="w-full h-full text-textGrey2 text-base font-medium px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
-                                    type="number"
-                                    //min="0"
-                                    name="years"
-                                    value={age.years === 0 ? '' : age.years} // Show empty string when 0
-                                    onChange={(e) => handleAgeChange('years', parseInt(e.target.value.replace(/^0+/, '')))} // Remove leading 0s
-                                />
-                            </div>
-                            <div className="text-gray-500 text-base font-medium ">Years</div>
-                        </div>
-                        <div className="flex justify-start items-center gap-1">
-                            <div className="w-12 h-9 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
-                                <input
-                                    className="w-full h-full text-textGrey2 text-base font-medium px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
-                                    type="number"
-                                    //min="0"
-                                    name="months"
-                                    value={age.months === 0 ? '' : age.months}
-                                    onChange={(e) => handleAgeChange('months', parseInt(e.target.value.replace(/^0+/, '')))} // Remove leading 0s
-                                />
-                            </div>
-                            <div className="text-gray-500 text-base font-medium ">Months</div>
-                        </div>
-                        <div className="flex justify-start items-center gap-1">
-                            <div className="w-12 h-9 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
-                               <input
-                                    className="w-full h-full text-textGrey2 text-base font-medium px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
-                                    type="number"
-                                    min="0"
-                                    name="days"
-                                    value={age.days === 0 ? '' : age.days}
-                                    onChange={(e) => handleAgeChange('days', parseInt(e.target.value.replace(/^0+/, '')))} // Remove leading 0s
-                                />
-                            </div>
-                            <div className="text-gray-500 text-base font-medium ">Days</div>
-                        </div>
-                        </div>
-                    </div> */}
+
                 {/* Date of Birth Field with Required Indicator */}
                 <div className="flex gap-[65px] items-center w-full">
                     <div className="text-gray-500 text-base font-medium w-[10rem]">
@@ -633,7 +617,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                     <div className="grow shrink basis-0 self-stretch justify-start items-center gap-2 flex">
                         <input
                             type="checkbox"
-                            className="appearance-none w-6 h-6 rounded-full bg-teal-500 border-2 border-teal-500 cursor-pointer"
+                            className="appearance-none w-5 h-5 bg-white border border-solid border-borderGrey  checked:bg-teal-500 checked:border-teal-500 checked:after:content-['✔'] checked:after:text-white checked:after:block checked:after:text-center"
                             style={{
                                 WebkitAppearance: 'none',
                                 MozAppearance: 'none',
@@ -661,16 +645,18 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 </div>
 
                 <div className=" justify-end items-start gap-6 flex w-full">
-                    <div className=" h-11 px-4 py-2.5 bg-teal-400 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer" onClick={isSaveDisabled ? undefined : handleAnotherpatient}>
+                    <div className={`h-11 px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex  ${!editPatient && isSaveDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-teal-500 cursor-pointer'
+                        }`}
+                        onClick={!editPatient && isSaveDisabled ? undefined : handleAnotherpatient}>
                         <div className="w-6 h-7"> <Image src={Paws} alt='Paws' className='w-6 h-6 ' /></div>
-                        <div className="text-gray-100 text-base font-medium ">Add another Patient</div>
+                        <div className="text-gray-100 text-base font-medium ">{savingData ? <Loading2/> : "Add another Patient"}</div>
                     </div>
                     <div
-                        className={`h-11 px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex  ${isSaveDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-zinc-900 cursor-pointer'
+                        className={`h-11 px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex  ${!editPatient && isSaveDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-zinc-900 cursor-pointer'
                             }`}
-                        onClick={isSaveDisabled ? undefined : handleSaveClick}
+                        onClick={!editPatient && isSaveDisabled ? undefined : handleSaveClick}
                     >
-                        {!isSaveDisabled && (
+                        {!editPatient && !isSaveDisabled && (
                             <div className="w-6 h-6 relative">
                                 <div className="w-6 h-6 left-0 top-0 absolute">
                                     <Image src={Check} alt="Check" />

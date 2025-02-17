@@ -38,7 +38,7 @@ const DatabaseNavbar = () => {
     
           const clientOptions = clients.flatMap((item: any) =>
             item.patients.map((patient: any) => ({
-                label: `${item?.clientName || ''}---${item?.contact || ''}---${patient.patientName || ''}`,
+                label: `${item?.clientName || ''} - ${patient.patientName || ''}(${item?.contact || ''})`,
                 value: {
                 clientId: item.id,
                 clientName: item.clientName,
@@ -50,11 +50,12 @@ const DatabaseNavbar = () => {
             );
     
           const distributorOptions = distributors.map((item: any) => ({
-            label: `${item?.distributorName || ''}---${item?.contact || ''}`,
+            label: `${item?.distributorName || ''} - ${item?.contact || ''}`,
             value: item,
           }));
           const patientOptions = patients.map((item:any)=>({
-            label:`${item?.patientName||''}---${item?.clients?.clientName||''}`
+            label:`${item?.patientName||''} - ${item?.clients?.clientName||''}`,
+            value:item,
           }))
           const combinedOptions = [...clientOptions, ...distributorOptions,...patientOptions];
     
@@ -68,11 +69,17 @@ const DatabaseNavbar = () => {
     const handleSearch = (selectedOption: any) => {
         const item = selectedOption?.value;
         let path = '';
-        if (item.productBatch) {
-            path = `/inventory/products/overview?id=${item.productBatch.product.id}`;
-        } else if (item.service) {
-            path = `/inventory/services/overview?id=${item.service.id}`;
-        } 
+        if (item?.patientId) {
+            path = `/database/clients/overview?id=${item.patientId}`;
+        } else if (item?.clientId) {
+            path = `/database/clients/overview?id=${item.clientId}`;
+        } else if (item?.distributorName) {
+            path = `/database/distributor/overview?id=${item.id}`;
+        } else {
+            // Handle the case where item is not found
+            console.error('Invalid selection');
+            return;
+        }
         router.push(path); // Navigate to the selected route
     };
     const currentRoute = usePathname();

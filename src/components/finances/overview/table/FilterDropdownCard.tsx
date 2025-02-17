@@ -7,13 +7,13 @@ import useSWR from 'swr';
 import { useAppSelector } from '@/lib/hooks';
 
 import { FinanceCreationType } from '@prisma/client';
-import {useRouter} from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { SalesStatus } from '@/utils/statusType';
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json());
 
-const FilterDropdwonCard = () => {
-  const router=useRouter();
+const FilterDropdownCard = () => {
+  const router = useRouter();
   const appState = useAppSelector((state) => state.app);
   const [partyInfo, setPartyInfo] = useState<any[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<any[]>([]);
@@ -62,7 +62,7 @@ const FilterDropdwonCard = () => {
       if (prevSelectedParties.includes(String(party))) {
         return prevSelectedParties.filter((partyName) => partyName !== String(party));
       } else {
-        return [...prevSelectedParties,String(party)];
+        return [...prevSelectedParties, String(party)];
       }
     });
   };
@@ -77,7 +77,7 @@ const FilterDropdwonCard = () => {
     });
   };
 
-  const [activeTab, setActiveTab] = useState("party");
+  const [activeTab, setActiveTab] = useState("dateRange");
 
   const handleTabChange = (tab: any) => {
     setActiveTab(tab);
@@ -102,51 +102,42 @@ const FilterDropdwonCard = () => {
     selectedInvoiceTypes.forEach((type) => queryParams.append('selectedInvoiceTypes', type));
     const queryString = queryParams.toString();
     router.push(`?${queryString}`);
-    
+
   };
 
   return (
-    <div className="w-[420px] h-[541px] px-4 py-4 bg-white rounded-[10px] flex-col justify-start items-start gap-2 inline-flex shadow-lg">
+    <div className="w-[420px] h-[541px] min-h-fit px-4 py-4 bg-white rounded-[10px] flex-col justify-start items-start gap-2 inline-flex shadow-lg">
       <div className="items-start flex border border-solid border-borderGrey rounded-[5px] cursor-pointer">
-       
+
         <div
-          className={`px-2 py-1 ${
-            activeTab === "dateRange" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
-          }  border-0 border-r border-solid border-borderGrey justify-start items-center gap-1 flex`}
+          className={`px-2 py-1 ${activeTab === "dateRange" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
+            }  border-0 border-r border-solid border-borderGrey justify-start items-center gap-1 flex`}
           onClick={() => handleTabChange("dateRange")}
         >
           <div className={`text-sm font-bold ${activeTab === "dateRange" ? "text-white" : "text-neutral-400"}`}>
             Date Range
           </div>
-          <div className="w-4 h-4 p-2 bg-teal-400 rounded-[17px] flex-col justify-center items-center gap-2.5 inline-flex">
-            <div className="text-white text-[10px] font-medium">2</div>
-          </div>
+
         </div>
         <div
-          className={`px-2 py-1 ${
-            activeTab === "invoiceType" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
-          }  border-0 border-r border-solid border-borderGrey justify-start items-center gap-1 flex`}
+          className={`px-2 py-1 ${activeTab === "invoiceType" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
+            }  border-0 border-r border-solid border-borderGrey justify-start items-center gap-1 flex`}
           onClick={() => handleTabChange("invoiceType")}
         >
           <div className={`text-sm font-bold ${activeTab === "invoiceType" ? "text-white" : "text-neutral-400"}`}>
             Invoice Type
           </div>
-          <div className="w-4 h-4 p-2 bg-teal-400 rounded-[17px] flex-col justify-center items-center gap-2.5 inline-flex">
-            <div className="text-white text-[10px] font-medium">2</div>
-          </div>
+
         </div>
         <div
-          className={`px-2 py-1 ${
-            activeTab === "status" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
-          } rounded-tr-[5px] rounded-br-[5px] border justify-start items-center gap-1 flex`}
+          className={`px-2 py-1 ${activeTab === "status" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
+            } rounded-tr-[5px] rounded-br-[5px] border justify-start items-center gap-1 flex`}
           onClick={() => handleTabChange("status")}
         >
           <div className={`text-sm font-bold ${activeTab === "status" ? "text-white" : "text-neutral-400"}`}>
             Status
           </div>
-          <div className="w-4 h-4 p-2 bg-teal-400 rounded-[17px] flex-col justify-center items-center gap-2.5 inline-flex">
-            <div className="text-white text-[10px] font-medium">1</div>
-          </div>
+
         </div>
       </div>
       {activeTab === "party" && (
@@ -316,14 +307,13 @@ const FilterDropdwonCard = () => {
         </div>
       </div>}
       <div className="w-full h-fit flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <input type="checkbox" name="" id="" />
-          <div className="text-textGrey2 font-medium text-base">Select All</div>
+        <div className="w-full flex justify-between items-center">
+          <div className="flex items-center gap-2"></div>
+          <div className="px-3 py-3 bg-textGreen text-white rounded-[5px] justify-start items-center cursor-pointer" onClick={applyFilters}>Apply</div>
         </div>
-        <div className="px-3 py-3 bg-textGreen text-white rounded-[5px] justify-start items-center" onClick={applyFilters}>Apply</div>
       </div>
     </div>
   );
 };
 
-export default FilterDropdwonCard;
+export default FilterDropdownCard;

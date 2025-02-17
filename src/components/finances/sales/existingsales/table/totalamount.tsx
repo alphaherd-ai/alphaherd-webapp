@@ -54,8 +54,8 @@ const ExistingsalesTotalAmout = ({ otherData, isLoading, loading }: any) => {
 
     const handleSelectedTransaction = (transaction: any) => {
         const updatedTransaction = {
-            partyName:otherData.customer,
-            invoiceLink:otherData.invoiceNo,
+            partyName: otherData.customer,
+            invoiceLink: otherData.invoiceNo,
             ...transaction
         }
         setTransaction(updatedTransaction);
@@ -76,8 +76,9 @@ const ExistingsalesTotalAmout = ({ otherData, isLoading, loading }: any) => {
         <>
 
 
-            <div className="flex gap-4  pt-[20px] pb-[20px]">
-                <Popup headerdata={otherData} setCount={setCount} initialInvoiceNo={initialInvoiceNo} balanceDue={balanceDue} />
+            < div className={`flex gap-4 ${otherData?.status==='Cancelled' ? "justify-end" : ""}   pt-[20px] pb-[20px]`}>
+                {!(otherData?.status === 'Cancelled') &&
+                    <Popup headerdata={otherData} setCount={setCount} initialInvoiceNo={initialInvoiceNo} balanceDue={balanceDue} />}
                 <div className='w-1/2 '>
                     <div className="w-full bg-white rounded-md ">
                         <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">
@@ -219,9 +220,14 @@ const ExistingsalesTotalAmout = ({ otherData, isLoading, loading }: any) => {
 
                     </div>
                 </div>
-                {popup && <EditRecordTransactionPopup onClose={onClose} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue}/>}
-                {showConfirmation && <CancellationPopup setShowConfirmation={setShowConfirmation} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue}/>}
-            </div>
+                {!(otherData?.status === 'Cancelled') &&
+                    <>
+                        {popup && <EditRecordTransactionPopup onClose={onClose} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue} />}
+                        {showConfirmation && <CancellationPopup setShowConfirmation={setShowConfirmation} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue} />}
+                    </>}
+            </ div>
+
+
 
 
 

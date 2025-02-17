@@ -46,6 +46,7 @@ export const PUT=async (req: NextRequest,
             return new Response('Method not allowed',{status:405});
         } 
         try {
+            const inventoryId = await fetchInventoryId(req);
             const productId = Number(params.id);
             const body=await req.json();
             const validatedData = productSchema.safeParse(body);
@@ -55,14 +56,14 @@ export const PUT=async (req: NextRequest,
             //     status: 422,
             //   });
             // }
-            await prisma.productBatch.deleteMany({
-                where: { productId },
-            });
+            
 
            const product= await prismaClient.products.update({
-                where: { id: Number(params.id) },
+                where: { id: Number(params.id),inventorySectionId:inventoryId },
                 data:body,
-            });     
+            });   
+            
+            
             return new Response(JSON.stringify(product), {
                 status: 201,
                 headers: {
@@ -86,10 +87,13 @@ export const DELETE = async (req: NextRequest, { params }: { params: { id: numbe
 
     try {
         const productId = Number(params.id);
-
+        const inventoryId = await fetchInventoryId(req);
         // Check if the product exists
-        const product = await prisma.products.findUnique({
-            where: { id: productId },
+        const product = await prisma.products.update({
+            where: { id: productId,inventorySectionId:inventoryId },
+            data:{
+                isDeleted:true
+            }
         });
 
         if (!product) {
@@ -97,21 +101,14 @@ export const DELETE = async (req: NextRequest, { params }: { params: { id: numbe
         }
 
         // Fetch inventory ID and delete related records
-        const inventoryId = await fetchInventoryId(req);
-        console.log("Inventory ID is:", inventoryId);
+        
+        //console.log("Inventory ID is:", inventoryId);
 
-        await prisma.productBatch.deleteMany({
-            where: { productId },
-        });
+        
 
-        await prisma.inventoryTimeline.deleteMany({
-            where: { productId, inventorySectionId: inventoryId },
-        });
+        
 
-        // Delete the product itself
-        await prisma.products.delete({
-            where: { id: productId },
-        });
+        
 
         // Return 204 with no response body
         return new Response(null, { status: 204 });

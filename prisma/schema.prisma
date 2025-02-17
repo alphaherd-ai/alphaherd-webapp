@@ -63,8 +63,6 @@ enum Inventory {
   Service
 }
 
-
-
 enum Role {
   Admin
   Staff
@@ -97,25 +95,26 @@ model Organization {
 }
 
 model OrgBranch {
-  id                    Int                 @id @default(autoincrement())
-  branchName            String
-  org                   Organization        @relation(fields: [orgId], references: [id])
-  orgId                 Int
-  phoneNo               String?
-  altphoneNo            String?
-  address               String?
-  panNo                 String?
-  state                 String?
-  pinCode               Int?
-  gstNo                 String?
-  email                 String?
-  description           String?
-  website               String?
-  assignedUsers         User[]
-  orgBranchUserRoles    OrgBranchUserRole[]
-  inventories           InventorySection[]
-  finances              FinanceSection[]
-  databases             DatabaseSection[]
+  id                 Int                 @id @default(autoincrement())
+  branchName         String
+  org                Organization        @relation(fields: [orgId], references: [id])
+  orgId              Int
+  phoneNo            String?
+  altphoneNo         String?
+  address            String?
+  panNo              String?
+  state              String?
+  pinCode            Int?
+  gstNo              String?
+  email              String?
+  description        String?
+  website            String?
+  assignedUsers      User[]
+  orgBranchUserRoles OrgBranchUserRole[]
+  inventories        InventorySection[]
+  finances           FinanceSection[]
+  databases          DatabaseSection[]
+
   @@index([branchName, orgId])
 }
 
@@ -215,7 +214,6 @@ model DatabaseSection {
   distributors Distributors[]
   species      Species[]
   breed        Breed[]
-  
 
   @@index([branchId])
 }
@@ -223,7 +221,7 @@ model DatabaseSection {
 model Clients {
   id                Int              @id @default(autoincrement())
   clientName        String?
-  email             String?          @unique
+  email             String?
   contact           String?
   address           String?
   invoiceNo         String[]
@@ -233,6 +231,7 @@ model Clients {
   DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
   databaseSectionId Int?
   creditedToken     Float?           @default(0)
+  isDeleted         Boolean          @default(false)
   @@index([databaseSectionId])
   @@map("client")
 }
@@ -247,18 +246,26 @@ model Patients {
   age               String?
   gender            String?
   isInpatient       Boolean?
-  date              DateTime?          @default(now())
+  date              DateTime?        @default(now())
   clients           Clients?         @relation(fields: [clientId], references: [id])
   DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
   databaseSectionId Int?
+  isDeleted         Boolean          @default(false)
 
   @@index([databaseSectionId, clientId])
+}
+
+model OTP{
+  id        Int     @id @default(autoincrement())
+  email     String
+  otp       String
+  createdAt DateTime @default(now())
 }
 
 model Distributors {
   id                Int              @id @default(autoincrement())
   distributorName   String?
-  email             String?          @unique
+  email             String?
   contact           String?
   gstinNo           String?
   panNo             String?
@@ -270,7 +277,7 @@ model Distributors {
   databaseSectionId Int?
   invoiceNo         String[]
   creditedToken     Float?           @default(0)
-
+  isDeleted         Boolean          @default(false)
   @@index([databaseSectionId])
 }
 
@@ -286,7 +293,7 @@ model Products {
   totalQuantity       Int?
   minStock            Int?
   maxStock            Int?
-  location         String?
+  location            String?
   lastOutOfStockNotif DateTime?
   lastExpiryNotif     DateTime? // Last expired notification sent
   lastExpiringNotif   DateTime? // Last expiring soon notification sent
@@ -297,6 +304,7 @@ model Products {
   InventorySection    InventorySection? @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId  Int?
   createdAt           DateTime?         @default(now())
+  isDeleted           Boolean           @default(false)
 
   @@index([inventorySectionId, id])
 }
@@ -308,7 +316,7 @@ model ProductBatch {
   productId           Int
   batchNumber         String?
   costPrice           Int?
-  location           String?
+  location            String?
   totalCost           Int?
   maxRetailPrice      Float?
   costPerItem         Int?
@@ -327,6 +335,7 @@ model ProductBatch {
   inventoryTimeline   InventoryTimeline[] // Add the opposite relation
   InventorySection    InventorySection?   @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId  Int?
+  isDeleted           Boolean             @default(false)
 
   @@index([inventorySectionId, productId])
   @@index([id, inventorySectionId])
@@ -350,6 +359,7 @@ model Services {
   InventorySection   InventorySection?   @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId Int?
   createdAt          DateTime?           @default(now())
+  isDeleted          Boolean             @default(false)
 
   @@index([inventorySectionId, id])
 }
@@ -539,7 +549,7 @@ model InventoryTimeline {
   service            Services?         @relation(fields: [serviceId], references: [id])
   InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId Int?
-  deliveryStatus   String?
+  deliveryStatus     String?
 
   @@index([inventorySectionId, productId, serviceId, createdAt])
 }
@@ -587,6 +597,7 @@ model Reason {
   InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId Int?
 }
+
 model ExpenseCategory {
   id                 Int               @id @default(autoincrement())
   name               String[]
@@ -619,7 +630,7 @@ model TaxType {
 }
 
 model Inventorytransfer {
-  id                 Int      @id @default(autoincrement())
+  id                 Int       @id @default(autoincrement())
   items              Json?
   status             String?
   transferStatus     String?

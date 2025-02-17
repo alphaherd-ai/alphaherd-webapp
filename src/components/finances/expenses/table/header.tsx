@@ -14,14 +14,13 @@ import { usePathname } from 'next/navigation';
 
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
-import FilterDropdwonCard from './FilterDropDownCard';
-
-
+import FilterDropdownCard from './FilterDropDownCard';
+import { useRouter } from 'next/navigation';
 
 
 const FinancesExpensesTableHeader = ({ recurringCount, nonrecurringCount }: any) => {
     const currentRoute = usePathname();
-
+    const router=useRouter();
     const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
     const [selectedSort, setselectedSort] = React.useState(new Set(["Category: text"]));
     const [showPopup, setShowPopup] = React.useState(false);
@@ -44,13 +43,9 @@ const FinancesExpensesTableHeader = ({ recurringCount, nonrecurringCount }: any)
 
         <>
 
-
-
-
-
             <div className='flex w-full bg-white h-20  p-4 px-6  justify-between border-0 border-b border-solid border-borderGrey rounded-tl-lg rounded-tr-lg'>
 
-                <div className='flex  text-gray-500 items-center w-5/12'>
+                <div className='flex  text-gray-500 items-center w-6/12'>
                     <Link className='no-underline flex item-center' href='/finance/expenses/all'>
 
                         <div className={currentRoute.startsWith("/finance/expenses/all")
@@ -60,8 +55,8 @@ const FinancesExpensesTableHeader = ({ recurringCount, nonrecurringCount }: any)
                     <Link className='no-underline flex item-center' href='/finance/expenses/nonrecurring'>
 
                         <div className={currentRoute.startsWith("/finance/expenses/nonrecurring")
-                            ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white"
-                            : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}> Non Recurring Expenses</div>
+                            ? "flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white"
+                            : "flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}> Non Recurring Expenses</div>
                     </Link>
                     <Link className='no-underline flex item-center' href='/finance/expenses/recurring'>
 
@@ -69,7 +64,7 @@ const FinancesExpensesTableHeader = ({ recurringCount, nonrecurringCount }: any)
                             ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white"
                             : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}>Recurring Expenses</div>
                     </Link>
-                            
+
                     <Link className='ml-6 no-underline flex item-center' href={{ pathname: '/finance/expenses/newexpenses', query: { count: nonrecurringCount } }}>
                         <Button
                             variant="solid"
@@ -89,14 +84,14 @@ const FinancesExpensesTableHeader = ({ recurringCount, nonrecurringCount }: any)
                         <div className='flex items-center justify-center w-7 h-7 border border-solid border-gray-300 border-0.5 rounded-md  p-1'><Image src={Chart} alt='Chart' className='w-4  h-4' /></div>
                     </Link> */}
                     <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg bg-[#35BEB1]'>
-<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => alert("cross icon clicked")} className='cursor-pointer'>
-<mask id="mask0_1198_18016" maskUnits="userSpaceOnUse" x="0" y="0" width="16" height="16">
-<rect width="16" height="16" fill="white"/>
-</mask>
-<g mask="url(#mask0_1198_18016)">
-<path d="M7.32918 14.0011V10.0011H8.66252V11.3344H13.9958V12.6678H8.66252V14.0011H7.32918ZM1.99585 12.6678V11.3344H5.99585V12.6678H1.99585ZM4.66252 10.0011V8.66777H1.99585V7.33443H4.66252V6.0011H5.99585V10.0011H4.66252ZM7.32918 8.66777V7.33443H13.9958V8.66777H7.32918ZM9.99585 6.0011V2.0011H11.3292V3.33443H13.9958V4.66777H11.3292V6.0011H9.99585ZM1.99585 4.66777V3.33443H8.66252V4.66777H1.99585Z" fill="white"/>
-</g>
-</svg>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => router.push('/finance/expenses/all?type=all')} className='cursor-pointer'>
+                            <mask id="mask0_1198_18016" maskUnits="userSpaceOnUse" x="0" y="0" width="16" height="16">
+                                <rect width="16" height="16" fill="white" />
+                            </mask>
+                            <g mask="url(#mask0_1198_18016)">
+                                <path d="M7.32918 14.0011V10.0011H8.66252V11.3344H13.9958V12.6678H8.66252V14.0011H7.32918ZM1.99585 12.6678V11.3344H5.99585V12.6678H1.99585ZM4.66252 10.0011V8.66777H1.99585V7.33443H4.66252V6.0011H5.99585V10.0011H4.66252ZM7.32918 8.66777V7.33443H13.9958V8.66777H7.32918ZM9.99585 6.0011V2.0011H11.3292V3.33443H13.9958V4.66777H11.3292V6.0011H9.99585ZM1.99585 4.66777V3.33443H8.66252V4.66777H1.99585Z" fill="white" />
+                            </g>
+                        </svg>
 
 
                         <Popover>
@@ -109,12 +104,12 @@ const FinancesExpensesTableHeader = ({ recurringCount, nonrecurringCount }: any)
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent>
-                                <FilterDropdwonCard />
+                                <FilterDropdownCard />
                             </PopoverContent>
                         </Popover>
-                        <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => alert("cross icon clicked")} className='cursor-pointer'>
-<path d="M4.77561 12L4 11.2244L7.22439 8L4 4.77561L4.77561 4L8 7.22439L11.2244 4L12 4.77561L8.77561 8L12 11.2244L11.2244 12L8 8.77561L4.77561 12Z" fill="white"/>
-</svg>
+                        <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => router.push('/finance/expenses/all?type=all')} className='cursor-pointer'>
+                            <path d="M4.77561 12L4 11.2244L7.22439 8L4 4.77561L4.77561 4L8 7.22439L11.2244 4L12 4.77561L8.77561 8L12 11.2244L11.2244 12L8 8.77561L4.77561 12Z" fill="white" />
+                        </svg>
                     </div>
 
                     {/* <div className='flex items-center h-9 py-2.5 bg-black justify-between rounded-lg '> */}

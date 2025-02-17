@@ -16,7 +16,7 @@ import { useAppSelector } from '@/lib/hooks';
 import { DataContext } from "./DataContext";
 import { generateInvoiceNumber } from "@/utils/generateInvoiceNo";
 import { useSearchParams } from "next/navigation";
-
+import Loading2 from "@/app/loading2";
 import formatDateAndTime from "@/utils/formateDateTime";
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
@@ -158,7 +158,7 @@ const NewPurchasesHeader = ({existingHeaderData,isNewDistributorClicked, newDist
                         <div className="text-gray-500 text-base font-bold ">Distributor:</div>
                         { id===null?(
                             
-                            isLoading?<div>Loading...</div>:(
+                            isLoading?<Loading2/>:(
                         <Select
                             className="text-gray-500 text-base font-medium  w-full border-0 boxShadow-0"
                             classNamePrefix="select"
@@ -223,7 +223,7 @@ const NewPurchasesHeader = ({existingHeaderData,isNewDistributorClicked, newDist
                                             <div className='relative '>
                                                 <input
                                                     className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={startDate.toLocaleDateString()}
+                                                    value={startDate.toLocaleDateString('en-GB')}
                                                     readOnly
                                                 />
                                                 <Image
@@ -274,7 +274,7 @@ const NewPurchasesHeader = ({existingHeaderData,isNewDistributorClicked, newDist
                                             <div className='relative'>
                                                 <input
                                                     className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={headerData?.dueDate?.toLocaleDateString() || dueDate.toLocaleDateString()}
+                                                    value={headerData?.dueDate?.toLocaleDateString('en-GB') || dueDate.toLocaleDateString('en-GB')}
                                                     readOnly
                                                 />
                                                 <Image

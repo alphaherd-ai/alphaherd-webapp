@@ -147,7 +147,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     }, [appState.currentBranchId]);
 
     const { fetchedProducts, isLoading, error } = useProductfetch(appState.currentBranchId);
-
+    console.log("fetchproducts",fetchedProducts)
     useEffect(() => {
         // Handle successful product fetch (all conditions met)
         if (!isLoading && !error && fetchedProducts) {
@@ -188,6 +188,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
         }
         fetchTax();
     }, [appState.currentBranchId]);
+
+    
     useEffect(() => {
 
         const fetchDistributors = async () => {
@@ -273,10 +275,9 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
 
         setFormData((prevFormData: any) => {
             const updatedFormData = { ...prevFormData, [field]: value };
-             console.log(updatedFormData);
             const isProductNameValid = updatedFormData.itemName !== '' ;
             const isTaxValid = updatedFormData.tax !== undefined;
-            const isProductExist=fetchedProducts?.some((item:any)=>(item.itemName).toLowerCase()===(updatedFormData.itemName).toLowerCase());
+            const isProductExist = fetchedProducts?.some((item: any) => item.itemName?.toLowerCase() === updatedFormData.itemName?.toLowerCase()) || false;
             // Update the errors state directly
             const updatedErrors = { ...errors };
             if (!isProductNameValid) {
@@ -296,7 +297,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
             }
 
             setErrors(updatedErrors);
-            setIsSaveDisabled(!isProductNameValid || !isTaxValid || !updatedFormData.providers);
+            setIsSaveDisabled(!isProductNameValid || !isTaxValid || !updatedFormData.providers || isProductExist);
 
             return updatedFormData;
         });
@@ -353,7 +354,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                         <div className="text-gray-500 text-xl font-medium">New Product</div>
                         <div className="text-neutral-400 text-base font-medium">Add a new product to your inventory</div>
                         <div className="flex items-center gap-[87px]">
-                            <div className="text-gray-500 text-base font-medium">Name*</div>
+                            <div className="text-gray-500 text-base font-medium">Name<span className="text-red-500">*</span></div>
                             <div>
                                 <input className="w-[440px] h-9 rounded-md  text-gray-400 text-base font-medium p-2 outline-none border border-solid border-gray-300" type="text" name="itemName" onChange={(e) => {
                                     const value = e.target.value;

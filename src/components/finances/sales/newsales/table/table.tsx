@@ -150,16 +150,9 @@ const NewsalesTable = () => {
                 id: item.itemType === 'product' ? item.productBatch.id : item.serviceId,
                 provider: item.itemType === 'product' ? "" : item.serviceProvider
             }));
-            setItems((prevItems: any) => [...prevItems, ...itemData]);
-            setItems((prevItems: any) => [
-                ...prevItems,
-                {
-                    productId: null,
-                    serviceId: null,
-                    itemName: "",
-                },
-            ]);
-            console.log('all the data is stored',itemData);
+            setItems((prevItems: any) => [...itemData,...prevItems]);
+            
+            
         }
     }, [estimateData, id,isEstimateDataLoading,isEstimateDataError]);
 

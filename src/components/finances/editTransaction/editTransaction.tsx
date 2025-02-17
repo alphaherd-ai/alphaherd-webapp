@@ -14,7 +14,7 @@ import Select from 'react-select';
 import { Button } from '@nextui-org/react';
 import { useAppSelector } from '@/lib/hooks';
 import useSWR from 'swr';
-
+import { usePathname } from 'next/navigation'
 import Loading2 from '@/app/loading2';
 import axios from 'axios';
 import { useSearchParams } from 'next/navigation';
@@ -54,22 +54,22 @@ interface ProductBatch {
 const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onClose, transactionsData, type, balanceDue }) => {
     const url = useSearchParams();
     const id = url.get('id');
-
-
+    //const pathName=usePathname();
+    //console.log(pathName);
+    //console.log(url);
     const [isSaving, setSaving] = useState(false);
-    const [formData, setFormData] = useState<any>({});
+    const [formData, setFormData] = useState<any>({ amountPaid: editTransaction?.amountPaid });
     const appState = useAppSelector((state) => state.app)
     const [startDate, setStartDate] = useState(new Date());
-    const [transactionType, setTransactionType] = useState<string | null>("Money In");
+    const [transactionType, setTransactionType] = useState<string | null>(editTransaction?.moneyChange === 'In' ? "Money In" : "Money Out");
     const [selectedProducts, setSelectedProducts] = useState<ProductOption[]>([]);
     const [productOptions, setProductOptions] = useState([]);
     const [selectedServices, setSelectedServices] = useState<ServiceOption[]>([]);
     const [serviceOptions, setServiceOptions] = useState([]);
-
-    const [selectedMode, setSelectedMode] = useState('');
+    const [isAdvancePayment, setIsAdvancePayment] = useState(editTransaction?.isAdvancePayment || false);
+    const [selectedMode, setSelectedMode] = useState(editTransaction?.mode);
     const [modeOptions, setModeOptions] = useState<any>([]);
     const [linkInvoice, setLinkInvoice] = useState<any>([]);
-
 
 
     const handleDateChange = (date: any) => {
@@ -93,8 +93,8 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                         partyName: editTransaction?.partyName.replace(/\d+/g, "").trim() || "Unknown",
                         subject: formData.subject,
                         date: formData.date || new Date(),
-                        amountPaid: parseInt(formData.amountPaid.toString(), 10),
-                        mode: selectedMode,
+                        amountPaid: parseInt(formData.amountPaid.toString(), 10) || editTransaction?.amountPaid,
+                        mode: selectedMode || editTransaction?.mode,
                         moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
                         products: selectedProducts,
                         services: selectedServices,
@@ -119,9 +119,10 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                 if (transactionsData) {
                     transactionsData.forEach((transaction: any) => {
                         if (transaction?.receiptNo === editTransaction.receiptNo) {
-                            transaction.amountPaid = parseInt(formData.amountPaid, 10);
+                            transaction.amountPaid = parseInt(formData.amountPaid, 10) || editTransaction?.amountPaid;
                             transaction.date = formData.date || new Date();
-                            transaction.mode = selectedMode;
+                            transaction.isAdvancePayment=isAdvancePayment;
+                            transaction.mode = selectedMode || editTransaction?.mode;
                             transaction.moneyChange = transactionType === 'Money In' ? 'In' : 'Out';
                         }
                     });
@@ -143,9 +144,10 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
 
                 const newTransaction = {
                     receiptNo: editTransaction?.receiptNo,
+                    isAdvancePayment:isAdvancePayment,
                     date: formData.date || new Date(),
-                    amountPaid: parseInt(formData.amountPaid, 10),
-                    mode: selectedMode,
+                    amountPaid: parseInt(formData.amountPaid, 10) || editTransaction?.amountPaid,
+                    mode: selectedMode || editTransaction?.mode,
                     moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
                 }
 
@@ -158,8 +160,8 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                             partyName: editTransaction?.partyName.replace(/\d+/g, "").trim() || "Unknown",
                             subject: formData.subject,
                             date: formData.date || new Date(),
-                            amountPaid: parseInt(formData.amountPaid, 10),
-                            mode: selectedMode,
+                            amountPaid: parseInt(formData.amountPaid, 10) || editTransaction?.amountPaid,
+                            mode: selectedMode || editTransaction?.mode,
                             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
                             products: selectedProducts,
                             services: selectedServices,
@@ -186,30 +188,7 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                 ])
 
                 if (transactionResponse.status === 201 && recordResponse.status === 201) {
-                    if (!(editTransaction?.invoiceLink.includes('SE'))) {
-                        if (id) {
-                            //console.log('Here')
-                            const balanceStatus = balanceDue && (editTransaction?.invoiceLink.startsWith('S') || editTransaction?.invoiceLink.includes('PR')) ? (balanceDue + (editTransaction?.moneyChange === 'In' ? Number(editTransaction?.amountPaid) : -Number(editTransaction?.amountPaid)) + (transactionType === 'Money In' ? -1 * Number(formData.amountPaid) : Number(formData.amountPaid))) :  (balanceDue + (editTransaction?.moneyChange === 'In' ? -Number(editTransaction?.amountPaid) : Number(editTransaction?.amountPaid)) + (transactionType === 'Money In' ? Number(formData.amountPaid) : -Number(formData.amountPaid))) ;
-                            //console.log(balanceDue,balanceStatus,editTransaction?.amountPaid, formData.amountPaid)
-                            const baseURL=`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/${editTransaction?.invoiceLink.startsWith('S') ? 'sales' : 'purchases'}/status/${id}/?branchId=${appState.currentBranchId}`
-                            const putResponse = await fetch(baseURL, {
-                                method: 'PUT',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({
-                                    status: (editTransaction?.invoiceLink.startsWith('S') || editTransaction?.invoiceLink.includes('PR')) ? balanceStatus && (balanceStatus >= 1 ? `You’re owed: ₹${parseFloat((balanceStatus).toFixed(2))}` : balanceStatus <= -1 ? `You owe: ₹${parseFloat((-1 * balanceStatus).toFixed(2))}` : 'Closed'): balanceStatus <= -1 ? `You’re owed: ₹${parseFloat((-1 * balanceStatus).toString()).toFixed(2)}` : balanceStatus >= 1 ? `You owe: ₹${parseFloat((balanceStatus).toString()).toFixed(2)}` : 'Closed',
-                                })
-
-                            })
-                            if (putResponse.ok) {
-                                onClose();
-                                window.dispatchEvent(new FocusEvent('focus'))
-                            } else {
-                                console.error('Failed to save data')
-                            }
-                        }
-                    }
+                    onClose();
                 }
             }
             catch (err) {
@@ -235,7 +214,7 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
     const { data: products, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll/?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
     const { data: service, error: serviceError, isLoading: serviceLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true })
     const { data: invoice, error: invoiceError, isLoading: invoiceLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
-    const { data: modes, error: modesError, isLoading: modesLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
+    const { data: modes, error: modesError, isLoading: modesLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/paymentMethod/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
 
 
 
@@ -283,7 +262,7 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
 
     }, [products, service, error, isLoading, serviceError, serviceLoading, modes, modesError, modesLoading, invoice, invoiceError, invoiceLoading]);
 
-    // console.log(linkInvoice)
+
 
 
 
@@ -292,33 +271,32 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
     }
 
 
-    const handleProductSelect = (selectedOptions: any) => {
-        setSelectedProducts(selectedOptions);
-    };
+    // const handleProductSelect = (selectedOptions: any) => {
+    //     setSelectedProducts(selectedOptions);
+    // };
 
-    const handleProductRemove = (productId: any) => {
-        setSelectedProducts(selectedProducts?.filter(product => product.value !== productId));
-    };
+    // const handleProductRemove = (productId: any) => {
+    //     setSelectedProducts(selectedProducts?.filter(product => product.value !== productId));
+    // };
 
-    const handleServiceSelect = (selectedOptions: any) => {
-        setSelectedServices(selectedOptions);
-    };
+    // const handleServiceSelect = (selectedOptions: any) => {
+    //     setSelectedServices(selectedOptions);
+    // };
 
-    const handleServiceRemove = (serviceId: any) => {
-        setSelectedServices(selectedServices?.filter(service => service.value !== serviceId));
-    };
-
-
+    // const handleServiceRemove = (serviceId: any) => {
+    //     setSelectedServices(selectedServices?.filter(service => service.value !== serviceId));
+    // };
 
 
-    //   console.log("Hererererererer",JSON.stringify(selectedProducts[0]?.label),selectedProducts[0]?.label)
 
-    useEffect(() => {
-        const totalProductAmount = selectedProducts.reduce((sum, product) => sum + product.price, 0);
-        const totalServiceAmount = selectedServices.reduce((sum, service) => sum + service.price, 0);
-        const totalAmount = totalProductAmount + totalServiceAmount;
-        setFormData((prevFormData: any) => ({ ...prevFormData, amountPaid: totalAmount }));
-    }, [selectedProducts, selectedServices]);
+
+
+    // useEffect(() => {
+    //     const totalProductAmount = selectedProducts.reduce((sum, product) => sum + product.price, 0);
+    //     const totalServiceAmount = selectedServices.reduce((sum, service) => sum + service.price, 0);
+    //     const totalAmount = totalProductAmount + totalServiceAmount;
+    //     setFormData((prevFormData: any) => ({ ...prevFormData, amountPaid: totalAmount }));
+    // }, [selectedProducts, selectedServices]);
 
     const customStyles = {
         control: (provided: any, state: any) => ({
@@ -412,107 +390,10 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                         <input className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2  outline-none border border-solid border-borderGrey focus:border-teal-500 " type="text" name="partyName" disabled={true} placeholder={editTransaction?.partyName} />
                     </div>
                 </div>
-                <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Subject*</span></div>
-                    <div><input className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2  outline-none border border-solid border-borderGrey focus:border-teal-500 " type="text" name="subject" onChange={(e) => handleChange("subject", e.target.value)} /></div>
-                </div>
-                {/* <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Ref. No.</span></div>
-                    <div>
-                        <input className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2  outline-none border border-solid border-borderGrey focus:border-teal-500 " type="text" name="refNo" disabled={true} placeholder={editTransaction?.invoiceLink} />
-                    </div>
-                </div> */}
-                <div className='w-full flex justify-between items-center mt-4'>
-                    <div>
-                        <span className='text-gray-500 text-base font-medium '>Link Service(s)</span>
-                    </div>
-                    <div className="w-[440px]">
-                        {service ? (
-                            <Select
-                                className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
-                                placeholder="Select Service"
-                                isClearable={false}
-                                isSearchable={true}
-                                options={serviceOptions}
-                                isMulti={true}
-                                name="linkService"
-                                onChange={(value) => handleServiceSelect(value)}
-                                styles={customStyles}
-                            />
-                        ) : (
-                            <div className="text-neutral-400 text-base font-medium w-full"><Loading2 /></div>
-                        )}
-                    </div>
-                </div>
-                <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Link Product(s)</span></div>
-                    <div className="w-[440px]">
-                        {products ? (
-                            <Select
-                                className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
-                                placeholder="Select Product"
-                                isClearable={true}
-                                isSearchable={true}
-                                options={productOptions}
-                                isMulti={true}
-                                name="linkProduct"
-                                onChange={(value) => handleProductSelect(value)}
-                                styles={customStyles}
-                            />
-                        ) : (
-                            <div className="text-neutral-400 text-base font-medium w-full"><Loading2 /></div>
-                        )}
-                    </div>            </div>
 
-                <div className='w-full bg-white rounded-[5px] flex flex-col border border-solid border-borderGrey '>
-                    <div className='w-full h-9 bg-[#F4F5F7] flex justify-evenly items-center text-textGrey2 rounded-tl-[5px] rounded-tr-[5px] border-0 border-b border-solid border-borderGrey'>
-                        <div className='w-[10rem] text-textGrey2 font-medium text-base'>Name</div>
-                        <div className='w-[8rem] text-textGrey2 font-medium text-base'>Selling Price</div>
-                        <div className='w-[10rem] text-textGrey2 font-medium text-base'>Quantity</div>
-                        <div className='w-[3rem] text-textGrey2 font-medium text-base'></div>
-                    </div>
-                    <div className='w-full h-[5rem] overflow-y-auto container'>
-                        {selectedProducts.map((product) => (
-                            <div
-                                key={product.value}
-                                className="w-full h-9 flex justify-evenly items-center text-textGrey2 border-0 border-b border-solid border-borderGrey"
-                            >
-                                <div className="w-[10rem] text-textGrey2 font-medium text-base">{product.label}</div>
-                                <div className="w-[8rem] text-textGrey2 font-medium text-base">₹ {product.price}</div>
-                                <div className="w-[10rem] text-textGrey2 font-medium text-base">1</div>
-                                <div
-                                    className="w-[3rem] text-textGrey2 font-medium text-base flex justify-center items-center cursor-pointer"
-                                    onClick={() => handleProductRemove(product.value)}
-                                >
-                                    <Image className="w-4 h-4" src={closeicon} alt="Delete" />
-                                </div>
-                            </div>
-                        ))}
 
-                        {selectedServices.map((service) => (
-                            <div
-                                key={service.value}
-                                className="w-full h-9 flex justify-evenly items-center text-textGrey2 border-0 border-b border-solid border-borderGrey"
-                            >
-                                <div className="w-[10rem] text-textGrey2 font-medium text-base">{service.label}</div>
-                                <div className="w-[8rem] text-textGrey2 font-medium text-base">₹ {service.price}</div>
-                                <div className="w-[10rem] text-textGrey2 font-medium text-base">1</div>
-                                <div
-                                    className="w-[3rem] text-textGrey2 font-medium text-base flex justify-center items-center cursor-pointer"
-                                    onClick={() => handleServiceRemove(service.value)}
-                                >
-                                    <Image className="w-4 h-4" src={closeicon} alt="Delete" />
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                    <div className='w-full h-9 bg-[#F4F5F7] flex justify-evenly items-center text-textGrey2 rounded-bl-[5px] rounded-br-[5px]'>
-                        <div className='w-[10rem] text-textGrey2 font-bold text-base'>Total</div>
-                        <div className='w-[8rem] text-textGrey2 font-bold text-base'>₹ {formData.amountPaid}</div>
-                        <div className='w-[10rem] text-textGrey2 font-medium text-base'></div>
-                        <div className='w-[3rem] text-textGrey2 font-medium text-base'></div>
-                    </div>
-                </div>
+
+
 
                 <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Receipt No.</span></div>
@@ -520,19 +401,9 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                         <div><div className="w-[10rem] h-9 rounded-[5px] bg-white text-textGrey2 text-base font-medium p-2  border border-solid border-borderGrey flex items-center">#{editTransaction?.receiptNo}</div></div>
 
 
-                        <div><span className='text-gray-500 text-base font-medium '>Mode</span></div>
+                        <div><span className='text-gray-500 text-base font-medium '>Mode <span className='text-red-500'>*</span></span></div>
                         <div className='w-[10rem]'>
-                            {/* <Select
-                            className="text-neutral-400 text-base font-medium w-full"
-                            placeholder="Mode"
-                            isClearable={false}
-                            isSearchable={true}
-                            options={Mode}
-                            isMulti={false}
-                            name="mode"
-                            onChange={(value) => handleChange("mode", value)}
-                            styles={customStyles}
-                        /> */}
+
                             {!modesLoading && modeOptions ? (
                                 <Select
                                     className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
@@ -542,6 +413,7 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                                     options={modeOptions}
                                     isMulti={false}
                                     name="mode"
+                                    value={modeOptions.find((option: any) => option.label === selectedMode)}
                                     onChange={(value) => handleModeSelect(value)}
                                     styles={customStyles}
                                 />
@@ -553,9 +425,17 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
 
                 </div>
                 <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Amount Paid</span></div>
+                    <div><span className='text-gray-500 text-base font-medium '>Amount Paid <span className='text-red-500'>*</span></span></div>
                     <div className='w-[440px] flex justify-between items-center'>
-                        <div><input className="w-[10rem] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2  outline-none border border-solid border-borderGrey focus:border-teal-500 " type="number" name="amountPaid" value={formData.amountPaid} onChange={(e) => handleChange("amountPaid", e.target.value)} /></div>
+                        <div>
+                            <input
+                                className="w-[10rem] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2 outline-none border border-solid border-borderGrey focus:border-teal-500"
+                                type="number"
+                                name="amountPaid"
+                                value={formData.amountPaid}
+                                onChange={(e) => handleChange("amountPaid", e.target.value)}
+                            />
+                        </div>
 
                         <div><span className='text-gray-500 text-base font-medium '>Date</span></div>
                         <div className='relative'>
@@ -585,12 +465,29 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                     </div>
 
                 </div>
+
+                <div className='w-full flex justify-between items-center'>
+                    <div><span className='text-gray-500 text-base font-medium '>Subject <span className='text-red-600'>*</span></span></div>
+                    <div><input className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2  outline-none border border-solid border-borderGrey focus:border-teal-500 " type="text" name="subject" onChange={(e) => handleChange("subject", e.target.value)} /></div>
+                </div>
+
                 <div className='w-full flex justify-end'>
                     <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
                         }`} onClick={handleSaveClick} disabled={isDisabled || isSaving}>
                         <Image src={check} alt='check' />
                         <span className='text-white text-base font-medium pr-2'>{isSaving ? <Loading2></Loading2> : "Save Payment"}</span>
                     </Button>
+                </div>
+
+                <div className='flex items-center gap-1'>
+                    <input
+                        type="checkbox"
+                        name="advancePayment"
+                        id="advancePayment"
+                        checked={isAdvancePayment}
+                        onChange={(e) => { setIsAdvancePayment(e.target.checked);}}
+                    />
+                    <span className='text-textGrey2 text-base font-medium'>Mark as advance payment</span>
                 </div>
 
             </div>

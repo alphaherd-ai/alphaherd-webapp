@@ -9,12 +9,14 @@ import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/reac
 import { FinanceCreationType } from '@prisma/client';
 
 import formatDateAndTime from '@/utils/formateDateTime';
-
+import CancellationPopup from './cancellationPopup';
 
 import Loading from '@/app/loading';
 import { getStatusStyles } from '@/utils/getStatusStyles';
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
+
+
 interface Sales {
   id: number;
   date: string;
@@ -34,6 +36,8 @@ const FinancesSalesTableItem = ({ onCountsChange, data, sales, isLoading }: any)
   const [invoiceCount, setInvoiceCount] = useState(0);
   const [estimateCount, setEstimateCount] = useState(0);
   const [returnCount, setReturnCount] = useState(0);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [salesId, selectedSalesId] = useState<number | null>(null);
   useEffect(() => {
     if (data) {
 
@@ -61,9 +65,7 @@ const FinancesSalesTableItem = ({ onCountsChange, data, sales, isLoading }: any)
   useEffect(() => {
     handleCounts();
   }, [sales]);
-  console.log("invoice count is :", invoiceCount);
-  console.log("estimate count is :", estimateCount);
-  console.log("return count is :", returnCount);
+  
 
   if (isLoading && !data) return (<Loading />)
 
@@ -93,11 +95,11 @@ const FinancesSalesTableItem = ({ onCountsChange, data, sales, isLoading }: any)
           {/* <div className='w-1/12 flex  items-center text-base font-medium'>{sale.totalQty}</div> */}
           <div className='w-1/12 flex  items-center  text-base font-medium'>{formatDateAndTime(sale.dueDate).formattedDate}</div>
           <div className='w-2/12 flex  items-center  text-base font-medium'>
-            <Tooltip content={sale.status} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
               <div>
                 {
                   (() => {
-                    const statusParts = sale.status.split('|').map((part: string) => part.trim());
+                    const status = sale?.status ||  "";
+                    const statusParts = status.trim() ? status.split('|').map((part: string) => part.trim()) : ["Closed"];
                     //console.log(statusParts);
                     if (!statusParts.length) {
                       return (
@@ -117,40 +119,24 @@ const FinancesSalesTableItem = ({ onCountsChange, data, sales, isLoading }: any)
                   })
                     ()}
               </div >
-            </Tooltip>
 
           </div>
+
+          
           <div className=' right-16'>
 
             <Popover placement="left" showArrow offset={10}>
               <PopoverTrigger>
                 <Button
-                  // color="gray-400"
+                 
                   variant="solid"
                   className="capitalize flex border-none  text-gray rounded-lg ">
                   <div className='flex items-center '><Image src={Menu} alt='Menu' className='w-5  h-5' /></div></Button>
               </PopoverTrigger>
-              <PopoverContent className="p-5 text-gray-500 bg-white text-sm  font-medium flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
+              <PopoverContent className="p-2 text-gray-500 bg-white text-sm  font-medium flex flex-row items-start rounded-lg border-2">
 
-                <div className="flex flex-col ">
-
-                  <div className='flex flex-col'>
-
-                    <Link className='no-underline flex item-center' href='/finance/overview'>
-                      <div className='text-gray-500 text-sm p-3 font-medium flex '>
-                        gtr</div>
-                    </Link>
-                    <Link className='no-underline flex item-center' href='/finance/overview'>
-                      <div className='text-gray-500 text-sm p-3 font-medium flex '>
-                        grtt</div>
-                    </Link>
-                    <Link className='no-underline flex item-center' href='/finance/overview'>
-                      <div className='text-gray-500 text-sm p-3 font-medium flex '>
-                        gtrt</div>
-                    </Link>
-
-                  </div>
-                </div>
+                <div className='text-gray-500 cursor-pointer no-underline  item-center text-sm  font-medium flex ' onClick={() => { setShowConfirmation(true); selectedSalesId(sale?.id) }}>
+                  Cancel</div>
 
 
               </PopoverContent>
@@ -159,10 +145,11 @@ const FinancesSalesTableItem = ({ onCountsChange, data, sales, isLoading }: any)
 
 
           </div>
+
         </div>
+
       ))}
-
-
+      {showConfirmation && salesId !== null && <CancellationPopup setShowConfirmation={setShowConfirmation} salesId={salesId} />}
     </div>)
 }
 

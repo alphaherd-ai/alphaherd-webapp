@@ -25,7 +25,7 @@ const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
 
 type PopupProps = {
-    setCount:any,
+    setCount: any,
     headerdata: any;
     initialInvoiceNo: any;
     balanceDue: any;
@@ -56,7 +56,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, in
     const [selectedMode, setSelectedMode] = useState('');
     const [modeOptions, setModeOptions] = useState<any>([]);
 
-    const { data: modes, error: modesError, isLoading: modesLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
+    const { data: modes, error: modesError, isLoading: modesLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/paymentMethod/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
 
 
     useEffect(() => {
@@ -139,8 +139,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, in
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
         };
 
-        const balanceStatus = balanceDue + (newTransaction?.moneyChange === "In" ? -1 * newTransaction.amountPaid : newTransaction.amountPaid)
-        
+        const balanceStatus = balanceDue + (newTransaction?.moneyChange === "In" ? newTransaction.amountPaid : -1*newTransaction.amountPaid)
+
         if (newTransaction) {
             try {
                 const putResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/${id}/?branchId=${appState.currentBranchId}`, {
@@ -150,13 +150,13 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, in
                     },
                     body: JSON.stringify({
                         recordTransaction: [newTransaction],
-                        status: balanceStatus >= 1 ? `You’re owed: ₹${parseFloat(balanceStatus).toFixed(2)}` : balanceStatus <= -1 ? `You owe: ₹${parseFloat((-1 * balanceStatus).toFixed(2))}` : 'Closed',
+                        status: balanceStatus <= -1 ? `You’re owed: ₹${parseFloat((-1*balanceStatus).toFixed(2))}` : balanceStatus >= 1 ? `You owe: ₹${parseFloat((balanceStatus).toFixed(2))}` : 'Closed',
                     })
 
                 })
                 if (putResponse.ok) {
                     // console.log('Data saved Sucessfully2')
-                    setCount((prev:any)=>prev+1);
+                    setCount((prev: any) => prev + 1);
                     window.dispatchEvent(new FocusEvent('focus'))
                 } else {
                     console.error('Failed to save data')
@@ -363,7 +363,13 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, in
                 </div>
                 <div className='w-full flex justify-between items-center'>
                     <div className='flex items-center gap-1'>
-                        <input type="checkbox" name="" id="" />
+                        <input
+                            type="checkbox"
+                            name="advancePayment"
+                            id="advancePayment"
+                            checked={isAdvancePayment}
+                            onChange={(e) => { setIsAdvancePayment(e.target.checked); setTransactionType('Money Out') }}
+                        />
                         <span className='text-textGrey2 text-base font-medium'>Mark as advance payment</span>
                     </div>
                     <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${isDisabled ? 'bg-gray-400' : 'bg-zinc-900'

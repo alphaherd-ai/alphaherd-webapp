@@ -12,7 +12,7 @@ import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 import formatDateAndTime from '@/utils/formateDateTime';
 import Popup from "./recordCreateGrnTransaction"
 import Cash from '../../../../../assets/icons/finance/Cash.svg'
-import { Tooltip, Button } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 import Menu from '../../../../../assets/icons/finance/menu.svg'
 import EditRecordTransactionPopup from '@/components/finances/editTransaction/editTransaction';
@@ -189,9 +189,8 @@ const CreateGrnTotalAmount = ({ orderData }: any) => {
 
 
 
-    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
-
-    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
 
     const balanceDue = grandAmt >= headerData.distributor?.creditedToken ? grandAmt + totalPaidAmount - totalAmountToPay - headerData.distributor?.creditedToken : grandAmt + totalPaidAmount - totalAmountToPay;
@@ -272,7 +271,7 @@ const CreateGrnTotalAmount = ({ orderData }: any) => {
                                         <div className='relative'>
                                             <input
                                                 className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                value={startDate.toLocaleDateString()}
+                                                value={startDate.toLocaleDateString('en-GB')}
                                                 readOnly
                                             />
                                             <Image

@@ -46,7 +46,6 @@ const OrgDetailsSetup = (props: any) => {
         { value: 'Puducherry', label: 'Puducherry' }
     ];
     //   console.log("this is props",props.data.state)
-    const [resource, setResource] = useState<any>();
 
     return (
         <div className="w-[1016px] h-fit px-10 py-8 rounded-[30px] border border-stone-300  justify-center  inline-flex">
@@ -67,7 +66,7 @@ const OrgDetailsSetup = (props: any) => {
                                 uploadPreset={process.env.CUSTOMCONNSTR_NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
                                 onSuccess={(result, { widget }) => {
                                     //@ts-ignore
-                                    setResource(result?.info.secure_url);
+                                    props.setResource(result?.info.secure_url);
                                     console.log(result); // { public_id, secure_url, etc }
                                     props.handlePicChange(result.info, "orgImgUrl");
                                     widget.close();
@@ -79,10 +78,10 @@ const OrgDetailsSetup = (props: any) => {
                                             <div className="">
                                                 <div className="">
 
-                                                    {!resource ?
+                                                    {!props.resource ?
                                                         <Image src={updatelogo} alt="upload" />
                                                         :
-                                                        <Image className="w-8 h-8 rounded-full" src={resource} alt="Uploaded image" width={150} height={150} />
+                                                        <Image className="w-8 h-8 rounded-full" src={props.resource} alt="Uploaded image" width={150} height={150} />
                                                     }
 
                                                 </div>
@@ -192,7 +191,7 @@ const OrgDetailsSetup = (props: any) => {
                             <div className="w-[136px] text-gray-500 text-base font-medium">GSTIN Number*</div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
                                 <input
-                                    type="number"
+                                    type="text"
                                     className="text-textGrey2 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
                                     id="gstNo"
                                     name="gstNo"

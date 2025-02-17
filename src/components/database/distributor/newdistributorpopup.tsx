@@ -262,7 +262,7 @@ const DistributorPopup: React.FC<PopupProps> = ({ onClose }: any) => {
                     </div>
                 </div>
                 <div className="flex items-center gap-[40px]">
-                    <div className="text-gray-500 text-base font-medium w-[6rem]">Phone No.</div>
+                    <div className="text-gray-500 text-base font-medium w-[6rem]">Phone No.<span className="text-red-500">*</span></div>
                     <div>
                         <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="contact" onChange={(e) => handleChange("contact", e.target.value)} />
                         {errors.contact && <div className="text-red-500 text-sm">{errors.contact}</div>}
@@ -372,7 +372,7 @@ const DistributorPopup: React.FC<PopupProps> = ({ onClose }: any) => {
                         <div onClick={handleSaveClick} className="text-gray-100 text-base font-bold ">Save</div>
                     </div> */}
                     <div
-                        className={`h-11 px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer ${isSaveDisabled ? 'bg-[#17181A] cursor-not-allowed' : 'bg-zinc-900'
+                        className={`h-11 px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer ${isSaveDisabled ? 'bg-gray-500 cursor-not-allowed' : 'bg-zinc-900'
                             }`}
                         onClick={isSaveDisabled ? undefined : handleSaveClick}
                     >

@@ -75,3 +75,13 @@ input:-webkit-autofill:active{
   animation: slide-in 0.1s ease-out forwards;
 }
 
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+}
+
+.no-scrollbar {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+

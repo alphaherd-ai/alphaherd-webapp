@@ -3,11 +3,10 @@ import Image from "next/image";
 import React, { useEffect, useState } from 'react';
 import closeicon from "../../../../assets/icons/inventory/closeIcon.svg";
 import Select from 'react-select';
-
+import { mutate } from 'swr';
 import { useAppSelector } from '@/lib/hooks';
 import Arrow from "../../../../assets/icons/inventory/arrow.svg"
 import Loading2 from "@/app/loading2";
-
 import axios from 'axios';
 import useSWR from "swr";
 const fetcher = (...args: [RequestInfo, RequestInit?]) => fetch(...args).then(res => res.json())
@@ -57,6 +56,12 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
                     return acc;
                   }, []);
                 console.log(taxTypeList);
+                if (taxTypeList.length > 0) {
+                    setFormData((prevFormData: any) => ({
+                        ...prevFormData,
+                        tax: taxTypeList[0]
+                    }));
+                }
                 settaxType(taxTypeList);
             }catch(error){
                 console.log("Error fetching species",error);
@@ -188,6 +193,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
 
             if (response.ok) {
                 console.log('Data saved successfully');
+                const SWR_KEY = `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/getAll?branchId=${appState.currentBranchId}`;
+                mutate(SWR_KEY);
                 onClose();
                 window.dispatchEvent(new FocusEvent('focus'));
             } else {
@@ -203,7 +210,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
     const handleChange = (field: string, value: any) => {
         setFormData((prevState: any) => {
             const updatedFormData = { ...prevState, [field]: value };
-            console.log(serviceList);
+
             // Validation
             if (field === 'name') {
                 const isServiceExists = serviceList?.some((service: any) => (service.name).toLowerCase() === (value).toLowerCase());
@@ -216,12 +223,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
                 setServiceCostError(value ? '' : 'Service cost is required');
             }
 
-            if (field === 'tax') {
-                setTaxError(value ? '' : 'Tax is required');
-            }
-
             // Check if all required fields are filled
-            const allFieldsFilled = updatedFormData.name && updatedFormData.serviceCost && updatedFormData.tax;
+            const allFieldsFilled = updatedFormData.name && updatedFormData.serviceCost;
             setButtonDisabled(!allFieldsFilled);
 
             return updatedFormData;
@@ -316,11 +319,11 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
                         </button> */}
                         <button
                             onClick={handleContinueClick}
-                            disabled={!formData.name}
-                            className={`px-4 py-2.5 rounded-[5px] justify-start items-center gap-1 flex border-0 outline-none cursor-pointer ${formData.name ? "bg-zinc-900" : "bg-gray-500"
+                            disabled={!formData.name || (nameError==='The service name  you are trying to add already exists')}
+                            className={`px-4 py-2.5 rounded-[5px] justify-start items-center gap-1 flex border-0 outline-none cursor-pointer ${formData.name || (nameError !== 'The service name you are trying to add already exists') ? "bg-zinc-900" : "bg-gray-500"
                                 }`}
                         >
-                            <div className={`text-base font-bold ${formData.name ? "text-white" : "text-neutral-200 cursor-not-allowed"}`}>
+                            <div className={`text-base font-bold ${formData.name  || (nameError !== 'The service name you are trying to add already exists') ? "text-white" : "text-neutral-200 cursor-not-allowed"}`}>
                                 Continue
                             </div>
                             {formData.name && (
@@ -357,7 +360,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
 
                             <Select
                                 className="w-[157px] text-neutral-400 text-base font-medium border border-solid border-borderGrey rounded-[5px]"
-                                // defaultValue={gstOptions[0]}
+                                defaultValue={taxType[0]}
                                 isClearable={false}
                                 isSearchable={true}
                                 options={taxType}

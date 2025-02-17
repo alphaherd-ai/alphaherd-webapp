@@ -9,7 +9,7 @@ import downloadicon from "../../../../assets/icons/inventory/1. Icons-24.svg"
 
 import EditClientPopup from "./editClientPopup"
 
-import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
+
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from "next/navigation"
@@ -27,6 +27,12 @@ import { getStatusStyles } from '@/utils/getStatusStyles';
 import LeftArrow from '../../../../assets/icons/finance/leftArrow.svg';
 import RightArrow from '../../../../assets/icons/finance/rightArrow.svg';
 import Loading from "@/app/loading"
+import { Tooltip, Button } from "@nextui-org/react";
+import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
+import Menu from '../../../../assets/icons/finance/menu.svg'
+import PatientPopup from '../../patient/newpatientpopup';
+import ConfirmationPopup from "./confirmationPopup"
+import { set } from "date-fns"
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json());
 
@@ -39,7 +45,8 @@ const ClientDetails = () => {
     });
     const [client, setClient] = useState<any | null>(null);
     const [invoiceList, setInvoiceList] = useState<any | null>(null);
-    const [clientTimeLine,setClientTimeLine]=useState<any | null>(null);
+    const [clientTimeLine, setClientTimeLine] = useState<any | null>(null);
+    const [patientPopup, setPatientPopup] = useState<boolean>(false);
     const url = useSearchParams();
     const appState = useAppSelector((state) => state.app)
     const id = url.get('id');
@@ -52,6 +59,16 @@ const ClientDetails = () => {
     const [toBePaid, setToBePaid] = useState(0);
     const [totalInComebynow, setTotalIncome] = useState(0);
     const [isEditPopupVisible, setEditPopupVisible] = useState(false);
+    const [editPatient, setEditpatient] = useState<any>(null);
+    const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
+    const [patientList, setPatientList] = useState<any>([]);
+    const [showDeletePopup, setShowDeletePopup] = useState<boolean>(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const onClose = () => {
+        setPatientPopup((prev: boolean) => !prev);
+    }
+
+
     function useClientfetch(id: string | null, branchId: number | null) {
         const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/${id}?branchId=${branchId}`, fetcher, { revalidateOnFocus: true });
         //setInvoiceList(data?.invoiceNo);
@@ -61,6 +78,9 @@ const ClientDetails = () => {
             error
         }
     }
+
+
+
     //setting up pagination
     const [currentPageNumber, setCurrentPageNumber] = useState(1);
     const [startInd, setStartInd] = useState(0);
@@ -76,15 +96,15 @@ const ClientDetails = () => {
         if (currentPageNumber === Math.ceil((totalLen) / TOTAL_VALUES_PER_PAGE)) return;
         setCurrentPageNumber((prev) => prev + 1);
     };
-    useEffect(()=>{
-          const start=(currentPageNumber-1)*TOTAL_VALUES_PER_PAGE;
-          const end=currentPageNumber*TOTAL_VALUES_PER_PAGE;
-          setStartInd(start)
-          setEndInd(end);
-          setClientTimeLine(invoiceList?.slice(start,end));
-    },[currentPageNumber,invoiceList])
+    useEffect(() => {
+        const start = (currentPageNumber - 1) * TOTAL_VALUES_PER_PAGE;
+        const end = currentPageNumber * TOTAL_VALUES_PER_PAGE;
+        setStartInd(start)
+        setEndInd(end);
+        setClientTimeLine(invoiceList?.slice(start, end));
+    }, [currentPageNumber, invoiceList])
 
-    if(endInd > totalLen) setEndInd(totalLen);
+    if (endInd > totalLen) setEndInd(totalLen);
 
     useEffect(() => {
         if (id) {
@@ -127,20 +147,13 @@ const ClientDetails = () => {
 
     //console.log(client);
 
-    const tabs = [
-        { label: 'Day', clicked: clickedIndex === 0 },
-        { label: 'Week', clicked: clickedIndex === 1 },
-        { label: 'Month', clicked: clickedIndex === 2 },
-        { label: 'Quarter', clicked: clickedIndex === 3 },
-        { label: 'Year', clicked: clickedIndex === 4 },
-        { label: 'All Time', clicked: clickedIndex === 5 }
-    ];
+
 
     useEffect(() => {
         if (!error && !isLoading && fetchedClient) {
             //console.log(fetchedClient)
             setClient(fetchedClient);
-
+            setPatientList(fetchedClient.patients);
         }
     }, [fetchedClient, error, isLoading]
     );
@@ -162,11 +175,12 @@ const ClientDetails = () => {
 
     const handleDeleteClient = async () => {
         try {
+            setIsDeleting(true);
             const branchId = appState.currentBranchId;
-            console.log("Branch ID being sent:", branchId);
+            //console.log("Branch ID being sent:", branchId);
 
             // Ensure the 'Branch-ID' header is a string, not null or a number
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/${clientId}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/${clientId}?branchId=${appState.currentBranchId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -177,7 +191,7 @@ const ClientDetails = () => {
 
             if (response.ok) {
                 alert("Client deleted successfully.");
-                router.push('/clients'); // Redirect to the clients list or relevant page
+                router.push('/database/clients'); // Redirect to the clients list or relevant page
             } else {
                 // Only attempt to parse error message if response is not OK
                 let errorMessage = "Failed to delete client. Please try again.";
@@ -194,7 +208,17 @@ const ClientDetails = () => {
             console.error("Request failed:", error);
             alert("Failed to delete client. Please check your network connection and try again.");
         }
+        finally {
+            setIsDeleting(false);
+        }
     };
+
+    useEffect(() => {
+
+    }, [patientList]);
+
+
+
 
 
     return <>
@@ -217,31 +241,68 @@ const ClientDetails = () => {
                     </div>
                     <div className="flex items-center gap-4">
 
-                        <div className=' '>
+                        <div className=''>
                             <Popover placement="left" showArrow offset={10}>
                                 <PopoverTrigger>
                                     <Button
                                         variant="solid"
-                                        className="capitalize flex border-none  text-gray rounded-lg ">
-                                        <div className='w-12 h-12 px-[11px] py-2.5 bg-white rounded-[5px] border border-solid border-stone-300 justify-center items-center gap-2 flex'>   <Image src={optionicon} alt="option"></Image></div></Button>
+                                        className="capitalize flex border-none  text-gray rounded-lg overflow-visible">
+                                        <div className={`w-12 h-12 px-[11px] py-2.5  rounded-[5px] border border-solid bg-white border-stone-300 justify-center items-center gap-2 flex`}>   <Image src={optionicon} alt="option"></Image></div></Button>
                                 </PopoverTrigger>
-                                <PopoverContent className="p-5 text-gray-500 bg-white text-sm p-2 font-medium flex flex-row items-start rounded-lg border-2 mt-2.5">
-                                    <div className="flex flex-col">
-                                        <div className='flex flex-col'>
-                                            <div className='no-underline flex item-center' onClick={openEditPopup}>
-                                                <div className='text-gray-500 text-sm p-3 font-medium flex '>
-                                                    Edit</div>
-                                            </div>
-                                            <div className='no-underline flex item-center' onClick={handleDeleteClient}>
-                                                <div className='text-gray-500 text-sm p-3 font-medium flex '>
-                                                    Delete</div>
+                                <PopoverContent className={`text-gray-500 ${!(isEditPopupVisible || showDeletePopup) ? "bg-white" : ""} text-sm p-2 font-medium flex flex-row items-start rounded-lg border-2 mt-2.5`}>
+
+                                    {!(isEditPopupVisible || showDeletePopup) ?
+                                        <div className="flex flex-col">
+                                            <div className='flex flex-col'>
+                                                <div className='no-underline flex cursor-pointer item-center' onClick={openEditPopup}>
+                                                    <div className='text-gray-500 text-sm p-3 font-medium flex '>
+                                                        Edit</div>
+                                                </div>
+                                                <div className='no-underline flex cursor-pointer item-center' onClick={() => setShowDeletePopup(true)}>
+                                                    <div className='text-gray-500 text-sm p-3 font-medium flex '>
+                                                        Delete</div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                        : ""}
                                 </PopoverContent>
                             </Popover>
                             {isEditPopupVisible && (
                                 <EditClientPopup onClose={closeEditPopup} clientData={client} />
+                            )}
+                            {showDeletePopup && (
+                                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                                    <div className="bg-white rounded-lg p-6 w-[600px] h-[200px] shadow-lg flex flex-col justify-between">
+                                        <h2 className="text-xl font-semibold text-gray-500">
+                                            Deleting Client
+                                        </h2>
+                                        <p className="text-sm text-gray-500">
+                                            Are you sure you want to permanently delete{" "}
+                                            <span className="font-medium text-gray-500">
+                                                {client?.clientName || "this service"}
+                                            </span>
+                                            ?
+                                        </p>
+                                        <div className="flex justify-end gap-4 mt-4">
+                                            <button
+                                                className="px-4 py-2 outline-none border border-solid border-gray-500 rounded-md bg-teal-500 text-white text-sm hover:bg-teal-600"
+                                                onClick={() => setShowDeletePopup(false)}
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                className={`px-4 py-2 border border-solid outline-none border-gray-500 rounded-md text-white text-sm ${isDeleting
+                                                    ? "bg-gray-400 cursor-not-allowed"
+                                                    : "bg-black hover:bg-gray-800"
+                                                    }`}
+                                                onClick={handleDeleteClient}
+                                                disabled={isDeleting}
+                                            >
+                                                {isDeleting ? <Loading2 /> : "Delete"}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             )}
 
                         </div>
@@ -282,6 +343,22 @@ const ClientDetails = () => {
                                 <div className="text-gray-500 text-base font-medium ">{client ? client?.address : <Loading2 />}</div>
                             </div>
                         </div>
+
+                        <div className="w-full flex border-b  border-solid border-0 border-stone-300">
+                            <div className="w-full border-r border-solid border-0 border-stone-300 flex gap-2 items-center p-6 h-3/12">
+                                <div className="text-textGrey2 text-base font-medium ">City:</div>
+                                <div className="text-gray-500 text-base font-medium ">{client ? client?.city : <Loading2 />}</div>
+                            </div>
+
+                            <div className="w-full flex gap-2 items-center p-6 h-3/12">
+                                <div className="text-textGrey2 text-base font-medium ">PinCode:</div>
+                                <div className="text-gray-500 text-base font-medium ">{client ? client?.pinCode : <Loading2 />}</div>
+                            </div>
+
+                        </div>
+
+
+
                         <div className="w-full border-b border-solid border-0 border-stone-300">
                             <div className="w-full flex gap-2 items-center p-6 h-3/12">
                                 <div className="text-textGrey2 text-base font-medium ">Email:</div>
@@ -307,33 +384,66 @@ const ClientDetails = () => {
                             </div>
                         </div>
                         <div className="w-full">
-                            {/* Code for invoice details */}
+
                         </div>
                     </div>
                 </div>
                 <div className="rounded-md">
                     <div className="w-full mt-[25px] rounded-md border-borderGrey border border-solid  border-neutral-40  ">
-                        <div className="w-full h-[72px] px-6 py-4 bg-white border-b border-solid border-0 border-borderGrey justify-start items-center gap-4 flex">
-                            <div className="text-gray-500 text-xl font-medium ">
-                                Patients
+                        <div className="w-full h-[72px] px-6 py-4 bg-white rounded-tl-md rounded-tr-md border-b border-solid border-0 border-borderGrey justify-start items-center gap-4 flex">
+                            <div className="text-gray-500 flex items-center gap-4 text-xl font-medium ">
+                                <p>Patients</p>
+                                <div className="h-12 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-center items-center gap-2 flex" onClick={() => setPatientPopup((prev: boolean) => !prev)}>
+                                    <div>
+                                        <Image src={addicon} alt="add"></Image>
+                                    </div>
+                                    <div className="text-white text-sm font-medium cursor-pointer">
+                                        Add Patients
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div>
-                            <div className='flex justify-evenly  w-full  items-center box-border bg-gray-100  h-12  border-b border-borderGrey text-gray-500'>
+                            <div className='flex justify-evenly  w-full  items-center box-border border-solid bg-gray-100  h-12 border-0  border-b border-borderGrey text-gray-500'>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-1/6'>Name</div>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-1/6'>Species</div>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-1/6'>Breed</div>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-1/6'>Age</div>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-1/6'>Sex</div>
+                                <div className="w-1/6"></div>
                             </div>
 
-                            {client?.patients?.map((patient: any) => (
-                                <div key={patient.id} className='flex items-center justify-evenly w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
+                            {!patientList ? <Loading /> : patientList?.filter((patient: any) => !patient.isDeleted).map((patient: any) => (
+
+                                <div key={patient.id} className='flex items-center justify-evenly w-full border-0 border-b box-border py-4 bg-white  border-solid border-gray-300 text-gray-400 border-t-0.5'>
                                     <div className='w-1/6 px-6 flex items-center text-textGrey1 text-base font-medium'>{patient?.patientName} </div>
                                     <div className='w-1/6 px-6 flex items-center text-textGrey1 text-base font-medium'>{patient?.species}</div>
                                     <div className='w-1/6 px-6 flex items-center text-textGrey1 text-base font-medium'>{patient?.breed}</div>
                                     <div className='w-1/6 px-6 flex items-center text-textGrey1 text-base font-medium'>{patient?.age}</div>
                                     <div className='w-1/6 px-6 flex items-center text-textGrey1 text-base font-medium'>{patient?.gender}</div>
+                                    <div className="w-1/6">
+                                        <Popover placement="bottom" showArrow offset={10}>
+                                            <PopoverTrigger>
+                                                <Button variant="solid" className="capitalize flex border-none text-gray rounded-lg">
+                                                    <div className='flex items-center'>
+                                                        <Image src={Menu} alt='Menu' className='w-5 h-5' />
+                                                    </div>
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="text-gray-500 bg-white text-sm p-2 font-medium flex flex-row items-start rounded-lg border-2 mt-2.5">
+                                                <div className="flex flex-col">
+                                                    <div className='flex flex-col'>
+                                                        <div className='text-gray-500 cursor-pointer text-sm p-3 font-medium flex hover:cursor-pointer' onClick={() => { setPatientPopup((prev: any) => !prev); setEditpatient(patient) }}>
+                                                            Edit
+                                                        </div>
+                                                        <div className='text-gray-500 cursor-pointer text-sm p-3 font-medium flex hover:cursor-pointer' onClick={() => { setEditpatient(patient); setShowConfirmation((prev: any) => !prev) }}>
+                                                            Delete
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </PopoverContent>
+                                        </Popover>
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -344,8 +454,8 @@ const ClientDetails = () => {
                 <div className="rounded-md">
                     <div className="w-full mt-[25px] rounded-md border-borderGrey border border-solid  border-neutral-40  ">
                         <div>
-                            <div className="w-full  h-[72px] px-6 py-4 bg-white border-b border-solid border-0 border-borderGrey justify-start items-center gap-4 flex">
-                                <div className="text-gray-500 text-xl font-medium ">
+                            <div className="w-full  h-[72px] px-6 py-4 bg-white border-b border-solid border-0 rounded-tl-md rounded-tr-md border-borderGrey justify-start items-center gap-4 flex">
+                                <div className="text-gray-500 text-xl font-medium">
                                     Timeline
                                 </div>
                                 <div className="h-12 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-center items-center gap-2 flex" onClick={() => setRecordPaymentPopup((prev: boolean) => !prev)}>
@@ -360,7 +470,7 @@ const ClientDetails = () => {
 
                         </div>
                         <div>
-                            <div className='flex w-full  items-center box-border bg-gray-100  h-12 py-4 border-b border-borderGrey text-gray-500'>
+                            <div className='flex w-full  items-center border-solid box-border bg-gray-100  h-12 py-4 border-0 border-b border-borderGrey text-gray-500'>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'>Date</div>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'>Type</div>
                                 <div className='flex text-gray-500 text-base font-medium px-6 w-2/12'>Invoice No. </div>
@@ -370,8 +480,8 @@ const ClientDetails = () => {
 
                             </div>
 
-                            {!clientTimeLine ? <Loading/> :  clientTimeLine?.map((item: any, index: number) => (
-                                <div key={item.id} className='flex   items-center w-full  box-border py-4   bg-white border border-solid border-borderGrey text-gray-400 border-t-0.5  '>
+                            {!clientTimeLine ? <Loading /> : clientTimeLine?.map((item: any, index: number) => (
+                                <div key={item.id} className='flex   items-center w-full  box-border py-4   bg-white border-0 border-b border-solid border-borderGrey text-gray-400 border-t-0.5  '>
                                     <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{formatDateAndTime(item.date).formattedDate}</div>
                                     <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{item.type}</div>
                                     <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{item.invoiceNo}</div>
@@ -405,21 +515,21 @@ const ClientDetails = () => {
                             ))}
 
                             <div className='flex w-full  justify-between  h-12 px-6 py-3 bg-white rounded-bl-lg rounded-br-lg'>
-
-
                                 <div className='flex h-full'>
-
                                     <div className='flex items-center   '>
                                         <div className='flex  pl-2'><Image src={LeftArrow} alt='LeftArrow' className='w-6 h-6 ' onClick={goOnPrevPage} /></div>
-                                        <div className='flex  pl-2'><Image src={RightArrow} alt='RightArrow' className='w-6 h-6 '  onClick={goOnNextPage} /></div>
-                                        <div className='text-sm   text-gray-500'>{startInd+1}-{endInd} of {totalLen}</div>
+                                        <div className='flex  pl-2'><Image src={RightArrow} alt='RightArrow' className='w-6 h-6 ' onClick={goOnNextPage} /></div>
+                                        <div className='text-sm   text-gray-500'>{startInd + 1}-{endInd} of {totalLen}</div>
                                     </div>
                                 </div>
                             </div >
+
+
                         </div>
                     </div>
                 </div>
-
+                {patientPopup && <PatientPopup onClose={onClose} clientData={client} editPatient={editPatient} setEditpatient={setEditpatient} />}
+                {showConfirmation && <ConfirmationPopup patient={editPatient} setShowConfirmation={setShowConfirmation} patientList={patientList} setEditpatient={setEditpatient} setPatientList={setPatientList} />}
             </div>
         }
     </>

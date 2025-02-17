@@ -24,17 +24,17 @@ const InvoiceReturnBottomBar = ({ invoiceData }: any) => {
     const id = url.get('id');
     const router = useRouter();
     const [isSaving, setSaving] = useState(false);
-
+    //console.log(headerData);
 
 
 
     const handleSubmit = async () => {
-        const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+        const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' ).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
-        const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+        const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
 
-        const balanceDue = totalAmountData.totalCost - totalPaidAmount + totalAmountToPay;
+        const balanceDue = totalAmountData.totalCost + totalPaidAmount - totalAmountToPay;
         setSaving(true);
         const allData = { headerData, tableData, totalAmountData, transactionsData };
         console.log("this is all data", allData)
@@ -59,7 +59,7 @@ const InvoiceReturnBottomBar = ({ invoiceData }: any) => {
             email: (id === null) ? allData.headerData.customer.value.email : "",
             notes: (id === null) ? allData.headerData.notes : invoiceData.notes,
             subTotal: allData.totalAmountData.subTotal,
-            invoiceNo: (id === null) ? allData.headerData.invoiceNo : invoiceData.invoiceNo,
+            invoiceNo:  allData.headerData.invoiceNo,
             dueDate: (id === null) ? allData.headerData.dueDate : invoiceData.dueDate,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
@@ -69,7 +69,7 @@ const InvoiceReturnBottomBar = ({ invoiceData }: any) => {
             recordTransaction: {
                 create: allData.transactionsData
             },
-            status: balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
+            status: balanceDue <= -1 ? `You’re owed: ₹${parseFloat((-1*balanceDue).toFixed(2))}` : balanceDue >= 1 ? `You owe: ₹${parseFloat((balanceDue).toFixed(2))}` : 'Closed',
             type: FinanceCreationType.Sales_Return,
             items: {
                 create: items
@@ -100,7 +100,7 @@ const InvoiceReturnBottomBar = ({ invoiceData }: any) => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    status: `Returned ${totalQty} | ${balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed'}`
+                    status: `Returned ${totalQty} | ${balanceDue <= -1 ? `You’re owed: ₹${parseFloat((-1*balanceDue).toFixed(2))}` : balanceDue >= 1 ? `You owe: ₹${parseFloat((balanceDue).toFixed(2))}` : 'Closed'}`
                 })
             });
             if (putResponse.ok) {

@@ -11,7 +11,8 @@ export  const GET=async (req: NextRequest)=> {
       const databaseId = await fetchDatabaseId(req);
         const clients = await prismaClient.clients.findMany({
           where:{
-            databaseSectionId:databaseId
+            databaseSectionId:databaseId,
+            isDeleted:false
           },
           
           include:{

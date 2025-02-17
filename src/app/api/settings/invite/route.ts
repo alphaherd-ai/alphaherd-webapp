@@ -51,7 +51,7 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
             redirectURL+=`/auth/user/register?userInviteString=${userInviteString}`;
         }
         else {
-            console.log(branchId);
+            // console.log(branchId);
             await prismaClient.orgBranchUserRole.create({
                 data: {
                     orgBranchId: Number(branchId),

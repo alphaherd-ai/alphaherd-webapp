@@ -136,7 +136,7 @@ export const MyOrganisationSettings = () => {
                                                  handleUpdatePic(result.info)
                                                  widget.close();
                                              }}
-                                     >                {appState.currentOrg.orgImgUrl?<Image src={appState.currentOrg.orgImgUrl} alt="profile" width={150} height={150} />:
+                                     >                {appState.currentOrg.orgImgUrl?<Image src={appState.currentOrg.orgImgUrl} alt="profile" width={130} height={150} />:
                                      <div className="w-[164px] h-[164px] p-2 rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 flex">
                                      <div className="text-neutral-400 text-base font-bold ">+</div>
                                      <div className="text-neutral-400 text-base font-bold "> Logo</div>
@@ -144,7 +144,7 @@ export const MyOrganisationSettings = () => {
                                    }
                                                 
                                                  </CldUploadButton>
-                                    ):(appState.currentOrg.orgImgUrl?<Image src={appState.currentOrg.orgImgUrl} alt="profile" width={150} height={150} />:(
+                                    ):(appState.currentOrg.orgImgUrl?<Image src={appState.currentOrg.orgImgUrl} alt="profile" width={130} height={150} />:(
                                         <div className="flex gap-4">
                                             <div className="w-[164px] h-[164px] p-2 rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 flex">
                                      <div className="text-neutral-400 text-base font-bold ">+</div>
@@ -157,10 +157,10 @@ export const MyOrganisationSettings = () => {
                                
                                    
                                     
-                                    <div className="w-[164px] h-[164px] p-2 rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 flex">
+                                    {/* <div className="w-[164px] h-[164px] p-2 rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 flex">
                                         <div className="text-neutral-400 text-base font-bold ">+</div>
                                         <div className="text-neutral-400 text-base font-bold ">WaterMark</div>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                             <div className="flex flex-col gap-2 w-9/12">

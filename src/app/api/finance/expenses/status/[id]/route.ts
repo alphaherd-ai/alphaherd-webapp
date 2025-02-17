@@ -12,14 +12,14 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: number }
       const financeId=await fetchFinanceId(req);
       const body = await req.json();
       const status=body.status;
-      const sales = await prismaClient.sales.update({
+      const expenses = await prismaClient.expenses.update({
         where: { id: Number(params.id),financeSectionId:financeId},
         data: {
           status:status,
         }, 
       });
   
-      return new Response(JSON.stringify(sales), {
+      return new Response(JSON.stringify(expenses), {
         status: 201,
         headers: {
           'Content-Type': 'application/json',

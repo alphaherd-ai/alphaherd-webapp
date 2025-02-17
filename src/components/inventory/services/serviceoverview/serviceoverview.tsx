@@ -1,29 +1,19 @@
 "use client"
 import Image from "next/image"
-import Link from "next/link"
 import lefticon from "../../../../assets/icons/inventory/left_icon.svg"
-import aiicon from "../../../../assets/icons/inventory/Group 2749.svg"
-import infoicon from "../../../../assets/icons/inventory/Icons16.svg"
-import addicon from "../../../../assets/icons/inventory/bar_chart.svg"
 import optionicon from "../../../../assets/icons/inventory/more_vert.svg"
 import downloadicon from "../../../../assets/icons/inventory/1. Icons-24.svg"
 import baricon from "../../../../assets/icons/inventory/bar_chart.svg"
-import expandicon from "../../../../assets/icons/inventory/expand_content.svg"
-import tuneicon from "../../../../assets/icons/inventory/bar_chart.svg"
-import downarrow from "../../../../assets/icons/inventory/Icons16.svg"
-import optionarrow from "../../../../assets/icons/inventory/more_vert.svg"
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
 import formatDateAndTime from "@/utils/formateDateTime";
-import Slider from '@mui/material/Slider';
-import { ThemeProvider } from '@mui/material/styles';
-import theme from './theme';
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from "next/navigation"
-import { response } from "express"
+import CreatableSelect from 'react-select/creatable';
 import { useAppSelector } from "@/lib/hooks"
 import useSWR from "swr"
 import Loading2 from "@/app/loading2"
-import { set } from "date-fns"
+import Select from 'react-select';
+import axios from "axios"
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
@@ -45,54 +35,17 @@ function useServiceTimeLine(id: string | null, branchId: number | null) {
     }
 }
 
-// async function fetchProductDetails(productNames: string[]) {
-//     const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/products`, {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ productNames }),
-//     });
-
-//     if (response.ok) {
-//         return response.json();
-//     } else {
-//         console.error('Failed to fetch product details:', response.statusText);
-//         return [];
-//     }
-// }
-
-// async function fetchProductDetails(id: any,branchId:any) {
-//     try {
-//         const queryParams = new URLSearchParams();
+interface ServiceCategory {
+    id: string,
+    name: string | string[],
+}
 
 
-//         id.forEach((val:any) => {
-//             queryParams.append('id', val);
-//         });
+interface TaxType {
+    id: number;
+    name: number[];
+}
 
-//         console.log("queryParams", queryParams);
-
-//         const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${id}?branchId=${branchId}`, {
-//             method: 'GET',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//         });
-
-//         if (response.ok) {
-//             const data = await response.json();
-//             console.log("data", data);
-//             return data;
-//         } else {
-//             console.error('Failed to fetch product details:', response.statusText);
-//             return [];
-//         }
-//     } catch (error) {
-//         console.error('Error fetching product details:', error);
-//         return [];
-//     }
-// }
 
 
 
@@ -103,17 +56,18 @@ const ServiceDetails = () => {
     const router = useRouter();
 
     const [service, setService] = useState<any | null>(null);
+    const [editService, setEditService] = useState<any | null>(null);
     const [inventoryTimeline, setInventoryTimeline] = useState<any | null>(null);
     const url = useSearchParams();
     const id = url.get('id');
     const appState = useAppSelector((state) => state.app)
     const { fetchedService, isLoading, error } = useServicefetch(id, appState.currentBranchId);
     const [value, setValue] = useState(30);
-
+    const [productOptions, setProductOptions] = useState<any | null>(null);
     const [showEditPopup, setShowEditPopup] = useState(false);
     const [showDeletePopup, setShowDeletePopup] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
-
+    const [isUpdating, setIsUpdating] = useState(false);
     const { fetchedServiceTimeLine, serviceLoading, serviceError } = useServiceTimeLine(id, appState.currentBranchId)
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue(event.target.value === '' ? 0 : Number(event.target.value));
@@ -122,6 +76,7 @@ const ServiceDetails = () => {
     useEffect(() => {
         if (!error && !isLoading && fetchedService) {
             setService(fetchedService);
+            setEditService(fetchedService);
         }
         if (!serviceError && !serviceLoading && fetchedServiceTimeLine) {
             console.log(fetchedServiceTimeLine[0]?.inventoryTimeline);
@@ -130,6 +85,46 @@ const ServiceDetails = () => {
 
     }, [fetchedService, error, isLoading, fetchedServiceTimeLine, serviceError, serviceLoading]
     );
+
+    useEffect(() => {
+        const fetchProductsAndProviders = async () => {
+            // console.log("inside fetch");
+            const productsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/branch/products?branchId=${appState.currentBranchId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            let productsJson = await productsResponse?.json();
+            setProductOptions(productsJson.products.filter((product:any)=>!(product?.isDeleted)).map((product: any) => { return { label: product.itemName, value: product.id } }));
+
+        }
+        fetchProductsAndProviders();
+    }, [])
+
+    const [categories, setCategories] = useState<any[]>([]);
+    useEffect(() => {
+        const fetchServiceCategory = async () => {
+            try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/serviceCategory/getAll?branchId=${appState.currentBranchId}`);
+                const serviceCategoryList: any[] = response.data.reduce((acc: any[], serviceCategoryEntry: ServiceCategory) => {
+                    if (Array.isArray(serviceCategoryEntry.name)) {
+                        serviceCategoryEntry.name.forEach((name: string) => {
+                            acc.push({ value: serviceCategoryEntry.id, label: name });
+                        });
+                    } else {
+                        acc.push({ value: serviceCategoryEntry.id, label: serviceCategoryEntry.name });
+                    }
+                    return acc;
+                }, []);
+                console.log(response, serviceCategoryList);
+                setCategories(serviceCategoryList);
+            } catch (error) {
+                console.log("Error fetching species", error);
+            }
+        }
+        fetchServiceCategory();
+    }, [appState.currentBranchId]);
 
     // console.log("service", service);
 
@@ -162,13 +157,59 @@ const ServiceDetails = () => {
         }
     }, [service?.linkProducts, appState.currentBranchId]);
 
+    const [taxType, settaxType] = useState<any[]>([]);
+    useEffect(() => {
+        const fetchTax = async () => {
+            try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/taxType/getAll?branchId=${appState.currentBranchId}`);
+                const taxTypeList: any[] = response.data.reduce((acc: any[], taxTypeEntry: TaxType) => {
+                    if (Array.isArray(taxTypeEntry.name)) {
+                        taxTypeEntry.name.forEach((taxValue: number) => {
+                            acc.push({
+                                value: taxValue * 0.01,
+                                label: `${taxValue}% GST`
+                            });
+                        });
+                    }
+                    return acc;
+                }, []);
+                console.log(taxTypeList);
+                settaxType(taxTypeList);
+            } catch (error) {
+                console.log("Error fetching species", error);
+            }
+        }
+        fetchTax();
+    }, [appState.currentBranchId]);
+
+
     const handleEditSave = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("the service is: ", service);
+        //console.log("the service is: ", service);
         try {
-            console.log("Payload being sent: ", JSON.stringify(service));
-            console.log("API Endpoint: ", `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/${id}?branchId=${appState.currentBranchId}`);
+            setIsUpdating(true);
+            const serviceLinkProducts = Array.isArray(service?.linkProducts)
+                ? service.linkProducts
+                : JSON.parse(service?.linkProducts || "[]");
 
+            const editProductLinkProducts = Array.isArray(editService?.linkProducts)
+                ? editService.linkProducts
+                : JSON.parse(editService?.linkProducts || "[]");
+
+            const combinedLinkProducts = [...serviceLinkProducts, ...editProductLinkProducts];
+            //console.log("Payload being sent: ", JSON.stringify(service));
+            //console.log("API Endpoint: ", `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/${id}?branchId=${appState.currentBranchId}`);
+            const data = {
+                ...(editService?.name && { name: editService?.name }),
+                ...(editService?.sacCode && { sacCode: editService?.sacCode }),
+                ...(editService?.description && { description: editService?.description }),
+                ...(editService?.sellingPrice && { sellingPrice: editService?.sellingPrice }),
+                ...(editService?.tax && { tax: Number(editService?.tax) }),
+                ...(editService?.category && { category: editService?.category }),
+                ...(editService?.linkProducts && { linkProducts: combinedLinkProducts }),
+
+            }
+            //console.log(data);
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/${id}?branchId=${appState.currentBranchId}`,
                 {
@@ -176,40 +217,43 @@ const ServiceDetails = () => {
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify(service),
+                    body: JSON.stringify(data),
                 }
             );
 
-            console.log("The response created is : ", response);
+            //console.log("The response created is : ", response);
 
             if (response.ok) {
                 alert("Service updated successfully!");
                 setShowEditPopup(false);
-                router.push('/inventory/services/timeline'); // Adjust the path as needed
+                //router.push('/inventory/services/timeline'); // Adjust the path as needed
             } else {
                 const errorResponse = await response.json();
-                console.error("Error response body: ", errorResponse);
+                //console.error("Error response body: ", errorResponse);
                 alert("Failed to update service!");
             }
         } catch (err) {
             console.error(err);
             alert("An error occurred while updating!");
         }
+        finally {
+            setIsUpdating(false);
+        }
     };
 
 
     const handleDelete = async () => {
-        setIsDeleting(true);
-        console.log("service name is : ", service);
-        try {
 
+        //console.log("service name is : ", service);
+        try {
+            setIsDeleting(true);
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/${id}?branchId=${appState.currentBranchId}`,
                 {
                     method: "DELETE",
                 }
             );
-             console.log("response:",response);
+            //console.log("response:",response);
             if (response.ok) {
                 alert("Service deleted successfully!");
                 setShowDeletePopup(false);
@@ -226,8 +270,48 @@ const ServiceDetails = () => {
     };
 
     // console.log("productDetails", productDetails);
+    const customStyles = {
+        control: (provided: any, state: any) => ({
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
+            border: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4',
+            '&:hover': {
+                borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4',
+            },
+            boxShadow: state.isFocused ? 'none' : 'none',
+        }),
+        valueContainer: (provided: any) => ({
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
+        }),
+        singleValue: (provided: any, state: any) => ({
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
+            color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+        }),
+        menu: (provided: any) => ({
+            ...provided,
+            backgroundColor: 'white',
+            width: '100%',
+            maxWidth: '100%',
+        }),
+        option: (provided: any, state: any) => ({
+            ...provided,
+            backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+            color: state.isFocused ? 'white' : '#6B7E7D',
+            '&:hover': {
+                backgroundColor: '#35BEB1',
+                color: 'white',
+            },
+        }),
+        menuPortal: (base: any) => ({ ...base, zIndex: 9999 })
+    };
 
 
+    console.log("service",service)
     return <>
         <div className="w-full h-full relative  rounded-[20px] pr-[16px] pl-[16px] z-1">
             <div className="w-full flex items-center justify-between">
@@ -257,55 +341,59 @@ const ServiceDetails = () => {
                                 {/* </div> */}
                             </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="p-5 text-textGrey2 bg-white text-sm font-medium rounded-lg border-2">
+                        <PopoverContent className="p-5 bg-white text-sm font-medium rounded-lg border-2">
                             <div className="flex space-x-4">
                                 {/* Delete Button */}
-                                <button
-                                    className="flex items-center gap-2 p-2 text-sm font-medium bg-teal-500 text-white rounded-lg shadow-md hover:shadow-lg hover:bg-teal-600 transition duration-300 ease-in-out border-none"
-                                    onClick={() => setShowDeletePopup(true)} // Opens the delete popup
-                                >
+                                {!(showDeletePopup || showEditPopup) ?
+                                    <>
+                                        <button
+                                            className="flex outline-none items-center gap-2 p-2 text-sm font-medium bg-teal-500 text-white rounded-lg shadow-md hover:shadow-lg hover:bg-teal-600 transition duration-300 ease-in-out border-none"
+                                            onClick={() => setShowDeletePopup(true)} // Opens the delete popup
+                                        >
 
-                                    Delete
-                                </button>
+                                            Delete
+                                        </button>
 
-                                {/* Edit Button */}
-                                <button
-                                    className="flex items-center gap-2 p-2 text-sm font-medium bg-teal-500 text-white rounded-lg shadow-md hover:shadow-lg hover:bg-teal-600 transition duration-300 ease-in-out border-none"
-                                    onClick={() => setShowEditPopup(true)} // Opens the edit popup
-                                >
-                                    Edit
-                                </button>
+
+                                        <button
+                                            className="flex items-center gap-2 p-2 text-sm font-medium bg-teal-500 text-white rounded-lg shadow-md hover:shadow-lg hover:bg-teal-600 transition duration-300 ease-in-out border-none"
+                                            onClick={() => setShowEditPopup(true)} // Opens the edit popup
+                                        >
+                                            Edit
+                                        </button>
+                                    </>
+                                    : ""}
 
                                 {/* Delete Popup */}
                                 {showDeletePopup && (
-                                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                                    <div className=" flex items-center justify-center  bg-opacity-50 z-50">
                                         <div className="bg-white rounded-lg p-6 w-[600px] h-[200px] shadow-lg flex flex-col justify-between">
-                                            <h2 className="text-xl font-semibold text-gray-800">
-                                                Deleting <span className="text-gray-600"> Service</span>
+                                            <h2 className="text-xl font-semibold text-gray-500">
+                                                Deleting Service
                                             </h2>
                                             <p className="text-sm text-gray-600">
                                                 Are you sure you want to permanently delete{" "}
-                                                <span className="font-medium text-gray-800">
+                                                <span className="font-medium text-gray-600">
                                                     {service?.name || "this service"}
                                                 </span>
                                                 ?
                                             </p>
                                             <div className="flex justify-end gap-4 mt-4">
                                                 <button
-                                                    className="px-4 py-2 rounded-md bg-teal-500 text-white text-sm hover:bg-teal-600"
+                                                    className="px-4 py-2 outline-none border border-solid border-neutral-500 rounded-md bg-teal-500 text-white text-sm hover:bg-teal-600"
                                                     onClick={() => setShowDeletePopup(false)}
                                                 >
                                                     Cancel
                                                 </button>
                                                 <button
-                                                    className={`px-4 py-2 rounded-md text-white text-sm ${isDeleting
+                                                    className={`px-4 py-2 border border-solid border-neutral-500 outline-none rounded-md text-white text-sm ${isDeleting
                                                         ? "bg-gray-400 cursor-not-allowed"
                                                         : "bg-black hover:bg-gray-800"
                                                         }`}
                                                     onClick={handleDelete}
                                                     disabled={isDeleting}
                                                 >
-                                                    {isDeleting ? "Deleting..." : "Delete"}
+                                                    {isDeleting ? <Loading2 /> : "Delete"}
                                                 </button>
                                             </div>
                                         </div>
@@ -315,7 +403,7 @@ const ServiceDetails = () => {
                                 {/* Edit Service Popup */}
                                 {showEditPopup && (
                                     <div
-                                        className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+                                        className="fixed inset-0 z-50 flex items-center justify-center  bg-opacity-50"
                                     >
                                         <div
                                             className="absolute top-10 right-10 bg-white rounded-lg shadow-lg p-8 w-[600px] max-w-[90vw] flex flex-col"
@@ -340,13 +428,14 @@ const ServiceDetails = () => {
                                                     <label className="block text-gray-700 font-medium">Name*</label>
                                                     <input
                                                         type="text"
-                                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
-                                                        value={service?.name || ""}
+                                                        className="w-full outline-none border border-solid text-gray-500 border-gray-300 rounded-lg px-4 py-2 mt-1"
+                                                        value={editService?.name || ""}
+                                                        //placeholder={service?.name}
                                                         onChange={(e) =>
-                                                            setService({
-                                                                ...service,
+                                                            setEditService((prev: any) => ({
+                                                                ...prev,
                                                                 name: e.target.value,
-                                                            })
+                                                            }))
                                                         }
                                                     />
                                                 </div>
@@ -356,13 +445,14 @@ const ServiceDetails = () => {
                                                     <label className="block text-gray-700 font-medium">SAC Code*</label>
                                                     <input
                                                         type="text"
-                                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
-                                                        value={service?.sacCode || ""}
+                                                        className="w-full outline-none border border-solid text-gray-500 border-gray-300 rounded-lg px-4 py-2 mt-1"
+                                                        value={editService?.sacCode || ""}
+                                                        //placeholder={service?.sacCode}
                                                         onChange={(e) =>
-                                                            setService({
-                                                                ...service,
+                                                            setEditService((prev: any) => ({
+                                                                ...prev,
                                                                 sacCode: e.target.value,
-                                                            })
+                                                            }))
                                                         }
                                                     />
                                                 </div>
@@ -371,13 +461,14 @@ const ServiceDetails = () => {
                                                 <div>
                                                     <label className="block text-gray-700 font-medium">Description</label>
                                                     <textarea
-                                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
-                                                        value={service?.description || ""}
+                                                        className="w-full outline-none border border-solid text-gray-500 border-gray-300 rounded-lg px-4 py-2 mt-1"
+                                                        value={editService?.description || ""}
+                                                        //placeholder={service?.description}
                                                         onChange={(e) =>
-                                                            setService({
-                                                                ...service,
+                                                            setEditService((prev: any) => ({
+                                                                ...prev,
                                                                 description: e.target.value,
-                                                            })
+                                                            }))
                                                         }
                                                     />
                                                 </div>
@@ -387,100 +478,93 @@ const ServiceDetails = () => {
                                                     <label className="block text-gray-700 font-medium">Selling Price</label>
                                                     <input
                                                         type="number"
-                                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
-                                                        value={service?.sellingPrice || ""}
+                                                        className="w-full outline-none border border-solid text-gray-500 border-gray-300 rounded-lg px-4 py-2 mt-1"
+                                                        value={editService?.sellingPrice || ""}
+                                                        //placeholder={service?.sellingPrice}
                                                         onChange={(e) =>
-                                                            setService({
-                                                                ...service,
+                                                            setEditService((prev: any) => ({
+                                                                ...prev,
                                                                 sellingPrice: e.target.value,
-                                                            })
+                                                            }))
                                                         }
                                                     />
                                                 </div>
 
-                                                {/* Service Charge Field */}
-                                                <div>
-                                                    <label className="block text-gray-700 font-medium">Service Charge</label>
-                                                    <input
-                                                        type="number"
-                                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
-                                                        value={service?.serviceCharge || ""}
-                                                        onChange={(e) =>
-                                                            setService({
-                                                                ...service,
-                                                                serviceCharge: e.target.value,
-                                                            })
-                                                        }
-                                                    />
-                                                </div>
+
+
 
                                                 {/* Tax Field */}
                                                 <div>
                                                     <label className="block text-gray-700 font-medium">Tax (%)</label>
-                                                    <input
-                                                        type="number"
-                                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
-                                                        value={service?.tax || ""}
-                                                        onChange={(e) =>
-                                                            setService({
-                                                                ...service,
-                                                                tax: e.target.value,
-                                                            })
-                                                        }
+                                                    <Select
+                                                        className="rounded-[5px] text-gray-400 border border-solid border-borderGrey mt-2 text-base font-medium outline-none w-full"
+                                                        placeholder="Select Tax"
+                                                        isClearable={false}
+                                                        isSearchable={true}
+                                                        options={taxType}
+                                                        isMulti={false}
+                                                        name="tax"
+                                                        onChange={(e: any) => setEditService((prev: any) => ({ ...prev, tax: e?.value }))}
+                                                        styles={customStyles}
+                                                        value={taxType.find((option) => option.value === (editService?.tax || service?.tax))}
                                                     />
                                                 </div>
 
-                                                {/* Providers Field */}
-                                                <div>
-                                                    <label className="block text-gray-700 font-medium">Providers</label>
-                                                    <textarea
-                                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
-                                                        placeholder="Comma-separated values, e.g., Provider1, Provider2"
-                                                        value={service?.providers?.join(", ") || ""}
-                                                        onChange={(e) =>
-                                                            setService({
-                                                                ...service,
-                                                                providers: e.target.value.split(",").map((p) => p.trim()),
-                                                            })
-                                                        }
-                                                    />
-                                                </div>
+
 
                                                 {/* Category Field */}
                                                 <div>
                                                     <label className="block text-gray-700 font-medium">Category</label>
-                                                    <select
-                                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
-                                                        value={service?.category || ""}
-                                                        onChange={(e) =>
-                                                            setService({
-                                                                ...service,
-                                                                category: e.target.value,
-                                                            })
-                                                        }
-                                                    >
-                                                        <option value="">Select a category</option>
-                                                        <option value="Category 1">Category 1</option>
-                                                        <option value="Category 2">Category 2</option>
-                                                        <option value="Category 3">Category 3</option>
-                                                    </select>
+                                                    <CreatableSelect
+                                                        className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
+                                                        placeholder="Select Category"
+                                                        isClearable={false}
+                                                        isSearchable={true}
+                                                        options={categories}
+                                                        isMulti={false}
+                                                        name="category"
+                                                        onChange={(e: any) => setEditService((prev: any) => ({ ...prev, category: e?.label }))}
+                                                        styles={customStyles}
+                                                        value={categories.find((option) => option.label === (editService?.category || service?.category))}
+                                                    />
+                                                </div>
+
+
+                                                <div>
+                                                    <label className="block text-gray-700 font-medium">Link Products</label>
+                                                    {productOptions ? (
+                                                        <Select
+                                                            className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
+                                                            placeholder="Select Product"
+                                                            isClearable={true}
+                                                            isSearchable={true}
+                                                            options={productOptions}
+                                                            isMulti={true}
+                                                            name="linkProduct"
+                                                            onChange={(value) => setEditService((prev: any) => ({ ...prev, linkProducts: value }))}
+                                                            styles={customStyles}
+                                                            
+                                                        />
+                                                    ) : (
+                                                        <div className="text-neutral-400 text-base font-medium w-full"><Loading2 /></div>
+                                                    )}
                                                 </div>
 
                                                 {/* Save and Cancel Buttons */}
                                                 <div className="flex justify-end space-x-4 mt-6">
                                                     <button
                                                         type="button"
-                                                        className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 focus:outline-none"
+                                                        className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 focus:outline-none border-none"
                                                         onClick={() => setShowEditPopup(false)}
                                                     >
                                                         Cancel
                                                     </button>
                                                     <button
-                                                        type="button"
-                                                        className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 focus:outline-none"
+                                                        type="submit"
+                                                        className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 focus:outline-none border-none"
                                                         onClick={handleEditSave}
                                                     >
-                                                        Save
+                                                        {isUpdating ? <Loading2 /> : "Save"}
                                                     </button>
                                                 </div>
                                             </form>
@@ -556,19 +640,19 @@ const ServiceDetails = () => {
                         <div className="w-full flex gap-2 items-center p-6 h-3/12">
                             <div className="text-textGrey2 text-base font-medium ">Tax Rate:</div>
                             <div className="px-2 py-1.5 bg-gray-100 rounded-[5px] justify-center items-center gap-2 flex">
-                                <div className="text-textGrey2 text-base font-medium ">{isLoading ? <Loading2 /> : service?.tax} %</div>
+                                <div className="text-textGrey2 text-base font-medium ">{isLoading ? <Loading2 /> : service?.tax * 100} %</div>
                             </div>
                         </div>
                     </div>
-                    <div className="w-full">
+                    {/* <div className="w-full">
                         <div className="w-full flex gap-2 items-center p-6 h-3/12">
                             <div className="text-textGrey2 text-base font-medium ">Providers:</div>
                             <div className="px-2 py-1.5 bg-gray-100 rounded-[5px] justify-center items-center gap-2 flex">
-                                <div className="text-textGrey2 text-base font-medium ">{isLoading ? <Loading2 /> : service?.providers}</div>
+                                <div className="text-textGrey2 text-base font-medium ">{isLoading ? <Loading2 /> : service?.providers?.join(", ")}</div>
                             </div>
 
                         </div>
-                    </div>
+                    </div> */}
                 </div>
                 <div className="w-6/12 bg-white mt-[25px] rounded-[10px] border border-solid border-borderGrey flex  flex-col">
                     <div className="w-full flex p-6 items-start justify-between border-0 border-b  border-solid border-borderGrey">

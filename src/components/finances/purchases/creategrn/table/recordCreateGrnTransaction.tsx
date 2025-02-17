@@ -59,7 +59,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ orderData, headerdata,se
     const [selectedMode, setSelectedMode] = useState('');
     const [modeOptions, setModeOptions] = useState<any>([]);
 
-    const { data: modes, error: modesError, isLoading: modesLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
+    const { data: modes, error: modesError, isLoading: modesLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/paymentMethod/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
 
 
     useEffect(() => {
@@ -286,7 +286,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ orderData, headerdata,se
                                     <div className='relative'>
                                         <input
                                             className="w-[10rem] border border-solid border-borderGrey h-9 text-textGrey1 text-base font-medium px-2 rounded   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                            value={startDate?.toLocaleDateString() || new Date().toLocaleDateString()}
+                                            value={startDate?.toLocaleDateString('en-GB') || new Date().toLocaleDateString('en-GB')}
                                             readOnly
                                         />
                                         <Image
@@ -339,7 +339,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ orderData, headerdata,se
                             name="advancePayment"
                             id="advancePayment"
                             checked={isAdvancePayment}
-                            onChange={(e) => setIsAdvancePayment(e.target.checked)}
+                            onChange={(e) => {setIsAdvancePayment(e.target.checked); setTransactionType('Money Out')}}
                         />
                         <span className='text-textGrey2 text-base font-medium'>Mark as advance payment</span>
                     </div>

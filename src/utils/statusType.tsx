@@ -25,6 +25,10 @@ export const SalesStatus=[
     },{
         id:'6',
         status:'Credited'
+    },
+    {
+        id:'7',
+        status:'Cancelled'
     }
 
 ]

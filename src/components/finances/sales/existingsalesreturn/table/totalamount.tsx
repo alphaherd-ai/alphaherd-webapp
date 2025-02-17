@@ -24,14 +24,14 @@ const ExistingsalesReturnTotalAmout = ({ otherData, isLoading }: any) => {
 
 
     const totalPaidAmount = otherData?.recordTransaction?.reduce((acc: any, transaction: any) => {
-        if (transaction?.moneyChange === 'In' || transaction?.isAdvancePayment) {
+        if (transaction?.moneyChange === 'In') {
             return acc + transaction?.amountPaid;
         }
         return acc;
     }, 0);
 
     const totalAmountPay = otherData?.recordTransaction?.reduce((acc: any, transaction: any) => {
-        if (transaction?.moneyChange === 'Out' && !transaction?.isAdvancePayment) {
+        if (transaction?.moneyChange === 'Out' || transaction?.isAdvancePayment) {
             return acc + transaction?.amountPaid;
         }
         return acc;
@@ -40,7 +40,7 @@ const ExistingsalesReturnTotalAmout = ({ otherData, isLoading }: any) => {
     // const totalPaidAmount = otherData?.recordTransaction?.reduce((a: any, b: any) => a + b.amountPaid, 0);
 
 
-    const balanceDue = otherData.totalCost - totalPaidAmount + totalAmountPay
+    const balanceDue = otherData.totalCost + totalPaidAmount - totalAmountPay
 
 
     const [count, setCount] = useState(0);
@@ -81,8 +81,10 @@ const ExistingsalesReturnTotalAmout = ({ otherData, isLoading }: any) => {
         <>
 
 
-            <div className="flex gap-4  pt-[20px] pb-[20px]">
-                <Popup headerdata={otherData} setCount={setCount} initialInvoiceNo={initialInvoiceNo} balanceDue={balanceDue} />
+            < div className={`flex gap-4 ${otherData?.status === 'Cancelled' ? "justify-end" : ""}   pt-[20px] pb-[20px]`}>
+                {!(otherData?.status === 'Cancelled') &&
+                    <Popup headerdata={otherData} setCount={setCount} initialInvoiceNo={initialInvoiceNo} balanceDue={balanceDue} />
+                }
                 <div className='w-full rounded-md'>
                     <div className="w-full  bg-white rounded-md">
                         <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">
@@ -210,12 +212,12 @@ const ExistingsalesReturnTotalAmout = ({ otherData, isLoading }: any) => {
                         <div className="w-full  px-6 bg-white rounded-bl-md rounded-br-md justify-between items-center flex  border border-t-0 border-solid border-borderGrey">
                             <div className="text-gray-500 text-base font-bold  w-1/3 py-4">Balance Due</div>
                             <div className="text-gray-500 text-lg font-medium  w-1/3 py-4 flex  items-center"></div>
-                            <div className="text-gray-500 text-base font-bold  w-1/3 py-4 ">₹{balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue || 0)?.toFixed(2)}
-                                {balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                            <div className="text-gray-500 text-base font-bold  w-1/3 py-4 ">₹{balanceDue < 0 ?  (-1*balanceDue)?.toFixed(2) : (balanceDue || 0)?.toFixed(2)}
+                                {balanceDue >= 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
                                     You owe
-                                </span> : balanceDue === 0 ? "" : <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                                </span> : balanceDue < 0 ?  <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
                                     You’re owed
-                                </span>}
+                                </span> : ""}
                             </div>
 
                         </div>
@@ -223,9 +225,12 @@ const ExistingsalesReturnTotalAmout = ({ otherData, isLoading }: any) => {
                     </div>
 
                 </div>
-                {popup && <EditRecordTransactionPopup onClose={onClose} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue} />}
-                {showConfirmation && <CancellationPopup setShowConfirmation={setShowConfirmation} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue} />}
+                {!(otherData?.status === 'Cancelled') && <>
+                    {popup && <EditRecordTransactionPopup onClose={onClose} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue} />}
+                    {showConfirmation && <CancellationPopup setShowConfirmation={setShowConfirmation} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue} />}
+                </>}
             </div>
+
 
 
 

@@ -40,18 +40,16 @@ const DatabaseClientTable = () => {
         { revalidateOnFocus: true }
     );
 
-    // Initialize state when data is fetched
+    
     useEffect(() => {
         if (!isLoading && data && !error) {
-            // Sort by ID (most recent first) before setting the clients
             const sortedData = data.sort((a: Clients, b: Clients) => b.id - a.id);
             setClients(sortedData);
-            setSortedClients(sortedData); // Initialize sorted clients
+            setSortedClients(sortedData);
         }
     }, [data, error, isLoading]);
 
-    console.log("sort order si :", sortOrder);
-    // Function to handle sorting
+    
     const handleSortChange = (key: keyof Clients, order: 'asc' | 'desc') => {
         setSortKey(key);
         setSortOrder(order);
@@ -85,7 +83,7 @@ const DatabaseClientTable = () => {
         console.log(`Sorting by ${key} in ${order} order`, sortedData);
     };
 
-    console.log(sortedClients); // Check the sorted clients array here
+    //console.log(sortedClients); // Check the sorted clients array here
 
     return (
         <div className="flex flex-col w-full box-border mb-6 mt-6 border border-solid border-borderGrey rounded-lg cursor-default">
@@ -96,7 +94,6 @@ const DatabaseClientTable = () => {
                 <div className="flex text-gray-500 text-base font-medium px-6 w-1/6">Pet(s)</div>
                 <div className="flex text-gray-500 text-base font-medium px-6 w-1/6">Phone no.</div>
                 <div className="flex text-gray-500 text-base font-medium px-6 w-1/6">Email</div>
-                <div className="flex text-gray-500 text-base font-medium px-6 w-1/6">City</div>
             </div>
 
             {/* Pass the sortedClients to the DatabaseClientTableItem component */}

@@ -1,8 +1,7 @@
 "use client"
 import Image from "next/image"
-import Link from "next/link"
 import lefticon from "../../../../assets/icons/inventory/left_icon.svg"
-
+import closeIcon from '../../../../assets/icons/finance/closeIcon.svg';
 import addicon from "../../../../assets/icons/inventory/bar_chart.svg"
 import optionicon from "../../../../assets/icons/inventory/more_vert.svg"
 import downloadicon from "../../../../assets/icons/inventory/1. Icons-24.svg"
@@ -10,18 +9,23 @@ import baricon from "../../../../assets/icons/inventory/bar_chart.svg"
 import expandicon from "../../../../assets/icons/inventory/expand_content.svg"
 import tuneicon from "../../../../assets/icons/inventory/bar_chart.svg"
 import downarrow from "../../../../assets/icons/inventory/Icons16.svg"
-
+import Menu from "../../../../assets/icons/finance/menu.svg"
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
 import formatDateAndTime from "@/utils/formateDateTime";
-
+import axios from "axios";
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from "next/navigation"
-
+import CreatableSelect from 'react-select/creatable';
 import { useAppSelector } from "@/lib/hooks"
 import Popup2 from '../../product/producttable/updateinventorypopup';
 import useSWR from "swr"
+import EditBatchPopup from "./editBatch"
+import ConfirmationPopup from "./deleteBatch"
+import Select from 'react-select';
+import Loading2 from "@/app/loading2";
+
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
@@ -41,7 +45,15 @@ function useProductbatches(id: string | null, branchId: number | null) {
     }
 }
 
+interface ItemCategory {
+    id: string,
+    name: string | string[],
+}
 
+interface TaxType {
+    id: number;
+    name: number[];
+}
 
 const ProductDetails = () => {
     const [showPopup2, setShowPopup2] = React.useState(false);
@@ -53,6 +65,7 @@ const ProductDetails = () => {
     const router = useRouter();
 
     const [product, setProduct] = useState<any | null>(null);
+    const [editProduct, setEditProduct] = useState<any | null>(null);
     const [inventoryTimeline, setInventoryTimeline] = useState<any | null>(null);
     const url = useSearchParams();
     const id = url.get('id');
@@ -62,12 +75,15 @@ const ProductDetails = () => {
     const [showEditPopup, setShowEditPopup] = useState(false);
     const [showDeletePopup, setShowDeletePopup] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
-
-
+    const [isEditing, setIsEditing] = useState(false);
+    const [isEditingBatch, setIsEditingBatch] = useState<any | null>(null);
+    const [productEditingLoading, setProductEditingLoading] = useState<boolean>(false);
+    const [productDeletingLoading, setProductDeletingLoading] = useState<boolean>(false);
 
     useEffect(() => {
         if (!error && !isLoading && fetchedProduct) {
             setProduct(fetchedProduct);
+            setEditProduct(fetchedProduct);
         }
         if (!error && !isLoading && fetchedProductBatches) {
             console.log(fetchedProductBatches[0]);
@@ -109,23 +125,77 @@ const ProductDetails = () => {
 
     const totalMRP = oldestBatch?.maxRetailPrice || 0;
 
+    const [categories, setCategories] = useState<any[]>([]);
+    useEffect(() => {
+        const fetchCategory = async () => {
+            try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemCategory/getAll?branchId=${appState.currentBranchId}`);
+                const itemCategoryList: any[] = response.data.reduce((acc: any[], categoryEntry: ItemCategory) => {
+                    if (Array.isArray(categoryEntry.name)) {
+                        categoryEntry.name.forEach((name: string) => {
+                            acc.push({ value: categoryEntry.id, label: name });
+                        });
+                    } else {
+                        acc.push({ value: categoryEntry.id, label: categoryEntry.name });
+
+                    }
+                    return acc;
+                }, []);
+                console.log(itemCategoryList);
+                setCategories(itemCategoryList);
+            } catch (error) {
+                console.log("Error fetching species", error);
+            }
+        }
+        fetchCategory();
+    }, [appState.currentBranchId]);
+
+    const [taxType, settaxType] = useState<any[]>([]);
+    useEffect(() => {
+        const fetchTax = async () => {
+            try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/taxType/getAll?branchId=${appState.currentBranchId}`);
+                const taxTypeList: any[] = response.data.reduce((acc: any[], taxTypeEntry: TaxType) => {
+                    if (Array.isArray(taxTypeEntry.name)) {
+                        taxTypeEntry.name.forEach((taxValue: number) => {
+                            acc.push({
+                                value: taxValue * 0.01,
+                                label: `${taxValue}% GST`
+                            });
+                        });
+                    }
+                    return acc;
+                }, []);
+                console.log(taxTypeList);
+                settaxType(taxTypeList);
+            } catch (error) {
+                console.log("Error fetching species", error);
+            }
+        }
+        fetchTax();
+    }, [appState.currentBranchId]);
+
+
+
+
     const handleEditSave = async (e: React.FormEvent) => {
         e.preventDefault();
-    
+
         // Clean the payload
         const cleanedProduct = {
-            itemName: product.itemName,
-            category: product.category,
-            tax: product.tax,
-            description: product.description,
-            minStock: product.minStock,
-            maxStock: product.maxStock,
-            hsnCode: product.hsnCode,
+            ...(editProduct.itemName && { itemName: editProduct.itemName }),
+            ...(editProduct.category && { category: editProduct.category }),
+            ...(editProduct.tax && { tax: editProduct.tax }),
+            ...(editProduct.description && { description: editProduct.description }),
+            ...(editProduct.minStock && { minStock: editProduct.minStock }),
+            ...(editProduct.maxStock && { maxStock: editProduct.maxStock }),
+            ...(editProduct.hsnCode && { hsnCode: editProduct.hsnCode }),
         };
-    
-        console.log("Cleaned Payload being sent:", JSON.stringify(cleanedProduct));
-    
+
+        //console.log("Cleaned Payload being sent:", JSON.stringify(cleanedProduct));
+
         try {
+            setProductEditingLoading(true);
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${id}?branchId=${appState.currentBranchId}`,
                 {
@@ -136,9 +206,9 @@ const ProductDetails = () => {
                     body: JSON.stringify(cleanedProduct),
                 }
             );
-    
-            console.log("The response created is:", response);
-    
+
+            //console.log("The response created is:", response);
+
             if (!response.ok) {
                 let errorMessage = "An unknown error occurred";
                 try {
@@ -153,23 +223,29 @@ const ProductDetails = () => {
                 alert(`Failed to update product! Error: ${errorMessage}`);
                 return;
             }
-    
-            alert("Service updated successfully!");
+
+            alert("Product updated successfully!");
             setShowEditPopup(false);
-            router.push('/inventory/products/all');
+            //router.push('/inventory/products/all');
         } catch (err) {
             console.error("Unexpected error occurred:", err);
             alert("An error occurred while updating!");
         }
+        finally {
+            setProductEditingLoading(false);
+        }
     };
-    
-    
+
+
 
 
     const handleDelete = async () => {
-        setIsDeleting(true);
-        console.log("product name is : ", product);
+        //setIsDeleting(true);
+        //console.log("product name is : ", product);
+
+
         try {
+            setProductDeletingLoading(true);
 
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${id}?branchId=${appState.currentBranchId}`,
@@ -177,11 +253,11 @@ const ProductDetails = () => {
                     method: "DELETE",
                 }
             );
-            console.log("the response is : ", response);
+            //console.log("the response is : ", response);
 
             if (!response.ok) {
                 const errorText = await response.text(); // Get the server error response
-                console.error("Error deleting product:", errorText);
+                //console.error("Error deleting product:", errorText);
                 alert(`Failed to delete product! Error: ${response.statusText || errorText}`);
             }
 
@@ -194,12 +270,52 @@ const ProductDetails = () => {
                 alert("Failed to delete product!");
             }
         } catch (err) {
-            console.error(err);
+            //console.error(err);
             alert("An error occurred!");
         } finally {
-            setIsDeleting(false);
+            setProductDeletingLoading(false);
         }
     };
+
+    const customStyles = {
+        control: (provided: any, state: any) => ({
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
+            border: state.isFocused ? '1px solid #35BEB1' : 'none',
+            '&:hover': {
+                borderColor: state.isFocused ? '1px solid #35BEB1' : '#C4C4C4',
+            },
+            boxShadow: state.isFocused ? 'none' : 'none',
+        }),
+        valueContainer: (provided: any) => ({
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
+        }),
+        singleValue: (provided: any, state: any) => ({
+            ...provided,
+            width: '100%',
+            maxWidth: '100%',
+            color: state.isSelected ? '#6B7E7D' : '#6B7E7D',
+        }),
+        menu: (provided: any) => ({
+            ...provided,
+            backgroundColor: 'white',
+            width: '100%',
+            maxWidth: '100%',
+        }),
+        option: (provided: any, state: any) => ({
+            ...provided,
+            backgroundColor: state.isFocused ? '#35BEB1' : 'white',
+            color: state.isFocused ? 'white' : '#6B7E7D',
+            '&:hover': {
+                backgroundColor: '#35BEB1',
+                color: 'white',
+            },
+        }),
+    };
+
 
 
     return <>
@@ -219,15 +335,7 @@ const ProductDetails = () => {
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
-                    {/* <div className="h-11 px-2.5 py-[5px] bg-white rounded-[5px] justify-start items-center gap-1.5 flex">
-                            <div>
-                                <Image src={aiicon} alt="AI"></Image>
-                            </div>
-                            <div>Expected restocking in 28 days</div>
-                            <div>
-                                <Image src={infoicon} alt="info"></Image>
-                            </div>
-                        </div> */}
+
                     <div className="h-12 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-center items-center gap-2 flex">
                         <div>
                             <Image src={addicon} alt="add"></Image>
@@ -238,6 +346,7 @@ const ProductDetails = () => {
                         </div>
 
                     </div>
+
                     <div className="relative">
                         <Popover placement="bottom-end" showArrow={false} offset={0}>
                             <PopoverTrigger>
@@ -252,7 +361,7 @@ const ProductDetails = () => {
 
                             {/* Dropdown Menu */}
                             <PopoverContent className="relative right-0 top-full mt-1 w-40 bg-white border border-gray-300 shadow-md z-10 p-0 rounded-lg" style={{ marginLeft: '-10px' }}>
-                                <button
+                                {!(showEditPopup || showDeletePopup) ? <><button
                                     onClick={() => {
                                         setShowEditPopup(true);
                                     }}
@@ -260,25 +369,28 @@ const ProductDetails = () => {
                                 >
                                     Edit
                                 </button>
-                                <button
-                                    onClick={() => {
-                                        setShowDeletePopup(true);
-                                    }}
-                                    className="w-full px-4 py-3 text-sm text-gray-800 hover:bg-gray-200 text-left bg-white border-none rounded-md"
-                                >
-                                    Delete
-                                </button>
+                                    <button
+                                        onClick={() => {
+                                            setShowDeletePopup(true);
+                                        }}
+                                        className="w-full px-4 py-3 text-sm text-gray-800 hover:bg-gray-200 text-left bg-white border-none rounded-md"
+                                    >
+                                        Delete
+                                    </button>
+                                </> : ""
+
+                                }
 
                                 {/* Delete Popup */}
                                 {showDeletePopup && (
                                     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                                         <div className="bg-white p-6 w-[600px] h-[200px] shadow-lg flex flex-col justify-between rounded-md ">
-                                            <h2 className="text-xl font-semibold text-gray-800">
-                                                Deleting <span className="text-gray-600">Product</span>
+                                            <h2 className="text-xl text-gray-600 font-semibold">
+                                                Deleting Product
                                             </h2>
                                             <p className="text-sm text-gray-600">
                                                 Are you sure you want to permanently delete{" "}
-                                                <span className="font-medium text-gray-800">
+                                                <span className="font-medium text-gray-600">
                                                     {product?.itemName || "this product"}
                                                 </span>
                                                 ?
@@ -298,7 +410,7 @@ const ProductDetails = () => {
                                                     onClick={handleDelete}
                                                     disabled={isDeleting}
                                                 >
-                                                    {isDeleting ? "Deleting..." : "Delete"}
+                                                    {productDeletingLoading ? <Loading2 /> : "Delete"}
                                                 </button>
                                             </div>
                                         </div>
@@ -307,14 +419,14 @@ const ProductDetails = () => {
                                 )}
 
                                 {showEditPopup && (
-                                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                                    <div className="fixed inset-0  z-50 flex items-center justify-center  bg-opacity-50">
                                         <div className="absolute top-10 right-10 bg-white rounded-lg shadow-lg p-8 w-[600px] max-w-[90vw] flex flex-col">
                                             {/* Close Button */}
                                             <button
                                                 onClick={() => setShowEditPopup(false)}
                                                 className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
                                             >
-                                                &#x2715;
+                                                <Image src={closeIcon} alt="" />
                                             </button>
 
                                             {/* Popup Heading */}
@@ -329,20 +441,27 @@ const ProductDetails = () => {
                                                     <label className="block text-gray-700 font-medium">Item Name</label>
                                                     <input
                                                         type="text"
-                                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
-                                                        value={product?.itemName || ''}
-                                                        onChange={(e) => setProduct({ ...product, itemName: e.target.value })}
+                                                        className="w-full text-gray-500 outline-none border border-solid border-borderGrey rounded-lg px-4 py-2 mt-1"
+                                                        value={editProduct?.itemName || ''}
+                                                        //placeholder={product?.itemName || ""}
+                                                        onChange={(e) => setEditProduct((prev: any) => ({ ...prev, itemName: e.target.value }))}
                                                     />
                                                 </div>
 
                                                 {/* Category */}
                                                 <div>
                                                     <label className="block text-gray-700 font-medium">Category</label>
-                                                    <input
-                                                        type="text"
-                                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
-                                                        value={product?.category || ''}
-                                                        onChange={(e) => setProduct({ ...product, category: e.target.value })}
+                                                    <CreatableSelect
+                                                        className="text-neutral-400  outline-none border border-solid mt-2 border-borderGrey  rounded-md text-base font-medium w-full"
+                                                        placeholder="Select Category"
+                                                        isClearable={false}
+                                                        isSearchable={true}
+                                                        options={categories}
+                                                        isMulti={false}
+                                                        styles={customStyles}
+                                                        name="category"
+                                                        onChange={(e: any) => setEditProduct((prev: any) => ({ ...prev, category: e?.label }))}
+                                                        value={categories.find((option) => option.label === (editProduct?.category || product?.category))}
                                                     />
                                                 </div>
 
@@ -351,59 +470,29 @@ const ProductDetails = () => {
                                                     <label className="block text-gray-700 font-medium">HSN Code</label>
                                                     <input
                                                         type="text"
-                                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
-                                                        value={product?.hsnCode || ''}
-                                                        onChange={(e) => setProduct({ ...product, hsnCode: e.target.value })}
+                                                        className="w-full text-gray-500 outline-none border border-solid border-borderGrey rounded-lg px-4 py-2 mt-1"
+                                                        value={editProduct?.hsnCode || ''}
+                                                        //placeholder={product?.hsnCode}
+                                                        onChange={(e) => setEditProduct((prev: any) => ({ ...prev, hsnCode: e.target.value }))}
                                                     />
                                                 </div>
 
-                                                {/* Providers */}
-                                                {/* <div>
-                                                    <label className="block text-gray-700 font-medium">Providers</label>
-                                                    <div className="space-y-2">
-                                                        {product?.providers?.map((provider: string, index: number) => (
-                                                            <div key={index} className="flex items-center space-x-2">
-                                                                <input
-                                                                    type="text"
-                                                                    className="w-full border border-gray-300 rounded-lg px-4 py-2"
-                                                                    value={provider || ''}
-                                                                    onChange={(e) => {
-                                                                        const newProviders = [...(product.providers || [])];
-                                                                        newProviders[index] = e.target.value;
-                                                                        setProduct({ ...product, providers: newProviders });
-                                                                    }}
-                                                                />
-                                                                <button
-                                                                    type="button"
-                                                                    className="text-red-500 hover:text-red-700"
-                                                                    onClick={() => {
-                                                                        const newProviders = product.providers.filter((_: any, i: number) => i !== index);
-                                                                        setProduct({ ...product, providers: newProviders });
-                                                                    }}
-                                                                >
-                                                                    &#x2715;
-                                                                </button>
-                                                            </div>
-                                                        ))}
-                                                        <button
-                                                            type="button"
-                                                            className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 focus:outline-none"
-                                                            onClick={() => setProduct({ ...product, providers: [...(product?.providers || []), ''] })}
-                                                        >
-                                                            Add Provider
-                                                        </button>
-                                                    </div>
-                                                </div> */}
 
 
                                                 {/* Tax */}
                                                 <div>
                                                     <label className="block text-gray-700 font-medium">Tax (%)</label>
-                                                    <input
-                                                        type="number"
-                                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
-                                                        value={product?.tax || 0}
-                                                        onChange={(e) => setProduct({ ...product, tax: parseFloat(e.target.value) })}
+                                                    <Select
+                                                        className="rounded-[5px] text-gray-400 border border-solid border-borderGrey mt-2 text-base font-medium outline-none w-full"
+                                                        placeholder="Select Tax"
+                                                        isClearable={false}
+                                                        isSearchable={true}
+                                                        options={taxType}
+                                                        isMulti={false}
+                                                        name="tax"
+                                                        onChange={(e: any) => setEditProduct((prev: any) => ({ ...prev, tax: e?.value }))}
+                                                        styles={customStyles}
+                                                        value={taxType.find((option) => option.value === (editProduct?.tax || product?.tax))}
                                                     />
                                                 </div>
 
@@ -412,9 +501,10 @@ const ProductDetails = () => {
                                                     <label className="block text-gray-700 font-medium">Description</label>
                                                     <input
                                                         type="text"
-                                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
-                                                        value={product?.description || ''}
-                                                        onChange={(e) => setProduct({ ...product, description: e.target.value })}
+                                                        className="w-full text-gray-500 outline-none border border-solid border-borderGrey rounded-lg px-4 py-2 mt-1"
+                                                        value={editProduct?.description || ''}
+                                                        //placeholder={product?.description}
+                                                        onChange={(e) => setEditProduct((prev: any) => ({ ...prev, description: e.target.value }))}
                                                     />
                                                 </div>
 
@@ -423,9 +513,10 @@ const ProductDetails = () => {
                                                     <label className="block text-gray-700 font-medium">Min Stock</label>
                                                     <input
                                                         type="number"
-                                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
-                                                        value={product?.minStock || 1}
-                                                        onChange={(e) => setProduct({ ...product, minStock: parseInt(e.target.value) })}
+                                                        className="w-full text-gray-500 outline-none border border-solid border-borderGrey rounded-lg px-4 py-2 mt-1"
+                                                        value={editProduct?.minStock || 1}
+                                                        //placeholder={product?.minStock || ""}
+                                                        onChange={(e) => setEditProduct((prev: any) => ({ ...prev, minStock: parseInt(e.target.value) }))}
                                                     />
                                                 </div>
 
@@ -434,9 +525,10 @@ const ProductDetails = () => {
                                                     <label className="block text-gray-700 font-medium">Max Stock</label>
                                                     <input
                                                         type="number"
-                                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 mt-1"
-                                                        value={product?.maxStock || 100}
-                                                        onChange={(e) => setProduct({ ...product, maxStock: parseInt(e.target.value) })}
+                                                        className="w-full text-gray-500 outline-none border border-solid border-borderGrey rounded-lg px-4 py-2 mt-1"
+                                                        value={editProduct?.maxStock || ''}
+                                                        //placeholder={product?.maxStock || ""}
+                                                        onChange={(e) => setEditProduct((prev: any) => ({ ...prev, maxStock: parseInt(e.target.value) }))}
                                                     />
                                                 </div>
 
@@ -454,7 +546,7 @@ const ProductDetails = () => {
                                                         className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 focus:outline-none border-none"
                                                         onClick={handleEditSave}
                                                     >
-                                                        Save
+                                                        {productEditingLoading ? <Loading2 /> : "Save"}
                                                     </button>
                                                 </div>
                                             </form>
@@ -467,6 +559,8 @@ const ProductDetails = () => {
                             </PopoverContent>
                         </Popover>
                     </div>
+
+
 
 
                 </div>
@@ -643,82 +737,67 @@ const ProductDetails = () => {
                     <div>
                         <div className='flex justify-evenly w-full  items-center box-border bg-gray-100  h-12 py-4 border-b border-borderGrey text-textGrey2'>
                             <div className='px-2 flex text-textGrey2 text-base font-medium w-1/12'>Quantity</div>
-                            <div className='flex text-textGrey2 text-base font-medium w-1/12'>Distributor</div>
+                            <div className='flex text-textGrey2 text-base font-medium w-2/12'>Distributor</div>
                             <div className='flex text-textGrey2 text-base font-medium w-1/12'>Batch Number</div>
                             <div className='flex text-textGrey2 text-base font-medium w-1/12'>Expiry Date</div>
-                            <div className='flex justify-center text-textGrey2 text-base font-medium w-1/12'>Code</div>
+                            <div className='flex text-textGrey2 text-base font-medium w-1/12'>Bar Code</div>
+
                             <div className='flex text-textGrey2 text-base font-medium w-1/12 '>Cost per item</div>
                             <div className='flex text-textGrey2 text-base font-medium w-1/12 pl-4'>MRP</div>
-                            <div className='flex text-textGrey2 text-base font-medium w-1/12'>Selling Price</div>
                             <div className='flex justify-center text-textGrey2 text-base font-medium w-1/12'>Margin</div>
                             <div className='flex justify-center text-textGrey2 text-base font-medium w-2/12'>Location</div>
-                            <div className='flex text-textGrey2 text-base font-medium w-1/12'></div>
+                            <div className='flex text-textGrey2 text-base font-medium w-[3.5%]'></div>
                         </div>
 
-                        {product?.productBatches?.map((item: any) => (
-                            <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white  bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5  '>
+                        {product?.productBatches?.sort((a: any, b: any) => a.id - b.id).map((item: any) => (
+                            <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 justify-evenly '>
                                 <div className='px-2 w-1/12  flex items-center text-borderGrey text-base font-medium'>{item.quantity} Strips</div>
-                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>providers</div>
+                                <div className='w-2/12  flex items-center text-borderGrey text-base font-medium'>{item.distributors[0]}</div>
                                 <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>{item.batchNumber}</div>
-                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>{formatDateAndTime(item.expiry).formattedDate}</div>
-                                <div className='w-1/12 justify-center flex items-center text-borderGrey text-base font-medium'>{item.hsnCode}</div>
-                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>{item.costPrice}</div>
-                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium pl-4'>₹399</div>
-                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>{item.sellingPrice}</div>
-                                <div className='w-1/12 justify-center  flex items-center text-borderGrey text-base font-medium'>{(item.quantity / item.maxStock) * 100}%</div>
+                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>{item.expiry ? formatDateAndTime(item.expiry).formattedDate : ''}</div>
+                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>{product.hsnCode}</div>
+
+                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>₹{item.costPrice}</div>
+                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium pl-4'>₹{item.maxRetailPrice}</div>
+                                <div className='w-1/12 justify-center  flex items-center text-borderGrey text-base font-medium'>{((((item.maxRetailPrice) - (item.costPrice)) / (item.maxRetailPrice)) * 100).toFixed(2)}%</div>
                                 <div className="w-2/12 justify-center  flex items-center gap-2">
-                                    <div className="w-fit flex items-center text-orange-500 text-[0.8rem] font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center ">{item.location}</div>
-                                    <div className="w-fit flex items-center text-orange-500 text-[0.8rem] font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center ">Shelf A2</div>
+                                    <div className="w-fit flex items-center text-orange-500 text-[0.8rem] font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center ">{item?.location}</div>
                                 </div>
-                                <div className="w-1/12 px-6 flex items-center gap-2">
-                                    <div className='w-6 h-6 p-1 bg-gray-100 rounded-[5px] justify-start items-center flex '>
 
-                                        <Popover placement="left" showArrow offset={10}>
-                                            <PopoverTrigger>
-                                                <Button
-                                                    variant="solid"
-                                                    className="capitalize flex border-none  text-gray rounded-lg ">
-                                                    <div className='w-4 h-4 px-[11px] py-2.5 bg-white rounded-[5px] border border-solid border-borderGrey justify-center items-center gap-2 flex'>   <Image src={optionicon} alt="option"></Image></div></Button>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="p-5 text-gray-500 bg-white text-sm p-2 font-medium flex flex-row items-start rounded-lg border-2 ,t-3 mt-2.5">
-
-                                                <div className="flex flex-col ">
-
-                                                    <div className='flex flex-col'>
-
-                                                        <Link className='no-underline flex item-center' href='/finance/overview'>
-                                                            <div className='text-gray-500 text-sm p-3 font-medium flex '>
-                                                                gtr</div>
-                                                        </Link>
-                                                        <Link className='no-underline flex item-center' href='/finance/overview'>
-                                                            <div className='text-gray-500 text-sm p-3 font-medium flex '>
-                                                                grtt</div>
-                                                        </Link>
-                                                        <Link className='no-underline flex item-center' href='/finance/overview'>
-                                                            <div className='text-gray-500 text-sm p-3 font-medium flex '>
-                                                                gtrt</div>
-                                                        </Link>
-
+                                {!isEditing &&
+                                    <Popover placement="bottom" showArrow offset={10}>
+                                        <PopoverTrigger>
+                                            <Button variant="solid" className="capitalize flex border-none text-gray rounded-lg">
+                                                <div className='flex items-center'>
+                                                    <Image src={Menu} alt='Menu' className='w-5 h-5' />
+                                                </div>
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="text-gray-500 bg-white text-sm p-2 font-medium flex flex-row items-start rounded-lg border-2 mt-2.5">
+                                            <div className="flex flex-col">
+                                                <div className='flex flex-col'>
+                                                    <div className='text-gray-500 text-sm p-3 font-medium flex hover:cursor-pointer' onClick={() => { setIsEditing(true); setIsEditingBatch(item) }}>
+                                                        Edit
+                                                    </div>
+                                                    <div className='text-gray-500 text-sm p-3 font-medium flex hover:cursor-pointer' onClick={() => { setIsDeleting(true); setIsEditingBatch(item) }}>
+                                                        Delete
                                                     </div>
                                                 </div>
-
-
-                                            </PopoverContent>
-                                        </Popover>
-
-
-
-                                    </div>
-
-                                </div>
+                                            </div>
+                                        </PopoverContent>
+                                    </Popover>
+                                }
                             </div>
 
                         ))}
                     </div>
                 </div>
             </div>
+
         </div>
         {showPopup2 && <Popup2 onClose={togglePopup2} individualSelectedProduct={product} />}
+        {isEditing && <EditBatchPopup setisEditing={setIsEditing} editBatch={isEditingBatch}  />}
+        {isDeleting && <ConfirmationPopup setisDeleting={setIsDeleting} deleteBatch={isEditingBatch} />}
     </>
 }
 

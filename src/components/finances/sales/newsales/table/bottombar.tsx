@@ -48,7 +48,7 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
         tableData.pop();
         //console.log(tableData);
         const allData = { headerData, tableData, totalAmountData, transactionsData };
-        console.log("this is all data", allData, balanceDue)
+        //console.log("this is all data", allData, balanceDue)
         //console.log(tableData);
         let totalQty = 0;
         tableData.forEach(data => {
@@ -73,7 +73,7 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
             newCreditedToken: (id === null) ? newCreditedToken : -1,
             notes: (id === null) ? allData.headerData.notes : estimateData.notes,
             subTotal: allData.totalAmountData.subTotal,
-            invoiceNo: (id === null) ? allData.headerData.invoiceNo : estimateData.invoiceNo,
+            invoiceNo: allData.headerData.invoiceNo,
             dueDate: (id === null) ? allData.headerData.dueDate : estimateData.dueDate,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
@@ -90,6 +90,7 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
             }
 
         }
+        console.log(data);    
         //console.log(data,balanceDue,headerData.customer?.value?.creditedToken);
         // console.log(appState.currentBranch)
         const notifData = {
@@ -219,7 +220,7 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
 
                 }),
             });
-            // console.log('Whatsapp Message sent successfully:', response);
+            
         } catch (error) {
             console.error('Error while sending message', error);
         }
@@ -287,7 +288,6 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
                 </div>
             </div>
         </>
-
     )
 };
 

@@ -12,11 +12,17 @@ import autoTable from 'jspdf-autotable';
 import { useAppSelector } from '@/lib/hooks';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 //@ts-ignore
-const fetcher = (...args:any[]) => fetch(...args).then(res => res.json())
+const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
+import { Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
-import FilterDropdwonCard from './FilterDropdowmCard';
+import FilterDropdownCard from './FilterDropdownCard';
 import DownloadPopup from './downloadTimeline';
+import { useRouter } from 'next/navigation';
 
+const FinacesOverviewTableHeader = ({ timeline }: any) => {
+    const router=useRouter();
+    const appState = useAppSelector((state) => state.app);
+    const { data, isLoading, error } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
 
 const FinacesOverviewTableHeader = ({timeline}:any) => {
 
@@ -103,7 +109,7 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
                     hsnSummary1[hsnCode].quantity += quantity;
                     hsnSummary1[hsnCode].totalValue += totalValue;
                 } else {
-                    hsnSummary1[hsnCode] = { quantity, itemName, defaultUnit, totalValue, tax, date};
+                    hsnSummary1[hsnCode] = { quantity, itemName, defaultUnit, totalValue, tax, date };
                 }
             }
         });
@@ -163,26 +169,26 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
     let hsnSummaryArray3: { hsnCode: string, itemName: string, quantity: number, defaultUnit: string, totalValue: number, tax: number, date: Date }[] = [];
 
     if (!productsLoading && products) {
-    const hsnSummary3: { [key: string]: { quantity: number, itemName: string, defaultUnit: string, totalValue: number, tax: number, date: Date } } = {};
-    products?.forEach((prod: any) => {
-        if (prod?.inventoryType === "Product" && prod?.invoiceType === "Purchase_Return") {
-            const hsnCode = prod.productBatch?.product?.hsnCode;
-            const itemName = prod.productBatch?.product?.itemName;
-            const defaultUnit = prod.productBatch?.product?.defaultUnit;
-            const sellingPrice = prod.productBatch?.sellingPrice;
-            const quantity = prod.productBatch?.quantity;
-            const totalValue = sellingPrice * quantity;
-            const tax = prod.productBatch?.product?.tax;
-            const date = (prod.createdAt);
+        const hsnSummary3: { [key: string]: { quantity: number, itemName: string, defaultUnit: string, totalValue: number, tax: number, date: Date } } = {};
+        products?.forEach((prod: any) => {
+            if (prod?.inventoryType === "Product" && prod?.invoiceType === "Purchase_Return") {
+                const hsnCode = prod.productBatch?.product?.hsnCode;
+                const itemName = prod.productBatch?.product?.itemName;
+                const defaultUnit = prod.productBatch?.product?.defaultUnit;
+                const sellingPrice = prod.productBatch?.sellingPrice;
+                const quantity = prod.productBatch?.quantity;
+                const totalValue = sellingPrice * quantity;
+                const tax = prod.productBatch?.product?.tax;
+                const date = (prod.createdAt);
 
-            if (hsnSummary3[hsnCode]) {
-                hsnSummary3[hsnCode].quantity += quantity;
-                hsnSummary3[hsnCode].totalValue += totalValue;
-            } else {
-                hsnSummary3[hsnCode] = { quantity, itemName, defaultUnit, totalValue, tax, date };
+                if (hsnSummary3[hsnCode]) {
+                    hsnSummary3[hsnCode].quantity += quantity;
+                    hsnSummary3[hsnCode].totalValue += totalValue;
+                } else {
+                    hsnSummary3[hsnCode] = { quantity, itemName, defaultUnit, totalValue, tax, date };
+                }
             }
-        }
-    });
+        });
 
         hsnSummaryArray3 = Object.keys(hsnSummary3).map(hsnCode => ({
             hsnCode,
@@ -203,389 +209,389 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
     }
 
 
-    const convertImageToBase64 = (imageSrc:any, callback:any) => {
+    const convertImageToBase64 = (imageSrc: any, callback: any) => {
         const xhr = new XMLHttpRequest();
         xhr.onload = function () {
-          const reader = new FileReader();
-          reader.onloadend = function () {
-            callback(reader.result);
-          };
-          reader.readAsDataURL(xhr.response);
+            const reader = new FileReader();
+            reader.onloadend = function () {
+                callback(reader.result);
+            };
+            reader.readAsDataURL(xhr.response);
         };
         xhr.open('GET', imageSrc);
         xhr.responseType = 'blob';
         xhr.send();
-      };
-    
-      const logo = appState?.currentOrg?.orgImgUrl;
+    };
+
+    const logo = appState?.currentOrg?.orgImgUrl;
 
     const downloadPDF = () => {
-        convertImageToBase64(logo, (base64Image:any) => {
-        const doc = new jsPDF('landscape');
-        const tableColumn = ["S.No.", "HSN/SAC", "Name", "UQC", "Total Qty()", "Total Value", "Total Taxable Amt", "CGST", "SGST", "Cess"];
-        const tableRows:any = [];
-    
+        convertImageToBase64(logo, (base64Image: any) => {
+            const doc = new jsPDF('landscape');
+            const tableColumn = ["S.No.", "HSN/SAC", "Name", "UQC", "Total Qty()", "Total Value", "Total Taxable Amt", "CGST", "SGST", "Cess"];
+            const tableRows: any = [];
 
-    
-        const currentYear1 = new Date().getFullYear();
-        const startDate = new Date(currentYear1, 3, 1);
-        const endDate = new Date(currentYear1 + 1, 3, 1);
 
-        hsnSummaryArray.forEach((item, index) => {
-          const itemDate = (item.date);
-          if (new Date(itemDate) >= startDate && new Date(itemDate) < endDate) {
-            const transactionData = [
-              index + 1,
-              item.hsnCode,
-              item.itemName,
-              (item.quantity) * -1,
-              item.defaultUnit,
-              (item.totalValue) * -1,
-              ((item.tax ? item.tax : 0) * (item.totalValue) * -1) + (item.totalValue) * -1,
-              ((item.tax ? item.tax : 0) * 100) / 2,
-              ((item.tax ? item.tax : 0) * 100) / 2,
-            ];
-            tableRows.push(transactionData);
-          }
-        });
 
-        const totalValueSum = hsnSummaryArray.reduce((sum, item) => sum + (((item.tax ? item.tax : 0)*(item.totalValue)*-1)+(item.totalValue)*-1), 0);
-    
-        doc.addImage(base64Image, 'PNG', 4, 4, 20, 20); 
-          doc.setFontSize(20);
-          doc.text(appState.currentOrg.orgName, 30, 10);
-          
-          doc.setFontSize(12);
-          const text = `${appState.currentOrg.address} ${appState.currentOrg.state}-${appState.currentOrg.pincode}`;
-          const maxWidth = 85;
-          const lines = doc.splitTextToSize(text, maxWidth);
-          doc.text(lines, 30, 15);
-    
-    
-    
-          doc.setFontSize(13);
-          doc.text(`Gst No. :  ${appState.currentOrg.gstNo}`, 126, 12);
-          doc.setFontSize(13);
-          doc.text(`PAN No. :  5465465465465465`, 126, 18);
-    
-          doc.setFontSize(13);
-          doc.text(`Email :  ${appState.currentOrg.orgEmail}`, 220, 12);
-          doc.setFontSize(13);
-          doc.text(`Phone No. :  ${appState.currentOrg.phoneNo}`, 220, 18);
-          doc.setFontSize(13);
-          doc.text(`Website :  XYZ.com`, 220, 24);
-    
-    
-          doc.setLineWidth(0.2);
-          doc.line(1, 26, 320, 26); 
-    
-          doc.setFontSize(15);
-          doc.text("HSN Wise Summary", 8, 34);
-    
-          doc.setFontSize(11);
-          doc.text(`Category : SALES`, 90, 33);
-          const currentDate = new Date();
-          const currentYear = currentDate.getFullYear();
-          const currentMonth = currentDate.getMonth();
-          const fiscalYear = currentMonth >= 3 ? `FY-${currentYear + 1}` : `FY-${currentYear}`;
-          doc.text(`Period : ${fiscalYear}`, 90, 37);
-    
-          doc.setFontSize(11);
-          let yPosition = 33;
-          
-          doc.text(`Total Amount: ${totalValueSum}`, 230, 33);
-    
-    
-          doc.setLineWidth(0.5);
-          doc.line(1, 53, 320, 53); 
-    
-    
-        autoTable(doc, {
-          startY: 55,
-          head: [tableColumn],
-          body: tableRows,
-        });
-    
-        const fileName = `HSN_SALES.pdf`;
-        doc.save(fileName);
-      })
-      }
+            const currentYear1 = new Date().getFullYear();
+            const startDate = new Date(currentYear1, 3, 1);
+            const endDate = new Date(currentYear1 + 1, 3, 1);
 
-      const downloadPDF1 = () => {
-        convertImageToBase64(logo, (base64Image:any) => {
-        const doc = new jsPDF('landscape');
-        const tableColumn = ["S.No.", "HSN/SAC", "Name", "UQC", "Total Qty()", "Total Value", "Total Taxable Amt", "IGST", "CGST", "SGST", "Cess"];
-        const tableRows:any = [];
-    
-        const currentYear1 = new Date().getFullYear();
-        const startDate = new Date(currentYear1, 3, 1);
-        const endDate = new Date(currentYear1 + 1, 3, 1);
-    
-        hsnSummaryArray1.forEach((item, index) => {
-            const itemDate = (item.date);
-            if (new Date(itemDate) >= startDate && new Date(itemDate) < endDate) {
-              const transactionData = [
-                index + 1,
-                item.hsnCode,
-                item.itemName,
-                (item.quantity) * -1,
-                item.defaultUnit,
-                (item.totalValue) * -1,
-                ((item.tax ? item.tax : 0) * (item.totalValue) * -1) + (item.totalValue) * -1,
-                ((item.tax ? item.tax : 0) * 100) / 2,
-                ((item.tax ? item.tax : 0) * 100) / 2,
-              ];
-              tableRows.push(transactionData);
-            }
-          });
+            hsnSummaryArray.forEach((item, index) => {
+                const itemDate = (item.date);
+                if (new Date(itemDate) >= startDate && new Date(itemDate) < endDate) {
+                    const transactionData = [
+                        index + 1,
+                        item.hsnCode,
+                        item.itemName,
+                        (item.quantity) * -1,
+                        item.defaultUnit,
+                        (item.totalValue) * -1,
+                        ((item.tax ? item.tax : 0) * (item.totalValue) * -1) + (item.totalValue) * -1,
+                        ((item.tax ? item.tax : 0) * 100) / 2,
+                        ((item.tax ? item.tax : 0) * 100) / 2,
+                    ];
+                    tableRows.push(transactionData);
+                }
+            });
 
-        const totalValueSum = hsnSummaryArray1.reduce((sum, item) => sum + (((item.tax ? item.tax : 0)*(item.totalValue)*-1)+(item.totalValue)*-1), 0);
+            const totalValueSum = hsnSummaryArray.reduce((sum, item) => sum + (((item.tax ? item.tax : 0) * (item.totalValue) * -1) + (item.totalValue) * -1), 0);
 
-    
-        doc.addImage(base64Image, 'PNG', 4, 4, 20, 20); 
-          doc.setFontSize(20);
-          doc.text(appState.currentOrg.orgName, 30, 10);
-          
-          doc.setFontSize(12);
-          const text = `${appState.currentOrg.address} ${appState.currentOrg.state}-${appState.currentOrg.pincode}`;
-          const maxWidth = 85;
-          const lines = doc.splitTextToSize(text, maxWidth);
-          doc.text(lines, 30, 15);
-    
-    
-    
-          doc.setFontSize(13);
-          doc.text(`Gst No. :  ${appState.currentOrg.gstNo}`, 126, 12);
-          doc.setFontSize(13);
-          doc.text(`PAN No. :  5465465465465465`, 126, 18);
-    
-          doc.setFontSize(13);
-          doc.text(`Email :  ${appState.currentOrg.orgEmail}`, 220, 12);
-          doc.setFontSize(13);
-          doc.text(`Phone No. :  ${appState.currentOrg.phoneNo}`, 220, 18);
-          doc.setFontSize(13);
-          doc.text(`Website :  XYZ.com`, 220, 24);
-    
-    
-          doc.setLineWidth(0.2);
-          doc.line(1, 26, 320, 26); 
-    
-          doc.setFontSize(15);
-          doc.text("HSN Wise Summary", 8, 34);
-    
-          doc.setFontSize(11);
-          doc.text(`Category : SALES_RETURN`, 90, 33);
-          const currentDate = new Date();
-          const currentYear = currentDate.getFullYear();
-          const currentMonth = currentDate.getMonth();
-          const fiscalYear = currentMonth >= 3 ? `FY-${currentYear + 1}` : `FY-${currentYear}`;
-          doc.text(`Period : ${fiscalYear}`, 90, 37);
-    
-          doc.setFontSize(11);
-          let yPosition = 33;
-          
-          doc.text(`Total Amount: ${totalValueSum}`, 230, 33);
-    
-    
-          doc.setLineWidth(0.5);
-          doc.line(1, 53, 320, 53); 
-    
-    
-        autoTable(doc, {
-          startY: 55,
-          head: [tableColumn],
-          body: tableRows,
-        });
-    
-        const fileName = `HSN_SALES_RETURN.pdf`;
-        doc.save(fileName);
-      })
-      }
+            doc.addImage(base64Image, 'PNG', 4, 4, 20, 20);
+            doc.setFontSize(20);
+            doc.text(appState.currentOrg.orgName, 30, 10);
 
-      const downloadPDF2 = () => {
-        convertImageToBase64(logo, (base64Image:any) => {
-        const doc = new jsPDF('landscape');
-        const tableColumn = ["S.No.", "HSN/SAC", "Name", "UQC", "Total Qty()", "Total Value", "Total Taxable Amt", "IGST", "CGST", "SGST", "Cess"];
-        const tableRows:any = [];
-    
-        const currentYear1 = new Date().getFullYear();
-        const startDate = new Date(currentYear1, 3, 1);
-        const endDate = new Date(currentYear1 + 1, 3, 1);
+            doc.setFontSize(12);
+            const text = `${appState.currentOrg.address} ${appState.currentOrg.state}-${appState.currentOrg.pincode}`;
+            const maxWidth = 85;
+            const lines = doc.splitTextToSize(text, maxWidth);
+            doc.text(lines, 30, 15);
 
-        hsnSummaryArray2.forEach((item, index) => {
-          const itemDate = (item.date);
-          if (new Date(itemDate) >= startDate && new Date(itemDate) < endDate) {
-            const transactionData = [
-              index + 1,
-              item.hsnCode,
-              item.itemName,
-              (item.quantity) * -1,
-              item.defaultUnit,
-              (item.totalValue) * -1,
-              ((item.tax ? item.tax : 0) * (item.totalValue) * -1) + (item.totalValue) * -1,
-              ((item.tax ? item.tax : 0) * 100) / 2,
-              ((item.tax ? item.tax : 0) * 100) / 2,
-            ];
-            tableRows.push(transactionData);
-          }
-        });
 
-        const totalValueSum = hsnSummaryArray2.reduce((sum, item) => sum + (((item.tax ? item.tax : 0)*(item.totalValue)*-1)+(item.totalValue)*-1), 0);
-    
-        doc.addImage(base64Image, 'PNG', 4, 4, 20, 20); 
-          doc.setFontSize(20);
-          doc.text(appState.currentOrg.orgName, 30, 10);
-          
-          doc.setFontSize(12);
-          const text = `${appState.currentOrg.address} ${appState.currentOrg.state}-${appState.currentOrg.pincode}`;
-          const maxWidth = 85;
-          const lines = doc.splitTextToSize(text, maxWidth);
-          doc.text(lines, 30, 15);
-    
-    
-    
-          doc.setFontSize(13);
-          doc.text(`Gst No. :  ${appState.currentOrg.gstNo}`, 126, 12);
-          doc.setFontSize(13);
-          doc.text(`PAN No. :  5465465465465465`, 126, 18);
-    
-          doc.setFontSize(13);
-          doc.text(`Email :  ${appState.currentOrg.orgEmail}`, 220, 12);
-          doc.setFontSize(13);
-          doc.text(`Phone No. :  ${appState.currentOrg.phoneNo}`, 220, 18);
-          doc.setFontSize(13);
-          doc.text(`Website :  XYZ.com`, 220, 24);
-    
-    
-          doc.setLineWidth(0.2);
-          doc.line(1, 26, 320, 26); 
-    
-          doc.setFontSize(15);
-          doc.text("HSN Wise Summary", 8, 34);
-    
-          doc.setFontSize(11);
-          doc.text(`Category : PURCHASE`, 90, 33);
-          const currentDate = new Date();
-          const currentYear = currentDate.getFullYear();
-          const currentMonth = currentDate.getMonth();
-          const fiscalYear = currentMonth >= 3 ? `FY-${currentYear + 1}` : `FY-${currentYear}`;
-          doc.text(`Period : ${fiscalYear}`, 90, 37);
-    
-          doc.setFontSize(11);
-          let yPosition = 33;
-          
-          doc.text(`Total Amount: ${totalValueSum}`, 230, 33);
-    
-    
-          doc.setLineWidth(0.5);
-          doc.line(1, 53, 320, 53); 
-    
-    
-        autoTable(doc, {
-          startY: 55,
-          head: [tableColumn],
-          body: tableRows,
-        });
-    
-        const fileName = `HSN_PURCHASE.pdf`;
-        doc.save(fileName);
-      })
-      }
 
-      const downloadPDF3 = () => {
-        convertImageToBase64(logo, (base64Image:any) => {
-        const doc = new jsPDF('landscape');
-        const tableColumn = ["S.No.", "HSN/SAC", "Name", "UQC", "Total Qty()", "Total Value", "Total Taxable Amt", "IGST", "CGST", "SGST", "Cess"];
-        const tableRows:any = [];
-    
-    
-        const currentYear1 = new Date().getFullYear();
-        const startDate = new Date(currentYear1, 3, 1);
-        const endDate = new Date(currentYear1 + 1, 3, 1);
+            doc.setFontSize(13);
+            doc.text(`Gst No. :  ${appState.currentOrg.gstNo}`, 126, 12);
+            doc.setFontSize(13);
+            doc.text(`PAN No. :  5465465465465465`, 126, 18);
 
-        hsnSummaryArray3.forEach((item, index) => {
-          const itemDate = (item.date);
-          if (new Date(itemDate) >= startDate && new Date(itemDate) < endDate) {
-            const transactionData = [
-              index + 1,
-              item.hsnCode,
-              item.itemName,
-              (item.quantity) * -1,
-              item.defaultUnit,
-              (item.totalValue) * -1,
-              ((item.tax ? item.tax : 0) * (item.totalValue) * -1) + (item.totalValue) * -1,
-              ((item.tax ? item.tax : 0) * 100) / 2,
-              ((item.tax ? item.tax : 0) * 100) / 2,
-            ];
-            tableRows.push(transactionData);
-          }
-        });
+            doc.setFontSize(13);
+            doc.text(`Email :  ${appState.currentOrg.orgEmail}`, 220, 12);
+            doc.setFontSize(13);
+            doc.text(`Phone No. :  ${appState.currentOrg.phoneNo}`, 220, 18);
+            doc.setFontSize(13);
+            doc.text(`Website :  XYZ.com`, 220, 24);
 
-        const totalValueSum = hsnSummaryArray3.reduce((sum, item) => sum + (((item.tax ? item.tax : 0)*(item.totalValue)*-1)+(item.totalValue)*-1), 0);
-    
-        doc.addImage(base64Image, 'PNG', 4, 4, 20, 20); 
-          doc.setFontSize(20);
-          doc.text(appState.currentOrg.orgName, 30, 10);
-          
-          doc.setFontSize(12);
-          const text = `${appState.currentOrg.address} ${appState.currentOrg.state}-${appState.currentOrg.pincode}`;
-          const maxWidth = 85;
-          const lines = doc.splitTextToSize(text, maxWidth);
-          doc.text(lines, 30, 15);
-    
-    
-    
-          doc.setFontSize(13);
-          doc.text(`Gst No. :  ${appState.currentOrg.gstNo}`, 126, 12);
-          doc.setFontSize(13);
-          doc.text(`PAN No. :  5465465465465465`, 126, 18);
-    
-          doc.setFontSize(13);
-          doc.text(`Email :  ${appState.currentOrg.orgEmail}`, 220, 12);
-          doc.setFontSize(13);
-          doc.text(`Phone No. :  ${appState.currentOrg.phoneNo}`, 220, 18);
-          doc.setFontSize(13);
-          doc.text(`Website :  XYZ.com`, 220, 24);
-    
-    
-          doc.setLineWidth(0.2);
-          doc.line(1, 26, 320, 26); 
-    
-          doc.setFontSize(15);
-          doc.text("HSN Wise Summary", 8, 34);
-    
-          doc.setFontSize(11);
-          doc.text(`Category : PURCHASE_RETURN`, 90, 33);
-          const currentDate = new Date();
-          const currentYear = currentDate.getFullYear();
-          const currentMonth = currentDate.getMonth();
-          const fiscalYear = currentMonth >= 3 ? `FY-${currentYear + 1}` : `FY-${currentYear}`;
-          doc.text(`Period : ${fiscalYear}`, 90, 37);
-    
-          doc.setFontSize(11);
-          let yPosition = 33;
-          
-          doc.text(`Total Amount: ${totalValueSum}`, 230, 33);
-    
-    
-          doc.setLineWidth(0.5);
-          doc.line(1, 53, 320, 53); 
-    
-    
-        autoTable(doc, {
-          startY: 55,
-          head: [tableColumn],
-          body: tableRows,
-        });
-    
-        const fileName = `HSN_PURCHASE_RTEURN.pdf`;
-        doc.save(fileName);
-      })
-      }
+
+            doc.setLineWidth(0.2);
+            doc.line(1, 26, 320, 26);
+
+            doc.setFontSize(15);
+            doc.text("HSN Wise Summary", 8, 34);
+
+            doc.setFontSize(11);
+            doc.text(`Category : SALES`, 90, 33);
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear();
+            const currentMonth = currentDate.getMonth();
+            const fiscalYear = currentMonth >= 3 ? `FY-${currentYear + 1}` : `FY-${currentYear}`;
+            doc.text(`Period : ${fiscalYear}`, 90, 37);
+
+            doc.setFontSize(11);
+            let yPosition = 33;
+
+            doc.text(`Total Amount: ${totalValueSum}`, 230, 33);
+
+
+            doc.setLineWidth(0.5);
+            doc.line(1, 53, 320, 53);
+
+
+            autoTable(doc, {
+                startY: 55,
+                head: [tableColumn],
+                body: tableRows,
+            });
+
+            const fileName = `HSN_SALES.pdf`;
+            doc.save(fileName);
+        })
+    }
+
+    const downloadPDF1 = () => {
+        convertImageToBase64(logo, (base64Image: any) => {
+            const doc = new jsPDF('landscape');
+            const tableColumn = ["S.No.", "HSN/SAC", "Name", "UQC", "Total Qty()", "Total Value", "Total Taxable Amt", "IGST", "CGST", "SGST", "Cess"];
+            const tableRows: any = [];
+
+            const currentYear1 = new Date().getFullYear();
+            const startDate = new Date(currentYear1, 3, 1);
+            const endDate = new Date(currentYear1 + 1, 3, 1);
+
+            hsnSummaryArray1.forEach((item, index) => {
+                const itemDate = (item.date);
+                if (new Date(itemDate) >= startDate && new Date(itemDate) < endDate) {
+                    const transactionData = [
+                        index + 1,
+                        item.hsnCode,
+                        item.itemName,
+                        (item.quantity) * -1,
+                        item.defaultUnit,
+                        (item.totalValue) * -1,
+                        ((item.tax ? item.tax : 0) * (item.totalValue) * -1) + (item.totalValue) * -1,
+                        ((item.tax ? item.tax : 0) * 100) / 2,
+                        ((item.tax ? item.tax : 0) * 100) / 2,
+                    ];
+                    tableRows.push(transactionData);
+                }
+            });
+
+            const totalValueSum = hsnSummaryArray1.reduce((sum, item) => sum + (((item.tax ? item.tax : 0) * (item.totalValue) * -1) + (item.totalValue) * -1), 0);
+
+
+            doc.addImage(base64Image, 'PNG', 4, 4, 20, 20);
+            doc.setFontSize(20);
+            doc.text(appState.currentOrg.orgName, 30, 10);
+
+            doc.setFontSize(12);
+            const text = `${appState.currentOrg.address} ${appState.currentOrg.state}-${appState.currentOrg.pincode}`;
+            const maxWidth = 85;
+            const lines = doc.splitTextToSize(text, maxWidth);
+            doc.text(lines, 30, 15);
+
+
+
+            doc.setFontSize(13);
+            doc.text(`Gst No. :  ${appState.currentOrg.gstNo}`, 126, 12);
+            doc.setFontSize(13);
+            doc.text(`PAN No. :  5465465465465465`, 126, 18);
+
+            doc.setFontSize(13);
+            doc.text(`Email :  ${appState.currentOrg.orgEmail}`, 220, 12);
+            doc.setFontSize(13);
+            doc.text(`Phone No. :  ${appState.currentOrg.phoneNo}`, 220, 18);
+            doc.setFontSize(13);
+            doc.text(`Website :  XYZ.com`, 220, 24);
+
+
+            doc.setLineWidth(0.2);
+            doc.line(1, 26, 320, 26);
+
+            doc.setFontSize(15);
+            doc.text("HSN Wise Summary", 8, 34);
+
+            doc.setFontSize(11);
+            doc.text(`Category : SALES_RETURN`, 90, 33);
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear();
+            const currentMonth = currentDate.getMonth();
+            const fiscalYear = currentMonth >= 3 ? `FY-${currentYear + 1}` : `FY-${currentYear}`;
+            doc.text(`Period : ${fiscalYear}`, 90, 37);
+
+            doc.setFontSize(11);
+            let yPosition = 33;
+
+            doc.text(`Total Amount: ${totalValueSum}`, 230, 33);
+
+
+            doc.setLineWidth(0.5);
+            doc.line(1, 53, 320, 53);
+
+
+            autoTable(doc, {
+                startY: 55,
+                head: [tableColumn],
+                body: tableRows,
+            });
+
+            const fileName = `HSN_SALES_RETURN.pdf`;
+            doc.save(fileName);
+        })
+    }
+
+    const downloadPDF2 = () => {
+        convertImageToBase64(logo, (base64Image: any) => {
+            const doc = new jsPDF('landscape');
+            const tableColumn = ["S.No.", "HSN/SAC", "Name", "UQC", "Total Qty()", "Total Value", "Total Taxable Amt", "IGST", "CGST", "SGST", "Cess"];
+            const tableRows: any = [];
+
+            const currentYear1 = new Date().getFullYear();
+            const startDate = new Date(currentYear1, 3, 1);
+            const endDate = new Date(currentYear1 + 1, 3, 1);
+
+            hsnSummaryArray2.forEach((item, index) => {
+                const itemDate = (item.date);
+                if (new Date(itemDate) >= startDate && new Date(itemDate) < endDate) {
+                    const transactionData = [
+                        index + 1,
+                        item.hsnCode,
+                        item.itemName,
+                        (item.quantity) * -1,
+                        item.defaultUnit,
+                        (item.totalValue) * -1,
+                        ((item.tax ? item.tax : 0) * (item.totalValue) * -1) + (item.totalValue) * -1,
+                        ((item.tax ? item.tax : 0) * 100) / 2,
+                        ((item.tax ? item.tax : 0) * 100) / 2,
+                    ];
+                    tableRows.push(transactionData);
+                }
+            });
+
+            const totalValueSum = hsnSummaryArray2.reduce((sum, item) => sum + (((item.tax ? item.tax : 0) * (item.totalValue) * -1) + (item.totalValue) * -1), 0);
+
+            doc.addImage(base64Image, 'PNG', 4, 4, 20, 20);
+            doc.setFontSize(20);
+            doc.text(appState.currentOrg.orgName, 30, 10);
+
+            doc.setFontSize(12);
+            const text = `${appState.currentOrg.address} ${appState.currentOrg.state}-${appState.currentOrg.pincode}`;
+            const maxWidth = 85;
+            const lines = doc.splitTextToSize(text, maxWidth);
+            doc.text(lines, 30, 15);
+
+
+
+            doc.setFontSize(13);
+            doc.text(`Gst No. :  ${appState.currentOrg.gstNo}`, 126, 12);
+            doc.setFontSize(13);
+            doc.text(`PAN No. :  5465465465465465`, 126, 18);
+
+            doc.setFontSize(13);
+            doc.text(`Email :  ${appState.currentOrg.orgEmail}`, 220, 12);
+            doc.setFontSize(13);
+            doc.text(`Phone No. :  ${appState.currentOrg.phoneNo}`, 220, 18);
+            doc.setFontSize(13);
+            doc.text(`Website :  XYZ.com`, 220, 24);
+
+
+            doc.setLineWidth(0.2);
+            doc.line(1, 26, 320, 26);
+
+            doc.setFontSize(15);
+            doc.text("HSN Wise Summary", 8, 34);
+
+            doc.setFontSize(11);
+            doc.text(`Category : PURCHASE`, 90, 33);
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear();
+            const currentMonth = currentDate.getMonth();
+            const fiscalYear = currentMonth >= 3 ? `FY-${currentYear + 1}` : `FY-${currentYear}`;
+            doc.text(`Period : ${fiscalYear}`, 90, 37);
+
+            doc.setFontSize(11);
+            let yPosition = 33;
+
+            doc.text(`Total Amount: ${totalValueSum}`, 230, 33);
+
+
+            doc.setLineWidth(0.5);
+            doc.line(1, 53, 320, 53);
+
+
+            autoTable(doc, {
+                startY: 55,
+                head: [tableColumn],
+                body: tableRows,
+            });
+
+            const fileName = `HSN_PURCHASE.pdf`;
+            doc.save(fileName);
+        })
+    }
+
+    const downloadPDF3 = () => {
+        convertImageToBase64(logo, (base64Image: any) => {
+            const doc = new jsPDF('landscape');
+            const tableColumn = ["S.No.", "HSN/SAC", "Name", "UQC", "Total Qty()", "Total Value", "Total Taxable Amt", "IGST", "CGST", "SGST", "Cess"];
+            const tableRows: any = [];
+
+
+            const currentYear1 = new Date().getFullYear();
+            const startDate = new Date(currentYear1, 3, 1);
+            const endDate = new Date(currentYear1 + 1, 3, 1);
+
+            hsnSummaryArray3.forEach((item, index) => {
+                const itemDate = (item.date);
+                if (new Date(itemDate) >= startDate && new Date(itemDate) < endDate) {
+                    const transactionData = [
+                        index + 1,
+                        item.hsnCode,
+                        item.itemName,
+                        (item.quantity) * -1,
+                        item.defaultUnit,
+                        (item.totalValue) * -1,
+                        ((item.tax ? item.tax : 0) * (item.totalValue) * -1) + (item.totalValue) * -1,
+                        ((item.tax ? item.tax : 0) * 100) / 2,
+                        ((item.tax ? item.tax : 0) * 100) / 2,
+                    ];
+                    tableRows.push(transactionData);
+                }
+            });
+
+            const totalValueSum = hsnSummaryArray3.reduce((sum, item) => sum + (((item.tax ? item.tax : 0) * (item.totalValue) * -1) + (item.totalValue) * -1), 0);
+
+            doc.addImage(base64Image, 'PNG', 4, 4, 20, 20);
+            doc.setFontSize(20);
+            doc.text(appState.currentOrg.orgName, 30, 10);
+
+            doc.setFontSize(12);
+            const text = `${appState.currentOrg.address} ${appState.currentOrg.state}-${appState.currentOrg.pincode}`;
+            const maxWidth = 85;
+            const lines = doc.splitTextToSize(text, maxWidth);
+            doc.text(lines, 30, 15);
+
+
+
+            doc.setFontSize(13);
+            doc.text(`Gst No. :  ${appState.currentOrg.gstNo}`, 126, 12);
+            doc.setFontSize(13);
+            doc.text(`PAN No. :  5465465465465465`, 126, 18);
+
+            doc.setFontSize(13);
+            doc.text(`Email :  ${appState.currentOrg.orgEmail}`, 220, 12);
+            doc.setFontSize(13);
+            doc.text(`Phone No. :  ${appState.currentOrg.phoneNo}`, 220, 18);
+            doc.setFontSize(13);
+            doc.text(`Website :  XYZ.com`, 220, 24);
+
+
+            doc.setLineWidth(0.2);
+            doc.line(1, 26, 320, 26);
+
+            doc.setFontSize(15);
+            doc.text("HSN Wise Summary", 8, 34);
+
+            doc.setFontSize(11);
+            doc.text(`Category : PURCHASE_RETURN`, 90, 33);
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear();
+            const currentMonth = currentDate.getMonth();
+            const fiscalYear = currentMonth >= 3 ? `FY-${currentYear + 1}` : `FY-${currentYear}`;
+            doc.text(`Period : ${fiscalYear}`, 90, 37);
+
+            doc.setFontSize(11);
+            let yPosition = 33;
+
+            doc.text(`Total Amount: ${totalValueSum}`, 230, 33);
+
+
+            doc.setLineWidth(0.5);
+            doc.line(1, 53, 320, 53);
+
+
+            autoTable(doc, {
+                startY: 55,
+                head: [tableColumn],
+                body: tableRows,
+            });
+
+            const fileName = `HSN_PURCHASE_RTEURN.pdf`;
+            doc.save(fileName);
+        })
+    }
 
     const downloadPDFs = () => {
         downloadPDF();
-        downloadPDF1(); 
+        downloadPDF1();
         downloadPDF2();
         downloadPDF3();
     }
@@ -599,19 +605,19 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
                     <div className=' text-base'>Finance Timeline</div>
                 </div>
                 <div className='flex items-center'>
-                <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg cursor-pointer' onClick={downloadPDF}>
+                    <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg cursor-pointer' onClick={downloadPDF}>
 
-                <Button
-                    variant="solid"
-                    className="capitalize border-none bg-transparent rounded-lg cursor-pointer"
-                    onClick={downloadPDFs}
-                    >
-                    <span className='text-textGrey2 text-sm font-medium'> HSN Wise Summary</span>
-                </Button>
-                </div>
-                <div onClick={togglePopup1} className='cursor-pointer mr-4 flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'>
-                    <Image src={Download} alt='Download' className='w-4  h-4' />
-                </div>
+                        <Button
+                            variant="solid"
+                            className="capitalize border-none bg-transparent rounded-lg cursor-pointer"
+                            onClick={downloadPDFs}
+                        >
+                            <span className='text-textGrey2 text-sm font-medium'> HSN Wise Summary</span>
+                        </Button>
+                    </div>
+                    <div onClick={togglePopup1} className='cursor-pointer mr-4 flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'>
+                        <Image src={Download} alt='Download' className='w-4  h-4' />
+                    </div>
                     {/* <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
 
                         <div  className='flex items-center justify-center w-7 h-7 border border-solid border-gray-300 border-0.5 rounded-md  p-1'><Image src={Chart} alt='Chart' className='w-4  h-4' /></div>
@@ -671,7 +677,6 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
 <path d="M7.32918 14.0011V10.0011H8.66252V11.3344H13.9958V12.6678H8.66252V14.0011H7.32918ZM1.99585 12.6678V11.3344H5.99585V12.6678H1.99585ZM4.66252 10.0011V8.66777H1.99585V7.33443H4.66252V6.0011H5.99585V10.0011H4.66252ZM7.32918 8.66777V7.33443H13.9958V8.66777H7.32918ZM9.99585 6.0011V2.0011H11.3292V3.33443H13.9958V4.66777H11.3292V6.0011H9.99585ZM1.99585 4.66777V3.33443H8.66252V4.66777H1.99585Z" fill={isActive ? "#FFFFFF" : "#A2A3A3"}/>
 </g>
 </svg>
-
 <Popover onOpenChange={(open) => setIsActive(open)}>
                             <PopoverTrigger>
                                 <Button
@@ -682,7 +687,7 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
                                 </Button>   
                                 </PopoverTrigger>
                             <PopoverContent>
-                                <FilterDropdwonCard />
+                                <FilterDropdownCard />
                             </PopoverContent>
                         </Popover>
                         {isActive && (
@@ -696,9 +701,9 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
                 </svg>
                         )}
                     </div>
-                    
-                      
-                        {/* <Popover placement="bottom-end" showArrow offset={10}>
+
+
+                    {/* <Popover placement="bottom-end" showArrow offset={10}>
                             <PopoverTrigger>
                                 <Button 
                                     variant="solid"
@@ -774,8 +779,8 @@ const FinacesOverviewTableHeader = ({timeline}:any) => {
 
                 </div>
             </div >
-          
-            {showPopup1 && <DownloadPopup onClose={togglePopup1} timeline={timeline}  />}
+
+            {showPopup1 && <DownloadPopup onClose={togglePopup1} timeline={timeline} />}
         </>
     )
 }

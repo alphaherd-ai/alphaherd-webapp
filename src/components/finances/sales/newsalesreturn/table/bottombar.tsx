@@ -24,12 +24,12 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
 
 
     const handleSubmit = async () => {
-        const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+        const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' ).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
-        const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+        const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
 
-        const balanceDue = totalAmountData.totalCost - totalPaidAmount + totalAmountToPay;
+        const balanceDue = totalAmountData.totalCost + totalPaidAmount - totalAmountToPay;
 
         if (!headerData.customer) {
             alert('Customer is required');
@@ -70,7 +70,7 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
             recordTransaction: {
                 create: allData.transactionsData
             },
-            status: allData.totalAmountData.totalCost === balanceDue ? `Credited:₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toFixed(2))}` : 'Closed',
+            status: allData.totalAmountData.totalCost === (balanceDue) ? `Credited:₹${(balanceDue).toFixed(2)}` : balanceDue <= -1 ? `You’re owed: ₹${parseFloat((-1 * balanceDue).toString()).toFixed(2)}` : balanceDue >= 1 ? `You owe: ₹${parseFloat((balanceDue).toString()).toFixed(2)}` : 'Closed',
             type: FinanceCreationType.Sales_Return,
             items: {
                 create: items

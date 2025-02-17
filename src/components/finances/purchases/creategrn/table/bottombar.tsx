@@ -29,9 +29,9 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
     const togglePopup = () =>{
         setShowPopup(!showPopup);
     }
-    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
     
-    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out' ||  item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
    
 
     const balanceDue = totalAmountData?.totalCost >= headerData.distributor?.creditedToken ? (totalAmountData?.totalCost + totalPaidAmount - totalAmountToPay - headerData.distributor?.creditedToken) : totalAmountData?.totalCost + totalPaidAmount - totalAmountToPay;
@@ -91,9 +91,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             expiry: data.expiry,
             batchNumber: data.batchNumber,
             hsnCode: data.barCode,
-
             location:data.location,
-
             isApproved: appState.isCurrentOrgAdmin ? true : false,
             costPrice: Number(data.unitPrice)
         }));
@@ -103,7 +101,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             distributorId: (id === null) ? allData.headerData.distributor.distributorId : orderData.distributorId,
             newCreditedToken: (id === null) ? newCreditedToken : -1,
             notes:  allData.headerData.notes ,
-            invoiceNo: (id === null) ? allData.headerData.invoiceNo : orderData.invoiceNo,
+            invoiceNo: allData.headerData.invoiceNo ,
             dueDate: (id === null) ? allData.headerData.dueDate : orderData.dueDate,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,

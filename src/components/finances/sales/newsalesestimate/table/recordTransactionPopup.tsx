@@ -55,7 +55,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({setFirstAdvancePaymentPai
     const [selectedMode, setSelectedMode] = useState('');
     const [modeOptions, setModeOptions] = useState<any>([]);
 
-    const { data: modes, error: modesError, isLoading: modesLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
+    const { data: modes, error: modesError, isLoading: modesLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/paymentMethod/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
 
     
     useEffect(() => {
@@ -90,6 +90,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({setFirstAdvancePaymentPai
     };
 
     const handleToggleRadioButton = (type: string) => {
+        
         setTransactionType(type);
     };
 
@@ -340,7 +341,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({setFirstAdvancePaymentPai
                             name="advancePayment"
                             id="advancePayment"
                             checked={isAdvancePayment}
-                            onChange={(e) => setIsAdvancePayment(e.target.checked)}
+                            onChange={(e) => {setIsAdvancePayment(e.target.checked);setTransactionType('Money In')}}
                         />
                         <span className='text-textGrey2 text-base font-medium'>Mark as advance payment</span>
                     </div>

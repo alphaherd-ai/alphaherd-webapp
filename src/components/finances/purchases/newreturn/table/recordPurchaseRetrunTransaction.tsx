@@ -48,7 +48,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
     const [selectedMode, setSelectedMode] = useState('');
     const [modeOptions, setModeOptions] = useState<any>([]);
 
-    const { data: modes, error: modesError, isLoading: modesLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
+    const { data: modes, error: modesError, isLoading: modesLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/paymentMethod/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
 
 
     useEffect(() => {
@@ -276,7 +276,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
                                     <div className='relative'>
                                         <input
                                             className="w-[10rem] border border-solid border-borderGrey h-9 text-textGrey1 text-base font-medium px-2 rounded   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                            value={startDate.toLocaleDateString() || new Date().toLocaleDateString()}
+                                            value={startDate.toLocaleDateString('en-GB') || new Date().toLocaleDateString('en-GB')}
                                             readOnly
                                         />
                                         <Image
@@ -325,7 +325,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
                 </div>
                 <div className='w-full flex justify-between items-center'>
                     <div className='flex items-center gap-1'>
-                        <input type="checkbox" name="advancePayment" id="advancePayment" checked={isAdvancePayment} onChange={(e) => setIsAdvancePayment(e.target.checked)} />
+                        <input type="checkbox" name="advancePayment" id="advancePayment" checked={isAdvancePayment} onChange={(e) => {setIsAdvancePayment(e.target.checked); setTransactionType('Money In')}} />
                         <span className='text-textGrey2 text-base font-medium'>Mark as advance payment</span>
                     </div>
                     <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${

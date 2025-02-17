@@ -77,7 +77,7 @@ const NewPurchasesTotalAmount = ({ orderData }: any) => {
     }, [totalAmountData])
 
     const handleShippingChange = (event: any) => {
-        //console.log(typeof event.target.value)
+        
         const value = event.target.value
         if (/^\d*\.?\d*$/.test(value)) {
             setShipping(value);
@@ -142,13 +142,13 @@ const NewPurchasesTotalAmount = ({ orderData }: any) => {
         }));
     };
 
-    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
-    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out').map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
 
 
     const balanceDue = grandAmt + totalPaidAmount - totalAmountToPay;
-    console.log(-grandAmt,totalPaidAmount,totalAmountToPay);
+    //console.log(-grandAmt,totalPaidAmount,totalAmountToPay);
 
     useEffect(() => {
         updateGrandTotal();

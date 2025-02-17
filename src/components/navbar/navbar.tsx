@@ -38,10 +38,7 @@ import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ExpensePopup from '../finances/transactions/table/recordTransactionPopup';
-
-
-
-
+import notificationSoundFile from "@/assets/icons/navbar/sounds/notification.mp3";
 
 
 //@ts-ignore
@@ -240,14 +237,34 @@ const Navbar = () => {
   );
   const router = useRouter() as any;
   const [isCardOpen, setIsCardOpen] = useState(false);
+  const notificationRef = useRef<HTMLDivElement | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dispatch=useDispatch();
   const user = useAppSelector((state) => state.user);
   const appState = useAppSelector((state) => state.app);
+  const notificationSound = useRef<HTMLAudioElement | null>(null);
 
   const handleClick = () => {
-    setIsCardOpen(!isCardOpen);
+    if(!isCardOpen)
+   { setIsCardOpen((prev) => !prev);}
   };
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      notificationRef.current &&
+      !notificationRef.current.contains(event.target as Node)
+    ) {
+      setIsCardOpen(false);
+    }
+  };
+  
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -258,33 +275,6 @@ const Navbar = () => {
   const [newnotifs, setnewNotifs] = useState<any[]>([]);
   const [showNotificationPopup, setShowNotificationPopup] = useState<boolean>(false);
   const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/getAll?orgId=${appState.currentOrgId}`, fetcher, { refreshInterval: 60000 })
-  
-  // useEffect(() => {
-  //   const fetchNotifications = async () => {
-  //     try {
-  //       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/autoupdatenotifs`, {
-  //         method: 'GET',
-  //       });
-        
-  //       if (response.ok) {
-  //         const data = await response.json();
-  //         console.log('Notifications sent:', data.message);
-  //       } else {
-  //         console.error('Failed to send notifications');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error:', error);
-  //     }
-  //   };
-
-  //   fetchNotifications();
-  // });
-  
-
-
-
-
-
 
 
  console.log("data :",data);
@@ -298,6 +288,7 @@ const Navbar = () => {
 
     if(hasNewNotifications)
     {
+      notificationSound.current?.play();
       const newNotif = data.newNotifs[data.newNotifs.length-1];
       setnewNotifs(newNotif);
     }
@@ -306,12 +297,23 @@ const Navbar = () => {
 
 console.log("new notifs is : ",newnotifs);
 
-
-
+console.log("Sound source:", notificationSound.current?.src);
+  useEffect(() => {
+    // Preload audio after user interaction
+    const enableSound = () => {
+      if (notificationSound.current) {
+        notificationSound.current.load();
+      }
+      window.removeEventListener("click", enableSound);
+    };
+    window.addEventListener("click", enableSound);
+    return () => window.removeEventListener("click", enableSound);
+  }, []);
 
 if (user.name === "" || currentRoute.startsWith("/auth"))return null;
   return (
     <div className='h-16 shadow-md min-w-screen box-border flex items-center justify-between text-textGrey1 bg-navBar z-100'>
+       <audio ref={notificationSound} src={notificationSoundFile} />
       <div className='flex flex-row items-center'>
         <div className=' px-4 py-2 border-0 border-r border-solid border-[#393939] '>
           <button onClick={toggleDrawer(true)} className='rounded-full bg-[#38F8E6] flex items-center justify-center h-[3rem] w-[3rem] border-0'>
@@ -400,11 +402,11 @@ if (user.name === "" || currentRoute.startsWith("/auth"))return null;
           </div>
         </Link>
         {isCardOpen && (
-          <div className="absolute top-[4rem] flex flex-col right-[5rem] w-[443px] max-h-[35rem] pt-6 pb-5 bg-zinc-800 shadow justify-center items-start gap-[5px] rounded-[20px] z-[100]">
+          <div  ref={notificationRef} className="absolute top-[4rem] flex flex-col right-[5rem] w-[443px] max-h-[35rem] pt-6 pb-5 bg-zinc-800 shadow justify-center items-start gap-[5px] rounded-[20px] z-[100]">
             <div className="text-gray-100 text-xl font-medium mb-2 px-6">
               Notifications
             </div>
-            <div className="notification-list-container overflow-auto h-[calc(50rem - 8.5rem)]"> {/* Adjust height as needed */}
+            <div className="notification-list-container overflow-auto h-[calc(50rem - 8.5rem)] no-scrollbar"> {/* Adjust height as needed */}
               <NotificationList notifs={notifs} isLoading={isLoading} />
             </div>
           </div>

@@ -55,7 +55,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, in
     const [selectedMode, setSelectedMode] = useState('');
     const [modeOptions, setModeOptions] = useState<any>([]);
 
-    const { data: modes, error: modesError, isLoading: modesLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
+    const { data: modes, error: modesError, isLoading: modesLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/paymentMethod/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
 
 
     useEffect(() => {
@@ -363,7 +363,13 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, in
                 </div>
                 <div className='w-full flex justify-between items-center'>
                     <div className='flex items-center gap-1'>
-                        <input type="checkbox" name="" id="" />
+                    <input
+                            type="checkbox"
+                            name="advancePayment"
+                            id="advancePayment"
+                            checked={isAdvancePayment}
+                            onChange={(e) => { setIsAdvancePayment(e.target.checked); setTransactionType('Money In') }}
+                        />
                         <span className='text-textGrey2 text-base font-medium'>Mark as advance payment</span>
                     </div>
                     <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${isDisabled ? 'bg-gray-400' : 'bg-zinc-900'

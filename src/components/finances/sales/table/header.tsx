@@ -16,7 +16,8 @@ import { FinanceCreationType } from '@prisma/client';
 import DownloadPopup from './downloadSalesPopup';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
-import FilterDropdwonCard from './FilterDropDownCard';
+import FilterDropdownCard from './FilterDropDownCard';
+import { useRouter } from 'next/navigation';
 
 
 
@@ -24,7 +25,7 @@ const FinancesSalesTableHeader = ({ invoiceCount, estimateCount, returnCount, sa
 
     const currentUrl = useSearchParams();
     const type = currentUrl.get("type")
-
+    const router = useRouter();
 
     const [showPopup1, setShowPopup1] = React.useState(false);
     const togglePopup1 = () => {
@@ -198,7 +199,7 @@ const FinancesSalesTableHeader = ({ invoiceCount, estimateCount, returnCount, sa
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent>
-                                <FilterDropdwonCard />
+                                <FilterDropdownCard />
                             </PopoverContent>
                         </Popover>
                         {isActive && (
@@ -214,13 +215,13 @@ const FinancesSalesTableHeader = ({ invoiceCount, estimateCount, returnCount, sa
                     </div>
 
 
-{/* <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '> */}
+                    {/* <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '> */}
 
-{showPopup1 && <DownloadPopup onClose={togglePopup1} sales={sales} type={type}  />}
+                    {showPopup1 && <DownloadPopup onClose={togglePopup1} sales={sales} type={type} />}
 
-{/* </div> */}
-</div>
-</div >
+                    {/* </div> */}
+                </div>
+            </div >
 
 
         </>

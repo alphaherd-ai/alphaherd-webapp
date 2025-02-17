@@ -51,9 +51,8 @@ const FinancesOverviewTable = () => {
         <div className=' flex text-gray-500 text-base font-medium  w-[12rem] '>Client/Distributor</div>
         <div className=' flex text-gray-500 text-base font-medium  w-[12rem] '>Reference No.</div>
         <div className=' flex text-gray-500 text-base font-medium  w-[8rem] '>Total cost</div>
-        <div className=' flex text-gray-500 text-base font-medium  w-[8rem] '>Total qty</div>
         <div className=' flex text-gray-500 text-base font-medium  w-[8rem] '>Due date</div>
-        <div className=' flex text-gray-500 text-base font-medium  w-[10rem]'>Status</div>
+        <div className=' flex text-gray-500 text-base font-medium  w-[18rem]'>Status</div>
       </div>
       <FinacesOverviewTableItem
         currentPageNumber={currentPageNumber}

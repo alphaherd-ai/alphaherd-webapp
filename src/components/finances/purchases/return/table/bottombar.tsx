@@ -46,7 +46,7 @@ const NewPurchaseReturnBottomBar = ({ invoiceData }: any) => {
             distributorId: (id === null) ? allData.headerData.distributor.distributorId : invoiceData.distributorId,
             email: (id === null) ? allData.headerData.distributor.email : "",
             notes: (id === null) ? allData.headerData.notes : invoiceData.notes,
-            invoiceNo: (id === null) ? allData.headerData.invoiceNo : invoiceData.invoiceNo,
+            invoiceNo: allData.headerData.invoiceNo,
             dueDate: (id === null) ? allData.headerData.dueDate : invoiceData.dueDate,
             shipping: totalAmountData.shipping,
             adjustment: totalAmountData.adjustment,
