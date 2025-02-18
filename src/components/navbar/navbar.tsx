@@ -3,7 +3,7 @@ import React, { useMemo,useCallback, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import FinancesIcon from './icons/financesIcon';
 import notification from '../../assets/icons/navbar/notification.svg';
-
+import { useRef } from "react";
 import setting from '../../assets/icons/settings/settingicon.svg';
 import PatientlistIcon from './icons/patientlistIcon';
 import InventoryIcon from './icons/inventoryIcon';
@@ -275,6 +275,18 @@ const Navbar = () => {
   const [newnotifs, setnewNotifs] = useState<any[]>([]);
   const [showNotificationPopup, setShowNotificationPopup] = useState<boolean>(false);
   const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/getAll?orgId=${appState.currentOrgId}`, fetcher, { refreshInterval: 60000 })
+  const {
+    data: branchData,
+    error: branchError,
+    isLoading: branchIsLoading,
+  } = useSWR(
+    () =>
+      appState.currentOrgId
+        ? `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/navbar/dropdown?orgId=${appState.currentOrgId}`
+        : null,
+    fetcher,
+    { revalidateOnFocus: false },
+  )
 
 
  console.log("data :",data);
@@ -294,6 +306,12 @@ const Navbar = () => {
     }
   }
 }, [data,error,isLoading]);
+
+const orgAndBranchMapping = useMemo(() => {
+  if (!branchData || branchError || branchIsLoading) return []
+  const org = branchData.find((org: any) => org.id === appState.currentOrgId)
+  return org ? org.allowedBranches : []
+}, [branchData, branchError, branchIsLoading, appState.currentOrgId])
 
 console.log("new notifs is : ",newnotifs);
 

@@ -84,17 +84,22 @@ const FinancesTransactionsTableHeader = ({transactions}:any) => {
         
     const currentRoute = usePathname();
     const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
-    const [selectedSort, setselectedSort] = React.useState(new Set(["Category: text"]));
+    const [selectedSort, setSelectedSort] = useState<string|null>(null);
+    
+      const handleSortChange = (key:string) => {
+        setSelectedSort(key);
+      };
+    
+      const clearSort = () => {
+        setSelectedSort(null);
+      };
 
 
     const selectedCategoryValue = React.useMemo(
         () => Array.from(selectedCategory).join(", ").replaceAll("_", " "),
         [selectedCategory]
     );
-    const selectedSortValue = React.useMemo(
-        () => Array.from(selectedSort).join(", ").replaceAll("_", " "),
-        [selectedSort]
-    );
+    
 
     return (
 
@@ -188,7 +193,7 @@ const FinancesTransactionsTableHeader = ({transactions}:any) => {
 </DropdownMenu>
 </Dropdown>
 </div> */}
-<div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg bg-[#35BEB1]'>
+{/* <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg bg-[#35BEB1]'>
 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => alert("cross icon clicked")} className='cursor-pointer'>
 <mask id="mask0_1198_18016" maskUnits="userSpaceOnUse" x="0" y="0" width="16" height="16">
 <rect width="16" height="16" fill="white"/>
@@ -227,6 +232,51 @@ const FinancesTransactionsTableHeader = ({transactions}:any) => {
 <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => alert("cross icon clicked")} className='cursor-pointer'>
 <path d="M4.77561 12L4 11.2244L7.22439 8L4 4.77561L4.77561 4L8 7.22439L11.2244 4L12 4.77561L8.77561 8L12 11.2244L11.2244 12L8 8.77561L4.77561 12Z" fill="white"/>
 </svg>
+</div> */}
+<div className={`flex items-center justify-center h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg  ${selectedSort ? 'bg-[#35BEB1]' : 'bg-[#FFFFFF'}`}>
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M14.5276 11.3892L11.0052 14.9022L7.47543 11.3725L8.40153 10.437L10.345 12.3805L10.345 1.75511L11.6747 1.75511L11.6747 12.3805L13.6015 10.4536L14.5276 11.3892ZM8.54357 4.61091L7.61747 5.53701L5.69067 3.61021L5.69067 14.2356L4.36093 14.2356L4.36093 3.61021L2.40803 5.55367L1.48193 4.62757L5.02108 1.08844L8.54357 4.61091Z" fill={selectedSort ? "#FFFFFF" : "#A2A3A3"}/>
+</svg>
+{/* <div className='flex '><Image src={Sort} alt='Sort' className='w-3 h-3 mr-2' /></div> */}
+<Dropdown >
+<DropdownTrigger className='z-0'>
+    <Button
+        //   variant="bordered" 
+        // color="gray-400"
+        variant="solid"
+        className="capitalize border-none  bg-transparent rounded-lg text-white"
+    >
+<span style={{ fontFamily: 'Satoshi', fontWeight: 500, fontSize: '14px', lineHeight: '18.9px', color: selectedSort ? '#FFFFFF' : '#A2A3A3' }}>{selectedSort ? `Sort: ${selectedSort}` : "Sort"}</span>
+      {/* Cross Icon */}
+
+    </Button>
+</DropdownTrigger>
+<DropdownMenu
+    aria-label="Single selection example"
+    // color="gray-500"
+    className=" text-base  text-gray-500 bg-gray-200 rounded-lg"
+    variant="solid"
+    disallowEmptySelection
+    selectionMode="single"
+    // onSelectionChange={setselectedSort}
+>
+    <DropdownItem
+        className=" p-2 text-base" onClick={()=>handleSortChange("Text")}>Sort: Text</DropdownItem>
+    <DropdownItem
+        className=" p-2 text-base" onClick={()=>handleSortChange("Number")}>Sort: Number</DropdownItem>
+    <DropdownItem
+        className=" p-2 text-base" onClick={()=>handleSortChange("Date")}>Sort:Date</DropdownItem>
+</DropdownMenu>
+</Dropdown>
+{selectedSort && (
+        <svg
+          width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"
+          className="hover:fill-gray-800 cursor-pointer"
+          onClick={clearSort}
+        >
+          <path d="M4.77561 12L4 11.2244L7.22439 8L4 4.77561L4.77561 4L8 7.22439L11.2244 4L12 4.77561L8.77561 8L12 11.2244L11.2244 12L8 8.77561L4.77561 12Z" fill="white"/>
+        </svg>
+      )}
 </div>
 
 {/* <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '> */}
