@@ -1,8 +1,6 @@
 "use client"
 import { usePathname } from 'next/navigation';
 import Image from "next/image"
-
-import profilepic from "../../assets/icons/profile/profilepic.png"
 import editicon from "../../assets/icons/profile/editicon.svg"
 import lefticon from "../../assets/icons/profile/left_icon.svg"
 import React, { useState, useEffect } from 'react';
@@ -58,7 +56,9 @@ const AdminProfile = () => {
   const currentRoute = usePathname();
   const router = useRouter();
   const [phone, setPhone] = useState<string>(String(userState.phoneNo));
-  const [altPhone, setAltPhone] = useState<string>(String(userState.altPhoneNo));
+  const [altPhone, setAltPhone] = useState<string>(
+    userState.altPhoneNo || userState.adminOrganizations.map((e: any) => e.altPhoneNo)[0] || ""
+  );
   const [email, setEmail] = useState<string>(String(userState.email));
   const [address, setAddress] = useState<string>(String(userState.adminOrganizations.map((e: any) => e.address)[0]));
   const dispatch = useAppDispatch();
@@ -83,7 +83,7 @@ const AdminProfile = () => {
         phoneNo: phone,
         altPhoneNo: altPhone,
         email,
-        address,
+        // address,
       });
 
       if (response.data) {
@@ -93,7 +93,7 @@ const AdminProfile = () => {
           phoneNo: phone,
           altPhoneNo: altPhone,
           email,
-          address,
+          // address,
         };
 
         dispatch(updateUser(updatedUserState as UserState));

@@ -1,8 +1,5 @@
 "use client";
-import React from 'react'
-
-import Sort from '../../../../assets/icons/finance/sort.svg';
-import Filter from '../../../../assets/icons/finance/filter.svg';
+import React,{useState,useEffect} from 'react'
 
 import Download from '../../../../assets/icons/finance/download.svg';
 
@@ -18,12 +15,14 @@ import { useAppSelector } from '@/lib/hooks';
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 import { Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem} from "@nextui-org/react";
 import FilterDropdownCard from './FilterDropdownCard';
 import DownloadPopup from './downloadTimeline';
-import { useRouter } from 'next/navigation';
+import { useRouter,useSearchParams } from 'next/navigation';
 
 const FinacesOverviewTableHeader = ({ timeline }: any) => {
     const router=useRouter();
+    const searchParams = useSearchParams();
     const appState = useAppSelector((state) => state.app);
     const { data, isLoading, error } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
 
@@ -33,6 +32,47 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
 
     let hsnSummaryArray: { hsnCode: string, itemName: string, quantity: number, defaultUnit: string, totalValue: number, tax: number, date: Date }[] = [];
 
+    const [selectedSort, setSelectedSort] = useState<string|null>(null);
+    
+      const handleSortChange = (key:string) => {
+        setSelectedSort(key);
+      };
+    
+      const clearSort = () => {
+        setSelectedSort(null);
+      };
+
+    const useFilterState = () => {
+            const [isActive, setIsActive] = useState(false)
+          
+            useEffect(() => {
+              const checkFilterState = () => {
+                const startDate = searchParams.get("startDate")
+                const endDate = searchParams.get("endDate")
+                const party = searchParams.get("selectedParties")
+                const status = searchParams.get("selectedStatus")
+                const invoice = searchParams.get("selectedInvoiceTypes")
+                setIsActive(Boolean(startDate || endDate || party || status || invoice))
+              }
+          
+              checkFilterState()
+            }, [searchParams])
+          
+            return isActive
+          }
+        const isFilterActive = useFilterState();
+    
+        const handleClearFilters = () => {
+            // // Get the base path without query parameters
+            // const pathWithoutQuery = window.location.pathname
+            
+            // // Get the 'type' parameter as we want to preserve it
+            // const type = searchParams.get("type") || "all"
+        
+            // // Navigate to the base URL with only the type parameter
+            // router.push(`${pathWithoutQuery}?type=${type}`)
+            router.push("/finance/overview");
+          }
     if (!productsLoading && products) {
         const hsnSummary: { [key: string]: { quantity: number, itemName: string, defaultUnit: string, totalValue: number, tax: number, date: Date } } = {};
 
@@ -603,82 +643,85 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
 
                         <div  className='flex items-center justify-center w-7 h-7 border border-solid border-gray-300 border-0.5 rounded-md  p-1'><Image src={Chart} alt='Chart' className='w-4  h-4' /></div>
                     </Link> */}
-                    <div className='flex items-center justify-center h-7   mr-4 border border-solid border-gray-300 border-0.5 rounded-lg p-2 bg-[#35BEB1]'>
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M14.5276 11.3892L11.0052 14.9022L7.47543 11.3725L8.40153 10.437L10.345 12.3805L10.345 1.75511L11.6747 1.75511L11.6747 12.3805L13.6015 10.4536L14.5276 11.3892ZM8.54357 4.61091L7.61747 5.53701L5.69067 3.61021L5.69067 14.2356L4.36093 14.2356L4.36093 3.61021L2.40803 5.55367L1.48193 4.62757L5.02108 1.08844L8.54357 4.61091Z" fill="white" />
-                        </svg>
-                        <Popover>
-                            <PopoverTrigger>
-                                <Button
-                                    variant="solid"
-                                    className="capitalize border-none bg-transparent rounded-lg text-white"
-                                >
-                                    <span style={{ fontFamily: 'Satoshi', fontWeight: 500, fontSize: '14px', lineHeight: '18.9px', color: '#FFFFFF' }}>Sort:Recent</span>
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent>
-                                {/* <FilterDropdwonCard /> */}
-                                Soon
-                            </PopoverContent>
-                        </Popover>
-                        <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M4.77561 12L4 11.2244L7.22439 8L4 4.77561L4.77561 4L8 7.22439L11.2244 4L12 4.77561L8.77561 8L12 11.2244L11.2244 12L8 8.77561L4.77561 12Z" fill="white" />
-                        </svg>
-                        {/* <Dropdown>
-                            <DropdownTrigger>
-                                <Button
-                                    //   variant="bordered" 
-                                    variant="solid"
-                                    className="capitalize border-none  bg-transparent rounded-lg"
-                                >
-                                    {selectedSortValue}
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu
-                                aria-label="Single selection example"
-                                // color="gray-500"
-                                className=" text-base  text-gray-500 bg-gray-200 rounded-lg"
-                                variant="solid"
-                                disallowEmptySelection
-                                selectionMode="single"
-                                selectedKeys={selectedSort}
-                                // onSelectionChange={setselectedSort}
-                            >
-                                <DropdownItem
-                                    className=" p-2 text-base" key="Category:text">Sort:Recently Used</DropdownItem>
-                                <DropdownItem
-                                    className=" p-2 text-base" key="Category:number">Sort:Recently Used</DropdownItem>
-                                <DropdownItem
-                                    className=" p-2 text-base" key="Category:date">Date</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown> */}
-                    </div>
-                    <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg bg-[#35BEB1] '>
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={()=>router.push('/finance/overview')} className='cursor-pointer'>
-                            <mask id="mask0_1198_18016" maskUnits="userSpaceOnUse" x="0" y="0" width="16" height="16">
-                                <rect width="16" height="16" fill="white" />
-                            </mask>
-                            <g mask="url(#mask0_1198_18016)">
-                                <path d="M7.32918 14.0011V10.0011H8.66252V11.3344H13.9958V12.6678H8.66252V14.0011H7.32918ZM1.99585 12.6678V11.3344H5.99585V12.6678H1.99585ZM4.66252 10.0011V8.66777H1.99585V7.33443H4.66252V6.0011H5.99585V10.0011H4.66252ZM7.32918 8.66777V7.33443H13.9958V8.66777H7.32918ZM9.99585 6.0011V2.0011H11.3292V3.33443H13.9958V4.66777H11.3292V6.0011H9.99585ZM1.99585 4.66777V3.33443H8.66252V4.66777H1.99585Z" fill="white" />
-                            </g>
-                        </svg>
+                    <div className={`flex items-center justify-center h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg  ${selectedSort ? 'bg-[#35BEB1]' : 'bg-[#FFFFFF'}`}>
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M14.5276 11.3892L11.0052 14.9022L7.47543 11.3725L8.40153 10.437L10.345 12.3805L10.345 1.75511L11.6747 1.75511L11.6747 12.3805L13.6015 10.4536L14.5276 11.3892ZM8.54357 4.61091L7.61747 5.53701L5.69067 3.61021L5.69067 14.2356L4.36093 14.2356L4.36093 3.61021L2.40803 5.55367L1.48193 4.62757L5.02108 1.08844L8.54357 4.61091Z" fill={selectedSort ? "#FFFFFF" : "#A2A3A3"}/>
+</svg>
+{/* <div className='flex '><Image src={Sort} alt='Sort' className='w-3 h-3 mr-2' /></div> */}
+<Dropdown >
+<DropdownTrigger className='z-0'>
+    <Button
+        //   variant="bordered" 
+        // color="gray-400"
+        variant="solid"
+        className="capitalize border-none  bg-transparent rounded-lg text-white"
+    >
+<span style={{ fontFamily: 'Satoshi', fontWeight: 500, fontSize: '14px', lineHeight: '18.9px', color: selectedSort ? '#FFFFFF' : '#A2A3A3' }}>{selectedSort ? `Sort: ${selectedSort}` : "Sort"}</span>
+      {/* Cross Icon */}
 
-                        <Popover>
+    </Button>
+</DropdownTrigger>
+<DropdownMenu
+    aria-label="Single selection example"
+    // color="gray-500"
+    className=" text-base  text-gray-500 bg-gray-200 rounded-lg"
+    variant="solid"
+    disallowEmptySelection
+    selectionMode="single"
+    // onSelectionChange={setselectedSort}
+>
+    <DropdownItem
+        className=" p-2 text-base" onClick={()=>handleSortChange("Recently Used")}>Sort:Recently Used</DropdownItem>
+    <DropdownItem
+        className=" p-2 text-base" onClick={()=>handleSortChange("Recently Used")}>Sort:Recently Used</DropdownItem>
+    <DropdownItem
+        className=" p-2 text-base" onClick={()=>handleSortChange("Date")}>Sort:Date</DropdownItem>
+</DropdownMenu>
+</Dropdown>
+{selectedSort && (
+        <svg
+          width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"
+          className="hover:fill-gray-800 cursor-pointer"
+          onClick={clearSort}
+        >
+          <path d="M4.77561 12L4 11.2244L7.22439 8L4 4.77561L4.77561 4L8 7.22439L11.2244 4L12 4.77561L8.77561 8L12 11.2244L11.2244 12L8 8.77561L4.77561 12Z" fill="white"/>
+        </svg>
+      )}
+</div>
+<div className={`flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg ${isFilterActive ? 'bg-[#35BEB1]' : 'bg-[#FFFFFF]'}`}>
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"  className='cursor-pointer'>
+<mask id="mask0_1198_18016" maskUnits="userSpaceOnUse" x="0" y="0" width="16" height="16">
+<rect width="16" height="16" fill="white"/>
+</mask>
+<g mask="url(#mask0_1198_18016)">
+<path d="M7.32918 14.0011V10.0011H8.66252V11.3344H13.9958V12.6678H8.66252V14.0011H7.32918ZM1.99585 12.6678V11.3344H5.99585V12.6678H1.99585ZM4.66252 10.0011V8.66777H1.99585V7.33443H4.66252V6.0011H5.99585V10.0011H4.66252ZM7.32918 8.66777V7.33443H13.9958V8.66777H7.32918ZM9.99585 6.0011V2.0011H11.3292V3.33443H13.9958V4.66777H11.3292V6.0011H9.99585ZM1.99585 4.66777V3.33443H8.66252V4.66777H1.99585Z" fill={isFilterActive ? "#FFFFFF" : "#A2A3A3"}/>
+</g>
+</svg>
+
+
+                        <Popover >
                             <PopoverTrigger>
                                 <Button
                                     variant="solid"
                                     className="capitalize border-none bg-transparent rounded-lg text-white"
                                 >
-                                    <span style={{ fontFamily: 'Satoshi', fontWeight: 500, fontSize: '14px', lineHeight: '18.9px', color: '#FFFFFF' }}>Filter</span>
+                                    <span style={{ fontFamily: 'Satoshi', fontWeight: 500, fontSize: '14px', lineHeight: '18.9px',  color: isFilterActive ? '#FFFFFF' : '#A2A3A3' }}>Filter</span>
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent>
                                 <FilterDropdownCard />
                             </PopoverContent>
                         </Popover>
-                        <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={()=>router.push('/finance/overview')} className='cursor-pointer'>
-                            <path d="M4.77561 12L4 11.2244L7.22439 8L4 4.77561L4.77561 4L8 7.22439L11.2244 4L12 4.77561L8.77561 8L12 11.2244L11.2244 12L8 8.77561L4.77561 12Z" fill="white" />
-                        </svg>
+                        {isFilterActive && (
+                <svg
+                    width="20" height="20" viewBox="0 0 16 16" fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className='cursor-pointer'
+                    onClick={handleClearFilters}
+                >
+                    <path d="M4.77561 12L4 11.2244L7.22439 8L4 4.77561L4.77561 4L8 7.22439L11.2244 4L12 4.77561L8.77561 8L12 11.2244L11.2244 12L8 8.77561L4.77561 12Z" fill="white"/>
+                </svg>
+            )}
                     </div>
 
 
