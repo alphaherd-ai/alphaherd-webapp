@@ -94,7 +94,6 @@ const DatabaseClientTable = () => {
                 <div className="flex text-gray-500 text-base font-medium px-6 w-1/6">Pet(s)</div>
                 <div className="flex text-gray-500 text-base font-medium px-6 w-1/6">Phone no.</div>
                 <div className="flex text-gray-500 text-base font-medium px-6 w-1/6">Email</div>
-                <div className="flex text-gray-500 text-base font-medium px-6 w-1/6">City</div>
             </div>
 
             {/* Pass the sortedClients to the DatabaseClientTableItem component */}

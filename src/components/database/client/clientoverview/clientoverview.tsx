@@ -246,7 +246,7 @@ const ClientDetails = () => {
                                 <PopoverTrigger>
                                     <Button
                                         variant="solid"
-                                        className="capitalize flex border-none  text-gray rounded-lg ">
+                                        className="capitalize flex border-none  text-gray rounded-lg overflow-visible">
                                         <div className={`w-12 h-12 px-[11px] py-2.5  rounded-[5px] border border-solid bg-white border-stone-300 justify-center items-center gap-2 flex`}>   <Image src={optionicon} alt="option"></Image></div></Button>
                                 </PopoverTrigger>
                                 <PopoverContent className={`text-gray-500 ${!(isEditPopupVisible || showDeletePopup) ? "bg-white" : ""} text-sm p-2 font-medium flex flex-row items-start rounded-lg border-2 mt-2.5`}>

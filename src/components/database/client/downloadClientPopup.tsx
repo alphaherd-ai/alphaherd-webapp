@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CSVLink } from 'react-csv';
 
 import 'react-datepicker/dist/react-datepicker.css';
@@ -21,11 +21,23 @@ const DownloadPopup = ({ onClose, clients }:any) => {
   const [endDate, setEndDate] = useState(null);
   const [selectedOption, setSelectedOption] = useState('Custom');
 
-
+  useEffect(() => {
+    const filteredData = clients.map((client: any) => ({
+      clientName: client.clientName,
+      email: client.email,
+      contact: client.contact,
+      address: client.address,
+      city: client.city,
+      pinCode: client.pinCode,
+      patients: client.patients?.map((patient: any) => patient.patientName).join(', ') || '',
+    }));
+    setData(filteredData);
+  }
+  , [clients]);
   const handleOptionClick = (option:any) => {
     setSelectedOption(option);
   };
-
+  console.log( "clients are :", data);
   // const handleFilter = (start:any, end:any) => {
   //   const filteredData = clients.filter((item:any) => {
   //     const date = new Date(item.date);
@@ -62,7 +74,7 @@ const DownloadPopup = ({ onClose, clients }:any) => {
   const downloadPDF = () => {
     convertImageToBase64(logo, (base64Image:any) => {
     const doc = new jsPDF('landscape');
-    const tableColumn = ["Client", "Pet(s)", "Phone No.", "Email", "Last Visit"];
+    const tableColumn = ["Client", "Pet(s)", "Phone No.", "Email"];
     const tableRows:any = [];
 
     data.forEach((item:any) => {
@@ -72,7 +84,6 @@ const DownloadPopup = ({ onClose, clients }:any) => {
         patientsNames,
         item.contact,
         item.email,
-        item.city,
       ];
       tableRows.push(clientsData);
     });

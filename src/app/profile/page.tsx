@@ -1,5 +1,4 @@
 import React from 'react'
-import UserProfile from '@/components/profile/userprofile';
 import AdminProfile from '@/components/profile/adminprofile';
 
 
