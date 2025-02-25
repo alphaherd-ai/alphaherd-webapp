@@ -23,13 +23,13 @@ import DownloadPopup from './downloadTimeline';
 import { useRouter } from 'next/navigation';
 
 const FinacesOverviewTableHeader = ({ timeline }: any) => {
-    const router=useRouter();
+    const router = useRouter();
     const appState = useAppSelector((state) => state.app);
     const { data, isLoading, error } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
 
     const { data: products, isLoading: productsLoading, error: productsError } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
 
-    !productsLoading && console.log(products);
+
 
     let hsnSummaryArray: { hsnCode: string, itemName: string, quantity: number, defaultUnit: string, totalValue: number, tax: number, date: Date }[] = [];
 
@@ -190,24 +190,54 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
     }
 
 
-    const convertImageToBase64 = (imageSrc: any, callback: any) => {
+    const convertImageToBase64 = (imageSrc: string, callback: (base64: string | null) => void) => {
+        if (!imageSrc) {
+            console.error("Image source is empty");
+            callback(null);
+            return;
+        }
+
         const xhr = new XMLHttpRequest();
         xhr.onload = function () {
+            if (xhr.status !== 200) {
+                console.error("Failed to fetch image:", xhr.statusText);
+                callback(null);
+                return;
+            }
+
             const reader = new FileReader();
             reader.onloadend = function () {
-                callback(reader.result);
+                callback(reader.result as string);
+            };
+            reader.onerror = function (error) {
+                console.error("Error reading image as base64:", error);
+                callback(null);
             };
             reader.readAsDataURL(xhr.response);
         };
-        xhr.open('GET', imageSrc);
-        xhr.responseType = 'blob';
+
+        xhr.onerror = function () {
+            console.error("Error loading image from URL");
+            callback(null);
+        };
+
+        xhr.open("GET", imageSrc);
+        xhr.responseType = "blob";
         xhr.send();
     };
 
     const logo = appState?.currentOrg?.orgImgUrl;
+    const defaultImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAwAB/YPsxEAAAAAASUVORK5CYII=";
 
     const downloadPDF = () => {
         convertImageToBase64(logo, (base64Image: any) => {
+
+
+            if (!base64Image) {
+                console.warn("Using default image due to image loading failure.");
+                base64Image = defaultImage;
+            }
+
             const doc = new jsPDF('landscape');
             const tableColumn = ["S.No.", "HSN/SAC", "Name", "UQC", "Total Qty()", "Total Value", "Total Taxable Amt", "CGST", "SGST", "Cess"];
             const tableRows: any = [];
@@ -300,13 +330,21 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
 
     const downloadPDF1 = () => {
         convertImageToBase64(logo, (base64Image: any) => {
+
+            if (!base64Image) {
+                console.warn("Using default image due to image loading failure.");
+                base64Image = defaultImage;
+            }
+
+
             const doc = new jsPDF('landscape');
             const tableColumn = ["S.No.", "HSN/SAC", "Name", "UQC", "Total Qty()", "Total Value", "Total Taxable Amt", "IGST", "CGST", "SGST", "Cess"];
             const tableRows: any = [];
 
             const currentYear1 = new Date().getFullYear();
-            const startDate = new Date(currentYear1, 3, 1);
-            const endDate = new Date(currentYear1 + 1, 3, 1);
+            const startDate = new Date(currentYear1, new Date().getMonth() < 3 ? currentYear1 - 1 : currentYear1, 3, 1);
+            const endDate = new Date(startDate.getFullYear() + 1, 2, 31);
+
 
             hsnSummaryArray1.forEach((item, index) => {
                 const itemDate = (item.date);
@@ -325,6 +363,7 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
                     tableRows.push(transactionData);
                 }
             });
+
 
             const totalValueSum = hsnSummaryArray1.reduce((sum, item) => sum + (((item.tax ? item.tax : 0) * (item.totalValue) * -1) + (item.totalValue) * -1), 0);
 
@@ -391,6 +430,13 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
 
     const downloadPDF2 = () => {
         convertImageToBase64(logo, (base64Image: any) => {
+
+            if (!base64Image) {
+                console.warn("Using default image due to image loading failure.");
+                base64Image = defaultImage;
+            }
+
+
             const doc = new jsPDF('landscape');
             const tableColumn = ["S.No.", "HSN/SAC", "Name", "UQC", "Total Qty()", "Total Value", "Total Taxable Amt", "IGST", "CGST", "SGST", "Cess"];
             const tableRows: any = [];
@@ -481,6 +527,13 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
 
     const downloadPDF3 = () => {
         convertImageToBase64(logo, (base64Image: any) => {
+
+            if (!base64Image) {
+                console.warn("Using default image due to image loading failure.");
+                base64Image = defaultImage;
+            }
+
+
             const doc = new jsPDF('landscape');
             const tableColumn = ["S.No.", "HSN/SAC", "Name", "UQC", "Total Qty()", "Total Value", "Total Taxable Amt", "IGST", "CGST", "SGST", "Cess"];
             const tableRows: any = [];
@@ -565,7 +618,7 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
                 body: tableRows,
             });
 
-            const fileName = `HSN_PURCHASE_RTEURN.pdf`;
+            const fileName = `HSN_PURCHASE_RETURN.pdf`;
             doc.save(fileName);
         })
     }
@@ -654,7 +707,7 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
                         </Dropdown> */}
                     </div>
                     <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg bg-[#35BEB1] '>
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={()=>router.push('/finance/overview')} className='cursor-pointer'>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => router.push('/finance/overview')} className='cursor-pointer'>
                             <mask id="mask0_1198_18016" maskUnits="userSpaceOnUse" x="0" y="0" width="16" height="16">
                                 <rect width="16" height="16" fill="white" />
                             </mask>
@@ -676,7 +729,7 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
                                 <FilterDropdownCard />
                             </PopoverContent>
                         </Popover>
-                        <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={()=>router.push('/finance/overview')} className='cursor-pointer'>
+                        <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => router.push('/finance/overview')} className='cursor-pointer'>
                             <path d="M4.77561 12L4 11.2244L7.22439 8L4 4.77561L4.77561 4L8 7.22439L11.2244 4L12 4.77561L8.77561 8L12 11.2244L11.2244 12L8 8.77561L4.77561 12Z" fill="white" />
                         </svg>
                     </div>

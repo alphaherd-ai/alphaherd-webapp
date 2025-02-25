@@ -307,9 +307,9 @@ const InvoiceReturnTable = () => {
                                         <div className=' flex text-textGreen text-base font-bold w-[12rem]'>Unit Price</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Batch No./Providers</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Bar Code</div>
-                                        <div className=' flex text-gray-500 text-base font-medium w-[15rem] px-2'>Expiry Date</div>
+                                       
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Subtotal</div>
-                                        <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>MRP</div>
+                                      
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Tax %</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Tax Amt.</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Discount %</div>
@@ -377,13 +377,7 @@ const InvoiceReturnTable = () => {
 
 
 
-                                            <div className=' flex text-textGrey2 text-base  w-[15rem]'>
-                                                {/* {item.batchNumber} */}
-                                                {/* <input
-                                        type="number"
-                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    /> */}
-                                            </div>
+                                           
                                             <div className=' flex text-gray-500 text-base  w-[15rem]'>
                                                 <div className="customDatePickerWidth1">
                                                     {item.itemType === 'product' ? formatDateAndTime(item.expiry).formattedDate : ""}
@@ -396,13 +390,7 @@ const InvoiceReturnTable = () => {
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                     /> */}
                                             </div>
-                                            <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                                                ₹ {item.maxRetailPrice}
-                                                {/* <input
-                                        type="number"
-                                        className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
-                                    /> */}
-                                            </div>
+                                           
                                             <div className='flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
                                                 {item.tax * 100}%
                                             </div>

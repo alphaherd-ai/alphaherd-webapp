@@ -130,6 +130,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, in
         const newTransaction = {
             amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1*formData.amountPaid, 10) || (balanceDue),
             date: formData.date || new Date(),
+            receiptNo: initialInvoiceNo,
             isAdvancePayment: isAdvancePayment,
             mode: selectedMode,
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
@@ -149,7 +150,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, in
                     },
                     body: JSON.stringify({
                         recordTransaction: [newTransaction],
-                        status: balanceStatus >= 1 ? `You’re owed ${parseFloat(balanceStatus).toFixed(2)}` : balanceStatus <= -1 ? `You owe ${parseFloat((-1 * balanceStatus).toFixed(2))}` : 'Closed',
+                        status: balanceStatus >= 1 ? `You’re owed: ₹${parseFloat(balanceStatus).toFixed(2)}` : balanceStatus <= -1 ? `You owe: ₹${parseFloat((-1 * balanceStatus).toFixed(2))}` : 'Closed',
                     })
 
                 })
