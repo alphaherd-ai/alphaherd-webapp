@@ -15,7 +15,7 @@ import autoTable from 'jspdf-autotable';
 import { useAppSelector } from '@/lib/hooks';
 import formatDateAndTime from '@/utils/formateDateTime';
 
-const DownloadPopup = ({ onClose, timeline }:any) => {
+const DownloadPopup = ({ onClose, timeline }: any) => {
 
   const appState = useAppSelector((state) => state.app)
   const [data, setData] = useState(timeline);
@@ -23,13 +23,13 @@ const DownloadPopup = ({ onClose, timeline }:any) => {
   const [endDate, setEndDate] = useState(null);
   const [selectedOption, setSelectedOption] = useState('Custom');
 
-  const handleOptionClick = (option:any) => {
+  const handleOptionClick = (option: any) => {
     setSelectedOption(option);
   };
 
-  const handleFilter = (start:any, end:any) => {
-    const filteredData = timeline.filter((item:any) => {
-      const date = new Date(item?.sale?.date);
+  const handleFilter = (start: any, end: any) => {
+    const filteredData = timeline.filter((item: any) => {
+      const date = new Date(item?.sale?.date || item?.purchases?.date || item?.expenses?.date);
       return date >= start && date <= end;
     });
     setData(filteredData);
@@ -44,128 +44,141 @@ const DownloadPopup = ({ onClose, timeline }:any) => {
     }
   };
 
-  const convertImageToBase64 = (imageSrc:any, callback:any) => {
+  const convertImageToBase64 = (imageSrc: string, callback: (base64: string | null) => void) => {
+    if (!imageSrc) {
+      console.error("Image source is empty");
+      callback(null);
+      return;
+    }
+
     const xhr = new XMLHttpRequest();
     xhr.onload = function () {
+      if (xhr.status !== 200) {
+        console.error("Failed to fetch image:", xhr.statusText);
+        callback(null);
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = function () {
-        callback(reader.result);
+        callback(reader.result as string);
+      };
+      reader.onerror = function (error) {
+        console.error("Error reading image as base64:", error);
+        callback(null);
       };
       reader.readAsDataURL(xhr.response);
     };
-    xhr.open('GET', imageSrc);
-    xhr.responseType = 'blob';
+
+    xhr.onerror = function () {
+      console.error("Error loading image from URL");
+      callback(null);
+    };
+
+    xhr.open("GET", imageSrc);
+    xhr.responseType = "blob";
     xhr.send();
   };
 
-  const logo = appState?.currentOrg?.orgImgUrl;
 
-  
+
+
+
+
+  const defaultBase64Image =
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP88x8AAusB97vdMxkAAAAASUVORK5CYII=";
 
   const downloadPDF = () => {
-    convertImageToBase64(logo, (base64Image:any) => {
-    const doc = new jsPDF('landscape');
-    const tableColumn = ["Date", "Type", "Party", "Ref. No..", "Total Cost", "Total Qty", "Due Date", "Status"];
-    const tableRows:any = [];
+    const logo = appState?.currentOrg?.orgImgUrl || defaultBase64Image;
 
-    const typeCounts:any = {};
+    convertImageToBase64(logo, (base64Image) => {
+      const doc = new jsPDF("landscape");
 
+      // Table Headers
+      const tableColumn = ["Date", "Type", "Party", "Ref. No.", "Total Cost",  "Due Date", "Status"];
+      const tableRows: any[] = [];
 
-    let totalAmount = 0;
-    let totalQuantity = 0;
-
-    data.forEach((item:any) => {
-        if (typeCounts[item?.sale?.type]) {
-          typeCounts[item?.sale?.type]++;
-        } else {
-          typeCounts[item?.sale?.type] = 1;
-        }
-        if(item?.sale?.totalCost){
-          totalAmount += item?.sale?.totalCost;
-        }
-        if(item?.sale?.totalQty){
-          totalQuantity += item?.sale?.totalQty;
-        }
-    })  
-
-  
-
-    data.forEach((item:any) => {
-      const timelineData = [
-        format(new Date(item?.sale?.date), 'dd-MM-yyyy'),
-        item?.sale?.type,
-        item?.sale?.customer,
-        item?.sale?.invoiceNo,
-        item?.sale?.totalCost,
-        item?.sale?.totalQty,
-        formatDateAndTime(item?.sale?.dueDate).formattedDate,
-        item?.sale?.status,
-      ];
-      tableRows.push(timelineData);
-    });
-
-    doc.addImage(base64Image, 'PNG', 4, 4, 20, 20); 
-      doc.setFontSize(20);
-      doc.text(appState.currentOrg.orgName, 30, 10);
+      let totalAmount = 0;
+      let totalQuantity = 0;
+      const typeCounts: Record<string, number> = {};
       
+      // Processing Data
+      data.forEach((item: any) => {
+        
+        ["sale", "purchases", "expenses"].forEach((key) => {
+          const finance = item?.[key]; // Get sale, purchase, or expense
+          if (finance && finance?.status!=='Cancelled') {
+            typeCounts[finance.type] = (typeCounts[finance.type] || 0) + 1;
+            totalAmount += finance.totalCost || 0;
+            totalQuantity += finance.totalQty || 0;
+      
+            tableRows.push([
+              format(new Date(finance.date), "dd-MM-yyyy"),
+              finance.type,
+              finance.customer || finance.vendor || "N/A",
+              finance.invoiceNo || finance.referenceNo || "N/A",
+              finance.totalCost || 0,
+              //finance.totalQty || 0,
+              finance.dueDate ? formatDateAndTime(finance.dueDate).formattedDate : "N/A",
+              finance.status || "N/A",
+            ]);
+          }
+        });
+      });
+      
+
+      // Add Logo
+      if (base64Image) {
+        doc.addImage(base64Image, "PNG", 4, 4, 20, 20);
+      }
+
+      // Organization Header
+      doc.setFontSize(20).text(appState.currentOrg.orgName, 30, 10);
       doc.setFontSize(12);
-      const text = `${appState.currentOrg.address} ${appState.currentOrg.state}-${appState.currentOrg.pincode}`;
-      const maxWidth = 85;
-      const lines = doc.splitTextToSize(text, maxWidth);
-      doc.text(lines, 30, 15);
+      const orgAddress = `${appState.currentOrg.address} ${appState.currentOrg.state}-${appState.currentOrg.pincode}`;
+      doc.text(doc.splitTextToSize(orgAddress, 85), 30, 15);
 
+      // Contact Details
+      const details = [
+        { label: "GST No.", value: appState.currentOrg.gstNo, x: 126, y: 12 },
+        { label: "PAN No.", value: "5465465465465465", x: 126, y: 18 },
+        { label: "Email", value: appState.currentOrg.orgEmail, x: 220, y: 12 },
+        { label: "Phone No.", value: appState.currentOrg.phoneNo, x: 220, y: 18 },
+        { label: "Website", value: "XYZ.com", x: 220, y: 24 },
+      ];
+      details.forEach(({ label, value, x, y }) => doc.setFontSize(13).text(`${label} : ${value}`, x, y));
 
+      // Line Separator
+      doc.setLineWidth(0.2).line(1, 26, 320, 26);
 
-      doc.setFontSize(13);
-      doc.text(`Gst No. :  ${appState.currentOrg.gstNo}`, 126, 12);
-      doc.setFontSize(13);
-      doc.text(`PAN No. :  5465465465465465`, 126, 18);
-
-      doc.setFontSize(13);
-      doc.text(`Email :  ${appState.currentOrg.orgEmail}`, 220, 12);
-      doc.setFontSize(13);
-      doc.text(`Phone No. :  ${appState.currentOrg.phoneNo}`, 220, 18);
-      doc.setFontSize(13);
-      doc.text(`Website :  XYZ.com`, 220, 24);
-
-
-      doc.setLineWidth(0.2);
-      doc.line(1, 26, 320, 26); 
-
-      doc.setFontSize(15);
-      doc.text("Timeline Report", 8, 34);
-
+      // Report Title
+      doc.setFontSize(15).text("Timeline Report", 8, 34);
       doc.setFontSize(11);
       doc.text(`Category : Finance All Type`, 60, 33);
-      doc.text(`Period : ${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'} - ${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}`, 60, 37);
+      doc.text(`Period : ${startDate ? format(startDate, "dd-MM-yyyy") : "start"} - ${endDate ? format(endDate, "dd-MM-yyyy") : "end"}`, 60, 37);
 
-  
-      doc.setFontSize(11);
+      // Type Counts
       let yPosition = 33;
       Object.entries(typeCounts).forEach(([type, count]) => {
         doc.text(`${type}: ${count}`, 140, yPosition);
-        yPosition += 5
-      })
+        yPosition += 5;
+      });
 
-
+      // Totals
       doc.text(`Total Amount: ${totalAmount}`, 200, 33);
-      doc.text(`Total Quantity: ${totalQuantity}`, 200, 38);
+      //doc.text(`Total Quantity: ${totalQuantity}`, 200, 38);
 
+      // Line Separator
+      doc.setLineWidth(0.5).line(1, 53, 320, 53);
 
-      doc.setLineWidth(0.5);
-      doc.line(1, 53, 320, 53); 
+      // Generate Table
+      autoTable(doc, { startY: 55, head: [tableColumn], body: tableRows });
 
-
-    autoTable(doc, {
-      startY: 55,
-      head: [tableColumn],
-      body: tableRows,
+      // Save PDF
+      const fileName = `timeline_report_${startDate ? format(startDate, "dd-MM-yyyy") : "start"}_to_${endDate ? format(endDate, "dd-MM-yyyy") : "end"}.pdf`;
+      doc.save(fileName);
     });
-
-    const fileName = `timeline_report_${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'} to ${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}.pdf`;
-    doc.save(fileName);
-  })
-  }
+  };
 
 
   return (
@@ -266,11 +279,11 @@ const DownloadPopup = ({ onClose, timeline }:any) => {
             </div>
             <div className="text-white text-base font-medium">Download as PDF</div>
           </Button>) : (<Button className="cursor-not-allowed outline-none border-0 px-4 py-2.5 bg-[#EDEDED] rounded-[5px] justify-start items-center gap-2 flex" disabled>
-              <div className="w-6 h-6">
-                <Image src={download} alt="download" />
-              </div>
-              <div className="text-textGrey2 text-base font-medium">Download as PDF</div>
-            </Button>)}
+            <div className="w-6 h-6">
+              <Image src={download} alt="download" />
+            </div>
+            <div className="text-textGrey2 text-base font-medium">Download as PDF</div>
+          </Button>)}
           {startDate && endDate ? (<CSVLink
             data={data}
             filename={`sales_report_${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'}_to_${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}.csv`}
@@ -292,11 +305,11 @@ const DownloadPopup = ({ onClose, timeline }:any) => {
               <div className="text-white text-base font-medium">Download as CSV</div>
             </Button>
           </CSVLink>) : (<Button className="cursor-not-allowed outline-none border-0 px-4 py-2.5 bg-[#EDEDED] rounded-[5px] justify-start items-center gap-2 flex" disabled>
-              <div className="w-6 h-6">
-                <Image src={download} alt="download" />
-              </div>
-              <div className="text-textGrey2 text-base font-medium">Download as CSV</div>
-            </Button>)}
+            <div className="w-6 h-6">
+              <Image src={download} alt="download" />
+            </div>
+            <div className="text-textGrey2 text-base font-medium">Download as CSV</div>
+          </Button>)}
         </div>
       </div>
     </div>

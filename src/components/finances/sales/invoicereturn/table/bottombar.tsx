@@ -18,6 +18,7 @@ import Loading2 from "@/app/loading2"
 
 
 const InvoiceReturnBottomBar = ({ invoiceData }: any) => {
+    //console.log(invoiceData);
     const { headerData, tableData, totalAmountData, transactionsData } = useContext(DataContext);
     const appState = useAppSelector((state) => state.app);
     const url = useSearchParams();
@@ -100,7 +101,7 @@ const InvoiceReturnBottomBar = ({ invoiceData }: any) => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    status: `Returned ${totalQty} | ${balanceDue <= -1 ? `You’re owed: ₹${parseFloat((-1*balanceDue).toFixed(2))}` : balanceDue >= 1 ? `You owe: ₹${parseFloat((balanceDue).toFixed(2))}` : 'Closed'}`
+                    status: `Returned ${totalQty} | ${invoiceData?.status}`
                 })
             });
             if (putResponse.ok) {
@@ -139,7 +140,7 @@ const InvoiceReturnBottomBar = ({ invoiceData }: any) => {
                         <Image src={drafticon} alt="draft"></Image>
                         <div>Save as Draft</div>
                     </Button>
-                    <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer" onClick={handleSubmit} disabled={isSaving}>
+                    <Button   className={`px-4 py-2.5 text-white text-base ${tableData.length <= 0 ? 'bg-gray-500 cursor-not-allowed' : 'bg-zinc-900'} rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer`} onClick={handleSubmit} disabled={isSaving || tableData.length <= 0 }>
                         <Image src={checkicon} alt="check"></Image>
                         <div>{isSaving ? <Loading2></Loading2> : "Save"}</div>
                     </Button>

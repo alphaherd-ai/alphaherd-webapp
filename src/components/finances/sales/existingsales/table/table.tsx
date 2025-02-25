@@ -33,9 +33,9 @@ const ExistingsalesTable = () => {
 
     useEffect(() => {
         if (!isLoading && data && !error) {
-            console.log(data);
+            //console.log(data);
             const { items, ...otherData } = data;
-            console.log("other data in existing sale is :", otherData);
+            //console.log("other data in existing sale is :", otherData);
 
                 setOtherData(otherData)
                 // console.log(items)

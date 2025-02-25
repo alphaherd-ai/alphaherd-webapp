@@ -144,9 +144,9 @@ const InvoiceReturnHeader = ({ existingHeaderData }: any) => {
                                     {invoiceNo}
                                 </div>
                             )}
-                            <button onClick={handleEditButtonClick} className="mr-5 border-0">
+                            {/* <button onClick={handleEditButtonClick} className="mr-5 border-0">
                                 <Image src={editicon} alt="edit" />
-                            </button>
+                            </button> */}
                         </div>
                     </div>
                 </div>
