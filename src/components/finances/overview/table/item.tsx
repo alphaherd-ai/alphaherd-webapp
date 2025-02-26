@@ -85,7 +85,8 @@ const FinacesOverviewTableItem = ({ currentPageNumber, setCurrentPageNumber, set
   return (
     <>
       {timeline?.map((data: any, index: any) =>
-        <div key={index + 1} className='flex  w-full  box-border h-16 justify-evenly items-center bg-white border-0 border-b border-solid border-borderGrey hover:bg-gray-100 text-textGrey1 hover:text-textGrey2 transition '>    <div className='w-[8rem] flex items-center    text-neutral-400 text-base font-medium'>{formatDateAndTime(data.createdAt).formattedDate}</div>
+        <div key={index + 1} className='flex  w-full  box-border h-16 justify-evenly items-center bg-white border-0 border-b border-solid border-borderGrey hover:bg-gray-100 text-textGrey1 hover:text-textGrey2 transition '>
+          <div className='w-[8rem] flex items-center    text-neutral-400 text-base font-medium'>{formatDateAndTime(data.createdAt).formattedDate}</div>
           <div className='w-[8rem] flex  items-center    text-base font-medium'>{formatDateAndTime(data.createdAt).formattedTime}</div>
           <Link className='no-underline text-textGrey2' href={{
             pathname: data.type === FinanceCreationType.Sales_Estimate ? 'sales/existingsalesestimate' :
@@ -103,7 +104,7 @@ const FinacesOverviewTableItem = ({ currentPageNumber, setCurrentPageNumber, set
           <div className='w-[8rem] flex  items-center    text-base font-medium'>{(data.sale?.totalCost || data.purchases?.totalCost || data.expenses?.totalCost)?.toFixed(2)}</div>
           <div className='w-[8rem] flex  items-center    text-base font-medium'>{formatDateAndTime(data.sale?.dueDate || data.purchases?.dueDate || data.expenses?.dueDate).formattedDate}</div>
 
-          <div className='w-[10rem] flex  items-center  text-base font-medium'>
+          <div className='w-[18rem] flex  items-center  text-base font-medium'>
             <Tooltip content={data.sale?.status || data.expenses?.status || data.purchases?.status} className='bg-black text-white p-1 px-3 text-xs rounded-lg'>
               <div>
                 {
@@ -131,7 +132,7 @@ const FinacesOverviewTableItem = ({ currentPageNumber, setCurrentPageNumber, set
               </div >
             </Tooltip>
 
-            <div className=' right-16'>
+            <div className='right-8'>
 
               <Popover placement="left" showArrow offset={10}>
                 <PopoverTrigger>

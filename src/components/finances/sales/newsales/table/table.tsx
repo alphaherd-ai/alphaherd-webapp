@@ -555,7 +555,7 @@ const NewsalesTable = () => {
 
 
     useEffect(() => {
-        if (id == null) {
+        if (id === null) {
             setItems(items);
             setTableData(items);
         }
@@ -843,10 +843,7 @@ const NewsalesTable = () => {
                                     ).toFixed(2)}`}</div>
                                     {index !== items.length - 1 ?
                                         <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[20px] justify-end'>
-                                            <button className="border-0 bg-transparent cursor-pointer">
-                                                <Image className='w-5 h-5' src={sellicon} alt="sell" ></Image>
-                                            </button>
-
+                                            
                                             <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
                                                 <Image className='w-5 h-5' src={delicon} alt="delete" ></Image>
                                             </button>

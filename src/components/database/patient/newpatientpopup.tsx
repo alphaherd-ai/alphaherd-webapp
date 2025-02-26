@@ -53,6 +53,8 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
     const [filteredBreeds, setFilteredBreeds] = useState<any[]>([]);
     const [selectedSpecies, setSelectedSpecies] = useState<any>(null);
     const [isImPatient, setIsImpatient] = useState(false);
+    const [prevPatients,setPrevPatients]=useState<any[]>([]);
+    const [isSamePatientName, setIsSamePatientName] = useState(false);
     let isAnotherPatient = false;
     let selectedClient: { value: string; label: string; } | null | undefined = null;
 
@@ -196,11 +198,19 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
         fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`)
             .then((response) => response.json())
             .then((data) => {
+                
                 const formattedClients = data.map((client: any) => ({
                     value: client.id,
                     label: client.clientName
                 }))
                 setClients(formattedClients)
+
+                const formattedPatients=data.map((client:any)=>({
+                    label:client.clientName,
+                    patients:client.patients
+                }))
+                console.log(formattedPatients);
+                setPrevPatients(formattedPatients);
             })
             .catch((error) =>
                 console.error("Error fetching client from API: ", error)
@@ -214,6 +224,11 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
                 dateOfBirth: null,
             }));
         }
+
+
+        
+
+
     }, []);
 
     const handleAnotherpatient = () => {
@@ -359,6 +374,15 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
             if (!isPatientNameValid) newErrors.patientName = 'Patient name is required';
             if (!isClientNameValid) newErrors.clientName = 'Client name is required';
             setErrors(newErrors);
+            //console.log(prevPatients);
+
+            const foundClient = prevPatients.find((e: any) => e.label === updatedFormData.clientName?.label);
+            const patientListIfExists = foundClient ? foundClient.patients : undefined;
+            //console.log(patientListIfExists,foundClient);
+            if(patientListIfExists){
+                setIsSamePatientName(patientListIfExists.some((patient:any)=>patient.patientName?.toLowerCase()===updatedFormData.patientName?.toLowerCase()));
+            }
+
             setIsSaveDisabled(!isPatientNameValid || !isClientNameValid);
             return updatedFormData;
 
@@ -446,6 +470,9 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
                         />
                         {!editPatient && errors.patientName && (
                             <div className="text-[red] error">{errors.patientName}</div>
+                        )}
+                        {isSamePatientName &&  (
+                            <div className="text-[red] error">Patient Name already exists</div>
                         )}
                     </div>
                 </div>

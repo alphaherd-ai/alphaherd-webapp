@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import prismaClient from '../../../../../../../prisma';
 import { fetchFinanceId } from '@/utils/fetchBranchDetails';
-import { recurringExpenses } from '@/lib/bull';
+//import { recurringExpenses } from '@/lib/bull';
 import { calculateNextOccurrence } from '@/utils/calculateNextOccurrence';
 import { FinanceCreationType } from '@prisma/client';
 
@@ -55,7 +55,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
         repeatType: body.recurringRepeatType
       }
       //console.log(payload,schedule);
-      await recurringExpenses({ payload, schedule });
+      //await recurringExpenses({ payload, schedule });
     }
 
     return new Response(JSON.stringify({ expense, finance }), {

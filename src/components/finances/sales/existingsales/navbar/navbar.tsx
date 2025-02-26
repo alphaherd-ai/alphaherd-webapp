@@ -20,7 +20,7 @@ const ExistingsalesNavbar = () => {
                     <Image className="w-6 h-6 relative rounded-[5px]  cursor-pointer" src={lefticon} alt="Back"  onClick={()=>router.back()}></Image>
                     </div>
                     <div className="text-gray-500 text-[28px] font-bold ">
-                    Sales Invoice - SI-000345
+                    Sales Invoice
 
                     </div>
                     </div>

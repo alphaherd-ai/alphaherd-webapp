@@ -205,6 +205,8 @@ export function DownloadPdf(doc: jsPDF, fileName: string) {
   console.log("I am in downloadPDF");
   doc.save(`${fileName}.pdf`);
 }
+
+
 export function PrintPdf(doc: jsPDF) {
   doc.autoPrint();
   var oHiddFrame = document.createElement("iframe");

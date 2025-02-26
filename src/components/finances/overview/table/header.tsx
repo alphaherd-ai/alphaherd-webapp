@@ -28,7 +28,7 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
 
     const { data: products, isLoading: productsLoading, error: productsError } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
 
-    !productsLoading && console.log(products);
+
 
     let hsnSummaryArray: { hsnCode: string, itemName: string, quantity: number, defaultUnit: string, totalValue: number, tax: number, date: Date }[] = [];
 
@@ -230,24 +230,54 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
     }
 
 
-    const convertImageToBase64 = (imageSrc: any, callback: any) => {
+    const convertImageToBase64 = (imageSrc: string, callback: (base64: string | null) => void) => {
+        if (!imageSrc) {
+            console.error("Image source is empty");
+            callback(null);
+            return;
+        }
+
         const xhr = new XMLHttpRequest();
         xhr.onload = function () {
+            if (xhr.status !== 200) {
+                console.error("Failed to fetch image:", xhr.statusText);
+                callback(null);
+                return;
+            }
+
             const reader = new FileReader();
             reader.onloadend = function () {
-                callback(reader.result);
+                callback(reader.result as string);
+            };
+            reader.onerror = function (error) {
+                console.error("Error reading image as base64:", error);
+                callback(null);
             };
             reader.readAsDataURL(xhr.response);
         };
-        xhr.open('GET', imageSrc);
-        xhr.responseType = 'blob';
+
+        xhr.onerror = function () {
+            console.error("Error loading image from URL");
+            callback(null);
+        };
+
+        xhr.open("GET", imageSrc);
+        xhr.responseType = "blob";
         xhr.send();
     };
 
     const logo = appState?.currentOrg?.orgImgUrl;
+    const defaultImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAwAB/YPsxEAAAAAASUVORK5CYII=";
 
     const downloadPDF = () => {
         convertImageToBase64(logo, (base64Image: any) => {
+
+
+            if (!base64Image) {
+                console.warn("Using default image due to image loading failure.");
+                base64Image = defaultImage;
+            }
+
             const doc = new jsPDF('landscape');
             const tableColumn = ["S.No.", "HSN/SAC", "Name", "UQC", "Total Qty()", "Total Value", "Total Taxable Amt", "CGST", "SGST", "Cess"];
             const tableRows: any = [];
@@ -340,13 +370,21 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
 
     const downloadPDF1 = () => {
         convertImageToBase64(logo, (base64Image: any) => {
+
+            if (!base64Image) {
+                console.warn("Using default image due to image loading failure.");
+                base64Image = defaultImage;
+            }
+
+
             const doc = new jsPDF('landscape');
             const tableColumn = ["S.No.", "HSN/SAC", "Name", "UQC", "Total Qty()", "Total Value", "Total Taxable Amt", "IGST", "CGST", "SGST", "Cess"];
             const tableRows: any = [];
 
             const currentYear1 = new Date().getFullYear();
-            const startDate = new Date(currentYear1, 3, 1);
-            const endDate = new Date(currentYear1 + 1, 3, 1);
+            const startDate = new Date(currentYear1, new Date().getMonth() < 3 ? currentYear1 - 1 : currentYear1, 3, 1);
+            const endDate = new Date(startDate.getFullYear() + 1, 2, 31);
+
 
             hsnSummaryArray1.forEach((item, index) => {
                 const itemDate = (item.date);
@@ -365,6 +403,7 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
                     tableRows.push(transactionData);
                 }
             });
+
 
             const totalValueSum = hsnSummaryArray1.reduce((sum, item) => sum + (((item.tax ? item.tax : 0) * (item.totalValue) * -1) + (item.totalValue) * -1), 0);
 
@@ -431,6 +470,13 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
 
     const downloadPDF2 = () => {
         convertImageToBase64(logo, (base64Image: any) => {
+
+            if (!base64Image) {
+                console.warn("Using default image due to image loading failure.");
+                base64Image = defaultImage;
+            }
+
+
             const doc = new jsPDF('landscape');
             const tableColumn = ["S.No.", "HSN/SAC", "Name", "UQC", "Total Qty()", "Total Value", "Total Taxable Amt", "IGST", "CGST", "SGST", "Cess"];
             const tableRows: any = [];
@@ -521,6 +567,13 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
 
     const downloadPDF3 = () => {
         convertImageToBase64(logo, (base64Image: any) => {
+
+            if (!base64Image) {
+                console.warn("Using default image due to image loading failure.");
+                base64Image = defaultImage;
+            }
+
+
             const doc = new jsPDF('landscape');
             const tableColumn = ["S.No.", "HSN/SAC", "Name", "UQC", "Total Qty()", "Total Value", "Total Taxable Amt", "IGST", "CGST", "SGST", "Cess"];
             const tableRows: any = [];
@@ -605,7 +658,7 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
                 body: tableRows,
             });
 
-            const fileName = `HSN_PURCHASE_RTEURN.pdf`;
+            const fileName = `HSN_PURCHASE_RETURN.pdf`;
             doc.save(fileName);
         })
     }
