@@ -138,11 +138,11 @@ const FinancesTransactionSheet = () => {
 
 
                 {activeTab === 'All transactions' &&
-                    <div className="flex overflow-x-auto">
+                    <div className="flex w-full overflow-x-auto">
 
                         {isLoading ? <Loading /> : paymentMethod.map((item: any) => {
                             return (
-                                <div key={item.id}>
+                                <div key={item.id} className="flex  justify-between">
                                     <TransactionsBlanceSheetCashItem mode={item.name} filterdate={date}/>
                                 </div>
                             );
