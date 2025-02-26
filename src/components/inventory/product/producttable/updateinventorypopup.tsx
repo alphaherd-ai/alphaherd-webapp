@@ -3,14 +3,12 @@ import Image from "next/image";
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import closeicon from "../../../../assets/icons/inventory/closeIcon.svg";
-import addicon from "../../../../assets/icons/inventory/add.svg";
 import deleteicon from "../../../../assets/icons/loginsignup/delete.svg";
 import add1icon from "../../../../assets/icons/inventory/add (1).svg";
 import RadioButton from './RadioButton';
 import subicon from "../../../../assets/icons/inventory/1. Icons-24 (6) (2).svg";
 import checkicon from "../../../../assets/icons/inventory/check (1).svg";
 import Select from 'react-select';
-import calicon from "../../../../assets/icons/finance/calendar_today.svg"
 import Distributors from "@/app/database/distributor/page";
 import formatDateAndTime from "@/utils/formateDateTime";
 import { Stock } from "@prisma/client";
@@ -20,11 +18,7 @@ import { Notif_Source } from "@prisma/client";
 import { useAppSelector } from "@/lib/hooks";
 import useSWR from 'swr';
 import z from 'zod';
-import { ConversationContextImpl } from "twilio/lib/rest/conversations/v1/conversation";
 import Loading2 from "@/app/loading2";
-import { UserState } from '@/lib/features/userSlice';
-import { set } from "date-fns";
-import Loading from "@/app/loading";
 import StockConfirmationPopup from "@/utils/stockConfirmationpopup";
 
 //@ts-ignore
@@ -317,10 +311,22 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
     };
 
     const handleDeleteRow = useCallback((index: number) => {
-        const updatedInventory = [...inventory];
-        updatedInventory.splice(index, 1);
-        setInventory(updatedInventory);
-    }, [inventory]);
+        console.log("index", index);
+        console.log("before",inventory);
+        setInventory((prevInventory) => {
+            const updatedInventory = prevInventory.filter((_, i) => i !== index);
+            
+            // Ensure at least one empty object exists
+    if (updatedInventory.length === 0 || updatedInventory[updatedInventory.length - 1].item) {
+        updatedInventory.push({});
+    }
+            // Ensure the last row remains an empty object
+            console.log("Updated Inventories: ", updatedInventory);
+            return updatedInventory;
+        });
+    
+    }, []);
+    
 
     const handleQuantityDecClick = useCallback((index: number) => {
         const updatedInventory = [...inventory];
@@ -411,7 +417,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                         prevItems.map((item, itemIndex) =>
                             itemIndex === index ? {
                                 ...item, id: defaultBatch?.value?.id,
-                                quantity: defaultBatch?.value?.quantity,
+                                quantity: 1,
                                 batchNumber: defaultBatch?.value?.batchNumber,
                                 expiry: defaultBatch?.value?.expiry,
                                 sellingPrice: defaultBatch?.value?.sellingPrice,
@@ -840,6 +846,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
 
                                 </div>
                                 <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
+                                    {selectedOption===Stock.StockIN && 
                                     <DatePicker
                                         
                                         className="w-[90%] rounded-[5px] border border-solid border-borderGrey outline-none  focus:border focus:border-textGreen px-1 py-2"
@@ -851,6 +858,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                                         calendarClassName="react-datepicker-custom"
                                     
                                     />
+}   
                                     {item.expiry && selectedOption !== Stock.StockIN && (
                                         <div>{formatDateAndTime(item.expiry).formattedDate}</div>
                                     )}

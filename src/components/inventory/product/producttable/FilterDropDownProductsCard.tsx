@@ -24,8 +24,6 @@ const FilterDropdownProductsCard = () => {
   const [selectedParties, setSelectedParties] = useState<any[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<any[]>([]);
   const { data, isLoading, error } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
   const {fetchedProducts,isProductLoading,productError}=useProductfetch(appState.currentBranchId);
   const [categories, setCategories] = useState<any[]>([
     { value: "Pet food", label: "Pet food" },
@@ -41,7 +39,10 @@ const FilterDropdownProductsCard = () => {
           const fetchedCategories = fetchedProducts.map((product: { category: string }) => product.category);
           const uniqueFetchedCategories = Array.from(new Set(fetchedCategories));   
           const allCategories = [...categories.map(cat => cat.value), ...uniqueFetchedCategories];
-          const uniqueCategories = Array.from(new Set(allCategories)).map(category => ({ value: category, label: category }));
+          const uniqueCategories = Array.from(new Set(allCategories))
+    .filter(category => category !== null && category !== undefined)
+    .map(category => ({ value: category, label: category }));
+
           setCategories(uniqueCategories);
       }
   }, [isLoading, error, fetchedProducts]);

@@ -83,6 +83,7 @@ const ProductDetails = () => {
     useEffect(() => {
         if (!error && !isLoading && fetchedProduct) {
             setProduct(fetchedProduct);
+            console.log("fetched Products",fetchedProduct);
             setEditProduct(fetchedProduct);
         }
         if (!error && !isLoading && fetchedProductBatches) {
@@ -658,29 +659,6 @@ const ProductDetails = () => {
                         <div className="text-gray-500 text-xl font-medium ">
                             Stock History
                         </div>
-                        <div className="flex gap-2">
-                            <div className="w-8 h-8 px-1.5 py-2 bg-white rounded-[5px] border border-solid  border-borderGrey justify-start items-center gap-2 flex">
-                                <Image src={downloadicon} alt="download" className="w-5 h-5" />
-                            </div>
-                            <div className="w-8 h-8 px-1.5 py-2 bg-white rounded-[5px] border border-solid border-borderGrey justify-start items-center gap-2 flex">
-                                <Image src={baricon} alt="baricon" className="w-5 h-5" />
-                            </div>
-                            <div className="w-8 h-8 px-1.5 py-2 bg-white rounded-[5px] border border-solid  border-borderGrey justify-start items-center gap-2 flex">
-                                <Image src={expandicon} alt="expandicon" className="w-5 h-5" />
-                            </div>
-                            <div className=" h-7 p-2 bg-white rounded-[5px] border border-solid  border-borderGrey justify-start items-center gap-2 flex">
-                                <Image src={tuneicon} alt="tuneicon" className="w-5 h-5" />
-                                <div className="text-borderGrey text-sm font-medium ">
-                                    Filter by
-                                </div>
-                            </div>
-                            <div className=" h-7 p-2 bg-white rounded-[5px] border border-solid border-borderGrey justify-start items-center gap-2 flex">
-                                <Image src={downarrow} alt="downarrow" className="w-5 h-5" />
-                                <div className="text-borderGrey text-sm font-medium ">
-                                    Status: All
-                                </div>
-                            </div>
-                        </div>
                     </div>
                     <div className="w-full">
 
@@ -741,7 +719,6 @@ const ProductDetails = () => {
                             <div className='flex text-textGrey2 text-base font-medium w-1/12'>Batch Number</div>
                             <div className='flex text-textGrey2 text-base font-medium w-1/12'>Expiry Date</div>
                             <div className='flex text-textGrey2 text-base font-medium w-1/12'>Bar Code</div>
-
                             <div className='flex text-textGrey2 text-base font-medium w-1/12 '>Cost per item</div>
                             <div className='flex text-textGrey2 text-base font-medium w-1/12 pl-4'>MRP</div>
                             <div className='flex justify-center text-textGrey2 text-base font-medium w-1/12'>Margin</div>
@@ -749,7 +726,7 @@ const ProductDetails = () => {
                             <div className='flex text-textGrey2 text-base font-medium w-[3.5%]'></div>
                         </div>
 
-                        {product?.productBatches?.sort((a: any, b: any) => a.id - b.id).map((item: any) => (
+                        {product?.productBatches?.filter((item:any)=> !item.isDeleted).sort((a: any, b: any) => a.id - b.id).map((item: any) => (
                             <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 justify-evenly '>
                                 <div className='px-2 w-1/12  flex items-center text-borderGrey text-base font-medium'>{item.quantity} Strips</div>
                                 <div className='w-2/12  flex items-center text-borderGrey text-base font-medium'>{item.distributors[0]}</div>
@@ -796,7 +773,7 @@ const ProductDetails = () => {
 
         </div>
         {showPopup2 && <Popup2 onClose={togglePopup2} individualSelectedProduct={product} />}
-        {isEditing && <EditBatchPopup setisEditing={setIsEditing} editBatch={isEditingBatch}  />}
+        {isEditing && <EditBatchPopup setisEditing={setIsEditing} editBatch={isEditingBatch} />}
         {isDeleting && <ConfirmationPopup setisDeleting={setIsDeleting} deleteBatch={isEditingBatch} />}
     </>
 }

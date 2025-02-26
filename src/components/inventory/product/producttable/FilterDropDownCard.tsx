@@ -99,8 +99,6 @@ const FilterDropdwonCard = () => {
     selectedParties.forEach((id) => queryParams.append('selectedParties', id));
     if (startDate) queryParams.set('startDate', startDate.toISOString());
     if (endDate) queryParams.set('endDate', endDate.toISOString());
-    console.log(selectedInvoiceTypes);
-    selectedInvoiceTypes.forEach((type) => queryParams.append('selectedInvoiceTypes', type));
     selectedMoneyTypes.forEach((type) => queryParams.append('selectedMoneyTypes', type));
     const queryString = queryParams.toString();
     router.push(`?${queryString}`);
@@ -131,17 +129,6 @@ const FilterDropdwonCard = () => {
             Date Range
           </div>
          
-        </div>
-        <div
-          className={`px-2 py-1 ${
-            activeTab === "invoiceType" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
-          }  border-0 border-r border-solid border-borderGrey justify-start items-center gap-1 flex`}
-          onClick={() => handleTabChange("invoiceType")}
-        >
-          <div className={`text-sm font-bold ${activeTab === "invoiceType" ? "text-white" : "text-neutral-400"}`}>
-            Invoice Type
-          </div>
-          
         </div>
         <div
           className={`px-2 py-1 ${
