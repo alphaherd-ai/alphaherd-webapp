@@ -12,10 +12,10 @@ import { useAppSelector } from '@/lib/hooks';
 import { toast, Bounce } from 'react-toastify';
 
 import Loading2 from "@/app/loading2";
-import { set } from "date-fns";
+
 type PopupProps = {
     setisEditing: any;
-    editBatch: any
+    editBatch: any,
 }
 
 interface Distributors {
@@ -25,7 +25,7 @@ interface Distributors {
 
 
 
-const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch }) => {
+const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch}) => {
     console.log(editBatch);
     const [formData, setFormData] = useState<any>({});
     const [saving, isSaving] = useState(false);
@@ -33,7 +33,7 @@ const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch }) => {
     const [distributor, setDistributor] = useState<any>([]);
     
     useEffect(() => {
-
+        console.log("Edit Batch",editBatch);
         const fetchDistributors = async () => {
             try {
                 const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll?branchId=${appState.currentBranchId}`);
@@ -64,8 +64,9 @@ const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch }) => {
                 expiry: editBatch.expiry,
                 costPrice: editBatch.costPrice,
                 maxRetailPrice: editBatch.maxRetailPrice,
-                sellingPrice: editBatch.sellingPrice,
-                distributors: [editBatch.distributors[0]]
+                distributors: [editBatch.distributors[0]],
+                quantity: editBatch.quantity,
+                location: editBatch.location,
             });
         }
     }, []);
@@ -253,23 +254,39 @@ const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch }) => {
                 </div>
 
                 <div className="flex items-center gap-[20px] w-full">
-                    <div className="text-gray-500  text-base font-medium  w-2/12">Selling Price</div>
+                    <div className="text-gray-500  text-base font-medium  w-2/12">Quantity</div>
                     <div className="flex w-10/12">
 
                         <div className="flex-1 ml-1">
                             <input className="w-full px-2 h-9 text-textGrey2 text-base font-medium   focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="number"
-                                defaultValue={editBatch.sellingPrice}
+                                defaultValue={editBatch.quantity}
                                 onChange={(e) => setFormData((prev: any) => ({
                                     ...prev,
-                                    sellingPrice: Number(e.target.value)
+                                    quantity: Number(e.target.value)
                                 }))} />
 
                         </div>
 
                     </div>
                 </div>
+                
+                <div className="flex items-center gap-[20px] w-full">
+                    <div className="text-gray-500  text-base font-medium  w-2/12">Location</div>
+                    <div className="flex w-10/12">
 
+                        <div className="flex-1 ml-1">
+                            <input className="w-full px-2 h-9 text-textGrey2 text-base font-medium   focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
+                                defaultValue={editBatch.location}
+                                onChange={(e) => setFormData((prev: any) => ({
+                                    ...prev,
+                                    location:e.target.value
+                                }))} />
 
+                        </div>
+
+                    </div>
+                </div>
+                
 
                 <div className="self-end items-start gap-6 flex">
 

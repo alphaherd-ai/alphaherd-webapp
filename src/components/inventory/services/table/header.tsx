@@ -69,8 +69,6 @@ const InventoryServicesTableHeader = ({ onSortChange }: any) => {
                 </div>
                 <div className='flex items-center'>
                     <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
-
-                        <div className='flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'><Image src={Download} alt='Download' className='w-4  h-4' /></div>
                     </Link>
                     {/* <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
 
@@ -110,69 +108,6 @@ const InventoryServicesTableHeader = ({ onSortChange }: any) => {
                         </Dropdown>
                     </div> */}
 
-
-                    <div className="flex items-center justify-center h-7 mr-4 border border-solid border-gray-300 rounded-lg p-2">
-                        <div className="flex">
-                            <Image src={Sort} alt="Sort" className="w-3 h-3 mr-2" />
-                        </div>
-                        <Dropdown>
-                            <DropdownTrigger className="z-0">
-                                <Button variant="solid" className="capitalize border-none bg-transparent rounded-lg">
-                                    <div className="flex text-gray-500 items-center">
-                                        <div className="text-base">Sort By: {selectedSort}</div>
-                                    </div>
-                                </Button>
-                            </DropdownTrigger>
-
-
-                            {currentRoute.startsWith("/inventory/services/timeline") ?
-                                <DropdownMenu
-                                    aria-label="Sort options"
-                                    className="text-base text-gray-500 bg-gray-200 rounded-lg"
-                                    variant="solid"
-                                    disallowEmptySelection
-                                    selectionMode="single"
-                                    selectedKeys={new Set([selectedSort])}
-                                >
-                                    <DropdownItem
-                                        className="p-2 text-base"
-                                        key="name"
-                                        onClick={() => handleSortChange("name")}
-                                    >
-                                        Service Name
-                                    </DropdownItem>
-
-                                    <DropdownItem
-                                        className="p-2 text-base"
-                                        key="serviceCharge"
-                                        onClick={() => handleSortChange("serviceCharge")}
-                                    >
-                                        Selling Price
-                                    </DropdownItem>
-                                </DropdownMenu>
-
-                                :
-                                <DropdownMenu
-                                    aria-label="Sort options"
-                                    className="text-base text-gray-500 bg-gray-200 rounded-lg"
-                                    variant="solid"
-                                    disallowEmptySelection
-                                    selectionMode="single"
-                                    selectedKeys={new Set([selectedSort])}
-                                >
-                                    <DropdownItem
-                                        className="p-2 text-base"
-                                        key="date"
-                                        onClick={() => handleSortChange("date")}
-                                    >
-                                        Date of Registration
-                                    </DropdownItem>
-                                </DropdownMenu>
-                            }
-
-
-                        </Dropdown>
-                    </div>
 
                     <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg '>
                         <div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>

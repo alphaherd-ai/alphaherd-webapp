@@ -1,7 +1,6 @@
 'use client'
 import React,{useState} from 'react'
 import ProductTimelineItem from './timelineitems'
-import InventoryProductTableBottombar from './bottombar'
 import InventoryProductTableHeader from './header'
 
 const InventoryProductTimelineTable = () => {

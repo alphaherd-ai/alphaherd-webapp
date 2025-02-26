@@ -1,5 +1,5 @@
 import { Queue, Worker } from "bullmq";
-import IORedis from "ioredis";
+import IORedis from "ioredis"; 
 import prismaClient from "../../prisma";
 import { addWeeks, addMonths, addDays, addYears } from "date-fns";
 const redisConnection = new IORedis(
@@ -146,8 +146,3 @@ export const recurringExpenses = async ({ payload, schedule }: any) => {
   }
   getAllJobs();
 }
-
-
-
-
-

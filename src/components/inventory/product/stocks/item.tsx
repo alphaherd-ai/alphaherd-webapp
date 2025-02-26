@@ -208,6 +208,7 @@ const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
         return true;
       });
     }
+    console.log("filtered products",products);
     return products;
   };
   
@@ -230,7 +231,7 @@ const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
 
           <div className='w-2/6 flex items-center cursor-pointer transition-colors duration-300 no-underline hover:underline hover:text-teal-400  px-6  text-neutral-400 text-base font-medium'>
             <Tooltip content={(activeTabValue === 'Expired' || activeTabValue === 'Expiring') ? (product as ProductBatch).product.itemName : (product as Products).itemName} className='bg-black w-fit  text-white px-4 text-sm rounded-lg'>
-              <Link href={{ pathname: 'overview', query: { id: (product as ProductBatch).productId } }} className='transition-colors duration-300 text-gray-400 no-underline hover:underline hover:text-teal-400'>
+              <Link href={{ pathname: 'overview', query: { id: (product as ProductBatch).id } }} className='transition-colors duration-300 text-gray-400 no-underline hover:underline hover:text-teal-400'>
                 <p> {(activeTabValue === 'Expired' || activeTabValue === 'Expiring') ? (product as ProductBatch).product.itemName : (product as Products).itemName} </p>
               </Link>
             </Tooltip>
