@@ -19,7 +19,7 @@ import { useAppSelector } from "@/lib/hooks";
 import useSWR from 'swr';
 import { DataContext } from "./DataContext"
 import Popup from '../../../../inventory/product/producttable/newproductpopup';
-
+import Popup1 from '../../../../database/distributor/newdistributorpopup'
 import { useSearchParams } from "next/navigation"
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
@@ -97,17 +97,6 @@ const NewPurchasesTable = () => {
     ];
     const [showPopup, setShowPopup] = React.useState(false);
     const [showDistributorPopup, setDistributorPopup] = React.useState(false);
-
-    const Popup1: React.FC<Popup1Props> = ({ onClose, setNewDistributor, setIsNewDistributorClicked }) => {
-        return (
-          <div>
-            <button onClick={onClose}>Close</button>
-            {/* Use setNewDistributor and setIsNewDistributorClicked as needed */}
-          </div>
-        );
-      };
-      
-
     if(id){
         const {data,isLoading,error}=DataFromOrder(Number(id),appState.currentBranchId);
         orderData=data;
@@ -434,7 +423,7 @@ const NewPurchasesTable = () => {
                     <div className='flex pr-2'><Image src={addicon1} alt='addicon1' className='w-6 h-6 ' /></div>
                             New Distributor
                     </Button>
-                    {showDistributorPopup && <Popup1 onClose={ togglePopup1} setNewDistributor ={setNewDistributor} setIsNewDistributorClicked={setIsNewDistributorClicked} />}
+                    {showDistributorPopup && <Popup1 onClose={ togglePopup1}/>}
                     {/* {showDistributorPopup && <Popup1 onClose={ togglePopup1} />} */}
                    
 

@@ -87,8 +87,11 @@ const FinancesExpensesTable = () => {
       }
 
       if (selectedStatus.length > 0) {
+        console.log(selectedStatus);
         filteredData = filteredData.filter((item: any) =>
-          selectedStatus.some((status) => item.status.startsWith(status)))
+          selectedStatus.some((status) => (item.status?.startsWith(status)))
+        )
+        console.log("filteredData", filteredData);
       }
       //console.log(filteredData.length);
       setTotalLen(filteredData.length);
