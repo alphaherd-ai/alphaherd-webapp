@@ -1,8 +1,8 @@
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import calicon from "../../../../assets/icons/finance/calendar_today.svg";
+import Image from "next/image";
 import useSWR from 'swr';
 import { useAppSelector } from '@/lib/hooks';
 import { ExpenseStatus } from '@/utils/statusType';
@@ -67,7 +67,7 @@ const FilterDropdownCard = () => {
 
 
 
-  const [activeTab, setActiveTab] = useState("party");
+  const [activeTab, setActiveTab] = useState("dateRange");
 
   const handleTabChange = (tab: any) => {
     setActiveTab(tab);
@@ -84,22 +84,21 @@ const FilterDropdownCard = () => {
   }
 
   const url = useSearchParams();
-    const type = url.get('type')
-    const applyFilters = () => {
-      const queryParams = new URLSearchParams();
-      selectedStatus.forEach((status) => queryParams.append('selectedStatus', status));
-      selectedParties.forEach((id) => queryParams.append('selectedParties', id));
-      if (startDate) queryParams.set('startDate', startDate.toISOString());
-      if (endDate) queryParams.set('endDate', endDate.toISOString());
-      const queryString = queryParams.toString();
-      router.push(`?type=${type}&${queryString}`);
-  
-    };
+  const type = url.get('type')
+  const applyFilters = () => {
+    const queryParams = new URLSearchParams();
+    selectedStatus.forEach((status) => queryParams.append('selectedStatus', status));
+    selectedParties.forEach((id) => queryParams.append('selectedParties', id));
+    if (startDate) queryParams.set('startDate', startDate.toISOString());
+    if (endDate) queryParams.set('endDate', endDate.toISOString());
+    const queryString = queryParams.toString();
+    router.push(`?type=${type}&${queryString}`);
+  };
 
   return (
     <div className="w-[420px] h-[441px] min-h-fit px-4 py-6 bg-white rounded-[10px] flex-col justify-start items-start gap-4 inline-flex shadow-lg">
       <div className="items-start flex border border-solid border-borderGrey rounded-[5px] cursor-pointer">
-        <div
+        {/* <div
           className={`px-2 py-1 ${activeTab === "party" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
             } rounded-tl-[5px] rounded-bl-[5px] border-0 border-r border-solid border-borderGrey justify-start items-center gap-1 flex`}
           onClick={() => handleTabChange("party")}
@@ -108,7 +107,7 @@ const FilterDropdownCard = () => {
             Party
           </div>
 
-        </div>
+        </div> */}
         <div
           className={`px-2 py-1 ${activeTab === "dateRange" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
             }  border-0 border-r border-solid border-borderGrey justify-start items-center gap-1 flex`}

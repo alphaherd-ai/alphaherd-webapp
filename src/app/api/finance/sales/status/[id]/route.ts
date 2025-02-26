@@ -77,6 +77,11 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: number }
 
             }
           })
+          await prismaClient.inventoryTimeline.deleteMany({
+            where: {
+              invoiceNo: sales.invoiceNo,
+            },
+          });
         }
       }
 
