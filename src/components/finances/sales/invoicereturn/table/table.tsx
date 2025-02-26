@@ -264,9 +264,6 @@ const InvoiceReturnTable = () => {
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
                 <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-end items-center gap-6 flex">
 
-
-
-
                     {/* <Button
                         variant="solid"
                         className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer">
@@ -275,7 +272,7 @@ const InvoiceReturnTable = () => {
 
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px] overflow-auto max-h-[40rem]">
-                    <InvoiceReturnHeader existingHeaderData={otherData} />
+                    <InvoiceReturnHeader existingHeaderData={otherData} invoiceData={invoiceData}/>
                     <div>
                         <div className="w-full rounded-md border border-solid border-borderGrey">
                             <div className="w-full h-[84px] p-6 bg-white rounded-t-md  justify-between items-center gap-6 flex border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey">

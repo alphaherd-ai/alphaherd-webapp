@@ -107,7 +107,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({headerdata,setCount,expen
                 body: JSON.stringify({
                     partyName: headerdata?.title?.value,
                     invoiceLink: headerdata.invoiceNo,
-                    receiptNo: formData.receiptNo,
+                    receiptNo: initialInvoiceNo,
                     date: formData.date || new Date(),
                     amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1*formData.amountPaid, 10) || (balanceDue),
                     mode: selectedMode,
@@ -133,7 +133,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({headerdata,setCount,expen
             date: formData.date || new Date(),
             isAdvancePayment: isAdvancePayment,
             mode: selectedMode,
-            receiptNo: formData.receiptNo,
+            receiptNo: initialInvoiceNo,
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
             
         };
@@ -141,7 +141,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({headerdata,setCount,expen
         dispatch(addAmount({
             amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1*formData.amountPaid, 10) || (balanceDue),
             mode: selectedMode,
-            receiptNo: formData.receiptNo,
+            receiptNo: initialInvoiceNo,
             invoiceLink: headerdata.invoiceNo,
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
             date: formData.date || new Date()

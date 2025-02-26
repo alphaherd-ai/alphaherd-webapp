@@ -22,7 +22,11 @@
 // /** @type {import('next').NextConfig} */
 // const nextConfig = {
 //   images: {
-//     domains: ['res.cloudinary.com'],
+//       domains: ['res.cloudinary.com'],
+//     },
+//   basePath: process.env.BASE_PATH,
+//   env: {
+//      NEXTAUTH_URL: process.env.NEXTAUTH_URL,
 //   },
 //   webpack(config) {
 //     config.module.rules.push({
@@ -31,12 +35,10 @@
 //       generator: {
 //         filename: 'static/media/[name].[hash][ext]', // Output path for processed files
 //       },
-//     })
+//     });
 //     return config;
 //   },
+//   reactStrictMode: false,
 // }
+
 // module.exports = nextConfig;
-
-
-
-
