@@ -45,15 +45,15 @@ const FinancesExpensesTableHeader = ({ recurringCount, nonrecurringCount,expense
               
                 useEffect(() => {
                   const checkFilterState = () => {
-                    const startDate = searchParams.get("startDate")
-                    const endDate = searchParams.get("endDate")
-                    const party = searchParams.get("selectedParties")
-                    const status = searchParams.get("selectedStatus")
+                    const startDate = currentUrl.get("startDate")
+                    const endDate = currentUrl.get("endDate")
+                    const party = currentUrl.get("selectedParties")
+                    const status = currentUrl.get("selectedStatus")
                     setIsActive(Boolean(startDate || endDate || party || status))
                   }
               
                   checkFilterState()
-                }, [searchParams])
+                }, [currentUrl])
               
                 return isActive
               }
@@ -64,7 +64,7 @@ const FinancesExpensesTableHeader = ({ recurringCount, nonrecurringCount,expense
                 // const pathWithoutQuery = window.location.pathname
                 
                 // // Get the 'type' parameter as we want to preserve it
-                // const type = searchParams.get("type") || "all"
+                // const type = currentUrl.get("type") || "all"
             
                 // // Navigate to the base URL with only the type parameter
                 // router.push(`${pathWithoutQuery}?type=${type}`)

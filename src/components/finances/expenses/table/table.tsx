@@ -85,7 +85,6 @@ const FinancesExpensesTable = () => {
           selectedParties.includes(item.customer)
         );
       }
-
       if (selectedStatus.length > 0) {
         console.log(selectedStatus);
         filteredData = filteredData.filter((item: any) =>
