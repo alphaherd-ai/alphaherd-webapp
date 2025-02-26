@@ -70,6 +70,7 @@ const InvoiceReturnBottomBar = ({ invoiceData }: any) => {
             recordTransaction: {
                 create: allData.transactionsData
             },
+            date:(id===null) ? allData.headerData.date : invoiceData.date,
             status: balanceDue <= -1 ? `You’re owed: ₹${parseFloat((-1*balanceDue).toFixed(2))}` : balanceDue >= 1 ? `You owe: ₹${parseFloat((balanceDue).toFixed(2))}` : 'Closed',
             type: FinanceCreationType.Sales_Return,
             items: {

@@ -131,6 +131,8 @@ const NewsalesTable = () => {
             itemName: "",
         });
     },[])
+
+    
     useEffect(() => {
         if (!isEstimateDataLoading && estimateData && !isEstimateDataError) {
             const { items, ...otherData } = estimateData;
@@ -150,11 +152,19 @@ const NewsalesTable = () => {
                 id: item.itemType === 'product' ? item.productBatch.id : item.serviceId,
                 provider: item.itemType === 'product' ? "" : item.serviceProvider
             }));
-            setItems((prevItems: any) => [...itemData,...prevItems]);
-            
-            
+            setItems((prevItems: any) => {
+                const combinedItems = [...itemData, ...prevItems];
+    
+               
+                const uniqueItems = combinedItems.filter(
+                    (item, index, self) =>
+                        index === self.findIndex((i) => i.id === item.id)
+                );
+    
+                return uniqueItems;
+            });    
         }
-    }, [estimateData, id,isEstimateDataLoading,isEstimateDataError]);
+    }, [estimateData,isEstimateDataLoading,isEstimateDataError]);
 
     useEffect(() => {
         if (confirmAction === 'idle' || confirmAction === 'Save') {

@@ -37,6 +37,21 @@ export const POST = async (req: NextRequest) => {
                 },
             });
         }
+        else if(body.financeType === 'expense'){
+            const expense = await prismaClient.expenses.findFirst({
+                where: {
+                    financeSectionId: financeId,
+                    invoiceNo: body.invoice
+                }
+            })
+            return new Response(JSON.stringify(expense), {
+                status: 201,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            
+        }
 
     } catch (error) {
         console.error(error)

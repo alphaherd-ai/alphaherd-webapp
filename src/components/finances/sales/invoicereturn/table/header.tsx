@@ -16,7 +16,7 @@ import Loading2 from '@/app/loading2';
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
-const InvoiceReturnHeader = ({ existingHeaderData }: any) => {
+const InvoiceReturnHeader = ({ existingHeaderData,invoiceData }: any) => {
     const url = useSearchParams();
     const id = url.get('id');
     const count = url.get('count');
@@ -37,16 +37,27 @@ const InvoiceReturnHeader = ({ existingHeaderData }: any) => {
         }
     }, [disableButton]);
     const [invoiceNo] = useState(`SR-${initialInvoiceNo}`);
+
+
     const handleEditButtonClick = () => {
         setDisableButton(!disableButton);
     };
     useEffect(() => {
         setHeaderData((prevData) => ({ ...prevData, invoiceNo: invoiceNo }));
     }, [invoiceNo])
+
+
     const handleDateChange = (date: any) => {
         setStartDate(date);
         setHeaderData((prevData) => ({ ...prevData, date }));
+        invoiceData.date=date;
     };
+
+    const handleDueDateChange = (date: any) => {
+        setDueDate(date);
+        setHeaderData((prevData) => ({ ...prevData, dueDate: date }))
+        invoiceData.dueDate=date;
+    }
 
 
     useEffect(() => {
@@ -101,6 +112,8 @@ const InvoiceReturnHeader = ({ existingHeaderData }: any) => {
         }),
         menuPortal: (base: any) => ({ ...base, zIndex: 9999 })
     };
+
+
 
     return (
         <>
@@ -158,32 +171,35 @@ const InvoiceReturnHeader = ({ existingHeaderData }: any) => {
                         <div className="flex items-center w-full gap-2">
                             <div className={"text-textGrey2 text-base font-medium w-full"}>
                                 {!isLoading ? (
-                                    <DatePicker
-                                        className="w-full"
-                                        selected={startDate}
-                                        onChange={handleDateChange}
-                                        calendarClassName="react-datepicker-custom"
-                                        customInput={
-                                            <div className='relative'>
-                                                <input
-                                                    className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={startDate.toLocaleDateString()}
-                                                    readOnly
-                                                />
-                                            </div>
-                                        }
-                                    />
+                                    <div className="customDatePickerWidth">
+                                        <DatePicker
+                                            className="w-full"
+                                            selected={startDate}
+                                            onChange={handleDateChange}
+                                            calendarClassName="react-datepicker-custom"
+                                            customInput={
+                                                <div className='relative '>
+                                                    <input
+                                                        className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                                        value={startDate.toLocaleDateString()}
+                                                        readOnly
+                                                    />
+                                                    <Image
+                                                        src={calicon}
+                                                        alt="Calendar Icon"
+                                                        className="absolute right-2 top-2 cursor-pointer"
+                                                        width={50}
+                                                        height={20}
+                                                    />
+                                                </div>
+                                            }
+                                        />
+                                    </div>
                                 ) : (
                                     <Loading2 />
                                 )}
                             </div>
-                            <Image
-                                src={calicon}
-                                alt="Calendar Icon"
-                                className="cursor-pointer"
-                                width={50}
-                                height={20}
-                            />
+
                         </div>
                     </div>
                 </div>
@@ -194,32 +210,35 @@ const InvoiceReturnHeader = ({ existingHeaderData }: any) => {
                         <div className="flex items-center w-full gap-2">
                             <div className={"text-textGrey2 text-base font-medium w-full"}>
                                 {!isLoading ? (
-                                    <DatePicker
-                                        className="w-full"
-                                        selected={startDate}
-                                        onChange={handleDateChange}
-                                        calendarClassName="react-datepicker-custom"
-                                        customInput={
-                                            <div className="relative">
-                                                <input
-                                                    className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                    value={startDate.toLocaleDateString()}
-                                                    readOnly
-                                                />
-                                            </div>
-                                        }
-                                    />
+                                    <div className="customDatePickerWidth">
+                                        <DatePicker
+                                            className="w-full"
+                                            selected={dueDate}
+                                            onChange={handleDueDateChange}
+                                            calendarClassName="react-datepicker-custom"
+                                            customInput={
+                                                <div className='relative'>
+                                                    <input
+                                                        className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                                        value={headerData?.dueDate?.toLocaleDateString() || dueDate.toLocaleDateString()}
+                                                        readOnly
+                                                    />
+                                                    <Image
+                                                        src={calicon}
+                                                        alt="Calendar Icon"
+                                                        className="absolute right-2 top-2 cursor-pointer"
+                                                        width={50}
+                                                        height={20}
+                                                    />
+                                                </div>
+                                            }
+                                        />
+                                    </div>
                                 ) : (
                                     <Loading2 />
                                 )}
                             </div>
-                            <Image
-                                src={calicon}
-                                alt="Calendar Icon"
-                                className="cursor-pointer"
-                                width={50}
-                                height={20}
-                            />
+                            
                         </div>
                     </div>
                 </div>

@@ -285,12 +285,14 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
 
 
             const currentYear1 = new Date().getFullYear();
-            const startDate = new Date(currentYear1, 3, 1);
-            const endDate = new Date(currentYear1 + 1, 3, 1);
+            const startDate = new Date(currentYear1-1, 3, 1);
+            const endDate = new Date(currentYear1 , 3, 1);
 
             hsnSummaryArray.forEach((item, index) => {
                 const itemDate = (item.date);
+                //console.log(item.date,startDate,endDate);
                 if (new Date(itemDate) >= startDate && new Date(itemDate) < endDate) {
+                    
                     const transactionData = [
                         index + 1,
                         item.hsnCode,
@@ -382,8 +384,8 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
             const tableRows: any = [];
 
             const currentYear1 = new Date().getFullYear();
-            const startDate = new Date(currentYear1, new Date().getMonth() < 3 ? currentYear1 - 1 : currentYear1, 3, 1);
-            const endDate = new Date(startDate.getFullYear() + 1, 2, 31);
+            const startDate = new Date(currentYear1-1, 3, 1);
+            const endDate = new Date(currentYear1 , 3, 1);
 
 
             hsnSummaryArray1.forEach((item, index) => {
@@ -482,8 +484,8 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
             const tableRows: any = [];
 
             const currentYear1 = new Date().getFullYear();
-            const startDate = new Date(currentYear1, 3, 1);
-            const endDate = new Date(currentYear1 + 1, 3, 1);
+            const startDate = new Date(currentYear1-1, 3, 1);
+            const endDate = new Date(currentYear1 , 3, 1);
 
             hsnSummaryArray2.forEach((item, index) => {
                 const itemDate = (item.date);
@@ -580,8 +582,8 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
 
 
             const currentYear1 = new Date().getFullYear();
-            const startDate = new Date(currentYear1, 3, 1);
-            const endDate = new Date(currentYear1 + 1, 3, 1);
+            const startDate = new Date(currentYear1-1, 3, 1);
+            const endDate = new Date(currentYear1 , 3, 1);
 
             hsnSummaryArray3.forEach((item, index) => {
                 const itemDate = (item.date);
