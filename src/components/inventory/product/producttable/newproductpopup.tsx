@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import {  Button } from "@nextui-org/react";
 
 import closeicon from "../../../../assets/icons/inventory/closeIcon.svg";
-import arrowicon from "../../../../assets/icons/inventory/arrow.svg";
 import Check from "../../../../assets/icons/database/check.svg"
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
@@ -12,7 +11,6 @@ import { useAppSelector } from "@/lib/hooks";
 import useSWR from 'swr';
 import axios from "axios";
 import Distributors from "@/app/database/distributor/page";
-
 
 import { ItemUnit } from "@prisma/client";
 import Loading2 from "@/app/loading2";
@@ -347,8 +345,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
         <>
             {!lastStep && (
                 <div className="w-full h-full overflow-auto flex justify-center items-center fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50">
-                    <div className="w-[640px] h-[787px] px-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-6 flex">
-                        <div className="self-end items-start gap-6 flex mt-[0.6rem] cursor-pointer" onClick={onClose}>
+                    <div className="w-[640px] h-[680px] px-8 bg-gray-100 rounded-[20px] shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] flex-col justify-start items-start gap-5 flex">
+                        <div className="self-end items-start pt-2 gap-6 flex mt-[0.6rem] cursor-pointer" onClick={onClose}>
                             <Image src={closeicon} alt="close"></Image>
                         </div>
                         <div className="text-gray-500 text-xl font-medium">New Product</div>
@@ -453,15 +451,38 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                             <textarea className="text-gray-400 text-base font-medium mt-[8px] px-2 py-2 outline-none border border-solid border-gray-300 rounded-md" placeholder="Provide details of the service" rows={1} cols={68} onChange={(e) => handleChange("description", e.target.value)}></textarea>
 
                         </div>
-                        <div className="self-end items-start  flex">
+                        <div className="self-end items-start flex">
                             <button
                                 onClick={handleContinue}
                                 className={`px-4 py-2.5 rounded-[5px] justify-start items-center  flex outline-none border-none cursor-pointer 
-                                    ${isSaveDisabled ? 'bg-gray-200' : 'bg-zinc-200'}`}
+                                    ${isSaveDisabled ? 'bg-gray-200' : 'bg-zinc-900'}`}
                                 disabled={isSaveDisabled}
                             >
-                                <div className={`text-base font-bold ${isSaveDisabled ? 'text-neutral-400' : 'text-neutral-900'}`}>Continue</div>
-                                <Image className={isSaveDisabled ? 'hidden' : 'block'} src={arrowicon} alt="arrow" />
+                                <div className={`text-base font-bold ${isSaveDisabled ? 'text-neutral-400' : 'text-white'}`}>Continue</div>
+                                {!isSaveDisabled ? (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className="block fill-current text-[#38F8E6]"
+  >
+    <path d="M12.9109 11.975L7.96094 7.02499L9.37509 5.61084L15.7392 11.975L9.37509 18.3391L7.96094 16.925L12.9109 11.975Z" />
+  </svg>
+) : (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className="hidden" // Change to desired gray color
+  >
+    <path d="M12.9109 11.975L7.96094 7.02499L9.37509 5.61084L15.7392 11.975L9.37509 18.3391L7.96094 16.925L12.9109 11.975Z" />
+  </svg>
+)}
+
                             </button>
                         </div>
                     </div>
@@ -483,7 +504,14 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                             </div>
                             <div className="justify-start items-center gap-4 flex">
                                 <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-2 flex">
-                                    <input className="p-2 rounded-md border-0 focus:border-0 focus:outline-none w-[263px] h-11 text-neutral-400 text-base font-medium" type="number" name="minStock" onChange={(e) => handleChange("minStock", e.target.value)} />
+                                <input 
+  className="p-2 rounded-md border border-[0.5px] border-[#A2A3A3] focus:outline-none w-[263px] h-11 text-neutral-400 text-base font-medium" 
+  type="number" 
+  name="minStock" 
+  onChange={(e) => handleChange('minStock', e.target.value)} 
+/>
+
+
 
 
                                 </div>
@@ -501,7 +529,13 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                             </div>
                             <div className="justify-start items-center gap-4 flex">
                                 <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-2 flex">
-                                    <input className="p-2 rounded-md border-0 focus:border-0 focus:outline-none w-[263px] h-11 text-neutral-400 text-base font-medium" type="number" name="maxStock" onChange={(e) => handleChange("maxStock", e.target.value)} />
+                                <input 
+  className="p-2 rounded-md border border-[0.5px] border-[#A2A3A3] focus:outline-none w-[263px] h-11 text-neutral-400 text-base font-medium" 
+  type="number" 
+  name="minStock" 
+  onChange={(e) => handleChange('minStock', e.target.value)} 
+/>
+
 
 
                                 </div>
@@ -512,8 +546,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="w-[545px] flex justify-end mt-[5px] cursor-pointer">
-                            <Button
+                        <div className="w-[545px] flex justify-end mt-[5px]">
+                            {/* <Button
                                 onClick={handleSaveClick}
                                 className="px-5 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex outline-none border-none"
                                 disabled={loading}
@@ -523,7 +557,18 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                                     <Image src={Check} alt="Check" className="mr-4" />
                                 </div>
                                 <div className="text-white text-base font-bold">{loading ?<Loading2/> :"Save"}</div>
-                            </Button>
+                            </Button> */}
+                            <Button
+  onClick={handleSaveClick}
+  className="px-5 py-2.5 bg-zinc-900 rounded-[5px] flex items-center gap-2 outline-none border-none cursor-pointer"
+  disabled={loading}
+>
+  <div className="w-6 h-6 flex items-center justify-center">
+    <Image src={Check} alt="Check" className="mr-2" />
+  </div>
+  <div className="text-white text-base font-bold">{loading ? <Loading2 /> : "Save"}</div>
+</Button>
+
                         </div>
                     </div>
 

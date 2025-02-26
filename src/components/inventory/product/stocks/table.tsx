@@ -1,7 +1,5 @@
 'use client';
 import React, { useState } from 'react'
-import InventoryProductStockTableBottombar from './bottombar'
-
 import InventoryProductStockTableHeader from './header'
 import ServicesStockItem from './item'
 

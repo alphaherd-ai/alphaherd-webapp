@@ -214,7 +214,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
             // Validation
             if (field === 'name') {
                 const isServiceExists = serviceList?.some((service: any) => (service.name).toLowerCase() === (value).toLowerCase());
-                console.log(isServiceExists);
+                console.log("service exists",isServiceExists);
                 setNameError(isServiceExists ? 'The service name  you are trying to add already exists' : value ? '' : 'Service name is required');
                 
             }
@@ -478,10 +478,10 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
                     <button
                             onClick={handleSaveClick}
                             disabled={!formData.serviceCharge || !formData.tax || loading}
-                            className={`px-4 py-2.5 rounded-[5px] justify-start items-center gap-1 flex border-0 outline-none cursor-pointer ${formData.name ? "bg-zinc-900" : "bg-gray-500"
+                            className={`px-4 py-2.5 rounded-[5px] justify-start items-center gap-1 flex border-0 outline-none cursor-pointer ${formData.serviceCharge ? "bg-zinc-900" : "bg-gray-200"
                                 }`}
                         >
-                            <div className={`text-base font-bold ${(formData.serviceCharge && formData.tax) ? "text-white" : "text-neutral-200 cursor-not-allowed"}`}>
+                            <div className={`text-base font-bold ${(formData.serviceCharge && formData.tax) ? "text-white" : "text-neutral-400 cursor-not-allowed"}`}>
                                 {loading ? <Loading2 /> : "Save"}
                             </div>
                             {(formData.serviceCharge && formData.tax) && (
