@@ -38,9 +38,9 @@ const NewExpensesHeader = ({existingHeaderData}:any) => {
     }, [disableButton]);
     const [invoiceNo] = useState(`EXP-${initialInvoiceNo}`);
 
-    const handleEditButtonClick = () => {
-        setDisableButton(!disableButton);
-    };
+    // const handleEditButtonClick = () => {
+    //     setDisableButton(!disableButton);
+    // };
 
     const handleDateChange = (date:any) => {
         setStartDate(date);
@@ -145,9 +145,9 @@ const NewExpensesHeader = ({existingHeaderData}:any) => {
                                 existingHeaderData.invoiceNo
                             )}
                             
-                            <button onClick={handleEditButtonClick} className="border-0">
+                            {/* <button onClick={handleEditButtonClick} className="border-0">
                                 <Image src={editicon} alt="edit" />
-                            </button>
+                            </button> */}
                         </div>
                     </div>
                 </div>

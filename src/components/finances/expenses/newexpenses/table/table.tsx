@@ -378,8 +378,8 @@ const handleItemName=(event:any,index:any)=>{
                         <div>
                             <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12  text-textGrey2 border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey'>
                                 <div className=' flex text-textGrey2 text-base font-medium w-[3rem]'>No.</div>
-                                <div className=' flex text-textGrey2 text-base font-medium w-[15rem]'>Name</div>
-                                <div className=' flex text-textGrey2 text-base font-medium w-[12rem]'>Cost</div>
+                                <div className=' flex text-textGrey2 text-base font-medium w-[15rem]'>Name*</div>
+                                <div className=' flex text-textGrey2 text-base font-medium w-[12rem]'>Cost*</div>
                                 <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>Transaction ID</div>
                                 <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>Invoice No.</div>
                                 <div className=' flex text-textGrey2 text-base font-medium w-[10rem]'>Category</div>
