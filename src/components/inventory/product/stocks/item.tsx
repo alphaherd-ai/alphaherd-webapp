@@ -156,7 +156,7 @@ const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
         return mergedProducts.filter(product => product.quantity <= product.minStock);
       } else if (activeTabValue === "Excess") {
         mergedProducts.forEach(product => {
-          if (product.quantity >= product.maxStock) {
+          if (product.maxStock !== undefined && product.quantity >= product.maxStock) {
             if (isOlderThanOneWeek(product.excessNotif)) {
               const notifData = {
                 source: Notif_Source.Inventory_Product_MaxStock,
