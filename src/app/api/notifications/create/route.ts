@@ -1,7 +1,6 @@
-import { connectToDB } from '../../../../utils/index';
+
 import prismaClient from '../../../../../prisma';
 import { NextRequest } from 'next/server';
-import { notifications } from '@/utils/notifications';
 
 export const POST=async(req: NextRequest,res:Response)=> {
   if (req.method !== 'POST') {
@@ -9,7 +8,8 @@ export const POST=async(req: NextRequest,res:Response)=> {
 } 
     try {
       const body = await req.json();
-      const message=notifications(body);
+      const message=body.message;
+
       const notifs= await prismaClient.notifications.create({
         data:{
             message:message,

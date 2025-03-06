@@ -143,6 +143,7 @@ const ServiceDetails = () => {
                 );
                 const results = await Promise.all(promises);
                 setProductDetails(results);
+                console.log("Product Details",productDetails);
             } catch (error) {
                 console.error('Failed to fetch product details:', error);
             }
@@ -700,24 +701,22 @@ const ServiceDetails = () => {
                     <div>
                         <div className='flex justify-evenly  w-full  items-center box-border bg-gray-100  h-12 py-4 border-b border-borderGrey text-textGrey2'>
                             <div className='flex text-textGrey2 text-base font-medium  w-[10rem]'>Product</div>
-                            <div className='flex text-textGrey2 text-base font-medium  w-[10rem]'>Item Quantity</div>
+                            <div className='flex text-textGrey2 text-base font-medium  w-[10rem]'>Batch Quantity</div>
                             <div className='flex text-textGrey2 text-base font-medium  w-[10rem]'>Batch Number</div>
                             <div className='flex text-textGrey2 text-base font-medium  w-[10rem]'>Expiry Date</div>
                             <div className='flex text-textGrey2 text-base font-medium  w-[10rem]'>Cost Price</div>
                             <div className='flex text-textGrey2 text-base font-medium  w-[10rem]'>Selling Price</div>
-                            <div className='flex text-textGrey2 text-base font-medium  w-[10rem]'>Stock Level</div>
                         </div>
                         {loading && <Loading2 />}
                         {productDetails?.map((item: any) => (
                             item?.productBatches?.map((batch: any) => (
                                 <div key={batch?.id} className='flex items-center justify-evenly w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
                                     <div className='w-[10rem]  flex text-textGrey2 text-base font-medium'>{item?.itemName}</div>
-                                    <div className='w-[10rem]  flex text-textGrey2 text-base font-medium'>{item?.totalQuantity}</div>
+                                    <div className='w-[10rem]  flex text-textGrey2 text-base font-medium'>{batch?.quantity}</div>
                                     <div className='w-[10rem]  flex text-textGrey2 text-base font-medium'>{batch?.batchNumber}</div>
                                     <div className='w-[10rem]  flex text-textGrey2 text-base font-medium'>{formatDateAndTime(batch?.expiry).formattedDate}</div>
                                     <div className='w-[10rem]  flex text-textGrey2 text-base font-medium'>₹{batch?.costPrice}</div>
                                     <div className='w-[10rem]  flex text-textGrey2 text-base font-medium'>₹{batch?.sellingPrice}</div>
-                                    <div className='w-[10rem]  flex text-textGrey2 text-base font-medium'>{item?.stockLevel}</div>
                                 </div>
                             ))
                         ))}

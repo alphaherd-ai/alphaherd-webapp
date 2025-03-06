@@ -27,6 +27,10 @@ enum Notif_Source {
   Sales_Invoice
   Expense_Invoice
   Purchase_Order_Due
+  Expense_Payment_Reminder
+  Sales_Approval_Request
+  Purchases_Approval_Request
+  Expenses_Approval_Request
 }
 
 enum Sales_Status {
@@ -386,6 +390,7 @@ model Sales {
   FinanceSection    FinanceSection?      @relation(fields: [financeSectionId], references: [id])
   financeSectionId  Int?
   clientId          Int?
+  lastDueNotif         DateTime?
 
   @@index([financeSectionId, id])
   @@index([financeSectionId, invoiceNo])
@@ -463,6 +468,7 @@ model Expenses {
   financeTimeline     FinanceTimeline[]
   FinanceSection      FinanceSection?     @relation(fields: [financeSectionId], references: [id])
   financeSectionId    Int?
+  lastDueNotification DateTime?
 
   @@index([financeSectionId, id])
 }

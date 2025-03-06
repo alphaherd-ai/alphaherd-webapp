@@ -24,70 +24,77 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ transaction, setS
 
 
     const handleCancel = async () => {
+        const isApproved = appState.isCurrentOrgAdmin;
+        console.log("isApproved",isApproved);
         setLoading(true);
-        try {
-
-            const response = await axios.put(
-                `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/${transaction?.id}?branchId=${appState.currentBranchId}`,
-                {
-
-                    moneyChange: "Cancelled",
-                },
-                {
-
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                }
-            );
-
-            if (response.status !== 201) {
-                setLoading(false);
-                return;
-            }
-
-           
-
-            const editRecordTransaction = {
-                receiptNo:transaction?.receiptNo,
-                moneyChange: "Cancelled",
-            };
-
+        if(isApproved){
             try {
 
-                const putResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/editRecordTransaction/${transaction?.invoiceLink}/?branchId=${appState.currentBranchId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
+                const response = await axios.put(
+                    `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/${transaction?.id}?branchId=${appState.currentBranchId}`,
+                    {
+
+                        moneyChange: "Cancelled",
                     },
-                    body: JSON.stringify({
-                        recordTransaction: [editRecordTransaction]
-                    })
-                });
+                    {
 
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    }
+                );
 
-                if (putResponse.status !== 201) {
+                if (response.status !== 201) {
                     setLoading(false);
                     return;
                 }
-                else if (putResponse.status === 201) {
-                    setShowConfirmation(false);
+
+            
+
+                const editRecordTransaction = {
+                    receiptNo:transaction?.receiptNo,
+                    moneyChange: "Cancelled",
+                };
+
+                try {
+
+                    const putResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/editRecordTransaction/${transaction?.invoiceLink}/?branchId=${appState.currentBranchId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            recordTransaction: [editRecordTransaction]
+                        })
+                    });
+
+
+                    if (putResponse.status !== 201) {
+                        setLoading(false);
+                        return;
+                    }
+                    else if (putResponse.status === 201) {
+                        setShowConfirmation(false);
+                    }
                 }
+
+                catch (error) {
+                    console.log(error)
+
+                }
+
+
+
             }
-
-            catch (error) {
-                console.log(error)
-
+            catch (err) {
+                console.log(err);
             }
-
-
-
+            finally {
+                setLoading(false);
+            }
         }
-        catch (err) {
-            console.log(err);
-        }
-        finally {
-            setLoading(false);
+        else{
+            
         }
     }
 

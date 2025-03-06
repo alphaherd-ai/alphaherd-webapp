@@ -92,6 +92,7 @@ const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
         id: productID,
         lastExpiryNotif: new Date().toISOString(),
       });
+      console.log(`Expiry notification sent for productId ${productID}`);
     } catch (error) {
       console.error("Failed to send notification:", error);
     }
@@ -200,7 +201,7 @@ const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
                 productName: product.product?.itemName,
                 url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/all`,
               };
-              sendexpiringNotification(notifData, product.id);
+              // sendexpiringNotification(notifData, product.id);
             }
           }
           return expiryDate > currentDate && (expiryDate.getTime() - currentDate.getTime()) <= Number(30 * 24 * 60 * 60 * 1000);

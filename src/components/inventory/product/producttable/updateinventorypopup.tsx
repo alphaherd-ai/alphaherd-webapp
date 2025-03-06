@@ -544,7 +544,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                     distributors:[providers],
                     location,
                     productId,
-                    isApproved: appState.isCurrentOrgAdmin ? true : false
+                    isApproved : appState.isCurrentOrgAdmin ? true : false
                 };
                 console.log("body is ", body);
                 if (selectedOption === Stock.StockOUT) {
@@ -554,11 +554,17 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                         const notifData = {
                             totalItems: body.quantity,
                             source: Notif_Source.Inventory_Timeline_Removed,
-                            url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/timeline`,
-                            orgId: appState.currentOrgId
+                            url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/overview/${body.productId}`,
+                            orgId: appState.currentOrgId,
+                            data: {
+                                body1: body,
+                                productId: id,
+                                message:`Stock levels successfully updated for ${body.quantity} items. Click here to see items removed from inventory.`
+                            },
                         }
                         // console.log("nnotifs data : ",notifData);
                         const notifPromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
+                        
                         setTimeout(() => {
                             onClose();
                         }, 2000)
@@ -689,6 +695,8 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
     }, [appState.currentBranchId]);
 
     const [location1, setLocation] = useState<any[]>([]);
+    const [selectedLocation, setSelectedLocation] = useState<any | null>(null);
+
     useEffect(() => {
         const fetchlocation = async () => {
             try {
@@ -705,6 +713,9 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                 }, []);
                 console.log("location list is ", locationList);
                 setLocation(locationList);
+                if(locationList.length>0){
+                    setSelectedLocation(locationList[0]);
+                }
             } catch (error) {
                 console.log("Error fetching location", error);
             }
@@ -884,6 +895,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                                         isSearchable={true}
                                         options={location1} // Ensure this is an array of objects with { value, label }
                                         name="Location"
+                                        value={selectedLocation}
                                         // onChange={(value) => handleInputChange(index, 'location', value)}
                                         onChange={handleLocationInput} // Pass the selected option object
                                         styles={customStyles}
