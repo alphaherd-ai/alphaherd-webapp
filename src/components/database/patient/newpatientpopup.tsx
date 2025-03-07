@@ -60,9 +60,11 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
 
 
     useEffect(() => {
-        setSelectedGender(editPatient.gender || 'unspecified');
-        setStartDate(editPatient.dateOfBirth ? new Date(editPatient.dateOfBirth) : null);
-        setAge(editPatient.age ? calculateAge(new Date(editPatient.dateOfBirth)) : { years: 0, months: 0, days: 0 });
+        if (editPatient) {
+            setSelectedGender(editPatient.gender || 'unspecified');
+            setStartDate(editPatient.dateOfBirth ? new Date(editPatient.dateOfBirth) : null);
+            setAge(editPatient.age ? calculateAge(new Date(editPatient.dateOfBirth)) : { years: 0, months: 0, days: 0 });
+        }
     }, [editPatient])
 
 
