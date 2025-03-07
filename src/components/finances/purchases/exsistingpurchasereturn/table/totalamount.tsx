@@ -94,7 +94,7 @@ const ExsistingPurcaseReturnTotalAmount = ({ otherData, isLoading }: any) => {
 
             < div className={`flex gap-4 ${otherData?.status === 'Cancelled' ? "justify-end" : ""}   pt-[20px] pb-[20px]`}>
                 <div className="w-1/2 mr-4 flex flex-col gap-4">
-                    <div className="px-6 py-2 mt-4 bg-white rounded-[5px] justify-between items-center gap-4 flex w-full border border-solid border-borderGrey">
+                    {/* <div className="px-6 py-2 mt-4 bg-white rounded-[5px] justify-between items-center gap-4 flex w-full border border-solid border-borderGrey">
                         <div className="flex gap-[0.2rem] items-center w-full">
                             <div className="text-gray-500 text-base font-bold  w-[20rem]">Last Date Of Item Returns:</div>
 
@@ -102,7 +102,7 @@ const ExsistingPurcaseReturnTotalAmount = ({ otherData, isLoading }: any) => {
                                 {formatDateAndTime(otherData?.returnLastDate).formattedDate}
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                     {!(otherData?.status === 'Cancelled') &&
 
                         <div className="w-full mr-4 flex flex-col mt-8 rounded-[20px]">

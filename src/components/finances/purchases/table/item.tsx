@@ -29,7 +29,7 @@ const FinancesPurchasesTableItem = ({ onCountsChange, purchases, data, isLoading
       setReturnCount(data.filter((purchase: any) => purchase.type === FinanceCreationType.Purchase_Return).length);
     }
   }, [data]);
-
+  console.log(purchases);
 
   const handleCounts = () => {
 
@@ -70,6 +70,7 @@ const FinancesPurchasesTableItem = ({ onCountsChange, purchases, data, isLoading
                 {
                   (() => {
                     const status = purchase?.status || "";
+                    console.log(status);
                     const statusParts = status.trim() ? status.split('|').map((part: string) => part.trim()) : ["Closed"];
                     //console.log(statusParts);
                     if (!statusParts.length) {

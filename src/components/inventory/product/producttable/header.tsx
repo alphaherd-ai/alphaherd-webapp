@@ -47,7 +47,8 @@ const InventoryProductTableHeader = ({ onSortChange }: any) => {
               const checkFilterState = () => {
                 const party = searchParams.get("selectedParties")
                 const category = searchParams.get("selectedCategories")
-                setIsActive(Boolean(party || category))
+                const moneyType = searchParams.get("selectedMoneyTypes")
+                setIsActive(Boolean(party || category || moneyType))
               }
           
               checkFilterState()
@@ -58,14 +59,6 @@ const InventoryProductTableHeader = ({ onSortChange }: any) => {
         const isFilterActive = useFilterState();
     
         const handleClearFilters = () => {
-            // // Get the base path without query parameters
-            // const pathWithoutQuery = window.location.pathname
-            
-            // // Get the 'type' parameter as we want to preserve it
-            // const type = searchParams.get("type") || "all"
-        
-            // // Navigate to the base URL with only the type parameter
-            // router.push(`${pathWithoutQuery}?type=${type}`)
             router.push("/inventory/products/all");
           }
     const [showPopup1, setShowPopup1] = React.useState(false);
@@ -171,14 +164,16 @@ const InventoryProductTableHeader = ({ onSortChange }: any) => {
                             </PopoverContent>
                         </Popover>
                         {isFilterActive && (
+                            <Link href="/inventory/products/all">
                 <svg
                     width="20" height="20" viewBox="0 0 16 16" fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                     className='cursor-pointer'
-                    onClick={handleClearFilters}
+                    // onClick={handleClearFilters}
                 >
                     <path d="M4.77561 12L4 11.2244L7.22439 8L4 4.77561L4.77561 4L8 7.22439L11.2244 4L12 4.77561L8.77561 8L12 11.2244L11.2244 12L8 8.77561L4.77561 12Z" fill="white"/>
                 </svg>
+                </Link>
             )}
                     </div>
 

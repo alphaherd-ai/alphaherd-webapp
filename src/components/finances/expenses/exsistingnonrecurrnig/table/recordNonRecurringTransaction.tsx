@@ -277,7 +277,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, in
                             {balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
                                 You owe ₹{formData.amountPaid ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
                             </span> : balanceDue === 0 ? "" : <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
-                                You’re owed ₹{formData.amountPaid ? (balanceDue > 0 ? 1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
+                            You owe ₹{formData.amountPaid ? (balanceDue > 0 ? 1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
                             </span>}
                         </div>
                     </div>
