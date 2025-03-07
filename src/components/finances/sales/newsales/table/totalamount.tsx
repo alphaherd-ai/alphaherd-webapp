@@ -37,7 +37,11 @@ interface Transactions {
 
 
 
+
+
 const NewsalesTotalAmout = ({ otherData }: { otherData: any }) => {
+
+
 
     const customStyles = {
         control: (provided: any, state: any) => ({
@@ -112,6 +116,8 @@ const NewsalesTotalAmout = ({ otherData }: { otherData: any }) => {
 
     const { totalAmountData, setTotalAmountData } = useContext(DataContext);
     const { transactionsData, setTransactionsData } = useContext(DataContext);
+
+    
     useEffect(() => {
         if (otherData.recordTransaction) {
             for (let i = 0; i < otherData.recordTransaction.length; i++) {

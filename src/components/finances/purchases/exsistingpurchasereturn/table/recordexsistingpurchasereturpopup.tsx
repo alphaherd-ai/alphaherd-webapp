@@ -28,10 +28,11 @@ type PopupProps = {
     headerdata: any;
     initialInvoiceNo: any;
     balanceDue: any;
+    setIsPaymentMade?:any;
 }
 
 
-const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, initialInvoiceNo, balanceDue }) => {
+const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, initialInvoiceNo, balanceDue,setIsPaymentMade }) => {
     const url = useSearchParams();
     const id = url.get('id');
     const dispatch = useDispatch();
@@ -156,7 +157,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, in
                 })
                 if (putResponse.ok) {
                     // console.log('Data saved Sucessfully2')
-                    
+                    if(setIsPaymentMade) setIsPaymentMade((prev:any)=>prev+1);
                     window.dispatchEvent(new FocusEvent('focus'))
                 } else {
                     console.error('Failed to save data')

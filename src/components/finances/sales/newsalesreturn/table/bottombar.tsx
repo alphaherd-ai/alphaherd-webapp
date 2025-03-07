@@ -90,12 +90,10 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
 
 
            
-           setTimeout(() => {
+        
 
-               router.back();
-           }, 2500);
-
-
+            router.back();
+           
         } catch (error) {
             console.error('Error:', error);
         }
