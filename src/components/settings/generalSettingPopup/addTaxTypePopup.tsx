@@ -23,7 +23,7 @@ const AddTaxType = ({onClose}:any) => {
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/taxType/getAll?branchId=${appState.currentBranchId}`);
                 const data = await response.json();
-                const taxTypeValues = data.map((taxType: { name: number[] }) => taxType.name[0]); // Extract the first value of the 'name' array
+                const taxTypeValues = data.flatMap((taxType: { name: number[] }) => taxType.name);
                 setExistingTaxTypes(taxTypeValues);
     
                 console.log('Existing tax types fetched:', taxTypeValues); 

@@ -23,7 +23,7 @@ const AddSpeciesPopup = ({onClose}:any) => {
             try{
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/getAll?branchId=${appState.currentBranchId}`);
                 const data = await response.json();
-                const speciesNames = data.map((item: {name: string}) => item.name);
+                const speciesNames = data.map((item: {name: string}) => item.name.toLowerCase());
                 setExistingSpecies(speciesNames);
                 console.log('Existing Species fetched: ',speciesNames);
             } catch(error){
@@ -47,7 +47,7 @@ const handleChange = (field: string, value: any) => {
             console.log("Empty Field");
             return;
         }
-       else if(existingSpecies.includes(trimmedInput)){
+       else if(existingSpecies.includes(trimmedInput.toLowerCase())){
             setError(`${trimmedInput} already exists.`);
             console.log(`Duplicate Species detected ${trimmedInput}`);
             return;

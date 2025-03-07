@@ -3,7 +3,7 @@
 
 import checkicon from "../../../../../assets/icons/finance/check.svg"
 import React, { useState, useEffect, useContext } from 'react';
-
+import { mutate } from "swr";
 import Image from "next/image"
 import { DataContext } from './DataContext'
 import { FinanceCreationType } from '@prisma/client'
@@ -85,7 +85,12 @@ const NewsaleEstimateBottomBar = () => {
                 throw new Error('Network response was not ok');
             }
            // mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`,(currData:any = [])=>[...currData,response.data?.sales],false)
-            router.back();
+
+           
+           setTimeout(() => {
+            //mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`);
+               router.back();
+           }, 2500);
 
         } catch (error) {
             console.error('Error:', error);

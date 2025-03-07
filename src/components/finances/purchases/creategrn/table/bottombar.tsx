@@ -17,6 +17,7 @@ import { FinanceCreationType } from "@prisma/client"
 import axios from "axios"
 
 import AmountnotMatchedPopup from "./totalTransactionPopup"
+import { mutate } from "swr";
 const CreateGrnBottomBar = ({ orderData }: any) => {
     const [isSaving, setSaving] = useState(false);
     const { headerData, tableData, totalAmountData, transactionsData } = useContext(DataContext);
@@ -121,6 +122,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
         try {
             setSaving(true);
             const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Invoice}?branchId=${appState.currentBranchId}`, data)
+            //mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/getAll?branchId=${appState.currentBranchId}`);
             setTimeout(() => {
                 router.back();
             }, 2000)

@@ -1,650 +1,656 @@
 generator client {
-  provider   = "prisma-client-js"
-  engineType = "library"
+ provider = "prisma-client-js"
+ engineType = "library"
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+ provider = "postgresql"
+ url   = env("DATABASE_URL")
+ directUrl = env("DIRECT_URL")
 }
 
 enum Tax {
-  GST_18
-  GST_9
+ GST_18
+ GST_9
 }
 
 enum Notif_Source {
-  Inventory_Timeline_Added
-  Inventory_Timeline_Removed
-  Inventory_Product_Remain
-  Inventory_Product_Expiry
-  Inventory_Product_MaxStock
-  Inventory_Update_Approval_Request
-  Payment_Edit_Approval_Request
-  Payment_Delete_Approval_Request
-  Inventory_ProductBatch
-  Sales_Invoice
-  Expense_Invoice
-  Purchase_Order_Due
+ Inventory_Timeline_Added
+ Inventory_Timeline_Removed
+ Inventory_Product_Remain
+ Inventory_Product_Expiry
+ Inventory_Product_MaxStock
+ Inventory_Update_Approval_Request
+ Payment_Edit_Approval_Request
+ Payment_Delete_Approval_Request
+ Inventory_ProductBatch
+ Sales_Invoice
+ Expense_Invoice
+ Purchase_Order_Due
+ Expense_Payment_Reminder
+ Sales_Approval_Request
+ Purchases_Approval_Request
+ Expenses_Approval_Request
 }
 
 enum Sales_Status {
-  Pending
-  Closed
+ Pending
+ Closed
 }
 
 enum Source {
-  Sales_Invoice
-  Sales_Return
-  Purchase_Invoice
-  Purchase_Return
+ Sales_Invoice
+ Sales_Return
+ Purchase_Invoice
+ Purchase_Return
 }
 
 enum Stock {
-  StockIN
-  StockOUT
+ StockIN
+ StockOUT
 }
 
 enum FinanceCreationType {
-  Sales_Estimate
-  Sales_Invoice
-  Sales_Return
-  Expense_Recurring
-  Expense_NonRecurring
-  Purchase_Order
-  Purchase_Invoice
-  Purchase_Return
+ Sales_Estimate
+ Sales_Invoice
+ Sales_Return
+ Expense_Recurring
+ Expense_NonRecurring
+ Purchase_Order
+ Purchase_Invoice
+ Purchase_Return
 }
 
 enum Inventory {
-  None
-  Product
-  Service
+ None
+ Product
+ Service
 }
 
 enum Role {
-  Admin
-  Staff
-  Manager
-  Veterinarian
+ Admin
+ Staff
+ Manager
+ Veterinarian
 }
 
 enum PermissionOptions {
-  Allow
-  Never_Allow
-  Allow_with_Admin
-  Allow_with_Manager
+ Allow
+ Never_Allow
+ Allow_with_Admin
+ Allow_with_Manager
 }
 
 model Organization {
-  id          Int         @id @default(autoincrement())
-  orgName     String      @unique
-  orgEmail    String
-  gstNo       String
-  orgImgUrl   String?
-  address     String
-  state       String
-  pincode     String
-  description String
-  phoneNo     String
-  adminUsers  User[]
-  orgBranches OrgBranch[]
+ id     Int    @id @default(autoincrement())
+ orgName  String   @unique
+ orgEmail  String
+ gstNo   String
+ orgImgUrl String?
+ address  String
+ state   String
+ pincode  String
+ description String
+ phoneNo  String
+ adminUsers User[]
+ orgBranches OrgBranch[]
 
-  @@index([orgEmail])
+ @@index([orgEmail])
 }
 
 model OrgBranch {
-  id                 Int                 @id @default(autoincrement())
-  branchName         String
-  org                Organization        @relation(fields: [orgId], references: [id])
-  orgId              Int
-  phoneNo            String?
-  altphoneNo         String?
-  address            String?
-  panNo              String?
-  state              String?
-  pinCode            Int?
-  gstNo              String?
-  email              String?
-  description        String?
-  website            String?
-  assignedUsers      User[]
-  orgBranchUserRoles OrgBranchUserRole[]
-  inventories        InventorySection[]
-  finances           FinanceSection[]
-  databases          DatabaseSection[]
+ id        Int        @id @default(autoincrement())
+ branchName    String
+ org        Organization    @relation(fields: [orgId], references: [id])
+ orgId       Int
+ phoneNo      String?
+ altphoneNo    String?
+ address      String?
+ panNo       String?
+ state       String?
+ pinCode      Int?
+ gstNo       String?
+ email       String?
+ description    String?
+ website      String?
+ assignedUsers   User[]
+ orgBranchUserRoles OrgBranchUserRole[]
+ inventories    InventorySection[]
+ finances     FinanceSection[]
+ databases     DatabaseSection[]
 
-  @@index([branchName, orgId])
+ @@index([branchName, orgId])
 }
 
 model OrgBranchUserRole {
-  id          Int       @id @default(autoincrement())
-  orgBranch   OrgBranch @relation(fields: [orgBranchId], references: [id])
-  orgBranchId Int
-  user        User      @relation(fields: [userId], references: [id])
-  userId      Int
-  role        Role
+ id     Int   @id @default(autoincrement())
+ orgBranch OrgBranch @relation(fields: [orgBranchId], references: [id])
+ orgBranchId Int
+ user    User   @relation(fields: [userId], references: [id])
+ userId   Int
+ role    Role
 }
 
 model User {
-  id                 Int                 @id @default(autoincrement())
-  name               String
-  email              String              @unique
-  token              String?             @unique
-  imageUrl           String?
-  phoneNo            String
-  altPhoneNo         String?
-  hashedPassword     String
-  adminOrganizations Organization[]
-  orgBranchId        Int?
-  lastUsedBranch     OrgBranch?          @relation(fields: [orgBranchId], references: [id])
-  userRoles          OrgBranchUserRole[]
+ id        Int        @id @default(autoincrement())
+ name       String
+ email       String       @unique
+ token       String?      @unique
+ imageUrl     String?
+ phoneNo      String
+ altPhoneNo    String?
+ hashedPassword  String
+ adminOrganizations Organization[]
+ orgBranchId    Int?
+ lastUsedBranch  OrgBranch?     @relation(fields: [orgBranchId], references: [id])
+ userRoles     OrgBranchUserRole[]
 
-  @@index([email, orgBranchId])
+ @@index([email, orgBranchId])
 }
 
 model Notifications {
-  id        Int          @id @default(autoincrement())
-  userId    Int?
-  orgId     Int?
-  url       String?
-  message   String?
-  data      Json?
-  source    Notif_Source
-  isRead    Boolean      @default(false)
-  createdAt DateTime?    @default(now())
+ id    Int     @id @default(autoincrement())
+ userId  Int?
+ orgId  Int?
+ url   String?
+ message String?
+ data   Json?
+ source  Notif_Source
+ isRead  Boolean   @default(false)
+ createdAt DateTime?  @default(now())
 
-  @@index([userId, orgId])
+ @@index([userId, orgId])
 }
 
 model Permissions {
-  id             Int                @id @default(autoincrement())
-  permissionName String?
-  role           Role?              @unique
-  options        PermissionOptions?
+ id      Int        @id @default(autoincrement())
+ permissionName String?
+ role     Role?       @unique
+ options    PermissionOptions?
 }
 
 model InventorySection {
-  id              Int                 @id @default(autoincrement())
-  name            String
-  quantity        Int?
-  branch          OrgBranch           @relation(fields: [branchId], references: [id])
-  branchId        Int                 @unique
-  products        Products[]
-  productBatch    ProductBatch[]
-  service         Services[]
-  timeline        InventoryTimeline[]
-  itemCategory    ItemCategory[]
-  itemUnit        ItemUnit[]
-  serviceCategory ServiceCategory[]
-  expenseCategory ExpenseCategory[]
-  location        Location[]
-  reason          Reason[]
-  taxType         TaxType[]
+ id       Int        @id @default(autoincrement())
+ name      String
+ quantity    Int?
+ branch     OrgBranch     @relation(fields: [branchId], references: [id])
+ branchId    Int        @unique
+ products    Products[]
+ productBatch  ProductBatch[]
+ service    Services[]
+ timeline    InventoryTimeline[]
+ itemCategory  ItemCategory[]
+ itemUnit    ItemUnit[]
+ serviceCategory ServiceCategory[]
+ expenseCategory ExpenseCategory[]
+ location    Location[]
+ reason     Reason[]
+ taxType    TaxType[]
 
-  @@index([branchId])
+ @@index([branchId])
 }
 
 model FinanceSection {
-  id            Int               @id @default(autoincrement())
-  name          String
-  amount        Float
-  branch        OrgBranch         @relation(fields: [branchId], references: [id])
-  branchId      Int               @unique
-  expenses      Expenses[]
-  transactions  Transactions[]
-  sales         Sales[]
-  purchase      Purchases[]
-  items         Items[]
-  timeline      FinanceTimeline[]
-  paymentMethod PaymentMethod[]
+ id      Int       @id @default(autoincrement())
+ name     String
+ amount    Float
+ branch    OrgBranch    @relation(fields: [branchId], references: [id])
+ branchId   Int       @unique
+ expenses   Expenses[]
+ transactions Transactions[]
+ sales    Sales[]
+ purchase   Purchases[]
+ items    Items[]
+ timeline   FinanceTimeline[]
+ paymentMethod PaymentMethod[]
 
-  @@index([branchId])
+ @@index([branchId])
 }
 
 model DatabaseSection {
-  id           Int            @id @default(autoincrement())
-  name         String
-  type         String
-  branch       OrgBranch      @relation(fields: [branchId], references: [id])
-  branchId     Int            @unique
-  clients      Clients[]
-  patients     Patients[]
-  distributors Distributors[]
-  species      Species[]
-  breed        Breed[]
+ id     Int      @id @default(autoincrement())
+ name    String
+ type    String
+ branch   OrgBranch   @relation(fields: [branchId], references: [id])
+ branchId  Int      @unique
+ clients   Clients[]
+ patients  Patients[]
+ distributors Distributors[]
+ species   Species[]
+ breed    Breed[]
 
-  @@index([branchId])
+ @@index([branchId])
 }
 
 model Clients {
-  id                Int              @id @default(autoincrement())
-  clientName        String?
-  email             String?
-  contact           String?
-  address           String?
-  invoiceNo         String[]
-  city              String?
-  pinCode           String?
-  patients          Patients[]
-  DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
-  databaseSectionId Int?
-  creditedToken     Float?           @default(0)
-  isDeleted         Boolean          @default(false)
-  @@index([databaseSectionId])
-  @@map("client")
+ id        Int       @id @default(autoincrement())
+ clientName    String?
+ email      String?
+ contact     String?
+ address     String?
+ invoiceNo    String[]
+ city       String?
+ pinCode     String?
+ patients     Patients[]
+ DatabaseSection DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
+ databaseSectionId Int?
+ creditedToken  Float?     @default(0)
+ isDeleted    Boolean     @default(false)
+ @@index([databaseSectionId])
+ @@map("client")
 }
 
 model Patients {
-  id                Int              @id @default(autoincrement())
-  patientName       String?
-  clientId          Int?
-  species           String?
-  breed             String?
-  dateOfBirth       DateTime?
-  age               String?
-  gender            String?
-  isInpatient       Boolean?
-  date              DateTime?        @default(now())
-  clients           Clients?         @relation(fields: [clientId], references: [id])
-  DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
-  databaseSectionId Int?
-  isDeleted         Boolean          @default(false)
+ id        Int       @id @default(autoincrement())
+ patientName   String?
+ clientId     Int?
+ species     String?
+ breed      String?
+ dateOfBirth   DateTime?
+ age       String?
+ gender      String?
+ isInpatient   Boolean?
+ date       DateTime?    @default(now())
+ clients     Clients?    @relation(fields: [clientId], references: [id])
+ DatabaseSection DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
+ databaseSectionId Int?
+ isDeleted    Boolean     @default(false)
 
-  @@index([databaseSectionId, clientId])
+ @@index([databaseSectionId, clientId])
 }
 
 model OTP{
-  id        Int     @id @default(autoincrement())
-  email     String
-  otp       String
-  createdAt DateTime @default(now())
+ id    Int  @id @default(autoincrement())
+ email  String
+ otp   String
+ createdAt DateTime @default(now())
 }
 
 model Distributors {
-  id                Int              @id @default(autoincrement())
-  distributorName   String?
-  email             String?
-  contact           String?
-  gstinNo           String?
-  panNo             String?
-  address           String?
-  city              String?
-  pinCode           String?
-  date              DateTime?        @default(now())
-  DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
-  databaseSectionId Int?
-  invoiceNo         String[]
-  creditedToken     Float?           @default(0)
-  isDeleted         Boolean          @default(false)
-  @@index([databaseSectionId])
+ id        Int       @id @default(autoincrement())
+ distributorName String?
+ email      String?
+ contact     String?
+ gstinNo     String?
+ panNo      String?
+ address     String?
+ city       String?
+ pinCode     String?
+ date       DateTime?    @default(now())
+ DatabaseSection DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
+ databaseSectionId Int?
+ invoiceNo    String[]
+ creditedToken  Float?     @default(0)
+ isDeleted    Boolean     @default(false)
+ @@index([databaseSectionId])
 }
 
 model Products {
-  id                  Int               @id @default(autoincrement())
-  itemName            String?
-  defaultUnit         String?
-  hsnCode             String?
-  tax                 Float?
-  category            String?
-  description         String?
-  providers           String[]
-  totalQuantity       Int?
-  minStock            Int?
-  maxStock            Int?
-  location            String?
-  lastOutOfStockNotif DateTime?
-  lastExpiryNotif     DateTime? // Last expired notification sent
-  lastExpiringNotif   DateTime? // Last expiring soon notification sent
-  excessNotif         DateTime?
-  isApproved          Boolean?          @default(false)
-  productBatches      ProductBatch[]
-  items               Items[]
-  InventorySection    InventorySection? @relation(fields: [inventorySectionId], references: [id])
-  inventorySectionId  Int?
-  createdAt           DateTime?         @default(now())
-  isDeleted           Boolean           @default(false)
+ id         Int       @id @default(autoincrement())
+ itemName      String?
+ defaultUnit    String?
+ hsnCode      String?
+ tax        Float?
+ category      String?
+ description    String?
+ providers     String[]
+ totalQuantity   Int?
+ minStock      Int?
+ maxStock      Int?
+ location      String?
+ lastOutOfStockNotif DateTime?
+ lastExpiryNotif  DateTime? // Last expired notification sent
+ lastExpiringNotif DateTime? // Last expiring soon notification sent
+ excessNotif    DateTime?
+ isApproved     Boolean?     @default(false)
+ productBatches   ProductBatch[]
+ items       Items[]
+ InventorySection  InventorySection? @relation(fields: [inventorySectionId], references: [id])
+ inventorySectionId Int?
+ createdAt     DateTime?    @default(now())
+ isDeleted     Boolean     @default(false)
 
-  @@index([inventorySectionId, id])
+ @@index([inventorySectionId, id])
 }
 
 model ProductBatch {
-  id                  Int                 @id @default(autoincrement())
-  distributors        String[]
-  quantity            Int?
-  productId           Int
-  batchNumber         String?
-  costPrice           Int?
-  location            String?
-  totalCost           Int?
-  maxRetailPrice      Float?
-  costPerItem         Int?
-  profitMargin        String?
-  expiry              DateTime?
-  sellingPrice        Int?
-  date                DateTime?
-  balanceDue          Boolean?
-  isApproved          Boolean?            @default(false)
-  lastOutOfStockNotif DateTime?
-  lastExpiryNotif     DateTime? // Last expired notification sent
-  lastExpiringNotif   DateTime? // Last expiring soon notification sent
-  excessNotif         DateTime?
-  items               Items[]
-  product             Products            @relation(fields: [productId], references: [id])
-  inventoryTimeline   InventoryTimeline[] // Add the opposite relation
-  InventorySection    InventorySection?   @relation(fields: [inventorySectionId], references: [id])
-  inventorySectionId  Int?
-  isDeleted           Boolean             @default(false)
+ id         Int        @id @default(autoincrement())
+ distributors    String[]
+ quantity      Int?
+ productId     Int
+ batchNumber    String?
+ costPrice     Int?
+ location      String?
+ totalCost     Int?
+ maxRetailPrice   Float?
+ costPerItem    Int?
+ profitMargin    String?
+ expiry       DateTime?
+ sellingPrice    Int?
+ date        DateTime?
+ balanceDue     Boolean?
+ isApproved     Boolean?      @default(false)
+ lastOutOfStockNotif DateTime?
+ lastExpiryNotif  DateTime? // Last expired notification sent
+ lastExpiringNotif DateTime? // Last expiring soon notification sent
+ excessNotif    DateTime?
+ items       Items[]
+ product      Products      @relation(fields: [productId], references: [id])
+ inventoryTimeline InventoryTimeline[] // Add the opposite relation
+ InventorySection  InventorySection? @relation(fields: [inventorySectionId], references: [id])
+ inventorySectionId Int?
+ isDeleted     Boolean      @default(false)
 
-  @@index([inventorySectionId, productId])
-  @@index([id, inventorySectionId])
+ @@index([inventorySectionId, productId])
+ @@index([id, inventorySectionId])
 }
 
 model Services {
-  id                 Int                 @id @default(autoincrement())
-  name               String
-  sacCode            String?
-  description        String?
-  sellingPrice       String?
-  tax                Float?
-  category           String?
-  providers          String[]
-  linkProducts       Json?
-  serviceCost        Int?
-  serviceCharge      Int?
-  items              Items[]
-  inventoryEntries   Inventory[]
-  inventoryTimeline  InventoryTimeline[] // Add the opposite relation
-  InventorySection   InventorySection?   @relation(fields: [inventorySectionId], references: [id])
-  inventorySectionId Int?
-  createdAt          DateTime?           @default(now())
-  isDeleted          Boolean             @default(false)
+ id        Int        @id @default(autoincrement())
+ name       String
+ sacCode      String?
+ description    String?
+ sellingPrice   String?
+ tax        Float?
+ category     String?
+ providers     String[]
+ linkProducts   Json?
+ serviceCost    Int?
+ serviceCharge   Int?
+ items       Items[]
+ inventoryEntries Inventory[]
+ inventoryTimeline InventoryTimeline[] // Add the opposite relation
+ InventorySection InventorySection? @relation(fields: [inventorySectionId], references: [id])
+ inventorySectionId Int?
+ createdAt     DateTime?     @default(now())
+ isDeleted     Boolean      @default(false)
 
-  @@index([inventorySectionId, id])
+ @@index([inventorySectionId, id])
 }
 
 model Sales {
-  id                Int                  @id @default(autoincrement())
-  customer          String?
-  email             String?
-  date              DateTime?            @default(now())
-  notes             String?
-  subTotal          Float?
-  invoiceNo         String?
-  dueDate           DateTime?
-  shipping          Float?
-  adjustment        Float?
-  totalCost         Float?
-  overallDiscount   Float?
-  totalQty          Int?
-  status            String?
-  recordTransaction RecordTransaction[]
-  type              FinanceCreationType?
-  items             Items[]
-  financeTimeline   FinanceTimeline[]
-  FinanceSection    FinanceSection?      @relation(fields: [financeSectionId], references: [id])
-  financeSectionId  Int?
-  clientId          Int?
+ id        Int         @id @default(autoincrement())
+ customer     String?
+ email      String?
+ date       DateTime?      @default(now())
+ notes      String?
+ subTotal     Float?
+ invoiceNo    String?
+ dueDate     DateTime?
+ shipping     Float?
+ adjustment    Float?
+ totalCost    Float?
+ overallDiscount Float?
+ totalQty     Int?
+ status      String?
+ recordTransaction RecordTransaction[]
+ type       FinanceCreationType?
+ items      Items[]
+ financeTimeline FinanceTimeline[]
+ FinanceSection  FinanceSection?   @relation(fields: [financeSectionId], references: [id])
+ financeSectionId Int?
+ clientId     Int?
+ lastDueNotif    DateTime?
 
-  @@index([financeSectionId, id])
-  @@index([financeSectionId, invoiceNo])
+ @@index([financeSectionId, id])
+ @@index([financeSectionId, invoiceNo])
 }
 
 model RecordTransaction {
-  id               Int        @id @default(autoincrement())
-  amountPaid       Int?
-  date             DateTime?  @default(now())
-  isAdvancePayment Boolean?
-  mode             String?
-  moneyChange      String?
-  sales            Sales?     @relation(fields: [salesId], references: [id])
-  salesId          Int?
-  purchases        Purchases? @relation(fields: [purchasesId], references: [id])
-  purchasesId      Int?
-  expenses         Expenses?  @relation(fields: [expensesId], references: [id])
-  expensesId       Int?
-  receiptNo        String?
+ id       Int    @id @default(autoincrement())
+ amountPaid   Int?
+ date      DateTime? @default(now())
+ isAdvancePayment Boolean?
+ mode      String?
+ moneyChange   String?
+ sales      Sales?  @relation(fields: [salesId], references: [id])
+ salesId     Int?
+ purchases    Purchases? @relation(fields: [purchasesId], references: [id])
+ purchasesId   Int?
+ expenses    Expenses? @relation(fields: [expensesId], references: [id])
+ expensesId   Int?
+ receiptNo    String?
 
-  @@index([salesId, purchasesId, expensesId])
+ @@index([salesId, purchasesId, expensesId])
 }
 
 model Purchases {
-  id                   Int                 @id @default(autoincrement())
-  distributor          String?
-  distributorId        Int?
-  email                String?
-  date                 DateTime?           @default(now())
-  dueDate              DateTime
-  returnLastDate       DateTime?
-  invoiceNo            String?
-  purchaseOrderNumber  String?
-  distributorInvoiceNo String?
-  grnNo                String?
-  notes                String?
-  lastDueNotif         DateTime?
-  shipping             Float?
-  adjustment           Float?
-  totalCost            Float?
-  overallDiscount      Float?
-  totalQty             Int?
-  status               String?
-  recordTransaction    RecordTransaction[]
-  type                 String?
-  items                Items[]
-  financeTimeline      FinanceTimeline[]
-  FinanceSection       FinanceSection?     @relation(fields: [financeSectionId], references: [id])
-  financeSectionId     Int?
+ id         Int        @id @default(autoincrement())
+ distributor     String?
+ distributorId    Int?
+ email        String?
+ date        DateTime?     @default(now())
+ dueDate       DateTime
+ returnLastDate   DateTime?
+ invoiceNo      String?
+ purchaseOrderNumber String?
+ distributorInvoiceNo String?
+ grnNo        String?
+ notes        String?
+ lastDueNotif    DateTime?
+ shipping      Float?
+ adjustment     Float?
+ totalCost      Float?
+ overallDiscount   Float?
+ totalQty      Int?
+ status       String?
+ recordTransaction  RecordTransaction[]
+ type        String?
+ items        Items[]
+ financeTimeline   FinanceTimeline[]
+ FinanceSection   FinanceSection?  @relation(fields: [financeSectionId], references: [id])
+ financeSectionId  Int?
 
-  @@index([financeSectionId, id])
-  @@index([financeSectionId, invoiceNo])
+ @@index([financeSectionId, id])
+ @@index([financeSectionId, invoiceNo])
 }
 
 model Expenses {
-  id                  Int                 @id @default(autoincrement())
-  party               String?
-  date                DateTime?           @default(now())
-  invoiceNo           String?
-  subTotal            Float?
-  overallDiscount     Float?
-  totalCost           Float?
-  totalQty            Int?
-  recurringStartedOn  DateTime?
-  recurringRepeatType String?
-  recurringEndson     DateTime?
-  dueDate             DateTime?
-  shipping            Float?
-  adjustment          Float?
-  notes               String?
-  status              String?
-  type                String?
-  recordTransaction   RecordTransaction[]
-  items               Items[]
-  financeTimeline     FinanceTimeline[]
-  FinanceSection      FinanceSection?     @relation(fields: [financeSectionId], references: [id])
-  financeSectionId    Int?
+ id         Int        @id @default(autoincrement())
+ party       String?
+ date        DateTime?     @default(now())
+ invoiceNo     String?
+ subTotal      Float?
+ overallDiscount  Float?
+ totalCost     Float?
+ totalQty      Int?
+ recurringStartedOn DateTime?
+ recurringRepeatType String?
+ recurringEndson  DateTime?
+ dueDate      DateTime?
+ shipping      Float?
+ adjustment     Float?
+ notes       String?
+ status       String?
+ type        String?
+ recordTransaction RecordTransaction[]
+ items       Items[]
+ financeTimeline  FinanceTimeline[]
+ FinanceSection   FinanceSection?  @relation(fields: [financeSectionId], references: [id])
+ financeSectionId  Int?
+ lastDueNotification DateTime?
 
-  @@index([financeSectionId, id])
+ @@index([financeSectionId, id])
 }
 
 model Transactions {
-  id               Int             @id @default(autoincrement())
-  partyName        String?
-  subject          String?
-  invoiceLink      String?
-  receiptNo        String?
-  date             DateTime?       @default(now())
-  amountPaid       Int
-  mode             String?
-  moneyChange      String?
-  products         Json?
-  services         Json?
-  FinanceSection   FinanceSection? @relation(fields: [financeSectionId], references: [id])
-  financeSectionId Int?
+ id       Int      @id @default(autoincrement())
+ partyName    String?
+ subject     String?
+ invoiceLink   String?
+ receiptNo    String?
+ date      DateTime?   @default(now())
+ amountPaid   Int
+ mode      String?
+ moneyChange   String?
+ products    Json?
+ services    Json?
+ FinanceSection FinanceSection? @relation(fields: [financeSectionId], references: [id])
+ financeSectionId Int?
 
-  @@index([financeSectionId, id])
+ @@index([financeSectionId, id])
 }
 
 model PaymentMethod {
-  id               Int             @id @default(autoincrement())
-  name             String?
-  FinanceSection   FinanceSection? @relation(fields: [financeSectionId], references: [id])
-  financeSectionId Int?
+ id       Int      @id @default(autoincrement())
+ name      String?
+ FinanceSection FinanceSection? @relation(fields: [financeSectionId], references: [id])
+ financeSectionId Int?
 }
 
 model Items {
-  id                Int             @id @default(autoincrement())
-  taxPercent        Tax?
-  taxAmount         Float?
-  totalAmount       Float?
-  itemType          String?
-  serviceId         Int?
-  reasons           String?
-  category          String?
-  sellingPrice      Int?
-  quantity          Int?
-  transactionId     String?
-  invoiceNo         String?
-  lowQty            Int?
-  highQty           Int?
-  discount          Float?
-  name              String?
-  productId         Int?
-  services          Services?       @relation(fields: [serviceId], references: [id])
-  products          Products?       @relation(fields: [productId], references: [id])
-  salesId           Int?
-  sale              Sales?          @relation(fields: [salesId], references: [id])
-  purchasesId       Int?
-  purchases         Purchases?      @relation(fields: [purchasesId], references: [id])
-  expensesId        Int?
-  expenses          Expenses?       @relation(fields: [expensesId], references: [id])
-  productBatchId    Int?
-  productBatch      ProductBatch?   @relation(fields: [productBatchId], references: [id])
-  FinanceSection    FinanceSection? @relation(fields: [financeSectionId], references: [id])
-  financeSectionId  Int?
-  serviceProvider   String?
-  expiryDate        DateTime? // Expiry date for the item
-  lastLowStockNotif DateTime? // Last low stock notification sent
-  lastExpiryNotif   DateTime? // Last expired notification sent
-  lastExpiringNotif DateTime? // Last expiring soon notification sent
-  excessNotif       DateTime?
+ id        Int      @id @default(autoincrement())
+ taxPercent    Tax?
+ taxAmount    Float?
+ totalAmount   Float?
+ itemType     String?
+ serviceId    Int?
+ reasons     String?
+ category     String?
+ sellingPrice   Int?
+ quantity     Int?
+ transactionId  String?
+ invoiceNo    String?
+ lowQty      Int?
+ highQty     Int?
+ discount     Float?
+ name       String?
+ productId    Int?
+ services     Services?   @relation(fields: [serviceId], references: [id])
+ products     Products?   @relation(fields: [productId], references: [id])
+ salesId     Int?
+ sale       Sales?     @relation(fields: [salesId], references: [id])
+ purchasesId   Int?
+ purchases    Purchases?   @relation(fields: [purchasesId], references: [id])
+ expensesId    Int?
+ expenses     Expenses?   @relation(fields: [expensesId], references: [id])
+ productBatchId  Int?
+ productBatch   ProductBatch? @relation(fields: [productBatchId], references: [id])
+ FinanceSection  FinanceSection? @relation(fields: [financeSectionId], references: [id])
+ financeSectionId Int?
+ serviceProvider String?
+ expiryDate    DateTime? // Expiry date for the item
+ lastLowStockNotif DateTime? // Last low stock notification sent
+ lastExpiryNotif DateTime? // Last expired notification sent
+ lastExpiringNotif DateTime? // Last expiring soon notification sent
+ excessNotif   DateTime?
 
-  @@index([salesId, purchasesId, expensesId, financeSectionId, productId])
+ @@index([salesId, purchasesId, expensesId, financeSectionId, productId])
 }
 
 model InventoryTimeline {
-  id                 Int               @id @default(autoincrement())
-  productId          Int?
-  serviceId          Int?
-  inventoryType      Inventory?        @default(None)
-  stockChange        Stock?            @default(StockIN)
-  invoiceType        String?
-  invoiceNo          String?
-  quantityChange     Int?
-  receiptNo          Int?
-  party              String?
-  isApproved         Boolean?          @default(false)
-  createdAt          DateTime?         @default(now())
-  productBatch       ProductBatch?     @relation(fields: [productId], references: [id])
-  service            Services?         @relation(fields: [serviceId], references: [id])
-  InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
-  inventorySectionId Int?
-  deliveryStatus     String?
+ id        Int       @id @default(autoincrement())
+ productId     Int?
+ serviceId     Int?
+ inventoryType   Inventory?    @default(None)
+ stockChange    Stock?      @default(StockIN)
+ invoiceType    String?
+ invoiceNo     String?
+ quantityChange  Int?
+ receiptNo     Int?
+ party       String?
+ isApproved    Boolean?     @default(false)
+ createdAt     DateTime?    @default(now())
+ productBatch   ProductBatch?  @relation(fields: [productId], references: [id])
+ service      Services?    @relation(fields: [serviceId], references: [id])
+ InventorySection InventorySection? @relation(fields: [inventorySectionId], references: [id])
+ inventorySectionId Int?
+ deliveryStatus  String?
 
-  @@index([inventorySectionId, productId, serviceId, createdAt])
+ @@index([inventorySectionId, productId, serviceId, createdAt])
 }
 
 model FinanceTimeline {
-  id               Int                  @id @default(autoincrement())
-  salesId          Int?
-  sale             Sales?               @relation(fields: [salesId], references: [id])
-  type             FinanceCreationType?
-  createdAt        DateTime
-  purchasesId      Int?
-  purchases        Purchases?           @relation(fields: [purchasesId], references: [id])
-  expensesId       Int?
-  expenses         Expenses?            @relation(fields: [expensesId], references: [id])
-  FinanceSection   FinanceSection?      @relation(fields: [financeSectionId], references: [id])
-  financeSectionId Int?
+ id       Int         @id @default(autoincrement())
+ salesId     Int?
+ sale      Sales?       @relation(fields: [salesId], references: [id])
+ type      FinanceCreationType?
+ createdAt    DateTime
+ purchasesId   Int?
+ purchases    Purchases?     @relation(fields: [purchasesId], references: [id])
+ expensesId   Int?
+ expenses    Expenses?      @relation(fields: [expensesId], references: [id])
+ FinanceSection FinanceSection?   @relation(fields: [financeSectionId], references: [id])
+ financeSectionId Int?
 
-  @@index([salesId, createdAt, purchasesId, expensesId, financeSectionId])
+ @@index([salesId, createdAt, purchasesId, expensesId, financeSectionId])
 }
 
 model ItemCategory {
-  id                 Int               @id @default(autoincrement())
-  name               String[]
-  InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
-  inventorySectionId Int?
+ id        Int       @id @default(autoincrement())
+ name       String[]
+ InventorySection InventorySection? @relation(fields: [inventorySectionId], references: [id])
+ inventorySectionId Int?
 }
 
 model ItemUnit {
-  id                 Int               @id @default(autoincrement())
-  name               String[]
-  InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
-  inventorySectionId Int?
+ id        Int       @id @default(autoincrement())
+ name       String[]
+ InventorySection InventorySection? @relation(fields: [inventorySectionId], references: [id])
+ inventorySectionId Int?
 }
 
 model ServiceCategory {
-  id                 Int               @id @default(autoincrement())
-  name               String[]
-  InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
-  inventorySectionId Int?
+ id        Int       @id @default(autoincrement())
+ name       String[]
+ InventorySection InventorySection? @relation(fields: [inventorySectionId], references: [id])
+ inventorySectionId Int?
 }
 
 model Reason {
-  id                 Int               @id @default(autoincrement())
-  name               String[]
-  InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
-  inventorySectionId Int?
+ id        Int       @id @default(autoincrement())
+ name       String[]
+ InventorySection InventorySection? @relation(fields: [inventorySectionId], references: [id])
+ inventorySectionId Int?
 }
 
 model ExpenseCategory {
-  id                 Int               @id @default(autoincrement())
-  name               String[]
-  InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
-  inventorySectionId Int?
+ id        Int       @id @default(autoincrement())
+ name       String[]
+ InventorySection InventorySection? @relation(fields: [inventorySectionId], references: [id])
+ inventorySectionId Int?
 }
 
 model Species {
-  id                Int              @id @default(autoincrement())
-  name              String?
-  breed             Breed[]
-  DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
-  databaseSectionId Int?
+ id        Int       @id @default(autoincrement())
+ name       String?
+ breed      Breed[]
+ DatabaseSection DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
+ databaseSectionId Int?
 }
 
 model Breed {
-  id                Int              @id @default(autoincrement())
-  name              String[]
-  speciesId         Int
-  species           Species          @relation(fields: [speciesId], references: [id])
-  DatabaseSection   DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
-  databaseSectionId Int?
+ id        Int       @id @default(autoincrement())
+ name       String[]
+ speciesId    Int
+ species     Species     @relation(fields: [speciesId], references: [id])
+ DatabaseSection DatabaseSection? @relation(fields: [databaseSectionId], references: [id])
+ databaseSectionId Int?
 }
 
 model TaxType {
-  id                 Int               @id @default(autoincrement())
-  name               Int[]
-  InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
-  inventorySectionId Int?
+ id        Int       @id @default(autoincrement())
+ name       Int[]
+ InventorySection InventorySection? @relation(fields: [inventorySectionId], references: [id])
+ inventorySectionId Int?
 }
 
 model Inventorytransfer {
-  id                 Int       @id @default(autoincrement())
-  items              Json?
-  status             String?
-  transferStatus     String?
-  notes              String?
-  dueDate            DateTime?
-  startDate          DateTime?
-  invoiceNumber      String?
-  transferringBranch String?
-  receivingBranch    String?
+ id        Int   @id @default(autoincrement())
+ items       Json?
+ status      String?
+ transferStatus  String?
+ notes       String?
+ dueDate      DateTime?
+ startDate     DateTime?
+ invoiceNumber   String?
+ transferringBranch String?
+ receivingBranch  String?
 }
 
 model Location {
-  id                 Int               @id @default(autoincrement())
-  name               String?
-  InventorySection   InventorySection? @relation(fields: [inventorySectionId], references: [id])
-  inventorySectionId Int?
+ id        Int       @id @default(autoincrement())
+ name       String?
+ InventorySection InventorySection? @relation(fields: [inventorySectionId], references: [id])
+ inventorySectionId Int?
 }

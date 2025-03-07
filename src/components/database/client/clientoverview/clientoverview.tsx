@@ -389,8 +389,8 @@ const ClientDetails = () => {
                     </div>
                 </div>
                 <div className="rounded-md">
-                    <div className="w-full mt-[25px] rounded-md border-borderGrey border border-solid  border-neutral-40  ">
-                        <div className="w-full h-[72px] px-6 py-4 bg-white rounded-tl-md rounded-tr-md border-b border-solid border-0 border-borderGrey justify-start items-center gap-4 flex">
+                    <div className="w-full mt-[25px] rounded-md border-borderGrey border border-solid">
+                        <div className="w-full h-[72px] px-6 py-4 bg-white rounded-tl-md rounded-tr-md  border-b border-solid border-0 border-borderGrey justify-start items-center gap-4 flex">
                             <div className="text-gray-500 flex items-center gap-4 text-xl font-medium ">
                                 <p>Patients</p>
                                 <div className="h-12 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-center items-center gap-2 flex" onClick={() => setPatientPopup((prev: boolean) => !prev)}>

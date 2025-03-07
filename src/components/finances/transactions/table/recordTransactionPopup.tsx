@@ -23,6 +23,7 @@ type PopupProps = {
     onClose: () => void;
     initialInvoiceNo: any;
     distributor?: string;
+    setIsTransactionMade?:any
 }
 interface ProductOption {
     value: string;
@@ -45,7 +46,7 @@ interface ProductBatch {
     quantity: number;
 }
 
-const RecordTransactionPopup: React.FC<PopupProps> = ({ onClose, initialInvoiceNo, distributor }: any) => {
+const RecordTransactionPopup: React.FC<PopupProps> = ({ onClose, initialInvoiceNo, distributor,setIsTransactionMade }: any) => {
 
     const dispatch = useDispatch();
 
@@ -121,6 +122,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ onClose, initialInvoiceN
             });
             if (response.ok) {
                 // console.log('Data saved Sucessfully')
+                if(setIsTransactionMade) setIsTransactionMade((prev:any)=>prev+1);
                 onClose();
                 window.dispatchEvent(new FocusEvent('focus'))
             } else {
@@ -782,7 +784,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ onClose, initialInvoiceN
                     <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
                         }`} onClick={handleSaveClick} disabled={isDisabled || isSaving}>
                         <Image src={check} alt='check' />
-                        <span className='text-white text-base font-medium pr-2'>{isSaving ? "Saving..." : "Save Payment"}</span>
+                        <span className='text-white text-base font-medium pr-2'>{isSaving ? <Loading2/> : "Save Payment"}</span>
                     </Button>
                 </div>
 

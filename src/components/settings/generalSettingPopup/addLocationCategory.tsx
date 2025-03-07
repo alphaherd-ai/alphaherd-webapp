@@ -16,8 +16,8 @@ const AddLocation = ({ onClose }: any) => {
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/LocationCategory/getAll?branchId=${appState.currentBranchId}`);
                 const data = await response.json();
-                const names = data.map((item: { name: string }) => item.name); 
-               
+                const names = data.map((item: { name: string }) => item.name.toLowerCase()); 
+                setExistingCategory(names);
                
 
                 console.log('Existing locations fetched:', names); 
@@ -39,15 +39,15 @@ const AddLocation = ({ onClose }: any) => {
         const trimmedInput = input.trim();
 
         // Validate the input
-        const defaultLocationCategories = 'Main Warehouse';
-        const allExistingCategories = defaultLocationCategories;
+        
+        //const allExistingCategories = [...existingCategory];
 
         if (!trimmedInput) {
             setError('Location name cannot be empty.');
             return;
         }
 
-        if (allExistingCategories.includes(trimmedInput)) {
+        if (existingCategory.includes(trimmedInput.toLowerCase())) {
             setError('This Location Category already exists.');
             console.log(`Duplicate Location Category detected: ${trimmedInput}`);
             return;

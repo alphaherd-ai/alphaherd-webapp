@@ -54,6 +54,7 @@ interface ProductBatch {
     distributors: string[];
     productId: number;
     product: Products;
+    maxRetailPrice:number;
 }
 function useProductfetch(id: number | null) {
     const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`, fetcher, { revalidateOnFocus: true });
@@ -98,7 +99,7 @@ const NewsalesTable = () => {
     const [products, setProducts] = useState<any[]>([]);
     const [services, setServices] = useState<any[]>([]);
     const [batches, setBatches] = useState<any[]>([]);
-    const [filteredBatches, setFilteredBatches] = useState<any[]>([]);
+    const [filteredBatches, setFilteredBatches] = useState<any[][]>([]);
     const [filteredProviders, setFilteredProviders] = useState<any[]>([]);
     const [otherData, setOtherData] = useState({});
     const [isNewClientClicked, setIsNewClientClicked] = useState<any>(false);
@@ -274,7 +275,7 @@ const NewsalesTable = () => {
                     quantity: 1,
                     batchNumber: product.batchNumber,
                     expiry: product.expiry,
-                    sellingPrice: product.sellingPrice,
+                    sellingPrice: product.maxRetailPrice,
                     originalQuantity: product.quantity
                 },
                 label: product.batchNumber
@@ -303,6 +304,9 @@ const NewsalesTable = () => {
     const handleDeleteRow = useCallback((index: number) => {
         const updatedItems = [...items];
         updatedItems.splice(index, 1);
+        const updatedBatches = [...filteredBatches];
+        updatedBatches.splice(index, 1);
+        setFilteredBatches(updatedBatches);
         setItems(updatedItems);
         setTableData(updatedItems);
     }, [items]);
@@ -473,7 +477,13 @@ const NewsalesTable = () => {
                 if (productdata) {
                     console.log('updation here product', index)
                     const productBatches = batches?.filter((batch) => batch.value.productId === selectedProduct.value.id).sort((a, b) => a.value.id - b.value.id);
-                    setFilteredBatches(productBatches);
+                    setFilteredBatches((prevBatches) => {
+                        const updatedBatches = [...prevBatches];
+
+                        updatedBatches[index] = productBatches;
+
+                        return updatedBatches;
+                    });
                     const defaultBatch = productBatches?.[0];
                     console.log(defaultBatch)
                     setItems((prevItems) =>
@@ -523,7 +533,7 @@ const NewsalesTable = () => {
         if (selectedProduct.value) {
             try {
 
-                const data = filteredBatches.find((batch) => batch.value.id == selectedProduct.value.id);
+                const data = filteredBatches[index].find((batch) => batch.value.id == selectedProduct.value.id);
                 // console.log(data)
                 const updatedItems = [...items];
                 updatedItems[index] = {
@@ -734,7 +744,7 @@ const NewsalesTable = () => {
                                                     isClearable={false}
                                                     isSearchable={true}
                                                     name={`batchNumber=${index}`}
-                                                    options={filteredBatches}
+                                                    options={filteredBatches[index]}
                                                     onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
                                                     styles={customStyles}
                                                 />
@@ -742,11 +752,11 @@ const NewsalesTable = () => {
                                                 item.batchNumber ? item.batchNumber : <Select
                                                     className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
                                                     classNamePrefix="select"
-                                                    value={filteredBatches.find((prod) => prod.value.id === item.id)}
+                                                    value={filteredBatches[index].find((prod) => prod.value.id === item.id)}
                                                     isClearable={false}
                                                     isSearchable={true}
                                                     name={`batchNumber=${index}`}
-                                                    options={filteredBatches}
+                                                    options={filteredBatches[index]}
                                                     onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
                                                     styles={customStyles}
                                                 />

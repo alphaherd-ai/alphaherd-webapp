@@ -151,8 +151,6 @@ const AddBreed = ({ onClose }: any) => {
     const handleSave = async () => {
         const trimmedBreeds = formData.breeds.map((breed) => breed.trim());
         const allExistingItems = [...existingBreeds];
-        console.log("exis ting breed : ",allExistingItems);
-        console.log("trimmed breed : ", trimmedBreeds);
         const duplicates = trimmedBreeds.filter(
           (breed, index) =>
             breed && (trimmedBreeds.indexOf(breed) !== index || existingBreeds.includes(breed))

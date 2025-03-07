@@ -44,6 +44,7 @@ interface ProductBatch {
     distributors: string[];
     productId: number;
     product: Products;
+    maxRetialPrice:number;
 }
 
 function useProductfetch(id: number | null) {

@@ -176,7 +176,7 @@ const ExistingsalesReturnTable = () => {
 
                                         <div className='w-[8rem] flex items-center text-textGrey2 text-base font-medium gap-6 '>
                                             <div className="w-1/12 flex items-center text-textGrey2 text-base font-medium">{item.sellingPrice}</div>
-                                            <div className="text-neutral-400 text-[12px]  font-medium  "> Tax inc</div>
+                                            {/* <div className="text-neutral-400 text-[12px]  font-medium  "> Tax inc</div> */}
 
                                         </div>
 
@@ -228,7 +228,7 @@ const ExistingsalesReturnTable = () => {
 
 
                                 <div className=' flex text-gray-500 text-base font-medium w-[8rem]'>
-                                    <div className="text-neutral-400 text-base  font-medium   "> Tax inc</div>
+                                    {/* <div className="text-neutral-400 text-base  font-medium   "> Tax inc</div> */}
                                 </div>
                                 <div className=' flex text-gray-500 text-base font-medium w-[6rem]'>{`₹${items.reduce((acc, item) => acc + item.quantity * item.tax * item.sellingPrice, 0).toFixed(2)}`}</div>
                                 <div className=' flex text-gray-500 text-base font-medium w-1/12'>{`₹${items.reduce((acc, item) => acc + item.quantity * item.sellingPrice + item.quantity * item.tax * item.sellingPrice, 0).toFixed(2)}`}</div>
