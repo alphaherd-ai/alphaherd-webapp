@@ -1,10 +1,8 @@
 'use client';
 import formatDateAndTime from "@/utils/formateDateTime";
-import { Spinner } from "@nextui-org/react";
 import axios from "axios";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import useSWR from "swr";
 import { useAppSelector } from "@/lib/hooks";
 import Loading from "@/app/loading";
 import { Notif_Source } from "@prisma/client";
@@ -31,7 +29,7 @@ const NotificationList =  ({ notifs, isLoading }) => {
     try {
       if (notifData && action === 'accept') {
         console.log("notif data inside list ",notifData);
-        if(notifData.source == Notif_Source.Inventory_Update_Approval_Request){
+          if(notifData.source == Notif_Source.Inventory_Update_Approval_Request){
               const stockStatus = notifData.data.body1.stockStatus;
               const productId = notifData.data.body1.productId;
               notifData.data.body1.isApproved = true;
@@ -41,11 +39,11 @@ const NotificationList =  ({ notifs, isLoading }) => {
                 console.log("stock out");
                 await axios.put(
                   `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/${productId}?branchId=${appState.currentBranchId}`,
-                  notifData.body.body1
+                  notifData.data.body1
                 );
                 console.log("Approved");
               } 
-            }
+          }
           else if(notifData.source == Notif_Source.Payment_Edit_Approval_Request)
           {
             const editTrans = notifData.data.body;
@@ -75,19 +73,164 @@ const NotificationList =  ({ notifs, isLoading }) => {
               alert('Failed to save transaction');
             }
           }
+          else if(notifData.source ==Notif_Source.Sales_Approval_Request){
+            try {
+              const salesId=notifData?.data.salesId;
+              if(!salesId){
+                throw new Error("Sales ID is missing in the notification data.");
+              }
+              console.log("salesId here",salesId);
+              const res = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/status/${salesId}?branchId=${appState.currentBranchId}`, {
+                status: "Cancelled"
+              }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+              }
+              )
+
+              if (res.status === 200 || res.status === 201) {
+                console.log("Sales transaction successfully cancelled.");
+              } else {
+                throw new Error(`Unexpected response status: ${res.status}`);
+              }
+            } catch (error) {
+              console.error('Failed to save transaction: ', error);
+              alert('Failed to save transaction');
+            }
+          }   
+          else if(notifData.source===Notif_Source.Purchases_Approval_Request){
+              try {
+                const purchaseId=notifData?.data.purchaseId;
+                if(!purchaseId){
+                  throw new Error("Sales ID is missing in the notification data.");
+                }
+                console.log("purchaseId here",purchaseId);
+
+                const res = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/status/${purchaseId}?branchId=${appState.currentBranchId}`, {
+                  status: "Cancelled"
+                }, {
+                  headers: {
+                      'Content-Type': 'application/json',
+                  }
+                }
+                )
+
+                if (res.status === 200 || res.status === 201) {
+                  console.log("Purchase transaction successfully cancelled.");
+                } else {
+                  throw new Error(`Unexpected response status: ${res.status}`);
+                }
+              } catch (error) {
+                console.error('Failed to save transaction: ', error);
+                alert('Failed to save transaction');
+              }
+          }
+          else if(notifData.source==Notif_Source.Expenses_Approval_Request){
+            try {
+                  const expenseId= notifData?.data.expenseId;
+                  if(!expenseId){
+                    throw new Error("Sales ID is missing in the notification data.");
+                  }
+
+                  console.log("expenseId here",expenseId);
+
+                  const res = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/finance/expenses/status/${expenseId}?branchId=${appState.currentBranchId}`, {
+                    status: "Cancelled"
+                  }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                  }
+                  )
+
+                  if (res.status === 200 || res.status === 201) {
+                    console.log("Purchase transaction successfully cancelled.");
+                  } else {
+                    throw new Error(`Unexpected response status: ${res.status}`);
+                  }
+            } catch (error) {
+              console.error('Failed to save transaction: ', error);
+              alert('Failed to save transaction');
+            }
+          }   
+          else if(notifData.source==Notif_Source.Payment_Delete_Approval_Request){
+            const transactionId = notifData.data.transactionId;
+            const invoiceLink = notifData.data.invoiceLink;
+            try {
+
+              const response = await axios.put(
+                  `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/${transactionId}?branchId=${appState.currentBranchId}`,
+                  {
+
+                      moneyChange: "Cancelled",
+                  },
+                  {
+
+                      headers: {
+                          'Content-Type': 'application/json',
+                      },
+                  }
+              );
+
+              if (response.status !== 201) {
+                  throw new Error(`Unexpected response status: ${response.status}`);
+              }
+
+          
+
+              const editRecordTransaction = {
+                  receiptNo:notifData.data.receiptNo,
+                  moneyChange: "Cancelled",
+              };
+
+              try {
+
+                  const putResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/editRecordTransaction/${invoiceLink}/?branchId=${appState.currentBranchId}`, {
+                      method: 'PUT',
+                      headers: {
+                          'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                          recordTransaction: [editRecordTransaction]
+                      })
+                  });
+
+
+                  if (putResponse.status !== 201) {
+                      throw new Error(`Unexpected response status: ${putResponse.status}`);
+                      
+                  }
+              }
+
+              catch (error) {
+                  console.log(error)
+
+              }
+
+
+
+          }
+          catch (err) {
+              console.log(err);
+          }
+
+          }
+
+          
       } else {
         console.log("Approval Denied");
       }
     //  console.log(`Notification ID is: ${notifId}`);
   
     
-      await axios.delete(
-        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/delete`,
-        {
-          data: { id: notifId }, 
-        }
-      );
-      console.log("Notification Deleted");
+      // await axios.delete(
+      //   `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/delete`,
+      //   {
+      //     data: { id: notifId }, 
+      //   }
+      // );
+      // console.log("Notification Deleted");
     } catch (error) {
       console.error("Error handling notification action:", error);
       console.error("An error occurred while processing the notification.");
@@ -103,7 +246,7 @@ const NotificationList =  ({ notifs, isLoading }) => {
     <>
       {notifs?.map((notif: any, index: number) => (
         <div key={notif.id}>
-          {(notif.source == Notif_Source.Inventory_Update_Approval_Request || notif.source == Notif_Source.Payment_Edit_Approval_Request || notif.source == Notif_Source.Payment_Delete_Approval_Request) && isAdmin  ?  (
+          {(notif.source==Notif_Source.Payment_Delete_Approval_Request || notif.source==Notif_Source.Expenses_Approval_Request || notif.source==Notif_Source.Purchases_Approval_Request || notif.source == Notif_Source.Inventory_Update_Approval_Request || notif.source == Notif_Source.Payment_Edit_Approval_Request || notif.source == Notif_Source.Payment_Delete_Approval_Request || notif.source ==Notif_Source.Sales_Approval_Request) && isAdmin  ?  (
 
             
             <div className=" px-5 py-4 bg-neutral-700 border border-neutral-700 rounded-[10px] justify-start items-start gap-4 inline-flex relative z-100">
@@ -116,7 +259,7 @@ const NotificationList =  ({ notifs, isLoading }) => {
                 <div className="self-stretch justify-end items-start inline-flex">
                   <div className="grow shrink basis-0 flex-col justify-center items-start inline-flex">
                     <div className="self-stretch text-emerald-50 text-base font-bold ">
-                      {notif.message}
+                      {notif.message || notif.data.message}
                     </div>
                     <div className="self-stretch text-neutral-400 text-xs font-medium flex justify-between items-center">
                         <span>{formatDateAndTime(notif.createdAt).formattedTime}</span>

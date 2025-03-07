@@ -45,16 +45,14 @@ export const PUT=async (req: NextRequest,
             const { isApproved,productId,stockStatus,invoiceType,...body}=await req.json();
             console.log("Parsed Body is:", body);
             const data={stockStatus,productId,invoiceType,...body};
-            // const validatedData = ProductBatchSchema.safeParse(data);
-      
-            // if (!validatedData.success) {
-            //   return new Response(JSON.stringify({ errors: validatedData.error.issues }), {
-            //     status: 422,
-            //   });
-            // }
-           const productBatch= await prismaClient.productBatch.findUnique({
-                where: { id: Number(params.id) },
+            const productBatch= await prismaClient.productBatch.findFirst({
+                where: { batchNumber: body.batchNumber },
             });  
+
+            if (!productBatch) {
+                throw new Error("Product batch not found");
+            }
+            
             console.log('Existing Product Batch:', productBatch);
             const product = await prismaClient.products.update({
                 where:{id:productId,inventorySectionId:inventoryId},
@@ -66,7 +64,7 @@ export const PUT=async (req: NextRequest,
             })
             console.log('Updated Product:', product);
             const updateItem = await prismaClient.productBatch.update({
-                where: { id: Number(params.id),inventorySectionId:inventoryId },
+                where: { id:productBatch.id },
                 data: {
                     ...body,
                     quantity:Math.abs((productBatch?.quantity || 0) - (body.quantity || 0)),
@@ -86,7 +84,7 @@ export const PUT=async (req: NextRequest,
                     isApproved:isApproved,
                     productBatch:{
                      connect:{
-                        id:Number(params.id)
+                        id:productBatch.id
                      }
                     },
                     InventorySection:{

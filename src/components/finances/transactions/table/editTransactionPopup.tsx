@@ -17,7 +17,7 @@ import useSWR from 'swr';
 
 import Loading2 from '@/app/loading2';
 import axios from 'axios';
-import { set } from 'date-fns';
+
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 

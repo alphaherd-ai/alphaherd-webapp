@@ -1,4 +1,4 @@
-import { connectToDB } from '../../../../utils/index';
+
 import prismaClient from '../../../../../prisma';
 import { NextRequest } from 'next/server';
 

@@ -305,11 +305,11 @@ const AdminProfile = () => {
               <div className="w-full justify-start items-start gap-4 flex">
                 <div className="w-full px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                   <div className="text-gray-500 text-base font-bold">Phone No.:</div>
-                  <input className="w-[25rem] h-full border-0 p-1 bg-white text-gray-500 text-base font-medium" type="number" name="" id="" defaultValue={String(userState.phoneNo)} onChange={(e) => setPhone(e.target.value)} disabled={!editable} />
+                  <input className="w-[18rem] h-full border-0 p-1 bg-white text-gray-500 text-base font-medium" type="number" name="" id="" defaultValue={String(userState.phoneNo)} onChange={(e) => setPhone(e.target.value)} disabled={!editable} />
                 </div>
                 <div className="w-full px-6 py-4 bg-white rounded-[11px] justify-start items-center gap-4 flex">
                   <div className="text-gray-500 text-base font-bold">Alternate Phone No.</div>
-                  <input className="w-[22rem] h-full border-0 p-1 bg-white text-gray-500 text-base font-medium" type="number" name="" id="" defaultValue={String(userState.altPhoneNo)} onChange={(e) => setAltPhone(e.target.value)} disabled={!editable} />
+                  <input className="w-[18rem] h-full border-0 p-1 bg-white text-gray-500 text-base font-medium" type="number" name="" id="" defaultValue={String(userState.altPhoneNo)} onChange={(e) => setAltPhone(e.target.value)} disabled={!editable} />
                 </div>
               </div>
               <div className="w-full justify-start items-start gap-4 flex">
