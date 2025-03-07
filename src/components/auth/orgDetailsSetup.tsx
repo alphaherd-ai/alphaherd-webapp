@@ -266,7 +266,7 @@ const OrgDetailsSetup = (props: any) => {
                             <div className="w-[136px] text-gray-500 text-base font-medium">Pincode*</div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
                                 <input
-                                    type="number"
+                                    type="text"
                                     className="text-textGrey2 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
                                     id="pinCode"
                                     name="pinCode"

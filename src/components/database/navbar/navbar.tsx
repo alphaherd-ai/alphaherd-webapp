@@ -70,17 +70,17 @@ const DatabaseNavbar = () => {
         const item = selectedOption?.value;
         let path = '';
         if (item?.patientId) {
-            path = `/database/clients/overview?id=${item.patientId}`;
+            path = `${process.env.NEXT_PUBLIC_API_BASE_PATH}/database/clients/overview?id=${item.patientId}`;
         } else if (item?.clientId) {
-            path = `/database/clients/overview?id=${item.clientId}`;
+            path = `${process.env.NEXT_PUBLIC_API_BASE_PATH}/database/clients/overview?id=${item.clientId}`;
         } else if (item?.distributorName) {
-            path = `/database/distributor/overview?id=${item.id}`;
+            path = `${process.env.NEXT_PUBLIC_API_BASE_PATH}/database/distributor/overview?id=${item.id}`;
         } else {
             // Handle the case where item is not found
             console.error('Invalid selection');
             return;
         }
-        router.push(path); // Navigate to the selected route
+        window.location.href = path; // Navigate to the selected route
     };
     const currentRoute = usePathname();
 

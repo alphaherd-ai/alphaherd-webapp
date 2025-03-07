@@ -8,7 +8,7 @@ export const POST = async (req: NextRequest) => {
     
     try {
         const url = new URL(req.url);
-        const branchDetails = await req.json();
+        const {branchDetails,userId} = await req.json();
         const orgId = url.searchParams.get("orgId");
         let orgNewBranch = await prismaClient.orgBranch.create({
         data: {
@@ -152,8 +152,14 @@ export const POST = async (req: NextRequest) => {
         })
       );
   
-    
-        return new Response(JSON.stringify({ "message": "Branch added successfully" }), {
+        await prismaClient.orgBranchUserRole.create({
+        data: {
+            orgBranchId: orgNewBranch.id,
+            userId: userId,
+            role: "Admin",
+        },
+        });
+        return new Response(JSON.stringify({ "message": "Branch added successfully" ,"orgBranch":orgNewBranch}), {
         status: 201,
         headers: {
             "Content-Type": "application/json",

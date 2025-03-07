@@ -558,11 +558,12 @@ const NewPurchasesTable = () => {
                                             }}
                                             onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
                                         />):( */}
-                                                    {item.gst * 100 || 0}%
+                                                    {(item.gst)?(item.gst * 100).toFixed(2) : 0}%
                                                     {/* )} */}
                                                 </div>
                                                 <div className=' flex text-textGrey2 text-base font-medium w-[10rem] items-center gap-1'>
-                                                    ₹{(item.quantity * item.gst * Number(item.unitPrice)).toFixed(2) || 0}
+                                                    
+                                                    ₹{(item.quantity && item.unitPrice && item.gst ? (item.quantity * item.gst * Number(item.unitPrice)).toFixed(2) : 0)}
 
                                                 </div>
                                                 <div className=' flex text-textGrey2 text-base font-medium w-[10rem] items-center gap-1'>

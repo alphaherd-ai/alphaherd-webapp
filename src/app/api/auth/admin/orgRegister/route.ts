@@ -48,15 +48,15 @@ export const POST = async (req: NextRequest) => {
         },
       });
     }
-
+    
     delete adminUserDetails.password;
     adminUserDetails.hashedPassword = hashedPassword;
 
-    let newOrg = await prismaClient.organization.create({
+    const newOrg = await prismaClient.organization.create({
       data: orgDetails
     });
-    let orgNewBranch = await prismaClient.orgBranch.create({
-      data: {
+    const orgNewBranch = await prismaClient.orgBranch.create({
+      data : {
         ...branchDetails,
         orgId: newOrg.id
       }
@@ -204,7 +204,7 @@ export const POST = async (req: NextRequest) => {
 
     adminUserDetails.orgBranchId = orgNewBranch.id;
 
-    let newUser = await prismaClient.user.create({
+    const newUser = await prismaClient.user.create({
       data: adminUserDetails
     });
 

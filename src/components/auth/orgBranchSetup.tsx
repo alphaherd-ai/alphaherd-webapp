@@ -171,7 +171,7 @@ const OrgDetailsSetup = (props: any) => {
                             </div>
                         </div>
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
-                            <div className="w-[136px] text-gray-500 text-base font-medium">PAN No.</div>
+                            <div className="w-[136px] text-gray-500 text-base font-medium">PAN No.*</div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
                                 <input
                                     type="text"

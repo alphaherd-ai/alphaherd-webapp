@@ -44,6 +44,7 @@ const NewExpensesTable = () => {
     const appState = useAppSelector((state) => state.app)
     const url = useSearchParams();
     const id = url.get('id');
+    const [validate, setValidate] = useState(false);
     const { tableData: items, setTableData: setItems } = useContext(DataContext);
 
     let expenseData: any = null, isExpenseDataLoading = false, isExpenseDataError = false;
@@ -395,6 +396,7 @@ const handleItemName=(event:any,index:any)=>{
                                         />
                                         <div className='w-[12rem] flex items-center text-textGrey2 text-base font-medium gap-1'>
                                             ₹<input className="w-[70%] border border-solid border-borderGrey outline-none h-8 rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
+                                                type="number"
                                                 value={item.cost}
                                                 onChange={(event) => handleSellingPrice(event, index)} />
                                         </div>
@@ -426,8 +428,8 @@ const handleItemName=(event:any,index:any)=>{
                                             </div> : <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[20px] justify-end'></div>}
                                     </div>
                                 ))}
-                            <div className='flex  w-full justify-evenly items-center box-border bg-gray-100 h-12 border border-solid border-gray-200 py-5  text-textGrey2'>
-                                
+                            <div className='flex  w-full items-center box-border bg-gray-100 h-12 border border-solid border-gray-200 py-5  text-textGrey2 pl-4'>
+                                {validate && <div className="text-red-500 text-sm">*Name and Cost are required.</div>}
 
                             </div>
                         </div>
@@ -435,7 +437,7 @@ const handleItemName=(event:any,index:any)=>{
                     </div>
                     <NewExpensesTotalAmout expenseData={expenseData}/>
                 </div>
-                <NewExpensesBottomBar expenseData={expenseData} />
+                <NewExpensesBottomBar expenseData={expenseData} setValidate={setValidate} />
             </div>
             {showPopup && <Popup onClose={togglePopup} />}
 

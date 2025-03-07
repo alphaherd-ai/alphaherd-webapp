@@ -15,7 +15,6 @@ export async function DELETE(req: NextRequest) {
         const user = await prismaClient.user.findUnique({
             where: {
                 id: Number(userId),
-                orgBranchId: Number(branchId),
             },
         });
 
@@ -24,18 +23,21 @@ export async function DELETE(req: NextRequest) {
         }
 
         // Delete related records in OrgBranchUserRole table
-        await prismaClient.orgBranchUserRole.deleteMany({
+        const deleted=await prismaClient.orgBranchUserRole.deleteMany({
             where: {
                 userId: Number(userId),
+                orgBranchId: Number(branchId),
             },
         });
-
-        // Delete the user
-        await prismaClient.user.delete({
-            where: {
-                id: Number(userId),
-            },
-        });
+        if(!deleted){
+            return new NextResponse('Error deleting user roles', { status: 500 });
+        }
+        // // Delete the user
+        // await prismaClient.user.delete({
+        //     where: {
+        //         id: Number(userId),
+        //     },
+        // });
 
         return new NextResponse('User deleted successfully', { status: 200 });
     } catch (error) {

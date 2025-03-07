@@ -618,7 +618,7 @@ const customStyles = {
                                             }}
                                             onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
                                         />):( */}
-                                           { item.gst*100 || 0}%
+                                           { item.gst?(item.gst*100).toFixed(2):0}%
                                         {/* )} */}
                                     </div>
                                 <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium'>{`₹${((item?.sellingPrice*item?.quantity * item?.gst)||0).toFixed(2)}`}</div>
