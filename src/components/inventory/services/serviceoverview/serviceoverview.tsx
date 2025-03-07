@@ -2,8 +2,6 @@
 import Image from "next/image"
 import lefticon from "../../../../assets/icons/inventory/left_icon.svg"
 import optionicon from "../../../../assets/icons/inventory/more_vert.svg"
-import downloadicon from "../../../../assets/icons/inventory/1. Icons-24.svg"
-import baricon from "../../../../assets/icons/inventory/bar_chart.svg"
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
 import formatDateAndTime from "@/utils/formateDateTime";
 import React, { useState, useEffect } from 'react';
@@ -97,7 +95,6 @@ const ServiceDetails = () => {
             });
             let productsJson = await productsResponse?.json();
             setProductOptions(productsJson.products.filter((product:any)=>!(product?.isDeleted)).map((product: any) => { return { label: product.itemName, value: product.id } }));
-
         }
         fetchProductsAndProviders();
     }, [])
@@ -146,6 +143,7 @@ const ServiceDetails = () => {
                 );
                 const results = await Promise.all(promises);
                 setProductDetails(results);
+                console.log("Product Details",productDetails);
             } catch (error) {
                 console.error('Failed to fetch product details:', error);
             }
@@ -597,8 +595,8 @@ const ServiceDetails = () => {
                 </div>
                 <div className="w-full justify-start items-start flex rounded-[10px]">
                     <div className="w-3/12 p-6 bg-white border-t border-solid border-0  border-r border-borderGrey flex-col justify-center items-start rounded-b-xl gap-4 flex ">
-                        <div className="text-textGrey2 text-[28px] font-bold ">₹{isLoading ? <Loading2 /> : service?.serviceCharge}</div>
-                        <div className="text-textGrey2 text-base font-medium ">Service Charge</div>
+                        <div className="text-textGrey2 text-[28px] font-bold ">₹{isLoading ? <Loading2 /> : service?.sellingPrice}</div>
+                        <div className="text-textGrey2 text-base font-medium ">Selling Price</div>
                     </div>
                     <div className="w-3/12 p-6 bg-white border-t border-solid border-0 border-r border-borderGrey flex-col justify-center items-start gap-4 flex">
                         <div className="text-textGrey2 text-[28px] font-bold ">₹32,499</div>
@@ -629,12 +627,12 @@ const ServiceDetails = () => {
                                 <div className="text-green-600 text-sm font-medium ">{isLoading ? <Loading2 /> : service?.category}</div>
                             </div>
                         </div>
-                        <div className="w-6/12 p-6 flex items-center justify-between">
-                            <div className="text-textGrey2 text-base font-medium ">Dispensing Fee</div>
+                        {/* <div className="w-6/12 p-6 flex items-center justify-between">
+                            
                             <div className="w-[66px] h-7 px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center items-center gap-2 flex">
                                 <div className="text-orange-500 text-sm font-medium ">{isLoading ? <Loading2 /> : service?.sellingPrice}</div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                     <div className="w-full border-b border-solid border-0 border-borderGrey">
                         <div className="w-full flex gap-2 items-center p-6 h-3/12">
@@ -658,14 +656,6 @@ const ServiceDetails = () => {
                     <div className="w-full flex p-6 items-start justify-between border-0 border-b  border-solid border-borderGrey">
                         <div className="text-textGrey2 text-xl font-medium ">
                             Service History
-                        </div>
-                        <div className="flex gap-2">
-                            <div className="w-8 h-8 px-1.5 py-2 bg-white rounded-[5px] border border-solid  border-borderGrey justify-start items-center gap-2 flex">
-                                <Image src={downloadicon} alt="download" className="w-5 h-5" />
-                            </div>
-                            <div className="w-8 h-8 px-1.5 py-2 bg-white rounded-[5px] border border-solid border-borderGrey justify-start items-center gap-2 flex">
-                                <Image src={baricon} alt="baricon" className="w-5 h-5" />
-                            </div>
                         </div>
                     </div>
                     <div className="w-full">
@@ -711,24 +701,22 @@ const ServiceDetails = () => {
                     <div>
                         <div className='flex justify-evenly  w-full  items-center box-border bg-gray-100  h-12 py-4 border-b border-borderGrey text-textGrey2'>
                             <div className='flex text-textGrey2 text-base font-medium  w-[10rem]'>Product</div>
-                            <div className='flex text-textGrey2 text-base font-medium  w-[10rem]'>Item Quantity</div>
+                            <div className='flex text-textGrey2 text-base font-medium  w-[10rem]'>Batch Quantity</div>
                             <div className='flex text-textGrey2 text-base font-medium  w-[10rem]'>Batch Number</div>
                             <div className='flex text-textGrey2 text-base font-medium  w-[10rem]'>Expiry Date</div>
                             <div className='flex text-textGrey2 text-base font-medium  w-[10rem]'>Cost Price</div>
                             <div className='flex text-textGrey2 text-base font-medium  w-[10rem]'>Selling Price</div>
-                            <div className='flex text-textGrey2 text-base font-medium  w-[10rem]'>Stock Level</div>
                         </div>
                         {loading && <Loading2 />}
                         {productDetails?.map((item: any) => (
                             item?.productBatches?.map((batch: any) => (
                                 <div key={batch?.id} className='flex items-center justify-evenly w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
                                     <div className='w-[10rem]  flex text-textGrey2 text-base font-medium'>{item?.itemName}</div>
-                                    <div className='w-[10rem]  flex text-textGrey2 text-base font-medium'>{item?.totalQuantity}</div>
+                                    <div className='w-[10rem]  flex text-textGrey2 text-base font-medium'>{batch?.quantity}</div>
                                     <div className='w-[10rem]  flex text-textGrey2 text-base font-medium'>{batch?.batchNumber}</div>
                                     <div className='w-[10rem]  flex text-textGrey2 text-base font-medium'>{formatDateAndTime(batch?.expiry).formattedDate}</div>
                                     <div className='w-[10rem]  flex text-textGrey2 text-base font-medium'>₹{batch?.costPrice}</div>
                                     <div className='w-[10rem]  flex text-textGrey2 text-base font-medium'>₹{batch?.sellingPrice}</div>
-                                    <div className='w-[10rem]  flex text-textGrey2 text-base font-medium'>{item?.stockLevel}</div>
                                 </div>
                             ))
                         ))}

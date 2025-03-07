@@ -1,24 +1,17 @@
 "use client";
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 
-import Sort from '../../../../assets/icons/finance/sort.svg';
-import Filter from '../../../../assets/icons/finance/filter.svg';
-
-import Download from '../../../../assets/icons/finance/download.svg';
-
-import FilterDropDownCard from './FilterDropDownCard';
-
-import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-
+import { useRouter,useSearchParams,usePathname } from 'next/navigation';
+import FilterDropDownCard from './FilterDropDownCard';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 
 
 const InventoryServicesTableHeader = ({ onSortChange }: any) => {
     const currentRoute = usePathname();
-
+    const router=useRouter();
+    const searchParams = useSearchParams();
     const [selectedSort, setSelectedSort] = useState<string>("name");
     const [sortOrder, setSortOrder] = useState<string>("asc");
 
@@ -47,7 +40,37 @@ const InventoryServicesTableHeader = ({ onSortChange }: any) => {
         [selectedSort]
     );
 
+    const handleClearFilters = () => {
+        // // Get the base path without query parameters
+        // const pathWithoutQuery = window.location.pathname
+        
+        // // Get the 'type' parameter as we want to preserve it
+        // const type = searchParams.get("type") || "all"
+    
+        // // Navigate to the base URL with only the type parameter
+        // router.push(`${pathWithoutQuery}?type=${type}`)
+        router.push("/inventory/services/all");
+      }
 
+
+
+
+
+        const useFilterState = () => {
+                const [isActive, setIsActive] = useState(false)
+              
+                useEffect(() => {
+                  const checkFilterState = () => {
+                    const category = searchParams.get("selectedCategory")
+                    setIsActive(Boolean( category))
+                  }
+              
+                  checkFilterState()
+                }, [searchParams])
+              
+                return isActive
+              }
+            const isFilterActive = useFilterState();
     return (
 
         <>
@@ -109,23 +132,42 @@ const InventoryServicesTableHeader = ({ onSortChange }: any) => {
                     </div> */}
 
 
-                    <div className='flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg '>
-                        <div className='flex '><Image src={Filter} alt='Filter' className='w-3 h-3 mr-2' /></div>
+<div className={`flex items-center  h-7  p-2 mr-4 border border-solid border-gray-300 border-0.5 rounded-lg ${isFilterActive ? 'bg-[#35BEB1]' : 'bg-[#FFFFFF]'}`}>
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"  className='cursor-pointer'>
+<mask id="mask0_1198_18016" maskUnits="userSpaceOnUse" x="0" y="0" width="16" height="16">
+<rect width="16" height="16" fill="white"/>
+</mask>
+<g mask="url(#mask0_1198_18016)">
+<path d="M7.32918 14.0011V10.0011H8.66252V11.3344H13.9958V12.6678H8.66252V14.0011H7.32918ZM1.99585 12.6678V11.3344H5.99585V12.6678H1.99585ZM4.66252 10.0011V8.66777H1.99585V7.33443H4.66252V6.0011H5.99585V10.0011H4.66252ZM7.32918 8.66777V7.33443H13.9958V8.66777H7.32918ZM9.99585 6.0011V2.0011H11.3292V3.33443H13.9958V4.66777H11.3292V6.0011H9.99585ZM1.99585 4.66777V3.33443H8.66252V4.66777H1.99585Z" fill={isFilterActive ? "#FFFFFF" : "#A2A3A3"}/>
+</g>
+</svg>
 
-                        <Popover className='overflow-y-scroll'>
+
+                        <Popover >
                             <PopoverTrigger>
                                 <Button
                                     variant="solid"
-                                    className="capitalize border-none bg-transparent rounded-lg"
+                                    className="capitalize border-none bg-transparent rounded-lg text-white"
                                 >
-                                    Filter
+                                    <span style={{ fontFamily: 'Satoshi', fontWeight: 500, fontSize: '14px', lineHeight: '18.9px',  color: isFilterActive ? '#FFFFFF' : '#A2A3A3' }}>Filter</span>
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent>
                                 <FilterDropDownCard />
                             </PopoverContent>
                         </Popover>
+                        {isFilterActive && (
+                <svg
+                    width="20" height="20" viewBox="0 0 16 16" fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className='cursor-pointer'
+                    onClick={handleClearFilters}
+                >
+                    <path d="M4.77561 12L4 11.2244L7.22439 8L4 4.77561L4.77561 4L8 7.22439L11.2244 4L12 4.77561L8.77561 8L12 11.2244L11.2244 12L8 8.77561L4.77561 12Z" fill="white"/>
+                </svg>
+            )}
                     </div>
+
 
                     <div className='flex items-center  justify-between rounded-lg '>
 

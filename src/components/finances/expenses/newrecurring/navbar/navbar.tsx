@@ -17,7 +17,7 @@ const NewRecurringNavbar = () => {
                         <Image className="w-6 h-6 relative rounded-[5px]" src={lefticon} alt="Back"></Image>
                     </div>
                     <div className="text-gray-500 text-[28px] flex items-center font-bold ">
-                    Recurring Expense - Rent - EXP-000002
+                    Recurring Expense
                     </div>
                     </div>
                     <div className=" h-11 px-6 py-2.5 rounded-[5px]  justify-center items-center inline-flex border border-gray-300 border-solid">

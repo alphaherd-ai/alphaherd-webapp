@@ -36,9 +36,9 @@ export function notifications(data: any) {
         return `${data.user} wants to edit ${data.partyName}'s payment receipt #${data.receipt}. `
     }
     if(data.source ===Notif_Source.Payment_Delete_Approval_Request){
-
         return `${data.user} wants to cancel ${data.partyName}'s payment receipt #${data.receipt}. `
     }
+    
     
   }
   

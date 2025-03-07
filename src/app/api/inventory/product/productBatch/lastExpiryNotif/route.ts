@@ -1,7 +1,4 @@
-import { connectToDB } from '../../../../../../utils/index';
 import prismaClient from '../../../../../../../prisma';
-import { fetchInventoryId } from '@/utils/fetchBranchDetails';
-import { ProductBatch } from "@prisma/client";
 
 // Named export for the PATCH method
 export async function PATCH(req: Request) {

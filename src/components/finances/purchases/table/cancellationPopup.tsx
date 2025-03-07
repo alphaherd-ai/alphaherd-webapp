@@ -6,6 +6,8 @@ import Image from 'next/image';
 import axios from 'axios';
 import { useAppSelector } from '@/lib/hooks';
 import Loading2 from '@/app/loading2';
+import { Notif_Source } from '@prisma/client';
+
 interface CancellationPopupProps {
     setShowConfirmation: any;
     purchaseId: number;
@@ -23,20 +25,39 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ setShowConfirmati
 
 
     const handleCancel = async () => {
-
+        const isApproved = appState.isCurrentOrgAdmin;
+        console.log("isApproved",isApproved);
         try {
             setLoading(true);
-            const res = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/status/${purchaseId}?branchId=${appState.currentBranchId}`, {
-                status: "Cancelled"
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
+            if(isApproved){
+                const res = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/status/${purchaseId}?branchId=${appState.currentBranchId}`, {
+                    status: "Cancelled"
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                }
+                )
+
+                if (res.status === 201) {
+                    setShowConfirmation(false);
                 }
             }
-            )
-
-            if (res.status === 201) {
-                setShowConfirmation(false);
+            else{
+                const notifData = {
+                    orgId: appState.currentOrgId,
+                    url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/finance/purchases/all?type=all`,
+                    message: `Someone is trying to edit. Click here to view the transaction.`,
+                    data: {
+                      purchaseId: purchaseId,
+                      branchId: appState.currentBranchId,
+                      action: "Cancel Sales Transaction",
+                    },
+                    source: Notif_Source.Purchases_Approval_Request,
+                  };
+            
+                  await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData);
+                  console.log("Notification sent for approval:", notifData);
             }
         }
         catch (err) {

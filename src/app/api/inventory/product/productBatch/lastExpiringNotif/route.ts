@@ -1,13 +1,32 @@
-import { connectToDB } from '../../../../../../utils/index';
 import prismaClient from '../../../../../../../prisma';
-import { fetchInventoryId } from '@/utils/fetchBranchDetails';
-import { ProductBatch } from "@prisma/client";
+
 
 // Named export for the PATCH method
 export async function PATCH(req: Request) {
   try {
     const { id, lastExpiringNotif } = await req.json();
+
+    if (!id || !lastExpiringNotif) {
+      return new Response(
+        JSON.stringify({ error: "Invalid or missing 'id' or 'lastDueNotif'" }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
     console.log("Request Body:", { id, lastExpiringNotif }); // Log the request body for debugging
+
+    const notifDate = new Date(lastExpiringNotif);
+    if (isNaN(notifDate.getTime())) {
+      return new Response(
+        JSON.stringify({ error: "'lastDueNotif' must be a valid date" }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
 
     await prismaClient.products.update({
       where: { id },

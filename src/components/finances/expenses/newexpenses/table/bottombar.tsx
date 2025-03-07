@@ -37,14 +37,15 @@ const NewExpensesBottomBar = ({ expenseData }: any) => {
     
     const handleSubmit = async () => {
         tableData.pop();
-        const allData = { headerData, tableData, totalAmountData, recurringData, transactionsData };
+        const filteredTableData = tableData.filter(data => data.itemName);
+        const allData = { headerData, filteredTableData, totalAmountData, recurringData, transactionsData };
         // console.log("this is all data", allData)
         // console.log(new Date(Date.now()));    
         let totalQty = 0;
-        tableData.forEach(data => {
+        filteredTableData.forEach(data => {
             totalQty += 1 || 0;
         });
-        const items = tableData.map(data => ({
+        const items = filteredTableData.map(data => ({
             sellingPrice: data.cost,
             // taxAmount: data.gst,
             invoiceNo: data.invoiceNo,

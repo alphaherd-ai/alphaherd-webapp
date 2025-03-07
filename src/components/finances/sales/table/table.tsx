@@ -6,10 +6,11 @@ import FinancesSalesTableHeader from './header'
 
 import { FinanceCreationType } from '@prisma/client';
 import FinancesSalesTableItem from './item'
-
-import { useAppSelector } from '@/lib/hooks';
-import { useSearchParams } from 'next/navigation';
 import axios from 'axios';
+import { useAppSelector } from '@/lib/hooks';
+import { Notif_Source } from '@prisma/client';
+import { useSearchParams } from 'next/navigation';
+
 
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
@@ -127,7 +128,74 @@ const FinancesSalesTable = () => {
   };
   // console.log(invoiceCount, estimateCount, returnCount)
 
+  const isOlderThanOneWeek = (dateString: string | undefined) => {
 
+    if (!dateString) return true;
+    const lastNotifDate = new Date(dateString);
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7 );
+    return lastNotifDate < oneWeekAgo;
+  };
+
+
+  const sendDueNotification = async (notifData: any, invoiceID: number) => {
+    try {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData);
+  
+      await axios.patch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/lastDueDateNotif`, {
+        id: invoiceID,
+        lastReminderSent: new Date().toISOString(),
+      });
+  
+      console.log(`Payment reminder notification sent for Invoice ID: ${invoiceID}`);
+    } catch (error) {
+      console.error("Failed to send payment reminder notification:", error);
+    }
+  };
+
+
+  useEffect(()=>{
+    function sendPaymentReminders(invoices: any[], currentDate: Date) {
+          if (!invoices || !Array.isArray(invoices)) {
+            return [];
+          }
+          console.log("data for invoices", invoices);
+          return invoices.map(invoice => {
+            const dueDate = new Date(invoice.dueDate);
+            const daysLeftForDue = Math.ceil((dueDate.getTime() - currentDate.getTime()) / (24 * 60 * 60 * 1000));
+    
+            if (daysLeftForDue <= 7 && daysLeftForDue >= 0 && isOlderThanOneWeek(invoice.lastDueNotif)) {
+              console.log("iam here1")
+              const notifData = {
+                orgId: appState.currentOrgId,
+                url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/finance/invoices/${invoice.id}`,
+                message: `Payment of ₹${invoice.totalCost} due in ${daysLeftForDue} days for invoice ${invoice.invoiceNo}`,
+                data: {
+                  invoiceId: invoice.id,
+                  dueInDays: daysLeftForDue,
+                  party: invoice.distributor,
+                  amountDue: invoice.totalCost,
+                  status: invoice.status,
+                },
+                source: Notif_Source.Sales_Invoice
+              };
+              console.log("notif data", notifData);
+              sendDueNotification(notifData, invoice.id);
+              return { ...invoice, notificationSent: true };
+            } else if (daysLeftForDue < 0) {
+              console.log("iam here3")
+              return { ...invoice, status: 'Overdue' };
+            } else {
+              console.log("iam here4")
+              return invoice;
+            }
+          });
+        }
+
+        const currentDate = new Date();
+        const updated = sendPaymentReminders(data,currentDate);
+        console.log("updated invoices",updated);
+  },[data]);
 
   return (
     <div className='flex flex-col w-full box-border border border-solid border-borderGrey rounded-lg mt-6 mb-6'>
