@@ -6,7 +6,6 @@ import React, { useEffect, useState } from "react";
 import { useAppSelector } from "@/lib/hooks";
 import Loading from "@/app/loading";
 import { Notif_Source } from "@prisma/client";
-import { tryCatch } from "bullmq";
 
 //@ts-ignore
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json());
@@ -30,7 +29,7 @@ const NotificationList =  ({ notifs, isLoading }) => {
     try {
       if (notifData && action === 'accept') {
         console.log("notif data inside list ",notifData);
-        if(notifData.source == Notif_Source.Inventory_Update_Approval_Request){
+          if(notifData.source == Notif_Source.Inventory_Update_Approval_Request){
               const stockStatus = notifData.data.body1.stockStatus;
               const productId = notifData.data.body1.productId;
               notifData.data.body1.isApproved = true;
@@ -44,7 +43,7 @@ const NotificationList =  ({ notifs, isLoading }) => {
                 );
                 console.log("Approved");
               } 
-            }
+          }
           else if(notifData.source == Notif_Source.Payment_Edit_Approval_Request)
           {
             const editTrans = notifData.data.body;
@@ -155,7 +154,68 @@ const NotificationList =  ({ notifs, isLoading }) => {
               alert('Failed to save transaction');
             }
           }   
-              
+          else if(notifData.source==Notif_Source.Payment_Delete_Approval_Request){
+            const transactionId = notifData.data.transactionId;
+            const invoiceLink = notifData.data.invoiceLink;
+            try {
+
+              const response = await axios.put(
+                  `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/${transactionId}?branchId=${appState.currentBranchId}`,
+                  {
+
+                      moneyChange: "Cancelled",
+                  },
+                  {
+
+                      headers: {
+                          'Content-Type': 'application/json',
+                      },
+                  }
+              );
+
+              if (response.status !== 201) {
+                  throw new Error(`Unexpected response status: ${response.status}`);
+              }
+
+          
+
+              const editRecordTransaction = {
+                  receiptNo:notifData.data.receiptNo,
+                  moneyChange: "Cancelled",
+              };
+
+              try {
+
+                  const putResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/editRecordTransaction/${invoiceLink}/?branchId=${appState.currentBranchId}`, {
+                      method: 'PUT',
+                      headers: {
+                          'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                          recordTransaction: [editRecordTransaction]
+                      })
+                  });
+
+
+                  if (putResponse.status !== 201) {
+                      throw new Error(`Unexpected response status: ${putResponse.status}`);
+                      
+                  }
+              }
+
+              catch (error) {
+                  console.log(error)
+
+              }
+
+
+
+          }
+          catch (err) {
+              console.log(err);
+          }
+
+          }
 
           
       } else {
@@ -186,7 +246,7 @@ const NotificationList =  ({ notifs, isLoading }) => {
     <>
       {notifs?.map((notif: any, index: number) => (
         <div key={notif.id}>
-          {(notif.source==Notif_Source.Expenses_Approval_Request || notif.source==Notif_Source.Purchases_Approval_Request || notif.source == Notif_Source.Inventory_Update_Approval_Request || notif.source == Notif_Source.Payment_Edit_Approval_Request || notif.source == Notif_Source.Payment_Delete_Approval_Request || notif.source ==Notif_Source.Sales_Approval_Request) && isAdmin  ?  (
+          {(notif.source==Notif_Source.Payment_Delete_Approval_Request || notif.source==Notif_Source.Expenses_Approval_Request || notif.source==Notif_Source.Purchases_Approval_Request || notif.source == Notif_Source.Inventory_Update_Approval_Request || notif.source == Notif_Source.Payment_Edit_Approval_Request || notif.source == Notif_Source.Payment_Delete_Approval_Request || notif.source ==Notif_Source.Sales_Approval_Request) && isAdmin  ?  (
 
             
             <div className=" px-5 py-4 bg-neutral-700 border border-neutral-700 rounded-[10px] justify-start items-start gap-4 inline-flex relative z-100">

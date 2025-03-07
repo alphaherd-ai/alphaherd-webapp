@@ -5,8 +5,9 @@ import checkMark from '../../../../assets/icons/finance/check.svg';
 import Image from 'next/image';
 import axios from 'axios';
 import { useAppSelector } from '@/lib/hooks';
-import useSWR from 'swr';
+import { Notif_Source } from '@prisma/client';
 import Loading2 from '@/app/loading2';
+
 interface CancellationPopupProps {
     transaction: any;
     setShowConfirmation: any;
@@ -18,7 +19,7 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ transaction, setS
 
     const appState = useAppSelector((state) => state.app);
 
-    
+    console.log("transactions",transaction);
 
     const [loading, setLoading] = useState(false);
 
@@ -94,7 +95,22 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ transaction, setS
             }
         }
         else{
-            
+            const notifData = {
+                orgId: appState.currentOrgId,
+                url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/finance/transactions/all?type=all`,
+                message: `Someone is trying to edit. Click here to view the transaction.`,
+                data: {
+                  transactionId: transaction.id,
+                  branchId: appState.currentBranchId,
+                  action: "Cancel Sales Transaction",
+                  receiptNo:transaction.receiptNo,
+                  invoiceLink:transaction.invoiceLink
+                },
+                source: Notif_Source.Payment_Delete_Approval_Request,
+              };
+              
+              await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData);
+              console.log("Notification sent for approval:", notifData);
         }
     }
 

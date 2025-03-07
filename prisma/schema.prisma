@@ -31,6 +31,7 @@ enum Notif_Source {
   Sales_Approval_Request
   Purchases_Approval_Request
   Expenses_Approval_Request
+  Payments_Approval_Request
 }
 
 enum Sales_Status {
@@ -340,6 +341,7 @@ model ProductBatch {
   InventorySection    InventorySection?   @relation(fields: [inventorySectionId], references: [id])
   inventorySectionId  Int?
   isDeleted           Boolean             @default(false)
+  hsnCode             String?
 
   @@index([inventorySectionId, productId])
   @@index([id, inventorySectionId])

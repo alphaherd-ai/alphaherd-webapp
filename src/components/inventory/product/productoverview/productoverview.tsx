@@ -732,7 +732,7 @@ const ProductDetails = () => {
                                 <div className='w-2/12  flex items-center text-borderGrey text-base font-medium'>{item.distributors[0]}</div>
                                 <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>{item.batchNumber}</div>
                                 <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>{item.expiry ? formatDateAndTime(item.expiry).formattedDate : ''}</div>
-                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>{product.hsnCode}</div>
+                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>{item.hsnCode}</div>
 
                                 <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>₹{item.costPrice}</div>
                                 <div className='w-1/12  flex items-center text-borderGrey text-base font-medium pl-4'>₹{item.maxRetailPrice}</div>
