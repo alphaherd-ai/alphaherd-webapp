@@ -25,6 +25,7 @@ import { useRouter } from "next/navigation"
 import Loading2 from "@/app/loading2"
 import Rupee from '../../../../assets/icons/finance/rupee.svg';
 import RecordTransactionPopup from '../../../finances/transactions/table/recordTransactionPopup';
+import { set } from "date-fns"
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
@@ -41,6 +42,7 @@ const DistributorDetails = () => {
   const [isUpdating, setUpdating] = useState(false);
   const [distributorTimeLine, setDistributorTimeLine] = useState<any | null>(null);
   const [toBePaid, setToBePaid] = useState<number>(0);
+  const [lastDateofReturn,setLastDateofReturn]=useState<string>('');
   const url = useSearchParams();
   const id = url.get('id');
   const appState = useAppSelector((state) => state.app)
@@ -125,8 +127,8 @@ const DistributorDetails = () => {
         address: editDistributor?.address,
         city: editDistributor?.city,
         pinCode: editDistributor?.pinCode,
-        gstinNo: editDistributor?.gstin,
-        panNo: editDistributor?.panNumber,
+        gstinNo: editDistributor?.gstinNo,
+        panNo: editDistributor?.panNo,
       };
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/${id}?branchId=${appState.currentBranchId}`,
@@ -191,12 +193,16 @@ const DistributorDetails = () => {
     if (invoiceList) {
       let sum = 0;
       invoiceList.map((invoice: any) => {
-        if (invoice.status.includes('You’re owed')) {
+        if (invoice.status.includes('You owe')) {
           sum += parseFloat(invoice.status.split('₹')[1]);
           //console.log(toBePaid);
         }
       })
-      setToBePaid(sum);
+      setToBePaid(Number(sum.toFixed(2)));
+
+      const purchaseOrders=invoiceList.filter((invoice:any)=>invoice?.type==='Purchase_Order');
+      const latestPurchaseOrder=purchaseOrders.sort((a:any,b:any)=>new Date(b.date).getTime()-new Date(a.date).getTime())[0];
+      setLastDateofReturn(latestPurchaseOrder?.dueDate);
     }
   }, [invoiceList])
 
@@ -541,7 +547,7 @@ const DistributorDetails = () => {
 
           <div className="w-4/12 p-6 rounded-tr-md rounded-br-md  border-t border-solid border-0 border-r border-b border-stone-300 flex-col justify-center items-start gap-4 flex">
             <div className="w-fit bg-[#FFF0E9] py-2 px-2 rounded-md">
-              <div className="text-[#FC6E20] text-[28px] font-bold ">25/12/2024</div>
+              <div className="text-[#FC6E20] text-[28px] font-bold ">{lastDateofReturn && lastDateofReturn ? formatDateAndTime(lastDateofReturn).formattedDate:'No Active Orders'}</div>
               <div className="text-[#FC6E20] text-base font-medium ">Last Date for Item Returns</div>
             </div>
 
@@ -564,12 +570,12 @@ const DistributorDetails = () => {
 
           <div className="w-full flex border-b  border-solid border-0 border-stone-300">
             <div className="w-full border-r border-solid border-0 border-stone-300 flex gap-2 items-center p-6 h-3/12">
-              <div className="text-textGrey2 text-base font-medium ">City:</div>
+              <div className="text-textGrey1 text-base font-medium ">City:</div>
               <div className="text-gray-500 text-base font-medium ">{distributor ? distributor?.city : <Loading2 />}</div>
             </div>
 
             <div className="w-full flex gap-2 items-center p-6 h-3/12">
-              <div className="text-textGrey2 text-base font-medium ">PinCode:</div>
+              <div className="text-textGrey1 text-base font-medium ">PinCode:</div>
               <div className="text-gray-500 text-base font-medium ">{distributor ? distributor?.pinCode : <Loading2 />}</div>
             </div>
 

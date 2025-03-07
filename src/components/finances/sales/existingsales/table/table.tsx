@@ -176,7 +176,7 @@ const ExistingsalesTable = () => {
 
                                         <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium gap-5'>
                                             <div className=" flex items-center text-[#6B7E7D] text-base font-medium">₹{item.sellingPrice}</div>
-                                            <div className="text-neutral-400 text-[12px]  font-medium  "> Tax inc</div>
+                                            {/* <div className="text-neutral-400 text-[12px]  font-medium  "> Tax inc</div> */}
 
                                         </div>
 

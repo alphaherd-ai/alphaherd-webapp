@@ -106,11 +106,11 @@ const NewPurchaseReturnNewHeader = ({existingHeaderData}:any) => {
 
         }
         if (headerData.distributor) {
-            const invoices = purchaseData.filter((item: { type: string; distributorId: number }) => 
+            const invoices = purchaseData?.filter((item: { type: string; distributorId: number }) => 
                 item.type === 'Purchase_Invoice' && item.distributorId === headerData.distributor.distributorId
             );
             console.log(invoices);
-            const options = invoices.map((item: any) => (
+            const options = invoices?.map((item: any) => (
                 {
                     label: item.invoiceNo,
                     value: item

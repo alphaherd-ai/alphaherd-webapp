@@ -13,6 +13,7 @@ import { useAppSelector } from "@/lib/hooks"
 import editicon from "@/assets/icons/finance/1. Icons-25.svg";
 
 const OrganisationNavbar = () => {
+    const [isChangeORganisationShow, setIsChangeOrganisationShow] = useState(false);
     const currentRoute = usePathname();
     const appState=useAppSelector((state)=>state.app);
     const [showPopup, setShowPopup] = React.useState(false);
@@ -59,7 +60,7 @@ const OrganisationNavbar = () => {
                   variant="solid"
                   className="capitalize border-none bg-black py-2.5 text-white rounded-lg flex gap-2 justify-center items-center hover:cursor-pointer" onClick={toggleOrgPopup}>
                   <div className='flex'><Image src={addUserIcon} alt='addUserIcon' className='w-6 h-6 ' /></div>
-                  <span>Change Organization</span>
+                  {isChangeORganisationShow && <span>Change Organization</span>}
                   </Button>
                             </div>
                     {appState.isCurrentOrgAdmin ?
@@ -106,7 +107,7 @@ const OrganisationNavbar = () => {
                 {/* </Popover> */}
 
                 {showPopup && <Popup onClose={togglePopup} />}
-                {showOrgPopup && <OrgPopup onClose={toggleOrgPopup} />}
+                {showOrgPopup && <OrgPopup onClose={toggleOrgPopup} setIsChangeOrganisationShow={setIsChangeOrganisationShow} />}
 
 
             </div>

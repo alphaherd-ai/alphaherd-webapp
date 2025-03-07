@@ -11,12 +11,14 @@ import { useAppSelector } from '@/lib/hooks';
 import { useSearchParams } from "next/navigation"
 
 import { Button } from "@nextui-org/react"
-
+import { mutate } from "swr";
 import { generatePdfForInvoice } from "@/utils/salesPdf"
 
 import { useRouter } from "next/navigation"
 
 import Loading2 from "@/app/loading2"
+//@ts-ignore
+const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
 
 const NewsalesBottomBar = ({ estimateData }: any) => {
@@ -74,7 +76,8 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
             notes: (id === null) ? allData.headerData.notes : estimateData.notes,
             subTotal: allData.totalAmountData.subTotal,
             invoiceNo: allData.headerData.invoiceNo,
-            dueDate: (id === null) ? allData.headerData.dueDate : estimateData.dueDate,
+            dueDate:  allData.headerData.dueDate || new Date(),
+            date: allData.headerData.date,
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
             totalCost: allData.totalAmountData.totalCost,
@@ -107,21 +110,20 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
             const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Invoice}?branchId=${appState.currentBranchId}`, data)
             const notifPromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
 
-            setTimeout(() => {
-                router.back();
-            }, 2000);
+           
 
             const [response, notif] = await Promise.all([responsePromise, notifPromise])
 
-            if (!response.data) {
+            if (!response.data || !notif.data) {
                 throw new Error('Network response was not ok');
             }
-            console.log(response.status);
-            // if(response.status===201){
+            //console.log(response.status);
 
-            // }
-            //mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`,(currData:any = [])=>[...currData,response.data?.sales],false)
-            //router.back();
+            setTimeout(async () => {
+                //mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`);
+                router.back();
+              }, 2000);
+            
 
         } catch (error) {
             console.error('Error:', error);

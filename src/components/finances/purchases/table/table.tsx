@@ -37,7 +37,8 @@ const FinancesPurchasesTable = () => {
     setEndInd(end);
     setPurchases(tableData.slice(start, end));
   }, [currentPageNumber])
-
+  const [data, setData] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const appState = useAppSelector((state) => state.app);
   const [purchases, setPurchases] = useState<any[]>([]);
   const currentUrl = useSearchParams();
@@ -46,44 +47,60 @@ const FinancesPurchasesTable = () => {
   const endDate = useMemo(() => urlSearchParams.get('endDate') ? new Date(urlSearchParams.get('endDate')!) : null, [urlSearchParams]);
   const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
   const selectedStatus = useMemo(() => urlSearchParams.getAll('selectedStatus'), [urlSearchParams]);
-  const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/getAll?branchId=${appState.currentBranchId}`, fetcher)
+  //const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true })
+
+
   useEffect(() => {
-    if (data && !error && !isLoading) {
-      console.log("data for purchase",data);
-      let filteredData = data?.filter((sale: any) => {
-        if (currentUrl.get('type') === 'all') {
-          return true;
-        } else {
-          return sale.type === currentUrl.get('type');
+
+    const getAllFinancesPurchase = async () => {
+      try {
+        setIsLoading(true);
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/getAll?branchId=${appState.currentBranchId}`);
+        if (res.data) {
+          setData(res.data);
+          let filteredData = res.data?.filter((sale: any) => {
+            if (currentUrl.get('type') === 'all') {
+              return true;
+            } else {
+              return sale.type === currentUrl.get('type');
+            }
+          })
+          if (startDate || endDate) {
+            filteredData = filteredData.filter((item: any) => {
+              const itemDate = new Date(item.date);
+              // console.log(itemDate)
+              if (startDate && itemDate < startDate) return false;
+              if (endDate && itemDate > endDate) return false;
+              return true;
+            });
+          }
+
+
+          if (selectedParties.length > 0) {
+            filteredData = filteredData.filter((item: any) =>
+              selectedParties.includes(item.customer)
+            );
+          }
+
+          if (selectedStatus.length > 0) {
+            filteredData = filteredData.filter((item: any) =>
+              selectedStatus.some((status) => item.status.startsWith(status)))
+          }
+          //console.log(filteredData.length);
+          setTotalLen(filteredData.length);
+          setTableData(filteredData)
+          setPurchases(filteredData?.slice(0, TOTAL_VALUES_PER_PAGE));
         }
-      })
-      if (startDate || endDate) {
-        filteredData = filteredData.filter((item: any) => {
-          const itemDate = new Date(item.date);
-          // console.log(itemDate)
-          if (startDate && itemDate < startDate) return false;
-          if (endDate && itemDate > endDate) return false;
-          return true;
-        });
       }
-
-
-      if (selectedParties.length > 0) {
-        filteredData = filteredData.filter((item: any) =>
-          selectedParties.includes(item.customer)
-        );
+      catch (err) {
+        console.log(err)
+      }finally{
+        setIsLoading(false);
       }
+  }
+    getAllFinancesPurchase();
 
-      if (selectedStatus.length > 0) {
-        filteredData = filteredData.filter((item: any) =>
-          selectedStatus.some((status) => item.status.startsWith(status)))
-      }
-      //console.log(filteredData.length);
-      setTotalLen(filteredData.length);
-      setTableData(filteredData)
-      setPurchases(filteredData?.slice(0, TOTAL_VALUES_PER_PAGE));
-    }
-  }, [data, error, isLoading, setPurchases, startDate, endDate, selectedParties,selectedStatus])
+  }, [startDate, endDate, selectedParties, selectedStatus, currentUrl.toString()])
 
   const sendDueDateNotification = async (notifData: any, purchaseID: number) => {
     try {

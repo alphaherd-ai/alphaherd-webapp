@@ -45,7 +45,7 @@ const FinancesPurchasesTableItem = ({ onCountsChange, purchases, data, isLoading
     handleCounts();
   }, [purchases]);
 
-  if (isLoading && !data) return (<Loading />)
+  if (isLoading) return (<Loading />)
   return (
     <div>
       {purchases?.map((purchase: any, index: number) =>

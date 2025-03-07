@@ -94,16 +94,18 @@ const NewsaleEstimateTotalAmout = ({ isChecked }: { isChecked: boolean }) => {
                 ? (discount / totalAmount || 0).toFixed(4)
                 : (discount / totalAmountLow || 0).toFixed(4);
             setDiscountPer(Number(discountPercent))
+            //console.log(discount / totalAmount , discountPercent);
             //setGrandAmt(discountedAmount);
             setTotalAmountData((prevData) => ({ ...prevData, gst: Number(discountPercent) }))
         }
         else if (discountMethod === 'percent') {
-            setDiscountInput(discount);
+            //setDiscountInput(discount);
             //let discountedAmount = (!isChecked ? totalAmount : totalAmountLow) - (!isChecked ? totalAmount : totalAmountLow) * (discount / 100);
             const discountPercent = Number(discount / 100).toFixed(4)
             setDiscountPer(Number(discountPercent));
             const discountedValue = !isChecked ? Number(discountPercent) * totalAmount : Number(discountPercent) * totalAmountLow;
             setDiscountInput(discountedValue);
+            //console.log(discountedValue)
             //setGrandAmt(discountedAmount);
             setTotalAmountData((prevData) => ({ ...prevData, gst: Number(discountPercent) }))
         }
@@ -139,8 +141,9 @@ const NewsaleEstimateTotalAmout = ({ isChecked }: { isChecked: boolean }) => {
     const [isFirstAdvancePaymentPaid, setFirstAdvancePaymentPaid] = useState(false);
 
     const updateGrandTotal = () => {
+        
         //console.log(discountInput,selectedDiscount);
-        const discountedAmount = (totalAmount - (discountMethod === 'amount' ? discountInput : totalAmount * selectedDiscountPer)) || 0;
+        const discountedAmount = (totalAmount - (discountMethod === 'amount' ? discountInput : totalAmount - discountInput)) || 0;
         const lowDiscount = (totalAmountLow - (discountMethod === 'amount' ? discountInput : totalAmount * selectedDiscountPer)) || 0;
         const highDiscount = (totalAmountHigh - (discountMethod === 'amount' ? discountInput : totalAmount * selectedDiscountPer)) || 0;
         const shippingValue = parseFloat(shipping) || 0;

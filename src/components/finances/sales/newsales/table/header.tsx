@@ -105,7 +105,7 @@ const NewsalesHeader = ({ existingHeaderData, isNewClientClicked, newClient }: a
     const handleDateChange = (date: any) => {
         setStartDate(date);
         // console.log(date);
-        setHeaderData((prevData) => ({ ...prevData, date }));
+        setHeaderData((prevData) => ({ ...prevData, date:date }));
     };
     const handleDueDateChange = (date: any) => {
         setDueDate(date);
@@ -201,17 +201,8 @@ const NewsalesHeader = ({ existingHeaderData, isNewClientClicked, newClient }: a
                 <div className="px-6 py-2 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                     <div className="flex gap-[0.8rem] items-center w-full">
                         <div className="text-gray-500 text-base font-bold  w-1/8">Date:</div>
-                        {id === null ? (
-                            // <DatePicker
-                            //     className={"text-gray-500 text-base font-medium  w-full"}
-                            //     value={startDate}
-                            //     onChange={handleDateChange}
-                            //     clearIcon={() => null}
-                            //     calendarIcon={() => (
-                            //         <Image src={calicon} alt="Calendar Icon" width={20} height={20} />
-                            //     )}
-                            // />
-                            // <div className='w-full relative'>
+
+                           
 
                             <div className="customDatePickerWidth">
                                 <DatePicker
@@ -237,16 +228,13 @@ const NewsalesHeader = ({ existingHeaderData, isNewClientClicked, newClient }: a
                                     }
                                 />
                             </div>
-                            // </div>
-                        ) : (
-                            formatDateAndTime(existingHeaderData.date).formattedDate
-                        )}
+                            
                     </div>
                 </div>
                 <div className="px-6 py-2 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full">
                     <div className="flex gap-[0.2rem] items-center w-full">
                         <div className="text-gray-500 text-base font-bold w-[6rem]">Due Date:</div>
-                        {id === null ? (
+
                             <div className="customDatePickerWidth">
                                 <DatePicker
                                     className="w-full"
@@ -271,9 +259,7 @@ const NewsalesHeader = ({ existingHeaderData, isNewClientClicked, newClient }: a
                                     }
                                 />
                             </div>
-                        ) : (
-                            formatDateAndTime(existingHeaderData.dueDate).formattedDate
-                        )}
+                        
                     </div>
                 </div>
             </div>

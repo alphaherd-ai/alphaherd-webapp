@@ -5,7 +5,7 @@ import drafticon from "../../../../../assets/icons/finance/draft.svg"
 import checkicon from "../../../../../assets/icons/finance/check.svg"
 import React, { useState, useContext } from 'react';
 import downloadicon from "../../../../../assets/icons/finance/download.svg"
-
+import { mutate } from "swr"
 import Image from "next/image"
 import { DataContext } from './DataContext'
 import { FinanceCreationType } from '@prisma/client'
@@ -87,7 +87,10 @@ const InvoiceReturnBottomBar = ({ invoiceData }: any) => {
                 throw new Error('Network response was not ok');
             }
             // mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`,(currData:any = [])=>[...currData,response.data?.sales],false)
-            router.back();
+           // mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`);
+            setTimeout(() => {
+                router.back();
+            }, 2500);
         } catch (error) {
             console.error('Error:', error);
         } finally {

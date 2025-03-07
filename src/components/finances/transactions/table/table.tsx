@@ -6,6 +6,7 @@ import FinancesTransactionsTableItem from './item'
 import { useAppSelector } from '@/lib/hooks'
 import useSWR from 'swr'
 import { useSearchParams } from 'next/navigation'
+import axios from 'axios'
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 interface Transactions {
@@ -27,6 +28,10 @@ const FinancesTransactionsTable = () => {
 
   //Pagination
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
+  const [isTransactionMade, setIsTransactionMade] = useState(0);
+  const [isEditTransasctionMade, setIsEditTransactionMade] = useState(0);
+  const [data, setData] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [startInd, setStartInd] = useState(0);
   const [endInd, setEndInd] = useState(0);
   const [totalLen, setTotalLen] = useState(0);
@@ -50,7 +55,7 @@ const FinancesTransactionsTable = () => {
 
   const [transactions, setTransactions] = useState<Transactions[]>([]);
   const appState = useAppSelector((state) => state.app)
-  const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
+  //const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true });
   const currentUrl = useSearchParams();
   useEffect(() => {
     const handleWindowFocus = () => {
@@ -62,24 +67,37 @@ const FinancesTransactionsTable = () => {
 
 
   useEffect(() => {
-    if (!isLoading && data && !error) {
-      const filteredData = data?.filter((transaction: any) => {
-        if (currentUrl.get('type') === 'all') {
-          return true;
-        } else {
-          return transaction.mode === currentUrl.get('type');
+    const getAllPayments = async () => {
+      try {
+        setIsLoading(true);
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/getAll?branchId=${appState.currentBranchId}`);
+        if (res.data) {
+          const filteredData = res.data?.filter((transaction: any) => {
+            if (currentUrl.get('type') === 'all') {
+              return true;
+            } else {
+              return transaction.mode === currentUrl.get('type');
+            }
+          })
+          setTotalLen(filteredData.length);
+          setTableData(filteredData);
+          setTransactions(filteredData.slice(0, TOTAL_VALUES_PER_PAGE));
         }
-      })
-      setTotalLen(filteredData.length);
-      setTableData(filteredData);
-      setTransactions(filteredData.slice(0, TOTAL_VALUES_PER_PAGE));
-    }
-  }, [data, error, isLoading, setTransactions]);
+
+      } catch (error) {
+        console.log('Error fetching data', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    getAllPayments();
+
+  }, [isTransactionMade,isEditTransasctionMade]);
 
 
   return (
     <div className='flex flex-col w-full box-border  border border-solid border-borderGrey rounded-[5px] mt-6'>
-      <FinancesTransactionsTableHeader transactions={transactions} />
+      <FinancesTransactionsTableHeader transactions={transactions} setIsTransactionMade={setIsTransactionMade}/>
       <div className='flex px-2 w-full  box-border bg-gray-100  h-12 items-center justify-evenly border-0 border-t border-b border-solid border-borderGrey text-textGrey2'>
         <div className=' flex text-textGrey2 text-base font-medium  w-[6rem] '>Date</div>
         <div className=' flex text-textGrey2 text-base font-medium  w-[6rem] '>Time</div>
@@ -92,7 +110,7 @@ const FinancesTransactionsTable = () => {
         <div className=' flex text-textGrey2 text-base font-medium  w-[12rem]'>Mode of Payment</div>
       </div>
 
-      <FinancesTransactionsTableItem transactions={transactions} isLoading={isLoading} />
+      <FinancesTransactionsTableItem transactions={transactions} isLoading={isLoading} setIsEditTransactionMade={setIsEditTransactionMade}/>
       <FinancesTransactionsTableBottombar
         goOnPrevPage={goOnPrevPage}
         goOnNextPage={goOnNextPage}

@@ -24,6 +24,7 @@ const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 type PopupProps = {
     onClose: any
     editTransaction: any;
+    setIsEditTransactionMade?:any;
 }
 
 interface ProductOption {
@@ -47,7 +48,7 @@ interface ProductBatch {
     quantity: number;
 }
 
-const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onClose }) => {
+const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onClose,setIsEditTransactionMade }) => {
 
     //console.log(editTransaction);
     const dispatch = useDispatch();
@@ -162,6 +163,7 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
 
 
             if (putResponse.status === 201) {
+                if(setIsEditTransactionMade) setIsEditTransactionMade((prev:any)=>prev+1);
                 onClose();
 
             }
@@ -442,10 +444,7 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                         <input className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2  outline-none border border-solid border-borderGrey focus:border-teal-500 " type="text" name="partyName" disabled={true} placeholder={editTransaction?.partyName} />
                     </div>
                 </div>
-                <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Subject <span className='text-red-600'>*</span></span></div>
-                    <div><input className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2  outline-none border border-solid border-borderGrey focus:border-teal-500 " type="text" name="subject" onChange={(e) => handleChange("subject", e.target.value)} /></div>
-                </div>
+               
                 <div className='w-full flex justify-between items-center'>
                     <div><span className='text-gray-500 text-base font-medium '>Ref. No.</span></div>
                     <div>
@@ -621,6 +620,8 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                         <div className='w-[10rem] text-textGrey2 font-medium text-base'></div>
                         <div className='w-[3rem] text-textGrey2 font-medium text-base'></div>
                     </div>
+
+                    
                 </div>
 
 
@@ -664,13 +665,14 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
 
                 </div>
                 <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Other<span className='text-red-600'>*</span></span></div>
+                    <div><span className='text-gray-500 text-base font-medium '>Exsisting Amount<span className='text-red-600'>*</span></span></div>
                     <div className='w-[440px] flex justify-between items-center'>
                         <div>
                             <input
                                 className="w-[10rem] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2 outline-none border border-solid border-borderGrey focus:border-teal-500"
                                 type="number"
                                 name="amountPaidOtherThanLinked"
+                                defaultValue={editTransaction?.amountPaid}
                                 value={formData.amountPaidOtherThanLinked}
                                 onChange={(e) => handleChange("amountPaidOtherThanLinked", e.target.value)}
                             />
@@ -726,11 +728,16 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
 
                 </div>
 
+                <div className='w-full flex justify-between items-center'>
+                    <div><span className='text-gray-500 text-base font-medium '>Subject <span className='text-red-600'>*</span></span></div>
+                    <div><input className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2  outline-none border border-solid border-borderGrey focus:border-teal-500 " type="text"  name="subject" onChange={(e) => handleChange("subject", e.target.value)} /></div>
+                </div>
+
                 <div className='w-full flex justify-end'>
                     <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
                         }`} onClick={handleSaveClick} disabled={isDisabled || isSaving}>
                         <Image src={check} alt='check' />
-                        <span className='text-white text-base font-medium pr-2'>{isSaving ? "Saving..." : "Save Payment"}</span>
+                        <span className='text-white text-base font-medium pr-2'>{isSaving ? <Loading2/> : "Save Payment"}</span>
                     </Button>
                 </div>
 

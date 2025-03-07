@@ -8,10 +8,10 @@ import { FinanceCreationType } from '@prisma/client';
 import FinancesSalesTableItem from './item'
 import axios from 'axios';
 import { useAppSelector } from '@/lib/hooks';
+import { Notif_Source } from '@prisma/client';
 import { useSearchParams } from 'next/navigation';
-import useSWR from 'swr';
 
-import { Notif_Source } from "@prisma/client";
+
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 interface Sales {
@@ -30,7 +30,7 @@ interface Sales {
 
 
 const FinancesSalesTable = () => {
-
+  
   const appState = useAppSelector((state) => state.app);
   const [sales, setSales] = useState<Sales[]>([]);
   const currentUrl = useSearchParams();
@@ -39,71 +39,82 @@ const FinancesSalesTable = () => {
   const endDate = useMemo(() => urlSearchParams.get('endDate') ? new Date(urlSearchParams.get('endDate')!) : null, [urlSearchParams]);
   const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
   const selectedStatus = useMemo(() => urlSearchParams.getAll('selectedStatus'), [urlSearchParams]);
-  const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`, fetcher, {revalidateOnFocus: true})
+  //const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`, fetcher, {revalidateOnFocus: true})
 
 
   //Paginaton
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
-    const [startInd, setStartInd] = useState(0);
-    const [endInd, setEndInd] = useState(0);
-    const [totalLen, setTotalLen] = useState(0);
-    const [tableData,setTableData]=useState<any[]>([]);
-    const TOTAL_VALUES_PER_PAGE = 50;
-    const goOnPrevPage = () => {
-      if (currentPageNumber === 1) return;
-      setCurrentPageNumber((prev) => prev - 1);
-    };
-    const goOnNextPage = () => {
-      //console.log(currentPageNumber,data.length/TOTAL_VALUES_PER_PAGE);
-      if (currentPageNumber === Math.ceil((totalLen) / TOTAL_VALUES_PER_PAGE)) return;
-      setCurrentPageNumber((prev) => prev + 1);
-    };
-    useEffect(()=>{
-      const start=(currentPageNumber-1)*TOTAL_VALUES_PER_PAGE;
-      const end=currentPageNumber*TOTAL_VALUES_PER_PAGE;
-      setStartInd(start)
-      setEndInd(end);
-      setSales(tableData.slice(start, end));
-    },[currentPageNumber])
-    //console.log("Sales Page " + isLoading)
+  const [startInd, setStartInd] = useState(0);
+  const [endInd, setEndInd] = useState(0);
+  const [totalLen, setTotalLen] = useState(0);
+  const [tableData, setTableData] = useState<any[]>([]);
+  const [data, setData] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const TOTAL_VALUES_PER_PAGE = 50;
+  const goOnPrevPage = () => {
+    if (currentPageNumber === 1) return;
+    setCurrentPageNumber((prev) => prev - 1);
+  };
+  const goOnNextPage = () => {
+    if (currentPageNumber === Math.ceil((totalLen) / TOTAL_VALUES_PER_PAGE)) return;
+    setCurrentPageNumber((prev) => prev + 1);
+  };
+  useEffect(() => {
+    const start = (currentPageNumber - 1) * TOTAL_VALUES_PER_PAGE;
+    const end = currentPageNumber * TOTAL_VALUES_PER_PAGE;
+    setStartInd(start)
+    setEndInd(end);
+    setSales(tableData.slice(start, end));
+  }, [currentPageNumber])
+
 
   useEffect(() => {
-    
-    if (data && !error && !isLoading) {
-      let filteredData = data?.filter((sale: any) => {
-        if (currentUrl.get('type') === 'all') {
-          return true;
-        } else {
-          return sale.type === currentUrl.get('type');
+
+
+    const getAllFinanceSales = async () => {
+      try {
+        setIsLoading(true);
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`);
+        if (res.data) {
+          setData(res.data);
+          let filteredData = res.data?.filter((sale: any) => {
+            if (currentUrl.get('type') === 'all') {
+              return true;
+            } else {
+              return sale.type === currentUrl.get('type');
+            }
+          })
+          if (startDate || endDate) {
+            filteredData = filteredData.filter((item: any) => {
+              const itemDate = new Date(item.date);
+              // console.log(itemDate)
+              if (startDate && itemDate < startDate) return false;
+              if (endDate && itemDate > endDate) return false;
+              return true;
+            });
+          }
+          if (selectedParties.length > 0) {
+            filteredData = filteredData.filter((item: any) =>
+              selectedParties.includes(item.customer)
+            );
+          }
+          if (selectedStatus.length > 0) {
+            filteredData = filteredData.filter((item: any) =>
+              selectedStatus.some((status) => item.status.startsWith(status)))
+          }
+          //console.log(filteredData.length);
+          setTotalLen(filteredData.length);
+          setTableData(filteredData)
+          setSales(filteredData?.slice(0, TOTAL_VALUES_PER_PAGE));
         }
-      })
-      if (startDate || endDate) {
-        filteredData = filteredData.filter((item: any) => {
-          const itemDate = new Date(item.date);
-          // console.log(itemDate)
-          if (startDate && itemDate < startDate) return false;
-          if (endDate && itemDate > endDate) return false;
-          return true;
-        });
+      } catch (error) {
+        console.log(error)
+      } finally {
+        setIsLoading(false);
       }
-
-
-      if (selectedParties.length > 0) {
-        filteredData = filteredData.filter((item: any) =>
-          selectedParties.includes(item.customer)
-        );
-      }
-
-      if(selectedStatus.length>0){
-        filteredData = filteredData.filter((item: any) =>
-          selectedStatus.some((status)=>item.status.startsWith(status)))
-      }
-      //console.log(filteredData.length);
-      setTotalLen(filteredData.length);
-      setTableData(filteredData)
-      setSales(filteredData?.slice(0,TOTAL_VALUES_PER_PAGE));
     }
-  }, [data, error, isLoading, setSales, startDate, endDate, selectedParties,selectedStatus])
+    getAllFinanceSales();
+  }, [startDate, endDate, selectedParties, selectedStatus, currentUrl.toString()])
 
 
   const [invoiceCount, setInvoiceCount] = useState(0);
@@ -206,14 +217,14 @@ const FinancesSalesTable = () => {
       </div>
 
       <FinancesSalesTableItem
-        onCountsChange={handleCountsChange}  sales={sales} data={data} isLoading={isLoading}
+        onCountsChange={handleCountsChange} sales={sales} data={data} isLoading={isLoading}
       />
       <FinancesSalesTableBottombar
-      goOnPrevPage={goOnPrevPage}
-      goOnNextPage={goOnNextPage}
-      startInd={startInd}
-      endInd={endInd}
-      totalLen={totalLen} />
+        goOnPrevPage={goOnPrevPage}
+        goOnNextPage={goOnNextPage}
+        startInd={startInd}
+        endInd={endInd}
+        totalLen={totalLen} />
 
     </div>
 

@@ -161,7 +161,7 @@ const NewPurchaseReturnTable = () => {
             console.log('all the data is stored',itemData);
 
             //   console.log("These are the items",items)
-　　 　 　 　
+　　 　  　
             }
           }, [grnData]); 
     const taxOptions = [

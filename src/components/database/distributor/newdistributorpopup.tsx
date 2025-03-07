@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import closeicon from "../../../assets/icons/inventory/closeIcon.svg";
 
@@ -10,6 +10,7 @@ import Check from "../../../assets/icons/database/check.svg"
 import { useAppSelector } from "@/lib/hooks";
 
 import Loading2 from "@/app/loading2";
+import axios from "axios";
 type PopupProps = {
     onClose: () => void;
 }
@@ -21,12 +22,29 @@ const DistributorPopup: React.FC<PopupProps> = ({ onClose }: any) => {
     const [isSaveDisabled, setIsSaveDisabled] = useState(true);
     const [savingData, setSavingData] = useState(false);
     const appState = useAppSelector((state) => state.app)
-
+    const [exsistingDistributors, setExsistingDistributors] = useState<any[]>([]);
+    const [showDuplicateDistributorError, setShowDuplicateDistributorError] = useState('');
+    useEffect(()=>{
+        const getAllDistributors=async()=>{
+            const res=await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll?branchId=${appState.currentBranchId}`);
+            if(res.data){
+                setExsistingDistributors(res.data);
+            }
+        }
+        getAllDistributors();
+    },[])
 
     const handleSaveClick = async () => {
         try {
             setIsSaveDisabled(true);
             setSavingData(true);
+            //checking if same distributor exists or not by checking its distributorName contact and email
+            const isDistributorExists=exsistingDistributors.some((distributor)=>distributor.distributorName.toLowerCase()===formData.distributorName.toLowerCase() && distributor.contact===formData.contact && distributor.email===formData.email);
+            if(isDistributorExists){
+                setShowDuplicateDistributorError('Distributor with same name, contact and email already exists');
+                return;
+            }
+
             // formSchema.parse(formData);
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
@@ -47,6 +65,7 @@ const DistributorPopup: React.FC<PopupProps> = ({ onClose }: any) => {
             if (response.ok) {
                 // console.log('Data saved successfully');
                 onClose();
+                setShowDuplicateDistributorError('');
                 window.dispatchEvent(new FocusEvent('focus'));
             } else {
                 console.error('Failed to save data:', response.statusText);
@@ -231,6 +250,7 @@ const DistributorPopup: React.FC<PopupProps> = ({ onClose }: any) => {
                 </div>
                 <div className="text-gray-500 text-xl font-medium ">Add Distributor</div>
                 <div className="text-neutral-400 text-base font-medium ">New distributor? Enter their details to get started.</div>
+                <span className="text-red-500">{showDuplicateDistributorError!=='' ? showDuplicateDistributorError : ""}</span>
                 <div className="flex items-center gap-[88px]">
                     <div className="text-gray-500 text-base font-medium">
                         Name<span className="text-red-500">*</span>
@@ -311,11 +331,11 @@ const DistributorPopup: React.FC<PopupProps> = ({ onClose }: any) => {
 
 
                     <div className="flex items-center gap-[104px] w-[22rem]">
-                        <div className="text-gray-500 text-base font-medium  w-2/12">City</div>
-                        <div className="flex w-10/12  h-11">
+                        <div className="text-gray-500 text-base font-medium  w-2/12 ">City</div>
+                        <div className="flex w-10/12">
 
                             <Select
-                                className="text-neutral-400 w-[10rem] text-base font-medium "
+                                className="text-neutral-400 w-[10rem] text-base font-medium focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
                                 placeholder=""
                                 isClearable={false}
                                 isSearchable={true}
@@ -371,6 +391,7 @@ const DistributorPopup: React.FC<PopupProps> = ({ onClose }: any) => {
                         </div>
                         <div onClick={handleSaveClick} className="text-gray-100 text-base font-bold ">Save</div>
                     </div> */}
+
                     <div
                         className={`h-11 px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer ${isSaveDisabled ? 'bg-gray-500 cursor-not-allowed' : 'bg-zinc-900'
                             }`}

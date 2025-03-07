@@ -134,7 +134,7 @@ const ExistingsaleEstimateTable = () => {
                                         </div>
                                         <div className='w-[10rem] flex items-center  text-base font-medium gap-1 '>
                                             <div className="flex items-center text-textGrey2  text-base font-medium">₹ {item.sellingPrice}</div>
-                                            <div className="text-neutral-400 text-[12px]  font-medium  "> Tax inc</div>
+
 
                                         </div>
                                         <div className='w-1/12  flex items-center text-textGrey2 text-base font-medium gap-[12px] '>
@@ -232,7 +232,7 @@ const ExistingsaleEstimateTable = () => {
                                 <div className=' flex text-gray-500 text-base font-medium  w-1/12'>{items.reduce((acc, item) => acc + (item.lowQty === 0 && item.highQty === 0 ? 0 : item.highQty), 0)} Items</div>
 
                                 <div className=' flex text-gray-500 text-base font-medium  w-1/12'>
-                                    <div className="text-neutral-400 text-base  font-medium   "> Tax inc</div>
+                                    {/* <div className="text-neutral-400 text-base  font-medium   "> Tax inc</div> */}
                                 </div>
                                 <div className=' flex text-gray-500 text-base font-medium  w-1/12 mr-4'>
                                     <>

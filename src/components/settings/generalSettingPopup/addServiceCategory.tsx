@@ -23,7 +23,8 @@ const AddServiceCategory = ({onClose}:any) => {
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/serviceCategory/getAll?branchId=${appState.currentBranchId}`);
                 const data = await response.json();
-                const names = data.map((item: { name: any[]; }) => item.name[0]); 
+                const names = data.flatMap((item: { name: any[] }) => item.name.map(n => n.toLowerCase()));
+ 
                 setExistingCategory(names);
                 
                 console.log('Existing reasons fetched:', names); 
@@ -60,8 +61,7 @@ const AddServiceCategory = ({onClose}:any) => {
     let hasError = false;
 
     // Define default service categories
-    const defaultServiceCategories = ['Grooming', 'Consultation'];
-    const allExistingCategories = [...existingCategory, ...defaultServiceCategories];
+    
 
     inputs.forEach((input, index) => {
         const trimmedInput = input.trim();
@@ -70,7 +70,7 @@ const AddServiceCategory = ({onClose}:any) => {
             hasError = true;
             
         }
-       else if (allExistingCategories.includes(trimmedInput)) {
+       else if (existingCategory.includes(trimmedInput.toLowerCase())) {
             newErrors[index] = 'This Service Category already exists';
             hasError = true;
             console.log(`Duplicate Service Category detected: ${trimmedInput}`);

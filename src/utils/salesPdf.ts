@@ -88,8 +88,9 @@ export function generatePdfForInvoice(data: any, appState: any, items: any): Pro
       };
       img.src = url;
     };
-
-    getImageFromUrl(appState.currentOrg.orgImgUrl, (base64Image: string) => {
+    const defaultBase64Image =
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP88x8AAusB97vdMxkAAAAASUVORK5CYII=";
+    getImageFromUrl(appState.currentOrg.orgImgUrl || defaultBase64Image, (base64Image: string) => {
       doc.addImage(base64Image, 'JPEG', 10, 0.5, 40, 38);
 
       // Add header

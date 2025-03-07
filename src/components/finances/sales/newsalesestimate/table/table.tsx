@@ -53,6 +53,7 @@ interface ProductBatch {
     distributors: string[];
     productId: number;
     product: Products;
+    maxRetailPrice:number;
 }
 function useProductfetch(id: number | null) {
     const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`, fetcher, { revalidateOnFocus: true });
@@ -85,7 +86,7 @@ const NewsaleEstimateTable = () => {
     const [products, setProducts] = useState<any[]>([]);
     const [services, setServices] = useState<any[]>([]);
     const [batches, setBatches] = useState<any[]>([]);
-    const [filteredBatches, setFilteredBatches] = useState<any[]>([]);
+    const [filteredBatches, setFilteredBatches] = useState<any[][]>([]);
     const [filteredProviders, setFilteredProviders] = useState<any[]>([]);
     const [isNewClientClicked, setIsNewClientClicked] = useState<any>(false);
     const [newClient, setNewClient] = useState<any>();
@@ -203,7 +204,7 @@ const NewsaleEstimateTable = () => {
                     quantity: 1,
                     batchNumber: product.batchNumber,
                     expiry: product.expiry,
-                    sellingPrice: product.sellingPrice,
+                    sellingPrice: product.maxRetailPrice,
                     originalQuantity: product.quantity
                 },
                 label: product.batchNumber
@@ -230,9 +231,12 @@ const NewsaleEstimateTable = () => {
     const handleDeleteRow = useCallback((index: number) => {
         const updatedItems = [...items];
         updatedItems.splice(index, 1);
+        const updatedBatches = [...filteredBatches];
+        updatedBatches.splice(index, 1);
         setItems(updatedItems);
+        setFilteredBatches(updatedBatches);
         setTableData(updatedItems);
-    }, [items]);
+    }, [items, filteredBatches]);
 
     // const handleGstSelect = (selectedGst: any, index: number) => {
     //     const updatedItems = [...tableData];
@@ -408,7 +412,14 @@ const NewsaleEstimateTable = () => {
                 // Set first element of filteredBatches as default value for batches
                 if (productdata) {
                     const productBatches = batches?.filter((batch) => batch.value.productId === selectedProduct.value.id).sort((a, b) => a.value.id - b.value.id);
-                    setFilteredBatches(productBatches);
+                    setFilteredBatches((prevBatches) => {
+                        const updatedBatches = [...prevBatches];
+
+                        updatedBatches[index] = productBatches;
+
+                        return updatedBatches;
+                    });
+
                     const defaultBatch = productBatches?.[0];
                     setItems((prevItems) =>
                         prevItems.map((item, itemIndex) =>
@@ -454,7 +465,7 @@ const NewsaleEstimateTable = () => {
         if (selectedProduct.value) {
             try {
 
-                const data = filteredBatches.find((batch) => batch.value.id == selectedProduct.value.id);
+                const data = filteredBatches[index].find((batch) => batch.value.id == selectedProduct.value.id);
                 console.log(data)
                 const updatedItems = [...items];
                 updatedItems[index] = {
@@ -557,6 +568,8 @@ const NewsaleEstimateTable = () => {
         }),
         menuPortal: (base: any) => ({ ...base, zIndex: 9999 })
     };
+
+    console.log(filteredBatches);
 
     return (
         <>
@@ -662,7 +675,7 @@ const NewsaleEstimateTable = () => {
                                                         isClearable={false}
                                                         isSearchable={true}
                                                         name={`batchNumber=${index}`}
-                                                        options={filteredBatches}
+                                                        options={filteredBatches[index]}
                                                         onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
                                                         styles={customStyles}
                                                     />
@@ -812,7 +825,7 @@ const NewsaleEstimateTable = () => {
                                                     (item?.sellingPrice * item?.highQty * item?.discountPer / 100 || 0).toFixed(2))
                                             ) : (
 
-                                                <input className='w-[5rem] ml-1 border border-solid border-borderGrey px-2 py-1 rounded-md  text-neutral-400 outline-none ' placeholder='0' type='number' value={item.quantity * item.sellingPrice * (item.discountPer / 100 || 0)} onChange={(e) => handleDiscountAmtChange(index, e.target.value)}></input>
+                                                <input className='w-[5rem] ml-1 border border-solid border-borderGrey px-2 py-1 rounded-md  text-neutral-400 outline-none ' placeholder='0' type='number' value={item.discountAmt} onChange={(e) => handleDiscountAmtChange(index, e.target.value)}></input>
                                             )}
 
                                         </div>
@@ -852,9 +865,9 @@ const NewsaleEstimateTable = () => {
                                         </div>
                                         {index !== items.length - 1 ?
                                             <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[20px] justify-end'>
-                                                <button className="border-0 bg-transparent cursor-pointer">
+                                                {/*<button className="border-0 bg-transparent cursor-pointer">
                                                     <Image className='w-5 h-5' src={sellicon} alt="sell" ></Image>
-                                                </button>
+                                                </button>*/}
 
                                                 <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
                                                     <Image className='w-5 h-5' src={delicon} alt="delete" ></Image>

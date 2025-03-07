@@ -17,6 +17,7 @@ import { useAppSelector } from '@/lib/hooks';
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@nextui-org/react"
 import Loading2 from '@/app/loading2';
+import { mutate } from "swr"
 
 const NewExpensesBottomBar = ({ expenseData }: any) => {
     const { headerData, tableData, totalAmountData, recurringData, transactionsData } = useContext(DataContext);
@@ -94,7 +95,10 @@ const NewExpensesBottomBar = ({ expenseData }: any) => {
             }
             //console.log(response.data);
             //mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/getAll?branchId=${appState.currentBranchId}`,(currData:any)=>[...currData,response?.data?.expense],false)
-            router.back()
+            //mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/getAll?branchId=${appState.currentBranchId}`);
+            setTimeout(() => {
+                router.back();
+            }, 2000)
         } catch (error) {
             console.error('Error:', error);
         }

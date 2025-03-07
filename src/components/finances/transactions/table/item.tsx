@@ -16,7 +16,7 @@ import CancellationPopup from './cancellationPopup';
 
 
 
-const FinancesTransactionsTableItem = ({ transactions, isLoading }: any) => {
+const FinancesTransactionsTableItem = ({ transactions, isLoading,setIsEditTransactionMade }: any) => {
 
   const [popup, setPopup] = useState(false);
   const [transaction, setTransaction] = useState<any>();
@@ -96,7 +96,7 @@ const FinancesTransactionsTableItem = ({ transactions, isLoading }: any) => {
 
       ))}
 
-      {popup && <EditRecordTransactionPopup editTransaction={transaction} onClose={onClose} />}
+      {popup && <EditRecordTransactionPopup editTransaction={transaction} onClose={onClose}  setIsEditTransactionMade={setIsEditTransactionMade} />}
       {showConfirmation && <CancellationPopup setShowConfirmation={setShowConfirmation} transaction={transaction}/>}
 
     </>

@@ -96,6 +96,8 @@ const DownloadPopup = ({ onClose, transactions, type }: any) => {
       const modeCounts: any = {};
 
       let totalAmount = 0;
+      let totalAmountIn=0;
+      let totalAmountOut=0;
       const noOfTransactions = data.length;
 
       data.forEach((item: any) => {
@@ -107,8 +109,10 @@ const DownloadPopup = ({ onClose, transactions, type }: any) => {
           }
           if (item.moneyChange === 'In') {
             totalAmount += item.amountPaid
+            totalAmountIn+=item.amountPaid;
           } else if (item.moneyChange === 'Out') {
             totalAmount -= item.amountPaid;
+            totalAmountOut+=item.amountPaid;
           }
         }
       });
@@ -173,8 +177,10 @@ const DownloadPopup = ({ onClose, transactions, type }: any) => {
         yPosition += 5
       })
 
-      doc.text(`Total Amount: ${totalAmount}`, 230, 33);
+      doc.text(`Net: ${totalAmount}`, 230, 33);
       doc.text(`Total Number Of Transactions: ${noOfTransactions}`, 230, 38);
+      doc.text(`Total Money In: ${totalAmountIn}`, 230, 43);
+      doc.text(`Total Money Out: ${totalAmountOut}`, 230, 48);
 
 
       doc.setLineWidth(0.5);

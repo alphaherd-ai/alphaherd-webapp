@@ -16,7 +16,7 @@ import Loading from "@/app/loading1";
 // @ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json());
 
-const OrgPopup = ({ onClose }: any) => {
+const OrgPopup = ({ onClose,setIsChangeOrganisationShow }: any) => {
     const userState = useAppSelector((state) => state.user);
     const appState = useAppSelector((state) => state.app);
     const [org, setOrg] = useState<any[]>([]);
@@ -34,6 +34,9 @@ const OrgPopup = ({ onClose }: any) => {
                     return acc;
                 }
             }, []);
+            if(uniqueOrgs.length>1){
+                setIsChangeOrganisationShow(true);
+            }
             setOrg(uniqueOrgs);
         }
     }, [data, error, isLoading]);

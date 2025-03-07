@@ -17,52 +17,18 @@ const AddItemCategoryPopup = ({onClose}:any) => {
     const appState = useAppSelector((state) => state.app);
     const [existingItems, setExistingItems] = useState<string[]>([]);
     const [errors, setErrors] = useState<string[]>([]);
-    const defaultCategories = ['A','B','BFG'];
+    
     const [isSaving, setSaving] = useState(false);
     // Fetch existing item categories and add defaults if missing
-    useEffect(() => {
-        const initializeCategories = async () => {
-            try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemCategory/getAll?branchId=${appState.currentBranchId}`);
-                if (response.ok) {
-                    const fetchedItems = await response.json();
-                    const categoryNames = fetchedItems.map((category: { name: string }) => category.name);
-                    setExistingItems(categoryNames);
-                    console.log('Fetched existing items:', categoryNames);
-                    const missingDefaults = defaultCategories.filter(
-                        (defaultCategory) => !categoryNames.includes(defaultCategory)
-                    );
-
-                    if (missingDefaults.length > 0) {
-                        console.log('Adding missing default categories:', missingDefaults);
-                        await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemCategory/create?branchId=${appState.currentBranchId}`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                name: missingDefaults,
-                            }),
-                        });
-                    }
-                } else {
-                    console.error('Failed to fetch existing items:', response.statusText);
-                }
-            } catch (error) {
-                console.error('Error while fetching or creating default items:', error);
-            }
-        };
-
-        initializeCategories();
-    }, []); 
+    
 
     useEffect(() => {
         const fetchExistingItems = async () => {
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemCategory/getAll?branchId=${appState.currentBranchId}`);
                 const data = await response.json();
-
-                const names = data.map((item: { name: any[]; }) => item.name[0]);
+                console.log(data);
+                const names = data.flatMap((item: { name: any[] }) => item.name.map(n => n.toLowerCase()));
                 setExistingItems(names);
                 
                 console.log('Existing items fetched:', names);
@@ -100,11 +66,13 @@ const AddItemCategoryPopup = ({onClose}:any) => {
         const newErrors = [...errors];
         let hasError = false;
 
-        const allExistingItems = [...existingItems, ...defaultCategories];
-        console.log('All existing items (including defaults):', allExistingItems);
+        
+        //console.log('All existing items (including defaults):', allExistingItems);
 
         inputs.forEach((input, index) => {
+            
             const trimmedInput = input.trim();
+            //console.log(trimmedInput.toLowerCase(),existingItems.includes(trimmedInput.toLowerCase()))
            
         if (!trimmedInput) {
             newErrors[index] = 'Item Category cannot be empty.'
@@ -112,7 +80,7 @@ const AddItemCategoryPopup = ({onClose}:any) => {
             
         }
             
-          else if (allExistingItems.includes(trimmedInput)) {
+          else if (existingItems.includes(trimmedInput.toLowerCase())) {
                 newErrors[index] = 'This item already exists';
                 hasError = true;
                 console.log(`Duplicate item detected: ${trimmedInput}`);

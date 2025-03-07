@@ -47,6 +47,7 @@ interface ProductBatch {
     category :string;
     distributors:string[];
     productId:number;
+    maxRetailPrice:number;
 }
 function useProductfetch (id: number | null) {
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`,fetcher,{revalidateOnFocus:true});
@@ -212,7 +213,7 @@ const NewPurchaseReturnNewTable = () => {
                 quantity:1 ,
                 batchNumber: product.batchNumber,
                 expiry:  product.expiry,
-                sellingPrice:  product.sellingPrice,
+                sellingPrice:  product.maxRetailPrice,
                 originalQuantity:product.quantity
             },
             label:product.batchNumber
