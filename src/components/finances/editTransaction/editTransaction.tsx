@@ -226,6 +226,7 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                 );
 
                 if (response.status === 201) {
+                    if(setIsPaymentEdited){ setIsPaymentEdited((prev:any)=>prev+1);}
                     onClose();
                 }
             }

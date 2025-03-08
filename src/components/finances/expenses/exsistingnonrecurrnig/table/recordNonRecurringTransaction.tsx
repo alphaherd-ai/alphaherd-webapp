@@ -115,6 +115,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, in
             if (response.ok) {
                 // console.log('Data saved Sucessfully')
                 setCount((prev:any)=>prev+1);   
+
                 window.dispatchEvent(new FocusEvent('focus'))
             } else {
                 console.error('Failed to save data')
@@ -158,6 +159,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, in
                 if (putResponse.ok) {
                     // console.log('Data saved Sucessfully2')
                    if(setIsAdvancePayment) setIsAdvancePayment((prev:any)=>prev+1);
+                   if(setIsPaymentMade) setIsPaymentMade((prev:any)=>prev+1);
                     window.dispatchEvent(new FocusEvent('focus'))
                 } else {
                     console.error('Failed to save data')

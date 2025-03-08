@@ -27,7 +27,7 @@ const ExsistingNonRecurringTotalAmount = ({ otherData, isLoading }: any) => {
     
         useEffect(() => {
             const getAllPayments = async () => {
-                const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/recordTransactions/${id}`);
+                const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/recordTransactions/${id}`);
                 if (res.status === 200) {
                     setRecordTransaction(res.data);
                 }
@@ -35,6 +35,8 @@ const ExsistingNonRecurringTotalAmount = ({ otherData, isLoading }: any) => {
             getAllPayments();
     
         }, [isPaymentEdited, isPaymentMade])
+
+        console.log(isPaymentEdited, isPaymentMade);
 
 
 
@@ -216,7 +218,7 @@ const ExsistingNonRecurringTotalAmount = ({ otherData, isLoading }: any) => {
     </div>
     {!(otherData?.status === 'Cancelled') &&
         <>
-            {popup && <EditRecordTransactionPopup onClose={onClose} editTransaction={transaction} type={"exsistingnonrecurring"} balanceDue={balanceDue} setIsPaymentEdited={setIsPaymentEdited}/>}
+            {popup && <EditRecordTransactionPopup onClose={onClose} editTransaction={transaction} type={"exsistingnonrecurring"} balanceDue={balanceDue} setIsPaymentEdited={setIsPaymentEdited} />}
             {showConfirmation && <CancellationPopup setShowConfirmation={setShowConfirmation} editTransaction={transaction} type={"exsistingnonrecurring"} balanceDue={balanceDue} setIsPaymentEdited={setIsPaymentEdited}/>}
         </>
     }
