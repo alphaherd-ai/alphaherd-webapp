@@ -26,7 +26,7 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ setShowConfirmati
 
     const handleCancel = async () => {
         const isApproved = appState.isCurrentOrgAdmin;
-        console.log("isApproved",isApproved);
+        //console.log("isApproved",isApproved);
 
         try {
             setLoading(true);

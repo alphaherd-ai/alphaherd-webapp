@@ -10,13 +10,31 @@ import formatDateAndTime from '@/utils/formateDateTime';
 import { generateInvoiceNumber } from '@/utils/generateInvoiceNo';
 import Popup from "../table/recordexsistingpurchasereturpopup"
 import Loading2 from '@/app/loading2';
-import {  Button } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 import Menu from '../../../../../assets/icons/finance/menu.svg'
 import EditRecordTransactionPopup from '@/components/finances/editTransaction/editTransaction';
 import CancellationPopup from '@/components/finances/cancelTransaaction/cancelTransaction';
-
+import axios from 'axios';
+import { useSearchParams } from 'next/navigation';
 const ExsistingPurcaseReturnTotalAmount = ({ otherData, isLoading }: any) => {
+
+    const [isPaymentEdited, setIsPaymentEdited] = useState(0);
+    const [isPaymentMade, setIsPaymentMade] = useState(0);
+    const url = useSearchParams();
+    const id = url.get('id');
+    const [recordTransaction, setRecordTransaction] = useState<any>([]);
+
+    useEffect(() => {
+        const getAllPayments = async () => {
+            const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/recordTransactions/${id}`);
+            if (res.status === 200) {
+                setRecordTransaction(res.data);
+            }
+        }
+        getAllPayments();
+
+    }, [isPaymentEdited, isPaymentMade])
 
     const [startDate, setStartDate] = useState(new Date());
 
@@ -28,15 +46,15 @@ const ExsistingPurcaseReturnTotalAmount = ({ otherData, isLoading }: any) => {
 
     // console.log("otherData", otherData)
 
-    const totalPaidAmount = otherData?.recordTransaction?.reduce((acc: any, transaction: any) => {
-        if (transaction?.moneyChange === 'In'  || transaction?.isAdvancePayment) {
+    const totalPaidAmount = recordTransaction?.reduce((acc: any, transaction: any) => {
+        if (transaction?.moneyChange === 'In' || transaction?.isAdvancePayment) {
             return acc + transaction?.amountPaid;
         }
         return acc;
     }, 0);
 
-    const totalAmountPay = otherData?.recordTransaction?.reduce((acc: any, transaction: any) => {
-        if (transaction?.moneyChange === 'Out' ) {
+    const totalAmountPay = recordTransaction?.reduce((acc: any, transaction: any) => {
+        if (transaction?.moneyChange === 'Out') {
             return acc + transaction?.amountPaid;
         }
         return acc;
@@ -106,7 +124,7 @@ const ExsistingPurcaseReturnTotalAmount = ({ otherData, isLoading }: any) => {
                     {!(otherData?.status === 'Cancelled') &&
 
                         <div className="w-full mr-4 flex flex-col mt-8 rounded-[20px]">
-                            <Popup headerdata={otherData} setCount={setCount} initialInvoiceNo={initialInvoiceNo} balanceDue={balanceDue} />
+                            <Popup headerdata={otherData} setCount={setCount} initialInvoiceNo={initialInvoiceNo} balanceDue={balanceDue} setIsPaymentMade={setIsPaymentMade}/>
                         </div>
                     }
                 </div>
@@ -158,7 +176,7 @@ const ExsistingPurcaseReturnTotalAmount = ({ otherData, isLoading }: any) => {
                             <div className="w-full  bg-white  justify-between items-center  flex">
                                 <div className='w-full h-[9.6rem] flex flex-col overflow-auto container'>
                                     {isLoading && <Loading2 />}
-                                    {otherData && otherData.recordTransaction && otherData.recordTransaction.map((transaction: any, index: any) => (
+                                    {recordTransaction && recordTransaction.map((transaction: any, index: any) => (
                                         transaction.isAdvancePayment &&
                                         (<div key={index} className='w-full px-2 items-center justify-between flex border-0 border-b border-solid border-borderGrey'>
                                             <div className="text-textGrey2  text-base font-bold  w-1/3 py-4">Advance Paid</div>
@@ -195,7 +213,7 @@ const ExsistingPurcaseReturnTotalAmount = ({ otherData, isLoading }: any) => {
                                             )}
                                         </div>)
                                     ))}
-                                    {otherData && otherData.recordTransaction && otherData.recordTransaction.map((transaction: any, index: any) => (
+                                    {recordTransaction && recordTransaction.map((transaction: any, index: any) => (
                                         !transaction.isAdvancePayment &&
                                         (<div key={index} className='w-full px-2 flex justify-between items-center border-0 border-b border-solid border-borderGrey'>
                                             <div className="text-textGrey2 text-base font-medium  w-1/3 py-4">{formatDateAndTime(transaction.date).formattedDate}</div>
@@ -258,8 +276,8 @@ const ExsistingPurcaseReturnTotalAmount = ({ otherData, isLoading }: any) => {
 
                 </div>
                 {!(otherData?.status === 'Cancelled') && <>
-                    {popup && <EditRecordTransactionPopup onClose={onClose} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue} />}
-                    {showConfirmation && <CancellationPopup setShowConfirmation={setShowConfirmation} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue} />}
+                    {popup && <EditRecordTransactionPopup onClose={onClose} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue} setIsPaymentEdited={setIsPaymentEdited}/>}
+                    {showConfirmation && <CancellationPopup setShowConfirmation={setShowConfirmation} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue} setIsPaymentEdited={setIsPaymentEdited}/>}
                 </>}
             </div>
 

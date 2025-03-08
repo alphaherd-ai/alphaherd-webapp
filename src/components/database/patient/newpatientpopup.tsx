@@ -38,7 +38,7 @@ interface Breed {
 }
 
 const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, setEditpatient }) => {
-    console.log(editPatient);
+    //console.log(editPatient);
     const [formData, setFormData] = useState<any>({});
     const [clients, setClients] = useState<{ value: string; label: string }[]>([]);
     //const [startDate, setStartDate] = useState(new Date());
@@ -456,8 +456,8 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
         }
     }, [editPatient, species])
 
-    useEffect(()=>{
-        if(editPatient && filteredBreeds.length > 0){
+    useEffect(() => {
+        if (editPatient && filteredBreeds.length > 0) {
             console.log(filteredBreeds);
             const findBreed = filteredBreeds.find((breed: any) => breed.label[0] === editPatient?.breed);
             setFormData((prevData: any) => ({
@@ -466,16 +466,16 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
             }))
         }
 
-    },[editPatient,filteredBreeds])
+    }, [editPatient, filteredBreeds])
 
-    
+
     useEffect(() => {
         if (selectedSpecies && breeds.length > 0) {
             const filtered = breeds.filter((breed) => breed.speciesId === selectedSpecies.value);
             setFilteredBreeds(filtered);
-            console.log(selectedSpecies,filtered);
+            console.log(selectedSpecies, filtered);
         } else {
-            setFilteredBreeds([]); 
+            setFilteredBreeds([]);
         }
     }, [selectedSpecies, breeds]);
 
