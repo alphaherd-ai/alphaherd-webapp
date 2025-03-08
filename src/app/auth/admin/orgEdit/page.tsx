@@ -71,7 +71,7 @@ const OrgEdit = () => {
         branchName: appState.currentBranch.branchName || '',
         panNo: appState.currentBranch.panNo || '',
         state: appState.currentBranch.state || '',
-        pinCode: (appState.currentBranch.pinCode) || 0,
+        pinCode: (appState.currentBranch.pinCode).toString() || 0,
         description: appState.currentBranch.description || ''
       };
     });
@@ -138,7 +138,7 @@ const OrgEdit = () => {
       }
       else {
         name = e.target.name;
-        value = e.target.value;
+        value = e.target.value.toString();
       }
       
       try{

@@ -134,12 +134,16 @@ export const PUT = async (req: NextRequest, { params }: { params: { invoice: str
                 }
             })
             let statusString = exsistingInvoice?.status?.split('₹')[0]?.trim().replace(/:$/, '');
-            let balanceDue=Number(exsistingInvoice?.status?.split('₹')[1]);
+            let balanceDue = Number(exsistingInvoice?.status?.split('₹')[1]) || 0;
             //console.log(statusString);
             balanceDue=(statusString==='You’re owed') ? -1*balanceDue : balanceDue;
-            const balanceStatus = balanceDue && (balanceDue + (CheckRecordTransaction?.moneyChange === 'In' ? -Number(CheckRecordTransaction?.amountPaid) : Number(CheckRecordTransaction?.amountPaid)) + (otherData.moneyChange === 'In' ? Number(otherData.amountPaid) : -Number(otherData.amountPaid))) 
+            console.log(balanceDue);
+            console.log(CheckRecordTransaction?.moneyChange,CheckRecordTransaction?.amountPaid,otherData.moneyChange,otherData.amountPaid);
+            const balanceStatus =(balanceDue + (CheckRecordTransaction?.moneyChange === 'In' ? -Number(CheckRecordTransaction?.amountPaid) : Number(CheckRecordTransaction?.amountPaid)) + (otherData.moneyChange === 'In' ? Number(otherData.amountPaid) : -Number(otherData.amountPaid)));
             //console.log(balanceDue,balanceStatus);
-            const status = invoice.includes('SI') || invoice.includes('PR') ? balanceStatus && (balanceStatus >= 1 ? `You’re owed: ₹${parseFloat((balanceStatus).toFixed(2))}` : balanceStatus <= -1 ? `You owe: ₹${parseFloat((-1 * balanceStatus).toFixed(2))}` : 'Closed') : balanceStatus <= -1 ? `You’re owed: ₹${parseFloat((-1 * balanceStatus).toString()).toFixed(2)}` : balanceStatus >= 1 ? `You owe: ₹${parseFloat((balanceStatus).toString()).toFixed(2)}` : 'Closed';
+            const status = balanceStatus <= -1 ? `You’re owed: ₹${parseFloat((-1 * balanceStatus).toString()).toFixed(2)}` : balanceStatus >= 1 ? `You owe: ₹${parseFloat((balanceStatus).toString()).toFixed(2)}` : 'Closed';
+            console.log(status)
+            console.log(exsistingInvoice)
             exsistingInvoice && await prismaClient.purchases.update({
                 where:{
                     id:exsistingInvoice.id

@@ -201,7 +201,41 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                 setSaving(false);
             }
         }
+        else if (type == 'exsistingrecurring' || type == 'exsistingnonrecurring') {
+            try {
+                setSaving(true);
+                const response = await axios.put(
+                    `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/editRecordTransaction/${editTransaction?.invoiceLink}?branchId=${appState.currentBranchId}`,
+                    {
+                        recordTransaction: [
+                            {
+                                receiptNo: editTransaction?.receiptNo,
+                                date: formData.date || new Date(),
+                                amountPaid: parseInt(formData.amountPaid, 10) || editTransaction?.amountPaid,
+                                mode: selectedMode || editTransaction?.mode,
+                                moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
+                            },
+                        ],
+                    },
+                    {
 
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    }
+                );
+
+                if (response.status === 201) {
+                    onClose();
+                }
+            }
+            catch (err) {
+                console.log(err);
+            }
+            finally {
+                setSaving(false);
+            }
+        }
 
 
     }

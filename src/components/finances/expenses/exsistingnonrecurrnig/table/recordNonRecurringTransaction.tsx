@@ -28,10 +28,11 @@ type PopupProps = {
     initialInvoiceNo: any;
     balanceDue: any;
     setCount:any;
+    setIsPaymentMade?:any;
 }
 
 
-const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, initialInvoiceNo, balanceDue }) => {
+const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, initialInvoiceNo, balanceDue,setIsPaymentMade }) => {
     const url = useSearchParams();
     const id = url.get('id');
     const dispatch = useDispatch();
@@ -156,7 +157,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, in
                 })
                 if (putResponse.ok) {
                     // console.log('Data saved Sucessfully2')
-                   
+                   if(setIsAdvancePayment) setIsAdvancePayment((prev:any)=>prev+1);
                     window.dispatchEvent(new FocusEvent('focus'))
                 } else {
                     console.error('Failed to save data')
@@ -277,7 +278,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, in
                             {balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
                                 You owe ₹{formData.amountPaid ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
                             </span> : balanceDue === 0 ? "" : <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
-                                You’re owed ₹{formData.amountPaid ? (balanceDue > 0 ? 1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
+                            You owe ₹{formData.amountPaid ? (balanceDue > 0 ? 1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
                             </span>}
                         </div>
                     </div>

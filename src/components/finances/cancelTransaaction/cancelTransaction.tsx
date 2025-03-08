@@ -75,7 +75,7 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ editTransaction, 
                 setLoading(false);
             }
         }
-        else if (type === 'exsistingInvoice') {
+        else if (type === 'exsistingInvoice' || type === 'exsistingrecurring'|| type === 'exsistingnonrecurring') {
             try {
                 const newTransaction = {
 
@@ -152,11 +152,12 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ editTransaction, 
                 
             }
         }
+        
     }
 
     return (
-        <div className='fixed inset-0 flex items-center justify-center z-50'>
-            <div className='rounded-md w-1/2 h-fit px-4 py-10 bg-white relative'>
+        <div className='w-full h-full flex justify-center items-center  fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50'>
+            <div className='rounded-md w-1/2 h-fit px-4 py-10 bg-gray-100 shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] relative'>
                 <Image
                     className='absolute right-4 top-4 cursor-pointer'
                     src={closeIcon}
