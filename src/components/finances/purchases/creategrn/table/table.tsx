@@ -8,7 +8,7 @@ import calicon from "../../../../../assets/icons/finance/calendar_today.svg"
 
 import DatePicker from "react-datepicker"
 import 'react-datepicker/dist/react-datepicker.css';
-
+import delicon from "@/assets/icons/finance/1. Icons-27.svg"
 
 import Subtract from "../../../../../assets/icons/finance/Subtract.svg"
 import Add from "../../../../../assets/icons/finance/add (2).svg"
@@ -20,7 +20,7 @@ import CreateGrnBottomBar from "./bottombar"
 import CreateGrnTotalAmount from "./totalamount"
 import CreateGrnHeader from "./header"
 import { useAppSelector } from "@/lib/hooks";
-
+import DistributorPopup from '@/components/database/distributor/newdistributorpopup';
 import useSWR from 'swr';
 import { DataContext } from "./DataContext"
 import { useSearchParams } from "next/navigation"
@@ -92,6 +92,11 @@ const CreateGrnTable = () => {
     const togglePopup = () => {
         setShowPopup(!showPopup);
     }
+    const [showPopup2, setShowPopup2] = React.useState(false);
+    const togglePopup2 = () => {
+        setShowPopup2(!showPopup2);
+    }
+
     if (id) {
         const { data, isLoading, error } = DataFromOrder(Number(id), appState.currentBranchId);
         orderData = data;
@@ -238,10 +243,12 @@ const CreateGrnTable = () => {
 
     }, [fetchedProducts])
     const handleDeleteRow = useCallback((index: number) => {
-        const updatedItems = [...items];
-        updatedItems.splice(index, 1);
-        setItems(updatedItems);
-    }, [items]);
+        setItems((prevItems) => {
+            const updatedItems = [...prevItems];
+            updatedItems.splice(index, 1);
+            return updatedItems;
+        });
+    }, []);
 
     const handleGstSelect = (selectedGst: any, index: number) => {
         const updatedItems = [...tableData];
@@ -420,7 +427,7 @@ const CreateGrnTable = () => {
         });
         setItems(items);
     }, [])
-
+    
     useEffect(() => {
         if (tableData.length === 0) {
             setSelectedProduct(undefined);
@@ -502,12 +509,19 @@ const CreateGrnTable = () => {
                     </div>
 
 
+                    <div className='flex gap-4'>
 
-                    <Button
-                        variant="solid"
-                        className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer" onClick={togglePopup}>
-                        <div className='flex'><Image src={addicon} alt='addicon' className='w-6 h-6 ' /></div>New Product
-                    </Button>
+                        <Button
+                            variant="solid"
+                            className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer" onClick={togglePopup}>
+                            <div className='flex'><Image src={addicon} alt='addicon' className='w-6 h-6 ' /></div>New Product
+                        </Button>
+                        <Button
+                            variant="solid"
+                            className="capitalize h-9 flex border-none bg-black px-4 py-2.5 text-white rounded-md cursor-pointer" onClick={togglePopup2}>
+                            <div className='flex'><Image src={addicon} alt='addicon' className='w-6 h-6 ' /></div>New Distributor
+                        </Button>
+                    </div>
 
                 </div>
                 <div className="flex-col w-full pr-[16px] pl-[16px] pt-[20px] overflow-auto max-h-[40rem]">
@@ -541,11 +555,11 @@ const CreateGrnTable = () => {
                                         <div className=' flex text-gray-500 text-base font-medium w-[15rem]'>Batch No. <span className="text-[red] ml-1 block">*</span></div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Bar Code</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[15rem] '>Expiry Date <span className="text-[red] ml-1 block">*</span></div>
-                                        <div className=' flex text-gray-500 text-base font-medium w-[18rem]'>Quantity</div>
+                                        <div className=' flex text-gray-500 text-base font-medium w-[18rem]'>Quantity<span className="text-[red] ml-1 block">*</span></div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[18rem]'>Free Quantity</div>
-                                        <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Unit Price</div>
+                                        <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Unit Price<span className="text-[red] ml-1 block">*</span></div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Subtotal</div>
-                                        <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>MRP</div>
+                                        <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>MRP<span className="text-[red] ml-1 block">*</span></div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Tax %</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Tax Amt.</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Discount %</div>
@@ -737,11 +751,11 @@ const CreateGrnTable = () => {
                                             }}
                                             onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
                                         />):( */}
-                                                {item.gst * 100 || 0}%
+                                                {(item.gst)?(item.gst * 100 ): 0}%
                                                 {/* )} */}
                                             </div>
                                             <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
-                                                ₹ {(item.quantity * item.gst * Number(item.unitPrice)).toFixed(2) || 0}
+                                                ₹ {(item.quantity&&item.gst&&item.unitPrice)?(item.quantity * item.gst * Number(item.unitPrice)).toFixed(2) : 0}
 
                                             </div>
                                             <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
@@ -781,14 +795,14 @@ const CreateGrnTable = () => {
                                                 />
 
                                             </div>
-                                            {/* <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[20px] justify-end pr-4'>
-                                                <button className="border-0 bg-transparent cursor-pointer">
+                                            <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[20px] justify-end pr-4'>
+                                                {/* <button className="border-0 bg-transparent cursor-pointer">
                                                     <Image className='w-5 h-5' src={sellicon} alt="sell" ></Image>
-                                                </button>
+                                                </button> */}
                                                 <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
                                                     <Image className='w-5 h-5' src={delicon} alt="delete" ></Image>
                                                 </button>
-                                            </div> */}
+                                            </div>
                                         </div>
                                     ))}
 
@@ -813,7 +827,9 @@ const CreateGrnTable = () => {
                                     items.reduce((acc, item) => {
                                         if (!item.itemName) return acc;
                                         const discount = (item.discountPercent || 0) / 100; // Default to 0 if discountPercent is undefined
-                                        return acc + discount * (item.quantity * Number(item.unitPrice));
+                                        const quantity = item.quantity || 0;
+                                        const unitPrice = item.unitPrice || 0;
+                                        return acc + discount * (quantity * Number(unitPrice));
                                     }, 0).toFixed(2)
                                 }
                             </div>
@@ -828,9 +844,9 @@ const CreateGrnTable = () => {
                         <div key={item.id} className="flex items-center justify-center w-[10rem] box-border bg-white text-gray-500 border-t-0 border-r-0 border-l border-b border-solid border-gray-200 h-12">
                             <div className='flex text-gray-500 text-base font-medium'>
                                 ₹{
-                                    isNaN(((item.gst - (item.discountPercent || 0) / 100 + 1) * (item.quantity * Number(item.unitPrice))))
+                                    isNaN(((item.gst || 0) - ((item.discountPercent || 0) / 100) + 1) * ((item.quantity || 0) * Number(item.unitPrice || 0)))
                                     ? 0 
-                                    : ((item.gst - (item.discountPercent || 0) / 100 + 1) * (item.quantity * Number(item.unitPrice))).toFixed(2)
+                                    : (((item.gst || 0) - ((item.discountPercent || 0) / 100) + 1) * ((item.quantity || 0) * Number(item.unitPrice || 0))).toFixed(2)
                                 }
                             </div>
                         </div>
@@ -840,7 +856,11 @@ const CreateGrnTable = () => {
                     ₹{
                         items.reduce((acc, item) => {
                             if (!item.itemName) return acc;
-                            return acc + ((item.gst - (item.discountPercent || 0) / 100 + 1) * (item.quantity * Number(item.unitPrice)));
+                            const gst = item.gst || 0;
+                            const discountPercent = item.discountPercent || 0;
+                            const quantity = item.quantity || 0;
+                            const unitPrice = item.unitPrice || 0;
+                            return acc + ((gst - discountPercent / 100 + 1) * (quantity * Number(unitPrice)));
                         }, 0).toFixed(2)
                     }
                 </div>
@@ -857,7 +877,7 @@ const CreateGrnTable = () => {
                 <CreateGrnBottomBar orderData={otherData} />
             </div>
             {showPopup && <Popup onClose={togglePopup} />}
-
+            {showPopup2 && <DistributorPopup onClose={togglePopup2} />}
         </>
     )
 

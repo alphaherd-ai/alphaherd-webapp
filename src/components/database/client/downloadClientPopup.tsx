@@ -70,74 +70,78 @@ const DownloadPopup = ({ onClose, clients }:any) => {
   };
 
   const logo = appState?.currentOrg?.orgImgUrl;
-
+  console.log("logo is :", logo);
   const downloadPDF = () => {
     convertImageToBase64(logo, (base64Image:any) => {
-    const doc = new jsPDF('landscape');
-    const tableColumn = ["Client", "Pet(s)", "Phone No.", "Email"];
-    const tableRows:any = [];
+      const doc = new jsPDF('landscape');
+      const tableColumn = ["Client", "Pet(s)", "Phone No.", "Email"];
+      const tableRows:any = [];
+      console.log("data is :", data);
+      data.forEach((item:any) => {
+        // const patientsNames = item.patients?.map((patient:any) => patient.patientName).join(', ') || '';
+        const clientsData = [
+          item.clientName,
+          item.patients,
+          item.contact,
+          item.email,
+        ];
+        tableRows.push(clientsData);
+      });
 
-    data.forEach((item:any) => {
-      const patientsNames = item.patients?.map((patient:any) => patient.patientName).join(', ') || '';
-      const clientsData = [
-        item.clientName,
-        patientsNames,
-        item.contact,
-        item.email,
-      ];
-      tableRows.push(clientsData);
-    });
-
-    doc.addImage(base64Image, 'PNG', 4, 4, 20, 20); 
-      doc.setFontSize(20);
-      doc.text(appState.currentOrg.orgName, 30, 10);
-      
-      doc.setFontSize(10);
-      const text = `${appState.currentOrg.address} ${appState.currentOrg.state}-${appState.currentOrg.pincode}`;
-      const maxWidth = 85;
-      const lines = doc.splitTextToSize(text, maxWidth);
-      doc.text(lines, 30, 15);
-
-
-
-      doc.setFontSize(13);
-      doc.text(`Gst No. :  ${appState.currentOrg.gstNo}`, 126, 12);
-      doc.setFontSize(13);
-      doc.text(`PAN No. :  5465465465465465`, 126, 18);
-      doc.setFontSize(13);
-      doc.text(`Email :  ${appState.currentOrg.orgEmail}`, 220, 12);
-      doc.setFontSize(13);
-      doc.text(`Phone No. :  ${appState.currentOrg.phoneNo}`, 220, 18);
-      doc.setFontSize(13);
-      doc.text(`Website :  XYZ.com`, 220, 24);
+        if (base64Image.startsWith('data:image/png;base64,')) {
+          doc.addImage(base64Image, 'PNG', 4, 4, 20, 20);
+        } else {
+          console.error('Invalid image source');
+        }
+        doc.setFontSize(20);
+        doc.text(appState.currentOrg.orgName, 30, 10);
+        
+        doc.setFontSize(10);
+        const text = `${appState.currentOrg.address} ${appState.currentOrg.state}-${appState.currentOrg.pincode}`;
+        const maxWidth = 85;
+        const lines = doc.splitTextToSize(text, maxWidth);
+        doc.text(lines, 30, 15);
 
 
-      doc.setLineWidth(0.2);
-      doc.line(1, 26, 320, 26); 
 
-      doc.setFontSize(15);
-      doc.text("Database Report", 8, 34);
-
-      doc.setFontSize(11);
-      doc.text(`Category : Clients`, 60, 33);
-      doc.text(`Period : ${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'} - ${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}`, 60, 37);
-
-
-      doc.text(`Total Clients : ${data.length}`, 120, 33);
-
-      doc.setLineWidth(0.5);
-      doc.line(1, 53, 320, 53); 
+        doc.setFontSize(13);
+        doc.text(`Gst No. :  ${appState.currentOrg.gstNo}`, 126, 12);
+        doc.setFontSize(13);
+        doc.text(`PAN No. :  5465465465465465`, 126, 18);
+        doc.setFontSize(13);
+        doc.text(`Email :  ${appState.currentOrg.orgEmail}`, 220, 12);
+        doc.setFontSize(13);
+        doc.text(`Phone No. :  ${appState.currentOrg.phoneNo}`, 220, 18);
+        doc.setFontSize(13);
+        doc.text(`Website :  XYZ.com`, 220, 24);
 
 
-    autoTable(doc, {
-      startY: 55,
-      head: [tableColumn],
-      body: tableRows,
-    });
+        doc.setLineWidth(0.2);
+        doc.line(1, 26, 320, 26); 
 
-    const fileName = `clients_report_${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'}_to_${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}.pdf`;
-    doc.save(fileName);
-  })
+        doc.setFontSize(15);
+        doc.text("Database Report", 8, 34);
+
+        doc.setFontSize(11);
+        doc.text(`Category : Clients`, 60, 33);
+        doc.text(`Period : ${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'} - ${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}`, 60, 37);
+
+
+        doc.text(`Total Clients : ${data.length}`, 120, 33);
+
+        doc.setLineWidth(0.5);
+        doc.line(1, 53, 320, 53); 
+
+
+      autoTable(doc, {
+        startY: 55,
+        head: [tableColumn],
+        body: tableRows,
+      });
+
+      const fileName = `clients_report_${startDate ? format(startDate, 'dd-MM-yyyy') : 'start'}_to_${endDate ? format(endDate, 'dd-MM-yyyy') : 'end'}.pdf`;
+      doc.save(fileName);
+    })
   }
 
 
@@ -190,7 +194,7 @@ const DownloadPopup = ({ onClose, clients }:any) => {
         
         {selectedOption === 'Custom' && (
             <>
-            <div className='text-[red]'>For now we can download without date range</div>
+            {/* <div className='text-[red]'>For now we can download without date range</div> */}
             {/* <div className='flex items-center justify-between  w-[576px]'>
                     <div className="text-gray-500 text-base font-medium w-[200px]">Select Date Range</div>
                     <div className="w-full h-11 px-4 py-2 bg-white rounded-[5px] border border-neutral-400 flex items-center gap-2">
