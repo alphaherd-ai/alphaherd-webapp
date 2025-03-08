@@ -83,6 +83,8 @@ const BranchEdit = () => {
     // console.log(validationErrors);
 
     const [activeTab, setActiveTab] = useState(0);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>|any) => {
       let name: string,value: any;
       if(e?.label){
@@ -156,6 +158,7 @@ const BranchEdit = () => {
           }
     const formSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
+      setIsSubmitting(true);
       try {
         // console.log('your data', data);
         formSchema.parse(data);
@@ -214,6 +217,7 @@ const BranchEdit = () => {
             transition: Bounce,
           });
         }
+        setIsSubmitting(false);
       }
     };
 
@@ -237,13 +241,17 @@ const BranchEdit = () => {
                     }
                     <div className="flex justify-between px-[5rem] pb-[2rem]">
                           <div></div>
-                        <button className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0 cursor-pointer " onClick={formSubmit} >
+                        <button 
+                            className={`bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} 
+                            onClick={formSubmit}
+                            disabled={isSubmitting}
+                        >
                             <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
                                 <div className="text-white text-sm font-bold ">
-                                    Submit Details
+                                    {isSubmitting ? 'Submitting...' : 'Submit Details'}
                                 </div>
                             </div>
-                            </button>
+                        </button>
                     </div>
                 </div>
             </div>
