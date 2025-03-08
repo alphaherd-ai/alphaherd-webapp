@@ -37,11 +37,10 @@ const DatabaseNavbar = async () => {
             if (hasData) {
                 const { clients, distributors,patients } = data;
             
-                const clientOptions = await clients.flatMap((item: any) =>
-                    item.patients.map((patient: any) => ({
-                        label: `${item?.clientName || ''} - ${patient.patientName || ''}(${item?.contact || ''})`,
+                const clientOptions = await clients.flatMap((item: any) => ({
+                        label: `${item?.clientName || ''} - (${item?.contact || ''})`,
                         value: item,
-                    }))
+                    })
                     );
                     console.log("clients",clients);
                 const distributorOptions =await distributors.map((item: any) => ({

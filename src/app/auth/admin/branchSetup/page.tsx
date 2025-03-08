@@ -141,10 +141,11 @@ const BranchEdit = () => {
         
             const isCurrentBranchManager = isManagerOfBranch(orgBranch.id, user as UserState);
         
+            const updatedOrgBranch = { ...orgBranch };
             dispatch(
               updateApp({
-                currentBranch: orgBranch,
-                currentBranchId: orgBranch.id,
+                currentBranch: updatedOrgBranch,
+                currentBranchId: updatedOrgBranch.id,
                 currentOrg: appState.currentOrg, // Keep current organization since we only have one
                 currentOrgId: appState.currentOrgId,
                 isCurrentBranchManager: isCurrentBranchManager,
@@ -181,7 +182,7 @@ const BranchEdit = () => {
           },"userId":userState.id}),
         });
 
-        let json = await res.json();
+        const json = await res.json();
         if (res.ok) {
           toast.success(json.message, {
             position: "bottom-right",
@@ -190,7 +191,8 @@ const BranchEdit = () => {
             transition: Bounce,
           });
           // Select the branch 
-          handleOrgBranchSelect(json.orgBranch);
+          console.log(json.orgBranch)
+          // handleOrgBranchSelect(json.orgBranch);
           router.push(`/settings/organisation/myorg`);
         } else {
           throw new Error(json.message);
