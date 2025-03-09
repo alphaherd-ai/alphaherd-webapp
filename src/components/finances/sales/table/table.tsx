@@ -7,6 +7,7 @@ import FinancesSalesTableHeader from './header'
 import { FinanceCreationType } from '@prisma/client';
 import FinancesSalesTableItem from './item'
 import axios from 'axios';
+import useSWR from 'swr';
 import { useAppSelector } from '@/lib/hooks';
 import { Notif_Source } from '@prisma/client';
 import { useSearchParams } from 'next/navigation';
@@ -46,8 +47,8 @@ const FinancesSalesTable = () => {
   const [endInd, setEndInd] = useState(0);
   const [totalLen, setTotalLen] = useState(0);
   const [tableData, setTableData] = useState<any[]>([]);
-  const [data, setData] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [data1, setData] = useState<any[]>([]);
+  const [isLoading1, setIsLoading] = useState(false);
   const TOTAL_VALUES_PER_PAGE = 50;
   const goOnPrevPage = () => {
     if (currentPageNumber === 1) return;
