@@ -20,6 +20,7 @@ import useSWR from 'swr';
 import z from 'zod';
 import Loading2 from "@/app/loading2";
 import StockConfirmationPopup from "@/utils/stockConfirmationpopup";
+import { mutate } from 'swr';
 
 
 //@ts-ignore
@@ -677,6 +678,8 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
 
             }
 
+            // After successful update, revalidate the SWR cache
+            mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${appState.currentBranchId}`);
         } catch (error) {
             if(error instanceof z.ZodError){
                 const fieldErrors = error.flatten().fieldErrors;
