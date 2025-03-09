@@ -595,7 +595,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                     location,
                     productId,
                     hsnCode,
-                    isApproved : appState.isCurrentOrgAdmin ? true : false
+                    isApproved : true 
                 };
                 console.log("body is ", body);
                 if (selectedOption === Stock.StockOUT) {

@@ -40,8 +40,6 @@ const FinancesSalesTable = () => {
   const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
   const selectedStatus = useMemo(() => urlSearchParams.getAll('selectedStatus'), [urlSearchParams]);
   const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`, fetcher, {revalidateOnFocus: true})
-
-
   //Paginaton
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
     const [startInd, setStartInd] = useState(0);
@@ -146,15 +144,39 @@ const FinancesSalesTable = () => {
   useEffect(()=>{
     function sendPaymentReminders(invoices: any[], currentDate: Date) {
           if (!invoices || !Array.isArray(invoices)) {
+            console.log("no data");
             return [];
           }
           console.log("data for invoices", invoices);
           return invoices.map(invoice => {
             const dueDate = new Date(invoice.dueDate);
             const daysLeftForDue = Math.ceil((dueDate.getTime() - currentDate.getTime()) / (24 * 60 * 60 * 1000));
-    
-            if (daysLeftForDue <= 7 && daysLeftForDue >= 0 && isOlderThanOneWeek(invoice.lastDueNotif)) {
-              console.log("iam here1")
+            const words= invoice.status.trim().split(' ');
+            var bool=false;
+            if(words.length>1){
+              if(words[1].toLowerCase()==='owed:'){
+                bool =true;
+              }
+            }
+            if(invoice.type !==FinanceCreationType.Sales_Return &&  dueDate.toDateString() === currentDate.toDateString() && isOlderThanOneWeek(invoice.lastDueNotif) && bool){
+              const notifData = {
+                orgId: appState.currentOrgId,
+                url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/finance/invoices/${invoice.id}`,
+                message: `Payment of ₹${invoice.totalCost} due today  for invoice ${invoice.invoiceNo}`,
+                data: {
+                  invoiceId: invoice.id,
+                  dueInDays: daysLeftForDue,
+                  party: invoice.distributor,
+                  amountDue: invoice.totalCost,
+                  status: invoice.status,
+                },
+                source: Notif_Source.Sales_Invoice
+              };
+              console.log("notif data", notifData);
+              sendDueNotification(notifData, invoice.id);
+              return { ...invoice, notificationSent: true };
+            }
+            else if (daysLeftForDue <= 7 && daysLeftForDue >= 0 && isOlderThanOneWeek(invoice.lastDueNotif) && bool) {
               const notifData = {
                 orgId: appState.currentOrgId,
                 url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/finance/invoices/${invoice.id}`,
@@ -172,18 +194,16 @@ const FinancesSalesTable = () => {
               sendDueNotification(notifData, invoice.id);
               return { ...invoice, notificationSent: true };
             } else if (daysLeftForDue < 0) {
-              console.log("iam here3")
-              return { ...invoice, status: 'Overdue' };
+              return invoice;
             } else {
-              console.log("iam here4")
               return invoice;
             }
           });
         }
-
-        const currentDate = new Date();
-        const updated = sendPaymentReminders(data,currentDate);
-        console.log("updated invoices",updated);
+          const currentDate = new Date();
+          const updated = sendPaymentReminders(data,currentDate);
+          console.log("updated invoices",updated);
+        
   },[data]);
 
   return (

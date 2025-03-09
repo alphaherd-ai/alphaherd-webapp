@@ -92,7 +92,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             batchNumber: data.batchNumber,
             hsnCode: data.barCode,
             location:data.location,
-            isApproved: appState.isCurrentOrgAdmin ? true : false,
+            isApproved: true,
             costPrice: Number(data.unitPrice)
         }));
         console.log("item is :", items);
