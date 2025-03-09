@@ -595,7 +595,7 @@ const ServiceDetails = () => {
                 </div>
                 <div className="w-full justify-start items-start flex rounded-[10px]">
                     <div className="w-3/12 p-6 bg-white border-t border-solid border-0  border-r border-borderGrey flex-col justify-center items-start rounded-b-xl gap-4 flex ">
-                        <div className="text-textGrey2 text-[28px] font-bold ">₹{isLoading ? <Loading2 /> : service?.sellingPrice}</div>
+                        <div className="text-textGrey2 text-[28px] font-bold ">₹{isLoading ? <Loading2 /> : service?.serviceCharge}</div>
                         <div className="text-textGrey2 text-base font-medium ">Selling Price</div>
                     </div>
                     <div className="w-3/12 p-6 bg-white border-t border-solid border-0 border-r border-borderGrey flex-col justify-center items-start gap-4 flex">
