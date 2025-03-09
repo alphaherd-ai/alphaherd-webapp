@@ -153,11 +153,11 @@ export const POST = async (req: NextRequest) => {
       );
   
         await prismaClient.orgBranchUserRole.create({
-        data: {
-            orgBranchId: orgNewBranch.id,
-            userId: userId,
-            role: "Admin",
-        },
+            data: {
+                orgBranchId: orgNewBranch.id,
+                userId: userId,
+                role: "Admin",
+            },
         });
         return new Response(JSON.stringify({ "message": "Branch added successfully" ,"orgBranch":orgNewBranch}), {
         status: 201,
