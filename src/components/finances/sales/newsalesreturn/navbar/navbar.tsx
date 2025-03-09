@@ -40,7 +40,7 @@ const NewsalesReturnNavbar = () => {
             <div className="flex relative g-4 items-center justify-between pb-[27px]  text-gray-500 text-[28px] font-bold">
                 <div className="flex">
 
-                    <div className="w-11 h-11 bg-gray-100 rounded-[5px] border border-neutral-400 flex justify-center items-center mr-4">
+                    <div className="w-11 h-11 bg-gray-100 rounded-[5px] border border-solid border-neutral-400 flex justify-center items-center mr-4">
                         <Image className="w-6 h-6 relative rounded-[5px]  cursor-pointer" src={lefticon} alt="Back" onClick={() => router.back()}></Image>
                     </div>
                     <div className="text-gray-500 text-[28px] flex items-center font-bold ">
@@ -49,20 +49,7 @@ const NewsalesReturnNavbar = () => {
                     </div>
                 </div>
 
-                <div className="flex">
-                    
-                    
 
-                    <div className="flex">
-                        <div className="w-11 h-11 bg-gray-100 rounded-[5px] border border-neutral-400 flex justify-center items-center mr-4">
-                            <Image className="w-6 h-6 relative rounded-full  cursor-pointer" src={minimiseIcon} alt="Back" onClick={() => router.back()}></Image>
-
-                        </div>
-                        <div className=" w-11 h-11 bg-gray-100 rounded-[5px] border border-neutral-400 flex justify-center items-center mr-4">
-                            <Image className="w-6 h-6 relative rounded-[5px]  cursor-pointer" src={closeIcon} alt="Back" onClick={handleCancelTransaction}></Image>
-                        </div>
-                    </div>
-                </div>
 
             </div>
 

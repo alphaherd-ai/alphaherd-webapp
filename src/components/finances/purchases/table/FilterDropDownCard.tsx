@@ -76,7 +76,7 @@ const FilterDropdownCard = () => {
 
 
 
-  const [activeTab, setActiveTab] = useState("party");
+  const [activeTab, setActiveTab] = useState("dateRange");
 
   const handleTabChange = (tab: any) => {
     setActiveTab(tab);
@@ -100,16 +100,6 @@ const FilterDropdownCard = () => {
     <div className="w-[420px] h-[441px] min-h-fit px-4 py-6 bg-white rounded-[10px] flex-col justify-start items-start gap-4 inline-flex shadow-lg">
       <div className="items-start flex border border-solid border-borderGrey rounded-[5px] cursor-pointer">
         <div
-          className={`px-2 py-1 ${activeTab === "party" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
-            } rounded-tl-[5px] rounded-bl-[5px] border-0 border-r border-solid border-borderGrey justify-start items-center gap-1 flex`}
-          onClick={() => handleTabChange("party")}
-        >
-          <div className={`text-sm font-bold ${activeTab === "party" ? "text-white" : "text-neutral-400"}`}>
-            Distributors
-          </div>
-
-        </div>
-        <div
           className={`px-2 py-1 ${activeTab === "dateRange" ? "bg-zinc-900 border-zinc-900" : "bg-gray-100 border-neutral-400"
             }  border-0 border-r border-solid border-borderGrey justify-start items-center gap-1 flex`}
           onClick={() => handleTabChange("dateRange")}
@@ -131,30 +121,6 @@ const FilterDropdownCard = () => {
 
         </div>
       </div>
-      {activeTab === "party" && (
-        <div className="w-full h-full flex flex-col gap-4">
-          <div className="w-full">
-            <input
-              className="w-full p-2 border border-solid border-borderGrey outline-none rounded-[5px] text-sm text-textGrey2 font-medium"
-              type="text"
-              name=""
-              id=""
-            />
-          </div>
-          <div className="w-full flex flex-col gap-4">
-            {partyInfo?.map((party: any) => (
-              <div key={party.value.id} className="w-full flex gap-2 items-center">
-                <input
-                  type="checkbox"
-                  checked={selectedParties.includes(party.label)}
-                  onChange={() => handlePartySelect(party.label)}
-                />
-                <div className="text-textGrey2 font-medium text-base">{party.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
       {activeTab === "dateRange" && (
         <div className="w-full h-full flex flex-col gap-6">
           <div className="w-full flex flex-col gap-2">

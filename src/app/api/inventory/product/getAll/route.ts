@@ -18,9 +18,6 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
       },
       orderBy:{
         createdAt:'desc'
-      },
-      cacheStrategy:{
-        ttl:60
       }
     });
     return new Response(JSON.stringify(products), {

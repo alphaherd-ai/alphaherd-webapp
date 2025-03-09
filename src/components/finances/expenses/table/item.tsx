@@ -51,7 +51,7 @@ const FinancesExpensesTableItem = ({ onCountsChange,data,expenses,isLoading}:any
   }, [expenses]);
   
 
-  if (isLoading && !data) return (<Loading />)
+  if (isLoading) return (<Loading />)
 
   return (
     <div>

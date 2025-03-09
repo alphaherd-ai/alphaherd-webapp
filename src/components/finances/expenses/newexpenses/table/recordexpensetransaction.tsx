@@ -107,7 +107,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({headerdata,setCount,expen
                 body: JSON.stringify({
                     partyName: headerdata?.title?.value,
                     invoiceLink: headerdata.invoiceNo,
-                    receiptNo: formData.receiptNo,
+                    receiptNo: initialInvoiceNo,
                     date: formData.date || new Date(),
                     amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1*formData.amountPaid, 10) || (balanceDue),
                     mode: selectedMode,
@@ -133,7 +133,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({headerdata,setCount,expen
             date: formData.date || new Date(),
             isAdvancePayment: isAdvancePayment,
             mode: selectedMode,
-            receiptNo: formData.receiptNo,
+            receiptNo: initialInvoiceNo,
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
             
         };
@@ -141,7 +141,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({headerdata,setCount,expen
         dispatch(addAmount({
             amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1*formData.amountPaid, 10) || (balanceDue),
             mode: selectedMode,
-            receiptNo: formData.receiptNo,
+            receiptNo: initialInvoiceNo,
             invoiceLink: headerdata.invoiceNo,
             moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
             date: formData.date || new Date()
@@ -262,7 +262,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({headerdata,setCount,expen
                                 {balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
                                     You owe ₹{totalAmount.totalCost ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
                                 </span> : balanceDue === 0 ? "" : <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
-                                    You’re owed ₹{totalAmount.totalCost ? (balanceDue > 0 ? 1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
+                                You owe ₹{totalAmount.totalCost ? (balanceDue > 0 ? 1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
                                 </span>}
                             </div>
                         </div>

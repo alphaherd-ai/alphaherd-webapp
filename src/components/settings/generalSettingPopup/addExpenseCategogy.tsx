@@ -22,7 +22,7 @@ const AddExpenseCategory = ({onClose}:any) => {
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/expenseCategory/getAll?branchId=${appState.currentBranchId}`);
                 const data = await response.json();
-                const names = data.map((item: { name: any[]; }) => item.name[0]); 
+                const names = data.map((item: { name: any[]; }) => item.name[0].toLowerCase()); 
                 setExistingCategory(names);
                 
                 console.log('Existing reasons fetched:', names); 
@@ -59,8 +59,8 @@ const AddExpenseCategory = ({onClose}:any) => {
     let hasError = false;
 
     // Define default expense categories
-    const defaultExpenseCategories = ['Rent',' Payroll', 'Utilities', 'Transport', 'Medical Equipment', 'Repair and Maintenance', 'Other'];
-    const allExistingCategories = [...existingCategory, ...defaultExpenseCategories];
+   
+    
 
     inputs.forEach((input, index) => {
         const trimmedInput = input.trim();
@@ -71,7 +71,7 @@ const AddExpenseCategory = ({onClose}:any) => {
             hasError = true;
             return;
         }
-       else if (allExistingCategories.includes(trimmedInput)) {
+       else if (existingCategory.includes(trimmedInput.toLowerCase())) {
             newErrors[index] = 'This Expense Category already exists';
             hasError = true;
             console.log(`Duplicate Expense Category detected: ${trimmedInput}`);

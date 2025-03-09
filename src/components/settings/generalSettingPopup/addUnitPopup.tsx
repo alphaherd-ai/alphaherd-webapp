@@ -23,7 +23,7 @@ const AddItemUnit = ({onClose}:any) => {
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemUnit/getAll?branchId=${appState.currentBranchId}`);
                 const data = await response.json();
-                const names = data.map((item: { name: any[]; }) => item.name[0]); 
+                const names = data.flatMap((item: { name: any[] }) => item.name.map(n => n.toLowerCase())); 
                 setExistingUnit(names);
                 
                 console.log('Existing reasons fetched:', names); 
@@ -65,7 +65,7 @@ const AddItemUnit = ({onClose}:any) => {
             hasError = true;
             
         }
-           else if (existingUnit.includes(trimmedInput)) {
+           else if (existingUnit.includes(trimmedInput.toLowerCase())) {
                 newErrors[index] = 'This Reason already exists';
                 hasError = true;
                 console.log(`Duplicate Reason detected: ${trimmedInput}`);

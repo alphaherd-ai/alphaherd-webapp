@@ -47,6 +47,7 @@ interface ProductBatch {
     category :string;
     distributors:string[];
     productId:number;
+    maxRetailPrice:number;
 }
 function useProductfetch (id: number | null) {
     const {data,error,isLoading}=useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${id}`,fetcher,{revalidateOnFocus:true});
@@ -212,7 +213,7 @@ const NewPurchaseReturnNewTable = () => {
                 quantity:1 ,
                 batchNumber: product.batchNumber,
                 expiry:  product.expiry,
-                sellingPrice:  product.sellingPrice,
+                sellingPrice:  product.maxRetailPrice,
                 originalQuantity:product.quantity
             },
             label:product.batchNumber
@@ -617,7 +618,7 @@ const customStyles = {
                                             }}
                                             onChange={(selectedOption:any)=>handleGstSelect(selectedOption,index)}
                                         />):( */}
-                                           { item.gst*100 || 0}%
+                                           { item.gst?(item.gst*100).toFixed(2):0}%
                                         {/* )} */}
                                     </div>
                                 <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium'>{`₹${((item?.sellingPrice*item?.quantity * item?.gst)||0).toFixed(2)}`}</div>

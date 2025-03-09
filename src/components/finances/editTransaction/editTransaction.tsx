@@ -27,6 +27,7 @@ type PopupProps = {
     transactionsData?: any;
     balanceDue?: any;
     type: string,
+    setIsPaymentEdited?:any;
 }
 
 interface ProductOption {
@@ -51,12 +52,13 @@ interface ProductBatch {
     maxRetailPrice: number;
 }
 
-const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onClose, transactionsData, type, balanceDue }) => {
+const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onClose, transactionsData, type, balanceDue,setIsPaymentEdited }) => {
     const url = useSearchParams();
     const id = url.get('id');
     //const pathName=usePathname();
     //console.log(pathName);
     //console.log(url);
+    //console.log(setIsPaymentEdited);
     const [isSaving, setSaving] = useState(false);
     const [formData, setFormData] = useState<any>({ amountPaid: editTransaction?.amountPaid });
     const appState = useAppSelector((state) => state.app)
@@ -127,9 +129,9 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                         }
                     });
                 }
-
+                
                 onClose();
-
+                
 
             }
             catch (err) {
@@ -188,6 +190,7 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                 ])
 
                 if (transactionResponse.status === 201 && recordResponse.status === 201) {
+                    if(setIsPaymentEdited){ setIsPaymentEdited((prev:any)=>prev+1);}
                     onClose();
                 }
             }
@@ -198,7 +201,42 @@ const EditRecordTransactionPopup: React.FC<PopupProps> = ({ editTransaction, onC
                 setSaving(false);
             }
         }
+        else if (type == 'exsistingrecurring' || type == 'exsistingnonrecurring') {
+            try {
+                setSaving(true);
+                const response = await axios.put(
+                    `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/editRecordTransaction/${editTransaction?.invoiceLink}?branchId=${appState.currentBranchId}`,
+                    {
+                        recordTransaction: [
+                            {
+                                receiptNo: editTransaction?.receiptNo,
+                                date: formData.date || new Date(),
+                                amountPaid: parseInt(formData.amountPaid, 10) || editTransaction?.amountPaid,
+                                mode: selectedMode || editTransaction?.mode,
+                                moneyChange: transactionType === 'Money In' ? 'In' : 'Out',
+                            },
+                        ],
+                    },
+                    {
 
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    }
+                );
+
+                if (response.status === 201) {
+                    if(setIsPaymentEdited){ setIsPaymentEdited((prev:any)=>prev+1);}
+                    onClose();
+                }
+            }
+            catch (err) {
+                console.log(err);
+            }
+            finally {
+                setSaving(false);
+            }
+        }
 
 
     }

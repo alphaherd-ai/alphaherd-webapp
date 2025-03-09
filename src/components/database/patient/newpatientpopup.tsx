@@ -38,7 +38,7 @@ interface Breed {
 }
 
 const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, setEditpatient }) => {
-    console.log(editPatient);
+    //console.log(editPatient);
     const [formData, setFormData] = useState<any>({});
     const [clients, setClients] = useState<{ value: string; label: string }[]>([]);
     //const [startDate, setStartDate] = useState(new Date());
@@ -53,10 +53,24 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
     const [filteredBreeds, setFilteredBreeds] = useState<any[]>([]);
     const [selectedSpecies, setSelectedSpecies] = useState<any>(null);
     const [isImPatient, setIsImpatient] = useState(false);
-    const [prevPatients,setPrevPatients]=useState<any[]>([]);
+    const [prevPatients, setPrevPatients] = useState<any[]>([]);
     const [isSamePatientName, setIsSamePatientName] = useState(false);
     let isAnotherPatient = false;
     let selectedClient: { value: string; label: string; } | null | undefined = null;
+
+
+    useEffect(() => {
+        if(editPatient){
+                setSelectedGender(editPatient.gender || 'unspecified');
+                setStartDate(editPatient.dateOfBirth ? new Date(editPatient.dateOfBirth) : null);
+                setAge(editPatient.age ? calculateAge(new Date(editPatient.dateOfBirth)) : { years: 0, months: 0, days: 0 });
+            }
+        }, [editPatient])
+        
+
+
+
+
 
     const resetForm = () => {
         setFormData((prevData: { clientName: any; }) => ({
@@ -144,18 +158,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
         return new Date(today.getFullYear() - years, today.getMonth() - months, today.getDate() - days);
     };
 
-    // const calculateDateOfBirth = (value: number, field: string) => {
-    //     const today = new Date();
-    //     let years = age.years;
-    //     let months = age.months;
-    //     let days = age.days;
-    //     if (field === "years") years = value;
-    //     if (field === "months") months = value;
-    //     if (field === "days") days = value;
 
-    //     const newDate = new Date(today.getFullYear() - years, today.getMonth() - months, today.getDate() - days);
-    //     return newDate;
-    // };
     const handleDateChange = (date: Date) => {
         setStartDate(date);
         const calculatedAge = calculateAge(date);
@@ -198,16 +201,16 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
         fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`)
             .then((response) => response.json())
             .then((data) => {
-                
+
                 const formattedClients = data.map((client: any) => ({
                     value: client.id,
                     label: client.clientName
                 }))
                 setClients(formattedClients)
 
-                const formattedPatients=data.map((client:any)=>({
-                    label:client.clientName,
-                    patients:client.patients
+                const formattedPatients = data.map((client: any) => ({
+                    label: client.clientName,
+                    patients: client.patients
                 }))
                 console.log(formattedPatients);
                 setPrevPatients(formattedPatients);
@@ -224,11 +227,6 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
                 dateOfBirth: null,
             }));
         }
-
-
-        
-
-
     }, []);
 
     const handleAnotherpatient = () => {
@@ -236,6 +234,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
         isAnotherPatient = true;
         handleSaveClick();
     }
+
 
 
     useEffect(() => {
@@ -261,8 +260,6 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
                         ? formData.breed.label[0]
                         : formData.breed.label;
                 }
-
-
                 const body = {
                     ...(formData.patientName && { patientName: formData.patientName }),
                     ...(formData.species && { species: formData.species.label }),
@@ -325,6 +322,8 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
                         : formData.breed.label;
                 }
 
+                //console.log(selectedBreed);
+
 
                 //console.log('selected breed', selectedBreed);
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/patients/create?branchId=${appState.currentBranchId}`, {
@@ -366,6 +365,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
 
     // console.log(formData);
     const handleChange = (field: string, value: any) => {
+
         setFormData((prevFormData: any) => {
             const updatedFormData = { ...prevFormData, [field]: value };
             const isPatientNameValid = updatedFormData.patientName !== '';
@@ -379,8 +379,8 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
             const foundClient = prevPatients.find((e: any) => e.label === updatedFormData.clientName?.label);
             const patientListIfExists = foundClient ? foundClient.patients : undefined;
             //console.log(patientListIfExists,foundClient);
-            if(patientListIfExists){
-                setIsSamePatientName(patientListIfExists.some((patient:any)=>patient.patientName?.toLowerCase()===updatedFormData.patientName?.toLowerCase()));
+            if (patientListIfExists) {
+                setIsSamePatientName(patientListIfExists.some((patient: any) => patient.patientName?.toLowerCase() === updatedFormData.patientName?.toLowerCase()));
             }
 
             setIsSaveDisabled(!isPatientNameValid || !isClientNameValid);
@@ -388,6 +388,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
 
         });
     };
+
 
 
     const [species, setSpecies] = useState<any[]>([]);
@@ -412,6 +413,8 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
         fetchSpecies();
     }, [appState.currentBranchId]);
 
+
+
     useEffect(() => {
         const fetchBreeds = async () => {
             try {
@@ -434,15 +437,42 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
         fetchBreeds();
     }, [appState.currentBranchId]);
 
-    // Filter breeds based on selected species
     useEffect(() => {
-        if (selectedSpecies) {
+        if (editPatient && species.length > 0) {
+            const findSpecies = species.find((specie: any) => specie.label === editPatient?.species);
+            setSelectedSpecies(findSpecies);
+            setFormData((prevData: any) => ({
+                ...prevData,
+                species: findSpecies
+            }))
+
+        }
+    }, [editPatient, species])
+
+    useEffect(() => {
+        if (editPatient && filteredBreeds.length > 0) {
+            console.log(filteredBreeds);
+            const findBreed = filteredBreeds.find((breed: any) => breed.label[0] === editPatient?.breed);
+            setFormData((prevData: any) => ({
+                ...prevData,
+                breed: findBreed
+            }))
+        }
+
+    }, [editPatient, filteredBreeds])
+
+
+    useEffect(() => {
+        if (selectedSpecies && breeds.length > 0) {
             const filtered = breeds.filter((breed) => breed.speciesId === selectedSpecies.value);
             setFilteredBreeds(filtered);
+            console.log(selectedSpecies, filtered);
         } else {
-            setFilteredBreeds([]); // Reset if no species is selected
+            setFilteredBreeds([]);
         }
     }, [selectedSpecies, breeds]);
+
+
     const handleGenderChange = (gender: any) => {
         setSelectedGender(gender);
     };
@@ -467,11 +497,13 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
                                 handleChange("patientName", e.target.value);
                             }}
                             value={formData?.patientName}
+                            placeholder={editPatient?.patientName}
                         />
+
                         {!editPatient && errors.patientName && (
                             <div className="text-[red] error">{errors.patientName}</div>
                         )}
-                        {isSamePatientName &&  (
+                        {isSamePatientName && (
                             <div className="text-[red] error">Patient Name already exists</div>
                         )}
                     </div>
@@ -482,7 +514,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
 
                         {clientData === undefined ? (
                             <Select
-                                className="text-textGrey2 text-base font-medium  w-[25rem] border-0 boxShadow-0 "
+                                className="text-textGrey2 text-base font-medium  w-[25rem]  boxShadow-0 border border-solid border-borderGrey rounded-[5px] focus:outline-none focus:border focus:border-[#35BEB1]"
                                 classNamePrefix="select"
                                 isClearable={false}
                                 isSearchable={true}
@@ -505,7 +537,8 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
                         type="text" name="species" onChange={(e) => handleChange("species", e.target.value)} /> */}
                         <div>
                             <Creatable
-                                className="text-textGrey2 text-base font-medium w-[25rem] "
+
+                                className="text-textGrey2 text-base font-medium w-[25rem] border border-solid border-borderGrey rounded-[5px] focus:outline-none focus:border focus:border-[#35BEB1]"
                                 placeholder=""
                                 isClearable={false}
                                 isSearchable={true}
@@ -518,15 +551,16 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
                                 }}
                                 styles={customStyles}
                                 value={formData?.species}
+
                             />
                         </div>
                     </div>
                 </div>
                 <div className="flex items-center gap-[95px] w-full">
                     <div className="text-gray-500 text-base font-medium  w-2/12">Breed</div>
-                    <div className="flex w-10/12 h-11">
+                    <div className="flex w-10/12">
                         <Creatable
-                            className="text-textGrey2 text-base font-medium w-[25rem] "
+                            className="text-textGrey2 text-base font-medium w-[25rem] border border-solid border-borderGrey rounded-[5px] focus:outline-none focus:border focus:border-[#35BEB1]"
                             placeholder=""
                             isClearable={false}
                             isSearchable={true}
@@ -579,18 +613,21 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
                 <div className="flex items-center gap-[140px] w-full">
                     <div className="text-gray-500 text-base font-medium">Age</div>
                     <div className="flex gap-4">
+
                         <div className="flex justify-start items-center gap-1">
                             <div className="w-12 h-9 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
                                 <input
                                     className="w-full h-full text-textGrey2 text-base font-medium px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
                                     type="number"
-                                    name="years"
-                                    value={age.years === 0 ? '' : age.years} // Show empty string when 0
-                                    onChange={(e) => handleAgeChange('years', parseInt(e.target.value.replace(/^0+/, '')))} // Remove leading 0s
+                                    min="0"
+                                    name="days"
+                                    value={age.days === 0 ? '' : age.days}
+                                    onChange={(e) => handleAgeChange('days', parseInt(e.target.value.replace(/^0+/, '')))} // Remove leading 0s
                                 />
                             </div>
-                            <div className="text-gray-500 text-base font-medium">Years</div>
+                            <div className="text-gray-500 text-base font-medium">Days</div>
                         </div>
+
                         <div className="flex justify-start items-center gap-1">
                             <div className="w-12 h-9 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 inline-flex">
                                 <input
@@ -608,13 +645,12 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
                                 <input
                                     className="w-full h-full text-textGrey2 text-base font-medium px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
                                     type="number"
-                                    min="0"
-                                    name="days"
-                                    value={age.days === 0 ? '' : age.days}
-                                    onChange={(e) => handleAgeChange('days', parseInt(e.target.value.replace(/^0+/, '')))} // Remove leading 0s
+                                    name="years"
+                                    value={age.years === 0 ? '' : age.years} // Show empty string when 0
+                                    onChange={(e) => handleAgeChange('years', parseInt(e.target.value.replace(/^0+/, '')))} // Remove leading 0s
                                 />
                             </div>
-                            <div className="text-gray-500 text-base font-medium">Days</div>
+                            <div className="text-gray-500 text-base font-medium">Years</div>
                         </div>
                     </div>
                 </div>
@@ -676,7 +712,7 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
                         }`}
                         onClick={!editPatient && isSaveDisabled ? undefined : handleAnotherpatient}>
                         <div className="w-6 h-7"> <Image src={Paws} alt='Paws' className='w-6 h-6 ' /></div>
-                        <div className="text-gray-100 text-base font-medium ">{savingData ? <Loading2/> : "Add another Patient"}</div>
+                        <div className="text-gray-100 text-base font-medium ">{savingData ? <Loading2 /> : "Add another Patient"}</div>
                     </div>
                     <div
                         className={`h-11 px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex  ${!editPatient && isSaveDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-zinc-900 cursor-pointer'

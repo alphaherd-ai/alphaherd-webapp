@@ -48,41 +48,169 @@ export const POST = async (req: NextRequest) => {
         },
       });
     }
-
+    
     delete adminUserDetails.password;
     adminUserDetails.hashedPassword = hashedPassword;
 
-    let newOrg = await prismaClient.organization.create({
+    const newOrg = await prismaClient.organization.create({
       data: orgDetails
     });
-    let orgNewBranch = await prismaClient.orgBranch.create({
+    const orgNewBranch = await prismaClient.orgBranch.create({
       data : {
         ...branchDetails,
         orgId: newOrg.id
       }
     })
 
+    //creating finance database and other sections for it
+    const financeSection = await prismaClient.financeSection.create({
+      data: {
+        name: "Finance-" + orgNewBranch.branchName,
+        branchId: orgNewBranch.id,
+        amount: 1
+      }
+    })
+
+    const databaseSection = await prismaClient.databaseSection.create({
+      data: {
+        name: "Database-" + orgNewBranch.branchName,
+        branchId: orgNewBranch.id,
+        type: "type`",
+      }
+    })
+
+    const inventorySection = await prismaClient.inventorySection.create({
+      data: {
+        name: "Inventory-" + orgNewBranch.branchName,
+        branchId: orgNewBranch.id,
+        quantity: 1
+      }
+    })
+
+    const defaultCategories = ['Pet food', 'Medicine', 'Supplements', 'Pet Accessories', 'Equipment'];
+    await prismaClient.itemCategory.create({
+      data: {
+        name: defaultCategories,
+        InventorySection: {
+          connect: { id: inventorySection.id }
+        }
+      }
+    })
+
+    const defaultUnits = ['Boxes', 'Pieces', 'Vials', 'Units', 'Strips'];
+    await prismaClient.itemUnit.create({
+      data: {
+        name: defaultUnits,
+        InventorySection: {
+          connect: { id: inventorySection.id }
+        }
+      }
+    })
+
+    const defaultTaxTypes = [0, 5, 12, 18, 28];
+    await prismaClient.taxType.create({
+      data: {
+        name: defaultTaxTypes,
+        InventorySection: {
+          connect: { id: inventorySection.id }
+        }
+      }
+    })
+
+    const defaultServiceCategory = ['General Consultation', 'Follow Up', 'Surgery', 'Vaccination', 'Grooming', 'Boarding', 'Rescue'];
+    await prismaClient.serviceCategory.create({
+      data: {
+        name: defaultServiceCategory,
+        InventorySection: {
+          connect: { id: inventorySection.id }
+        }
+      }
+    })
+
+    const defaultExpenseCategory = ['Rent', ' Payroll', 'Utilities', 'Transport', 'Medical Equipment', 'Repair and Maintenance', 'Other'];
+    await prismaClient.expenseCategory.create({
+      data: {
+        name: defaultExpenseCategory,
+        InventorySection: {
+          connect: { id: inventorySection.id }
+        }
+      }
+    })
+
+    const defaultPaymentMethod = ['Cash', 'UPI', 'Netbanking'];
+    //making a loop for each method
+    defaultPaymentMethod.forEach(async (method) => {
+      await prismaClient.paymentMethod.create({
+        data: {
+          name: method,
+          FinanceSection: {
+            connect: { id: financeSection.id }
+          }
+        }
+      })
+    })
+
+    const defaultLocationCategory = 'Main Warehouse';
+    await prismaClient.location.create({
+      data: {
+        name: defaultLocationCategory,
+        InventorySection: {
+          connect: { id: inventorySection.id }
+        }
+      }
+    })
+
+    const defaultReason = ['Damaged', 'Expired', 'Wrong Item', 'Quality Issues'];
+    await prismaClient.reason.create({
+      data: {
+        name: defaultReason,
+        InventorySection: {
+          connect: { id: inventorySection.id }
+        }
+      }
+    })
+
+    const defaultSpeciesandBreed = [
+      { name: 'Dog', breed: ['Unknown', 'Labrador Retriever', 'German Shepherd', 'Golden Retriever', 'Beagle', 'Pug', 'Indian Mastiff', 'Husky', 'Dashshund', 'Shi Tzu'] },
+      { name: 'Cat', breed: ['Unknown', 'Domestic Short Hair', 'Bombay', 'Himalayan', 'Persian', 'Bengal', 'Siamese'] },
+      { name: 'Fish', breed: ['Unknown'] },
+      { name: 'Rabbit', breed: ['Unknown'] },
+      { name: 'Bird', breed: ['Unknown'] },
+      { name: 'Turtle', breed: ['Unknown'] },
+      { name: 'Horse', breed: ['Unknown'] },
+      { name: 'Unknow', breed: ['Unknown'] }
+    ];
+
+    await Promise.all(
+      defaultSpeciesandBreed.map(async (speciesData) => {
+        const species = await prismaClient.species.create({
+          data: {
+            name: speciesData.name,
+            databaseSectionId: databaseSection.id,
+            breed: {
+              create: speciesData.breed.map((breedName) => ({
+                name: [breedName],
+                databaseSectionId: databaseSection.id,
+              })),
+            },
+          },
+        });
+      })
+    );
+
+
+
     // console.log(orgNewBranch)
 
     adminUserDetails.orgBranchId = orgNewBranch.id;
 
-    let newUser = await prismaClient.user.create({
+    const newUser = await prismaClient.user.create({
       data: adminUserDetails
     });
 
     // console.log(newOrg,newUser);
 
-    const orgBranchUserRole = await prismaClient.orgBranchUserRole.create({
-      data: {
-          orgBranchId : orgNewBranch.id,
-          role : "Manager",
-          userId : newUser.id
-      }
-  });
 
-  // console.log(orgBranchUserRole)
-
-  // console.log(orgBranchUserRole);
 
     await prismaClient.organization.update({
       where: {
@@ -97,26 +225,22 @@ export const POST = async (req: NextRequest) => {
       }
     });
 
-    let dop = await prismaClient.organization.findUnique({
-      where: {
-        orgName: orgDetails.orgName
-      },
-      include: { adminUsers: true },
-    });
 
-    // console.log(dop?.adminUsers.length);
 
-    return new Response(JSON.stringify({ "message" : "Organization & Admin user successfully created."}), {
+
+
+
+    return new Response(JSON.stringify({ "message": "Organization & Admin user successfully created." }), {
       status: 201,
       headers: {
         'Content-Type': 'application/json',
       },
     });
 
-  } catch (error : any) {
+  } catch (error: any) {
     // console.log(error);
     // console.log(typeof(error))
-    return new Response(JSON.stringify({"message" : error.message}), {
+    return new Response(JSON.stringify({ "message": error.message }), {
       status: 500,
       headers: {
         'Content-Type': 'application/json',

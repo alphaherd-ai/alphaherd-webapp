@@ -5,30 +5,34 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { Bounce, ToastContainer, toast } from 'react-toastify';
 import continuebutton from "../../../../assets/icons/loginsignup/1. Icons-24.svg"
+import { updateApp } from "@/lib/features/appSlice";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { UserState } from "@/lib/features/userSlice";
+import { isAdminOfOrg, isManagerOfBranch } from "@/utils/stateChecks";
 import {z} from 'zod';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from "next/navigation";
 import { setValidationErrorsForForm } from "@/utils/setValidationErrorForForm";
-import { useAppSelector } from "@/lib/hooks";
 import { useSearchParams } from 'next/navigation';
 const formSchema = z.object({
-    orgName: z.string().min(4, 'Org Name must be at least 4 characters'),
-    orgEmail: z.string().email('Invalid Email Address'),
-    gstNo: z.string().length(15, 'Invalid GST No.'),
-    phoneNo: z.string().length(10, 'Invalid Phone No.'),
-    altphoneNo:z.string(),
-    website:z.string(),
-    panNo:z.string().length(10,'PAN ID must have 10 characters'),
-    address: z.string().min(1, 'Address is required'),
-    state: z.string().min(1,'Select a state'),
-    pincode: z.string()
-    .regex(/^\d{6}$/, 'Invalid Pincode - must be exactly 6 numeric digits'),
-    description: z.string(),
-  });
+  orgName: z.string().min(4, 'Org Name must be at least 4 characters'),
+  orgEmail: z.string().email('Invalid Email Address'),
+  gstNo: z.string().length(15, 'Invalid GST No.'),
+  phoneNo: z.string().length(10, 'Invalid Phone No.'),
+  altphoneNo: z.string().optional().refine(val => !val || val.length === 10, 'Invalid Phone No.'),
+  website: z.string().optional(),
+  panNo: z.string().length(10, 'PAN ID must have 10 characters'),
+  address: z.string().min(1, 'Address is required'),
+  state: z.string().min(1, 'Select a state'),
+  pincode: z.string().regex(/^\d{6}$/, 'Invalid Pincode - must be exactly 6 numeric digits'),
+  description: z.string().optional(),
+});
 
 const BranchEdit = () => {
-
+    const user = useAppSelector((state) => state.user);
     const appState = useAppSelector((state) => state.app);
+    const userState = useAppSelector((state) => state.user);
+    const dispatch = useAppDispatch();
     // console.log("appstate is :",appState)
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -79,6 +83,8 @@ const BranchEdit = () => {
     // console.log(validationErrors);
 
     const [activeTab, setActiveTab] = useState(0);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>|any) => {
       let name: string,value: any;
       if(e?.label){
@@ -127,8 +133,32 @@ const BranchEdit = () => {
         }
       }
     };
+    function handleOrgBranchSelect(orgBranch : any){
+        
+            console.log(orgBranch);
+        
+            const currentOrgId = appState.currentOrgId || 0; 
+        
+            const isCurrentOrgAdmin = isAdminOfOrg(currentOrgId, user as UserState);
+        
+            const isCurrentBranchManager = isManagerOfBranch(orgBranch.id, user as UserState);
+        
+            dispatch(
+              updateApp({
+                currentBranch: orgBranch,
+                currentBranchId: orgBranch.id,
+                currentOrg: appState.currentOrg, // Keep current organization since we only have one
+                currentOrgId: appState.currentOrgId,
+                isCurrentBranchManager: isCurrentBranchManager,
+                isCurrentOrgAdmin: isCurrentOrgAdmin,
+              })
+            );
+        
+            window.location.reload();
+          }
     const formSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
+      setIsSubmitting(true);
       try {
         // console.log('your data', data);
         formSchema.parse(data);
@@ -138,7 +168,7 @@ const BranchEdit = () => {
           headers: {
             'Content-Type': "application/json"
           },
-          body: JSON.stringify({
+          body: JSON.stringify({"branchDetails":{
             email: data.orgEmail,
             gstNo: data.gstNo,
             phoneNo: data.phoneNo,
@@ -151,7 +181,7 @@ const BranchEdit = () => {
             description: data.description,
             orgId: appState.currentOrgId,
             branchName: data.branchName,
-          })
+          },"userId":userState.id}),
         });
 
         let json = await res.json();
@@ -162,6 +192,8 @@ const BranchEdit = () => {
             theme: "colored",
             transition: Bounce,
           });
+          // Select the branch 
+          handleOrgBranchSelect(json.orgBranch);
           router.push(`/settings/organisation/myorg`);
         } else {
           throw new Error(json.message);
@@ -185,6 +217,7 @@ const BranchEdit = () => {
             transition: Bounce,
           });
         }
+        setIsSubmitting(false);
       }
     };
 
@@ -208,13 +241,17 @@ const BranchEdit = () => {
                     }
                     <div className="flex justify-between px-[5rem] pb-[2rem]">
                           <div></div>
-                        <button className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0 cursor-pointer " onClick={formSubmit} >
+                        <button 
+                            className={`bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} 
+                            onClick={formSubmit}
+                            disabled={isSubmitting}
+                        >
                             <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
                                 <div className="text-white text-sm font-bold ">
-                                    Submit Details
+                                    {isSubmitting ? 'Submitting...' : 'Submit Details'}
                                 </div>
                             </div>
-                            </button>
+                        </button>
                     </div>
                 </div>
             </div>

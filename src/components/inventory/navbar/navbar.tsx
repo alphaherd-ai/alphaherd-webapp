@@ -48,9 +48,9 @@ const InventoryNavbar = () => {
                 }
                 return {
                     label: item.productBatch
-                        ? `${item.productBatch?.product?.itemName}------${item.productBatch?.batchNumber}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0Product`
+                        ? `${item.productBatch?.product?.itemName} - ${item.productBatch?.batchNumber}`
                         : item.service
-                        ? `${item.service?.name}\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0Service`
+                        ? `${item.service?.name}`
                         : "",
                     value: item
                 };

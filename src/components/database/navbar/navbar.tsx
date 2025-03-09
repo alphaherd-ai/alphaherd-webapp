@@ -18,7 +18,7 @@ import DistributorPopup from '../distributor/newdistributorpopup';
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json());
 
 
-const DatabaseNavbar = () => {
+const DatabaseNavbar = async () => {
     const appState = useAppSelector((state: { app: any; }) => state.app);
     const [searchData, setSearchData] = useState<any[]>([]);
     const [searchOptions, setSearchOptions] = useState<any[]>([]);
@@ -31,56 +31,55 @@ const DatabaseNavbar = () => {
     
    
     useEffect(() => {
-        const hasData = data && !isLoading && !error;
+        const searchfunction = async () => {
+            const hasData = data && !isLoading && !error;
     
-        if (hasData) {
-          const { clients, distributors,patients } = data;
-    
-          const clientOptions = clients.flatMap((item: any) =>
-            item.patients.map((patient: any) => ({
-                label: `${item?.clientName || ''} - ${patient.patientName || ''}(${item?.contact || ''})`,
-                value: {
-                clientId: item.id,
-                clientName: item.clientName,
-                contact: item.contact,
-                patientId: patient.id,
-                patientName: patient.patientName
-                },
-            }))
-            );
-    
-          const distributorOptions = distributors.map((item: any) => ({
-            label: `${item?.distributorName || ''} - ${item?.contact || ''}`,
-            value: item,
-          }));
-          const patientOptions = patients.map((item:any)=>({
-            label:`${item?.patientName||''} - ${item?.clients?.clientName||''}`,
-            value:item,
-          }))
-          const combinedOptions = [...clientOptions, ...distributorOptions,...patientOptions];
-    
-          setSearchData(data);
-          setSearchOptions(combinedOptions);
+            if (hasData) {
+                const { clients, distributors,patients } = data;
+            
+                const clientOptions = await clients.flatMap((item: any) =>
+                    item.patients.map((patient: any) => ({
+                        label: `${item?.clientName || ''} - ${patient.patientName || ''}(${item?.contact || ''})`,
+                        value: item,
+                    }))
+                    );
+                    console.log("clients",clients);
+                const distributorOptions =await distributors.map((item: any) => ({
+                    label: `${item?.distributorName || ''} - ${item?.contact || ''}`,
+                    value: item,
+                }));
+                const patientOptions =await patients.map((item:any)=>({
+                    label:`${item?.patientName||''} - ${item?.clients?.clientName||''}`,
+                    value:item,
+                }))
+                const combinedOptions = [...clientOptions, ...distributorOptions,...patientOptions];
+                
+                setSearchData(data);
+                console.log("combinedOptions",combinedOptions);
+                setSearchOptions(combinedOptions);
+            }
         }
+        searchfunction();
       }, [data, isLoading, error]);
       
 
 
     const handleSearch = (selectedOption: any) => {
         const item = selectedOption?.value;
+        console.log("selected item",item);
         let path = '';
         if (item?.patientId) {
-            path = `/database/clients/overview?id=${item.patientId}`;
+            path = `${process.env.NEXT_PUBLIC_API_BASE_PATH}/database/clients/overview?id=${item.id}`;
         } else if (item?.clientId) {
-            path = `/database/clients/overview?id=${item.clientId}`;
+            path = `${process.env.NEXT_PUBLIC_API_BASE_PATH}/database/clients/overview?id=${item.id}`;
         } else if (item?.distributorName) {
-            path = `/database/distributor/overview?id=${item.id}`;
+            path = `${process.env.NEXT_PUBLIC_API_BASE_PATH}/database/distributor/overview?id=${item.id}`;
         } else {
             // Handle the case where item is not found
             console.error('Invalid selection');
             return;
         }
-        router.push(path); // Navigate to the selected route
+        window.location.href = path; // Navigate to the selected route
     };
     const currentRoute = usePathname();
 

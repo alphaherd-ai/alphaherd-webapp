@@ -13,11 +13,12 @@ interface CancellationPopupProps {
     transactionsData?: any;
     balanceDue?: any;
     type: string;
+    setIsPaymentEdited?:any;
 }
 
 const fetcher = (...args: [RequestInfo, RequestInit?]) => fetch(...args).then(res => res.json())
 
-const CancellationPopup: React.FC<CancellationPopupProps> = ({ editTransaction, setShowConfirmation, transactionsData, type, balanceDue }) => {
+const CancellationPopup: React.FC<CancellationPopupProps> = ({ editTransaction, setShowConfirmation, transactionsData, type, balanceDue,setIsPaymentEdited }) => {
 
     const appState = useAppSelector((state) => state.app);
 
@@ -74,7 +75,7 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ editTransaction, 
                 setLoading(false);
             }
         }
-        else if (type === 'exsistingInvoice') {
+        else if (type === 'exsistingInvoice' || type === 'exsistingrecurring'|| type === 'exsistingnonrecurring') {
             try {
                 const newTransaction = {
 
@@ -115,19 +116,21 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ editTransaction, 
                 if (transactionResponse.status === 201 && recordResponse.status === 201) {
                     if (!(editTransaction?.invoiceLink.includes('SE'))) {
                         if (id) {
+                            const financeType=(editTransaction?.invoiceLink.includes('SI') || editTransaction?.invoiceLink.includes('SR')) ? 'sales' : (editTransaction?.invoiceLink.includes('PI') || editTransaction?.invoiceLink.includes('PO') || editTransaction?.invoiceLink.includes('PR')) ? 'purchases' : 'expenses';
                             const balanceStatus = balanceDue && (editTransaction?.invoiceLink.includes('SI') || editTransaction?.invoiceLink.includes('PR')) ?  (balanceDue + (editTransaction?.moneyChange === 'In' ? Number(editTransaction?.amountPaid) : -Number(editTransaction?.amountPaid))) : (balanceDue + (editTransaction?.moneyChange === 'In' ? -Number(editTransaction?.amountPaid) :Number(editTransaction?.amountPaid)));
-                            const baseURL=`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/${editTransaction?.invoiceLink.includes('SI') ? 'sales' : 'purchases'}/status/${id}/?branchId=${appState.currentBranchId}`
+                            const baseURL=`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/${financeType}/status/${id}/?branchId=${appState.currentBranchId}`
                             const putResponse = await fetch(baseURL, {
                                 method: 'PUT',
                                 headers: {
                                     'Content-Type': 'application/json',
                                 },
                                 body: JSON.stringify({
-                                    status: (editTransaction?.invoiceLink.includes('SI') || editTransaction?.invoiceLink.includes('PR')) ? balanceStatus && (balanceStatus >= 1 ? `You’re owed: ₹${parseFloat((balanceStatus).toFixed(2))}` : balanceStatus <= -1 ? `You owe: ₹${parseFloat((-1 * balanceStatus).toFixed(2))}` : 'Closed'): balanceStatus <= -1 ? `You’re owed: ₹${parseFloat((-1 * balanceStatus).toString()).toFixed(2)}` : balanceStatus >= 1 ? `You owe: ₹${parseFloat((balanceStatus).toString()).toFixed(2)}` : 'Closed',
+                                    status: (editTransaction?.invoiceLink.includes('SI') || editTransaction?.invoiceLink.includes('PR') || editTransaction?.invoiceLink.includes()) ? balanceStatus && (balanceStatus >= 1 ? `You’re owed: ₹${parseFloat((balanceStatus).toFixed(2))}` : balanceStatus <= -1 ? `You owe: ₹${parseFloat((-1 * balanceStatus).toFixed(2))}` : 'Closed'): balanceStatus <= -1 ? `You’re owed: ₹${parseFloat((-1 * balanceStatus).toString()).toFixed(2)}` : balanceStatus >= 1 ? `You owe: ₹${parseFloat((balanceStatus).toString()).toFixed(2)}` : 'Closed',
                                 })
 
                             })
                             if (putResponse.ok) {
+                                if(setIsPaymentEdited) setIsPaymentEdited((prev:any)=>prev+1);
                                 setShowConfirmation(false);
                                 window.dispatchEvent(new FocusEvent('focus'))
                             } else {
@@ -136,6 +139,10 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ editTransaction, 
                         }
 
                     }
+                    else if((editTransaction?.invoiceLink.includes('SE'))){
+                        setShowConfirmation(false);
+                        if(setIsPaymentEdited) setIsPaymentEdited((prev:any)=>prev+1);
+                    }
                 }
             }
             catch (err) {
@@ -143,13 +150,15 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ editTransaction, 
             }
             finally {
                 setLoading(false);
+                
             }
         }
+        
     }
 
     return (
-        <div className='fixed inset-0 flex items-center justify-center z-50'>
-            <div className='rounded-md w-1/2 h-fit px-4 py-10 bg-white relative'>
+        <div className='w-full h-full flex justify-center items-center  fixed top-0 left-0 inset-0 backdrop-blur-sm bg-gray-200 bg-opacity-50 z-50'>
+            <div className='rounded-md w-1/2 h-fit px-4 py-10 bg-gray-100 shadow border border-neutral-400 border-opacity-60 backdrop-blur-[60px] relative'>
                 <Image
                     className='absolute right-4 top-4 cursor-pointer'
                     src={closeIcon}

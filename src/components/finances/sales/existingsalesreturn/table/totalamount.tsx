@@ -16,21 +16,36 @@ import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 import Menu from '../../../../../assets/icons/finance/menu.svg'
 import EditRecordTransactionPopup from '@/components/finances/editTransaction/editTransaction';
 import CancellationPopup from '@/components/finances/cancelTransaaction/cancelTransaction';
-
+import { useSearchParams } from 'next/navigation';
+import axios from 'axios';
 const ExistingsalesReturnTotalAmout = ({ otherData, isLoading }: any) => {
 
 
+    const [isPaymentEdited, setIsPaymentEdited] = useState(0);
+        const url = useSearchParams();
+        const id = url.get('id');
+        const [recordTransaction, setRecordTransaction] = useState<any>([]);
+        const [isPaymentMade, setIsPaymentMade] = useState(0);
+        useEffect(() => {
+            const getAllPayments = async () => {
+                const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/recordTransactions/${id}`);
+                if (res.status === 200) {
+                    setRecordTransaction(res.data);
+                }
+            }
+            getAllPayments();
+    
+        }, [isPaymentEdited,isPaymentMade])
 
 
-
-    const totalPaidAmount = otherData?.recordTransaction?.reduce((acc: any, transaction: any) => {
+    const totalPaidAmount = recordTransaction?.reduce((acc: any, transaction: any) => {
         if (transaction?.moneyChange === 'In') {
             return acc + transaction?.amountPaid;
         }
         return acc;
     }, 0);
 
-    const totalAmountPay = otherData?.recordTransaction?.reduce((acc: any, transaction: any) => {
+    const totalAmountPay = recordTransaction?.reduce((acc: any, transaction: any) => {
         if (transaction?.moneyChange === 'Out' || transaction?.isAdvancePayment) {
             return acc + transaction?.amountPaid;
         }
@@ -83,7 +98,7 @@ const ExistingsalesReturnTotalAmout = ({ otherData, isLoading }: any) => {
 
             < div className={`flex gap-4 ${otherData?.status === 'Cancelled' ? "justify-end" : ""}   pt-[20px] pb-[20px]`}>
                 {!(otherData?.status === 'Cancelled') &&
-                    <Popup headerdata={otherData} setCount={setCount} initialInvoiceNo={initialInvoiceNo} balanceDue={balanceDue} />
+                    <Popup headerdata={otherData} setCount={setCount} initialInvoiceNo={initialInvoiceNo} balanceDue={balanceDue} setIsPaymentMade={setIsPaymentMade}/>
                 }
                 <div className='w-full rounded-md'>
                     <div className="w-full  bg-white rounded-md">
@@ -128,7 +143,7 @@ const ExistingsalesReturnTotalAmout = ({ otherData, isLoading }: any) => {
                         <div className="w-full  bg-white  justify-between items-center  flex">
                             <div className='w-full h-[9.6rem] flex flex-col overflow-auto container'>
                                 {isLoading && <Loading2 />}
-                                {otherData && otherData.recordTransaction && otherData.recordTransaction.map((transaction: any, index: any) => (
+                                {recordTransaction && recordTransaction.map((transaction: any, index: any) => (
                                     transaction.isAdvancePayment &&
                                     (<div key={index} className='w-full px-2 flex items-center justify-between border-0 border-b border-solid border-borderGrey'>
                                         <div className="text-textGrey2  text-base font-bold  w-1/3 py-4">Advance Paid</div>
@@ -166,7 +181,7 @@ const ExistingsalesReturnTotalAmout = ({ otherData, isLoading }: any) => {
                                         )}
                                     </div>)
                                 ))}
-                                {otherData && otherData.recordTransaction && otherData.recordTransaction.map((transaction: any, index: any) => (
+                                {recordTransaction && recordTransaction.map((transaction: any, index: any) => (
                                     !transaction.isAdvancePayment &&
                                     (<div key={index} className='w-full px-2 flex items-center justify-between border-0 border-b border-solid border-borderGrey'>
                                         <div className="text-textGrey1 text-base font-medium  w-1/3 py-4">{formatDateAndTime(transaction.date).formattedDate}</div>
@@ -226,8 +241,8 @@ const ExistingsalesReturnTotalAmout = ({ otherData, isLoading }: any) => {
 
                 </div>
                 {!(otherData?.status === 'Cancelled') && <>
-                    {popup && <EditRecordTransactionPopup onClose={onClose} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue} />}
-                    {showConfirmation && <CancellationPopup setShowConfirmation={setShowConfirmation} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue} />}
+                    {popup && <EditRecordTransactionPopup onClose={onClose} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue}  setIsPaymentEdited={setIsPaymentEdited}/>}
+                    {showConfirmation && <CancellationPopup setShowConfirmation={setShowConfirmation} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue} setIsPaymentEdited={setIsPaymentEdited}/>}
                 </>}
             </div>
 

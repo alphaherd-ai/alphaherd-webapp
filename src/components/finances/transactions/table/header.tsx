@@ -20,7 +20,7 @@ import { useAppSelector } from '@/lib/hooks';
 
 
 
-const FinancesTransactionsTableHeader = ({ transactions }: any) => {
+const FinancesTransactionsTableHeader = ({ transactions,setIsTransactionMade }: any) => {
     const appState = useAppSelector((state) => state.app);
     const currentUrl = useSearchParams();
     const type = currentUrl.get("type")
@@ -315,7 +315,7 @@ const FinancesTransactionsTableHeader = ({ transactions }: any) => {
 
 </PopoverContent>
 </Popover> */}
-                    {showPopup && <Popup onClose={togglePopup} initialInvoiceNo={initialInvoiceNo} />}
+                    {showPopup && <Popup onClose={togglePopup} initialInvoiceNo={initialInvoiceNo} setIsTransactionMade={setIsTransactionMade}/>}
                     {showPopup1 && <DownloadPopup onClose={togglePopup1} transactions={transactions} type={type} />}
 
 

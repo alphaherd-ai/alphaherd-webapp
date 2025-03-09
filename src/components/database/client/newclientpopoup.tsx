@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, {  useState } from 'react';
+import React, {  useEffect, useState } from 'react';
 
 import closeicon from "../../../assets/icons/inventory/closeIcon.svg";
 
@@ -33,6 +33,8 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
     const [savingData, setSavingData] = useState(false);
     const [isClientSaved, setClientStatus] = useState<any>(false);
     const [clientData,setNewClientData]=useState<any>({})
+    const [prevClient, setPrevClient] = useState<any>({})
+
     let addAnotherPatient = false;
     const togglePopup = () => {
         setShowPopup(!showPopup);
@@ -76,12 +78,46 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
             },
         }),
     };
+    useEffect(() => {
+        const fetchdata=async()=>{
+            await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`)
+            .then((response) => response.json())
+            .then((data) => {
 
+                const formattedClients = data.map((client: any) => ({
+                    value: client.id,
+                    email: client.email,
+                    contact: client.contact,
+                    label: client.clientName
+                }))
+                setPrevClient(formattedClients)
+            })
+            .catch((error) =>
+                console.error("Error fetching client from API: ", error)
+            );
+            console.log("Client data",prevClient);
+        }
+        fetchdata();
+        // if (clientData) {
+        //     setFormData((prevData: { clientName: any; }) => ({
+        //         clientName: selectedClient,
+        //         patientName: '',
+        //         species: null,
+        //         breed: null,
+        //         dateOfBirth: null,
+        //     }));
+        // }
+    }, []);
     const handleSaveClick = async () => {
         
+        if (Object.values(errors).some(error => error !== '')) {
+            console.error('Form contains errors:', errors);
+            return;
+        }
         try {
             setIsSaveDisabled(true);
             setSavingData(true);
+            //check for errors
 
             //   clientSchema.parse(formData);
             console.log("Form data is valid:", formData);
@@ -113,16 +149,16 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
                 }
 
                 console.log('Data saved successfully');
-                if (!addAnotherPatient) {
-                    // onClose();
-                    addAnotherPatient = false;
-                }
-                else {
+                // if (!addAnotherPatient) {
+                //     // onClose();
+                //     addAnotherPatient = false;
+                // }
+                // else {
                     //console.log("Here")
-                    togglePopup();
-                    // onClose();
-                    addAnotherPatient = false;
-                }
+                    // togglePopup();
+                    onClose();
+                    // addAnotherPatient = false;
+                // }
 
                 window.dispatchEvent(new FocusEvent('focus'));
             } else {
@@ -139,8 +175,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
         }
     };
 
-
-    const handleChange = (field: string, value: any) => {
+    const handleChange = async (field: string, value: any) => {
         setFormData((prevFormData: any) => {
             const updatedFormData = { ...prevFormData, [field]: value };
 
@@ -155,30 +190,51 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
 
             return updatedFormData;
         });
-
+        
         
         if (field === 'contact') {
-            if (value.length > 10) {
+            const client =await prevClient.find((client: any) => client.contact === value);
+            if (value.length > 10 || value.length < 10) {
                 setErrors((prevErrors) => ({
                     ...prevErrors,
-                    contact: 'Phone number must be exactly 10 digits',
+                    contact: 'Invalid phone number',
                 }));
             } else if (!/^[0-9]+$/.test(value)) {
                 setErrors((prevErrors) => ({
                     ...prevErrors,
                     contact: 'Phone number must contain only digits',
                 }));
-            } else if (value.length === 10) {
+            }else if (prevClient && prevClient.length > 0 && client) {
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    contact: 'Contact number already exists',
+                }));
+            }else if (value.length === 10) {
                 setErrors((prevErrors) => ({
                     ...prevErrors,
                     contact: '',
                 }));
             }
-        } else if (field === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-            setErrors((prevErrors) => ({
-                ...prevErrors,
-                email: 'This is an invalid email',
-            }));
+        } else if (field === 'email') {
+            const client =await prevClient.find((client: any) => client.email === value);
+            console.log("Regex",!(/^[^\s@]+@[^\s@]+\.[^\s@]+$/).test(value));
+            if (!(/^[^\s@]+@[^\s@]+\.[^\s@]+$/).test(value)) {
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    email: 'This is an invalid email',
+                }));
+            }
+            else if (prevClient && prevClient.length > 0&&client) {
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    email: 'Email already exists',
+                }));
+            }else{
+                setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    email: '',
+                }));
+            }
         } else {
             setErrors((prevErrors) => ({ ...prevErrors, [field]: '' }));
         }

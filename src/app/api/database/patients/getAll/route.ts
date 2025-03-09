@@ -13,7 +13,8 @@ export  const GET=async (req: NextRequest)=> {
         
         const patients = await prismaClient.patients.findMany({
           where:{
-            databaseSectionId:databaseId
+            databaseSectionId:databaseId,
+            isDeleted:false,
           }
         });
         return new Response(JSON.stringify(patients), {

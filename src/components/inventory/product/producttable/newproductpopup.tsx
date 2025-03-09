@@ -8,7 +8,7 @@ import Check from "../../../../assets/icons/database/check.svg"
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { useAppSelector } from "@/lib/hooks";
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import axios from "axios";
 import Distributors from "@/app/database/distributor/page";
 
@@ -160,7 +160,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
             // Update the state with unique categories
             setCategories(uniqueCategories);
         }
-    }, [isLoading, error, fetchedProducts]);
+    }, [isLoading, error, fetchedProducts, categories]);
 
     const [taxType, settaxType] = useState<any[]>([]);
     useEffect(() => {
@@ -204,7 +204,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
             }
         }
         fetchDistributors();
-    }, []);
+    }, [appState.currentBranchId]);
 
     function handleContinue() {
         setLastStep(true);
@@ -218,8 +218,6 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
         try {
             setLoading(true);
             let selectedProviders = [formData.providers];
-
-            
 
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/create?branchId=${appState.currentBranchId}`, {
                method: 'POST',
@@ -248,11 +246,14 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                     itemName: formData.itemName,
                     providers: selectedProviders,
                 });
-                onClose();
-                window.location.reload();
-                //window.dispatchEvent(new FocusEvent('focus'));
                 
-                } else {
+                // Trigger revalidation of the products data
+                mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${appState.currentBranchId}`);
+                
+                onClose();
+                // No need for window.location.reload() as SWR will refresh the data
+                
+            } else {
                 console.error('Failed to save data:', response.statusText);
             }
         } catch (error) {
@@ -505,7 +506,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                             <div className="justify-start items-center gap-4 flex">
                                 <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-2 flex">
                                 <input 
-  className="p-2 rounded-md border border-[0.5px] border-[#A2A3A3] focus:outline-none w-[263px] h-11 text-neutral-400 text-base font-medium" 
+  className="p-2 rounded-md border-[0.5px] border-[#A2A3A3] focus:outline-none w-[263px] h-11 text-neutral-400 text-base font-medium" 
   type="number" 
   name="minStock" 
   onChange={(e) => handleChange('minStock', e.target.value)} 
@@ -530,10 +531,10 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                             <div className="justify-start items-center gap-4 flex">
                                 <div className="grow shrink basis-0 h-[22px] justify-start items-center gap-2 flex">
                                 <input 
-  className="p-2 rounded-md border border-[0.5px] border-[#A2A3A3] focus:outline-none w-[263px] h-11 text-neutral-400 text-base font-medium" 
+  className="p-2 rounded-md border-[0.5px] border-[#A2A3A3] focus:outline-none w-[263px] h-11 text-neutral-400 text-base font-medium" 
   type="number" 
-  name="minStock" 
-  onChange={(e) => handleChange('minStock', e.target.value)} 
+  name="maxStock" 
+  onChange={(e) => handleChange('maxStock', e.target.value)} 
 />
 
 

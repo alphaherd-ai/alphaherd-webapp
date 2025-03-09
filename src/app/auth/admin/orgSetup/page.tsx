@@ -22,10 +22,13 @@ const formSchema = z.object({
   gstNo: z.string().length(15, 'Invalid GST no. - must be 15 digits'),
   phoneNo: z.string().length(10, 'Invalid Phone No.'),
   orgEmail: z.string().email('Invalid Email Address'),
-  altPhoneNo: z.string(),
+  branchName: z.string().min(1, "Enter Branch Name to continue"),
+  altPhoneNo: z.string().optional().refine((value) => !value || value.length === 10, {
+    message: 'Invalid Phone No.',
+  }),
   address: z.string().min(1, "Enter Company Address to continue"),
   website: z.string(),
-  panNo:z.string(),
+  panNo:z.string().length(10, 'Invalid PAN no. - must be 10 digits'),
   state: z.string().min(1, "Select State to continue").optional(),
   pincode: z.string()
   .regex(/^\d{6}$/, 'Invalid Pincode - must be exactly 6 digits'),
@@ -33,7 +36,9 @@ const formSchema = z.object({
   adminName: z.string(),
   adminEmail: z.string().email('Invalid Email Address'),
   adminPhoneNo: z.string().length(10, 'Invalid Phone No.'),
-  adminAltPhoneNo: z.string(),
+  adminAltPhoneNo: z.string().optional().refine((value) => !value || value.length === 10, {
+    message: 'Invalid Phone No.',
+  }),
   adminPassword: z.string().min(4, 'Admin Password must be at least 4 characters'),
   reAdminPassword: z.string().min(4, 'Admin Password must be at least 4 characters')
 }).superRefine((data, ctx) => {

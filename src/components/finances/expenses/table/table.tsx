@@ -9,8 +9,8 @@ import FinancesExpensesTableItem from './item'
 import { useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 import axios from 'axios';
-import { Notif_Source } from "@prisma/client";
 
+import { Notif_Source } from '@prisma/client';
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
@@ -19,7 +19,8 @@ const FinancesExpensesTable = () => {
 
   const [nonrecurringCount, setNonRecurringCount] = useState(0);
   const [recurringCount, setRecurringCount] = useState(0);
-
+  const [data, setData] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const appState = useAppSelector((state) => state.app);
   const [expenses, setExpenses] = useState<any[]>([]);
   const currentUrl = useSearchParams();
@@ -28,7 +29,7 @@ const FinancesExpensesTable = () => {
   const endDate = useMemo(() => urlSearchParams.get('endDate') ? new Date(urlSearchParams.get('endDate')!) : null, [urlSearchParams]);
   const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
   const selectedStatus = useMemo(() => urlSearchParams.getAll('selectedStatus'), [urlSearchParams]);
-  const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true })
+  //const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true })
 
 
   const handleCountsChange = (counts: any) => {
@@ -62,43 +63,58 @@ const FinancesExpensesTable = () => {
 
   useEffect(() => {
 
-    
-    if (data && !error && !isLoading) {
-      let filteredData = data?.filter((expense: any) => {
-        if (currentUrl.get('type') === 'all') {
-          return true;
-        } else {
-          return expense.type === currentUrl.get('type');
+    const getAllFinanceExpense = async () => {
+      try {
+        setIsLoading(true);
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/getAll?branchId=${appState.currentBranchId}`);
+        if (res.data) {
+          setData(res.data);
+          let filteredData = res.data?.filter((expense: any) => {
+            if (currentUrl.get('type') === 'all') {
+              return true;
+            } else {
+              return expense.type === currentUrl.get('type');
+            }
+          })
+          if (startDate || endDate) {
+            filteredData = filteredData.filter((item: any) => {
+              const itemDate = new Date(item.date);
+              // console.log(itemDate)
+              if (startDate && itemDate < startDate) return false;
+              if (endDate && itemDate > endDate) return false;
+              return true;
+            });
+          }
+
+
+          if (selectedParties.length > 0) {
+            filteredData = filteredData.filter((item: any) =>
+              selectedParties.includes(item.customer)
+            );
+          }
+          if (selectedStatus.length > 0) {
+            console.log(selectedStatus);
+            filteredData = filteredData.filter((item: any) =>
+              selectedStatus.some((status) => (item.status?.startsWith(status)))
+            )
+            console.log("filteredData", filteredData);
+          }
+          //console.log(filteredData.length);
+          setTotalLen(filteredData.length);
+          setTableData(filteredData)
+          setExpenses(filteredData?.slice(0, TOTAL_VALUES_PER_PAGE));
         }
-      })
-      if (startDate || endDate) {
-        filteredData = filteredData.filter((item: any) => {
-          const itemDate = new Date(item.date);
-          // console.log(itemDate)
-          if (startDate && itemDate < startDate) return false;
-          if (endDate && itemDate > endDate) return false;
-          return true;
-        });
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setIsLoading(false);
       }
-
-
-      if (selectedParties.length > 0) {
-        filteredData = filteredData.filter((item: any) =>
-          selectedParties.includes(item.customer)
-        );
-      }
-
-      if (selectedStatus.length > 0) {
-        filteredData = filteredData.filter((item: any) =>
-          selectedStatus.some((status) => item.status.startsWith(status)))
-      }
-      //console.log(filteredData.length);
-      setTotalLen(filteredData.length);
-      setTableData(filteredData)
-      setExpenses(filteredData?.slice(0, TOTAL_VALUES_PER_PAGE));
-     
     }
-  }, [data, error, isLoading, setExpenses, startDate, endDate, selectedParties, selectedStatus])
+    getAllFinanceExpense();
+
+
+
+  }, [startDate, endDate, selectedParties, selectedStatus, currentUrl.toString()])
 
   const isOlderThanOneWeek = (dateString: string | undefined) => {
 
@@ -168,24 +184,24 @@ const FinancesExpensesTable = () => {
   return (
 
     <div className='flex flex-col w-full box-border border border-solid border-borderGrey rounded-lg mt-6 mb-6'>
-      <FinancesExpensesTableHeader recurringCount={recurringCount} nonrecurringCount={nonrecurringCount} expenses={expenses}/>
+      <FinancesExpensesTableHeader recurringCount={recurringCount} nonrecurringCount={nonrecurringCount} expenses={expenses} />
       <div className='flex  w-full  box-border bg-gray-100  h-12 justify-evenly items-center border-0 border-b border-solid border-borderGrey text-textGrey2'>
         <div className='flex text-gray-500 text-base font-medium  w-[6rem] '>Date</div>
         <div className=' flex text-gray-500 text-base font-medium  w-[6rem] '>Time</div>
         <div className=' flex text-gray-500 text-base font-medium  w-[10rem] '>Type</div>
-        <div className=' flex text-gray-500 text-base font-medium  w-2/12 '>Party</div>
+        <div className=' flex text-gray-500 text-base font-medium  w-2/12 '>Title</div>
         <div className=' flex text-gray-500 text-base font-medium  w-[9rem] '>Ref. No.</div>
         <div className=' flex text-gray-500 text-base font-medium  w-1/12 '>Total cost</div>
         <div className=' flex text-gray-500 text-base font-medium  w-[6rem] '>Due date</div>
         <div className=' flex text-gray-500 text-base font-medium  w-[12rem] '>Status</div>
       </div>
 
-      <FinancesExpensesTableItem 
-        onCountsChange={handleCountsChange}  
-        expenses={expenses} 
-        data={data} 
+      <FinancesExpensesTableItem
+        onCountsChange={handleCountsChange}
+        expenses={expenses}
+        data={data}
         isLoading={isLoading}
-    />
+      />
       <FinancesExpensesTableBottombar
         goOnPrevPage={goOnPrevPage}
         goOnNextPage={goOnNextPage}

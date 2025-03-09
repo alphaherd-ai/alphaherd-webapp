@@ -38,19 +38,7 @@ import AddItemUnit from "../generalSettingPopup/addUnitPopup";
 import AddBreed from "../generalSettingPopup/addBreedPopup";
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
-const defaultCategories = ['Pet food', 'Medicine', 'Supplements', 'Pet Accessories', 'Equipment'];
-const defaultUnits = ['Boxes', 'Pieces', 'Vials', 'Units', 'Strips'];
-const defaultTaxTypes = [0, 5, 12, 18, 28];
-const defaultServiceCategory = ['General Consultation', 'Follow Up', 'Surgery', 'Vaccination', 'Grooming', 'Boarding', 'Rescue'];
-const defaultExpenseCategory = ['Rent', ' Payroll', 'Utilities', 'Transport', 'Medical Equipment', 'Repair and Maintenance', 'Other'];
-const defaultPaymentMethod = ['Cash', 'UPI', 'Netbanking'];
-const defaultLocationCategory = 'Main Warehouse';
-const defaultReason = ['Damaged', 'Expired', 'Wrong Item', 'Quality Issues'];
-const defaultSpeciesandBreed = [
-    { name: 'Dog', breed: ['Labrador Retriever', 'German Shepherd', 'Golden Retriever', 'Beagle', 'Pug', 'Indian Mastiff', 'Husky', 'Dashshund', 'Shi Tzu'] },
-    { name: 'Cat', breed: ['Domestic Short Hair', 'Bombay', 'Himalayan', 'Persian', 'Bengal', 'Siamese'] },
 
-];
 
 interface LocationCategory {
     id: string; // or `number` if `id` is a number in your database
@@ -251,48 +239,8 @@ const GeneralSettings = () => {
 
 
     useEffect(() => {
-        const initializePaymentMethods = async () => {
-            if (data) {
-                const existingPaymentMethods = data.map((method: any) => method.name);
-                const missingPaymentMethods = defaultPaymentMethod.filter(
-                    (method) => !existingPaymentMethods.includes(method)
-                );
-
-                if (missingPaymentMethods.length > 0) {
-                    ////console.log('Adding missing payment methods:', missingPaymentMethods);
-
-                    try {
-                        for (const method of missingPaymentMethods) {
-                            await fetch(
-                                `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/paymentMethod/create?branchId=${appState.currentBranchId}`,
-                                {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                    },
-                                    body: JSON.stringify({ name: method }),
-                                }
-                            );
-                        }
-                        const response = await fetch(
-                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/paymentMethod/getAll?branchId=${appState.currentBranchId}`
-                        );
-                        const updatedData = await response.json();
-                        setPaymentMethod(updatedData);
-                    } catch (error) {
-                        console.error('Error while adding default payment methods:', error);
-                    }
-                } else {
-                    ////console.log('All default payment methods already exist');
-                    setPaymentMethod(data);
-                }
-            }
-        };
-
-        if (data && !isLoading && !error) {
-            initializePaymentMethods();
-        } else if (error) {
-            console.error('Error fetching payment methods:', error);
+        if(data && !isLoading && !error){
+            setPaymentMethod(data)
         }
     }, [data, isLoading, error]);
 
@@ -304,48 +252,8 @@ const GeneralSettings = () => {
         { revalidateOnFocus: true }
     );
     useEffect(() => {
-        const addDefaultCategories = async () => {
-            if (itemCategoryData) {
-                const existingCategoryNames = itemCategoryData.flatMap((item: any) =>
-                    Array.isArray(item.name) ? item.name : [item.name]
-                );
-                const missingCategories = defaultCategories.filter(
-                    (category) => !existingCategoryNames.includes(category)
-                );
-
-                if (missingCategories.length > 0) {
-                    ////console.log('Adding missing categories:', missingCategories);
-                    try {
-                        await fetch(
-                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemCategory/create?branchId=${appState.currentBranchId}`,
-                            {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({ name: missingCategories }),
-                            }
-                        );
-
-                        const response = await fetch(
-                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemCategory/getAll?branchId=${appState.currentBranchId}`
-                        );
-                        const updatedData = await response.json();
-                        setItemCategories(updatedData);
-
-
-                    } catch (error) {
-                        console.error('Error while adding default categories:', error);
-                    }
-                } else {
-                    setItemCategories(itemCategoryData)
-                }
-            }
-        };
-
-        if (itemCategoryData && !isLoadingItemCategories && !itemCategoryError) {
-            addDefaultCategories();
-            setItemCategories(itemCategoryData);
+        if(itemCategoryData && !isLoadingItemCategories && !itemCategoryError){
+            setItemCategories(itemCategoryData)
         }
     }, [itemCategoryData, isLoadingItemCategories, itemCategoryError]);
 
@@ -357,48 +265,8 @@ const GeneralSettings = () => {
         { revalidateOnFocus: true }
     );
     useEffect(() => {
-        const addDefaultUnits = async () => {
-            if (itemUnitsData) {
-                const existingUnitNames = itemUnitsData.flatMap((item: any) =>
-                    Array.isArray(item.name) ? item.name : [item.name]
-                );
-                const missingUnit = defaultUnits.filter(
-                    (category) => !existingUnitNames.includes(category)
-                );
-
-                if (missingUnit.length > 0) {
-                    ////console.log('Adding missing categories:', missingUnit);
-                    try {
-                        await fetch(
-                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemUnit/create?branchId=${appState.currentBranchId}`,
-                            {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({ name: missingUnit }),
-                            }
-                        );
-
-                        const response = await fetch(
-                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/itemUnit/getAll?branchId=${appState.currentBranchId}`
-                        );
-                        const updatedData = await response.json();
-                        setItemUnits(updatedData);
-                    } catch (error) {
-                        console.error('Error while adding default categories:', error);
-                    }
-                } else {
-                    //console.log('All default categories already exist');
-                    setItemUnits(itemUnitsData)
-                }
-            }
-        };
-
-
-        if (!isLoadingItemUnits && !itemUnitsError && itemUnitsData) {
-            addDefaultUnits();
-
+        if(itemUnitsData && !isLoadingItemUnits && !itemUnitsError){
+            setItemUnits(itemUnitsData)
         }
     }, [itemUnitsData, itemUnitsError, isLoadingItemUnits]);
 
@@ -409,47 +277,8 @@ const GeneralSettings = () => {
         { revalidateOnFocus: true }
     );
     useEffect(() => {
-        const addDefaultReason = async () => {
-            if (reasonsData) {
-                const existingReasons = reasonsData.flatMap((item: any) =>
-                    Array.isArray(item.name) ? item.name : [item.name]
-                );
-                const missingReasons = defaultReason.filter(
-                    (category) => !existingReasons.includes(category)
-                );
-
-                if (missingReasons.length > 0) {
-                    ////console.log('Adding missing reasons:', missingReasons);
-                    try {
-                        await fetch(
-                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/reason/create?branchId=${appState.currentBranchId}`,
-                            {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({ name: missingReasons }),
-                            }
-                        );
-
-                        const response = await fetch(
-                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/reason/getAll?branchId=${appState.currentBranchId}`
-                        );
-                        const updatedData = await response.json();
-                        setReasons(updatedData);
-
-                    } catch (error) {
-                        console.error('Error while adding default categories:', error);
-                    }
-                } else {
-                    ////console.log('All default categories already exist');
-                    setReasons(reasonsData)
-                }
-            }
-        };
-        if (!isLoadingreasons && !reasonsError && reasonsData) {
-            addDefaultReason();
-
+        if(reasonsData && !isLoadingreasons && !reasonsError){
+            setReasons(reasonsData)
         }
     }, [reasonsData, reasonsError, isLoadingreasons]);
 
@@ -461,52 +290,8 @@ const GeneralSettings = () => {
         { revalidateOnFocus: true }
     );
     useEffect(() => {
-        const addDefaultTaxTypes = async () => {
-            if (taxTypeData) {
-                const existingTaxTypes = taxTypeData.flatMap((tax: any) =>
-                    Array.isArray(tax.name) ? tax.name : [tax.name]
-                );
-
-                const missingTaxTypes = defaultTaxTypes.filter(
-                    (tax) => !existingTaxTypes.includes(tax)
-                );
-
-                if (missingTaxTypes.length > 0) {
-                    ////console.log('Adding missing tax types:', missingTaxTypes);
-                    try {
-                        await fetch(
-                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/taxType/create?branchId=${appState.currentBranchId}`,
-                            {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({ name: missingTaxTypes }),
-                            }
-                        );
-
-                        const response = await fetch(
-                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/taxType/getAll?branchId=${appState.currentBranchId}`
-                        );
-                        const updatedData = await response.json();
-                        settaxType(updatedData);
-
-
-                    } catch (error) {
-                        console.error('Error while adding default tax types:', error);
-                    }
-                } else {
-                    ////console.log('All default tax types already exist');
-                    settaxType(taxTypeData)
-                }
-            }
-        };
-
-        if (taxTypeData && !isLoadingtaxType && !taxTypeError) {
-            addDefaultTaxTypes();
-
-        } else if (taxTypeError) {
-            console.error('Error fetching tax types:', taxTypeError);
+        if(taxTypeData && !isLoadingtaxType && !taxTypeError){
+            settaxType(taxTypeData)
         }
     }, [taxTypeData, taxTypeError, isLoadingtaxType]);
 
@@ -518,46 +303,8 @@ const GeneralSettings = () => {
         { revalidateOnFocus: true }
     );
     useEffect(() => {
-        const addDefaultServiceCategory = async () => {
-            if (serviceCategoryData) {
-                const existingServiceCategory = serviceCategoryData.flatMap((item: any) =>
-                    Array.isArray(item.name) ? item.name : [item.name]
-                );
-
-                const missingServiceCategory = defaultServiceCategory.filter(
-                    (category) => !existingServiceCategory.includes(category)
-                );
-
-                if (missingServiceCategory.length > 0) {
-                    ////console.log('Adding missing reasons:', missingServiceCategory);
-                    try {
-                        await fetch(
-                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/serviceCategory/create?branchId=${appState.currentBranchId}`,
-                            {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({ name: missingServiceCategory }),
-                            }
-                        );
-                        const response = await fetch(
-                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/serviceCategory/getAll?branchId=${appState.currentBranchId}`
-                        );
-                        const updatedData = await response.json();
-                        setserviceCategory(updatedData);
-                    } catch (error) {
-                        console.error('Error while adding default categories:', error);
-                    }
-                } else {
-                    ////console.log('All default categories already exist');
-                    setserviceCategory(serviceCategoryData)
-                }
-            }
-        };
-        if (!isLoadingserviceCategory && !serviceCategoryError && serviceCategoryData) {
-            addDefaultServiceCategory();
-
+        if(serviceCategoryData && !isLoadingserviceCategory && !serviceCategoryError){
+            setserviceCategory(serviceCategoryData)
         }
     }, [serviceCategoryData, serviceCategoryError, isLoadingserviceCategory]);
 
@@ -569,49 +316,8 @@ const GeneralSettings = () => {
         { revalidateOnFocus: true }
     );
     useEffect(() => {
-        const addDefaultExpenseCategory = async () => {
-            if (expenseCategoryData) {
-                const existingExpenseCategory = expenseCategoryData.flatMap((item: any) =>
-                    Array.isArray(item.name) ? item.name : [item.name]
-                );
-
-                const missingExpenseCategory = defaultExpenseCategory.filter(
-                    (category) => !existingExpenseCategory.includes(category)
-                );
-
-                if (missingExpenseCategory.length > 0) {
-                    ////console.log('Adding missing reasons:', missingExpenseCategory);
-                    try {
-                        await fetch(
-                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/expenseCategory/create?branchId=${appState.currentBranchId}`,
-                            {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({ name: missingExpenseCategory }),
-                            }
-                        );
-
-                        const response = await fetch(
-                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/expenseCategory/getAll?branchId=${appState.currentBranchId}`
-                        );
-                        const updatedData = await response.json();
-                        setexpenseCategory(updatedData);
-
-                        // window.location.reload();
-                    } catch (error) {
-                        console.error('Error while adding default categories:', error);
-                    }
-                } else {
-                    ////console.log('All default categories already exist');
-                    setexpenseCategory(expenseCategoryData)
-                }
-            }
-        };
-        if (!isLoadingexpenseCategory && !expenseCategoryError && expenseCategoryData) {
-            addDefaultExpenseCategory();
-
+        if(expenseCategoryData && !isLoadingexpenseCategory && !expenseCategoryError){
+            setexpenseCategory(expenseCategoryData)
         }
     }, [expenseCategoryData, expenseCategoryError, isLoadingexpenseCategory]);
 
@@ -637,85 +343,17 @@ const GeneralSettings = () => {
     //console.log("breed data is :" ,breedData);
 
     useEffect(() => {
-        const createMissingSpecies = async () => {
-            if (!isLoadingSpecies && !speciesError && speciesData) {
-                const speciesWithBreeds = [...speciesData];
-
-                for (const defaultSpecies of defaultSpeciesandBreed) {
-                    let existingSpecies = speciesData.find((specie: any) => specie.name === defaultSpecies.name);
-
-                    if (!existingSpecies) {
-                        // Create species first if it doesn't exist
-                        const speciesResponse = await fetch(
-                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/species/create?branchId=${appState.currentBranchId}`,
-                            {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ name: defaultSpecies.name }),
-                            }
-                        );
-
-                        if (speciesResponse.ok) {
-                            existingSpecies = await speciesResponse.json(); // Get the newly created species
-                            speciesWithBreeds.push({ ...existingSpecies, breed: [] }); // Add to state
-                        } else {
-                            console.error(`Failed to create species: ${defaultSpecies.name}`);
-                            continue; // Skip to the next species
-                        }
-                    }
-
-                    // Now that the species exists, check and add missing breeds
-                    createMissingBreeds(existingSpecies, defaultSpecies.breed);
-                }
-
-                setSpecies(speciesWithBreeds);
-            }
-        };
-
-        const createMissingBreeds = async (existingSpecies: any, defaultBreeds: string[]) => {
-            if (!isLoadingBreed && !breedError && breedData) {
-                const existingBreeds = breedData
-                    .filter((b: any) => b.speciesId === existingSpecies.id)
-                    .flatMap((b: any) => (Array.isArray(b.name) ? b.name : [b.name]));
-
-                const missingBreeds = defaultBreeds.filter((breed) => !existingBreeds.includes(breed));
-
-                if (missingBreeds.length > 0) {
-                    await Promise.all(
-                        missingBreeds.map(async (breed) => {
-                            await fetch(
-                                `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/breed/create?branchId=${appState.currentBranchId}`,
-                                {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
-                                        name: [breed], // Wrap in array
-                                        speciesId: existingSpecies.id,
-                                        databaseSectionId: existingSpecies.databaseSectionId,
-                                    }),
-                                }
-                            );
-                        })
-                    );
-
-                    // Fetch updated breed data and update state
-                    const updatedBreedResponse = await fetch(
-                        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/breed/getAll?branchId=${appState.currentBranchId}`
-                    );
-                    const updatedBreedData = await updatedBreedResponse.json();
-
-                    setSpecies((prevSpecies) =>
-                        prevSpecies.map((specie) =>
-                            specie.id === existingSpecies.id
-                                ? { ...specie, breed: updatedBreedData.filter((b: any) => b.speciesId === specie.id) }
-                                : specie
-                        )
-                    );
-                }
-            }
-        };
-
-        createMissingSpecies();
+        if(speciesData && !isLoadingSpecies && !speciesError){
+            setSpecies(speciesData)
+        }
+        if(breedData && !isLoadingBreed && !breedError){
+            setSpecies((prev) => {
+                return prev.map((species) => {
+                    const breeds = breedData.filter((breed:any) => breed.speciesId === species.id);
+                    return { ...species, breeds };
+                });
+            });
+        }
     }, [speciesData, breedData, speciesError, breedError, isLoadingSpecies, isLoadingBreed]);
 
 
@@ -730,46 +368,12 @@ const GeneralSettings = () => {
     );
     //////console.log("location category data is :",locationCategoryData);
     useEffect(() => {
-        const addDefaultLocationCategory = async () => {
-            if (locationCategoryData && locationCategoryData.length === 0) {
-                const existingLocationCategory = locationCategoryData.flatMap((item: any) =>
-                    Array.isArray(item.name) ? item.name : [item.name]
-                );
-
-                const missingLocationCategory = defaultLocationCategory;
-
-                if (missingLocationCategory.length > 0) {
-                    ////console.log('Adding missing reasons:', missingLocationCategory);
-                    try {
-                        await fetch(
-                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/LocationCategory/create?branchId=${appState.currentBranchId}`,
-                            {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({ name: missingLocationCategory }),
-                            }
-                        );
-                        const response = await fetch(
-                            `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/LocationCategory/getAll?branchId=${appState.currentBranchId}`
-                        );
-                        const updatedData = await response.json();
-                        setlocationCategory(updatedData);
-                    } catch (error) {
-                        console.error('Error while adding default categories:', error);
-                    }
-                } else {
-                    ////console.log('All default categories already exist');
-                    setlocationCategory(locationCategoryData)
-                }
-            }
-        };
-        if (!isLoadinglocationCategory && !locationCategoryError && locationCategoryData) {
-            addDefaultLocationCategory();
-            //setlocationCategory(locationCategoryData); 
+        if(locationCategoryData && !isLoadinglocationCategory && !locationCategoryError){
+            setlocationCategory(locationCategoryData)
         }
     }, [locationCategoryData, locationCategoryError, isLoadinglocationCategory]);
+
+    
     const deleteLocation = async (id: string) => {
         try {
             const response = await fetch(

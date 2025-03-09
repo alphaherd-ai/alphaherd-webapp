@@ -6,7 +6,7 @@ import lefticon from "../../../../assets/icons/inventory/left_icon.svg"
 import addicon from "../../../../assets/icons/inventory/bar_chart.svg"
 import optionicon from "../../../../assets/icons/inventory/more_vert.svg"
 import downloadicon from "../../../../assets/icons/inventory/1. Icons-24.svg"
-
+import { FinanceCreationType } from '@prisma/client';
 import EditClientPopup from "./editClientPopup"
 
 
@@ -33,6 +33,7 @@ import Menu from '../../../../assets/icons/finance/menu.svg'
 import PatientPopup from '../../patient/newpatientpopup';
 import ConfirmationPopup from "./confirmationPopup"
 import { set } from "date-fns"
+import Link from "next/link"
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json());
 
@@ -103,7 +104,8 @@ const ClientDetails = () => {
         setEndInd(end);
         setClientTimeLine(invoiceList?.slice(start, end));
     }, [currentPageNumber, invoiceList])
-
+    
+    console.log("Client TimeLine", clientTimeLine);
     if (endInd > totalLen) setEndInd(totalLen);
 
     useEffect(() => {
@@ -389,8 +391,8 @@ const ClientDetails = () => {
                     </div>
                 </div>
                 <div className="rounded-md">
-                    <div className="w-full mt-[25px] rounded-md border-borderGrey border border-solid  border-neutral-40  ">
-                        <div className="w-full h-[72px] px-6 py-4 bg-white rounded-tl-md rounded-tr-md border-b border-solid border-0 border-borderGrey justify-start items-center gap-4 flex">
+                    <div className="w-full mt-[25px] rounded-md border-borderGrey border border-solid">
+                        <div className="w-full h-[72px] px-6 py-4 bg-white rounded-tl-md rounded-tr-md  border-b border-solid border-0 border-borderGrey justify-start items-center gap-4 flex">
                             <div className="text-gray-500 flex items-center gap-4 text-xl font-medium ">
                                 <p>Patients</p>
                                 <div className="h-12 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-center items-center gap-2 flex" onClick={() => setPatientPopup((prev: boolean) => !prev)}>
@@ -483,7 +485,17 @@ const ClientDetails = () => {
                             {!clientTimeLine ? <Loading /> : clientTimeLine?.map((item: any, index: number) => (
                                 <div key={item.id} className='flex   items-center w-full  box-border py-4   bg-white border-0 border-b border-solid border-borderGrey text-gray-400 border-t-0.5  '>
                                     <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{formatDateAndTime(item.date).formattedDate}</div>
-                                    <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{item.type}</div>
+                                    <Link href={{
+                                                pathname: item.type === FinanceCreationType.Sales_Estimate ? '/finance/sales/existingsalesestimate' :
+                                                  item.type === FinanceCreationType.Sales_Invoice ? '/finance/sales/existingsales' :
+                                                    item.type === FinanceCreationType.Sales_Return ? '/finance/sales/existingsalesreturn' :
+                                                      item.type === FinanceCreationType.Purchase_Order ? '/finance/purchases/exsistingpurchaseorder' :
+                                                        item.type === FinanceCreationType.Purchase_Invoice ? '/finance/purchases/exsistinggrn' :
+                                                          item.type === FinanceCreationType.Purchase_Return ? '/finance/purchases/exsistingpurchasereturn' :
+                                                            item.type === FinanceCreationType.Expense_NonRecurring ? '/finance/expenses/exsistingnonrecurring' :
+                                                              item.type === FinanceCreationType.Expense_Recurring ? '/finance/expenses/exsistingrecurring' : "",
+                                                query: { id: item.id}
+                                              }} className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{item.type}</Link>
                                     <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{item.invoiceNo}</div>
                                     <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{item.totalQty} items</div>
                                     <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{formatDateAndTime(item.dueDate).formattedDate}</div>

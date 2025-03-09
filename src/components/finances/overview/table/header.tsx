@@ -30,7 +30,7 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
 
 
 
-    let hsnSummaryArray: { hsnCode: string, itemName: string, quantity: number, defaultUnit: string, totalValue: number, tax: number, date: Date }[] = [];
+    let hsnSummaryArray: { hsnCode: string, itemName: string, quantity: number, defaultUnit: string, totalValue: number, tax: number,igst:number, date: Date }[] = [];
 
     const [selectedSort, setSelectedSort] = useState<string|null>(null);
     
@@ -74,7 +74,7 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
             router.push("/finance/overview");
           }
     if (!productsLoading && products) {
-        const hsnSummary: { [key: string]: { quantity: number, itemName: string, defaultUnit: string, totalValue: number, tax: number, date: Date } } = {};
+        const hsnSummary: { [key: string]: { quantity: number, itemName: string, defaultUnit: string, totalValue: number, tax: number, igst:number,date: Date } } = {};
 
         products?.forEach((prod: any) => {
             if (prod?.inventoryType === "Product" && prod?.invoiceType === "Sales_Invoice") {
@@ -91,7 +91,7 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
                     hsnSummary[hsnCode].quantity += quantity;
                     hsnSummary[hsnCode].totalValue += totalValue;
                 } else {
-                    hsnSummary[hsnCode] = { quantity, itemName, defaultUnit, totalValue, tax, date };
+                    hsnSummary[hsnCode] = { quantity, itemName, defaultUnit, totalValue, tax, igst: 0, date };
                 }
             }
         });
@@ -103,17 +103,18 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
             defaultUnit: hsnSummary[hsnCode].defaultUnit,
             totalValue: hsnSummary[hsnCode].totalValue,
             tax: hsnSummary[hsnCode].tax,
-            date: hsnSummary[hsnCode].date
+            date: hsnSummary[hsnCode].date,
+            igst:0
         }));
 
         console.log(hsnSummaryArray);
     }
 
-    let hsnSummaryArray1: { hsnCode: string, itemName: string, quantity: number, defaultUnit: string, totalValue: number, tax: number, date: Date }[] = [];
+    let hsnSummaryArray1: { hsnCode: string, itemName: string, quantity: number, defaultUnit: string, totalValue: number, tax: number,igst:number, date: Date }[] = [];
 
 
     if (!productsLoading && products) {
-        const hsnSummary1: { [key: string]: { quantity: number, itemName: string, defaultUnit: string, totalValue: number, tax: number, date: Date } } = {};
+        const hsnSummary1: { [key: string]: { quantity: number, itemName: string, defaultUnit: string, totalValue: number, tax: number,igst:number, date: Date } } = {};
 
         products?.forEach((prod: any) => {
             if (prod?.inventoryType === "Product" && prod?.invoiceType === "Sales_Return") {
@@ -130,7 +131,7 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
                     hsnSummary1[hsnCode].quantity += quantity;
                     hsnSummary1[hsnCode].totalValue += totalValue;
                 } else {
-                    hsnSummary1[hsnCode] = { quantity, itemName, defaultUnit, totalValue, tax, date };
+                    hsnSummary1[hsnCode] = { quantity, itemName, defaultUnit, totalValue, tax,igst:0, date };
                 }
             }
         });
@@ -142,16 +143,17 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
             defaultUnit: hsnSummary1[hsnCode].defaultUnit,
             totalValue: hsnSummary1[hsnCode].totalValue,
             tax: hsnSummary1[hsnCode].tax,
-            date: hsnSummary1[hsnCode].date
+            date: hsnSummary1[hsnCode].date,
+            igst:0,
         }));
 
         console.log(hsnSummaryArray1);
     }
 
-    let hsnSummaryArray2: { hsnCode: string, itemName: string, quantity: number, defaultUnit: string, totalValue: number, tax: number, date: Date }[] = [];
+    let hsnSummaryArray2: { hsnCode: string, itemName: string, quantity: number, defaultUnit: string, totalValue: number, tax: number,igst:number, date: Date }[] = [];
 
     if (!productsLoading && products) {
-        const hsnSummary2: { [key: string]: { quantity: number, itemName: string, defaultUnit: string, totalValue: number, tax: number, date: Date } } = {};
+        const hsnSummary2: { [key: string]: { quantity: number, itemName: string, defaultUnit: string, totalValue: number, tax: number,igst:number, date: Date } } = {};
 
         products?.forEach((prod: any) => {
             if (prod?.inventoryType === "Product" && prod?.invoiceType === "Purchase_Invoice") {
@@ -168,7 +170,7 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
                     hsnSummary2[hsnCode].quantity += quantity;
                     hsnSummary2[hsnCode].totalValue += totalValue;
                 } else {
-                    hsnSummary2[hsnCode] = { quantity, itemName, defaultUnit, totalValue, tax, date };
+                    hsnSummary2[hsnCode] = { quantity, itemName, defaultUnit, totalValue, tax,igst:0, date };
                 }
             }
         });
@@ -180,17 +182,18 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
             defaultUnit: hsnSummary2[hsnCode].defaultUnit,
             totalValue: hsnSummary2[hsnCode].totalValue,
             tax: hsnSummary2[hsnCode].tax,
-            date: hsnSummary2[hsnCode].date
+            date: hsnSummary2[hsnCode].date,
+            igst:0
         }));
 
         console.log(hsnSummaryArray2);
     }
 
 
-    let hsnSummaryArray3: { hsnCode: string, itemName: string, quantity: number, defaultUnit: string, totalValue: number, tax: number, date: Date }[] = [];
+    let hsnSummaryArray3: { hsnCode: string, itemName: string, quantity: number, defaultUnit: string, totalValue: number, tax: number,igst:number, date: Date }[] = [];
 
     if (!productsLoading && products) {
-        const hsnSummary3: { [key: string]: { quantity: number, itemName: string, defaultUnit: string, totalValue: number, tax: number, date: Date } } = {};
+        const hsnSummary3: { [key: string]: { quantity: number, itemName: string, defaultUnit: string, totalValue: number, tax: number,igst:number, date: Date } } = {};
         products?.forEach((prod: any) => {
             if (prod?.inventoryType === "Product" && prod?.invoiceType === "Purchase_Return") {
                 const hsnCode = prod.productBatch?.product?.hsnCode;
@@ -206,7 +209,7 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
                     hsnSummary3[hsnCode].quantity += quantity;
                     hsnSummary3[hsnCode].totalValue += totalValue;
                 } else {
-                    hsnSummary3[hsnCode] = { quantity, itemName, defaultUnit, totalValue, tax, date };
+                    hsnSummary3[hsnCode] = { quantity, itemName, defaultUnit, totalValue, tax,igst:0, date };
                 }
             }
         });
@@ -218,7 +221,8 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
             defaultUnit: hsnSummary3[hsnCode].defaultUnit,
             totalValue: hsnSummary3[hsnCode].totalValue,
             tax: hsnSummary3[hsnCode].tax,
-            date: hsnSummary3[hsnCode].date
+            date: hsnSummary3[hsnCode].date,
+            igst:0,
         }));
 
         console.log(hsnSummaryArray3);
@@ -279,34 +283,37 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
             }
 
             const doc = new jsPDF('landscape');
-            const tableColumn = ["S.No.", "HSN/SAC", "Name", "UQC", "Total Qty()", "Total Value", "Total Taxable Amt", "CGST", "SGST", "Cess"];
+            const tableColumn = ["S.No.", "HSN/SAC", "Name", "Total Qty()", "UQC", "Total Value", "Total Taxable Amt", "CGST", "SGST", "IGST",  "Cess"];
             const tableRows: any = [];
 
 
 
             const currentYear1 = new Date().getFullYear();
-            const startDate = new Date(currentYear1, 3, 1);
-            const endDate = new Date(currentYear1 + 1, 3, 1);
+            const startDate = new Date(currentYear1-1, 3, 1);
+            const endDate = new Date(currentYear1 , 3, 1);
 
             hsnSummaryArray.forEach((item, index) => {
                 const itemDate = (item.date);
+                //console.log(item.date,startDate,endDate);
                 if (new Date(itemDate) >= startDate && new Date(itemDate) < endDate) {
+                    
                     const transactionData = [
                         index + 1,
                         item.hsnCode,
                         item.itemName,
-                        (item.quantity) * -1,
+                        Math.abs(item.quantity),
                         item.defaultUnit,
-                        (item.totalValue) * -1,
-                        ((item.tax ? item.tax : 0) * (item.totalValue) * -1) + (item.totalValue) * -1,
-                        ((item.tax ? item.tax : 0) * 100) / 2,
-                        ((item.tax ? item.tax : 0) * 100) / 2,
+                        Math.abs(item.totalValue),
+                        ((item.tax ? item.tax : 0) * Math.abs(item.totalValue)),
+                        (item.tax ? Math.abs(item.totalValue) * item.tax : 0) / 2,
+                        (item.tax ? Math.abs(item.totalValue) * item.tax : 0) / 2,
+                        item.igst,
                     ];
                     tableRows.push(transactionData);
                 }
             });
 
-            const totalValueSum = hsnSummaryArray.reduce((sum, item) => sum + (((item.tax ? item.tax : 0) * (item.totalValue) * -1) + (item.totalValue) * -1), 0);
+            const totalValueSum = hsnSummaryArray.reduce((sum, item) => sum + ((item.tax ? item.tax : 0) * Math.abs(item.totalValue)), 0);
 
             doc.addImage(base64Image, 'PNG', 4, 4, 20, 20);
             doc.setFontSize(20);
@@ -378,12 +385,12 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
 
 
             const doc = new jsPDF('landscape');
-            const tableColumn = ["S.No.", "HSN/SAC", "Name", "UQC", "Total Qty()", "Total Value", "Total Taxable Amt", "IGST", "CGST", "SGST", "Cess"];
+            const tableColumn = ["S.No.", "HSN/SAC", "Name", "Total Qty()", "UQC", "Total Value", "Total Taxable Amt", "CGST", "SGST","IGST", "Cess"];
             const tableRows: any = [];
 
             const currentYear1 = new Date().getFullYear();
-            const startDate = new Date(currentYear1, new Date().getMonth() < 3 ? currentYear1 - 1 : currentYear1, 3, 1);
-            const endDate = new Date(startDate.getFullYear() + 1, 2, 31);
+            const startDate = new Date(currentYear1-1, 3, 1);
+            const endDate = new Date(currentYear1 , 3, 1);
 
 
             hsnSummaryArray1.forEach((item, index) => {
@@ -393,19 +400,20 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
                         index + 1,
                         item.hsnCode,
                         item.itemName,
-                        (item.quantity) * -1,
+                        Math.abs(item.quantity),
                         item.defaultUnit,
-                        (item.totalValue) * -1,
-                        ((item.tax ? item.tax : 0) * (item.totalValue) * -1) + (item.totalValue) * -1,
-                        ((item.tax ? item.tax : 0) * 100) / 2,
-                        ((item.tax ? item.tax : 0) * 100) / 2,
+                        Math.abs(item.totalValue),
+                        ((item.tax ? item.tax : 0) * Math.abs(item.totalValue)),
+                        (item.tax ? Math.abs(item.totalValue) * item.tax : 0) / 2,
+                        (item.tax ? Math.abs(item.totalValue) * item.tax : 0) / 2,
+                        item.igst,
                     ];
                     tableRows.push(transactionData);
                 }
             });
 
 
-            const totalValueSum = hsnSummaryArray1.reduce((sum, item) => sum + (((item.tax ? item.tax : 0) * (item.totalValue) * -1) + (item.totalValue) * -1), 0);
+            const totalValueSum = hsnSummaryArray1.reduce((sum, item) => sum + ((item.tax ? item.tax : 0) * Math.abs(item.totalValue)), 0);
 
 
             doc.addImage(base64Image, 'PNG', 4, 4, 20, 20);
@@ -478,12 +486,12 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
 
 
             const doc = new jsPDF('landscape');
-            const tableColumn = ["S.No.", "HSN/SAC", "Name", "UQC", "Total Qty()", "Total Value", "Total Taxable Amt", "IGST", "CGST", "SGST", "Cess"];
+            const tableColumn = ["S.No.", "HSN/SAC", "Name", "Total Qty()", "UQC", "Total Value", "Total Taxable Amt", "CGST", "SGST", "IGST", "Cess"];
             const tableRows: any = [];
 
             const currentYear1 = new Date().getFullYear();
-            const startDate = new Date(currentYear1, 3, 1);
-            const endDate = new Date(currentYear1 + 1, 3, 1);
+            const startDate = new Date(currentYear1-1, 3, 1);
+            const endDate = new Date(currentYear1 , 3, 1);
 
             hsnSummaryArray2.forEach((item, index) => {
                 const itemDate = (item.date);
@@ -492,18 +500,19 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
                         index + 1,
                         item.hsnCode,
                         item.itemName,
-                        (item.quantity) * -1,
+                        Math.abs(item.quantity),
                         item.defaultUnit,
-                        (item.totalValue) * -1,
-                        ((item.tax ? item.tax : 0) * (item.totalValue) * -1) + (item.totalValue) * -1,
-                        ((item.tax ? item.tax : 0) * 100) / 2,
-                        ((item.tax ? item.tax : 0) * 100) / 2,
+                        Math.abs(item.totalValue),
+                        ((item.tax ? item.tax : 0) * Math.abs(item.totalValue)),
+                        (item.tax ? Math.abs(item.totalValue) * item.tax : 0) / 2,
+                        (item.tax ? Math.abs(item.totalValue) * item.tax : 0) / 2,
+                        item.igst,
                     ];
                     tableRows.push(transactionData);
                 }
             });
 
-            const totalValueSum = hsnSummaryArray2.reduce((sum, item) => sum + (((item.tax ? item.tax : 0) * (item.totalValue) * -1) + (item.totalValue) * -1), 0);
+            const totalValueSum = hsnSummaryArray2.reduce((sum, item) => sum + ((item.tax ? item.tax : 0) * Math.abs(item.totalValue)), 0);
 
             doc.addImage(base64Image, 'PNG', 4, 4, 20, 20);
             doc.setFontSize(20);
@@ -575,13 +584,13 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
 
 
             const doc = new jsPDF('landscape');
-            const tableColumn = ["S.No.", "HSN/SAC", "Name", "UQC", "Total Qty()", "Total Value", "Total Taxable Amt", "IGST", "CGST", "SGST", "Cess"];
+            const tableColumn = ["S.No.", "HSN/SAC", "Name", "Total Qty()", "UQC", "Total Value", "Total Taxable Amt", "CGST", "SGST","IGST", "Cess"];
             const tableRows: any = [];
 
 
             const currentYear1 = new Date().getFullYear();
-            const startDate = new Date(currentYear1, 3, 1);
-            const endDate = new Date(currentYear1 + 1, 3, 1);
+            const startDate = new Date(currentYear1-1, 3, 1);
+            const endDate = new Date(currentYear1 , 3, 1);
 
             hsnSummaryArray3.forEach((item, index) => {
                 const itemDate = (item.date);
@@ -590,18 +599,19 @@ const FinacesOverviewTableHeader = ({ timeline }: any) => {
                         index + 1,
                         item.hsnCode,
                         item.itemName,
-                        (item.quantity) * -1,
+                        Math.abs(item.quantity),
                         item.defaultUnit,
-                        (item.totalValue) * -1,
-                        ((item.tax ? item.tax : 0) * (item.totalValue) * -1) + (item.totalValue) * -1,
-                        ((item.tax ? item.tax : 0) * 100) / 2,
-                        ((item.tax ? item.tax : 0) * 100) / 2,
+                        Math.abs(item.totalValue),
+                        ((item.tax ? item.tax : 0) * Math.abs(item.totalValue)),
+                        (item.tax ? Math.abs(item.totalValue) * item.tax : 0) / 2,
+                        (item.tax ? Math.abs(item.totalValue) * item.tax : 0) / 2,
+                        item.igst,
                     ];
                     tableRows.push(transactionData);
                 }
             });
 
-            const totalValueSum = hsnSummaryArray3.reduce((sum, item) => sum + (((item.tax ? item.tax : 0) * (item.totalValue) * -1) + (item.totalValue) * -1), 0);
+            const totalValueSum = hsnSummaryArray3.reduce((sum, item) => sum + ((item.tax ? item.tax : 0) * Math.abs(item.totalValue)), 0);
 
             doc.addImage(base64Image, 'PNG', 4, 4, 20, 20);
             doc.setFontSize(20);

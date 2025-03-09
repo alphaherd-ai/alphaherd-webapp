@@ -8,17 +8,18 @@ import Expense from "../../../../assets/icons/finance/request_quote.svg"
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname,useSearchParams } from 'next/navigation';
-
+import DownloadPopup from  './downloadExpensesPopup';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Popover, PopoverTrigger, PopoverContent, Input } from "@nextui-org/react";
 import FilterDropdownCard from './FilterDropDownCard';
 import { useRouter } from 'next/navigation';
 
 
-const FinancesExpensesTableHeader = ({ recurringCount, nonrecurringCount }: any) => {
+const FinancesExpensesTableHeader = ({ recurringCount, nonrecurringCount,expenses }: any) => {
     const currentRoute = usePathname();
     const router=useRouter();
-    const searchParams=useSearchParams();
+    const currentUrl = useSearchParams();
+    const type = currentUrl.get("type")
     const [selectedCategory, setSelectedCategory] = React.useState(new Set(["Category: text"]));
     const [selectedSort, setselectedSort] = React.useState(new Set(["Category: text"]));
     const [showPopup, setShowPopup] = React.useState(false);
@@ -27,7 +28,6 @@ const FinancesExpensesTableHeader = ({ recurringCount, nonrecurringCount }: any)
     const togglePopup = () => {
         setShowPopup(!showPopup);
     }
-
     const selectedCategoryValue = React.useMemo(
         () => Array.from(selectedCategory).join(", ").replaceAll("_", " "),
         [selectedCategory]
@@ -36,21 +36,24 @@ const FinancesExpensesTableHeader = ({ recurringCount, nonrecurringCount }: any)
         () => Array.from(selectedSort).join(", ").replaceAll("_", " "),
         [selectedSort]
     );
-
+    const [showPopup1, setShowPopup1] = React.useState(false);
+    const togglePopup1 = () => {
+        setShowPopup1(!showPopup1);
+    }
     const useFilterState = () => {
                 const [isActive, setIsActive] = useState(false)
               
                 useEffect(() => {
                   const checkFilterState = () => {
-                    const startDate = searchParams.get("startDate")
-                    const endDate = searchParams.get("endDate")
-                    const party = searchParams.get("selectedParties")
-                    const status = searchParams.get("selectedStatus")
+                    const startDate = currentUrl.get("startDate")
+                    const endDate = currentUrl.get("endDate")
+                    const party = currentUrl.get("selectedParties")
+                    const status = currentUrl.get("selectedStatus")
                     setIsActive(Boolean(startDate || endDate || party || status))
                   }
               
                   checkFilterState()
-                }, [searchParams])
+                }, [currentUrl])
               
                 return isActive
               }
@@ -61,7 +64,7 @@ const FinancesExpensesTableHeader = ({ recurringCount, nonrecurringCount }: any)
                 // const pathWithoutQuery = window.location.pathname
                 
                 // // Get the 'type' parameter as we want to preserve it
-                // const type = searchParams.get("type") || "all"
+                // const type = currentUrl.get("type") || "all"
             
                 // // Navigate to the base URL with only the type parameter
                 // router.push(`${pathWithoutQuery}?type=${type}`)
@@ -74,19 +77,19 @@ const FinancesExpensesTableHeader = ({ recurringCount, nonrecurringCount }: any)
             <div className='flex w-full bg-white h-20  p-4 px-6  justify-between border-0 border-b border-solid border-borderGrey rounded-tl-lg rounded-tr-lg'>
 
                 <div className='flex  text-gray-500 items-center w-6/12'>
-                    <Link className='no-underline flex item-center' href='/finance/expenses/all'>
+                    <Link className='no-underline flex item-center' href='/finance/expenses/all?type=all'>
 
                         <div className={currentRoute.startsWith("/finance/expenses/all")
                             ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white  rounded-tl-md rounded-bl-md"
                             : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500  rounded-tl-md rounded-bl-md"}>All</div>
                     </Link>
-                    <Link className='no-underline flex item-center' href='/finance/expenses/nonrecurring'>
+                    <Link className='no-underline flex item-center' href='/finance/expenses/nonrecurring?type=Expense_NonRecurring'>
 
                         <div className={currentRoute.startsWith("/finance/expenses/nonrecurring")
                             ? "flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white"
                             : "flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500"}> Non Recurring Expenses</div>
                     </Link>
-                    <Link className='no-underline flex item-center' href='/finance/expenses/recurring'>
+                    <Link className='no-underline flex item-center' href='/finance/expenses/recurring?type=Expense_Recurring'>
 
                         <div className={currentRoute.startsWith("/finance/expenses/recurring")
                             ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white"
@@ -103,10 +106,9 @@ const FinancesExpensesTableHeader = ({ recurringCount, nonrecurringCount }: any)
 
                 </div>
                 <div className='flex items-center'>
-                    <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
-
-                        <div className='flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'><Image src={Download} alt='Download' className='w-4  h-4' /></div>
-                    </Link>
+                    <div onClick={togglePopup1}  className='cursor-pointer mr-4 flex items-center justify-center border w-7 h-7 border-solid border-gray-300 border-0.5 rounded-md p-1'>
+                        <Image src={Download} alt='Download' className='w-4  h-4' />
+                    </div>
                     {/* <Link className='no-underline flex item-center mr-4' href='/finance/overview'>
 
                         <div className='flex items-center justify-center w-7 h-7 border border-solid border-gray-300 border-0.5 rounded-md  p-1'><Image src={Chart} alt='Chart' className='w-4  h-4' /></div>
@@ -178,7 +180,7 @@ const FinancesExpensesTableHeader = ({ recurringCount, nonrecurringCount }: any)
             </PopoverContent>
         </Popover> */}
 
-
+                    {showPopup1 && <DownloadPopup onClose={togglePopup1} expenses={expenses} type={type} />}
 
                     {/* </div> */}
                 </div>

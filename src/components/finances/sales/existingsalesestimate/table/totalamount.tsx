@@ -15,7 +15,8 @@ import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 import Menu from '../../../../../assets/icons/finance/menu.svg'
 import EditRecordTransactionPopup from '@/components/finances/editTransaction/editTransaction';
 import CancellationPopup from '@/components/finances/cancelTransaaction/cancelTransaction';
-
+import axios from 'axios';
+import { useSearchParams } from 'next/navigation';
 import { useAppSelector } from '@/lib/hooks';
 
 const ExistingsaleEstimateTotalAmout = ({ otherData, items, isLoading }: any) => {
@@ -25,6 +26,22 @@ const ExistingsaleEstimateTotalAmout = ({ otherData, items, isLoading }: any) =>
     const [isEditPopupVisible, setEditPopupVisible] = useState(false);
     const [selectedRecordTransaction, setSelectedRecordTransaction] = useState<any>(null);
     const [editRecordTransaction, setEditRecordTransaction] = useState<any>({});
+    const [isPaymentEdited, setIsPaymentEdited] = useState(0);
+    const [isPaymentMade, setIsPaymentMade] = useState(0);
+    const url = useSearchParams();
+    const id = url.get('id');
+    const [recordTransaction, setRecordTransaction] = useState<any>([]);
+
+    useEffect(() => {
+        const getAllPayments = async () => {
+            const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/recordTransactions/${id}`);
+            if (res.status === 200) {
+                setRecordTransaction(res.data);
+            }
+        }
+        getAllPayments();
+
+    }, [isPaymentEdited,isPaymentMade])
 
     const [popup, setPopup] = useState(false);
 
@@ -110,14 +127,14 @@ const ExistingsaleEstimateTotalAmout = ({ otherData, items, isLoading }: any) =>
 
     //console.log(subTotalAmountLow,subTotalAmountHigh,subTotalAmount,totalAmountLow,totalAmountHigh,totalAmount)
 
-    const totalPaidAmount = otherData?.recordTransaction?.reduce((acc: any, transaction: any) => {
+    const totalPaidAmount = recordTransaction?.reduce((acc: any, transaction: any) => {
         if (transaction?.moneyChange === 'In' || transaction?.isAdvancePayment) {
             return acc + transaction?.amountPaid;
         }
         return acc;
     }, 0);
 
-    const totalAmountPay = otherData?.recordTransaction?.reduce((acc: any, transaction: any) => {
+    const totalAmountPay = recordTransaction?.reduce((acc: any, transaction: any) => {
         if (transaction?.moneyChange === 'Out' && !transaction?.isAdvancePayment) {
             return acc + transaction?.amountPaid;
         }
@@ -155,49 +172,7 @@ const ExistingsaleEstimateTotalAmout = ({ otherData, items, isLoading }: any) =>
         setEditPopupVisible(false);
     };
 
-    const handleSave = async () => {
-        try {
-            // Format the date field to ensure it's in ISO-8601 format
-            const formattedTransaction = {
-                ...editRecordTransaction,
-                date: new Date(editRecordTransaction.date).toISOString(), // Ensure ISO-8601 format
-            };
-
-            console.log("Saving updated transaction: ", formattedTransaction);
-
-            // Call the API with the formatted transaction
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/paymentTransaction/${formattedTransaction.id}?branchId=${appState.currentBranchId}`,
-                {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(formattedTransaction),
-                }
-            );
-
-            // Handle API response
-            if (!response.ok) {
-                throw new Error("Failed to save transaction");
-            }
-
-            const result = await response.json();
-            console.log("Transaction successfully updated:", result);
-
-            // Success feedback
-            alert("Transaction saved successfully");
-            setEditPopupVisible(false); // Close the popup on success
-        } catch (error) {
-            console.error("Failed to save transaction:", error);
-            alert("Failed to save transaction");
-        }
-    };
-
-
-
-
-    console.log("shdvh", otherData.recordTransaction);
+    
 
     return (
         <>
@@ -205,7 +180,7 @@ const ExistingsaleEstimateTotalAmout = ({ otherData, items, isLoading }: any) =>
 
             < div className={`flex gap-4 ${otherData?.status === 'Cancelled' ? "justify-end" : ""}   pt-[20px] pb-[20px]`}>
                 {!(otherData?.status === 'Cancelled') &&
-                    <RecordTransactionPopup headerdata={otherData} setCount={setCount} initialInvoiceNo={initialInvoiceNo} balanceDue={balanceDue} />
+                    <RecordTransactionPopup headerdata={otherData} setCount={setCount} initialInvoiceNo={initialInvoiceNo} balanceDue={balanceDue} setIsPaymentMade={setIsPaymentMade}/>
                 }
                 <div className="w-full rounded-md">
                     <div className="w-full bg-white rounded-md ">
@@ -255,7 +230,7 @@ const ExistingsaleEstimateTotalAmout = ({ otherData, items, isLoading }: any) =>
                         <div className="w-full  bg-white  justify-between items-center  flex">
                             <div className='w-full h-[9.6rem] flex flex-col overflow-auto container'>
                                 {isLoading && <Loading2 />}
-                                {otherData && otherData.recordTransaction && otherData.recordTransaction.map((transaction: any, index: any) => (
+                                {recordTransaction && recordTransaction.map((transaction: any, index: any) => (
                                     transaction.isAdvancePayment &&
                                     (<div key={index} className='w-full px-2 flex items-center justify-between border-0 border-b border-solid border-borderGrey'>
                                         <div className="text-textGrey2  text-base font-bold  w-1/3 py-4">Advance Paid</div>
@@ -293,7 +268,7 @@ const ExistingsaleEstimateTotalAmout = ({ otherData, items, isLoading }: any) =>
                                         )}
                                     </div>)
                                 ))}
-                                {otherData && otherData.recordTransaction && otherData.recordTransaction.map((transaction: any, index: any) => (
+                                {recordTransaction && recordTransaction.map((transaction: any, index: any) => (
                                     !transaction.isAdvancePayment &&
                                     (<div key={index} className='w-full px-2 flex items-center justify-between border-0 border-b border-solid border-borderGrey'>
                                         <div className="text-textGrey1 text-base font-medium  w-1/3 py-4">{formatDateAndTime(transaction.date).formattedDate}</div>
@@ -353,8 +328,8 @@ const ExistingsaleEstimateTotalAmout = ({ otherData, items, isLoading }: any) =>
                     </div>
                 </div>
                 {!(otherData?.status === 'Cancelled') && <>
-                    {popup && <EditRecordTransactionPopup onClose={onClose} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue} />}
-                    {showConfirmation && <CancellationPopup setShowConfirmation={setShowConfirmation} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue} />}
+                    {popup && <EditRecordTransactionPopup onClose={onClose} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue} setIsPaymentEdited={setIsPaymentEdited}/>}
+                    {showConfirmation && <CancellationPopup setShowConfirmation={setShowConfirmation} editTransaction={transaction} type={"exsistingInvoice"} balanceDue={balanceDue} setIsPaymentEdited={setIsPaymentEdited}/>}
                 </>}
             </div>
 

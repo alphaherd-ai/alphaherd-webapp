@@ -13,13 +13,14 @@ import DownloadPopup from './downloadClientPopup';
 
 const DatabaseClientHeader = ({ clients, onSortChange }: any) => {
     const [showPopup1, setShowPopup1] = React.useState(false);
-    const [selectedSort, setSelectedSort] = React.useState("name");
+    const [selectedSort, setSelectedSort] = React.useState("Recent");
     const [sortOrder, setSortOrder] = React.useState("asc");
 
     const togglePopup1 = () => setShowPopup1(!showPopup1);
 
     const handleSortChange = (key: string) => {
         // console.log(key,selectedSort);
+        
         if (key === selectedSort) {
             setSortOrder(sortOrder === "asc" ? "desc" : "asc");
         } else {
@@ -61,7 +62,7 @@ const DatabaseClientHeader = ({ clients, onSortChange }: any) => {
                                     variant="solid"
                                     className="capitalize border-none bg-transparent rounded-lg text-white"
                                 >
-                                    <span style={{ fontFamily: 'Satoshi', fontWeight: 500, fontSize: '14px', lineHeight: '18.9px', color: '#FFFFFF' }}>Sort By: {selectedSort}</span>
+                                    <span style={{ fontFamily: 'Satoshi', fontWeight: 500, fontSize: '14px', lineHeight: '18.9px', color: '#FFFFFF' }}>Sort By: {selectedSort=='id'?'Date':selectedSort}</span>
                                 </Button>
                             </DropdownTrigger>
 
@@ -83,10 +84,10 @@ const DatabaseClientHeader = ({ clients, onSortChange }: any) => {
 
                                 <DropdownItem
                                     className="p-2 text-base"
-                                    key="city"
-                                    onClick={() => handleSortChange("city")}
+                                    key="Date"
+                                    onClick={() => handleSortChange("id")}
                                 >
-                                    City
+                                    Date
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>

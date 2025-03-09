@@ -12,7 +12,7 @@ import { Button } from "@nextui-org/react"
 import { useRouter } from "next/navigation"
 import { generatePdfForInvoice } from "@/utils/salesPdf"
 import Loading2 from "@/app/loading2"
-
+import { mutate } from "swr";
 
 const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
     const { headerData, tableData, totalAmountData, transactionsData } = useContext(DataContext);
@@ -81,17 +81,19 @@ const NewsalesReturnBottomBar = ({ invoiceData }: any) => {
         // console.log(JSON.stringify(data))
         try {
             setSaving(true);
-            const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Return}?branchId=${appState.currentBranchId}`, data)
-            setTimeout(() => {
-                router.back();
-            }, 2000)
-            const response = await responsePromise;
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/create/${FinanceCreationType.Sales_Return}?branchId=${appState.currentBranchId}`, data)
+            
+            
             if (!response.data) {
                 throw new Error('Network response was not ok');
-
             }
-            //mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`,(currData:any = [])=>[...currData,response.data?.sales],false);
-            //router.back();
+
+
+           
+        
+
+            router.back();
+           
         } catch (error) {
             console.error('Error:', error);
         }

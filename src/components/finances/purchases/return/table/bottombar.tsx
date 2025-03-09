@@ -4,7 +4,7 @@
 import checkicon from "../../../../../assets/icons/finance/check.svg"
 import React, { useState, useContext } from 'react';
 
-
+import { mutate } from "swr";
 import Image from "next/image"
 import { Button } from '@nextui-org/react'
 import { DataContext } from "./DataContext"
@@ -71,9 +71,10 @@ const NewPurchaseReturnBottomBar = ({ invoiceData }: any) => {
         try {
             setSaving(true);
             const responsePromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/create/${FinanceCreationType.Purchase_Return}?branchId=${appState.currentBranchId}`, data)
+            //mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/getAll?branchId=${appState.currentBranchId}`);
             setTimeout(() => {
                 router.back();
-            }, 2000);
+            }, 2000)
             const response = await responsePromise;
             if (!response.data) {
                 throw new Error('Network response was not ok');

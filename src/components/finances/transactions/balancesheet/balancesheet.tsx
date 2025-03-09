@@ -74,9 +74,9 @@ const FinancesTransactionSheet = () => {
     return (
         <>
             <div className="flex flex-col mt-6 border-0 border-b border-solid border-borderGrey">
-                <div className="flex flex-col">
+                <div className="flex w-full flex-col">
                     <div className="flex w-full h-14 p-4 bg-white border border-solid border-borderGrey justify-between items-center">
-                        <div className="w-[751px] h-[27px] justify-start items-center gap-4 inline-flex">
+                        <div className="w-full h-[27px] justify-start items-center gap-4 inline-flex">
                             <div className="justify-end items-start flex border border-solid border-borderGrey rounded-[5px] cursor-pointer">
                                 <div
                                     className={`px-2 py-1 ${activeTab === 'All transactions' ? 'bg-zinc-900 border-zinc-900' : 'bg-gray-100 border-neutral-400'} rounded-tl-[5px] rounded-bl-[5px] border justify-start items-center gap-1 flex`}
@@ -138,7 +138,7 @@ const FinancesTransactionSheet = () => {
 
 
                 {activeTab === 'All transactions' &&
-                    <div className="flex w-full overflow-x-auto">
+                    <div className="flex w-full justify-between  overflow-x-auto">
 
                         {isLoading ? <Loading /> : paymentMethod.map((item: any) => {
                             return (
@@ -152,7 +152,7 @@ const FinancesTransactionSheet = () => {
 
 
                 {activeTab === 'Sales' &&
-                    <div className="flex">
+                    <div className="flex w-full justify-between  overflow-x-auto">
 
                         {isLoading ? <Loading /> : paymentMethod.map((item: any) => {
                             return (
@@ -171,7 +171,7 @@ const FinancesTransactionSheet = () => {
                     </div>}
 
                     {activeTab === 'Expenses' &&
-                    <div className="flex">
+                    <div className="flex w-full justify-between  overflow-x-auto">
 
                         {isLoading ? <Loading /> : paymentMethod.map((item: any) => {
                             return (
@@ -192,7 +192,7 @@ const FinancesTransactionSheet = () => {
                     </div>}
 
                     {activeTab === 'Purchases' &&
-                    <div className="flex">
+                    <div className="flex w-full justify-between  overflow-x-auto">
 
                         {isLoading ? <Loading /> : paymentMethod.map((item: any) => {
                             return (

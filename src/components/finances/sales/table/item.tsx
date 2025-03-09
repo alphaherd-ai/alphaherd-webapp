@@ -67,7 +67,7 @@ const FinancesSalesTableItem = ({ onCountsChange, data, sales, isLoading }: any)
   }, [sales]);
   
 
-  if (isLoading && !data) return (<Loading />)
+  if (isLoading) return (<Loading />)
 
 
 
