@@ -205,14 +205,14 @@ const NewPurchasesTable = () => {
         };
     }
         const handleAddItem = useCallback(() => {
-            setItems([...items, {}]);
+            setItems([...items, { rowId: Date.now() }]);
         }, [items]);
 
-        const handleQuantityDecClick = (itemId: any) => {
+        const handleQuantityDecClick = (rowId: any) => {
             console.log(items);
             setItems((prevItems: any) =>
                 prevItems.map((item: any) => {
-                    if (item.productId === itemId && item.quantity >= 1) {
+                    if (item.rowId === rowId && item.quantity >= 1) {
                         const newQuantity = item.quantity - 1;
                         const updatedDiscountAmt = (item.unitPrice * newQuantity * item.discountPercent) / 100 || 0;
                         return { ...item, quantity: newQuantity, discountAmt: updatedDiscountAmt };
@@ -223,11 +223,11 @@ const NewPurchasesTable = () => {
             );
         };
 
-        const handleQuantityIncClick = (itemId: any) => {
-            console.log(itemId);
+        const handleQuantityIncClick = (rowId: any) => {
+            console.log(rowId);
             setItems((prevItems: any) =>
                 prevItems.map((item: any) => {
-                    if (item.productId === itemId && item.quantity >= 0) {
+                    if (item.rowId === rowId && item.quantity >= 0) {
                         const newQuantity = item.quantity + 1;
                         const updatedDiscountAmt = (item.unitPrice * newQuantity * item.discountPercent) / 100 || 0;
                         return { ...item, quantity: newQuantity, discountAmt: updatedDiscountAmt };
@@ -306,8 +306,10 @@ const NewPurchasesTable = () => {
             if (selectedProduct.value) {
                 if (index === items.length - 1) {
                     items.push({
+                        rowId: Date.now(),
                         productId: null,
                         itemName: "",
+                        quantity: 0
                     });
                     setItems(items);
                 }
@@ -342,8 +344,10 @@ const NewPurchasesTable = () => {
 
         useEffect(() => {
             items.push({
+                rowId: Date.now(),
                 productId: null,
                 itemName: "",
+                quantity: 0
             });
             setItems(items);
         }, [])
@@ -497,7 +501,7 @@ const NewPurchasesTable = () => {
                                                 </div>
                                                 <div className=' flex text-textGrey2 text-base font-medium w-[15rem] items-center gap-2'>
                                                     <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
-                                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.productId)}>
+                                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.rowId)}>
                                                             <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
                                                         </button>
                                                         <input
@@ -509,7 +513,7 @@ const NewPurchasesTable = () => {
                                                         />
 
                                                         {/* {item.quantity} */}
-                                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.productId)}>
+                                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.rowId)}>
                                                             <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                                         </button>
                                                         {item?.defaultUnit}
