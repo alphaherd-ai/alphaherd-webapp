@@ -117,7 +117,37 @@ const FinancesPurchasesTable = () => {
       console.error("Failed to send due date notification:", error);
     }
   };
+  const sendLastDueDateNotification = async(notifData:any, purchaseID:number) =>{
+    try {
 
+      await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData);
+
+      await axios.patch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/updateLastDayNotif`, {
+        id: purchaseID,
+        lastDueNotif: new Date().toISOString(),
+      });
+
+      console.log(`Payment reminder notification sent for Purchase Id: ${purchaseID}`);
+    } catch (error) {
+      console.error("Failed to send due date notification:", error);
+    }
+  }
+
+  const sendSevenDueDateNotification = async(notifData:any, purchaseID:number) =>{
+    try {
+
+       await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData);
+
+      await axios.patch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/updateLastSevenDayNotif`, {
+        id: purchaseID,
+        lastDueNotif: new Date().toISOString(),
+      });
+
+      console.log(`Payment reminder notification sent for Purchase Id: ${purchaseID}`);
+    } catch (error) {
+      console.error("Failed to send due date notification:", error);
+    }
+  }
   const isOlderThanOneWeek = (dateString: string | undefined) => {
     if (!dateString) return true;
     const lastNotifDate = new Date(dateString);
@@ -140,12 +170,29 @@ const FinancesPurchasesTable = () => {
       const currentDate = new Date();
     
       const daysLeftForDue = Math.ceil((dueDate.getTime() - currentDate.getTime()) / (24 * 60 * 60 * 1000));
-    
+      
+
+      const words= purchase.status.trim().split(' ');
+      console.log("words",words);
+      var bool=false;
+      var pobool=true;
+      if(words.length>1){
+          if(words[1].toLowerCase()==='owe:'){
+              bool =true;
+          }
+      }
+      if(words.length>0){
+        if(words[0].toLowerCase()==="Cancelled"){
+          pobool=false;
+        }
+      }
+      console.log(purchase.status,bool,pobool);
       let message = '';
       if (purchase.type === "Purchase_Order") {
         // Check if the purchase order is due today
-        if (dueDate.toDateString() === currentDate.toDateString()) {
-          message = `Your purchase order #${purchase.purchaseOrderNumber} from ${purchase.distributor} is scheduled to arrive today!`;
+        if (dueDate.toDateString() === currentDate.toDateString() && purchase.lastDueNotif===null && pobool) {
+
+          message = `Your purchase order ${purchase.invoiceNo} from ${purchase.distributor} is scheduled to arrive today!`;
     
           const notifData = {
             orgId: appState.currentOrgId,
@@ -164,18 +211,53 @@ const FinancesPurchasesTable = () => {
     
           sendDueDateNotification(notifData, purchaseID);
           return true; 
-        } else {
-          return false; 
+        } 
+        if(dueDate.toDateString() === currentDate.toDateString() && purchase.lastDayNotif===null && bool){
+          message = `You owe ₹${purchase.totalCost} to ${purchase.distributor}. This payment is due today.`
+          const notifData = {
+            orgId: appState.currentOrgId,
+            url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/finance/purchases/all?type=all`,
+            message: message,
+            data: {
+              purchaseId: purchase.id,
+              invoiceNo: purchase.invoiceNo,
+              dueDate: purchase.dueDate,
+              distributor: purchase.distributor,
+              totalCost: purchase.totalCost,
+              status: purchase.status,
+            },
+            source: Notif_Source.Purchase_Order_Due,
+          };
+
+          sendLastDueDateNotification(notifData, purchaseID);
+          return true; 
+
         }
-      } else {
-        
-        if (daysLeftForDue <= 7 && daysLeftForDue >= 0 && isOlderThanOneWeek(purchase.lastDueNotif)) {
-          if (purchase.type === "Purchase_Invoice") {
-            message = `You owe ₹${purchase.totalCost} to ${purchase.distributor}. This payment is due on ${new Date(purchase.dueDate).toLocaleDateString()}.`;
-          } else {
-            message = `Purchase Return ${purchase.invoiceNo} due on ${new Date(purchase.dueDate).toLocaleDateString()} from ${purchase.distributor}`;
-          }
-    
+        else if(daysLeftForDue <= 7 && daysLeftForDue >= 0 && isOlderThanOneWeek(purchase.lastSevenNotif) && bool){
+          message = `You owe ₹${purchase.totalCost} to ${purchase.distributor}. This payment is due on ${new Date(purchase.dueDate).toLocaleDateString()}.`;
+          const notifData = {
+            orgId: appState.currentOrgId,
+            url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/finance/purchases/all?type=all`,
+            message: message,
+            data: {
+              purchaseId: purchase.id,
+              invoiceNo: purchase.invoiceNo,
+              dueDate: purchase.dueDate,
+              distributor: purchase.distributor,
+              totalCost: purchase.totalCost,
+              status: purchase.status,
+            },
+            source: Notif_Source.Purchase_Order_Due,
+          };
+
+          sendSevenDueDateNotification(notifData, purchaseID);
+          return true;
+        }
+      } else if(purchase.type === "Purchase_Invoice"){
+        message = `You owe ₹${purchase.totalCost} to ${purchase.distributor}. This payment is due on ${new Date(purchase.dueDate).toLocaleDateString()}.`;
+
+        if (daysLeftForDue <= 7 && daysLeftForDue >= 0 && isOlderThanOneWeek(purchase.lastDueNotif) && bool) {
+          
           const notifData = {
             orgId: appState.currentOrgId,
             url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/finance/purchases/all?type=all`,
