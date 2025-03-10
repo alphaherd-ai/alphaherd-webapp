@@ -10,7 +10,7 @@ import download from "../../../../assets/icons/finance/downloadGreen.svg";
 import { Button } from '@nextui-org/react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-
+import { useEffect } from 'react';
 import { useAppSelector } from '@/lib/hooks';
 import formatDateAndTime from '@/utils/formateDateTime';
 
@@ -21,8 +21,16 @@ const DownloadPopup = ({ onClose, sales, type }: any) => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [selectedOption, setSelectedOption] = useState('Custom');
+  const [isDisabled, setIsDisabled] = useState(true);
 
-
+  useEffect(() => {
+    if (startDate && endDate) {
+      setIsDisabled(false)
+    }
+    else {
+      setIsDisabled(true)
+    }
+  }, [startDate, endDate])
 
   const handleOptionClick = (option: any) => {
     setSelectedOption(option);
@@ -44,6 +52,8 @@ const DownloadPopup = ({ onClose, sales, type }: any) => {
       handleFilter(start, end);
     }
   };
+
+
 
   const convertImageToBase64 = (imageSrc: string, callback: (base64: string | null) => void) => {
     if (!imageSrc) {
@@ -270,7 +280,7 @@ const DownloadPopup = ({ onClose, sales, type }: any) => {
         </div>
         <div className='flex gap-4 justify-end w-full'>
 
-          <Button className="cursor-pointer outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex" onClick={downloadPDF}>
+          <Button disabled={isDisabled} className={` outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex ${isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`} onClick={downloadPDF}>
 
             <div className="w-6 h-6">
               <Image src={download} alt="download" />
@@ -291,7 +301,7 @@ const DownloadPopup = ({ onClose, sales, type }: any) => {
               { label: 'Status', key: 'status' },
             ]}
           >
-            <Button className="cursor-pointer outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+            <Button disabled={isDisabled} className={` outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex ${isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
 
               <div className="w-6 h-6">
                 <Image src={download} alt="download" />

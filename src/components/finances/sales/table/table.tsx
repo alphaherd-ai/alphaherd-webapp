@@ -40,15 +40,15 @@ const FinancesSalesTable = () => {
   const endDate = useMemo(() => urlSearchParams.get('endDate') ? new Date(urlSearchParams.get('endDate')!) : null, [urlSearchParams]);
   const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
   const selectedStatus = useMemo(() => urlSearchParams.getAll('selectedStatus'), [urlSearchParams]);
-  const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`, fetcher, {revalidateOnFocus: true})
+  //const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`, fetcher, {revalidateOnFocus: true})
   //Paginaton
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
   const [startInd, setStartInd] = useState(0);
   const [endInd, setEndInd] = useState(0);
   const [totalLen, setTotalLen] = useState(0);
   const [tableData, setTableData] = useState<any[]>([]);
-  const [data1, setData] = useState<any[]>([]);
-  const [isLoading1, setIsLoading] = useState(false);
+  const [data, setData] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const TOTAL_VALUES_PER_PAGE = 50;
   const goOnPrevPage = () => {
     if (currentPageNumber === 1) return;

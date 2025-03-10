@@ -164,7 +164,7 @@ const ServiceDetails = () => {
                     if (Array.isArray(taxTypeEntry.name)) {
                         taxTypeEntry.name.forEach((taxValue: number) => {
                             acc.push({
-                                value: taxValue * 0.01,
+                                value: taxValue,
                                 label: `${taxValue}% GST`
                             });
                         });

@@ -27,17 +27,19 @@ const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
 
 
-const RecordTransactionPopup= ({setOpen,clientName,togglePopup,formData,setFormData}:any) => {
+const RecordTransactionPopup= ({setOpen,clientName,togglePopup,formData,setFormData,toBePaid}:any) => {
 
     const dispatch = useDispatch();
     const router=useRouter();
     const [isSaving, setSaving] = useState(false);
-    
     const receiptNo=useState(generateInvoiceNumber(1));
     const appState = useAppSelector((state) => state.app)
     const [isAdvancePayment, setIsAdvancePayment] = useState(false);
+    const [exceedAmountError,setExceedAmountError]=useState(false);
     const url = useSearchParams();
     const id = url.get('id');
+
+    
 
     const Mode = [
         { value: "Cash", label: "Cash" },
@@ -71,7 +73,7 @@ const RecordTransactionPopup= ({setOpen,clientName,togglePopup,formData,setFormD
     
 
     const [startDate, setStartDate] = useState(new Date());
-    const [transactionType, setTransactionType] = useState<string | null>("Money In");
+
 
 
     const handleDateChange = (date: any) => {
@@ -79,10 +81,7 @@ const RecordTransactionPopup= ({setOpen,clientName,togglePopup,formData,setFormD
         setFormData({ ...formData, date });
     };
 
-    const handleToggleRadioButton = (type: string) => {
-        setFormData({ ...formData, moneyChange:type === 'Money In' ? 'In' : 'Out' });
-        setTransactionType(type);
-    };
+
 
 
 
@@ -99,6 +98,13 @@ const RecordTransactionPopup= ({setOpen,clientName,togglePopup,formData,setFormD
     
 
     const handleChange = (field: string, value: any) => {
+        if(field==="amountPaid"){
+            if(parseFloat(value)>parseFloat(toBePaid)){
+                setExceedAmountError(true);
+            }else{
+                setExceedAmountError(false);
+            }
+        }
         setFormData({ ...formData, [field]: value });
     }
 
@@ -143,7 +149,7 @@ const RecordTransactionPopup= ({setOpen,clientName,togglePopup,formData,setFormD
     };
 
    
-    const isDisabled = !formData?.mode || formData?.amountPaid === '0' || formData?.amountPaid===""
+    const isDisabled = !formData?.mode || formData?.amountPaid === '0' || formData?.amountPaid==="" || exceedAmountError
    
 
     
@@ -159,9 +165,10 @@ const RecordTransactionPopup= ({setOpen,clientName,togglePopup,formData,setFormD
                     <div className='mt-2 text-[#A2A3A3] text-md font-medium'>
                         Note down the details of transaction
                     </div>
+                    {exceedAmountError && <div className="text-[#FF0000] text-sm font-medium">Amount paid cannot exceed the amount due</div>}
                     
                 </div>
-                <div className='w-full flex gap-8'>
+                {/* <div className='w-full flex gap-8'>
                     <div className='flex gap-1'>
                         <div onClick={() => handleToggleRadioButton('Money In')}>
                             {transactionType !== 'Money In' ? (
@@ -190,7 +197,7 @@ const RecordTransactionPopup= ({setOpen,clientName,togglePopup,formData,setFormD
                             </span>
                         </div>
                     </div>
-                </div>
+                </div> */}
                 <div className='w-full flex justify-between items-center'>
                     <div>
                         <span className='text-gray-500 text-base font-medium '>Party Name</span>
