@@ -224,13 +224,19 @@ export const POST = async (req: NextRequest) => {
         }
       }
     });
+    await prismaClient.orgBranchUserRole.create({
+      data: {
+          orgBranchId: orgNewBranch.id,
+          userId: newUser.id,
+          role: "Admin",
+      },
+    });
 
 
 
 
 
-
-    return new Response(JSON.stringify({ "message": "Organization & Admin user successfully created." }), {
+    return new Response(JSON.stringify({ "message": `Your organisation ${orgDetails.orgName} has been created successfully` }), {
       status: 201,
       headers: {
         'Content-Type': 'application/json',
