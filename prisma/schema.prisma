@@ -392,7 +392,7 @@ model Sales {
   FinanceSection    FinanceSection?      @relation(fields: [financeSectionId], references: [id])
   financeSectionId  Int?
   clientId          Int?
-  lastDueNotif         DateTime?
+  lastDueNotif      DateTime?
 
   @@index([financeSectionId, id])
   @@index([financeSectionId, invoiceNo])
@@ -442,6 +442,8 @@ model Purchases {
   financeTimeline      FinanceTimeline[]
   FinanceSection       FinanceSection?     @relation(fields: [financeSectionId], references: [id])
   financeSectionId     Int?
+  lastDayNotif         DateTime?
+  lastSevenNotif       DateTime?
 
   @@index([financeSectionId, id])
   @@index([financeSectionId, invoiceNo])

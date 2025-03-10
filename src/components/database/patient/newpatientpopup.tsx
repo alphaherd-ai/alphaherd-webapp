@@ -60,13 +60,13 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
 
 
     useEffect(() => {
-        if (editPatient) {
-            setSelectedGender(editPatient.gender || 'unspecified');
-            setStartDate(editPatient.dateOfBirth ? new Date(editPatient.dateOfBirth) : null);
-            setAge(editPatient.age ? calculateAge(new Date(editPatient.dateOfBirth)) : { years: 0, months: 0, days: 0 });
-        }
-    }, [editPatient])
-
+        if(editPatient){
+                setSelectedGender(editPatient.gender || 'unspecified');
+                setStartDate(editPatient.dateOfBirth ? new Date(editPatient.dateOfBirth) : null);
+                setAge(editPatient.age ? calculateAge(new Date(editPatient.dateOfBirth)) : { years: 0, months: 0, days: 0 });
+            }
+        }, [editPatient])
+        
 
 
 
@@ -227,11 +227,6 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
                 dateOfBirth: null,
             }));
         }
-
-
-
-
-
     }, []);
 
     const handleAnotherpatient = () => {
@@ -265,8 +260,6 @@ const PatientPopup: React.FC<PopupProps> = ({ onClose, clientData, editPatient, 
                         ? formData.breed.label[0]
                         : formData.breed.label;
                 }
-
-
                 const body = {
                     ...(formData.patientName && { patientName: formData.patientName }),
                     ...(formData.species && { species: formData.species.label }),

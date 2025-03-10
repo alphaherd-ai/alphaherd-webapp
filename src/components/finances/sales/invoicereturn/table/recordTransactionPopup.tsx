@@ -262,7 +262,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
                             className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2 outline-none border border-solid border-gray-300 focus:border-teal-500"
                             type="number"
                             name="amountPaid"
-                            value={formData.amountPaid > 0 ? formData.amountPaid    : -1*formData.amountPaid}
+                            value={formData.amountPaid > 0 ? Number(formData.amountPaid).toFixed(2)    : Number(-1*formData.amountPaid).toFixed(2)}
                             onChange={(e) => handleChange("amountPaid", e.target.value)}
                         />
                     </div>

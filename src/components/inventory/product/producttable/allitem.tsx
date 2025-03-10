@@ -29,7 +29,7 @@ const ProductAllItem = ({ sortOrder, sortKey }: any) => {
   const [products, setProducts] = useState<Products[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(50);
-  const appState = useAppSelector((state) => state.app)
+  const appState: { currentBranchId: number | null } = useAppSelector((state) => state.app)
   const urlSearchParams = useSearchParams();
   const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
   const selectedCategories = useMemo(() => urlSearchParams.getAll('selectedCategories'), [urlSearchParams]);

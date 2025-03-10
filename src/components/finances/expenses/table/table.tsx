@@ -149,8 +149,7 @@ const FinancesExpensesTable = () => {
       return invoices.map(invoice => {
         const dueDate = new Date(invoice.dueDate);
         const daysLeftForDue = Math.ceil((dueDate.getTime() - currentDate.getTime()) / (24 * 60 * 60 * 1000));
-
-        if (daysLeftForDue <= 7 && daysLeftForDue >= 0 && isOlderThanOneWeek(invoice.lastDueNotif)) {
+        if (daysLeftForDue <= 7 && daysLeftForDue >= 0 && isOlderThanOneWeek(invoice.lastDueNotification) && invoice.status.startsWith("You're owed")) {
           const notifData = {
             orgId: appState.currentOrgId,
             url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/finance/invoices/${invoice.id}`,

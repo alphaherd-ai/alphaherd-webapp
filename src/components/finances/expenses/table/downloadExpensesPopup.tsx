@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { CSVLink } from 'react-csv';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -21,6 +21,16 @@ const DownloadPopup = ({ onClose, expenses, type }:any) => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [selectedOption, setSelectedOption] = useState('Custom');
+  const [isDisabled, setIsDisabled] = useState(true);
+    
+      useEffect(() => {
+        if (startDate && endDate) {
+          setIsDisabled(false)
+        }
+        else {
+          setIsDisabled(true)
+        }
+      }, [startDate, endDate])
 
 
   const handleOptionClick = (option:any) => {
@@ -262,7 +272,7 @@ const DownloadPopup = ({ onClose, expenses, type }:any) => {
     </div>
         <div className='flex gap-4 justify-end w-full'>
             
-        <Button className="cursor-pointer outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex" onClick={downloadPDF}>
+        <Button className={` outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex ${isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`} onClick={downloadPDF}>
               
             <div className="w-6 h-6">
                 <Image src={download} alt="download" />
@@ -283,7 +293,7 @@ const DownloadPopup = ({ onClose, expenses, type }:any) => {
               { label: 'Status', key: 'status' },
             ]}
         >
-        <Button className="cursor-pointer outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+        <Button className={` outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex ${isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
         
             <div className="w-6 h-6">
             <Image src={download} alt="download" />

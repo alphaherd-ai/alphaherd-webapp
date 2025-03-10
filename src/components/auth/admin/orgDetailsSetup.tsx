@@ -102,15 +102,19 @@ const OrgDetailsSetup = (props: any) => {
                 <div className="self-stretch flex-col justify-start items-start gap-6 flex">
                     <div className="self-stretch justify-start items-start gap-10 inline-flex">
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
-                            <div className="w-[136px] text-gray-500 text-base font-medium ">Name*</div>
+                            <div className="w-[136px] text-gray-500 text-base font-medium ">Name<span className="text-red-500">*</span></div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-start gap-2 inline-flex">
                                 <input type="text" className="text-textGrey2  text-base font-medium  h-full w-full px-2 border focus:outline-none border-solid border-borderGrey  focus:border focus:border-[#35BEB1] rounded-[5px]" id="orgName" name="orgName" value={props.data.orgName} onChange={props.handleChange} />
                             </div>
                         </div>
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
-                            <div className="w-[136px] text-gray-500 text-base font-medium ">Branch Name</div>
-                            <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-start gap-2 inline-flex">
-                                <input type="text" className="h-full w-full text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" id="branchName" name="branchName" value={props.data.branchName} onChange={props.handleChange} />
+                            <div className="w-[136px] text-gray-500 text-base font-medium">Branch Name<span className="text-red-500">*</span></div>
+                            <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
+                                <input type="text" className="text-textGrey2 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" id="branchName" 
+                                name="branchName" 
+                                value={props.data.branchName} 
+                                onChange={props.handleChange} 
+                                />
                                 {props.validationErrors.branchName && (
                                     <div className="text-[red] error">{props.validationErrors.branchName}</div>
                                 )}
@@ -119,7 +123,7 @@ const OrgDetailsSetup = (props: any) => {
                     </div>
                     <div className="self-stretch justify-start items-start gap-10 inline-flex">
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
-                            <div className="w-[136px] text-gray-500 text-base font-medium">Phone Number*</div>
+                            <div className="w-[136px] text-gray-500 text-base font-medium">Phone Number<span className="text-red-500">*</span></div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
                                 <input
                                     type="number"
@@ -153,7 +157,7 @@ const OrgDetailsSetup = (props: any) => {
                     </div>
                     <div className="self-stretch justify-start items-start gap-10 inline-flex">
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
-                            <div className="w-[136px] text-gray-500 text-base font-medium">Company Email*</div>
+                            <div className="w-[136px] text-gray-500 text-base font-medium">Company Email<span className="text-red-500">*</span></div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
                                 <input
                                     type="email"
@@ -188,23 +192,23 @@ const OrgDetailsSetup = (props: any) => {
                     </div>
                     <div className="self-stretch justify-start items-start gap-10 inline-flex">
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
-                            <div className="w-[136px] text-gray-500 text-base font-medium">GSTIN Number*</div>
+                            <div className="w-[136px] text-gray-500 text-base font-medium">GSTIN Number<span className="text-red-500">*</span></div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
-                                <input
-                                    type="text"
-                                    className="text-textGrey2 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
-                                    id="gstNo"
-                                    name="gstNo"
-                                    onChange={props.handleChange}
-                                    value={props.data.gstNo}
-                                />
+                            <input
+                                type="text"
+                                className="text-textGrey2 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
+                                id="gstNo"
+                                name="gstNo"
+                                onChange={(e) => props.handleChange({ target: { name: e.target.name, value: e.target.value.toUpperCase() } })}
+                                value={props.data.gstNo}
+                            />
                                 {props.validationErrors.gstNo && (
                                     <div className="text-[red] error">{props.validationErrors.gstNo}</div>
                                 )}
                             </div>
                         </div>
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
-                            <div className="w-[136px] text-gray-500 text-base font-medium">Pan No.*</div>
+                            <div className="w-[136px] text-gray-500 text-base font-medium">Pan No.<span className="text-red-500">*</span></div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
                                 <input
                                     type="text"
@@ -222,7 +226,7 @@ const OrgDetailsSetup = (props: any) => {
                     </div>
                     <div className="self-stretch justify-start items-start gap-10 inline-flex">
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
-                            <div className="w-[136px] text-gray-500 text-base font-medium">Business Address*</div>
+                            <div className="w-[136px] text-gray-500 text-base font-medium">Business Address<span className="text-red-500">*</span></div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
                                 <input
                                     type="text"
@@ -240,7 +244,7 @@ const OrgDetailsSetup = (props: any) => {
                     </div>
                     <div className="self-stretch justify-start items-start gap-10 inline-flex">
                         <div className="grow shrink basis-0  justify-start items-center gap-4 flex">
-                            <div className="w-[136px] text-gray-500 text-base font-medium">Select State*</div>
+                            <div className="w-[136px] text-gray-500 text-base font-medium">Select State<span className="text-red-500">*</span></div>
 
                             <Select
                                 className="text-textGrey2 text-base font-medium  w-full border-0 boxShadow-0 p-0 grow shrink basis-0"
@@ -271,7 +275,7 @@ const OrgDetailsSetup = (props: any) => {
 
                         </div>
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
-                            <div className="w-[136px] text-gray-500 text-base font-medium">Pincode*</div>
+                            <div className="w-[136px] text-gray-500 text-base font-medium">Pincode<span className="text-red-500">*</span></div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
                                 <input
                                     type="number"

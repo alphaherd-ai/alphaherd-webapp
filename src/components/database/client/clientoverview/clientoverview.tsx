@@ -6,7 +6,7 @@ import lefticon from "../../../../assets/icons/inventory/left_icon.svg"
 import addicon from "../../../../assets/icons/inventory/bar_chart.svg"
 import optionicon from "../../../../assets/icons/inventory/more_vert.svg"
 import downloadicon from "../../../../assets/icons/inventory/1. Icons-24.svg"
-
+import { FinanceCreationType } from '@prisma/client';
 import EditClientPopup from "./editClientPopup"
 
 
@@ -33,6 +33,7 @@ import Menu from '../../../../assets/icons/finance/menu.svg'
 import PatientPopup from '../../patient/newpatientpopup';
 import ConfirmationPopup from "./confirmationPopup"
 import { set } from "date-fns"
+import Link from "next/link"
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json());
 
@@ -103,7 +104,8 @@ const ClientDetails = () => {
         setEndInd(end);
         setClientTimeLine(invoiceList?.slice(start, end));
     }, [currentPageNumber, invoiceList])
-
+    
+    console.log("Client TimeLine", clientTimeLine);
     if (endInd > totalLen) setEndInd(totalLen);
 
     useEffect(() => {
@@ -125,7 +127,7 @@ const ClientDetails = () => {
             let totalAmt = 0;
             let totalIncomeByNow = 0;
             invoiceList.forEach((invoice: any) => {
-                if (invoice.status.includes("You’re owed")) {
+                if (invoice.status.includes("You owe")) {
                     const match = invoice.status.match(/[\d.]+/g); // Match both integers and floats
                     if (match) {
                         totalAmt += parseFloat(match[0]);
@@ -226,7 +228,7 @@ const ClientDetails = () => {
 
             <div className="w-full h-full  relative rounded-[20px] pr-[16px] pl-[16px] z-1">
                 <div className={`fixed inset-0 w-full h-full  bg-opacity-50 backdrop-blur-sm z-40 ${recordPaymentPopup ? 'block' : 'hidden'}`} >
-                    <RecordTransactionPopup setOpen={setOpen} formData={formData} setFormData={setFormData} clientName={client?.clientName} togglePopup={setRecordPaymentPopup} />
+                    <RecordTransactionPopup setOpen={setOpen} formData={formData} setFormData={setFormData} clientName={client?.clientName} togglePopup={setRecordPaymentPopup} toBePaid={toBePaid}/>
                 </div>
                 <div className="flex items-center justify-between">
                     <div className="flex gap-8">
@@ -483,7 +485,17 @@ const ClientDetails = () => {
                             {!clientTimeLine ? <Loading /> : clientTimeLine?.map((item: any, index: number) => (
                                 <div key={item.id} className='flex   items-center w-full  box-border py-4   bg-white border-0 border-b border-solid border-borderGrey text-gray-400 border-t-0.5  '>
                                     <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{formatDateAndTime(item.date).formattedDate}</div>
-                                    <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{item.type}</div>
+                                    <Link href={{
+                                                pathname: item.type === FinanceCreationType.Sales_Estimate ? '/finance/sales/existingsalesestimate' :
+                                                  item.type === FinanceCreationType.Sales_Invoice ? '/finance/sales/existingsales' :
+                                                    item.type === FinanceCreationType.Sales_Return ? '/finance/sales/existingsalesreturn' :
+                                                      item.type === FinanceCreationType.Purchase_Order ? '/finance/purchases/exsistingpurchaseorder' :
+                                                        item.type === FinanceCreationType.Purchase_Invoice ? '/finance/purchases/exsistinggrn' :
+                                                          item.type === FinanceCreationType.Purchase_Return ? '/finance/purchases/exsistingpurchasereturn' :
+                                                            item.type === FinanceCreationType.Expense_NonRecurring ? '/finance/expenses/exsistingnonrecurring' :
+                                                              item.type === FinanceCreationType.Expense_Recurring ? '/finance/expenses/exsistingrecurring' : "",
+                                                query: { id: item.id}
+                                              }} className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{item.type}</Link>
                                     <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{item.invoiceNo}</div>
                                     <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{item.totalQty} items</div>
                                     <div className='flex text-gray-400 text-base font-medium px-6 w-2/12'>{formatDateAndTime(item.dueDate).formattedDate}</div>

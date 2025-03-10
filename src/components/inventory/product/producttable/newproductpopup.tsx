@@ -8,7 +8,7 @@ import Check from "../../../../assets/icons/database/check.svg"
 import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { useAppSelector } from "@/lib/hooks";
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import axios from "axios";
 import Distributors from "@/app/database/distributor/page";
 
@@ -160,7 +160,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
             // Update the state with unique categories
             setCategories(uniqueCategories);
         }
-    }, [isLoading, error, fetchedProducts]);
+    }, [isLoading, error, fetchedProducts, categories]);
 
     const [taxType, settaxType] = useState<any[]>([]);
     useEffect(() => {
@@ -204,7 +204,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
             }
         }
         fetchDistributors();
-    }, []);
+    }, [appState.currentBranchId]);
 
     function handleContinue() {
         setLastStep(true);
@@ -218,8 +218,6 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
         try {
             setLoading(true);
             let selectedProviders = [formData.providers];
-
-            
 
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/create?branchId=${appState.currentBranchId}`, {
                method: 'POST',
@@ -248,11 +246,14 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                     itemName: formData.itemName,
                     providers: selectedProviders,
                 });
-                onClose();
-                window.location.reload();
-                //window.dispatchEvent(new FocusEvent('focus'));
                 
-                } else {
+                // Trigger revalidation of the products data
+                mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${appState.currentBranchId}`);
+                
+                onClose();
+                // No need for window.location.reload() as SWR will refresh the data
+                
+            } else {
                 console.error('Failed to save data:', response.statusText);
             }
         } catch (error) {
