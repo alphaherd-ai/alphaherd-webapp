@@ -86,6 +86,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             productId: data.productId,
             quantity: data.quantity,
             sellingPrice: Number(data.maxRetailPrice),
+            maxRetailPrice:Number(data.maxRetailPrice),
             taxAmount: data.gst,
             name: data.itemName,
             discount: Number(data.discountPercent) / 100,
