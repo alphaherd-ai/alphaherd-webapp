@@ -243,12 +243,13 @@ const CreateGrnTable = () => {
 
     }, [fetchedProducts])
     const handleDeleteRow = useCallback((index: number) => {
-        setItems((prevItems) => {
-            const updatedItems = [...prevItems];
+            const updatedItems = [...items];
+            console.log("updated items before deleting :", updatedItems);
             updatedItems.splice(index, 1);
-            return updatedItems;
-        });
-    }, []);
+            console.log("updated items after deleting :", updatedItems);
+            setItems(updatedItems);
+            setTableData(updatedItems);
+    }, [items]);
 
     const handleGstSelect = (selectedGst: any, index: number) => {
         const updatedItems = [...tableData];
@@ -362,7 +363,7 @@ const CreateGrnTable = () => {
         const updatedItems = [...items];
         updatedItems[index][field] = value;
         setItems(updatedItems);
-        // console.log(items)
+        console.log("items after date change :",items)
     }, [items]);
 
     const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
@@ -390,7 +391,7 @@ const CreateGrnTable = () => {
                 };
                 setItems(updatedItems);
 
-                console.log("this is the item", items)
+                // console.log("this is the item", items)
             } catch (error) {
                 console.error("Error fetching product details from API:", error);
             }
@@ -558,13 +559,14 @@ const CreateGrnTable = () => {
                                         <div className=' flex text-gray-500 text-base font-medium w-[18rem]'>Quantity<span className="text-[red] ml-1 block">*</span></div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[18rem]'>Free Quantity</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Unit Price<span className="text-[red] ml-1 block">*</span></div>
-                                        <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Subtotal</div>
+                                        <div className=' flex text-gray-500 text-base font-medium w-[12rem] justify-center'>Subtotal</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>MRP<span className="text-[red] ml-1 block">*</span></div>
-                                        <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Tax %</div>
-                                        <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Tax Amt.</div>
+                                        <div className=' flex text-gray-500 text-base font-medium w-[12rem] justify-center'>Tax %</div>
+                                        <div className=' flex text-gray-500 text-base font-medium w-[12rem] justify-center'>Tax Amt.</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Discount %</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Discount Amt.</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Location</div>
+                                        <div className=' flex text-gray-500 text-base font-medium w-1/12'></div>
 
                                     </div>
 
@@ -601,8 +603,7 @@ const CreateGrnTable = () => {
 
                                             </div>
 
-                                            <div
-                                                className="flex text-gray-500 text-base font-medium w-[15rem]"
+                                            <div className="flex text-gray-500 text-base font-medium w-[15rem]"
                                                 key={index}
                                             >
                                                 <input
@@ -712,16 +713,17 @@ const CreateGrnTable = () => {
 
                                                 />
                                             </div>
-                                            <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
+                                            <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1 justify-center'>
                                                 ₹
-                                                <input
+                                                {/* <input
                                                     type="number"
                                                     value={item.quantity * Number(item.unitPrice)}
                                                     className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                                     onChange={(e) => handleItemsDataChange(index, 'subTotal', e.target.value)}
                                                     name={`subTotal-${index + 1}`}
 
-                                                />
+                                                /> */}
+                                                {(item.quantity&&item.unitPrice)?item.quantity * Number(item.unitPrice):0}
                                             </div>
                                             <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
                                                 ₹
@@ -734,7 +736,7 @@ const CreateGrnTable = () => {
 
                                                 />
                                             </div>
-                                            <div className='w-[12rem] flex items-center text-textGrey2 text-base font-medium'>
+                                            <div className='w-[12rem] flex items-center text-textGrey2 text-base font-medium justify-center'>
                                                 {/* { id==null?(
                                         <Select
                                             className="text-textGrey2 text-base font-medium"
@@ -754,7 +756,7 @@ const CreateGrnTable = () => {
                                                 {(item.gst)?(item.gst * 100 ): 0}%
                                                 {/* )} */}
                                             </div>
-                                            <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
+                                            <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1 justify-center'>
                                                 ₹ {(item.quantity&&item.gst&&item.unitPrice)?(item.quantity * item.gst * Number(item.unitPrice)).toFixed(2) : 0}
 
                                             </div>
@@ -795,14 +797,14 @@ const CreateGrnTable = () => {
                                                 />
 
                                             </div>
-                                            <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[20px] justify-end pr-4'>
-                                                {/* <button className="border-0 bg-transparent cursor-pointer">
-                                                    <Image className='w-5 h-5' src={sellicon} alt="sell" ></Image>
-                                                </button> */}
-                                                <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
-                                                    <Image className='w-5 h-5' src={delicon} alt="delete" ></Image>
-                                                </button>
-                                            </div>
+                                            {index !== items.length - 1 ?
+                                                <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[20px] justify-center'>
+                                                    
+                                                    <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
+                                                        <Image className='w-5 h-5' src={delicon} alt="delete" ></Image>
+                                                    </button>
+                                                </div> : <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[20px] justify-center'></div>
+                                            }
                                         </div>
                                     ))}
 
