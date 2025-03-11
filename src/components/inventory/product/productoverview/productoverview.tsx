@@ -63,6 +63,11 @@ const ProductDetails = () => {
 
 
     const router = useRouter();
+    const [locations, setLocations] = useState<any[]>([]);
+
+    
+    
+
 
     const [product, setProduct] = useState<any | null>(null);
     const [editProduct, setEditProduct] = useState<any | null>(null);
@@ -83,18 +88,26 @@ const ProductDetails = () => {
     useEffect(() => {
         if (!error && !isLoading && fetchedProduct) {
             setProduct(fetchedProduct);
-            console.log("fetched Products",fetchedProduct);
+            console.log("fetched Products", fetchedProduct);
             setEditProduct(fetchedProduct);
         }
+
         if (!error && !isLoading && fetchedProductBatches) {
             console.log(fetchedProductBatches[0]);
-            const timelines = fetchedProductBatches[0].productBatches.map((batch: { inventoryTimeline: any }) => batch.inventoryTimeline);
-            const combinedTimeline = [].concat(...timelines);
-            console.log(combinedTimeline);
-            setInventoryTimeline(combinedTimeline)
-        }
 
+            const timelines = fetchedProductBatches[0].productBatches.map(
+                (batch: { inventoryTimeline: { createdAt: string }[] }) => batch.inventoryTimeline
+            );
+
+            const combinedTimeline = [].concat(...timelines).sort(
+                (a: { createdAt: string }, b: { createdAt: string }) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            );
+
+            console.log(combinedTimeline);
+            setInventoryTimeline(combinedTimeline);
+        }
     }, [fetchedProduct, fetchedProductBatches, error, isLoading]);
+
 
 
 
@@ -726,7 +739,7 @@ const ProductDetails = () => {
                             <div className='flex text-textGrey2 text-base font-medium w-[3.5%]'></div>
                         </div>
 
-                        {product?.productBatches?.filter((item:any)=> !item.isDeleted).sort((a: any, b: any) => a.id - b.id).map((item: any) => (
+                        {product?.productBatches?.filter((item: any) => !item.isDeleted).sort((a: any, b: any) => a.id - b.id).map((item: any) => (
                             <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 justify-evenly '>
                                 <div className='px-2 w-1/12  flex items-center text-borderGrey text-base font-medium'>{item.quantity} Strips</div>
                                 <div className='w-2/12  flex items-center text-borderGrey text-base font-medium'>{item.distributors[0]}</div>

@@ -36,19 +36,19 @@ const DatabaseNavbar = async () => {
     
             if (hasData) {
                 const { clients, distributors,patients } = data;
+                
             
-                const clientOptions = await clients.flatMap((item: any) =>
-                    item.patients.map((patient: any) => ({
-                        label: `${item?.clientName || ''} - ${patient.patientName || ''}(${item?.contact || ''})`,
-                        value: item,
-                    }))
-                    );
-                    console.log("clients",clients);
-                const distributorOptions =await distributors.map((item: any) => ({
+                const clientOptions =await clients.filter((item:any)=>!item?.isDeleted).map((item: any) => ({
+                    label: `${item?.clientName || ''} - ${item?.contact || ''}`,
+                    value: item,
+                }));
+                    
+                const distributorOptions =await distributors.filter((item:any)=>!item?.isDeleted).map((item: any) => ({
                     label: `${item?.distributorName || ''} - ${item?.contact || ''}`,
                     value: item,
                 }));
-                const patientOptions =await patients.map((item:any)=>({
+
+                const patientOptions =await patients.filter((item:any)=>!item?.isDeleted).map((item:any)=>({
                     label:`${item?.patientName||''} - ${item?.clients?.clientName||''}`,
                     value:item,
                 }))
@@ -56,6 +56,7 @@ const DatabaseNavbar = async () => {
                 
                 setSearchData(data);
                 console.log("combinedOptions",combinedOptions);
+                //console.log(clients);
                 setSearchOptions(combinedOptions);
             }
         }
@@ -68,9 +69,9 @@ const DatabaseNavbar = async () => {
         const item = selectedOption?.value;
         console.log("selected item",item);
         let path = '';
-        if (item?.patientId) {
+        if (item?.patientName) {
             path = `${process.env.NEXT_PUBLIC_API_BASE_PATH}/database/clients/overview?id=${item.id}`;
-        } else if (item?.clientId) {
+        } else if (item?.clientName) {
             path = `${process.env.NEXT_PUBLIC_API_BASE_PATH}/database/clients/overview?id=${item.id}`;
         } else if (item?.distributorName) {
             path = `${process.env.NEXT_PUBLIC_API_BASE_PATH}/database/distributor/overview?id=${item.id}`;

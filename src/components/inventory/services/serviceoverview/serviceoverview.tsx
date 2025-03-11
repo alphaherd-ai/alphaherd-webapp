@@ -66,6 +66,10 @@ const ServiceDetails = () => {
     const [showDeletePopup, setShowDeletePopup] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
+    const [totalSales, setTotalSales] = useState<number | null>(null);
+    const [avgCost, setAvgCost] = useState<number | null>(null);
+    const [margin, setMargin] = useState<number | null>(null);
+    const [isSameLinkProductUnderEdit, setIsSameLinkProductUnderEdit] = useState(false);
     const { fetchedServiceTimeLine, serviceLoading, serviceError } = useServiceTimeLine(id, appState.currentBranchId)
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue(event.target.value === '' ? 0 : Number(event.target.value));
@@ -73,6 +77,33 @@ const ServiceDetails = () => {
 
     useEffect(() => {
         if (!error && !isLoading && fetchedService) {
+            setTotalSales(
+                fetchedService?.items?.reduce((acc: any, e: any) => acc + Number(e.sellingPrice) * Number(e.quantity), 0) || 0
+            );
+
+            console.log(fetchedService);
+            const totalSales = fetchedService?.items?.reduce(
+                (acc: any, e: any) => acc + Number(e.sellingPrice) * Number(e.quantity),
+                0
+            ) || 0;
+
+            const totalQuantity = fetchedService?.items?.reduce(
+                (acc: any, e: any) => acc + Number(e.quantity),
+                0
+            ) || 1;
+
+            setAvgCost(totalSales / totalQuantity);
+
+            const calculateMargin = (fetchedService: any) => (
+                ((fetchedService?.items?.reduce((acc: any, e: any) => acc + Number(e.sellingPrice) * Number(e.quantity), 0) || 0) -
+                    (fetchedService?.items?.reduce((acc: any, e: any) => acc + Number(e.costPrice) * Number(e.quantity), 0) || 0)) /
+                (fetchedService?.items?.reduce((acc: any, e: any) => acc + Number(e.sellingPrice) * Number(e.quantity), 0) || 1) * 100
+            ).toFixed(2);
+
+            setMargin(Number(calculateMargin(fetchedService)));
+
+
+            console.log(fetchedService);
             setService(fetchedService);
             setEditService(fetchedService);
         }
@@ -85,19 +116,31 @@ const ServiceDetails = () => {
     );
 
     useEffect(() => {
+
         const fetchProductsAndProviders = async () => {
-            // console.log("inside fetch");
-            const productsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/branch/products?branchId=${appState.currentBranchId}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
-            let productsJson = await productsResponse?.json();
-            setProductOptions(productsJson.products.filter((product:any)=>!(product?.isDeleted)).map((product: any) => { return { label: product.itemName, value: product.id } }));
+            if (service) {
+                // console.log("inside fetch");
+                const productsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/branch/products?branchId=${appState.currentBranchId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                let productsJson = await productsResponse?.json();
+                const filteredProducts = (productsJson.products.filter((product: any) => !(product?.isDeleted)).map((product: any) => { return { label: product.itemName, value: product.id } }));
+                console.log(service);
+                const getAlreadyLinkedProductIds: any[] = [];
+                service.linkProducts.map((product: any) => {
+                    getAlreadyLinkedProductIds.push(product.value);
+                });
+                const unLinkedProducts = filteredProducts.filter((product: any) => !getAlreadyLinkedProductIds.includes(product.value));
+                setProductOptions(unLinkedProducts);
+            }
         }
         fetchProductsAndProviders();
-    }, [])
+    }, [service])
+
+
 
     const [categories, setCategories] = useState<any[]>([]);
     useEffect(() => {
@@ -143,7 +186,7 @@ const ServiceDetails = () => {
                 );
                 const results = await Promise.all(promises);
                 setProductDetails(results);
-                console.log("Product Details",productDetails);
+                console.log("Product Details", productDetails);
             } catch (error) {
                 console.error('Failed to fetch product details:', error);
             }
@@ -201,7 +244,7 @@ const ServiceDetails = () => {
                 ...(editService?.name && { name: editService?.name }),
                 ...(editService?.sacCode && { sacCode: editService?.sacCode }),
                 ...(editService?.description && { description: editService?.description }),
-                ...(editService?.sellingPrice && { sellingPrice: editService?.sellingPrice }),
+                ...(editService?.serviceCharge && { serviceCharge: editService?.serviceCharge }),
                 ...(editService?.tax && { tax: Number(editService?.tax) }),
                 ...(editService?.category && { category: editService?.category }),
                 ...(editService?.linkProducts && { linkProducts: combinedLinkProducts }),
@@ -308,8 +351,12 @@ const ServiceDetails = () => {
         menuPortal: (base: any) => ({ ...base, zIndex: 9999 })
     };
 
+    const [LinkProducterror, setLinkProductError] = useState<string | null>(null);
 
-    console.log("service",service)
+
+
+
+    console.log("service", service)
     return <>
         <div className="w-full h-full relative  rounded-[20px] pr-[16px] pl-[16px] z-1">
             <div className="w-full flex items-center justify-between">
@@ -477,12 +524,12 @@ const ServiceDetails = () => {
                                                     <input
                                                         type="number"
                                                         className="w-full outline-none border border-solid text-gray-500 border-gray-300 rounded-lg px-4 py-2 mt-1"
-                                                        value={editService?.sellingPrice || ""}
+                                                        value={editService?.serviceCharge || ""}
                                                         //placeholder={service?.sellingPrice}
                                                         onChange={(e) =>
                                                             setEditService((prev: any) => ({
                                                                 ...prev,
-                                                                sellingPrice: e.target.value,
+                                                                serviceCharge: e.target.value,
                                                             }))
                                                         }
                                                     />
@@ -541,7 +588,7 @@ const ServiceDetails = () => {
                                                             name="linkProduct"
                                                             onChange={(value) => setEditService((prev: any) => ({ ...prev, linkProducts: value }))}
                                                             styles={customStyles}
-                                                            
+
                                                         />
                                                     ) : (
                                                         <div className="text-neutral-400 text-base font-medium w-full"><Loading2 /></div>
@@ -595,19 +642,19 @@ const ServiceDetails = () => {
                 </div>
                 <div className="w-full justify-start items-start flex rounded-[10px]">
                     <div className="w-3/12 p-6 bg-white border-t border-solid border-0  border-r border-borderGrey flex-col justify-center items-start rounded-b-xl gap-4 flex ">
-                        <div className="text-textGrey2 text-[28px] font-bold ">₹{isLoading ? <Loading2 /> : service?.sellingPrice}</div>
+                        <div className="text-textGrey2 text-[28px] font-bold ">₹{isLoading ? <Loading2 /> : service?.serviceCharge}</div>
                         <div className="text-textGrey2 text-base font-medium ">Selling Price</div>
                     </div>
                     <div className="w-3/12 p-6 bg-white border-t border-solid border-0 border-r border-borderGrey flex-col justify-center items-start gap-4 flex">
-                        <div className="text-textGrey2 text-[28px] font-bold ">₹32,499</div>
+                        <div className="text-textGrey2 text-[28px] font-bold ">₹{(totalSales || 0).toFixed(2)}</div>
                         <div className="text-textGrey2 text-base font-medium ">Total Sales</div>
                     </div>
                     <div className="w-3/12 p-6 bg-white border-t border-solid border-0 border-r border-borderGrey flex-col justify-center items-start gap-4 flex">
-                        <div className="text-textGrey2 text-[28px] font-bold ">₹499</div>
+                        <div className="text-textGrey2 text-[28px] font-bold ">₹{(avgCost || 0).toFixed(2)}</div>
                         <div className="text-textGrey2 text-base font-medium ">Avg. Cost of products used</div>
                     </div>
                     <div className="w-3/12 p-6 bg-white border-t border-solid border-0 border-borderGrey flex-col justify-center items-start gap-4 flex rounded-b-xl">
-                        <div className="text-textGrey2 text-[28px] font-bold ">19%</div>
+                        <div className="text-textGrey2 text-[28px] font-bold ">{(margin || 0).toFixed(2)}%</div>
                         <div className="text-textGrey2 text-base font-medium ">Average Profit Margin</div>
                     </div>
                 </div>
