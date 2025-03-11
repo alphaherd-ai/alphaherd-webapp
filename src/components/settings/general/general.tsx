@@ -237,6 +237,9 @@ const GeneralSettings = () => {
     );
 
 
+    
+
+
 
     useEffect(() => {
         if(data && !isLoading && !error){
@@ -586,6 +589,8 @@ const GeneralSettings = () => {
     const [hoveredIndex6, setHoveredIndex6] = useState<number | null>(null);
     const [hoveredIndex7, setHoveredIndex7] = useState<number | null>(null);
 
+    //console.log(itemCategories);
+
 
     return (
         <>
@@ -799,17 +804,17 @@ const GeneralSettings = () => {
                                         <div className="w-full  max-h-[15rem] overflow-y-auto">
                                             {itemCategories.map((item: any, index: number) => (
                                                 <div key={index} className="w-full">
-                                                    {Array.isArray(item.name) && item.name.map((nameItem: string, nameIndex: number) => (
+                                                   
                                                         <div
-                                                            key={nameIndex}
+                                                            key={index}
                                                             className="flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 relative"
-                                                            onMouseEnter={() => setHoveredIndex1(nameIndex)}
+                                                            onMouseEnter={() => setHoveredIndex1(index)}
                                                             onMouseLeave={() => setHoveredIndex1(null)}
                                                         >
                                                             <div className="w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium">
-                                                                <div className="text-gray-500 text-base font-medium">{nameItem}</div>
+                                                                <div className="text-gray-500 text-base font-medium">{item.name[0]}</div>
                                                             </div>
-                                                            {hoveredIndex1 === nameIndex && (
+                                                            {hoveredIndex1 === index && (
                                                                 <div
                                                                     className="absolute right-4 h-full flex items-center cursor-pointer"
                                                                     onClick={() => deleteItemCategory(item.id)}
@@ -818,7 +823,7 @@ const GeneralSettings = () => {
                                                                 </div>
                                                             )}
                                                         </div>
-                                                    ))}
+                                                    
                                                 </div>
                                             ))}
 
@@ -847,17 +852,17 @@ const GeneralSettings = () => {
                                         <div className="w-full  max-h-[15rem] overflow-y-auto">
                                             {itemUnits.map((item: any, index: any) => (
                                                 <div key={index} className='w-full'>
-                                                    {Array.isArray(item.name) && item.name.map((nameItem: string, nameIndex: number) => (
+                                                    
                                                         <div
-                                                            key={nameIndex}
+                                                            key={index}
                                                             className="flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 relative"
-                                                            onMouseEnter={() => setHoveredIndex2(nameIndex)}
+                                                            onMouseEnter={() => setHoveredIndex2(index)}
                                                             onMouseLeave={() => setHoveredIndex2(null)}
                                                         >
                                                             <div className="w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium">
-                                                                <div className="text-gray-500 text-base font-medium">{nameItem}</div>
+                                                                <div className="text-gray-500 text-base font-medium">{item.name[0]}</div>
                                                             </div>
-                                                            {hoveredIndex2 === nameIndex && (
+                                                            {hoveredIndex2 === index && (
                                                                 <div
                                                                     className="absolute right-4 h-full flex items-center cursor-pointer"
                                                                     onClick={() => deleteItemUnit(item.id)}
@@ -867,7 +872,7 @@ const GeneralSettings = () => {
                                                             )}
                                                         </div>
 
-                                                    ))}
+
                                                 </div>
                                             ))
                                             }
@@ -898,17 +903,17 @@ const GeneralSettings = () => {
                                         <div className="w-full  max-h-[15rem] overflow-y-auto">
                                             {serviceCategory.map((item: any, index: any) => (
                                                 <div key={index} className='w-full'>
-                                                    {Array.isArray(item.name) && item.name.map((nameItem: string, nameIndex: number) => (
+                                                    
                                                         <div
-                                                            key={nameIndex}
+                                                            key={index}
                                                             className="flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 relative"
-                                                            onMouseEnter={() => setHoveredIndex3(nameIndex)}
+                                                            onMouseEnter={() => setHoveredIndex3(index)}
                                                             onMouseLeave={() => setHoveredIndex3(null)}
                                                         >
                                                             <div className="w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium">
-                                                                <div className="text-gray-500 text-base font-medium">{nameItem}</div>
+                                                                <div className="text-gray-500 text-base font-medium">{item.name[0]}</div>
                                                             </div>
-                                                            {hoveredIndex3 === nameIndex && (
+                                                            {hoveredIndex3 === index && (
                                                                 <div
                                                                     className="absolute right-4 h-full flex items-center cursor-pointer"
                                                                     onClick={() => deleteServiceCategory(item.id)}
@@ -918,7 +923,7 @@ const GeneralSettings = () => {
                                                             )}
                                                         </div>
 
-                                                    ))}
+
                                                 </div>
                                             ))
                                             }
@@ -948,18 +953,17 @@ const GeneralSettings = () => {
                                         <div className="w-full  max-h-[15rem] overflow-y-auto">
                                             {taxType.map((item: any, index: any) => (
                                                 <div key={index} className='w-full'>
-                                                    {Array.isArray(item.name) && item.name.length > 0 ? (
-                                                        item.name.map((taxValue: number, taxIndex: number) => (
+                                                    
                                                             <div
-                                                                key={taxIndex}
+                                                                key={index}
                                                                 className="flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 relative"
-                                                                onMouseEnter={() => setHoveredIndex4(taxIndex)}
+                                                                onMouseEnter={() => setHoveredIndex4(index)}
                                                                 onMouseLeave={() => setHoveredIndex4(null)}
                                                             >
                                                                 <div className="w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium">
-                                                                    <div className="text-gray-500 text-base font-medium">{`${taxValue}% GST`}</div>
+                                                                    <div className="text-gray-500 text-base font-medium">{`${item.name[0]}% GST`}</div>
                                                                 </div>
-                                                                {hoveredIndex4 === taxIndex && (
+                                                                {hoveredIndex4 === index && (
                                                                     <div
                                                                         className="absolute right-4 h-full flex items-center cursor-pointer"
                                                                         onClick={() => deleteTaxType(item.id)}
@@ -969,16 +973,7 @@ const GeneralSettings = () => {
                                                                 )}
                                                             </div>
 
-                                                        ))
-                                                    ) : (
-                                                        <div className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5'>
-                                                            <div className='w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium'>
-                                                                <div className="text-gray-500 text-base font-medium">
-                                                                    No tax types available
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    )}
+                                                    
                                                 </div>
                                             ))}
                                         </div>
@@ -1009,17 +1004,17 @@ const GeneralSettings = () => {
                                         <div className="w-full  max-h-[15rem] overflow-y-auto">
                                             {reasons.map((item: any, index: any) => (
                                                 <div key={index} className='w-full'>
-                                                    {Array.isArray(item.name) && item.name.map((nameItem: string, nameIndex: number) => (
+                                                   
                                                         <div
-                                                            key={nameIndex}
+                                                            key={index}
                                                             className="flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 relative"
-                                                            onMouseEnter={() => setHoveredIndex5(nameIndex)}
+                                                            onMouseEnter={() => setHoveredIndex5(index)}
                                                             onMouseLeave={() => setHoveredIndex5(null)}
                                                         >
                                                             <div className="w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium">
-                                                                <div className="text-gray-500 text-base font-medium">{nameItem}</div>
+                                                                <div className="text-gray-500 text-base font-medium">{item.name[0]}</div>
                                                             </div>
-                                                            {hoveredIndex5 === nameIndex && (
+                                                            {hoveredIndex5 === index && (
                                                                 <div
                                                                     className="absolute right-4 h-full flex items-center cursor-pointer"
                                                                     onClick={() => deleteReason(item.id)}
@@ -1029,7 +1024,7 @@ const GeneralSettings = () => {
                                                             )}
                                                         </div>
 
-                                                    ))}
+                                              
                                                 </div>
                                             ))
                                             }
@@ -1107,17 +1102,17 @@ const GeneralSettings = () => {
                                         <div className="w-full  max-h-[15rem] overflow-y-auto">
                                             {expenseCategory.map((item: any, index: any) => (
                                                 <div key={index} className='w-full'>
-                                                    {Array.isArray(item.name) && item.name.map((nameItem: string, nameIndex: number) => (
+                                                  
                                                         <div
-                                                            key={nameIndex}
+                                                            key={index}
                                                             className="flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 relative"
-                                                            onMouseEnter={() => setHoveredIndex7(nameIndex)}
+                                                            onMouseEnter={() => setHoveredIndex7(index)}
                                                             onMouseLeave={() => setHoveredIndex7(null)}
                                                         >
                                                             <div className="w-5/12 px-6 flex gap-2 items-center text-neutral-400 text-base font-medium">
-                                                                <div className="text-gray-500 text-base font-medium">{nameItem}</div>
+                                                                <div className="text-gray-500 text-base font-medium">{item.name[0]}</div>
                                                             </div>
-                                                            {hoveredIndex7 === nameIndex && (
+                                                            {hoveredIndex7 === index && (
                                                                 <div
                                                                     className="absolute right-4 h-full flex items-center cursor-pointer"
                                                                     onClick={() => deleteExpenseCategory(item.id)}
@@ -1127,7 +1122,7 @@ const GeneralSettings = () => {
                                                             )}
                                                         </div>
 
-                                                    ))}
+
                                                 </div>
                                             ))
                                             }

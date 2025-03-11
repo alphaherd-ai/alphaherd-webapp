@@ -190,6 +190,9 @@ const ProductDetails = () => {
     }, [appState.currentBranchId]);
 
 
+   
+
+
 
 
     const handleEditSave = async (e: React.FormEvent) => {

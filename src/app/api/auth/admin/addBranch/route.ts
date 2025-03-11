@@ -1,96 +1,105 @@
 import { NextRequest } from "next/server";
-import prismaClient from "../../../../../../prisma"; 
+import prismaClient from "../../../../../../prisma";
 
 export const POST = async (req: NextRequest) => {
-    if (req.method !== "POST") {
-        return new Response("Method not allowed", { status: 405 });
-    }
-    
-    try {
-        const url = new URL(req.url);
-        const {branchDetails,userId} = await req.json();
-        const orgId = url.searchParams.get("orgId");
-        let orgNewBranch = await prismaClient.orgBranch.create({
-        data: {
-            ...branchDetails,
-        },
-        });
+  if (req.method !== "POST") {
+    return new Response("Method not allowed", { status: 405 });
+  }
 
-        //creating finance database and other sections for it
+  try {
+    const url = new URL(req.url);
+    const { branchDetails, userId } = await req.json();
+    const orgId = url.searchParams.get("orgId");
+    let orgNewBranch = await prismaClient.orgBranch.create({
+      data: {
+        ...branchDetails,
+      },
+    });
+
+    //creating finance database and other sections for it
     const financeSection = await prismaClient.financeSection.create({
-        data: {
-          name: "Finance-" + orgNewBranch.branchName,
-          branchId: orgNewBranch.id,
-          amount: 1
-        }
-      })
-  
-      const databaseSection = await prismaClient.databaseSection.create({
-        data: {
-          name: "Database-" + orgNewBranch.branchName,
-          branchId: orgNewBranch.id,
-          type: "type`",
-        }
-      })
-  
-      const inventorySection = await prismaClient.inventorySection.create({
-        data: {
-          name: "Inventory-" + orgNewBranch.branchName,
-          branchId: orgNewBranch.id,
-          quantity: 1
-        }
-      })
-  
-      const defaultCategories = ['Pet food', 'Medicine', 'Supplements', 'Pet Accessories', 'Equipment'];
+      data: {
+        name: "Finance-" + orgNewBranch.branchName,
+        branchId: orgNewBranch.id,
+        amount: 1
+      }
+    })
+
+    const databaseSection = await prismaClient.databaseSection.create({
+      data: {
+        name: "Database-" + orgNewBranch.branchName,
+        branchId: orgNewBranch.id,
+        type: "type`",
+      }
+    })
+
+    const inventorySection = await prismaClient.inventorySection.create({
+      data: {
+        name: "Inventory-" + orgNewBranch.branchName,
+        branchId: orgNewBranch.id,
+        quantity: 1
+      }
+    })
+
+    const defaultCategories = ['Pet food', 'Medicine', 'Supplements', 'Pet Accessories', 'Equipment'];
+    for (const category of defaultCategories) {
       await prismaClient.itemCategory.create({
         data: {
-          name: defaultCategories,
+          name: [category],
           InventorySection: {
             connect: { id: inventorySection.id }
           }
         }
-      })
-  
-      const defaultUnits = ['Boxes', 'Pieces', 'Vials', 'Units', 'Strips'];
+      });
+    }
+
+    const defaultUnits = ['Boxes', 'Pieces', 'Vials', 'Units', 'Strips'];
+    for (const unit of defaultUnits) {
       await prismaClient.itemUnit.create({
         data: {
-          name: defaultUnits,
+          name: [unit],
           InventorySection: {
             connect: { id: inventorySection.id }
           }
         }
-      })
-  
-      const defaultTaxTypes = [0, 5, 12, 18, 28];
+      });
+    }
+
+    const defaultTaxTypes = [0, 5, 12, 18, 28];
+    for (const tax of defaultTaxTypes) {
       await prismaClient.taxType.create({
         data: {
-          name: defaultTaxTypes,
+          name: [tax],
           InventorySection: {
             connect: { id: inventorySection.id }
           }
         }
-      })
-  
-      const defaultServiceCategory = ['General Consultation', 'Follow Up', 'Surgery', 'Vaccination', 'Grooming', 'Boarding', 'Rescue'];
+      });
+    }
+
+    const defaultServiceCategory = ['General Consultation', 'Follow Up', 'Surgery', 'Vaccination', 'Grooming', 'Boarding', 'Rescue'];
+    for (const service of defaultServiceCategory) {
       await prismaClient.serviceCategory.create({
         data: {
-          name: defaultServiceCategory,
+          name: [service],
           InventorySection: {
             connect: { id: inventorySection.id }
           }
         }
-      })
-  
+      });
+
       const defaultExpenseCategory = ['Rent', ' Payroll', 'Utilities', 'Transport', 'Medical Equipment', 'Repair and Maintenance', 'Other'];
-      await prismaClient.expenseCategory.create({
-        data: {
-          name: defaultExpenseCategory,
-          InventorySection: {
-            connect: { id: inventorySection.id }
+      for (const expense of defaultExpenseCategory) {
+        await prismaClient.expenseCategory.create({
+          data: {
+            name: [expense],
+            InventorySection: {
+              connect: { id: inventorySection.id }
+            }
           }
-        }
-      })
-  
+        });
+      }
+
       const defaultPaymentMethod = ['Cash', 'UPI', 'Netbanking'];
       //making a loop for each method
       defaultPaymentMethod.forEach(async (method) => {
@@ -103,7 +112,7 @@ export const POST = async (req: NextRequest) => {
           }
         })
       })
-  
+
       const defaultLocationCategory = 'Main Warehouse';
       await prismaClient.location.create({
         data: {
@@ -113,17 +122,19 @@ export const POST = async (req: NextRequest) => {
           }
         }
       })
-  
+
       const defaultReason = ['Damaged', 'Expired', 'Wrong Item', 'Quality Issues'];
-      await prismaClient.reason.create({
-        data: {
-          name: defaultReason,
-          InventorySection: {
-            connect: { id: inventorySection.id }
+      for (const reason of defaultReason) {
+        await prismaClient.reason.create({
+          data: {
+            name: [reason],
+            InventorySection: {
+              connect: { id: inventorySection.id }
+            }
           }
-        }
-      })
-  
+        });
+      }
+
       const defaultSpeciesandBreed = [
         { name: 'Dog', breed: ['Unknown', 'Labrador Retriever', 'German Shepherd', 'Golden Retriever', 'Beagle', 'Pug', 'Indian Mastiff', 'Husky', 'Dashshund', 'Shi Tzu'] },
         { name: 'Cat', breed: ['Unknown', 'Domestic Short Hair', 'Bombay', 'Himalayan', 'Persian', 'Bengal', 'Siamese'] },
@@ -134,7 +145,7 @@ export const POST = async (req: NextRequest) => {
         { name: 'Horse', breed: ['Unknown'] },
         { name: 'Unknow', breed: ['Unknown'] }
       ];
-  
+
       await Promise.all(
         defaultSpeciesandBreed.map(async (speciesData) => {
           const species = await prismaClient.species.create({
@@ -151,28 +162,29 @@ export const POST = async (req: NextRequest) => {
           });
         })
       );
-  
-        await prismaClient.orgBranchUserRole.create({
-        data: {
-            orgBranchId: orgNewBranch.id,
-            userId: userId,
-            role: "Admin",
-        },
-        });
-        return new Response(JSON.stringify({ "message": "Branch added successfully" ,"orgBranch":orgNewBranch}), {
-        status: 201,
-        headers: {
-            "Content-Type": "application/json",
-        },
-        });
-    } catch (error: any) {
-        return new Response(JSON.stringify({ "message": error.message }), {
-        status: 500,
-        headers: {
-            "Content-Type": "application/json",
-        },
-        });
-    } finally {
-        await prismaClient.$disconnect();
     }
+
+    await prismaClient.orgBranchUserRole.create({
+      data: {
+        orgBranchId: orgNewBranch.id,
+        userId: userId,
+        role: "Admin",
+      },
+    });
+    return new Response(JSON.stringify({ "message": "Branch added successfully", "orgBranch": orgNewBranch }), {
+      status: 201,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  } catch (error: any) {
+    return new Response(JSON.stringify({ "message": error.message }), {
+      status: 500,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  } finally {
+    await prismaClient.$disconnect();
+  }
 }
