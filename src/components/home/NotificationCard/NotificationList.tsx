@@ -12,6 +12,7 @@ const fetcher = (...args:any[]) => fetch(...args).then(res => res.json());
 
 //@ts-ignore
 const NotificationList =  ({ notifs, isLoading }) => {
+  console.log("notif",notifs);
   const appState = useAppSelector((state) => state.app);
   const isAdmin =  appState.isCurrentOrgAdmin;
   if(isLoading) {
@@ -28,6 +29,7 @@ const NotificationList =  ({ notifs, isLoading }) => {
   const handleAction = async (notifId: number, action: string, notifData: any) => {
     try {
       if (notifData && action === 'accept') {
+        notifData.isApproved = true;
         console.log("notif data inside list ",notifData);
           if(notifData.source == Notif_Source.Inventory_Update_Approval_Request){
               const stockStatus = notifData.data.body1.stockStatus;
@@ -268,6 +270,7 @@ const NotificationList =  ({ notifs, isLoading }) => {
                   </div>
                   <div className="w-2.5 h-2.5 bg-cyan-400 rounded-full" />
                 </div>
+                {notif.isApproved===null && (
                 <div className="flex gap-5 mt-2">
                   <button
                     onClick={() => handleAction(notif.id, "accept",notif)}
@@ -282,6 +285,8 @@ const NotificationList =  ({ notifs, isLoading }) => {
                     Deny
                   </button>
                 </div>
+                )
+              }
               </div>
             </div>
           ) : (
