@@ -32,6 +32,8 @@ const ExistingsalesBottomBar = ({ existingSalesData }: any) => {
       setEmail(existingSalesData.email);
     }
   }, [existingSalesData]);
+
+
   const downloadPdf = async () => {
     // const allData = existingSalesData;
     const data = existingSalesData;
@@ -39,6 +41,8 @@ const ExistingsalesBottomBar = ({ existingSalesData }: any) => {
     // printPdf(doc);
     DownloadPdf(doc, `Invoice_${data.id}.pdf`);
   };
+
+
   const printPdf = async () => {
     const data = existingSalesData;
     const doc = await generatePdfForInvoice(data, appState, existingSalesData.items);
@@ -54,6 +58,8 @@ const ExistingsalesBottomBar = ({ existingSalesData }: any) => {
       return;
     }
     try {
+
+      
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/email`, {
         email: existingSalesData.email,
         invoiceData: existingSalesData,

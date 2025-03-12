@@ -126,11 +126,11 @@ const DownloadPopup = ({ onClose, patients, clients }: any) => {
         orgInfoY += addressLines.length * 5
         doc.setFontSize(13);
         doc.text(`Gst No. :  ${appState.currentOrg.gstNo}`, 126, startY + 12);
-        doc.text(`PAN No. :  5465465465465465`, 126, startY + 18);
+        doc.text(`PAN No. :  ${appState.currentBranch.panNo}`, 126, startY + 18);
 
         doc.text(`Email :  ${appState.currentOrg.orgEmail}`, 220, startY + 12);
         doc.text(`Phone No. :  ${appState.currentOrg.phoneNo}`, 220, startY + 18);
-        doc.text(`Website :  XYZ.com`, 220, startY + 24);
+        doc.text(`Website :  ${appState.currentBranch.website}`, 220, startY + 24);
 
         const lineY = orgInfoY + 4;
         doc.setLineWidth(0.2);
