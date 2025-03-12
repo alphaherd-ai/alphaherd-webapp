@@ -253,11 +253,30 @@ const FinancesPurchasesTable = () => {
           sendSevenDueDateNotification(notifData, purchaseID);
           return true;
         }
-      } else if(purchase.type === "Purchase_Invoice"){
-        message = `You owe ₹${purchase.totalCost} to ${purchase.distributor}. This payment is due on ${new Date(purchase.dueDate).toLocaleDateString()}.`;
-
-        if (daysLeftForDue <= 7 && daysLeftForDue >= 0 && isOlderThanOneWeek(purchase.lastDueNotif) && bool) {
-          
+      }
+      else if(purchase.type === "Purchase_Invoice"){
+        message = `You owe ₹${purchase.totalCost} to ${purchase.distributor}. This payment is due today.`;
+        if(dueDate.toDateString() === currentDate.toDateString() && purchase.lastDayNotif===null && bool){
+          const notifData = {
+            orgId: appState.currentOrgId,
+            url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/finance/purchases/all?type=all`,
+            message: message,
+            data: {
+              purchaseId: purchase.id,
+              invoiceNo: purchase.invoiceNo,
+              dueDate: purchase.dueDate,
+              distributor: purchase.distributor,
+              totalCost: purchase.totalCost,
+              status: purchase.status,
+            },
+            source: Notif_Source.Purchase_Order_Due,
+          };
+    
+          sendLastDueDateNotification(notifData, purchaseID);
+          return true; 
+        }
+        else if (daysLeftForDue <= 7 && daysLeftForDue >= 0 && isOlderThanOneWeek(purchase.lastSevenNotif) && bool) {
+          message = `You owe ₹${purchase.totalCost} to ${purchase.distributor}. This payment is due on ${new Date(purchase.dueDate).toLocaleDateString()}.`
           const notifData = {
             orgId: appState.currentOrgId,
             url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/finance/purchases/all?type=all`,
@@ -275,13 +294,10 @@ const FinancesPurchasesTable = () => {
     
           sendDueDateNotification(notifData, purchaseID);
           return true; 
-        } else if (daysLeftForDue < 0) {
-          return false; 
-        } else {
-          return false; 
         }
       }
-    });
+    }
+    );
     
 
 

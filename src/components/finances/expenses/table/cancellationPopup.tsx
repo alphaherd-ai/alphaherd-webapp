@@ -23,9 +23,8 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ setShowConfirmati
 
     const [loading, setLoading] = useState(false);
 
-
+    const isApproved = appState.isCurrentOrgAdmin;
     const handleCancel = async () => {
-        const isApproved = appState.isCurrentOrgAdmin;
         //console.log("isApproved",isApproved);
 
         try {
@@ -58,6 +57,7 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ setShowConfirmati
                   };
             
                   await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData);
+                  setShowConfirmation(false);
                   console.log("Notification sent for approval:", notifData);
             }
         }
@@ -91,7 +91,7 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ setShowConfirmati
                         {loading ? <Loading2 /> :
                             <>
                                 <Image src={checkMark} alt="" />
-                                Cancel
+                                {isApproved? "Cancel":"Send Approval Request"}
                             </>
                         }
                     </button>

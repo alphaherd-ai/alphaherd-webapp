@@ -159,6 +159,7 @@ model Notifications {
   source    Notif_Source
   isRead    Boolean      @default(false)
   createdAt DateTime?    @default(now())
+  isApproved Boolean?
 
   @@index([userId, orgId])
 }
