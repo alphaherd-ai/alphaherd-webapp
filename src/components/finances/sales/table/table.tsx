@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState, useCallback } from 'react'
 import FinancesSalesTableBottombar from './bottombar'
 
 import FinancesSalesTableHeader from './header'
@@ -39,10 +39,7 @@ const FinancesSalesTable = () => {
   const endDate = useMemo(() => urlSearchParams.get('endDate') ? new Date(urlSearchParams.get('endDate')!) : null, [urlSearchParams]);
   const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
   const selectedStatus = useMemo(() => urlSearchParams.getAll('selectedStatus'), [urlSearchParams]);
-  //const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`, fetcher, {revalidateOnFocus: true})
 
-
-  //Paginaton
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
   const [startInd, setStartInd] = useState(0);
   const [endInd, setEndInd] = useState(0);
@@ -51,6 +48,60 @@ const FinancesSalesTable = () => {
   const [data, setData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const TOTAL_VALUES_PER_PAGE = 50;
+
+  const getAllFinanceSales = async () => {
+    try {
+      setIsLoading(true);
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`);
+      if (res.data) {
+        setData(res.data);
+        let filteredData = res.data?.filter((sale: any) => {
+          if (currentUrl.get('type') === 'all') {
+            return true;
+          } else {
+            return sale.type === currentUrl.get('type');
+          }
+        });
+
+        if (startDate || endDate) {
+          filteredData = filteredData.filter((item: any) => {
+            const itemDate = new Date(item.date);
+            if (startDate && itemDate < startDate) return false;
+            if (endDate && itemDate > endDate) return false;
+            return true;
+          });
+        }
+
+        if (selectedParties.length > 0) {
+          filteredData = filteredData.filter((item: any) =>
+            selectedParties.includes(item.customer)
+          );
+        }
+
+        if (selectedStatus.length > 0) {
+          filteredData = filteredData.filter((item: any) =>
+            selectedStatus.some((status) => item.status.startsWith(status)));
+        }
+
+        setTotalLen(filteredData.length);
+        setTableData(filteredData);
+        setSales(filteredData?.slice(0, TOTAL_VALUES_PER_PAGE));
+      }
+    } catch (error) {
+      console.error('Error fetching sales data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRefresh = useCallback(() => {
+    getAllFinanceSales();
+  }, [currentUrl, startDate, endDate, selectedParties, selectedStatus, appState.currentBranchId]);
+
+  useEffect(() => {
+    getAllFinanceSales();
+  }, [startDate, endDate, selectedParties, selectedStatus, currentUrl.toString()]);
+
   const goOnPrevPage = () => {
     if (currentPageNumber === 1) return;
     setCurrentPageNumber((prev) => prev - 1);
@@ -66,55 +117,6 @@ const FinancesSalesTable = () => {
     setEndInd(end);
     setSales(tableData.slice(start, end));
   }, [currentPageNumber])
-
-
-  useEffect(() => {
-
-
-    const getAllFinanceSales = async () => {
-      try {
-        setIsLoading(true);
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/getAll?branchId=${appState.currentBranchId}`);
-        if (res.data) {
-          setData(res.data);
-          let filteredData = res.data?.filter((sale: any) => {
-            if (currentUrl.get('type') === 'all') {
-              return true;
-            } else {
-              return sale.type === currentUrl.get('type');
-            }
-          })
-          if (startDate || endDate) {
-            filteredData = filteredData.filter((item: any) => {
-              const itemDate = new Date(item.date);
-              // console.log(itemDate)
-              if (startDate && itemDate < startDate) return false;
-              if (endDate && itemDate > endDate) return false;
-              return true;
-            });
-          }
-          if (selectedParties.length > 0) {
-            filteredData = filteredData.filter((item: any) =>
-              selectedParties.includes(item.customer)
-            );
-          }
-          if (selectedStatus.length > 0) {
-            filteredData = filteredData.filter((item: any) =>
-              selectedStatus.some((status) => item.status.startsWith(status)))
-          }
-          //console.log(filteredData.length);
-          setTotalLen(filteredData.length);
-          setTableData(filteredData)
-          setSales(filteredData?.slice(0, TOTAL_VALUES_PER_PAGE));
-        }
-      } catch (error) {
-        console.log(error)
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    getAllFinanceSales();
-  }, [startDate, endDate, selectedParties, selectedStatus, currentUrl.toString()])
 
 
   const [invoiceCount, setInvoiceCount] = useState(0);
@@ -217,7 +219,11 @@ const FinancesSalesTable = () => {
       </div>
 
       <FinancesSalesTableItem
-        onCountsChange={handleCountsChange} sales={sales} data={data} isLoading={isLoading}
+        onCountsChange={handleCountsChange} 
+        sales={sales} 
+        data={data} 
+        isLoading={isLoading}
+        onRefresh={handleRefresh}
       />
       <FinancesSalesTableBottombar
         goOnPrevPage={goOnPrevPage}
