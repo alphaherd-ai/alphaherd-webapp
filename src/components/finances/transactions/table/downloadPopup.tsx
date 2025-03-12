@@ -36,11 +36,14 @@ const DownloadPopup = ({ onClose, transactions, type }: any) => {
     setSelectedOption(option);
   };
 
+  
+
   const handleFilter = (start: any, end: any) => {
     const filteredData = transactions.filter((item: any) => {
       const date = new Date(item.date);
-      return date >= start && date <= end;
+      return date >= start && date <= end && item.moneyChange !== 'Cancelled';
     });
+    //console.log(filteredData);
     setData(filteredData);
   };
 
@@ -111,7 +114,7 @@ const DownloadPopup = ({ onClose, transactions, type }: any) => {
       const noOfTransactions = data.length;
 
       data.forEach((item: any) => {
-        if (item?.status !== 'Cancelled') {
+        if (item?.moneyChange !== 'Cancelled') {
           if (modeCounts[item.mode]) {
             modeCounts[item.mode]++;
           } else {
@@ -128,7 +131,7 @@ const DownloadPopup = ({ onClose, transactions, type }: any) => {
       });
 
       data.forEach((item: any) => {
-        if (item.status !== 'Cancelled') {
+        if (item.moneyChange !== 'Cancelled') {
           if (item.moneyChange === 'In' || item.moneyChange === 'Out') {
             const transactionData = [
               format(new Date(item.date), 'dd-MM-yyyy'),

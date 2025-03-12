@@ -203,6 +203,8 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, tr
         menuPortal: (base: any) => ({ ...base, zIndex: 9999 })
     };
 
+    
+
 
 
     const isDisabled = !(id === null ? headerdata?.customer?.label : otherData.customer) || !(formData.amountPaid) || !selectedMode

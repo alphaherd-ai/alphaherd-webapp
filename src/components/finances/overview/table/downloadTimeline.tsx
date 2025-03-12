@@ -17,11 +17,14 @@ import formatDateAndTime from '@/utils/formateDateTime';
 
 const DownloadPopup = ({ onClose, timeline }: any) => {
 
+
+
   const appState = useAppSelector((state) => state.app)
   const [data, setData] = useState(timeline);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [selectedOption, setSelectedOption] = useState('Custom');
+  
 
   const handleOptionClick = (option: any) => {
     setSelectedOption(option);

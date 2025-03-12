@@ -40,6 +40,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
     const { data:serviceData, error:serviceError, isLoading:serviceLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true })
     const [taxType, settaxType] = useState<any[]>([]);
     const [serviceList,setServiceList]=useState<any[]>([]);
+
+    
     useEffect(() => {
         const fetchTax = async()=>{
             try{
@@ -272,6 +274,19 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
         menuPortal: (base: any) => ({ ...base, zIndex: 9999 })
     };
 
+    const numberInputOnWheelPreventChange = (e:any) => {
+        // Prevent the input value change
+        e.target.blur()
+      
+        // Prevent the page/container scrolling
+        e.stopPropagation()
+      
+        // Refocus immediately, on the next tick (after the current function is done)
+        setTimeout(() => {
+          e.target.focus()
+        }, 0)
+      }
+
 
 
     return <>
@@ -350,7 +365,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }: any) => {
                         <div className="flex gap-[52px] items-center">
                             <div className="text-gray-500 text-base font-medium ">Selling Price <span className="text-red-500">*</span></div>
 
-                            <input className="w-[157px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="number" name="serviceCharge" onChange={(e) => handleChange("serviceCharge", e.target.value)} />
+                            <input  className="w-[157px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-[#A2A3A3] rounded-[5px] focus:border focus:border-[#35BEB1]" type="number" onWheel={numberInputOnWheelPreventChange}  name="serviceCharge" onChange={(e:any) => handleChange("serviceCharge", e.target.value)} />
                             {serviceCostError && (
                                 <div className="text-red-500 text-sm mt-1">{serviceCostError}</div>
                             )}
