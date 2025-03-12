@@ -226,20 +226,14 @@ const ServiceDetails = () => {
 
     const handleEditSave = async (e: React.FormEvent) => {
         e.preventDefault();
-        //console.log("the service is: ", service);
         try {
             setIsUpdating(true);
-            const serviceLinkProducts = Array.isArray(service?.linkProducts)
-                ? service.linkProducts
-                : JSON.parse(service?.linkProducts || "[]");
-
-            const editProductLinkProducts = Array.isArray(editService?.linkProducts)
+    
+            // Use only the edited linkProducts if available; otherwise, keep the existing ones
+            const linkProducts = Array.isArray(editService?.linkProducts)
                 ? editService.linkProducts
-                : JSON.parse(editService?.linkProducts || "[]");
-
-            const combinedLinkProducts = [...serviceLinkProducts, ...editProductLinkProducts];
-            //console.log("Payload being sent: ", JSON.stringify(service));
-            //console.log("API Endpoint: ", `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/${id}?branchId=${appState.currentBranchId}`);
+                : JSON.parse(service?.linkProducts || "[]");
+    
             const data = {
                 ...(editService?.name && { name: editService?.name }),
                 ...(editService?.sacCode && { sacCode: editService?.sacCode }),
@@ -247,10 +241,9 @@ const ServiceDetails = () => {
                 ...(editService?.serviceCharge && { serviceCharge: editService?.serviceCharge }),
                 ...(editService?.tax && { tax: Number(editService?.tax) }),
                 ...(editService?.category && { category: editService?.category }),
-                ...(editService?.linkProducts && { linkProducts: combinedLinkProducts }),
-
-            }
-            //console.log(data);
+                ...(linkProducts.length > 0 && { linkProducts }), // Only include if not empty
+            };
+    
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/${id}?branchId=${appState.currentBranchId}`,
                 {
@@ -261,26 +254,23 @@ const ServiceDetails = () => {
                     body: JSON.stringify(data),
                 }
             );
-
-            //console.log("The response created is : ", response);
-
+    
             if (response.ok) {
                 alert("Service updated successfully!");
                 setShowEditPopup(false);
-                //router.push('/inventory/services/timeline'); // Adjust the path as needed
+                //router.push('/inventory/services/timeline');
             } else {
                 const errorResponse = await response.json();
-                //console.error("Error response body: ", errorResponse);
                 alert("Failed to update service!");
             }
         } catch (err) {
             console.error(err);
             alert("An error occurred while updating!");
-        }
-        finally {
+        } finally {
             setIsUpdating(false);
         }
     };
+    
 
 
     const handleDelete = async () => {
@@ -685,7 +675,7 @@ const ServiceDetails = () => {
                         <div className="w-full flex gap-2 items-center p-6 h-3/12">
                             <div className="text-textGrey2 text-base font-medium ">Tax Rate:</div>
                             <div className="px-2 py-1.5 bg-gray-100 rounded-[5px] justify-center items-center gap-2 flex">
-                                <div className="text-textGrey2 text-base font-medium ">{isLoading ? <Loading2 /> : service?.tax * 100} %</div>
+                                <div className="text-textGrey2 text-base font-medium ">{isLoading ? <Loading2 /> : service?.tax} %</div>
                             </div>
                         </div>
                     </div>
