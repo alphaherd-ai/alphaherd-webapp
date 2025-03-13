@@ -10,11 +10,12 @@ import { Notif_Source } from "@prisma/client";
 interface CancellationPopupProps {
     setShowConfirmation: any;
     salesId: number;
+    onCancellationSuccess?: () => void;
 }
 
 
 
-const CancellationPopup: React.FC<CancellationPopupProps> = ({ setShowConfirmation, salesId }) => {
+const CancellationPopup: React.FC<CancellationPopupProps> = ({ setShowConfirmation, salesId, onCancellationSuccess }) => {
 
     const appState = useAppSelector((state) => state.app);
     console.log(salesId);
@@ -39,6 +40,7 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ setShowConfirmati
                 )
 
                 if (res.status === 201) {
+                    onCancellationSuccess?.();
                     setShowConfirmation(false);
                 }
             }
@@ -57,11 +59,12 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ setShowConfirmati
             
                   await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData);
                   console.log("Notification sent for approval:", notifData);
+                  setShowConfirmation(false);
                 }
             
             }
         catch (err) {
-            console.log(err);
+            console.error("Error cancelling sale:", err);
         }
         finally {
             setLoading(false);

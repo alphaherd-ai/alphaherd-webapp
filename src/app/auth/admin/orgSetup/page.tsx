@@ -331,7 +331,7 @@ const OrgSetup = () => {
               {
                 activeTab === formElements.length - 1 ? <button className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0 cursor-pointer" onClick={formSubmit} disabled={isSaving}>
                   <div className={`h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                    <img src={createAccountLogo?.src} alt=""></img>
+                    <Image src={createAccountLogo} alt="Create Account Logo" width={24} height={24} />
                     <div className="text-white text-sm font-bold cursor-pointer ">
                       {isSaving ? <Loading2 /> : "Create Account"}
                     </div>

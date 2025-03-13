@@ -1,11 +1,8 @@
 'use client'
 import React,{useState} from 'react'
-import InventoryServicesTableBottombar from './bottombar'
-import InventoryProductTableBottombar from './bottombar'
 
-import InventoryProductTableHeader from './header'
+import InventoryProductTableHeader from '../../product/producttable/header'
 import ServicesTimelineItem from './timelineitems'
-import ProductTimelineItem from './timelineitems'
 
 
 

@@ -264,63 +264,71 @@ const CreateGrnTable = () => {
         setItems([...items, {}]);
     }, [items]);
 
-    // useEffect(() => {
-    //     items.push({
-    //         productId: null,
-    //         serviceId: null,
-    //         itemName: "",
-    //     });
-    //     setItems(items);
-    // }, [])
+    useEffect(() => {
+        items.push({
+            productId: null,
+            itemName: "",
+            quantity: 0, // Set default quantity to 0
+        });
+        setItems(items);
+    }, [])
 
 
-    const handleQuantityDecClick = (itemId: any) => {
-        setItems((prevItems: any) =>
-            prevItems.map((item: any) => {
-                if (item.productId === itemId && item.quantity >= 1) {
-                    const newQuantity = item.quantity - 1;
-                    const updatedDiscountAmt = (item.unitPrice * newQuantity * item.discountPercent) / 100 || 0;
-                    return { ...item, quantity: newQuantity, discountAmount: updatedDiscountAmt };
-                }
-
-                return item;
-            })
-        );
+    const handleQuantityDecClick = (index: number) => {
+        setItems((prevItems: any) => {
+            const updatedItems = [...prevItems];
+            if (updatedItems[index] && updatedItems[index].quantity >= 1) {
+                const newQuantity = updatedItems[index].quantity - 1;
+                const updatedDiscountAmt = (updatedItems[index].unitPrice * newQuantity * updatedItems[index].discountPercent) / 100 || 0;
+                updatedItems[index] = { 
+                    ...updatedItems[index], 
+                    quantity: newQuantity, 
+                    discountAmount: updatedDiscountAmt 
+                };
+            }
+            return updatedItems;
+        });
     };
 
-    const handleQuantityIncClick = (itemId: any) => {
-        setItems((prevItems: any) =>
-            prevItems.map((item: any) => {
-                if (item.productId === itemId && item.quantity >= 0) {
-                    const newQuantity = item.quantity + 1;
-                    const updatedDiscountAmt = (item.unitPrice * newQuantity * item.discountPercent) / 100 || 0;
-                    return { ...item, quantity: newQuantity, discountAmount: updatedDiscountAmt };
-                }
-
-                return item;
-            })
-        );
+    const handleQuantityIncClick = (index: number) => {
+        setItems((prevItems: any) => {
+            const updatedItems = [...prevItems];
+            if (updatedItems[index] && updatedItems[index].quantity >= 0) {
+                const newQuantity = updatedItems[index].quantity + 1;
+                const updatedDiscountAmt = (updatedItems[index].unitPrice * newQuantity * updatedItems[index].discountPercent) / 100 || 0;
+                updatedItems[index] = { 
+                    ...updatedItems[index], 
+                    quantity: newQuantity, 
+                    discountAmount: updatedDiscountAmt 
+                };
+            }
+            return updatedItems;
+        });
     };
-    const handleFreeQuantityDecClick = (itemId: any) => {
-        setItems((prevItems: any) =>
-            prevItems.map((item: any) => {
-                if (item.id === itemId && item.freeQuantity > 1) {
-                    return { ...item, freeQuantity: item.freeQuantity - 1 };
-                }
-                return item;
-            })
-        );
+    const handleFreeQuantityDecClick = (index: number) => {
+        setItems((prevItems: any) => {
+            const updatedItems = [...prevItems];
+            if (updatedItems[index] && updatedItems[index].freeQuantity > 0) {
+                updatedItems[index] = { 
+                    ...updatedItems[index], 
+                    freeQuantity: updatedItems[index].freeQuantity - 1 
+                };
+            }
+            return updatedItems;
+        });
     };
 
-    const handleFreeQuantityIncClick = (itemId: any) => {
-        setItems((prevItems: any) =>
-            prevItems.map((item: any) => {
-                if (item.id === itemId) {
-                    return { ...item, freeQuantity: item.freeQuantity + 1 };
-                }
-                return item;
-            })
-        );
+    const handleFreeQuantityIncClick = (index: number) => {
+        setItems((prevItems: any) => {
+            const updatedItems = [...prevItems];
+            if (updatedItems[index]) {
+                updatedItems[index] = { 
+                    ...updatedItems[index], 
+                    freeQuantity: (updatedItems[index].freeQuantity || 0) + 1 
+                };
+            }
+            return updatedItems;
+        });
     };
     const handleDiscountSelect = (selectedDiscount: number, index: number) => {
         const updatedItems = [...tableData];
@@ -374,6 +382,7 @@ const CreateGrnTable = () => {
                     productId: null,
                     serviceId: null,
                     itemName: "",
+                    quantity: 0, // Set default quantity to 0 for new items
                 });
                 setItems(items);
             }
@@ -384,7 +393,7 @@ const CreateGrnTable = () => {
                 updatedItems[index] = {
                     ...updatedItems[index],
                     defaultUnit: selectedProduct?.value?.defaultUnit,
-                    quantity: data.value.quantity,
+                    quantity: 0, // Set quantity to 0 instead of data.value.quantity
                     productId: selectedProduct.value.id,
                     itemName: data.value.itemName,
                     gst: data.value.tax
@@ -663,7 +672,7 @@ const CreateGrnTable = () => {
 
                                             <div className=' flex text-textGrey2 text-base font-medium w-[18rem] items-center gap-2'>
                                                 <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
-                                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.productId)}>
+                                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(index)}>
                                                         <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
                                                     </button>
                                                     <input
@@ -675,7 +684,7 @@ const CreateGrnTable = () => {
                                                     />
 
                                                     {/* {item.quantity} */}
-                                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.productId)}>
+                                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(index)}>
                                                         <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                                     </button>{item?.defaultUnit}
                                                 </div>
@@ -683,7 +692,7 @@ const CreateGrnTable = () => {
                                             </div>
                                             <div className=' flex text-textGrey2 text-base font-medium w-[18rem] items-center gap-2'>
                                                 <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
-                                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleFreeQuantityDecClick(item.productId)}>
+                                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleFreeQuantityDecClick(index)}>
                                                         <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
                                                     </button>
                                                     <input
@@ -695,7 +704,7 @@ const CreateGrnTable = () => {
                                                     />
 
                                                     {/* {item.quantity} */}
-                                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleFreeQuantityIncClick(item.productId)}>
+                                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleFreeQuantityIncClick(index)}>
                                                         <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                                     </button>
                                                 </div>
