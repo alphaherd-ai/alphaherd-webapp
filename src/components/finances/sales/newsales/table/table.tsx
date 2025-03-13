@@ -693,111 +693,59 @@ const NewsalesTable = () => {
 
                                     </div>
                                     <div className='w-[12rem] flex items-center text-neutral-400 text-base font-medium'>
-                                        {id === null ? (
-                                            <Select
-                                                className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
-                                                classNamePrefix="select"
-                                                value={
-                                                    tableData.length === 0
-                                                        ? null // When tableData is empty, set value to null
-                                                        : products.concat(services).find(
-                                                            (prodOrServ) =>
-                                                                prodOrServ.value.id === item.productId ||
-                                                                prodOrServ.value.id === item.serviceId
-                                                        ) || null
-                                                }
-                                                isClearable={false}
-                                                isSearchable={true}
-                                                name="itemName"
-                                                options={[...products, ...services]}
-                                                onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
-                                                styles={customStyles}
-                                            />) : (
-                                            item.itemName ? item.itemName : <Select
-                                                className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
-                                                classNamePrefix="select"
-                                                value={
-                                                    tableData.length === 0
-                                                        ? null // When tableData is empty, set value to null
-                                                        : products.concat(services).find(
-                                                            (prodOrServ) =>
-                                                                prodOrServ.value.id === item.productId ||
-                                                                prodOrServ.value.id === item.serviceId
-                                                        ) || null
-                                                }
-                                                isClearable={false}
-                                                isSearchable={true}
-                                                name="itemName"
-                                                options={[...products, ...services]}
-                                                onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
-                                                styles={customStyles}
-                                            />
-
-                                        )}
+                                        <Select
+                                            className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
+                                            classNamePrefix="select"
+                                            value={
+                                                tableData.length === 0
+                                                    ? null
+                                                    : products.concat(services).find(
+                                                        (prodOrServ) =>
+                                                            prodOrServ.value.id === item.productId ||
+                                                            prodOrServ.value.id === item.serviceId
+                                                    ) || null
+                                            }
+                                            isClearable={false}
+                                            isSearchable={true}
+                                            name="itemName"
+                                            options={[...products, ...services]}
+                                            onChange={(selectedProduct: any) => handleProductSelect(selectedProduct, index)}
+                                            styles={customStyles}
+                                        />
                                     </div>
                                     <div className='w-[8rem] flex-col items-center text-neutral-400 text-base font-medium'>
                                         {item.itemType === 'product' && (
-                                            id === null ? (
-
-                                                <Select
-                                                    className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
-                                                    classNamePrefix="select"
-                                                    value={batches.find((prod) => prod.value.id === item.id)}
-                                                    isClearable={false}
-                                                    isSearchable={true}
-                                                    name={`batchNumber=${index}`}
-                                                    options={filteredBatches[index]}
-                                                    onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
-                                                    styles={customStyles}
-                                                />
-                                            ) : (
-                                                item.batchNumber ? item.batchNumber : <Select
-                                                    className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
-                                                    classNamePrefix="select"
-                                                    value={filteredBatches[index].find((prod) => prod.value.id === item.id)}
-                                                    isClearable={false}
-                                                    isSearchable={true}
-                                                    name={`batchNumber=${index}`}
-                                                    options={filteredBatches[index]}
-                                                    onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
-                                                    styles={customStyles}
-                                                />
-                                            )
+                                            <Select
+                                                className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
+                                                classNamePrefix="select"
+                                                value={batches.find((prod) => prod.value.id === item.id)}
+                                                isClearable={false}
+                                                isSearchable={true}
+                                                name={`batchNumber=${index}`}
+                                                options={filteredBatches[index]}
+                                                onChange={(selectedProduct: any) => handleBatchSelect(selectedProduct, index)}
+                                                styles={customStyles}
+                                            />
                                         )}
 
                                         {item.itemType === 'service' && (
-                                            id === null ? (
-
-                                                <Select
-                                                    className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
-                                                    classNamePrefix="select"
-                                                    value={filteredProviders.find((prod) => prod.value.id === item.id)}
-                                                    isClearable={false}
-                                                    isSearchable={true}
-                                                    name={`providerNumber=${index}`}
-                                                    options={filteredProviders}
-                                                    onChange={(selectedProduct: any) => handleProviderSelect(selectedProduct, index)}
-                                                    styles={customStyles}
-                                                />
-                                            ) : (
-                                                item.provider ? item.provider :
-                                                    <Select
-                                                        className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
-                                                        classNamePrefix="select"
-                                                        value={filteredProviders.find((prod) => prod.value.id === item.id)}
-                                                        isClearable={false}
-                                                        isSearchable={true}
-                                                        name={`providerNumber=${index}`}
-                                                        options={filteredProviders}
-                                                        onChange={(selectedProduct: any) => handleProviderSelect(selectedProduct, index)}
-                                                        styles={customStyles}
-                                                    />
-                                            )
+                                            <Select
+                                                className="text-gray-500 text-base font-medium  w-[90%] border-0 boxShadow-0"
+                                                classNamePrefix="select"
+                                                value={filteredProviders.find((prod) => prod.value === item.provider)}
+                                                isClearable={false}
+                                                isSearchable={true}
+                                                name={`providerNumber=${index}`}
+                                                options={filteredProviders}
+                                                onChange={(selectedProduct: any) => handleProviderSelect(selectedProduct, index)}
+                                                styles={customStyles}
+                                            />
                                         )}
 
                                         {item.expiry && formatDateAndTime(item.expiry).formattedDate && (
                                             <div className="text-textGrey2 text-[13px] font-medium  px-2">{formatDateAndTime(item.expiry).formattedDate}</div>
-                                        )}                                </div>
+                                        )}
+                                    </div>
                                     <div className='w-[7rem] flex items-center text-neutral-400 text-base font-medium'>
                                         ₹{item.sellingPrice || 0}
                                         {/* <Select
