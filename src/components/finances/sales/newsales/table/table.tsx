@@ -137,12 +137,14 @@ const NewsalesTable = () => {
     useEffect(() => {
         if (!isEstimateDataLoading && estimateData && !isEstimateDataError) {
             const { items, ...otherData } = estimateData;
-            setOtherData(otherData);
+            // Remove payment-related data before setting other data
+            const { recordTransaction, status, ...relevantData } = otherData;
+            setOtherData(relevantData);
             const shallowDataCopy = [...items];
             const itemData = shallowDataCopy.map((item: any) => ({
                 itemType: item.itemType,
                 productId: item.itemType === "product" ? item?.productBatch?.productId : null,
-                serviceId: item.itemType === "product" ? null : item.serviceId,
+                serviceId: item.itemType === 'product' ? null : item.serviceId,
                 itemName: item.name,
                 quantity: item.quantity,
                 defaultUnit: item.itemType === 'product' ? item.products.defaultUnit : "",
@@ -156,7 +158,7 @@ const NewsalesTable = () => {
             setItems((prevItems: any) => {
                 const combinedItems = [...itemData, ...prevItems];
     
-               
+                // Filter out duplicate items
                 const uniqueItems = combinedItems.filter(
                     (item, index, self) =>
                         index === self.findIndex((i) => i.id === item.id)
@@ -638,7 +640,7 @@ const NewsalesTable = () => {
 
                     </div>
                     {/* <div className='bg-[#E7F5EE] rounded-md px-2 py-2' >
-                        <span className="text-[#0F9D58]  text-sm font-medium ">You’re owed: </span>
+                        <span className="text-[#0F9D58]  text-sm font-medium ">You're owed: </span>
                         <span className="text-[#0F9D58] text-sm font-bold "> ₹ 2,124</span>
                     </div> */}
 
