@@ -110,6 +110,7 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ transaction, setS
               };
               
               await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData);
+              setShowConfirmation(false);
               console.log("Notification sent for approval:", notifData);
         }
     }

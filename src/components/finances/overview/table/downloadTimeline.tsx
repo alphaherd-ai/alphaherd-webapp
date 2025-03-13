@@ -17,11 +17,14 @@ import formatDateAndTime from '@/utils/formateDateTime';
 
 const DownloadPopup = ({ onClose, timeline }: any) => {
 
+
+
   const appState = useAppSelector((state) => state.app)
   const [data, setData] = useState(timeline);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [selectedOption, setSelectedOption] = useState('Custom');
+  
 
   const handleOptionClick = (option: any) => {
     setSelectedOption(option);
@@ -141,10 +144,10 @@ const DownloadPopup = ({ onClose, timeline }: any) => {
       // Contact Details
       const details = [
         { label: "GST No.", value: appState.currentOrg.gstNo, x: 126, y: 12 },
-        { label: "PAN No.", value: "5465465465465465", x: 126, y: 18 },
+        { label: "PAN No.", value: appState.currentBranch.panNo, x: 126, y: 18 },
         { label: "Email", value: appState.currentOrg.orgEmail, x: 220, y: 12 },
         { label: "Phone No.", value: appState.currentOrg.phoneNo, x: 220, y: 18 },
-        { label: "Website", value: "XYZ.com", x: 220, y: 24 },
+        { label: "Website", value: appState.currentBranch.website, x: 220, y: 24 },
       ];
       details.forEach(({ label, value, x, y }) => doc.setFontSize(13).text(`${label} : ${value}`, x, y));
 

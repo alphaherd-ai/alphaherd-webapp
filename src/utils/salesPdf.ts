@@ -95,7 +95,7 @@ export function generatePdfForInvoice(data: any, appState: any, items: any): Pro
 
       // Add header
       // Adjust y position to avoid overlap with image
-      addText(appState.currentBranch?.org.orgName!, 55, y, 20, 'center', 'bold');
+      addText(appState.currentOrg?.org?.orgName!, 55, y, 20, 'center', 'bold');
       y += 8;
       addText(`${appState.currentBranch?.branchName}`, 55, y, 11, 'center');
       y += 5;

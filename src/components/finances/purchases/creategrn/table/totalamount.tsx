@@ -160,10 +160,16 @@ const CreateGrnTotalAmount = ({ orderData }: any) => {
         setDate(date);
         setTotalAmountData((prevData) => ({
             ...prevData,
-            lastDateOfReturn: date
+            returnLastDate: date
         }))
     }
-
+    useEffect(() => {
+        // by default last date should be todays date
+        setTotalAmountData((prevData) => ({
+            ...prevData,
+            returnLastDate: new Date()
+        }));
+    }, [])
     // const updateGrandTotal = () => {
     //     const discountedAmount = (totalAmount - totalAmount * overAllDiscount)||0;
     //     const shippingValue = parseFloat(shipping) || 0;

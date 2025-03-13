@@ -22,52 +22,6 @@ const AddBranchPopup = ({ onClose }:any) => {
     };
     const router = useRouter();
     const handleAddBranch = async () => {
-        try{
-            if (branchNameInput.trim() !== '') {
-                // let resp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/admin/branch?orgId=${appState.currentOrgId}`, {
-                //     method: 'POST',
-                //     headers: {
-                //         'Content-Type': 'application/json',
-                //     },
-                //     credentials: 'include',
-                //     body: JSON.stringify({
-                //         "branchName": branchNameInput.trim()
-                //     })
-                // });
-                appState.currentBranch.branchName = branchNameInput.trim();
-                // let json = await resp.json();
-                // if(!resp.ok){
-                //     // console.log(json);
-                //     throw new Error(json.message);
-                // }
-                // toast.success(json.message, {
-                //     position: "bottom-right",
-                //     autoClose: 5000,
-                //     hideProgressBar: false,
-                //     closeOnClick: true,
-                //     pauseOnHover: true,
-                //     draggable: true,
-                //     progress: undefined,
-                //     theme: "colored",
-                //     transition: Bounce,
-                // });
-    
-                // Optionally, handle UI cleanup
-                setTimeout(() => onClose(), 1000);
-            }
-        } catch (err: any) {
-            toast.error(err.message, {
-                position: "bottom-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-                transition: Bounce,
-            });
-        }
     
         // Ensure the form is closed regardless
         setTimeout(() => {

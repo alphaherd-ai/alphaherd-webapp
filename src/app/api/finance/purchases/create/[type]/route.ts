@@ -89,8 +89,11 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
                expiry:item.expiry,
                costPrice:item.costPrice,
                sellingPrice:item.sellingPrice,
-               distributors:item.distributors,
+               distributors:[otherData.distributor],
                isApproved:item.isApproved,
+               maxRetailPrice:item.sellingPrice,
+               hsnCode:item.hsnCode,
+               location:item.location,
               product:{
                 connect:{id: item.productId }
               },

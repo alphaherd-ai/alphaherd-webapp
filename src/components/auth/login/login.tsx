@@ -107,7 +107,7 @@ const Login = () => {
         transition: Bounce,
       });
 
-      router.push("/finance/overview");
+      router.push("/");
     } catch (err: any) {
       toast.error(err.message, {
         position: "bottom-right",

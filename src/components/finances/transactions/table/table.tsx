@@ -4,7 +4,6 @@ import FinancesTransactionsTableBottombar from './bottombar'
 import FinancesTransactionsTableHeader from './header'
 import FinancesTransactionsTableItem from './item'
 import { useAppSelector } from '@/lib/hooks'
-import useSWR from 'swr'
 import { useSearchParams } from 'next/navigation'
 import axios from 'axios'
 //@ts-ignore

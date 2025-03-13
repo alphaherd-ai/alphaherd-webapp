@@ -24,6 +24,7 @@ const NewsaleEstimateBottomBar = () => {
     const appState = useAppSelector((state) => state.app);
     const router = useRouter();
     const [isSaving,setSaving]=useState<any>(false);
+    console.log(tableData);
     
     //console.log(totalAmountData);
     const handleSubmit = async () => {
@@ -43,7 +44,7 @@ const NewsaleEstimateBottomBar = () => {
         const items = tableData.map(data => ({
             productId: data.productId,
             serviceId:data.serviceId,
-            productBatchId:data.id, 
+            productBatchId:data.productId ? data.id: null, 
             quantity: data.quantity,  
             sellingPrice:data.sellingPrice,
             taxAmount:data.gst,

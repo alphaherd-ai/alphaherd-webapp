@@ -18,6 +18,7 @@ import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 import Menu from '../../../../../assets/icons/finance/menu.svg'
 import EditRecordTransactionPopup from '@/components/finances/editTransaction/editTransaction';
 import CancellationPopup from '@/components/finances/cancelTransaaction/cancelTransaction';
+import { useSearchParams } from 'next/navigation';
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 interface Transactions {
@@ -41,7 +42,8 @@ interface Transactions {
 
 const NewsalesTotalAmout = ({ otherData }: { otherData: any }) => {
 
-
+    const url = useSearchParams();
+    const id = url.get('id');
 
     const customStyles = {
         control: (provided: any, state: any) => ({
@@ -101,7 +103,7 @@ const NewsalesTotalAmout = ({ otherData }: { otherData: any }) => {
 
     const handleSelectedTransaction = (transaction: any) => {
         const updatedTransaction = {
-            partyName:headerData?.customer?.label,
+            partyName: id===null ? headerData?.customer?.label : otherData?.customer,
             invoiceLink:headerData.invoiceNo,
             ...transaction
         }
@@ -117,23 +119,30 @@ const NewsalesTotalAmout = ({ otherData }: { otherData: any }) => {
     const { totalAmountData, setTotalAmountData } = useContext(DataContext);
     const { transactionsData, setTransactionsData } = useContext(DataContext);
 
-    
+    //console.log(transactionsData);
     useEffect(() => {
         if (otherData.recordTransaction) {
-            for (let i = 0; i < otherData.recordTransaction.length; i++) {
-                const formData = otherData.recordTransaction[i];
-                const newTransaction = {
+            setTransactionsData((prevTransactions: any) => {
+                const newTransactions = otherData.recordTransaction.map((formData: any) => ({
                     amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1 * formData.amountPaid, 10) || (balanceDue),
                     date: formData.date || new Date(),
                     isAdvancePayment: formData.isAdvancePayment,
                     mode: formData.mode,
                     moneyChange: formData.moneyChange,
                     receiptNo: formData?.receiptNo,
-                };
-                setTransactionsData((prevTransactions: any) => [...prevTransactions, newTransaction]);
-            };
+                }));
+    
+                // Remove duplicates based on receiptNo
+                const uniqueTransactions = [...prevTransactions, ...newTransactions].reduce((acc, curr) => {
+                    if (!acc.some((t: any) => t.receiptNo === curr.receiptNo)) acc.push(curr);
+                    return acc;
+                }, [] as any[]);
+                return uniqueTransactions;
+            });
         }
     }, [otherData.recordTransaction]);
+
+    
     const [grandAmt, setGrandAmt] = useState(totalAmount);
 
     const gstOptions = [
@@ -232,6 +241,8 @@ const NewsalesTotalAmout = ({ otherData }: { otherData: any }) => {
         setInitialInvoiceNo(newInvoiceNo);
 
     }, [count]);
+
+    
 
 
     return (

@@ -13,6 +13,9 @@ export const GET=async (req: NextRequest,
             
            const service= await prismaClient.services.findUnique({
                 where: { id: Number(params.id) },
+                include:{
+                    items:true
+                }
             });
                         
             return new Response(JSON.stringify(service), {

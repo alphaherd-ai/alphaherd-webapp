@@ -159,6 +159,7 @@ model Notifications {
   source    Notif_Source
   isRead    Boolean      @default(false)
   createdAt DateTime?    @default(now())
+  isApproved Boolean?
 
   @@index([userId, orgId])
 }
@@ -392,7 +393,7 @@ model Sales {
   FinanceSection    FinanceSection?      @relation(fields: [financeSectionId], references: [id])
   financeSectionId  Int?
   clientId          Int?
-  lastDueNotif         DateTime?
+  lastDueNotif      DateTime?
 
   @@index([financeSectionId, id])
   @@index([financeSectionId, invoiceNo])
@@ -442,6 +443,8 @@ model Purchases {
   financeTimeline      FinanceTimeline[]
   FinanceSection       FinanceSection?     @relation(fields: [financeSectionId], references: [id])
   financeSectionId     Int?
+  lastDayNotif         DateTime?
+  lastSevenNotif       DateTime?
 
   @@index([financeSectionId, id])
   @@index([financeSectionId, invoiceNo])
