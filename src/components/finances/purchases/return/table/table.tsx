@@ -28,7 +28,8 @@ interface Products{
     productBatch:ProductBatch[],
     hsnCode:string,
     quantity:number,
-    tax:number
+    tax:number,
+    rowId?: string
 }
 interface ProductBatch {
     id: number;
@@ -72,7 +73,7 @@ function useProductBatchfetch(id:number|null){
 }
 
 interface CheckedItems {
-    [key: number]: boolean;
+    [key: string]: boolean;
 }
 
 const NewPurchaseReturnTable = () => {
@@ -89,6 +90,7 @@ const NewPurchaseReturnTable = () => {
     const url= useSearchParams();
     const id=url.get('id');
     let grnData:any=null,isgrnDataLoading=false,isgrnDataError=false; 
+    const [uniqueRowId, setUniqueRowId] = useState(1);
     if(id){
         const {data,isLoading,error}=DataFromGRN(Number(id),appState.currentBranchId);
         grnData=data;
@@ -147,7 +149,8 @@ const NewPurchaseReturnTable = () => {
                 expiry:item.productBatch.expiry,
                 batchNumber:item.productBatch.batchNumber,
                 freeQuantity:item.freeQuantity,
-                maxRetailPrice:item.productBatch.sellingPrice
+                maxRetailPrice:item.productBatch.sellingPrice,
+                rowId: `row-${uniqueRowId + Math.random()}`
               }));
               setItems(itemData);
               setItems((prevItems: any) => [
@@ -156,12 +159,9 @@ const NewPurchaseReturnTable = () => {
                     productId: null,
                     serviceId: null,
                     itemName: "",
+                    rowId: `row-${uniqueRowId + Math.random()}`
                 },
             ]);
-            console.log('all the data is stored',itemData);
-
-            //   console.log("These are the items",items)
-　　 　  　
             }
           }, [grnData]); 
     const taxOptions = [
@@ -197,42 +197,36 @@ const NewPurchaseReturnTable = () => {
     }, [disableButton]);
     
 
-    const handleQuantityDecClick = (itemId: any) => {
+    const handleQuantityDecClick = (rowId: string) => {
         setItems((prevItems : any) => {
             const updatedItems = prevItems.map((item: any) => {
-                if (item.id === itemId && item.quantity > 0) {
+                if (item.rowId === rowId && item.quantity > 0) {
                     const newQuantity = item.quantity - 1;
                     const updatedDiscountAmt = (item.unitPrice * newQuantity * item.discount) / 100 || 0;
                     return { ...item, quantity: newQuantity, discountAmount: updatedDiscountAmt };
-                    //return { ...item, quantity: item.quantity - 1 };
                 }
                 return item;
             });
             const filteredItems = updatedItems.filter((item: any) => item.quantity > 0);
             setTableData(filteredItems);
-            console.log("hvuyvyu",updatedItems);
             return updatedItems;
-    });
+        });
     };
     
-    const handleQuantityIncClick = (itemId: any) => {
+    const handleQuantityIncClick = (rowId: string) => {
         setItems((prevItems: any) => {
             const updatedItems = prevItems.map((item: any) => {
-                if (item.id === itemId) {
-                    // Ensure quantity does not exceed purchased or original quantity
-                    if ( item.quantity < item.originalQuantity) {
+                if (item.rowId === rowId) {
+                    if (item.quantity < item.originalQuantity) {
                         const newQuantity = item.quantity + 1;
                         const updatedDiscountAmt = (item.unitPrice * newQuantity * item.discount) / 100 || 0;
                         return { ...item, quantity: newQuantity, discountAmount: updatedDiscountAmt };
-                        //return { ...item, quantity: item.quantity + 1 };
                     }
                 }
                 return item;
             });
-    
             const filteredItems = updatedItems.filter((item: any) => item.quantity > 0);
             setTableData(filteredItems);
-            console.log("hvuyvyu",updatedItems);
             return updatedItems;
         });
     };
@@ -240,24 +234,22 @@ const NewPurchaseReturnTable = () => {
 
     
 
-    const handleInputChange = (itemId: number, value: string) => {
+    const handleInputChange = (rowId: string, value: string) => {
         const quantity = parseInt(value, 10);
         if (!isNaN(quantity) && quantity >= 0) {
             setItems((prevItems:any) => {
                 const updatedItems = prevItems.map((item:any) => {
-                    if (item.id === itemId) {
+                    if (item.rowId === rowId) {
                         const newQuantity = quantity;
                         const updatedDiscountAmt = (item.unitPrice * newQuantity * item.discount) / 100 || 0;
                         return { ...item, quantity: newQuantity, discountAmount: updatedDiscountAmt };
-                        //return { ...item, quantity };
                     }
                     return item;
                 })
                 const filteredItems = updatedItems.filter((item: any) => item.quantity > 0);
                 setTableData(filteredItems);
-                console.log("hvuyvyu",updatedItems);
                 return updatedItems;
-        });
+            });
         }
     };
  
@@ -277,18 +269,6 @@ const NewPurchaseReturnTable = () => {
     }, [id, items]);
 
 
-    // const handleDiscountSelect= (selectedDiscount:number,index:number)=>{
-    //     const updatedItems=[...tableData];
-         
-    //     updatedItems[index]={
-    //         ...updatedItems[index],
-    //         discount: selectedDiscount,
-    //         discountAmount: Number(selectedDiscount / 100) * updatedItems[index].unitPrice * updatedItems[index].quantity
-    //     };
-    //     console.log("hvuyvyu",updatedItems);
-    //     setTableData(updatedItems);
-    //     return updatedItems;
-    // }
     const handleDiscountChange = (itemId: number, value: number) => {
         setItems((prevItems: any) => {
             const updatedItems = prevItems.map((item: any) => {
@@ -363,14 +343,14 @@ const NewPurchaseReturnTable = () => {
         });
     };
 
-    const handleCheckboxChange = useCallback((id: number) => {
+    const handleCheckboxChange = useCallback((rowId: string) => {
         setCheckedItems(prevState => {
             const newCheckedItems = {
                 ...prevState,
-                [id]: !prevState[id]
+                [rowId]: !prevState[rowId]
             };
     
-            const filteredItems = items.filter(item => newCheckedItems[item.id] === true);
+            const filteredItems = items.filter(item => newCheckedItems[item.rowId] === true);
             setTableData(filteredItems);
     
             return newCheckedItems;
@@ -378,13 +358,13 @@ const NewPurchaseReturnTable = () => {
     }, [items]);
 
 const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
-    // console.log(selectedProduct);
     if (selectedProduct.value) {
         if (index === items.length - 1) {
             items.push({
                 productId: null,
                 serviceId: null,
                 itemName: "",
+                rowId: `row-${uniqueRowId + Math.random()}`
             });
             setItems(items);
         }
@@ -397,7 +377,8 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
           quantity: data.value.quantity,
           productId: selectedProduct.value.id,
           itemName: data.value.itemName,
-          gst:data.value.tax
+          gst:data.value.tax,
+          rowId: updatedItems[index].rowId || `row-${uniqueRowId + Math.random()}`
         };
         setItems(updatedItems);
 
@@ -407,19 +388,23 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
         const defaultBatch = productBatches?.[0];
         setItems((prevItems) =>
           prevItems.map((item, itemIndex) =>
-            itemIndex === index ? { ...item, id: defaultBatch?.value?.id,
-                quantity: defaultBatch?.value?.quantity ,
+            itemIndex === index ? { 
+                ...item, 
+                id: defaultBatch?.value?.id,
+                quantity: defaultBatch?.value?.quantity,
                 batchNumber: defaultBatch?.value?.batchNumber,
-                expiry:  defaultBatch?.value?.expiry,
-                sellingPrice:  defaultBatch?.value?.sellingPrice,
-                productId:defaultBatch?.value?.productId } : item
+                expiry: defaultBatch?.value?.expiry,
+                sellingPrice: defaultBatch?.value?.sellingPrice,
+                productId: defaultBatch?.value?.productId,
+                rowId: item.rowId
+            } : item
           )
         );
       } catch (error) {
         console.error("Error fetching product details from API:", error);
       }
     }
-  }, [items, products]);
+  }, [items, products, uniqueRowId]);
   const customStyles = {
     control: (provided: any, state: any) => ({
         ...provided,
@@ -511,15 +496,15 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                         
                         {items.map((item, index) => (
                 <div
-                    key={index+1}
-                    className={`flex justify-evenly items-center w-[180%] box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-gray-200 h-12 ${checkedItems[item.id] ? 'text-textGrey2 font-bold' : 'text-textGrey2 font-medium'}`}
+                    key={item.rowId}
+                    className={`flex justify-evenly items-center w-[180%] box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-gray-200 h-12 ${checkedItems[item.rowId] ? 'text-textGrey2 font-bold' : 'text-textGrey2 font-medium'}`}
                 >
                     <div className='flex text-base  px-[10px] w-[5rem] items-center justify-center'>
                         <input
                             type="checkbox"
                             className="accent-teal-500 w-4 h-4"
-                            checked={checkedItems[item.id] || false}
-                            onChange={() => handleCheckboxChange(item.id)}
+                            checked={checkedItems[item.rowId] || false}
+                            onChange={() => handleCheckboxChange(item.rowId)}
                         />
                     </div>
                     <div className=' flex text-textGrey2 text-base  px-[10px] w-[5rem]'>{index+1}.</div>
@@ -540,19 +525,19 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
 
                                     <div className=' flex text-textGrey2 text-base  w-[20rem] items-center gap-2'>
                                 <div className='flex items-center text-textGrey2 text-base  gap-1 bg-white'>
-                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
+                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.rowId)}>
                                         <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
                                     </button>
                                     <input
                                         type="number"
                                         value={item.quantity}
-                                        onChange={(e) => handleInputChange(item.id, e.target.value)}
-                                        className={`w-[3rem] text-center border border-solid border-borderGrey h-8  rounded-md text-textGrey2  text-base ${checkedItems[item.id] ? 'text-textGrey2 font-bold' : 'text-textGrey2 font-medium'}`}
+                                        onChange={(e) => handleInputChange(item.rowId, e.target.value)}
+                                        className={`w-[3rem] text-center border border-solid border-borderGrey h-8  rounded-md text-textGrey2  text-base ${checkedItems[item.rowId] ? 'text-textGrey2 font-bold' : 'text-textGrey2 font-medium'}`}
                                         ref={index === items.length - 1 ? inputRef : null}
                                     />
                                     
                                     {/* {item.quantity} */}
-                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
+                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.rowId)}>
                                         <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                     </button>
                                 </div>
@@ -645,21 +630,21 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                             <div className=' flex text-gray-500 text-base font-bold px-[10px] w-[5rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[18rem]'>Total</div>
 
-                            <div className=' flex text-gray-500 text-base font-bold w-[20rem]'>{items.reduce((acc, item) =>  { if (!item.itemName) return acc; return checkedItems[item.id] ? acc + item.quantity : acc }, 0) ||
+                            <div className=' flex text-gray-500 text-base font-bold w-[20rem]'>{items.reduce((acc, item) =>  { if (!item.itemName) return acc; return checkedItems[item.rowId] ? acc + item.quantity : acc }, 0) ||
                                                 0} Items</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[15rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
                             <div className=' flex text-gray-500 text-base font-bold w-[15rem] px-2'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => { if (!item.itemName) return acc; return checkedItems[item.id] ? acc + (item.quantity*Number(item.unitPrice)):acc } , 0).toFixed(2) ||
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => { if (!item.itemName) return acc; return checkedItems[item.rowId] ? acc + (item.quantity*Number(item.unitPrice)):acc } , 0).toFixed(2) ||
                                                 0}</div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => { if (!item.itemName) return acc; return checkedItems[item.id] ? acc + Number(item.maxRetailPrice) :acc }, 0).toFixed(2) ||
-                                                0}</div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => { if (!item.itemName) return acc; return checkedItems[item.id] ?acc + (item.tax)*(item.quantity*Number(item.unitPrice)) :acc } , 0).toFixed(2) ||
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => { if (!item.itemName) return acc; return checkedItems[item.rowId] ? acc + Number(item.maxRetailPrice) :acc }, 0).toFixed(2) ||
                                                 0}</div>
                             <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
-                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => { if (!item.itemName) return acc; return checkedItems[item.id] ? acc + (item.discount/100)*(item.quantity*Number(item.unitPrice)) :acc} , 0).toFixed(2) ||
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => { if (!item.itemName) return acc; return checkedItems[item.rowId] ?acc + (item.tax)*(item.quantity*Number(item.unitPrice)) :acc } , 0).toFixed(2) ||
+                                                0}</div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'></div>
+                            <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{items.reduce((acc, item) => { if (!item.itemName) return acc; return checkedItems[item.rowId] ? acc + (item.discount/100)*(item.quantity*Number(item.unitPrice)) :acc} , 0).toFixed(2) ||
                                                 0}</div>
                             {/* <div className=' flex text-gray-500 text-base font-bold w-[12rem]'>₹{isNaN(items.reduce((acc, item) => acc + (item.discountPercent/100)*(item.quantity*Number(item.unitPrice)) , 0)) ? 0 : items.reduce((acc, item) => acc + (item.discountPercent/100)*(item.quantity*Number(item.unitPrice)) , 0).toFixed(2)}</div> */}
                             <div className=' flex text-gray-500 text-base font-bold w-1/12'></div>
@@ -671,12 +656,12 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                         <div className=' flex text-gray-500 text-base font-medium '>Total</div>
                     </div>
                     {items.map((item:any,index:number) => (
-                    <div key={item.id} className="flex items-center justify-center  w-[10rem] box-border bg-white text-gray-500 border-t-0 border-r-0 border-l border-b border-solid border-gray-200 h-12">
-                        <div className=' flex text-gray-500 text-base font-medium'>{ checkedItems[item.id]?((item.tax-item.discount/100+1)*(item.quantity*Number(item.unitPrice))).toFixed(2):0||
+                    <div key={item.rowId} className="flex items-center justify-center  w-[10rem] box-border bg-white text-gray-500 border-t-0 border-r-0 border-l border-b border-solid border-gray-200 h-12">
+                        <div className=' flex text-gray-500 text-base font-medium'>{ checkedItems[item.rowId]?((item.tax-item.discount/100+1)*(item.quantity*Number(item.unitPrice))).toFixed(2):0||
                                                 0}</div>
                     </div>
                     ))}
-                    <div className=' flex text-textGreen text-base font-bold w-[10rem] h-12 items-center justify-center'>₹{items.reduce((acc, item) =>  { if (!item.itemName) return acc; return checkedItems[item.id]?acc + (item.tax-item.discount/100+1)*(item.quantity*Number(item.unitPrice)):acc }, 0).toFixed(2) ||
+                    <div className=' flex text-textGreen text-base font-bold w-[10rem] h-12 items-center justify-center'>₹{items.reduce((acc, item) =>  { if (!item.itemName) return acc; return checkedItems[item.rowId]?acc + (item.tax-item.discount/100+1)*(item.quantity*Number(item.unitPrice)):acc }, 0).toFixed(2) ||
                                                 0}</div>
                                                 
                     </div>
