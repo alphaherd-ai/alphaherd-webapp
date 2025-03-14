@@ -1,4 +1,3 @@
-
 'use client';
 
 import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
@@ -149,6 +148,16 @@ const NewExpensesTable = () => {
     const handleDeleteRow = useCallback((index: number) => {
         const updatedItems = [...items];
         updatedItems.splice(index, 1);
+        // Ensure the last row is empty with default values
+        if (updatedItems.length > 0) {
+            updatedItems[updatedItems.length - 1] = {
+                itemName: "",
+                cost: "",
+                transactionId: "",
+                invoiceNo: "",
+                category: ""
+            };
+        }
         setItems(updatedItems);
         setTableData(updatedItems);
     }, [items]);
@@ -278,7 +287,7 @@ const handleItemName=(event:any,index:any)=>{
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
                 <div className="w-full h-[84px] p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-b border-t-0 border-r-0 border-l-0 border-solid border-borderGrey justify-between items-center gap-6 flex">
                     <div></div>
-                    {/* <div className='bg-orange-200 rounded-md px-2' ><span className="text-orange-600  text-sm font-medium ">You’re owed: ₹</span><span className="text-orange-600 text-sm font-bold ">2,124</span></div> */}
+                    {/* <div className='bg-orange-200 rounded-md px-2' ><span className="text-orange-600  text-sm font-medium ">You're owed: ₹</span><span className="text-orange-600 text-sm font-bold ">2,124</span></div> */}
                     {/* <div className='flex items-center h-9 py-2.5 bg-black justify-between rounded-lg '>
 
                         <Popover placement="bottom-end" showArrow offset={10}>
