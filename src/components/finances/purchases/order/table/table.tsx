@@ -4,7 +4,7 @@
 import addicon from "../../../../../assets/icons/finance/add.svg"
 
 import addicon1 from "../../../../../assets/icons/finance/add (3).svg"
-
+import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
 import Subtract from "../../../../../assets/icons/finance/Subtract.svg"
 import Add from "../../../../../assets/icons/finance/add (2).svg"
 import React, { Dispatch, useCallback, useContext, useEffect, useRef, useState } from 'react';
@@ -414,6 +414,11 @@ const NewPurchasesTable = () => {
         menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
       };
 
+    const handleDeleteRow = (index: number) => {
+        const updatedItems = items.filter((_, i) => i !== index);
+        setItems(updatedItems);
+    };
+
     return (
         <>
             <div className="w-full h-full flex-col justify-start items-start flex mt-2 bg-gray-100 rounded-lg border border-solid border-borderGrey">
@@ -592,12 +597,11 @@ const NewPurchasesTable = () => {
                                                     />
                                                 </div>
                                                 <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[20px] justify-end pr-6'>
-                                                    {/* <button className="border-0 bg-transparent w-4 h-4">
-                                        <Image src={sellicon} alt="sell" className="w-4 h-4"></Image>
-                                    </button> */}
-                                                    {/* <button className="border-0 bg-transparent w-5 h-5 cursor-pointer" onClick={() => handleDeleteRow(index)}>
-                                                    <Image src={delicon} alt="delete" className="w-5 h-5" ></Image>
-                                                </button> */}
+                                                    {item.itemName && (
+                                                        <button className="border-0 bg-transparent w-5 h-5 cursor-pointer" onClick={() => handleDeleteRow(index)}>
+                                                            <Image src={delicon} alt="delete" className="w-5 h-5" />
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </div>
                                         ))}
