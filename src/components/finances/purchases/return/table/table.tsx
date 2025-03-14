@@ -260,15 +260,19 @@ const NewPurchaseReturnTable = () => {
         // console.log(items)
     }, [items]);
 
-    
-      useEffect(() => {
-        if (id == null) {
-            setItems(items);
-            setTableData(items);  
-        }
-    }, [id, items]);
 
-
+    // const handleDiscountSelect= (selectedDiscount:number,index:number)=>{
+    //     const updatedItems=[...tableData];
+         
+    //     updatedItems[index]={
+    //         ...updatedItems[index],
+    //         discount: selectedDiscount,
+    //         discountAmount: Number(selectedDiscount / 100) * updatedItems[index].unitPrice * updatedItems[index].quantity
+    //     };
+    //     console.log("hvuyvyu",updatedItems);
+    //     setTableData(updatedItems);
+    //     return updatedItems;
+    // }
     const handleDiscountChange = (itemId: number, value: number) => {
         setItems((prevItems: any) => {
             const updatedItems = prevItems.map((item: any) => {

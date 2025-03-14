@@ -236,7 +236,7 @@ const CreateGrnHeader = ({ existingHeaderData }: any) => {
                             <div className="customDatePickerWidth">
                                 <DatePicker
                                     className="w-full"
-                                    selected={ dueDate || new Date()}
+                                    selected={ headerData?.dueDate ?headerData.dueDate:(dueDate || new Date())}
                                     onChange={(date) => handleDueDateChange(date)}
                                     calendarClassName="react-datepicker-custom"
                                     customInput={

@@ -93,6 +93,8 @@ model Organization {
   pincode     String
   description String
   phoneNo     String
+  panNo       String?
+  altPhoneNo  String?
   adminUsers  User[]
   orgBranches OrgBranch[]
 
