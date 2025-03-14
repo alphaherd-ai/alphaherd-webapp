@@ -33,7 +33,7 @@ const formSchema = z.object({
   pincode: z.string()
   .regex(/^\d{6}$/, 'Invalid Pincode - must be exactly 6 digits'),
   description: z.string(),
-  adminName: z.string(),
+  adminName: z.string().min(1, 'Enter Name to continue'),
   adminEmail: z.string().email('Invalid Email Address'),
   adminPhoneNo: z.string().length(10, 'Invalid Phone No.'),
   adminAltPhoneNo: z.string().optional().refine((value) => !value || value.length === 10, {
@@ -210,6 +210,8 @@ const OrgSetup = () => {
               "pincode": data.pincode,
               "description": data.description,
               "phoneNo": data.phoneNo,
+              "panNo": data.panNo,
+              "altPhoneNo": data.altPhoneNo
             },
             "branchDetails": {
               email: data.orgEmail,

@@ -56,12 +56,12 @@ const OrganisationNavbar = () => {
                   (  <div className="flex items-center gap-10">
 
                      <div>
-                            <Button
+                            {/* <Button
                   variant="solid"
                   className="capitalize border-none bg-black py-2.5 text-white rounded-lg flex gap-2 justify-center items-center hover:cursor-pointer" onClick={toggleOrgPopup}>
                   <div className='flex'><Image src={addUserIcon} alt='addUserIcon' className='w-6 h-6 ' /></div>
                   {isChangeORganisationShow && <span>Change Organization</span>}
-                  </Button>
+                  </Button> */}
                             </div>
                     {appState.isCurrentOrgAdmin ?
                         <div className="border border-solid border-borderGrey rounded-[10px] p-1">

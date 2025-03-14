@@ -69,7 +69,7 @@ const BranchEdit = () => {
         orgEmail: appState.currentOrg.orgEmail || '',
         gstNo: appState.currentOrg.gstNo || '',
         phoneNo: appState.currentOrg.phoneNo || '',
-        altphoneNo: appState.currentOrg.altphoneNo || '',
+        altphoneNo: appState.currentOrg.alphoneNo || '',
         website: appState.currentOrg.website || '',
         panNo: appState.currentOrg.panNo || '',
         address: appState.currentOrg.address || '',

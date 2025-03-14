@@ -66,7 +66,7 @@ const AdminProfile = () => {
   const [value, setValue] = useState<string>(String(userState.name));
 
   const handleUpdatePic = async (imageInfo: any) => {
-    const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/${userState.id}`, JSON.stringify(imageInfo.secure_url));
+    const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/${userState.id}`, JSON.stringify({"imageUrl":imageInfo.secure_url}));
     if (response.data) {
       const updatedUserState = {
         ...userState,
