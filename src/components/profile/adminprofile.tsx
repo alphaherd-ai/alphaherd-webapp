@@ -65,8 +65,30 @@ const AdminProfile = () => {
   const [editable, setEditable] = useState(false);
   const [value, setValue] = useState<string>(String(userState.name));
 
+  // Fetch user data when component mounts
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/${userState.id}`);
+        if (response.data && response.data.user) {
+          dispatch(updateUser(response.data.user as UserState));
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, [userState.id, dispatch]);
+
   const handleUpdatePic = async (imageInfo: any) => {
-    const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/${userState.id}`, JSON.stringify(imageInfo.secure_url));
+    const response = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/${userState.id}`, {
+      name: userState.name,
+      phoneNo: userState.phoneNo,
+      altPhoneNo: userState.altPhoneNo,
+      email: userState.email,
+      imageUrl: imageInfo.secure_url
+    });
     if (response.data) {
       const updatedUserState = {
         ...userState,
@@ -316,12 +338,6 @@ const AdminProfile = () => {
                 <div className="w-full px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
                   <div className="text-gray-500 text-base font-bold">Email:</div>
                   <input className="w-[25rem] h-full border-0 p-1 bg-white text-gray-500 text-base font-medium" type="text" name="" id="" defaultValue={String(userState.email)} onChange={(e) => setEmail(e.target.value)} disabled={!editable} />
-                </div>
-              </div>
-              <div className="w-full justify-start items-start gap-4 flex">
-                <div className="w-full px-6 py-4 bg-white rounded-[10px] justify-start items-center gap-4 flex">
-                  <div className="text-gray-500 text-base font-bold">Address:</div>
-                  <input className="w-[60rem] h-full border-0 p-1  bg-white text-gray-500 text-base font-medium" type="text" name="" id="" defaultValue={String(userState.address)} onChange={(e) => setAddress(e.target.value)} disabled={!editable} />
                 </div>
               </div>
             </div>
