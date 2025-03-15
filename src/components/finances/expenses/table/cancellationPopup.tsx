@@ -10,7 +10,7 @@ import { Notif_Source } from '@prisma/client';
 
 interface CancellationPopupProps {
     setShowConfirmation: any;
-    expenseId: number;
+    expenseId: number | null;
 }
 
 
@@ -24,13 +24,15 @@ const CancellationPopup: React.FC<CancellationPopupProps> = ({ setShowConfirmati
     const [loading, setLoading] = useState(false);
 
     const isApproved = appState.isCurrentOrgAdmin;
+    //console.log(isApproved);
     const handleCancel = async () => {
         //console.log("isApproved",isApproved);
 
         try {
             setLoading(true);
+            
             if(isApproved){
-                const res = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/finance/expenses/status/${expenseId}?branchId=${appState.currentBranchId}`, {
+                const res = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/expenses/status/${expenseId}?branchId=${appState.currentBranchId}`, {
                     status: "Cancelled"
                 }, {
                     headers: {

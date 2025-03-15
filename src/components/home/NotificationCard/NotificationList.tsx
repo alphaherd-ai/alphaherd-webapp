@@ -270,23 +270,7 @@ const NotificationList =  ({ notifs, isLoading }) => {
                   </div>
                   <div className="w-2.5 h-2.5 bg-cyan-400 rounded-full" />
                 </div>
-                {notif.isApproved===null && (
-                <div className="flex gap-5 mt-2">
-                  <button
-                    onClick={() => handleAction(notif.id, "accept",notif)}
-                    className="px-4 py-2 bg-teal-500 text-white rounded-md cursor-pointer  border-none"
-                  >
-                    Approve
-                  </button>
-                  <button
-                    onClick={() => handleAction(notif.id, "deny",notif)}
-                    className="px-4 py-2 bg-gray-600 text-white rounded-md cursor-pointer  border-none"
-                  >
-                    Deny
-                  </button>
-                </div>
-                )
-              }
+                
               </div>
             </div>
           ) : (

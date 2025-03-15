@@ -25,7 +25,13 @@ const NewsaleEstimateBottomBar = () => {
     const router = useRouter();
     const [isSaving,setSaving]=useState<any>(false);
     console.log(tableData);
-    
+
+    const totalPaidAmount = transactionsData?.filter(item => item.moneyChange === 'In' ).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+    const totalAmountToPay = transactionsData?.filter(item => item.moneyChange === 'Out' || item.isAdvancePayment).map(item => item.amountPaid).reduce((a: any, b: any) => a + b, 0);
+    const balanceDue = totalAmountData.totalCost - totalPaidAmount + totalAmountToPay;
+    const status=balanceDue >= 1 ? `You’re owed: ₹${parseFloat(balanceDue.toString()).toFixed(2)}` : balanceDue <= -1 ? `You owe: ₹${parseFloat((-1 * balanceDue).toString()).toFixed(2)}` : 'Closed'
+    const creditedTokenFromYouOweAmount = status.includes('You owe') ?  Number(status.split('₹')[1]) : 0;
+    //console.log(status,creditedTokenFromYouOweAmount);
     //console.log(totalAmountData);
     const handleSubmit = async () => {
         if (!headerData.customer || tableData.length === 0) {
@@ -56,6 +62,7 @@ const NewsaleEstimateBottomBar = () => {
             serviceProvider:data.provider
     }));
         const data={
+            newCreditedToken: creditedTokenFromYouOweAmount>0 ? creditedTokenFromYouOweAmount : 0,
             customer: allData.headerData.customer.value.clientName ,
             clientId:allData.headerData.customer.value.clientId,
             email:allData.headerData.customer.value.email,
