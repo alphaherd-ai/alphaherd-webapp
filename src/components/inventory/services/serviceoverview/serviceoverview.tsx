@@ -75,35 +75,11 @@ const ServiceDetails = () => {
         setValue(event.target.value === '' ? 0 : Number(event.target.value));
     };
 
+    const [productDetails, setProductDetails] = useState<any>([]);
+    const [loading, setLoading] = useState(false);
+
     useEffect(() => {
         if (!error && !isLoading && fetchedService) {
-            console.log(fetchedService);
-            setTotalSales(
-                fetchedService?.items?.reduce((acc: any, e: any) => e.salesId ?  acc + Number(e.sellingPrice) * Number(e.quantity) : 0, 0) || 0
-            );
-
-            console.log(fetchedService);
-            const totalSales = fetchedService?.items?.reduce(
-                (acc: any, e: any) => e.salesId ?  acc + Number(e.sellingPrice) * Number(e.quantity) : 0,
-                0
-            ) || 0;
-
-            const totalQuantity = fetchedService?.items?.reduce(
-                (acc: any, e: any) => e.salesId ?  acc + Number(e.quantity) : 0,
-                0
-            ) || 1;
-
-            setAvgCost(totalSales / totalQuantity);
-
-            const calculateMargin = (fetchedService: any) => (
-                ((fetchedService?.items?.reduce((acc: any, e: any) => e.salesId ?  acc + Number(e.sellingPrice) * Number(e.quantity):0, 0) || 0) -
-                    (fetchedService?.items?.reduce((acc: any, e: any) => e.salesId ?  acc + Number(e.costPrice) * Number(e.quantity):0, 0) || 0)) /
-                (fetchedService?.items?.reduce((acc: any, e: any) => e.salesId ?  acc + Number(e.sellingPrice) * Number(e.quantity):0, 0) || 1) * 100
-            ).toFixed(2);
-
-            setMargin(Number(calculateMargin(fetchedService)));
-
-
             console.log(fetchedService);
             setService(fetchedService);
             setEditService(fetchedService);
@@ -112,12 +88,56 @@ const ServiceDetails = () => {
             console.log(fetchedServiceTimeLine[0]?.inventoryTimeline);
             setInventoryTimeline(fetchedServiceTimeLine[0]?.inventoryTimeline)
         }
-
-    }, [fetchedService, error, isLoading, fetchedServiceTimeLine, serviceError, serviceLoading]
-    );
+    }, [fetchedService, error, isLoading, fetchedServiceTimeLine, serviceError, serviceLoading]);
 
     useEffect(() => {
+        if (service && productDetails && productDetails.length > 0) {
+            try {
+                // Get the first batch for each unique product
+                const uniqueProductCosts = productDetails.map((product: { productBatches?: { costPrice: number, createdAt?: string }[] }) => {
+                    // Check if productBatches exists and has items
+                    if (!product.productBatches || product.productBatches.length === 0) {
+                        return 0;
+                    }
+                    
+                    // Sort batches by creation date if createdAt exists
+                    const sortedBatches = [...product.productBatches].sort((a, b) => {
+                        if (a.createdAt && b.createdAt) {
+                            return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+                        }
+                        return 0; // If no createdAt, maintain original order
+                    });
+                    
+                    // Return the cost of the first batch
+                    return sortedBatches.length > 0 ? 
+                        Number(sortedBatches[0].costPrice) || 0 : 0;
+                });
+                
+                // Calculate total cost of all unique products
+                const totalCost = uniqueProductCosts.reduce((sum: number, cost: number) => sum + cost, 0);
+                setAvgCost(totalCost);
+                
+                // Calculate profit margin using service charge and total cost
+                const serviceCharge = Number(service.serviceCharge) || 0;
+                const profitMargin = serviceCharge > 0 ? 
+                    ((serviceCharge - totalCost) / serviceCharge * 100) : 0;
+                
+                setMargin(profitMargin);
+                
+                // Keep existing calculations for total sales
+                setTotalSales(
+                    service?.items?.reduce((acc: any, e: any) => acc + Number(e.sellingPrice) * Number(e.quantity), 0) || 0
+                );
+            } catch (error) {
+                console.error("Error calculating costs and margins:", error);
+                // Set default values in case of error
+                setAvgCost(0);
+                setMargin(0);
+            }
+        }
+    }, [service, productDetails]);
 
+    useEffect(() => {
         const fetchProductsAndProviders = async () => {
             if (service) {
                 // console.log("inside fetch");
@@ -139,7 +159,7 @@ const ServiceDetails = () => {
             }
         }
         fetchProductsAndProviders();
-    }, [service])
+    }, [appState.currentBranchId, service])
 
 
 
@@ -168,9 +188,6 @@ const ServiceDetails = () => {
     }, [appState.currentBranchId]);
 
     // console.log("service", service);
-
-    const [productDetails, setProductDetails] = useState<any>([]);
-    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const productIds = service?.linkProducts?.map((product: any) => (
@@ -642,7 +659,7 @@ const ServiceDetails = () => {
                     </div>
                     <div className="w-3/12 p-6 bg-white border-t border-solid border-0 border-r border-borderGrey flex-col justify-center items-start gap-4 flex">
                         <div className="text-textGrey2 text-[28px] font-bold ">₹{(avgCost || 0).toFixed(2)}</div>
-                        <div className="text-textGrey2 text-base font-medium ">Avg. Cost of products used</div>
+                        <div className="text-textGrey2 text-base font-medium ">Total Cost of Products</div>
                     </div>
                     <div className="w-3/12 p-6 bg-white border-t border-solid border-0 border-borderGrey flex-col justify-center items-start gap-4 flex rounded-b-xl">
                         <div className="text-textGrey2 text-[28px] font-bold ">{(margin || 0).toFixed(2)}%</div>

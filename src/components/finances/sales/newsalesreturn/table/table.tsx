@@ -97,6 +97,7 @@ const NewsalesReturnTable = () => {
     const [filteredBatches, setFilteredBatches] = useState<any[][]>([]);
     const [filteredProviders, setFilteredProviders] = useState<any[]>([]);
     const [otherData, setOtherData] = useState({});
+    const [rowIds, setRowIds] = useState<string[]>(['row-0']);
     const appState = useAppSelector((state) => state.app)
     const url = useSearchParams();
     const id = url.get('id');
@@ -273,10 +274,10 @@ const NewsalesReturnTable = () => {
         setTableData(updatedItems);
     };
 
-    const handleQuantityDecClick = (itemId: any) => {
+    const handleQuantityDecClick = (rowId: string) => {
         setItems((prevItems) =>
             prevItems.map((item) => {
-                if (item.id === itemId && item.quantity > 1) {
+                if (item.rowId === rowId && item.quantity > 1) {
                     const newQuantity = item.quantity - 1;
                     const updatedDiscountAmt = (item.sellingPrice * newQuantity * item.discountPercent) / 100 || 0;
                     return { ...item, quantity: newQuantity, discountAmt: updatedDiscountAmt };
@@ -286,10 +287,10 @@ const NewsalesReturnTable = () => {
         );
     };
 
-    const handleQuantityIncClick = (itemId: any) => {
+    const handleQuantityIncClick = (rowId: string) => {
         setItems((prevItems) =>
             prevItems.map((item) => {
-                if (item.id === itemId) {
+                if (item.rowId === rowId) {
                     const newQuantity = item.quantity + 1;
                     const updatedDiscountAmt = (item.sellingPrice * newQuantity * item.discountPercent) / 100 || 0;
                     return { ...item, quantity: newQuantity, discountAmt: updatedDiscountAmt };
@@ -331,6 +332,7 @@ const NewsalesReturnTable = () => {
             productId: null,
             serviceId: null,
             itemName: "",
+            rowId: `row-${Date.now()}-0`
         });
         setItems(items);
     }, [])
@@ -357,11 +359,14 @@ const NewsalesReturnTable = () => {
         //console.log(selectedProduct);
         if (selectedProduct.value) {
             if (index === items.length - 1) {
+                const newId = `row-${Date.now()}-${items.length}`;
                 items.push({
                     productId: null,
                     serviceId: null,
                     itemName: "",
+                    rowId: newId
                 });
+                setRowIds(prev => [...prev, newId]);
                 setItems(items);
             }
             try {
@@ -373,16 +378,15 @@ const NewsalesReturnTable = () => {
                         value: provider,
                         label: provider,
                     }));
-                    //console.log(formattedProviders);
                     setFilteredProviders(formattedProviders);
                 }
-                //console.log(productdata,servicedata);
                 setSelectedProduct(productdata ? productdata : servicedata);
                 const updatedItems = [...items];
                 updatedItems[index] = {
                     ...updatedItems[index],
+                    rowId: updatedItems[index].rowId || `row-${Date.now()}-${index}`,
                     quantity: 1,
-                    defaultUnit:productdata ? selectedProduct?.value?.defaultUnit : "",
+                    defaultUnit: productdata ? selectedProduct?.value?.defaultUnit : "",
                     itemType: productdata ? "product" : "service",
                     productId: productdata ? selectedProduct.value.id : null,
                     serviceId: servicedata ? selectedProduct.value.id : null,
@@ -391,15 +395,12 @@ const NewsalesReturnTable = () => {
                 };
                 setItems(updatedItems);
 
-
                 if (productdata) {
                     console.log('updation here product', index)
                     const productBatches = batches?.filter((batch) => batch.value.productId === selectedProduct.value.id).sort((a, b) => a.value.id - b.value.id);
                     setFilteredBatches((prevBatches) => {
                         const updatedBatches = [...prevBatches];
-
                         updatedBatches[index] = productBatches;
-
                         return updatedBatches;
                     });
                     const defaultBatch = productBatches?.[0];
@@ -407,8 +408,8 @@ const NewsalesReturnTable = () => {
                     setItems((prevItems) =>
                         prevItems.map((item, itemIndex) =>
                             itemIndex === index ? {
-                                ...item, id: defaultBatch?.value?.id,
-                                //quantity: defaultBatch?.value?.quantity ,
+                                ...item,
+                                id: defaultBatch?.value?.id,
                                 batchNumber: defaultBatch?.value?.batchNumber,
                                 expiry: defaultBatch?.value?.expiry,
                                 sellingPrice: defaultBatch?.value?.sellingPrice,
@@ -429,10 +430,6 @@ const NewsalesReturnTable = () => {
                         )
                     )
                 }
-
-                console.log(updatedItems);
-
-
             } catch (error) {
                 console.error("Error fetching product details from API:", error);
             }
@@ -546,7 +543,7 @@ const NewsalesReturnTable = () => {
 
                     </div>
                     {/* <div className='bg-[#E7F5EE] rounded-md px-2 py-2' >
-                        <span className="text-[#0F9D58]  text-sm font-medium ">You’re owed: </span>
+                        <span className="text-[#0F9D58]  text-sm font-medium ">You're owed: </span>
                         <span className="text-[#0F9D58] text-sm font-bold "> ₹ 2,124</span>
                     </div> */}
 
@@ -683,7 +680,7 @@ const NewsalesReturnTable = () => {
 
                                     <div className='w-[8rem] justify-center flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
                                         <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
-                                            <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
+                                            <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.rowId)}>
                                                 <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
                                             </button>
                                             <input
@@ -695,7 +692,7 @@ const NewsalesReturnTable = () => {
                                             />
 
                                             {/* {item.quantity} */}
-                                            <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
+                                            <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.rowId)}>
                                                 <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                             </button>{item?.defaultUnit}
                                         </div>

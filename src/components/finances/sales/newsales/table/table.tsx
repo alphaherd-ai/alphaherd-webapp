@@ -112,6 +112,7 @@ const NewsalesTable = () => {
     const [selectedBatchQuantity, setSelectedBatchQuantity] = useState<number>(0);
     const [selectedBatch, setSelectedBatch] = useState<any>();
     const [currIndex, setCurrIndex] = useState<number>(0);
+    const [rowIds, setRowIds] = useState<string[]>([]);
 
 
 
@@ -126,11 +127,14 @@ const NewsalesTable = () => {
         isEstimateDataLoading = isLoading;
     }
     useEffect(() => {
+        const newId = `row-${Date.now()}-${items.length}`;
         items.push({
             productId: null,
             serviceId: null,
             itemName: "",
+            rowId: newId
         });
+        setRowIds(prev => [...prev, newId]);
     },[])
 
     
@@ -362,26 +366,23 @@ const NewsalesTable = () => {
         setTableData(updatedItems);
     };
 
-    const handleQuantityDecClick = (itemId: any) => {
-        console.log(itemId);
+    const handleQuantityDecClick = (rowId: string) => {
         setItems((prevItems) =>
             prevItems.map((item) => {
-                if (item.id === itemId && item.quantity > 1) {
+                if (item.rowId === rowId && item.quantity > 1) {
                     const newQuantity = item.quantity - 1;
                     const updatedDiscountAmt = (item.sellingPrice * newQuantity * item.discountPercent) / 100 || 0;
                     return { ...item, quantity: newQuantity, discountAmt: updatedDiscountAmt };
                 }
-
                 return item;
             })
         );
-
     };
 
-    const handleQuantityIncClick = (itemId: any) => {
+    const handleQuantityIncClick = (rowId: string) => {
         setItems((prevItems) =>
             prevItems.map((item) => {
-                if (item.id === itemId) {
+                if (item.rowId === rowId) {
                     const newQuantity = item.quantity + 1;
                     const updatedDiscountAmt = (item.sellingPrice * newQuantity * item.discountPercent) / 100 || 0;
                     return { ...item, quantity: newQuantity, discountAmt: updatedDiscountAmt };
@@ -439,14 +440,16 @@ const NewsalesTable = () => {
 
 
     const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
-        //console.log(selectedProduct);
         if (selectedProduct.value) {
             if (index === items.length - 1) {
+                const newId = `row-${Date.now()}-${items.length}`;
                 items.push({
                     productId: null,
                     serviceId: null,
                     itemName: "",
+                    rowId: newId
                 });
+                setRowIds(prev => [...prev, newId]);
                 setItems(items);
             }
             try {
@@ -466,6 +469,7 @@ const NewsalesTable = () => {
                 const updatedItems = [...items];
                 updatedItems[index] = {
                     ...updatedItems[index],
+                    rowId: updatedItems[index].rowId || `row-${Date.now()}-${index}`,
                     quantity: 1,
                     defaultUnit: productdata ? selectedProduct?.value?.defaultUnit : "",
                     itemType: productdata ? "product" : "service",
@@ -689,7 +693,7 @@ const NewsalesTable = () => {
                                 <div className='flex text-gray-500 text-base font-medium w-1/12 '></div>
                             </div>
                             {items.map((item: any, index: number) => (
-                                <div key={index + 1} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400 py-2'>
+                                <div key={item.rowId || index} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400 py-2'>
                                     <div className='w-[3rem] flex items-center text-neutral-400 text-base font-medium '>{index + 1}.
 
                                     </div>
@@ -761,7 +765,7 @@ const NewsalesTable = () => {
 
                                     <div className='w-[8rem] justify-center flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
                                         <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
-                                            <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
+                                            <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.rowId)}>
                                                 <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
                                             </button>
                                             <input
@@ -773,7 +777,7 @@ const NewsalesTable = () => {
                                             />
 
                                             {/* {item.quantity} */}
-                                            <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
+                                            <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.rowId)}>
                                                 <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                             </button>
                                         </div> {item?.defaultUnit}

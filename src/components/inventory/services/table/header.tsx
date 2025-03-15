@@ -3,7 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import {usePathname } from 'next/navigation';
 
-const InventoryServicesTableHeader = () => {
+const InventoryServicesTableHeader = ({ onSortChange }: { onSortChange?: (key: string, sortOrder: string) => void }) => {
     const currentRoute = usePathname();
 
     return (
@@ -20,9 +20,6 @@ const InventoryServicesTableHeader = () => {
                             ? "flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white rounded-tr-md rounded-br-md"
                             : "flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500 rounded-tr-md rounded-br-md"}>All</div>
                     </Link>
-                </div>
-                <div className='flex items-center'>
-                    <Link className='no-underline flex item-center mr-4' href='/finance/overview'></Link>
                 </div>
             </div>
         </>
