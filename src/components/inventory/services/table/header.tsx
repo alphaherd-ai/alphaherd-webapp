@@ -21,9 +21,6 @@ const InventoryServicesTableHeader = ({ onSortChange }: { onSortChange?: (key: s
                             : "flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500 rounded-tr-md rounded-br-md"}>All</div>
                     </Link>
                 </div>
-                <div className='flex items-center'>
-                    {/* Right side of header - filter element removed */}
-                </div>
             </div>
         </>
     );
