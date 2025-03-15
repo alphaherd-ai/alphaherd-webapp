@@ -14,8 +14,8 @@ export const POST = async (req: NextRequest) => {
     const transport = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: process.env.AUTOMATED_GMAIL,
-        pass: process.env.AUTOMATED_GMAIL_APP_PASSWORD
+        user: process.env.CUSTOMCONNSTR_AUTOMATED_GMAIL,
+        pass: process.env.CUSTOMCONNSTR_AUTOMATED_GMAIL_APP_PASSWORD
       },
     });
     
@@ -32,7 +32,7 @@ export const POST = async (req: NextRequest) => {
     const emailMessage = "Please find your invoice attached";
     
     const mailOptions = {
-      from: process.env.AUTOMATED_GMAIL,
+      from: process.env.CUSTOMCONNSTR_AUTOMATED_GMAIL,
       to: email,
       subject: 'Your Invoice',
       text: emailMessage,
