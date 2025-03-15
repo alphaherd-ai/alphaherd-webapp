@@ -105,7 +105,6 @@ const ExsistingPurcaseReturnTotalAmount = ({ otherData, isLoading }: any) => {
         { value: 'GST@18%.', label: 'GST@18%.' },
         { value: 'GST@9%.', label: 'GST@9%.' }
     ];
-
     return (
         <>
 
@@ -135,7 +134,7 @@ const ExsistingPurcaseReturnTotalAmount = ({ otherData, isLoading }: any) => {
                         <div className="w-full h-full  bg-white rounded-[10px]">
                             <div className="w-full flex p-4 border border-solid  border-borderGrey justify-between items-center gap-2.5  rounded-t-md  ">
                                 <div className="text-gray-500 text-base font-bold ">Subtotal</div>
-                                <div className="text-right text-gray-500 text-base font-bold">₹{(otherData?.totalCost + otherData?.shipping + otherData?.adjustment + otherData?.overallDiscount * 100)?.toFixed(2) || 0}</div>
+                                <div className="text-right text-gray-500 text-base font-bold">₹{(otherData?.totalCost/(1-otherData?.overallDiscount) + otherData?.shipping + otherData?.adjustment)?.toFixed(2) || 0}</div>
                             </div>
                             <div className="w-full flex px-4 py-4 border border-solid  border-borderGrey border-t-0 justify-between items-center gap-2.5 ">
                                 <div className="text-gray-500 text-base font-bold ">Overall Discount</div>

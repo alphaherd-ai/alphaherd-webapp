@@ -110,8 +110,13 @@ const DownloadPopup = ({ onClose, expenses, type }:any) => {
       ];
       tableRows.push(ExpensesData);
     });
-
-    doc.addImage(base64Image, 'PNG', 4, 4, 20, 20); 
+    if (base64Image && typeof base64Image === 'string') {
+      try {
+        doc.addImage(base64Image, 'PNG', 4, 4, 20, 20);
+      } catch (error) {
+        console.error("Error adding image to PDF:", error);
+      }
+    }
       doc.setFontSize(20);
       doc.text(appState.currentOrg.orgName, 30, 10);
       
