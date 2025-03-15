@@ -2,6 +2,7 @@ import jsPDF from "jspdf";
 import formatDateAndTime from "./formateDateTime";
 
 export function generatePdfForInvoice(data: any, appState: any, items: any): Promise<jsPDF> {
+  console.log(data);
   return new Promise((resolve, reject) => {
     var doc = new jsPDF({
       orientation: 'portrait',
@@ -95,7 +96,7 @@ export function generatePdfForInvoice(data: any, appState: any, items: any): Pro
 
       // Add header
       // Adjust y position to avoid overlap with image
-      addText(appState.currentOrg?.org?.orgName!, 55, y, 20, 'center', 'bold');
+      addText(`${appState.currentBranch?.org?.orgName!}`, 55, y, 20, 'center', 'bold');
       y += 8;
       addText(`${appState.currentBranch?.branchName}`, 55, y, 11, 'center');
       y += 5;
@@ -170,11 +171,13 @@ export function generatePdfForInvoice(data: any, appState: any, items: any): Pro
       y += lineHeight;
 
       // Add summary headers and values
-      y = addRow(['Subtotal', `${(items.reduce((acc: any, item: any) => acc + item.quantity * item.sellingPrice, 0) || 0).toFixed(2)}`], y, [130, 180]);
+      let subTotal=items.reduce((acc: any, item: any) => acc + item.quantity * item.sellingPrice, 0) || 0
+      y = addRow(['Subtotal', `${(subTotal).toFixed(2)}`], y, [130, 180]);
       addLine(200, y, 130, y);
       y += lineHeight;
       const summaryHeaders = ['Taxable Value', 'Tax Rate', 'Tax Amount'];
       const summaryValues = items.map((item: any) => [String(item.quantity * item.sellingPrice), String(`${item.taxAmount * 100}%`), String((item.taxAmount * item.quantity * item.sellingPrice).toFixed(2))]); // Tax rate not getting for now...
+      const totalTaxAmountSumarry=items.reduce((acc: any, item: any) => acc + item.taxAmount * item.quantity * item.sellingPrice, 0) || 0;
       y += lineHeight;
       addLine(200, y + 2, 100, y + 2);
       y = addRow(summaryHeaders, y, [100, 130, 160], lineHeight);
@@ -184,12 +187,12 @@ export function generatePdfForInvoice(data: any, appState: any, items: any): Pro
         y += lineHeight
       });
       addLine(200, y + 2, 130, y + 2);
-      y = addRow(['Shipping', `${data.shipping}`], y, [130, 160]);
+      y = addRow(['Shipping', `${(data.shipping + data.adjustment) || 0}`], y, [130, 160]);
       addLine(200, y + 2, 130, y + 2);
-      y = addRow(['Total Discounts', `${data.overallDiscount}`], y, [130, 160]);
+      y = addRow(['Total Discounts', `${Number(data.overallDiscount)*100}%`], y, [130, 160]);
 
       addText('Grand Total', 130, y, 12);
-      addText(`${(data.subTotal).toFixed(2)}`, 160, y, 12);
+      addText(`${(((1-data.overallDiscount)*(subTotal+totalTaxAmountSumarry)+((data.shipping + data.adjustment) || 0))).toFixed(2)}`, 160, y, 12);
 
       y += lineHeight;
 
