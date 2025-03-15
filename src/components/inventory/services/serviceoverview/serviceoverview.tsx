@@ -77,27 +77,28 @@ const ServiceDetails = () => {
 
     useEffect(() => {
         if (!error && !isLoading && fetchedService) {
+            console.log(fetchedService);
             setTotalSales(
-                fetchedService?.items?.reduce((acc: any, e: any) => acc + Number(e.sellingPrice) * Number(e.quantity), 0) || 0
+                fetchedService?.items?.reduce((acc: any, e: any) => e.salesId ?  acc + Number(e.sellingPrice) * Number(e.quantity) : 0, 0) || 0
             );
 
             console.log(fetchedService);
             const totalSales = fetchedService?.items?.reduce(
-                (acc: any, e: any) => acc + Number(e.sellingPrice) * Number(e.quantity),
+                (acc: any, e: any) => e.salesId ?  acc + Number(e.sellingPrice) * Number(e.quantity) : 0,
                 0
             ) || 0;
 
             const totalQuantity = fetchedService?.items?.reduce(
-                (acc: any, e: any) => acc + Number(e.quantity),
+                (acc: any, e: any) => e.salesId ?  acc + Number(e.quantity) : 0,
                 0
             ) || 1;
 
             setAvgCost(totalSales / totalQuantity);
 
             const calculateMargin = (fetchedService: any) => (
-                ((fetchedService?.items?.reduce((acc: any, e: any) => acc + Number(e.sellingPrice) * Number(e.quantity), 0) || 0) -
-                    (fetchedService?.items?.reduce((acc: any, e: any) => acc + Number(e.costPrice) * Number(e.quantity), 0) || 0)) /
-                (fetchedService?.items?.reduce((acc: any, e: any) => acc + Number(e.sellingPrice) * Number(e.quantity), 0) || 1) * 100
+                ((fetchedService?.items?.reduce((acc: any, e: any) => e.salesId ?  acc + Number(e.sellingPrice) * Number(e.quantity):0, 0) || 0) -
+                    (fetchedService?.items?.reduce((acc: any, e: any) => e.salesId ?  acc + Number(e.costPrice) * Number(e.quantity):0, 0) || 0)) /
+                (fetchedService?.items?.reduce((acc: any, e: any) => e.salesId ?  acc + Number(e.sellingPrice) * Number(e.quantity):0, 0) || 1) * 100
             ).toFixed(2);
 
             setMargin(Number(calculateMargin(fetchedService)));

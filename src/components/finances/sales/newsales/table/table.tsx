@@ -137,6 +137,7 @@ const NewsalesTable = () => {
     useEffect(() => {
         if (!isEstimateDataLoading && estimateData && !isEstimateDataError) {
             const { items, ...otherData } = estimateData;
+            
             // Remove payment-related data before setting other data
             const { recordTransaction, status, ...relevantData } = otherData;
             setOtherData(relevantData);
