@@ -97,6 +97,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, in
     const handleSaveClick = async () => {
         setSaving(true);
         try {
+            console.log("amountPaid",parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1*formData.amountPaid, 10) || (balanceDue))
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/transactions/create?branchId=${appState.currentBranchId}`, {
                 method: 'POST',
                 headers: {
@@ -140,7 +141,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, in
 
         dispatch(addAmount({ amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1*formData.amountPaid, 10) || (balanceDue), mode: selectedMode, invoiceLink: headerdata.invoiceNo, moneyChange: transactionType === 'Money In' ? 'In' : 'Out', date: (formData.date ? new Date(formData.date).toISOString() : new Date().toISOString()) }))
 
-        const balanceStatus = balanceDue + (newTransaction?.moneyChange === "In" ? -1 * newTransaction.amountPaid : newTransaction.amountPaid)
+        const balanceStatus = balanceDue + (newTransaction?.moneyChange === "In" ? newTransaction.amountPaid :-1 *  newTransaction.amountPaid)
         //console.log(balanceStatus);
         if (newTransaction) {
             try {
@@ -152,7 +153,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, in
                     },
                     body: JSON.stringify({
                         recordTransaction: [newTransaction],
-                        status: balanceStatus >= 1 ? `You’re owed: ₹${parseFloat(balanceStatus).toFixed(2)}` : balanceStatus <= -1 ? `You owe: ₹${parseFloat((-1 * balanceStatus).toFixed(2))}` : 'Closed',
+                        status: balanceStatus <= -1 ? `You’re owed: ₹${parseFloat(balanceStatus).toFixed(2)}` : balanceStatus >= 1 ? `You owe: ₹${parseFloat((balanceStatus).toFixed(2))}` : 'Closed',
                     })
 
                 })
@@ -277,9 +278,9 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ setCount, headerdata, in
                     <div><span className='text-gray-500 text-base font-medium '>Party Name</span></div>
                     <div className="w-[440px] flex items-center h-9 rounded-[5px] text-textGrey2 bg-white text-base font-medium px-2 py-6  outline-none border border-solid border-gray-300 ">{headerdata ? headerdata?.party : ""}
                         <div >
-                            {balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
-                                You owe ₹{formData.amountPaid ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
-                            </span> : balanceDue === 0 ? "" : <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                            {balanceDue < 0 ? <span className=" text-[#0F9D58]  text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+                                You&apos;re owed ₹{formData.amountPaid ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
+                            </span> : balanceDue === 0 ? "" : <span className="text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px] text-[#FC6E20]">
                             You owe ₹{formData.amountPaid ? (balanceDue > 0 ? 1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
                             </span>}
                         </div>

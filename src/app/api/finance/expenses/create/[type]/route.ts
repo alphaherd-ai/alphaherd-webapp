@@ -57,7 +57,34 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
       //console.log(payload,schedule);
       //await recurringExpenses({ payload, schedule });
     }
-
+    // find the record transactions with same invoice number
+    const transactions = await prismaClient.recordTransaction.findMany({
+      where: {
+        expensesId: expense.id,
+      },
+    });
+  // get the some of moneyChange in transactions if moneyChange is 'In' subtract or 'Out' add
+    const totalAmount = transactions.reduce((acc, curr) => {
+      if (curr.moneyChange === 'In') {
+        return acc - (curr.amountPaid||0);
+      }else if(curr.moneyChange === 'Out'){
+        return acc + (curr.amountPaid||0);
+      }
+      return acc;
+    }, 0);
+    // get the balance status
+    const balanceStatus = (expense.totalCost||0)- totalAmount;
+    // get the status
+    const status = balanceStatus <= -1 ? `You’re owed: ₹${parseFloat((-1 * balanceStatus).toString()).toFixed(2)}` : balanceStatus >= 1 ? `You owe: ₹${parseFloat((balanceStatus).toString()).toFixed(2)}` : 'Closed';
+    // update the status in expenses
+    await prismaClient.expenses.update({
+      where: {
+        id: expense.id,
+      },
+      data: {
+        status: status,
+      },
+    });
     return new Response(JSON.stringify({ expense, finance }), {
       status: 201,
       headers: {

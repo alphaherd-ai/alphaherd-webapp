@@ -149,16 +149,16 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
                 }
 
                 console.log('Data saved successfully');
-                // if (!addAnotherPatient) {
-                //     // onClose();
-                //     addAnotherPatient = false;
-                // }
-                // else {
-                    //console.log("Here")
-                    // togglePopup();
+                if (!addAnotherPatient) {
+                    // onClose();
+                    addAnotherPatient = false;
+                }
+                else {
+                    console.log("Here")
+                    togglePopup();
                     onClose();
-                    // addAnotherPatient = false;
-                // }
+                    addAnotherPatient = false;
+                }
 
                 window.dispatchEvent(new FocusEvent('focus'));
             } else {
@@ -174,7 +174,6 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
             setSavingData(false);
         }
     };
-
     const handleChange = async (field: string, value: any) => {
         setFormData((prevFormData: any) => {
             const updatedFormData = { ...prevFormData, [field]: value };
@@ -396,7 +395,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
             </div>
         </div>
 
-        {showPopup && <PatientPopup onClose={onClose} clientData={clientData} />}
+        {showPopup && <PatientPopup onClose={togglePopup} clientData={clientData} />}
     </>;
 
 }

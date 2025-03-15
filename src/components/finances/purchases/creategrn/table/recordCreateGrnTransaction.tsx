@@ -202,7 +202,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ orderData, headerdata,se
 
     console.log(headerdata,orderData);
 
-    const isDisabled = !(headerData?.distributor ? headerdata?.distributor?.label: orderData?.distributor) || !(formData.amountPaid) || !selectedMode
+    const isDisabled = !(headerData?.distributor ? (headerdata?.distributor?.label||headerdata?.distributor): orderData?.distributor) || !(formData.amountPaid) || !selectedMode
 
     return (
 
@@ -247,7 +247,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ orderData, headerdata,se
                     </div>
 
                     <div>
-                        <div className="w-[440px] flex items-center h-9 rounded-[5px] text-textGrey2 bg-white text-base font-medium px-2 py-6  outline-none border border-solid border-gray-300 ">{headerdata?.distributor ? headerdata?.distributor?.label : orderData?.distributor}
+                        <div className="w-[440px] flex items-center h-9 rounded-[5px] text-textGrey2 bg-white text-base font-medium px-2 py-6  outline-none border border-solid border-gray-300 ">{headerdata?.distributor ? (headerdata?.distributor?.label||headerdata?.distributor) : orderData?.distributor}
                             {/* <div >
                                 {balanceDue > 0 ? <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5  bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
                                     You’re owed ₹{totalAmount.subTotal ? (balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue)?.toFixed(2)) : 0}
