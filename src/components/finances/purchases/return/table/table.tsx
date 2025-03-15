@@ -578,28 +578,28 @@ const handleProductSelect = useCallback(async (selectedProduct: any, index: numb
                             </div>
                             <div className=' flex text-gray-500 text-base  w-[15rem]'>
                                     <div className="customDatePickerWidth1">
-                                   {formatDateAndTime(item.expiry).formattedDate}
+                                  { (item.expiry?formatDateAndTime(item.expiry).formattedDate:"")}
                                     </div>
                                     </div>
                             <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                            ₹ {item.quantity*item.unitPrice?.toFixed(2)}
+                            ₹ {(item.quantity||0)*(item.unitPrice||0)?.toFixed(2)}
                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                     /> */}
                             </div>
                             <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                            ₹ {item.maxRetailPrice}
+                            ₹ {(item.maxRetailPrice||0)}
                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                     /> */}
                             </div>
                             <div className='flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                                {item.tax*100}%
+                                {(item.tax||0)*100}%
                             </div>
                             <div className=' flex text-textGrey2 text-base  w-[12rem] items-center gap-1'>
-                            ₹ {(item.tax*item.quantity*item.unitPrice).toFixed(2)}
+                            ₹ {((item.tax||0)*(item.quantity||0)*(item.unitPrice||0)).toFixed(2)}
                                 {/* <input
                                         type="number"
                                         className="w-[80%] border-0 outline-none h-8  rounded-md text-textGrey2  text-base focus:border focus:border-solid focus:border-textGreen px-2"

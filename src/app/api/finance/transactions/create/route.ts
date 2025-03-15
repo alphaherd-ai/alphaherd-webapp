@@ -107,7 +107,8 @@ export const POST = async (req: NextRequest, { params }: { params: { type: strin
             let balanceDue = Number(exsistingInvoice?.status?.split('₹')[1]);
             balanceDue = statusString === 'You’re owed' ? -1 * balanceDue : balanceDue;
             const balanceStatus = balanceDue && (balanceDue + (body.moneyChange === 'In' ? Number(body.amountPaid) : -Number(body.amountPaid)))
-            const status = invoice.includes('SI') || invoice.includes('PR') ? balanceStatus && (balanceStatus >= 1 ? `You’re owed: ₹${parseFloat((balanceStatus).toFixed(2))}` : balanceStatus <= -1 ? `You owe: ₹${parseFloat((-1 * balanceStatus).toFixed(2))}` : 'Closed') : balanceStatus <= -1 ? `You’re owed: ₹${parseFloat((-1 * balanceStatus).toString()).toFixed(2)}` : balanceStatus >= 1 ? `You owe: ₹${parseFloat((balanceStatus).toString()).toFixed(2)}` : 'Closed';
+            const status = balanceStatus <= -1 ? `You’re owed: ₹${parseFloat((-1 * balanceStatus).toString()).toFixed(2)}` : balanceStatus >= 1 ? `You owe: ₹${parseFloat((balanceStatus).toString()).toFixed(2)}` : 'Closed';
+            console.log("status :",status)
             exsistingInvoice && await prismaClient.expenses.update({
             where: {
                 id: exsistingInvoice.id
