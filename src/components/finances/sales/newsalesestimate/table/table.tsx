@@ -173,6 +173,7 @@ const NewsaleEstimateTable = () => {
             {children}
         </label>
     );
+    
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [isChecked, setChecked] = useState<boolean>(false);
@@ -241,15 +242,7 @@ const NewsaleEstimateTable = () => {
         setTableData(updatedItems);
     }, [items, filteredBatches]);
 
-    // const handleGstSelect = (selectedGst: any, index: number) => {
-    //     const updatedItems = [...tableData];
-    //     console.log(selectedGst)
-    //     updatedItems[index] = {
-    //         ...updatedItems[index],
-    //         gst: selectedGst.value
-    //     };
-    //     setTableData(updatedItems);
-    // };
+    
 
     const handleEditButtonClick = () => {
         setDisableButton(!disableButton);

@@ -92,7 +92,7 @@ function useAdminFetch(id: number | null) {
         adminError: error
     }
 }
-  
+
 const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: any) => {
     const [selectedOption, setSelectedOption] = useState<string>(Stock.StockIN);
     const [selectedProductDetails, setSelectedProduct] = useState<Products>()
@@ -121,18 +121,18 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
         costPrice: z.number().min(1, "Cost Price is required"),
         maxRetailPrice: z.number().min(1, "MRP is required"),
         batchNumber: z.union([z.string(), z.number()]).refine(
-          (val) => val !== '' && val !== null && val !== undefined,
-          "Batch number is required"
+            (val) => val !== '' && val !== null && val !== undefined,
+            "Batch number is required"
         )
-      }).refine(
+    }).refine(
         (data) => {
-          return !batches.some(batch => batch.label === String(data.batchNumber));
+            return !batches.some(batch => batch.label === String(data.batchNumber));
         },
         {
-          message: "Batch number must be unique",
-          path: ["batchNumber"], // This specifies which field the error is associated with
+            message: "Batch number must be unique",
+            path: ["batchNumber"], // This specifies which field the error is associated with
         }
-      );
+    );
     useEffect(() => {
         if (confirmAction === 'idle' || confirmAction === 'Save') {
             return;
@@ -148,7 +148,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
 
             const defaultBatch = (nextBatch || nextBatches[nextBatches.length - 1]);
             setSelectedBatch(defaultBatch);
-            setSelectedBatchQuantity(defaultBatch?.value?.quantity||0);
+            setSelectedBatchQuantity(defaultBatch?.value?.quantity || 0);
             setInventory((prevItems) =>
                 prevItems.map((item, itemIndex) =>
                     itemIndex === currIndex ? {
@@ -168,7 +168,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                         item,
                 )
             );
-            if(defaultBatch?.value?.quantity <= 0){
+            if (defaultBatch?.value?.quantity <= 0) {
                 setShowConfirmation(true);
             }
             setAction('idle');
@@ -262,6 +262,8 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
             fillItemName()
         }
     }, [individualSelectedProduct, products])
+
+
     useEffect(() => {
         if (!isLoading && fetchedProducts && !error) {
             //console.log(fetchedProducts);
@@ -279,7 +281,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
             setProducts(formattedProducts);
         }
         if (!batchError && !isBatchLoading && fetchedBathces) {
-            console.log("fetchededasdsads",fetchedBathces);
+            console.log("fetchededasdsads", fetchedBathces);
             const formattedProductBatches = fetchedBathces.map((product: ProductBatch) => ({
                 value: {
                     id: product.id,
@@ -298,7 +300,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
             }));
             //   console.log("formattedProductBatches   ",formattedProductBatches)
             setBatches(formattedProductBatches)
-            console.log("batches are ",batches);    
+            console.log("batches are ", batches);
         }
     }, [fetchedProducts, fetchedBathces, batchError, error, isBatchLoading, isLoading])
 
@@ -333,27 +335,23 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
         setFormData({ ...formData, [field]: value });
     };
 
-    const handleDeleteRow = useCallback((index: number) => {
-        console.log("index", index);
-        console.log("before",inventory);
-        setInventory((prevInventory) => {
-            const updatedInventory = prevInventory.filter((_, i) => i !== index);
-            
-            // Ensure at least one empty object exists
-    if (updatedInventory.length === 0 || updatedInventory[updatedInventory.length - 1].item) {
-        updatedInventory.push({});
-    }
-            // Ensure the last row remains an empty object
-            console.log("Updated Inventories: ", updatedInventory);
-            return updatedInventory;
-        });
-        // delete filteredBatches[index] as well
-        setFilteredBatches((prevBatches) => {
-            const updatedBatches = prevBatches.filter((_, i) => i !== index);
-            return updatedBatches;
-        });
-    }, []);
-    
+    const handleDeleteRow = (index: number) => {
+        const updatedInventory = inventory.filter((_, i) => i !== index);
+
+        if (updatedInventory.length === 0 || updatedInventory[updatedInventory.length - 1]?.item) {
+            updatedInventory.push({});
+        }
+
+        const updatedBatches = filteredBatches.filter((_, i) => i !== index);
+
+        setFilteredBatches([...updatedBatches]);
+        setInventory([...updatedInventory]);
+    };
+
+    console.log(inventory);
+
+
+
 
     const handleQuantityDecClick = useCallback((index: number) => {
         const updatedInventory = [...inventory];
@@ -398,17 +396,17 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
     //         setErrorValidation(false);
     //     }
     //     console.log("updatedInventory  ", updatedInventory);
-        
+
     // }, [inventory]);
     function handleInputChange(index: number, field: string, value: string | number) {
         const updatedInventory = [...inventory];
         updatedInventory[index][field] = value;
-        
+
         if (field === 'quantity' || field === 'costPrice') {
             updatedInventory[index].sellingPrice =
                 (updatedInventory[index]?.quantity || 0) * (updatedInventory[index]?.costPrice || 0);
         }
-        
+
         setInventory(updatedInventory);
 
         if (field === 'batchNumber') {
@@ -427,10 +425,10 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
         } else {
             setErrorValidation(false);
         }
-        
+
         console.log("updatedInventory  ", updatedInventory);
     }
-    
+
 
 
     const handleCheckBoxChange = useCallback(() => {
@@ -468,7 +466,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                     hsnCode: data.value.hsnCode,
                     itemName: data.value.itemName,
                     providers: data.value.provider
-                    
+
                 };
                 console.log("updatedInventory:  ", updatedInventory);
                 setInventory(updatedInventory);
@@ -557,7 +555,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                 if (data?.value?.quantity <= 0) {
                     setShowConfirmation(true);
                 }
-                if(selectedOption === Stock.StockOUT){
+                if (selectedOption === Stock.StockOUT) {
                     setCurrIndex(index);
                 }
                 // if (selectedOption === Stock.StockOUT) {
@@ -586,7 +584,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
         try {
             setUpdating(true);
             inventory.pop();
-    
+
             for (const item of inventory) {
                 // Skip validation if Stock Out is selected
                 if (selectedOption === Stock.StockIN) {
@@ -596,7 +594,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                 const { id, date, quantity, batchNumber, providers, productId, maxRetailPrice, isApproved, itemName, hsnCode } = item;
                 const invoiceType = "Manual";
                 const location = newlocation;
-    
+
                 console.log("item name is ", item);
                 let { expiry, costPrice, sellingPrice } = item;
                 console.log(sellingPrice);
@@ -608,7 +606,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                     let isoString = datetime.toISOString();
                     expiry = isoString.substring(0, 23) + "+00:00";
                 }
-    
+
                 const stockStatus = selectedOption;
                 const body = {
                     invoiceType,
@@ -643,7 +641,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                             },
                         }
                         const notifPromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
-    
+
                         setTimeout(() => {
                             onClose();
                         }, 2000)
@@ -688,7 +686,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                     }
                 }
             }
-    
+
             // After successful update, revalidate the SWR cache
             mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${appState.currentBranchId}`);
         } catch (error) {
@@ -766,7 +764,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                 }, []);
                 console.log("location list is ", locationList);
                 setLocation(locationList);
-                if(locationList.length>0){
+                if (locationList.length > 0) {
                     setSelectedLocation(locationList[0]);
                 }
             } catch (error) {
@@ -835,9 +833,9 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                             <div className='flex text-gray-500 text-base font-medium w-[8rem]'>Subtotal</div>
 
                         </div>
-
+                          
                         {inventory.map((item, index) => (
-                            <div key={index + 1} className='flex justify-evenly items-center w-full  py-2  bg-white text-gray-400  '>
+                            <div key={`${index}-${item.itemName || 'empty'}`} className='flex justify-evenly items-center w-full  py-2  bg-white text-gray-400  '>
                                 <div className='w-[5rem] px-2 flex items-center text-neutral-400 text-base font-medium'>{index + 1}</div>
                                 <div className='w-[15rem] flex items-center text-neutral-400 text-base font-medium'>
                                     <Select
@@ -911,19 +909,19 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
 
                                 </div>
                                 <div className='w-[10rem] flex items-center text-neutral-400 text-base font-medium'>
-                                    {selectedOption===Stock.StockIN && 
-                                    <DatePicker
-                                        
-                                        className="w-[90%] rounded-[5px] border border-solid border-borderGrey outline-none  focus:border focus:border-textGreen px-1 py-2"
-                                        selected={item.expiry}
-                                        placeholderText="MM/DD/YYYY"
-                                        onChange={(date: any) => {
-                                            handleInputChange(index, "expiry", date)
-                                        }}
-                                        calendarClassName="react-datepicker-custom"
-                                    
-                                    />
-}   
+                                    {selectedOption === Stock.StockIN &&
+                                        <DatePicker
+
+                                            className="w-[90%] rounded-[5px] border border-solid border-borderGrey outline-none  focus:border focus:border-textGreen px-1 py-2"
+                                            selected={item.expiry}
+                                            placeholderText="MM/DD/YYYY"
+                                            onChange={(date: any) => {
+                                                handleInputChange(index, "expiry", date)
+                                            }}
+                                            calendarClassName="react-datepicker-custom"
+
+                                        />
+                                    }
                                     {item.expiry && selectedOption !== Stock.StockIN && (
                                         <div>{formatDateAndTime(item.expiry).formattedDate}</div>
                                     )}
@@ -1019,7 +1017,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                     </div>
                     <div>
                         <div className="flex items-center">
-                            {errorValidation ? <div className="flex-grow text-red-600">*Please enter Quantity,Unit Price, Unique Batch and MRP to continue</div>:<div className="flex-grow"></div>}
+                            {errorValidation ? <div className="flex-grow text-red-600">*Please enter Quantity,Unit Price, Unique Batch and MRP to continue</div> : <div className="flex-grow"></div>}
                             <div className="bg-black px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer" onClick={handleUpdateInventory}>
                                 <Image src={checkicon} alt="add" />
                                 <button className="text-white text-base font-bold bg-transparent border-0 cursor-pointer" disabled={updating}>
