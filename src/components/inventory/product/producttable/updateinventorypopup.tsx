@@ -100,7 +100,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
     const [products, setProducts] = useState<any[]>([]);
     const [updating, setUpdating] = useState<boolean>(false);
     const [batches, setBatches] = useState<any[]>([]);
-    const [filteredBatches, setFilteredBatches] = useState<any[]>([]);
+    const [filteredBatches, setFilteredBatches] = useState<any[][]>([]);
     const [inventory, setInventory] = useState<any[]>([]);
     const [formData, setFormData] = useState<any>({});
     const appState = useAppSelector((state) => state.app)
@@ -172,7 +172,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                 setShowConfirmation(true);
             }
             setAction('idle');
-
+            // console.log("batches are, ",batches);
         }
     }, [confirmAction])
 
@@ -222,6 +222,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
 
     const { fetchedProducts, isLoading, error } = useProductfetch(appState.currentBranchId);
     const { fetchedBathces, isBatchLoading, batchError } = useProductBatchfetch(appState.currentBranchId);
+    console.log("fetched batches are ",fetchedBathces);
     const { fetchedAdmin, isAdminLoading, adminError } = useAdminFetch(appState.currentBranchId);
     useEffect(() => {
         if (fetchedAdmin && !isAdminLoading && !adminError) {
@@ -294,7 +295,8 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                     distributors: product.distributors[0],
                     totalCost: product.totalCost,
                     maxQuantity: product.quantity,
-                    maxRetailPrice: product.maxRetailPrice
+                    maxRetailPrice: product.maxRetailPrice,
+                    hsnCode: product.hsnCode,
                 },
                 label: product.batchNumber
             }));
@@ -418,12 +420,13 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
             }
         }
 
-
-        const validationResult = FormData.safeParse(updatedInventory[index]);
-        if (!validationResult.success) {
-            setErrorValidation(true);
-        } else {
-            setErrorValidation(false);
+        if(selectedOption === Stock.StockIN){
+            const validationResult = FormData.safeParse(updatedInventory[index]);
+            if (!validationResult.success) {
+                setErrorValidation(true);
+            } else {
+                setErrorValidation(false);
+            }
         }
 
         console.log("updatedInventory  ", updatedInventory);
@@ -463,7 +466,6 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                     ...updatedInventory[index],
                     quantity: selectedOption === Stock.StockIN ? 0 : data.value.quantity,
                     productId: data.value.id,
-                    hsnCode: data.value.hsnCode,
                     itemName: data.value.itemName,
                     providers: data.value.provider
 
@@ -477,7 +479,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                     updatedBatches[index] = productBatches;
                     return updatedBatches;
                 });
-                console.log("updated batches", filteredBatches);
+                console.log("updated batches", batches);
                 if (selectedOption === Stock.StockOUT) {
                     setCurrIndex(index);
                     const defaultBatch = productBatches?.[0];
@@ -498,7 +500,8 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                                 totalCost: defaultBatch?.value?.totalCost,
                                 maxQuantity: defaultBatch?.value?.quantity,
                                 maxRetailPrice: defaultBatch?.value?.maxRetailPrice,
-                                productId: defaultBatch?.value?.productId
+                                productId: defaultBatch?.value?.productId,
+                                hsnCode: defaultBatch?.value?.hsnCode
                             } :
                                 item,
                         )
@@ -523,8 +526,8 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
         setCurrIndex(index);
         if (selectedProduct.value) {
             try {
-                const data = filteredBatches.find((batch) => batch.value.id == selectedProduct.value.id);
-                // console.log(data)
+                const data = filteredBatches[index].find((batch) => batch.value.id == selectedProduct.value.id);
+                console.log("here the data",data)
                 setSelectedBatchQuantity(data.value.quantity);
                 // setSelectedBatch(data);
 
@@ -543,7 +546,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                     costPrice: selectedOption === Stock.StockIN ? "" : data?.value?.costPrice,
                     sellingPrice: selectedOption === Stock.StockIN ? "" : data?.value?.sellingPrice,
                     totalCost: selectedOption === Stock.StockIN ? "" : data?.value?.totalCost,
-                    hsnCode: selectedProductDetails?.hsnCode,
+                    hsnCode: data?.value?.hsnCode,
                     //    location: selectedOption === Stock.StockIN ? "" :selectedProductDetails?.location,
                     distributors: data?.value?.category,
                     providers: data?.value?.distributors,
