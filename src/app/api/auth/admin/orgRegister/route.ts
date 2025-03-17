@@ -52,10 +52,10 @@ export const POST = async (req: NextRequest) => {
     delete adminUserDetails.password;
     adminUserDetails.hashedPassword = hashedPassword;
 
-    const newOrg = await prismaClient.organization.create({
+    let newOrg = await prismaClient.organization.create({
       data: orgDetails
     });
-    const orgNewBranch = await prismaClient.orgBranch.create({
+    let orgNewBranch = await prismaClient.orgBranch.create({
       data : {
         ...branchDetails,
         orgId: newOrg.id
@@ -133,7 +133,7 @@ export const POST = async (req: NextRequest) => {
           }
         }
       });
-
+    }
     const defaultExpenseCategory = ['Rent', ' Payroll', 'Utilities', 'Transport', 'Medical Equipment', 'Repair and Maintenance', 'Other'];
     for (const expense of defaultExpenseCategory) {
       await prismaClient.expenseCategory.create({
@@ -214,10 +214,11 @@ export const POST = async (req: NextRequest) => {
     // console.log(orgNewBranch)
 
     adminUserDetails.orgBranchId = orgNewBranch.id;
-
-    const newUser = await prismaClient.user.create({
+    console.log("running");
+    let newUser = await prismaClient.user.create({
       data: adminUserDetails
     });
+    console.log("running2");
 
     // console.log(newOrg,newUser);
 
@@ -243,7 +244,6 @@ export const POST = async (req: NextRequest) => {
       },
     });
 
-  }
 
 
 

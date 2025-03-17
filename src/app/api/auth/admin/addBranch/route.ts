@@ -87,7 +87,7 @@ export const POST = async (req: NextRequest) => {
           }
         }
       });
-
+    }
       const defaultExpenseCategory = ['Rent', ' Payroll', 'Utilities', 'Transport', 'Medical Equipment', 'Repair and Maintenance', 'Other'];
       for (const expense of defaultExpenseCategory) {
         await prismaClient.expenseCategory.create({
@@ -162,7 +162,6 @@ export const POST = async (req: NextRequest) => {
           });
         })
       );
-    }
 
     await prismaClient.orgBranchUserRole.create({
       data: {
