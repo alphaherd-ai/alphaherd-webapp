@@ -8,12 +8,12 @@ import axios from "axios";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import CreatableSelect from "react-select/creatable";
+import { mutate } from "swr";
 
-import { useAppSelector } from '@/lib/hooks';
 import { toast, Bounce } from 'react-toastify';
-
+import { useSearchParams } from "next/navigation";
 import Loading2 from "@/app/loading2";
-
+import { useAppSelector } from "@/lib/hooks";
 type PopupProps = {
     setisEditing: any;
     editBatch: any,
@@ -28,14 +28,21 @@ interface Distributors {
 
 const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch }) => {
     console.log(editBatch);
+    const app=useAppSelector((state)=>state.app);
+    const branchId=app.currentBranchId;
+    const url=useSearchParams();
+    const id=url.get("id");
     const [formData, setFormData] = useState<any>({});
     const [locations, setLocations] = useState<any>([]);
     const [saving, isSaving] = useState(false);
     const appState = useAppSelector((state) => state.app);
     const [distributor, setDistributor] = useState<any>([]);
+    
+    
 
     useEffect(() => {
         console.log("Edit Batch", editBatch);
+
         const fetchDistributors = async () => {
             try {
                 const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll?branchId=${appState.currentBranchId}`);
@@ -70,6 +77,7 @@ const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch }) => {
                 quantity: editBatch.quantity,
                 location: editBatch.location,
             });
+            
         }
     }, []);
 
@@ -98,17 +106,22 @@ const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch }) => {
 
     const handleSave = async () => {
         const body = formData;
+        const changeInQuantity=(Number(formData.quantity)-Number(editBatch.quantity));
+        console.log(changeInQuantity);
         console.log('Body:', body);
         try {
             isSaving(true);
-            const res = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/edit/${editBatch.id}?branchId=${appState.currentBranchId}`, body,
+            const res = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/edit/${editBatch.id}?branchId=${appState.currentBranchId}`, {body, changeInQuantity},
                 {
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 });
             if (res.status === 201) {
+                mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${id}?branchId=${branchId}`)
+                mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/timeline/product/${id}?branchId=${branchId}`)
                 setisEditing((prev: any) => !prev);
+                window.location.reload();
             }
 
         }
