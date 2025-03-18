@@ -98,8 +98,8 @@ const AddExpenseCategory = ({onClose}:any) => {
                 }),
             });
             if (response.ok) {
-                const result = await response.json();
-                window.location.reload();
+                //const result = await response.json();
+                //window.location.reload();
                 // console.log('Payment methods saved:', result);
                 onClose(); 
             } else {
