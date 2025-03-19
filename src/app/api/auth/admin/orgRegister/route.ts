@@ -52,10 +52,10 @@ export const POST = async (req: NextRequest) => {
     delete adminUserDetails.password;
     adminUserDetails.hashedPassword = hashedPassword;
 
-    const newOrg = await prismaClient.organization.create({
+    let newOrg = await prismaClient.organization.create({
       data: orgDetails
     });
-    const orgNewBranch = await prismaClient.orgBranch.create({
+    let orgNewBranch = await prismaClient.orgBranch.create({
       data : {
         ...branchDetails,
         orgId: newOrg.id
@@ -88,54 +88,63 @@ export const POST = async (req: NextRequest) => {
     })
 
     const defaultCategories = ['Pet food', 'Medicine', 'Supplements', 'Pet Accessories', 'Equipment'];
-    await prismaClient.itemCategory.create({
-      data: {
-        name: defaultCategories,
-        InventorySection: {
-          connect: { id: inventorySection.id }
+    for (const category of defaultCategories) {
+      await prismaClient.itemCategory.create({
+        data: {
+          name: [category],
+          InventorySection: {
+            connect: { id: inventorySection.id }
+          }
         }
-      }
-    })
+      });
+    }
 
     const defaultUnits = ['Boxes', 'Pieces', 'Vials', 'Units', 'Strips'];
-    await prismaClient.itemUnit.create({
-      data: {
-        name: defaultUnits,
-        InventorySection: {
-          connect: { id: inventorySection.id }
+    for (const unit of defaultUnits) {
+      await prismaClient.itemUnit.create({
+        data: {
+          name: [unit],
+          InventorySection: {
+            connect: { id: inventorySection.id }
+          }
         }
-      }
-    })
+      });
+    }
 
     const defaultTaxTypes = [0, 5, 12, 18, 28];
-    await prismaClient.taxType.create({
-      data: {
-        name: defaultTaxTypes,
-        InventorySection: {
-          connect: { id: inventorySection.id }
+    for (const tax of defaultTaxTypes) {
+      await prismaClient.taxType.create({
+        data: {
+          name: [tax],
+          InventorySection: {
+            connect: { id: inventorySection.id }
+          }
         }
-      }
-    })
+      });
+    }
 
     const defaultServiceCategory = ['General Consultation', 'Follow Up', 'Surgery', 'Vaccination', 'Grooming', 'Boarding', 'Rescue'];
-    await prismaClient.serviceCategory.create({
-      data: {
-        name: defaultServiceCategory,
-        InventorySection: {
-          connect: { id: inventorySection.id }
+    for (const service of defaultServiceCategory) {
+      await prismaClient.serviceCategory.create({
+        data: {
+          name: [service],
+          InventorySection: {
+            connect: { id: inventorySection.id }
+          }
         }
-      }
-    })
-
+      });
+    }
     const defaultExpenseCategory = ['Rent', ' Payroll', 'Utilities', 'Transport', 'Medical Equipment', 'Repair and Maintenance', 'Other'];
-    await prismaClient.expenseCategory.create({
-      data: {
-        name: defaultExpenseCategory,
-        InventorySection: {
-          connect: { id: inventorySection.id }
+    for (const expense of defaultExpenseCategory) {
+      await prismaClient.expenseCategory.create({
+        data: {
+          name: [expense],
+          InventorySection: {
+            connect: { id: inventorySection.id }
+          }
         }
-      }
-    })
+      });
+    }
 
     const defaultPaymentMethod = ['Cash', 'UPI', 'Netbanking'];
     //making a loop for each method
@@ -161,14 +170,16 @@ export const POST = async (req: NextRequest) => {
     })
 
     const defaultReason = ['Damaged', 'Expired', 'Wrong Item', 'Quality Issues'];
-    await prismaClient.reason.create({
-      data: {
-        name: defaultReason,
-        InventorySection: {
-          connect: { id: inventorySection.id }
+    for (const reason of defaultReason) {
+      await prismaClient.reason.create({
+        data: {
+          name: [reason],
+          InventorySection: {
+            connect: { id: inventorySection.id }
+          }
         }
-      }
-    })
+      });
+    }
 
     const defaultSpeciesandBreed = [
       { name: 'Dog', breed: ['Unknown', 'Labrador Retriever', 'German Shepherd', 'Golden Retriever', 'Beagle', 'Pug', 'Indian Mastiff', 'Husky', 'Dashshund', 'Shi Tzu'] },
@@ -203,10 +214,11 @@ export const POST = async (req: NextRequest) => {
     // console.log(orgNewBranch)
 
     adminUserDetails.orgBranchId = orgNewBranch.id;
-
-    const newUser = await prismaClient.user.create({
+    console.log("running");
+    let newUser = await prismaClient.user.create({
       data: adminUserDetails
     });
+    console.log("running2");
 
     // console.log(newOrg,newUser);
 
@@ -224,13 +236,20 @@ export const POST = async (req: NextRequest) => {
         }
       }
     });
+    await prismaClient.orgBranchUserRole.create({
+      data: {
+          orgBranchId: orgNewBranch.id,
+          userId: newUser.id,
+          role: "Admin",
+      },
+    });
 
 
 
 
 
 
-    return new Response(JSON.stringify({ "message": "Organization & Admin user successfully created." }), {
+    return new Response(JSON.stringify({ "message": `Your organisation ${orgDetails.orgName} has been created successfully` }), {
       status: 201,
       headers: {
         'Content-Type': 'application/json',

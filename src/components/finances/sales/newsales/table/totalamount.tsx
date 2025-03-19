@@ -18,6 +18,7 @@ import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 import Menu from '../../../../../assets/icons/finance/menu.svg'
 import EditRecordTransactionPopup from '@/components/finances/editTransaction/editTransaction';
 import CancellationPopup from '@/components/finances/cancelTransaaction/cancelTransaction';
+import { useSearchParams } from 'next/navigation';
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 interface Transactions {
@@ -41,7 +42,9 @@ interface Transactions {
 
 const NewsalesTotalAmout = ({ otherData }: { otherData: any }) => {
 
-
+    const url = useSearchParams();
+    console.log(otherData);
+    const id = url.get('id');
 
     const customStyles = {
         control: (provided: any, state: any) => ({
@@ -101,7 +104,7 @@ const NewsalesTotalAmout = ({ otherData }: { otherData: any }) => {
 
     const handleSelectedTransaction = (transaction: any) => {
         const updatedTransaction = {
-            partyName:headerData?.customer?.label,
+            partyName: id===null ? headerData?.customer?.label : otherData?.customer,
             invoiceLink:headerData.invoiceNo,
             ...transaction
         }
@@ -117,30 +120,37 @@ const NewsalesTotalAmout = ({ otherData }: { otherData: any }) => {
     const { totalAmountData, setTotalAmountData } = useContext(DataContext);
     const { transactionsData, setTransactionsData } = useContext(DataContext);
 
-    
+    //console.log(transactionsData);
     useEffect(() => {
         if (otherData.recordTransaction) {
-            for (let i = 0; i < otherData.recordTransaction.length; i++) {
-                const formData = otherData.recordTransaction[i];
-                const newTransaction = {
+            setTransactionsData((prevTransactions: any) => {
+                const newTransactions = otherData.recordTransaction.map((formData: any) => ({
                     amountPaid: parseInt(formData.amountPaid > 0 ? formData.amountPaid : -1 * formData.amountPaid, 10) || (balanceDue),
                     date: formData.date || new Date(),
                     isAdvancePayment: formData.isAdvancePayment,
                     mode: formData.mode,
                     moneyChange: formData.moneyChange,
                     receiptNo: formData?.receiptNo,
-                };
-                setTransactionsData((prevTransactions: any) => [...prevTransactions, newTransaction]);
-            };
+                }));
+    
+                // Remove duplicates based on receiptNo
+                const uniqueTransactions = [...prevTransactions, ...newTransactions].reduce((acc, curr) => {
+                    if (!acc.some((t: any) => t.receiptNo === curr.receiptNo)) acc.push(curr);
+                    return acc;
+                }, [] as any[]);
+                return uniqueTransactions;
+            });
         }
     }, [otherData.recordTransaction]);
+
+    
     const [grandAmt, setGrandAmt] = useState(totalAmount);
 
     const gstOptions = [
         { value: 'percent', label: '% in Percent' },
         { value: 'amount', label: '₹ in Amount' }
     ];
-    const [discountMethod, setDiscountMethod] = useState('amount');
+    const [discountMethod, setDiscountMethod] = useState(id==null ? 'amount' : 'percent');
     const handleSelectChange = (selectedOption: any) => {
         setDiscountMethod(selectedOption.value);
     };
@@ -169,12 +179,16 @@ const NewsalesTotalAmout = ({ otherData }: { otherData: any }) => {
     const [shipping, setShipping] = useState<string>('');
     const [adjustment, setAdjustment] = useState<string>('');
 
-    useEffect(() => {
-        if (totalAmountData.subTotal == 0) {
-            setShipping('');
-            setAdjustment('');
+    useEffect(()=>{
+        if(otherData.adjustment || otherData.shipping || otherData.overallDiscount){
+            setAdjustment(otherData.adjustment.toString() || '0');
+            setShipping(otherData.shipping.toString() || '0');
+            setDiscountPer(otherData.overallDiscount || 0);
         }
-    }, [totalAmountData])
+    },[otherData])
+
+
+    
 
     const handleShippingChange = (event: any) => {
         //console.log(typeof event.target.value)
@@ -205,6 +219,7 @@ const NewsalesTotalAmout = ({ otherData }: { otherData: any }) => {
             totalCost: newGrandTotal,
             shipping: shippingValue,
             adjustment: adjustmentValue,
+            overAllDiscount:selectedDiscountPer,
         }));
     };
 
@@ -233,6 +248,8 @@ const NewsalesTotalAmout = ({ otherData }: { otherData: any }) => {
 
     }, [count]);
 
+    
+
 
     return (
         <>
@@ -259,7 +276,8 @@ const NewsalesTotalAmout = ({ otherData }: { otherData: any }) => {
                                 <div className=' flex text-gray-500 text-base font-medium pl-6'>
                                     <Select
                                         className="text-textGrey2 text-base font-medium"
-                                        defaultValue={gstOptions[1]}
+                                        //defaultValue={gstOptions[1]}
+                                        value={discountMethod === 'amount' ? gstOptions[1] : gstOptions[0]}
                                         isClearable={false}
                                         isSearchable={true}
                                         options={gstOptions}
@@ -284,6 +302,7 @@ const NewsalesTotalAmout = ({ otherData }: { otherData: any }) => {
                                 className="text-right text-textGrey2 text-base   border-none outline-none"
                                 placeholder='0'
                                 value={adjustment}
+                                defaultValue={otherData?.adjustment}
                                 onChange={handleAdjustmentChange}
                             />
                         </div>

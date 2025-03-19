@@ -41,14 +41,14 @@ const ExsistingNonRecurringTotalAmount = ({ otherData, isLoading }: any) => {
 
 
 
-    const totalPaidAmount = recordTransaction?.reduce((acc: any, transaction: any) => {
+    const  totalAmountPay = recordTransaction?.reduce((acc: any, transaction: any) => {
         if (transaction?.moneyChange === 'In' || transaction?.isAdvancePayment) {
             return acc + transaction?.amountPaid;
         }
         return acc;
     }, 0);
 
-    const totalAmountPay = recordTransaction?.reduce((acc: any, transaction: any) => {
+    const totalPaidAmount = recordTransaction?.reduce((acc: any, transaction: any) => {
         if (transaction?.moneyChange === 'Out') {
             return acc + transaction?.amountPaid;
         }
@@ -204,9 +204,9 @@ const ExsistingNonRecurringTotalAmount = ({ otherData, isLoading }: any) => {
     <div className="text-gray-500 text-base font-bold  w-1/3 py-4">Balance Due</div>
     <div className="text-gray-500 text-lg font-medium  w-1/3 py-4 flex  items-center"></div>
     <div className="text-gray-500 text-base font-bold  w-1/3 py-4 ">₹{balanceDue < 0 ? -1 * (balanceDue)?.toFixed(2) : (balanceDue || 0)?.toFixed(2)}
-        {balanceDue < 0 ? <span className="text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
-            You owe
-        </span> : balanceDue === 0 ? "" : <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+        {balanceDue < 0 ? <span className="text-[#0F9D58] text-sm font-medium  px-2 py-1.5 bg-[#FFF0E9] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
+            You&apos;re owed
+        </span> : balanceDue === 0 ? "" : <span className=" text-[#FC6E20] text-sm font-medium  px-2 py-1.5 bg-[#E7F5EE] rounded-[5px] justify-center items-center gap-2 ml-[5px]">
             You owe
         </span>}
     </div>

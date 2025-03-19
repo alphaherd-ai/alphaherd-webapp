@@ -1,80 +1,62 @@
 import { NextRequest, NextResponse } from "next/server";
 import { decrypt } from "../../../../../auth";
 import prismaClient from '../../../../../prisma';
-import { redirect } from 'next/navigation'
-import { create } from "domain";
 
-export const GET = async (req: NextRequest, res: NextResponse) => {
-
-    // redirect method throws an error so it should be called outside the try catch block
-
-    let redirectURL = process.env.CUSTOMCONNSTR_NEXT_PUBLIC_API_BASE_PATH!;
-
-    // console.log(req.method);
+export const GET = async (req: NextRequest) => {
+    // Initialize base URL without any trailing slashes
+    const baseURL = process.env.CUSTOMCONNSTR_NEXT_PUBLIC_API_BASE_PATH?.replace(/\/+$/, '') || '';
 
     try {
         if (req.method !== 'GET') {
             return new Response('Method not allowed', { status: 405 });
         }
 
-        // console.log("Inside settings/invite");
-
         const { searchParams } = new URL(req.url!);
         const userInviteString = searchParams.get("userInviteString");
 
         if (!userInviteString) {
-            return new NextResponse(JSON.stringify({ "message": "No Invite String Found" }), { status: 200 });
+            return NextResponse.json({ message: "No Invite String Found" }, { status: 400 });
         }
-
-        // console.log("User invite string found");
 
         const { branchId, role, email } = await decrypt(userInviteString);
-
-        // console.log(branchId, role, email);
-
+        
         const user = await prismaClient.user.findUnique({
-            where: {
-                email: email
-            }
+            where: { email }
         });
 
-        // const orgBranch = await prismaClient.orgBranch.findUnique({
-        //     where: {
-        //         id: branchId
-        //     }
-        // });
-
-        // console.log(user)
-
+        let redirectPath;
         if (!user) {
-            // console.log("here")
-            redirectURL+=`/auth/user/register?userInviteString=${userInviteString}`;
-        }
-        else {
-            // console.log(branchId);
-            await prismaClient.orgBranchUserRole.create({
-                data: {
+            redirectPath = `/auth/user/register?userInviteString=${userInviteString}`;
+        } else {
+            const existingRole = await prismaClient.orgBranchUserRole.findFirst({
+                where: {
                     orgBranchId: Number(branchId),
-                    userId: user!.id,
-                    role: role
+                    userId: user.id,
                 }
             });
-            redirectURL += `/auth/login?userInviteString=${userInviteString}`
 
+            if (existingRole) {
+                redirectPath = '/auth/login';
+            } else {
+                await prismaClient.orgBranchUserRole.create({
+                    data: {
+                        orgBranchId: Number(branchId),
+                        userId: user.id,
+                        role: role
+                    }
+                });
+                redirectPath = `/auth/login?userInviteString=${userInviteString}`;
+            }
         }
-    }
-    catch (error : any) {
-        // console.log(error);
-        // console.log(typeof (error))
-        return new Response(JSON.stringify({ "message": error.message }), {
-            status: 500,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-    }
-    finally{
-        // console.log(redirectURL);
-        redirect(redirectURL)
+
+        // Construct the full redirect URL
+        const redirectURL = `${baseURL}${redirectPath}`;
+        return NextResponse.redirect(redirectURL);
+    } catch (error) {
+        console.error('Invite acceptance error:', error);
+        return NextResponse.json(
+            { message: error instanceof Error ? error.message : 'Failed to process invitation' },
+            { status: 500 }
+        );
     }
 }

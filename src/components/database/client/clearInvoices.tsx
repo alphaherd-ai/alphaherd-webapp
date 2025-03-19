@@ -11,12 +11,14 @@ import { useAppSelector } from '@/lib/hooks';
 import Loading2 from '@/app/loading2';
 
 const ClearInvoices = ({ invoiceList, setOpen, formData }: any) => {
+
     console.log(formData);
     const [isSaving,setSaving]=useState(false);
     const appState = useAppSelector((state) => state.app)
     const router = useRouter();
     const [checkedInvoiceList, setCheckedInvoiceList] = useState<any[]>([]);
     const [totalSum, setTotalSum] = useState(0);
+    console.log(checkedInvoiceList);
     
 
 
@@ -27,8 +29,8 @@ const ClearInvoices = ({ invoiceList, setOpen, formData }: any) => {
             let calculatedTotalSum: number = 0;
             invoiceList.forEach((invoice: any) => {
                
-                if (invoice.status.includes("You’re owed")) {
-                    const match = invoice.status.match(/You’re owed: [₹₹]?\s?([\d.]+)/);
+                if (invoice.status.includes("You owe")) {
+                    const match = invoice.status.match(/₹\s*([\d.]+)/);
                     if (match && match[1]) {
                         invoice.toBePaid = parseFloat(match[1]); // Extracted amount
                         calculatedTotalSum += invoice.toBePaid;
@@ -44,6 +46,7 @@ const ClearInvoices = ({ invoiceList, setOpen, formData }: any) => {
                 } else {
                     invoice.toBePaid = 0;
                 }
+                //console.log(selectedInvoices,cummulative,calculatedTotalSum);
                 //setToPay(toPay);
 
             });
@@ -68,7 +71,7 @@ const ClearInvoices = ({ invoiceList, setOpen, formData }: any) => {
         });
     };
 
-    console.log(checkedInvoiceList, formData);
+    //console.log(checkedInvoiceList, formData);
 
     const handleRedirect = () => {
         setOpen((prev: any) => !prev);
@@ -94,7 +97,7 @@ const ClearInvoices = ({ invoiceList, setOpen, formData }: any) => {
                         date: formData?.date || new Date(),
                         amountPaid: Number(invoice?.toBePaid),
                         mode: formData?.mode,
-                        moneyChange: formData?.moneyChange,
+                        moneyChange: 'Out',
                     }),
                 });
 
@@ -116,7 +119,7 @@ const ClearInvoices = ({ invoiceList, setOpen, formData }: any) => {
                 amountPaid: Number(invoice?.toBePaid),
                 date: formData?.date || new Date(),
                 mode: formData?.mode,
-                moneyChange: formData?.moneyChange,
+                moneyChange: 'Out',
                 receiptNo: formData?.receiptNo[0],
             };
 
@@ -155,7 +158,7 @@ const ClearInvoices = ({ invoiceList, setOpen, formData }: any) => {
                         date: formData?.date || new Date(),
                         amountPaid: Number(totalAmountToBePaid),
                         mode: formData?.mode,
-                        moneyChange: formData?.moneyChange,
+                        moneyChange: 'Out',
                     }),
                 });
 
@@ -176,7 +179,7 @@ const ClearInvoices = ({ invoiceList, setOpen, formData }: any) => {
                 amountPaid: Number(totalAmountToBePaid),
                 date: formData?.date || new Date(),
                 mode: formData?.mode,
-                moneyChange: formData?.moneyChange,
+                moneyChange:'Out',
                 receiptNo: formData?.receiptNo[0],
             };
 
@@ -188,7 +191,7 @@ const ClearInvoices = ({ invoiceList, setOpen, formData }: any) => {
                     },
                     body: JSON.stringify({
                         recordTransaction: [newTransaction],
-                        status: (invoice?.toBePaid - totalAmountToBePaid) < 1  ? 'Closed' : `You’re owed ₹${(invoice?.toBePaid - totalAmountToBePaid).toFixed(2)}`,
+                        status: (invoice?.toBePaid - totalAmountToBePaid) < 1  ? 'Closed' : `You owe ₹${(invoice?.toBePaid - totalAmountToBePaid).toFixed(2)}`,
                     }),
                 });
 
@@ -209,6 +212,8 @@ const ClearInvoices = ({ invoiceList, setOpen, formData }: any) => {
     window.location.href = window.location.href;
     setSaving(false);
 };
+
+    
 
 
     return (
@@ -240,7 +245,7 @@ const ClearInvoices = ({ invoiceList, setOpen, formData }: any) => {
                     <div className='flex text-gray-500 text-base font-medium px-2  w-2/12'>Due Date</div>
                     <div className='flex text-gray-500 text-base font-medium px-2  w-2/12'>Status</div>
                 </div>
-                {invoiceList?.length > 0 && invoiceList.sort((a:any,b:any)=>new Date(b.date).getSeconds()-new Date(a.date).getSeconds()).filter((invoice: any) => invoice.status.includes('You’re owed')).map((invoice: any) => (
+                {invoiceList?.length > 0 && invoiceList.sort((a:any,b:any)=>new Date(b.date).getSeconds()-new Date(a.date).getSeconds()).filter((invoice: any) => invoice.status.includes('You owe')).map((invoice: any) => (
                     <div key={invoice?.id} className='box-border flex justify-between  w-full  items-center border-0 border-b border-solid border-borderGrey   h-12 py-8  text-gray-500'>
                         <input
                             className='w-[40px]'
@@ -254,7 +259,7 @@ const ClearInvoices = ({ invoiceList, setOpen, formData }: any) => {
                         <div className='flex text-[#A2A3A3] text-base font-medium px-2  w-1/12'>₹{invoice?.totalCost}</div>
                         <div className='flex text-[#A2A3A3] text-base font-medium px-2  w-1/12'>{invoice?.totalQty}</div>
                         <div className='flex text-[#A2A3A3] text-base font-medium px-2  w-2/12'>{new Date(invoice?.dueDate).toLocaleDateString('en-GB')}</div>
-                        <div className='flex  w-2/12 '><p className=" px-2 py-1 bg-[#FFF0E9] rounded-md text-sm font-medium text-[#FC6E20]">{invoice?.status?.replace("You’re owed", "to be paid")}</p></div>
+                        <div className='flex  w-2/12 '><p className=" px-2 py-1 bg-[#FFF0E9] rounded-md text-sm font-medium text-[#FC6E20]">{invoice?.status?.replace("You owe", "to be paid")}</p></div>
                     </div>
                 ))}
                 <div className="flex justify-end items-end flex-1 p-4">

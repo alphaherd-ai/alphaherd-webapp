@@ -32,7 +32,7 @@ export const fetchInventoryId = async (request:NextRequest) => {
         where: {
             id : Number(branchId)
         },
-        cacheStrategy:{ttl:30}
+        // cacheStrategy:{ttl:30}
     });
     let inventorySection = await prismaClient.inventorySection.findUnique({
         where: {
@@ -68,7 +68,7 @@ export const fetchFinanceId = async (request:NextRequest) => {
         where: {
             id : Number(branchId)
         },
-        cacheStrategy:{ttl:30}
+        // cacheStrategy:{ttl:30}
     });
     // console.log(orgBranch)
 
@@ -105,7 +105,7 @@ export const fetchDatabaseId = async (request:NextRequest) => {
         where: {
             id : Number(branchId)
         },
-        cacheStrategy:{ttl:30}
+        // cacheStrategy:{ttl:30}
     });
     // console.log(orgBranch)
     let databaseSection = await prismaClient.databaseSection.findUnique({

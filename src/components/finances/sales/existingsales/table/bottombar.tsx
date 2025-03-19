@@ -32,6 +32,8 @@ const ExistingsalesBottomBar = ({ existingSalesData }: any) => {
       setEmail(existingSalesData.email);
     }
   }, [existingSalesData]);
+
+
   const downloadPdf = async () => {
     // const allData = existingSalesData;
     const data = existingSalesData;
@@ -39,6 +41,8 @@ const ExistingsalesBottomBar = ({ existingSalesData }: any) => {
     // printPdf(doc);
     DownloadPdf(doc, `Invoice_${data.id}.pdf`);
   };
+
+
   const printPdf = async () => {
     const data = existingSalesData;
     const doc = await generatePdfForInvoice(data, appState, existingSalesData.items);
@@ -47,25 +51,71 @@ const ExistingsalesBottomBar = ({ existingSalesData }: any) => {
 
   console.log("email is : ", email);
   const shareInvoiceViaEmail = async () => {
-
-
     if (!email || email.trim() === "") {
       setIsPopupOpen(true); // Open the popup if email is missing
       return;
     }
+    
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/email`, {
-        email: existingSalesData.email,
-        invoiceData: existingSalesData,
-      });
-      if (response.status === 200) {
+      // Show loading state (if you have one)
 
-        alert("Invoice sent successfully");
+      
+      const data = existingSalesData;
+      const doc = await generatePdfForInvoice(data, appState, existingSalesData.items);
+      
+      if (!doc) {
+        throw new Error("Failed to generate PDF");
+      }
+      
+      // Convert PDF to base64 string - this part depends on what your generatePdfForInvoice returns
+      let pdfBase64;
+      
+      // If using PDFKit
+      if (typeof doc.output === 'function') {
+        pdfBase64 = doc.output('datauristring').split(',')[1]; // Extract base64 content
+      } 
+      // If using jsPDF
+      else if (typeof doc.output === 'function') {
+        pdfBase64 = doc.output('datauristring').split(',')[1]; // Extract base64 content
+      }
+      // If it's a Buffer
+      else if (Buffer.isBuffer(doc)) {
+        pdfBase64 = doc.toString('base64');
+      }
+      // If it's already a base64 string
+      else if (typeof doc === 'string') {
+        // Check if it's already base64 encoded
+        if (typeof doc === 'string' && !(doc as string).match(/^[A-Za-z0-9+/=]+$/)) {
+          pdfBase64 = Buffer.from(doc).toString('base64');
+        } else {
+          pdfBase64 = doc;
+        }
+      } else {
+        // Last resort for other formats
+        pdfBase64 = Buffer.from(JSON.stringify(doc)).toString('base64');
+      }
+      
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/email`, 
+        {
+          email: existingSalesData.email,
+          doc: pdfBase64,
+        }
+      );
+      
+      if (response.status === 200) {
+        console.log("Invoice sent successfully");
+        // Show success message to user
 
       }
     } catch (error) {
       console.error("Error sending invoice:", error);
       console.log("Failed to send invoice");
+      // Show error message to user
+     
+    } finally {
+      // Hide loading state (if you have one)
+      
     }
   };
 
@@ -83,6 +133,42 @@ const ExistingsalesBottomBar = ({ existingSalesData }: any) => {
     }
 
     try {
+
+      const data = existingSalesData;
+      const doc = await generatePdfForInvoice(data, appState, existingSalesData.items);
+      
+      if (!doc) {
+        throw new Error("Failed to generate PDF");
+      }
+      
+      // Convert PDF to base64 string - this part depends on what your generatePdfForInvoice returns
+      let pdfBase64;
+      
+      // If using PDFKit
+      if (typeof doc.output === 'function') {
+        pdfBase64 = doc.output('datauristring').split(',')[1]; // Extract base64 content
+      } 
+      // If using jsPDF
+      else if (typeof doc.output === 'function') {
+        pdfBase64 = doc.output('datauristring').split(',')[1]; // Extract base64 content
+      }
+      // If it's a Buffer
+      else if (Buffer.isBuffer(doc)) {
+        pdfBase64 = doc.toString('base64');
+      }
+      // If it's already a base64 string
+      else if (typeof doc === 'string') {
+        // Check if it's already base64 encoded
+        if (typeof doc === 'string' && !(doc as string).match(/^[A-Za-z0-9+/=]+$/)) {
+          pdfBase64 = Buffer.from(doc).toString('base64');
+        } else {
+          pdfBase64 = doc;
+        }
+      } else {
+        // Last resort for other formats
+        pdfBase64 = Buffer.from(JSON.stringify(doc)).toString('base64');
+      }
+
       // Save the email in the database
       const saveEmailResponse = await axios.put(
         `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/sales/updateEmail/?branchId=${appState.currentBranchId}`,
@@ -99,7 +185,7 @@ const ExistingsalesBottomBar = ({ existingSalesData }: any) => {
           `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/share/email`,
           {
             email: email,
-            invoiceData: existingSalesData,
+            doc: pdfBase64,
           }
         );
         if (shareResponse.status === 200) {

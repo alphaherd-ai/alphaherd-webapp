@@ -26,7 +26,8 @@ type PopupProps = {
 const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNewClient }: any) => {
     //console.log(setIsNewClientClicked);
     const [formData, setFormData] = useState<any>({});
-    const [showPopup, setShowPopup] = React.useState(false);
+    const [showPopup, setShowPopup] = useState(false);
+    const [closepop,setClosePop]=useState(false);
     const appState = useAppSelector((state) => state.app)
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [isSaveDisabled, setIsSaveDisabled] = useState(true);
@@ -34,10 +35,10 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
     const [isClientSaved, setClientStatus] = useState<any>(false);
     const [clientData,setNewClientData]=useState<any>({})
     const [prevClient, setPrevClient] = useState<any>({})
-
     let addAnotherPatient = false;
     const togglePopup = () => {
         setShowPopup(!showPopup);
+        console.log("Clicked on togglepopup",showPopup);
     }
 
     const customStyles = {
@@ -149,18 +150,18 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
                 }
 
                 console.log('Data saved successfully');
-                // if (!addAnotherPatient) {
-                //     // onClose();
-                //     addAnotherPatient = false;
-                // }
-                // else {
-                    //console.log("Here")
+                if (!addAnotherPatient) {
+                    // onClose();
+                    addAnotherPatient = false;
+                }
+                else {
+                    console.log("Here")
                     // togglePopup();
-                    onClose();
-                    // addAnotherPatient = false;
-                // }
-
-                window.dispatchEvent(new FocusEvent('focus'));
+                    addAnotherPatient = false;
+                }
+                console.log("Here it is closing", showPopup);
+                setClosePop(true);
+                
             } else {
                 console.error('Failed to save data', response.statusText);
             }
@@ -170,11 +171,16 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
             console.error('Error while saving data:', error);
         }
         finally {
-
+            
             setSavingData(false);
         }
     };
-
+    useEffect(() => {
+        if (closepop && !showPopup) {
+            onClose();
+            window.dispatchEvent(new FocusEvent('focus'));
+        }
+    }, [closepop])
     const handleChange = async (field: string, value: any) => {
         setFormData((prevFormData: any) => {
             const updatedFormData = { ...prevFormData, [field]: value };
@@ -216,7 +222,7 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
                 }));
             }
         } else if (field === 'email') {
-            const client =await prevClient.find((client: any) => client.email === value);
+            const client =await prevClient?.find((client: any) => client.email === value);
             console.log("Regex",!(/^[^\s@]+@[^\s@]+\.[^\s@]+$/).test(value));
             if (!(/^[^\s@]+@[^\s@]+\.[^\s@]+$/).test(value)) {
                 setErrors((prevErrors) => ({
@@ -258,14 +264,14 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
 
     ]
 
-    const handleNewPatientPopUp = () => {
+    const handleNewPatientPopUp = async () => {
         addAnotherPatient = true
-        if (!isClientSaved) handleSaveClick();
-        else {
+        if (!isClientSaved) await handleSaveClick();
+        // else {
             console.log("Client saved");
             // onClose();
             togglePopup();
-        }
+        // }
     }
 
 

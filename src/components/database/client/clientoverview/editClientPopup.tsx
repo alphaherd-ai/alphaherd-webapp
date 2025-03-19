@@ -69,6 +69,8 @@ const EditClientPopup: React.FC<PopupProps> = ({ onClose, clientData }) => {
                 //const updatedClient = await response.json();
                 //console.log('Client data updated successfully:', updatedClient);
                 onClose(); // Close the popup after a successful update
+                window.dispatchEvent(new FocusEvent('focus'));
+                // window.location.reload();
             } else {
                 console.error('Failed to update client data', response.statusText);
             }

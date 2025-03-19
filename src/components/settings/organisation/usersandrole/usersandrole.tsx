@@ -225,7 +225,7 @@ export default function UsersAndRolesSettings() {
                                                     <div className="text-neutral-400 text-sm font-medium">Make Admin</div>
                                                 </button>
                                             )}
-                                            { (user.userId != userState.id) &&  (userrole === 'Manager' && user.role === 'Admin') && (
+                                            { (user.userId != userState.id) &&  ((userrole==='Admin') && user.role === 'Admin') && (
                                                 <button 
                                                 onClick={() => toggleRemoveAdmin(user.user)} 
                                                 className="px-2 py-1 bg-gray-100 rounded-[5px] justify-start items-center gap-1 flex border-none cursor-pointer"
