@@ -60,7 +60,7 @@ const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
   const sendlowNotification = async (notifData: any, productID: number) => {
     //console.log("send notif triggered",notifData);
     try {
-      //await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData);
+      await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData);
 
       await axios.patch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/lastOutOfStockNotif`, {
         id: productID,
