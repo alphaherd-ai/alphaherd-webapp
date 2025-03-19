@@ -596,7 +596,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                 console.log("item", item);
                 const { id, date, quantity, batchNumber, providers, productId, maxRetailPrice, isApproved, itemName, hsnCode } = item;
                 const invoiceType = "Manual";
-                const location = newlocation;
+                const location = selectedLocation?.label || '';
 
                 console.log("item name is ", item);
                 let { expiry, costPrice, sellingPrice } = item;

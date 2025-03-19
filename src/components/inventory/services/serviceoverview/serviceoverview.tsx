@@ -12,6 +12,7 @@ import useSWR from "swr"
 import Loading2 from "@/app/loading2"
 import Select from 'react-select';
 import axios from "axios"
+import { set } from "date-fns";
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
 
@@ -74,7 +75,7 @@ const ServiceDetails = () => {
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue(event.target.value === '' ? 0 : Number(event.target.value));
     };
-
+    const [removeLinkedProducts, setRemoveLinkedProducts] = useState<any[]>([]);
     const [productDetails, setProductDetails] = useState<any>([]);
     const [loading, setLoading] = useState(false);
 
@@ -99,7 +100,7 @@ const ServiceDetails = () => {
                     if (!product.productBatches || product.productBatches.length === 0) {
                         return 0;
                     }
-                    
+
                     // Sort batches by creation date if createdAt exists
                     const sortedBatches = [...product.productBatches].sort((a, b) => {
                         if (a.createdAt && b.createdAt) {
@@ -107,23 +108,23 @@ const ServiceDetails = () => {
                         }
                         return 0; // If no createdAt, maintain original order
                     });
-                    
+
                     // Return the cost of the first batch
-                    return sortedBatches.length > 0 ? 
+                    return sortedBatches.length > 0 ?
                         Number(sortedBatches[0].costPrice) || 0 : 0;
                 });
-                
+
                 // Calculate total cost of all unique products
                 const totalCost = uniqueProductCosts.reduce((sum: number, cost: number) => sum + cost, 0);
                 setAvgCost(totalCost);
-                
+
                 // Calculate profit margin using service charge and total cost
                 const serviceCharge = Number(service.serviceCharge) || 0;
-                const profitMargin = serviceCharge > 0 ? 
+                const profitMargin = serviceCharge > 0 ?
                     ((serviceCharge - totalCost) / serviceCharge * 100) : 0;
-                
+
                 setMargin(profitMargin);
-                
+
                 // Keep existing calculations for total sales
                 setTotalSales(
                     service?.items?.reduce((acc: any, e: any) => acc + Number(e.sellingPrice) * Number(e.quantity), 0) || 0
@@ -149,13 +150,7 @@ const ServiceDetails = () => {
                 });
                 let productsJson = await productsResponse?.json();
                 const filteredProducts = (productsJson.products.filter((product: any) => !(product?.isDeleted)).map((product: any) => { return { label: product.itemName, value: product.id } }));
-                console.log(service);
-                const getAlreadyLinkedProductIds: any[] = [];
-                service.linkProducts.map((product: any) => {
-                    getAlreadyLinkedProductIds.push(product.value);
-                });
-                const unLinkedProducts = filteredProducts.filter((product: any) => !getAlreadyLinkedProductIds.includes(product.value));
-                setProductOptions(unLinkedProducts);
+                setProductOptions(filteredProducts);
             }
         }
         fetchProductsAndProviders();
@@ -246,12 +241,18 @@ const ServiceDetails = () => {
         e.preventDefault();
         try {
             setIsUpdating(true);
-    
+
             // Use only the edited linkProducts if available; otherwise, keep the existing ones
             const linkProducts = Array.isArray(editService?.linkProducts)
-                ? editService.linkProducts
-                : JSON.parse(service?.linkProducts || "[]");
-    
+                ? Array.from(
+                    new Map(
+                        [...editService.linkProducts]
+                            .map((item: any) => [item.value, item])
+                    ).values()
+                )
+                : ([]);
+
+
             const data = {
                 ...(editService?.name && { name: editService?.name }),
                 ...(editService?.sacCode && { sacCode: editService?.sacCode }),
@@ -259,9 +260,10 @@ const ServiceDetails = () => {
                 ...(editService?.serviceCharge && { serviceCharge: editService?.serviceCharge }),
                 ...(editService?.tax && { tax: Number(editService?.tax) }),
                 ...(editService?.category && { category: editService?.category }),
-                ...(linkProducts.length > 0 && { linkProducts }), // Only include if not empty
+                ...(linkProducts.length >= 0 && { linkProducts }), 
             };
-    
+            //console.log("data", data);
+
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/service/${id}?branchId=${appState.currentBranchId}`,
                 {
@@ -272,7 +274,7 @@ const ServiceDetails = () => {
                     body: JSON.stringify(data),
                 }
             );
-    
+
             if (response.ok) {
                 alert("Service updated successfully!");
                 setShowEditPopup(false);
@@ -289,6 +291,7 @@ const ServiceDetails = () => {
         }
     };
     
+
 
 
     const handleDelete = async () => {
@@ -537,7 +540,7 @@ const ServiceDetails = () => {
                                                         onChange={(e) =>
                                                             setEditService((prev: any) => ({
                                                                 ...prev,
-                                                                serviceCharge: e.target.value,
+                                                                serviceCharge: Number(e.target.value),
                                                             }))
                                                         }
                                                     />
@@ -584,7 +587,7 @@ const ServiceDetails = () => {
 
 
                                                 <div>
-                                                    <label className="block text-gray-700 font-medium">Link Products</label>
+                                                    <label className="block text-gray-700 font-medium">Linked Products</label>
                                                     {productOptions ? (
                                                         <Select
                                                             className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
@@ -594,14 +597,68 @@ const ServiceDetails = () => {
                                                             options={productOptions}
                                                             isMulti={true}
                                                             name="linkProduct"
-                                                            onChange={(value) => setEditService((prev: any) => ({ ...prev, linkProducts: value }))}
+                                                            onChange={(value) => {
+                                                                setEditService((prev: any) => ({
+                                                                    ...prev,
+                                                                    linkProducts: Array.from(
+                                                                        new Map(
+                                                                            [...(prev.linkProducts || []), ...value.map((v: any) => ({ ...v }))]
+                                                                                .map((item) => [item.value, item])
+                                                                        ).values()
+                                                                    )
+                                                                }));
+                                                                setRemoveLinkedProducts((prev:any)=>{return prev.filter((product:any)=>!value.some((v:any)=>v.value===product.value))})
+                                                            }}
                                                             styles={customStyles}
-
+                                                            value={
+                                                                editService?.linkProducts?.map((product: any) => {
+                                                                    return { label: product.label, value: product.value }
+                                                                }
+                                                                )
+                                                            }
                                                         />
                                                     ) : (
-                                                        <div className="text-neutral-400 text-base font-medium w-full"><Loading2 /></div>
+                                                        <div className="text-neutral-400 text-base font-medium w-full">
+                                                            <Loading2 />
+                                                        </div>
                                                     )}
                                                 </div>
+
+                                                <div>
+                                                    <label className="block text-gray-700 font-medium">Remove Linked Products</label>
+                                                    {productOptions ? (
+                                                        <Select
+                                                            className="text-neutral-400 text-base font-medium w-full border border-solid border-borderGrey rounded-[5px]"
+                                                            placeholder="Select Product"
+                                                            isClearable={true}
+                                                            isSearchable={true}
+                                                            options={productOptions}
+                                                            isMulti={true}
+                                                            name="unlinkProduct"
+                                                            onChange={(value) => {
+                                                                setEditService((prev: any) => ({
+                                                                    ...prev,
+                                                                    linkProducts: prev.linkProducts
+                                                                        ? prev.linkProducts.filter(
+                                                                            (existing: any) => !value.some((v: any) => v.value === existing.value)
+                                                                        )
+                                                                        : []
+                                                                }));
+                                                                setRemoveLinkedProducts([...value])
+                                                            }}
+                                                            styles={customStyles}
+                                                            value={removeLinkedProducts.map((product: any) => {
+                                                                return { label: product.label, value: product.value }
+                                                            })}
+                                                            
+                                                        />
+                                                    ) : (
+                                                        <div className="text-neutral-400 text-base font-medium w-full">
+                                                            <Loading2 />
+                                                        </div>
+                                                    )}
+                                                </div>
+
 
                                                 {/* Save and Cancel Buttons */}
                                                 <div className="flex justify-end space-x-4 mt-6">

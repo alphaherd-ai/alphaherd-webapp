@@ -28,6 +28,7 @@ const DistributorPopup: React.FC<PopupProps> = ({ onClose }: any) => {
         const getAllDistributors=async()=>{
             const res=await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll?branchId=${appState.currentBranchId}`);
             if(res.data){
+                console.log(res.data);
                 setExsistingDistributors(res.data);
             }
         }
@@ -38,10 +39,19 @@ const DistributorPopup: React.FC<PopupProps> = ({ onClose }: any) => {
         try {
             setIsSaveDisabled(true);
             setSavingData(true);
+
             //checking if same distributor exists or not by checking its distributorName contact and email
-            const isDistributorExists=exsistingDistributors.some((distributor)=>distributor.distributorName.toLowerCase()===formData.distributorName.toLowerCase() && distributor.contact===formData.contact && distributor.email===formData.email);
+            const isDistributorExists = exsistingDistributors.some((distributor:any) =>
+                distributor.distributorName.trim().toLowerCase() === formData.distributorName.trim().toLowerCase() &&
+                distributor.contact.trim() === formData.contact.trim() &&
+                distributor.email.trim().toLowerCase() === formData.email.trim().toLowerCase() &&
+                distributor.gstinNo.trim() === formData.gstinNo.trim() &&
+                distributor.panNo.trim() === formData.panNo.trim()
+              );
+              
+           
             if(isDistributorExists){
-                setShowDuplicateDistributorError('Distributor with same name, contact and email already exists');
+                setShowDuplicateDistributorError('Distributor with same name, contact ,email, GSTIN and PAN already exists');
                 return;
             }
 

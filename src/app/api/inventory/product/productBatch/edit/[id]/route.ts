@@ -33,28 +33,29 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: number; 
 
 
 
-
-        const createdInventory = await prismaClient.inventoryTimeline.create({
-            data: {
-                quantityChange: changeInQuantity,
-                inventoryType: Inventory.Product,
-                stockChange: changeInQuantity >= 0 ? Stock.StockIN : Stock.StockOUT,
-                party: 'Edit Product Batch',
-                inventorySectionId: batch.inventorySectionId
-            }
-
-        })
-
-        await prismaClient.inventoryTimeline.update({
-            where: { id: createdInventory.id },
-            data: {
-                productBatch: {
-                    connect: {
-                        id: batch.id,
+        if (changeInQuantity !== 0) {
+            const createdInventory = await prismaClient.inventoryTimeline.create({
+                data: {
+                    quantityChange: changeInQuantity,
+                    inventoryType: Inventory.Product,
+                    stockChange: changeInQuantity >= 0 ? Stock.StockIN : Stock.StockOUT,
+                    party: 'Edit Product Batch',
+                    inventorySectionId: batch.inventorySectionId
+                }
+            })
+            await prismaClient.inventoryTimeline.update({
+                where: { id: createdInventory.id },
+                data: {
+                    productBatch: {
+                        connect: {
+                            id: batch.id,
+                        },
                     },
                 },
-            },
-        });
+            });
+        }
+
+
 
 
         return new Response(JSON.stringify(batch), { status: 201, headers: { 'Content-Type': 'application/json' } });

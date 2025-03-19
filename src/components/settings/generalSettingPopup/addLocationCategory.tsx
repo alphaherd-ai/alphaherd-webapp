@@ -66,9 +66,9 @@ const AddLocation = ({ onClose }: any) => {
             });
 
             if (response.ok) {
-                const result = await response.json();
-                console.log('Location saved:', result);
-                window.location.reload();
+                //const result = await response.json();
+                //console.log('Location saved:', result);
+                //window.location.reload();
                 onClose(); // Close the modal on success
             } else {
                 console.error('Failed to save location:', response.statusText);

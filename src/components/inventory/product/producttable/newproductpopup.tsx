@@ -127,7 +127,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                 const itemCategoryList: any[] = response.data.reduce((acc: any[], categoryEntry: ItemCategory) => {
                     if (Array.isArray(categoryEntry.name)) {
                         categoryEntry.name.forEach((name: string) => {
-                            acc.push({ value: categoryEntry.id, label: name });
+                            acc.push({ value: categoryEntry.id, label: categoryEntry.name });
                         });
                     } else {
                         acc.push({ value: categoryEntry.id, label: categoryEntry.name });

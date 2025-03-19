@@ -1,5 +1,5 @@
 "use client";
-import React, {  useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import Update from '../../../assets/icons/inventory/update.svg';
 import Add from '../../../assets/icons/inventory/add.svg';
@@ -42,22 +42,21 @@ const InventoryNavbar = () => {
     useEffect(() => {
         if (!error && !isLoading && data) {
             const options = data?.map((item: any) => {
-               
                 if (!item?.productId && !item?.serviceId) {
-                    return null; 
+                    return null;
                 }
                 return {
                     label: item.productBatch
                         ? `${item.productBatch?.product?.itemName} - ${item.productBatch?.batchNumber}`
                         : item.service
-                        ? `${item.service?.name}`
-                        : "",
+                            ? `${item.service?.name}`
+                            : "",
                     value: item
                 };
-            }).filter(Boolean); 
-            console.log(data);
+            }).filter(Boolean);
+            const uniqueOptions = Array.from(new Map(options.map((option: { label: string; value: any }) => [option.label, option])).values());
             setSearchData(data);
-            setSearchOptions(options);
+            setSearchOptions(uniqueOptions);
         }
     }, [data, isLoading, error]);
 
@@ -177,7 +176,7 @@ const InventoryNavbar = () => {
                                     </div>
                                 </div>
 
-                                <div className='flex items-center mr-8   justify-center capitalize border-none bg-[#35BEB1] px-2  text-white rounded-lg cursor-pointer py-2 w-fit h-[44px]' onClick={()=>router.push('/inventory/transfer')}>
+                                <div className='flex items-center mr-8   justify-center capitalize border-none bg-[#35BEB1] px-2  text-white rounded-lg cursor-pointer py-2 w-fit h-[44px]' onClick={() => router.push('/inventory/transfer')}>
                                     <div className='flex items-center'>
                                         <Image src={InventoryTransferIcon} alt='Update' className='w-5 h-5 mr-2' />
                                         <button className='bg-transparent border-0 text-white text-base'>
