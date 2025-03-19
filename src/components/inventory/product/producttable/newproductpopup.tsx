@@ -135,7 +135,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                     }
                     return acc;
                 }, []);
-                console.log(itemCategoryList);
+                console.log("here are the categories",itemCategoryList);
                 setCategories(itemCategoryList);
             } catch (error) {
                 console.log("Error fetching species", error);
@@ -145,15 +145,13 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
     }, [appState.currentBranchId]);
 
     const { fetchedProducts, isLoading, error } = useProductfetch(appState.currentBranchId);
-    console.log("fetchproducts",fetchedProducts)
-    
     useEffect(() => {
         // Handle successful product fetch (all conditions met)
         if (!isLoading && !error && fetchedProducts) {
             // Extract unique categories from fetchedProducts
             const fetchedCategories = fetchedProducts.map((product: { category: string }) => product.category);
             const uniqueFetchedCategories = Array.from(new Set(fetchedCategories));
-            console.log(fetchedProducts);
+            // console.log(fetchedProducts);
             // Combine with existing categories and remove duplicates
             const allCategories = [...categories.map(cat => cat.value), ...uniqueFetchedCategories];
             const uniqueCategories = Array.from(new Set(allCategories)).map(category => ({ value: category, label: category }));
@@ -161,7 +159,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
             // Update the state with unique categories
             setCategories(uniqueCategories);
         }
-    }, [isLoading, error, fetchedProducts, categories]);
+    }, [isLoading, error, fetchedProducts]);
 
     const [taxType, settaxType] = useState<any[]>([]);
     useEffect(() => {
@@ -275,7 +273,8 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
 
         setFormData((prevFormData: any) => {
             const updatedFormData = { ...prevFormData, [field]: value };
-            const isProductNameValid = updatedFormData.itemName !== '' ;
+            const isProductNameValid = updatedFormData.itemName && updatedFormData.itemName.trim() !== '';
+            console.log("productName",updatedFormData.itemName,isProductNameValid);
             const isTaxValid = updatedFormData.tax !== undefined;
             const isProductExist = fetchedProducts?.some((item: any) => item.itemName?.toLowerCase() === updatedFormData.itemName?.toLowerCase()) || false;
             // Update the errors state directly
@@ -334,7 +333,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                     }
                     return acc;
                 }, []);
-                console.log(unitOptionsList);
+                // console.log(unitOptionsList);
                 setUnitOptions(unitOptionsList);
             } catch (error) {
                 console.log("Error fetching species", error);

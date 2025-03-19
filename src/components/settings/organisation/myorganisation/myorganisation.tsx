@@ -56,7 +56,7 @@ export const MyOrganisationSettings = () => {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify({"orgDetails":data,"orgId":appState.currentOrgId}),
           }
         );
       
@@ -124,7 +124,7 @@ export const MyOrganisationSettings = () => {
                                 <div className="flex gap-4">
                                     {appState.isCurrentOrgAdmin?(
                                          <CldUploadButton
-                                         className="rounded-full  h-0 border-none  hover:cursor-pointer"
+                                         className="rounded-full border-none  hover:cursor-pointer"
                                          options={{
                                              sources: ['local', 'url'],
                                              multiple: false,
@@ -136,7 +136,7 @@ export const MyOrganisationSettings = () => {
                                                  handleUpdatePic(result.info)
                                                  widget.close();
                                              }}
-                                     >                {appState.currentOrg.orgImgUrl?<Image src={appState.currentOrg.orgImgUrl} alt="profile" width={130} height={150} />:
+                                     >                {appState.currentOrg.orgImgUrl?<Image src={appState.currentOrg.orgImgUrl} alt="profile" width={130} height={150} className="h-[7rem] w-auto"/>:
                                      <div className="w-[164px] h-[164px] p-2 rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 flex">
                                      <div className="text-neutral-400 text-base font-bold ">+</div>
                                      <div className="text-neutral-400 text-base font-bold "> Logo</div>
@@ -144,7 +144,7 @@ export const MyOrganisationSettings = () => {
                                    }
                                                 
                                                  </CldUploadButton>
-                                    ):(appState.currentOrg.orgImgUrl?<Image src={appState.currentOrg.orgImgUrl} alt="profile" width={130} height={150} />:(
+                                    ):(appState.currentOrg.orgImgUrl?<Image src={appState.currentOrg.orgImgUrl} alt="profile" className="h-[130px]" />:(
                                         <div className="flex gap-4">
                                             <div className="w-[164px] h-[164px] p-2 rounded-[5px] border border-neutral-400 flex-col justify-center items-center gap-2 flex">
                                      <div className="text-neutral-400 text-base font-bold ">+</div>

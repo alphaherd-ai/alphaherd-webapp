@@ -68,7 +68,7 @@ const DistributorPopup: React.FC<PopupProps> = ({ onClose }: any) => {
                     gstinNo: formData.gstinNo,
                     panNo: formData.panNo,
                     address: formData.address,
-                    city: formData.city ? formData.city[0].value : undefined,
+                    city: formData.city ? formData.city.value : undefined,
                     pinCode: formData.pinCode,
                 }),
             });
@@ -170,22 +170,11 @@ const DistributorPopup: React.FC<PopupProps> = ({ onClose }: any) => {
             }
             // Validate GSTIN
             else if (field === 'gstinNo') {
-                if (value.length > 0 && !onlyDigitsPattern.test(value)) {
-                    // If non-digit characters are entered
+                const gstinPattern = /^[0-9A-Z]{15}$/;
+                if (value.length > 0 && !gstinPattern.test(value)) {
                     setErrors((prevErrors) => ({
                         ...prevErrors,
-                        gstinNo: 'Invalid format',
-                    }));
-                } else if (value.length > 15) {
-                    // If GSTIN exceeds 15 digits
-                    setErrors((prevErrors) => ({
-                        ...prevErrors,
-                        gstinNo: 'GSTIN should be 15 digits',
-                    }));
-                } else if (value.length > 0 && value.length < 15) {
-                    setErrors((prevErrors) => ({
-                        ...prevErrors,
-                        gstinNo: 'GSTIN should be 15 digits',
+                        gstinNo: 'GSTIN should be 15 alphanumeric characters',
                     }));
                 } else {
                     setErrors((prevErrors) => ({ ...prevErrors, gstinNo: '' }));
@@ -305,7 +294,11 @@ const DistributorPopup: React.FC<PopupProps> = ({ onClose }: any) => {
                             className="w-[447px] h-9 text-neutral-400 text-base font-medium px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
                             type="text"
                             name="gstinNo"
-                            onChange={(e) => handleChange("gstinNo", e.target.value)}
+                            style={{ textTransform: 'uppercase' }}
+                            onChange={(e) => {
+                                const value = e.target.value.toUpperCase();
+                                handleChange("gstinNo", value);
+                            }}
                         />
                         {errors.gstinNo && (
                             <div className="text-red-500 text-sm mt-1">{errors.gstinNo}</div>
@@ -317,7 +310,16 @@ const DistributorPopup: React.FC<PopupProps> = ({ onClose }: any) => {
                 <div className="flex items-center gap-1">
                     <div className="text-gray-500 text-base font-medium w-[8.2rem]">PAN Number</div>
                     <div>
-                        <input className="w-[447px] h-9 text-neutral-400 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="panNo" onChange={(e) => handleChange("panNo", e.target.value)} />
+                        <input
+                            className="w-[447px] h-9 text-neutral-400 text-base font-medium px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
+                            type="text"
+                            name="panNo"
+                            style={{ textTransform: 'uppercase' }}
+                            onChange={(e) => {
+                                const value = e.target.value.toUpperCase();
+                                handleChange("panNo", value);
+                            }}
+                        />
                         {errors.panNo && (
                             <div className="text-red-500 text-sm mt-1">{errors.panNo}</div>
                         )}
@@ -350,7 +352,7 @@ const DistributorPopup: React.FC<PopupProps> = ({ onClose }: any) => {
                                 isClearable={false}
                                 isSearchable={true}
                                 options={City}
-                                isMulti={true}
+                                isMulti={false}
                                 name="city"
                                 onChange={(value) => handleChange("city", value)}
                                 styles={customStyles}

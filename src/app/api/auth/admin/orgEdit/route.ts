@@ -15,12 +15,14 @@ export const PATCH = async (req: NextRequest) => {
         },
         data: orgDetails
     });
-    await prismaClient.orgBranch.update({
+    if(branchDetails){
+      await prismaClient.orgBranch.update({
         where: {
-            id: Number(branchId)
+          id: Number(branchId)
         },
         data: branchDetails
-    });
+      });
+    }
     
     return new Response(JSON.stringify({ "message" : "Organization data updated successfully"}), {
       status: 201,
@@ -30,7 +32,7 @@ export const PATCH = async (req: NextRequest) => {
     });
 
   } catch (error : any) {
-    // console.log(error);
+    console.log(error);
     // console.log(typeof(error))
     return new Response(JSON.stringify({"message" : error.message}), {
       status: 500,

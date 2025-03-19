@@ -1,7 +1,5 @@
-import { connectToDB } from '../../../../../../utils/index';
 import prismaClient from '../../../../../../../prisma';
-import { fetchInventoryId } from '@/utils/fetchBranchDetails';
-import { ProductBatch } from "@prisma/client";
+
 
 // Named export for the PATCH method
 export async function PATCH(req: Request) {
@@ -15,7 +13,7 @@ export async function PATCH(req: Request) {
         lastOutOfStockNotif: new Date(lastOutOfStockNotif) 
       },
     });
-
+    
     return new Response(JSON.stringify({ message: 'Last notification date updated' }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
