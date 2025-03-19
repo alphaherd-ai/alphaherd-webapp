@@ -67,6 +67,9 @@ export const UserAccountSetup = (props: any) => {
                             <div className="text-gray-500 text-base font-medium ">Name*</div>
                             <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
                                 <input className="w-[645px] h-11 bg-white text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" name="name" value={props.data.name} onChange={props.handleChange} />
+                                {props.validationErrors.name && (
+                                    <div className="text-[red] error">{props.validationErrors.name}</div>
+                                )}
                             </div>
                         </div>
                         <div className="flex items-center justify-between gap-12">
@@ -84,8 +87,12 @@ export const UserAccountSetup = (props: any) => {
                     <div className="flex items-center justify-between gap-[18px]">
                         <div className="w-[137px] text-gray-500 text-base font-medium ">Phone No.</div>
                         <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
-
-                            <input className="w-[304px] h-11 bg-white  text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" minLength={10} maxLength={10} name="phoneNo" value={props.data.phoneNo} onChange={props.handleChange} />
+                            <input className="w-[304px] h-11 bg-white text-textGrey2 text-base font-medium px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" minLength={10} maxLength={10} name="phoneNo" value={props.data.phoneNo} onChange={(e) => {
+                                const value = e.target.value;
+                                if (/^\d*$/.test(value)) {
+                                    props.handleChange(e);
+                                }
+                            }} />
                             {props.validationErrors.phoneNo && (
                                 <div className="text-[red] error">{props.validationErrors.phoneNo}</div>
                             )}
@@ -94,8 +101,12 @@ export const UserAccountSetup = (props: any) => {
                     <div className="flex items-center justify-between gap-[2px]">
                         <div className="w-[137px] text-gray-500 text-base font-medium ">Alt. Phone No.</div>
                         <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
-
-                            <input className="w-[304px] h-11 bg-white  text-textGrey2 text-base font-medium  px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" minLength={10} maxLength={10} name="altPhoneNo" value={props.data.altPhoneNo} onChange={props.handleChange} />
+                            <input className="w-[304px] h-11 bg-white text-textGrey2 text-base font-medium px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" type="text" minLength={10} maxLength={10} name="altPhoneNo" value={props.data.altPhoneNo} onChange={(e) => {
+                                const value = e.target.value;
+                                if (/^\d*$/.test(value)) {
+                                    props.handleChange(e);
+                                }
+                            }} />
                             {props.validationErrors.altPhoneNo && (
                                 <div className="text-[red] error">{props.validationErrors.altPhoneNo}</div>
                             )}

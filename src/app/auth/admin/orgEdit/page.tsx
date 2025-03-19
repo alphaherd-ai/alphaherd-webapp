@@ -25,7 +25,7 @@ const formSchema = z.object({
   branchName: z.string().min(4, 'Branch Name must be at least 4 characters'),
   panNo: z.string().length(10, 'PAN ID must have 10 characters'),
   state: z.string().min(1, "Select State to continue"),
-  pinCode: z.string().regex(/^\d{6}$/, 'Invalid Pincode - must be exactly 6 numeric digits'),
+  pincode: z.string().regex(/^\d{6}$/, 'Invalid Pincode - must be exactly 6 numeric digits'),
   description: z.string()
 });
 
@@ -48,13 +48,13 @@ const OrgEdit = () => {
         panNo: '',
         address: '',
         state: '',
-        pinCode: '',
+        pincode: '',
         description: ''
     };
     
     var stepFields = [
       ["orgName"],
-      ["orgName","orgEmail","orgImgUrl","gstNo","phoneNo","altPhoneNo","website","panNo","branchName","address","state","pinCode","description"]
+      ["orgName","orgEmail","orgImgUrl","gstNo","phoneNo","altPhoneNo","website","panNo","branchName","address","state","pincode","description"]
     ];
 
     
@@ -72,7 +72,7 @@ const OrgEdit = () => {
         branchName: appState.currentBranch.branchName || '',
         panNo: appState.currentBranch.panNo || '',
         state: appState.currentBranch.state || '',
-        pinCode: (appState.currentBranch.pinCode).toString() || 0,
+        pincode: appState.currentOrg.pinCode || '',
         description: appState.currentBranch.description || ''
       };
     });
@@ -197,7 +197,7 @@ const OrgEdit = () => {
             gstNo: data.gstNo,
             address: data.address,
             state: data.state,
-            pincode: data.pinCode,
+            pinCode: data.pincode,
             description: data.description,
             phoneNo: data.phoneNo
             };
@@ -212,7 +212,7 @@ const OrgEdit = () => {
             website: data.website,
             panNo: data.panNo,
             state: data.state,
-            pinCode: parseInt(data.pinCode),
+            pinCode: parseInt(data.pincode),
             description: data.description,
             branchName: data.branchName
             };
@@ -234,7 +234,7 @@ const OrgEdit = () => {
                   "gstNo": data.gstNo,
                   "address": data.address,
                   "state": data.state,
-                  "pincode": data.pinCode,
+                  "pincode": data.pincode,
                   "description": data.description,
                   "phoneNo": data.phoneNo
                 },
@@ -247,7 +247,7 @@ const OrgEdit = () => {
                   website: data.website,
                   panNo: data.panNo,
                   state: data.state,
-                  pinCode: parseInt(data.pinCode),
+                  pinCode: parseInt(data.pincode),
                   description: data.description,
                   branchName: data.branchName,
                 },
@@ -323,20 +323,7 @@ const OrgEdit = () => {
                         formElements[activeTab]
                     }
                     <div className="flex justify-between px-[5rem] pb-[2rem]">
-                        {
-                          activeTab!==0 ? <button
-                          className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0 cursor-pointer" disabled={activeTab === 0 ? true : false}
-                          onClick={() => setActiveTab(prev => prev - 1)}>
-                          <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
-                              <div className="text-white text-sm font-bold  cursor-pointer">
-                                  Prev
-                              </div>
-                              <div className="w-6 h-6 relative">
-                                  <Image src={continuebutton} alt="button" />
-                              </div>
-                          </div>
-                      </button> : <div></div>
-                        }
+                      <div></div>
                         {
                             activeTab !== formElements.length - 1 ? <button className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0"
                                 disabled={activeTab === formElements.length - 1 ? true : false}

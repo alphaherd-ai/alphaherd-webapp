@@ -20,7 +20,7 @@ export const MyOrganisationSettings = () => {
 
     const appState = useAppSelector((state) => state.app);
     const dispatch = useAppDispatch();
-
+    console.log("appstate",appState)
     const [showPopup, setShowPopup] = React.useState(false);
     const togglePopup = () => {
         setShowPopup(!showPopup);

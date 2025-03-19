@@ -10,10 +10,10 @@ import createAccountLogo from '@/assets/icons/loginsignup/CreateAccount.svg'
 import { Bounce, ToastContainer, toast } from 'react-toastify';
 import { z } from 'zod';
 import { setValidationErrorsForForm } from '@/utils/setValidationErrorForForm';
-
+import Loading from "@/app/loading2";
 const formSchema = z.object({
     phoneNo: z.string().length(10, 'Invalid Phone No.'),
-    name: z.string(),
+    name: z.string().min(1, 'Name is required'),
     email: z.string().email('Invalid Email Address'),
     altPhoneNo: z.string().length(10, 'Invalid Phone No.'),
     imageUrl: z.string(),
@@ -27,6 +27,13 @@ const formSchema = z.object({
             message: 'Alt. Phone No. must be different',
         });
     }
+    if (data.password !== data.rePassword) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['rePassword'],
+            message: 'Passwords do not match',
+        });
+    }
 });
 
 export default function UserAccountSetupPage() {
@@ -36,7 +43,7 @@ export default function UserAccountSetupPage() {
     const queryParams = new URLSearchParams(window.location.search);
 
     let userInviteString = queryParams.get('userInviteString');
-
+    const [saving,setSaving] = useState(false);
     const [data, setData] = useState({
         name: "",
         email: "",
@@ -48,7 +55,7 @@ export default function UserAccountSetupPage() {
     });
 
     var stepFields = [
-        ["name"], ["email"], ["phoneNo"], ["altPhoneNo"], ["password"], ["rePassword"]
+        ["name","email","phoneNo","altPhoneNo","password","rePassword"]
     ];
     const [validationErrors, setValidationErrors] = useState(data);
     useEffect(() => {
@@ -191,9 +198,9 @@ export default function UserAccountSetupPage() {
     const formSubmit = async (e:React.FormEvent) => {
         e.preventDefault();
         console.log("form button")
-
+        setSaving(true);
         try {
-
+            formSchema.parse(data);
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/auth/user/register${userInviteString ? "?userInviteString=" + userInviteString : ""}`,
                 {
                     method: 'POST',
@@ -231,6 +238,10 @@ export default function UserAccountSetupPage() {
             }
         }
         catch (err: any) {
+            if(err instanceof z.ZodError){
+                setValidationErrorsForForm(err, setValidationErrors, 0, stepFields);
+            }
+            else{
             toast.error(err.message, {
                 position: "bottom-right",
                 autoClose: 5000,
@@ -241,7 +252,9 @@ export default function UserAccountSetupPage() {
                 progress: undefined,
                 theme: "colored",
                 transition: Bounce,
-            });
+            });}
+        }finally{
+            setSaving(false);
         }
     }
 
@@ -263,7 +276,7 @@ export default function UserAccountSetupPage() {
                             onClick={(e) => formSubmit(e)}>
                             <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
                                 <div className="text-white text-sm font-bold">
-                                    Submit Details
+                                    {saving?<Loading/>:"Submit Details"}
                                 </div>
                             </div>
                         </button>

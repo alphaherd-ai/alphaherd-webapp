@@ -455,20 +455,19 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
             );
             setInventory(inventory);
         }
+        console.log("seleceted product :",selectedProduct);
         if (selectedProduct.value) {
             try {
                 const data = products.find((product) => product.value.id === selectedProduct.value.id);
-                //console.log(data);
+                console.log("data of selected product is  ", data);
                 setSelectedProduct(data);
-                console.log("data of selected is  ", data);
                 const updatedInventory = [...inventory];
                 updatedInventory[index] = {
                     ...updatedInventory[index],
                     quantity: selectedOption === Stock.StockIN ? 0 : data.value.quantity,
                     productId: data.value.id,
                     itemName: data.value.itemName,
-                    providers: data.value.provider
-
+                    // providers: data.value.provider
                 };
                 console.log("updatedInventory:  ", updatedInventory);
                 setInventory(updatedInventory);
@@ -596,7 +595,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                 console.log("item", item);
                 const { id, date, quantity, batchNumber, providers, productId, maxRetailPrice, isApproved, itemName, hsnCode } = item;
                 const invoiceType = "Manual";
-                const location = selectedLocation?.label || '';
+                const location = newlocation;
 
                 console.log("item name is ", item);
                 let { expiry, costPrice, sellingPrice } = item;
@@ -966,7 +965,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                                         options={distributor}
                                         isMulti={false}
                                         value={
-                                            distributor.find((option) => option.label === inventory[index]?.providers) || null
+                                            distributor.find((option) => option.label === item.providers) || null
                                         }
                                         name={`providers-${index}`}
                                         onChange={(e) => handleInputChange(index, 'providers', e?.label)}
