@@ -6,13 +6,13 @@ export async function PATCH(req: Request) {
     const { id, lastExpiryNotif } = await req.json();
     console.log("Request Body:", { id, lastExpiryNotif }); // Log the request body for debugging
 
-    await prismaClient.products.update({
+    await prismaClient.productBatch.update({
       where: { id },
       data: { 
         lastExpiryNotif: new Date(lastExpiryNotif) 
       },
     });
-
+    console.log("updated");
     return new Response(JSON.stringify({ message: 'Last Expiry notification date updated' }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },

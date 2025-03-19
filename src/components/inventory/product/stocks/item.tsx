@@ -162,9 +162,12 @@ const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
               const notifData = {
                 source: Notif_Source.Inventory_Product_Remain,
                 orgId: appState.currentOrgId,
-                totalItems: product.quantity,
-                productName: product.itemName,
+                data:{
+                  totalItems:product.quantity,
+                  productName:product.itemName,
+                },
                 url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/all`,
+                message:`Only ${product.quantity} of ${product.itemName} remaining. Replenish items soon for seamless operations.`
               };
               sendlowNotification(notifData, product.id);
             }
@@ -178,8 +181,11 @@ const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
               const notifData = {
                 source: Notif_Source.Inventory_Product_MaxStock,
                 orgId: appState.currentOrgId,
-                productName: product.itemName,
+                data:{
+                  productName: product.itemName,
+                },
                 url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/all`,
+                message:`${product.itemName} has reached maximum stock level. Evaluate your current inventory needs and consider adjusting levels accordingly.`
               };
               sendexcessNotification(notifData, product.id);
             }
@@ -197,11 +203,14 @@ const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
               const notifData = {
                 source: Notif_Source.Inventory_ProductBatch,
                 orgId: appState.currentOrgId,
-                batchNumber: product.batchNumber,
-                productName: product.product?.itemName,
+                data:{
+                  batchNumber: product.batchNumber,
+                  productName: product.product?.itemName,
+                },
                 url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/all`,
+                message:`Batch ${product.batchNumber} under ${product.product?.itemName} has reached expiry. Evaluate your current inventory needs and consider adjusting levels accordingly.`
               };
-              sendexpiredNotification(notifData, product.id);
+              sendexpiredNotification(notifData, product.product.id);
             }
           }
           return expiryDate <= currentDate;
@@ -212,12 +221,15 @@ const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
               const notifData = {
                 source: Notif_Source.Inventory_Product_Expiry,
                 orgId: appState.currentOrgId,
-                totalItems: product.quantity,
-                expiry :daysLeftForExpiry,
-                productName: product.product?.itemName,
+                data:{
+                  totalItems: product.quantity,
+                  expiry :daysLeftForExpiry,
+                  productName: product.product?.itemName,
+                },
                 url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/all`,
+                message:`${product.quantity} Units of ${product.product?.itemName} are ${daysLeftForExpiry} days away from exipration. Evaluate your current inventory needs and consider adjusting levels accordingly.`
               };
-              // sendexpiringNotification(notifData, product.id);
+               sendexpiringNotification(notifData, product.product.id);
             }
           }
           return expiryDate > currentDate && (expiryDate.getTime() - currentDate.getTime()) <= Number(30 * 24 * 60 * 60 * 1000);

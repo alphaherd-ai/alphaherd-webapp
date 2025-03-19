@@ -270,6 +270,20 @@ const NotificationList =  ({ notifs, isLoading }) => {
                   </div>
                   <div className="w-2.5 h-2.5 bg-cyan-400 rounded-full" />
                 </div>
+                <div className="flex gap-5 mt-2">
+                  <button
+                    onClick={() => handleAction(notif.id, "accept",notif)}
+                    className="px-4 py-2 bg-teal-500 text-white rounded-md cursor-pointer  border-none"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => handleAction(notif.id, "deny",notif)}
+                    className="px-4 py-2 bg-gray-600 text-white rounded-md cursor-pointer  border-none"
+                  >
+                    Deny
+                  </button>
+                </div>
                 
               </div>
             </div>
@@ -285,7 +299,7 @@ const NotificationList =  ({ notifs, isLoading }) => {
                   <div className="self-stretch justify-end items-start inline-flex">
                     <div className="grow shrink basis-0 flex-col justify-center items-start inline-flex">
                       <div className="self-stretch text-emerald-50 text-base font-bold ">
-                        {notif.message}
+                        {notif.message || notif.data?.message}
                       </div>
                       <div className="self-stretch text-neutral-400 text-xs font-medium flex justify-between items-center">
                         <span>{formatDateAndTime(notif.createdAt).formattedTime}</span>

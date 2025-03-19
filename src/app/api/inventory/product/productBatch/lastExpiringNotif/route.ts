@@ -28,12 +28,13 @@ export async function PATCH(req: Request) {
       );
     }
 
-    await prismaClient.products.update({
+    await prismaClient.productBatch.update({
       where: { id },
       data: { 
         lastExpiringNotif: new Date(lastExpiringNotif) 
       },
     });
+    console.log("updated");
 
     return new Response(JSON.stringify({ message: 'Last expiring notification date updated' }), {
       status: 200,
