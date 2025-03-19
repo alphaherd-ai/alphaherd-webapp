@@ -270,7 +270,6 @@ const NotificationList =  ({ notifs, isLoading }) => {
                   </div>
                   <div className="w-2.5 h-2.5 bg-cyan-400 rounded-full" />
                 </div>
-                {notif.isApproved===null && (
                 <div className="flex gap-5 mt-2">
                   <button
                     onClick={() => handleAction(notif.id, "accept",notif)}
@@ -285,8 +284,7 @@ const NotificationList =  ({ notifs, isLoading }) => {
                     Deny
                   </button>
                 </div>
-                )
-              }
+                
               </div>
             </div>
           ) : (
@@ -301,7 +299,7 @@ const NotificationList =  ({ notifs, isLoading }) => {
                   <div className="self-stretch justify-end items-start inline-flex">
                     <div className="grow shrink basis-0 flex-col justify-center items-start inline-flex">
                       <div className="self-stretch text-emerald-50 text-base font-bold ">
-                        {notif.message}
+                        {notif.message || notif.data?.message}
                       </div>
                       <div className="self-stretch text-neutral-400 text-xs font-medium flex justify-between items-center">
                         <span>{formatDateAndTime(notif.createdAt).formattedTime}</span>
