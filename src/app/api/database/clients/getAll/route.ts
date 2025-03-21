@@ -16,7 +16,11 @@ export  const GET=async (req: NextRequest)=> {
           },
           
           include:{
-            patients:true,
+            patients: {
+              where: {
+                isDeleted: false
+              }
+            },
           },
           
         });
