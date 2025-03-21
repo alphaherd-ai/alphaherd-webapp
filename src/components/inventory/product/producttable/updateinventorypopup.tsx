@@ -176,7 +176,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
         }
     }, [confirmAction])
 
-
+    console.log("batches are here: ",batches)
     const customStyles = {
         control: (provided: any, state: any) => ({
             ...provided,
@@ -422,7 +422,6 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
 
         if(selectedOption === Stock.StockIN){
             const validationResult = FormData.safeParse(updatedInventory[index]);
-            console.log("validation result",validationResult);
             if (!validationResult.success) {
                 setErrorValidation(true);
             } else {
@@ -822,17 +821,20 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                         <div className='flex w-full justify-between items-center box-border bg-gray-100 h-12 border-b border-neutral-400 text-gray-500'>
                             <div className='flex text-gray-500 text-base font-medium px-2 w-[5rem]'>No.</div>
                             <div className='flex text-gray-500 text-base font-medium w-[15rem]'>Product</div>
-                            <div className='flex text-gray-500 text-base font-medium w-[8rem]'>Quantity</div>
+                            <div className='flex text-gray-500 text-base font-medium w-[8rem]'>
+                                Quantity
+                                {selectedOption === Stock.StockIN && <span className="text-red-600">*</span>}
+                            </div>
                             {selectedOption === Stock.StockOUT && (
                                 <div className='flex text-gray-500 text-base font-medium w-[10rem]'>Reason</div>
                             )}
-                            <div className='flex text-gray-500 text-base font-medium w-[8rem]'>Batch No.</div>
+                            <div className='flex text-gray-500 text-base font-medium w-[8rem]'>Batch No.{selectedOption === Stock.StockIN && <span className="text-red-600">*</span>}</div>
                             <div className='flex text-gray-500 text-base font-medium w-[10rem]'>Expiry</div>
                             <div className='flex text-gray-500 text-base font-medium w-[6rem]'>Barcode</div>
                             <div className='flex text-gray-500 text-base font-medium w-[8rem]'>Location</div>
                             <div className='flex text-gray-500 text-base font-medium w-[10rem]'>Distributor</div>
-                            <div className='flex text-gray-500 text-base font-medium w-[8rem]'>Unit Price</div>
-                            <div className='flex text-gray-500 text-base font-medium w-[8rem]'>MRP</div>
+                            <div className='flex text-gray-500 text-base font-medium w-[8rem]'>Unit Price{selectedOption === Stock.StockIN && <span className="text-red-600">*</span>}</div>
+                            <div className='flex text-gray-500 text-base font-medium w-[8rem]'>MRP{selectedOption === Stock.StockIN && <span className="text-red-600">*</span>}</div>
                             <div className='flex text-gray-500 text-base font-medium w-[8rem]'>Subtotal</div>
 
                         </div>
@@ -1020,7 +1022,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                     </div>
                     <div>
                         <div className="flex items-center">
-                            {errorValidation ? <div className="flex-grow text-red-600">*Please enter Quantity,Unit Price, Unique Batch and MRP to continue</div> : <div className="flex-grow"></div>}
+                            {errorValidation && selectedOption==Stock.StockIN ? <div className="flex-grow text-red-600">*Please enter Quantity,Unit Price, Unique Batch and MRP to continue</div> : <div className="flex-grow"></div>}
                             <div className="bg-black px-4 py-2.5 rounded-[5px] justify-start items-center gap-2 flex cursor-pointer" onClick={handleUpdateInventory}>
                                 <Image src={checkicon} alt="add" />
                                 <button className="text-white text-base font-bold bg-transparent border-0 cursor-pointer" disabled={updating}>
