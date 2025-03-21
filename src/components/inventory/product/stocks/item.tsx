@@ -194,11 +194,11 @@ const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
                 url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/all`,
                 message:`Batch ${product.batchNumber} under ${product.product?.itemName} has reached expiry. Evaluate your current inventory needs and consider adjusting levels accordingly.`
               };
-              sendexpiredNotification(notifData, product.product.id);
+              sendexpiredNotification(notifData, product.id);
             }
           }
           return expiryDate <= currentDate;
-        } else if (activeTabValue === "Expiring") {
+        } else if (activeTabValue === "Expiring") { 
           if (expiryDate > currentDate && (expiryDate.getTime() - currentDate.getTime()) <= Number(30 * 24 * 60 * 60 * 1000)) {
             if (isOlderThanOneWeek(product.lastExpiringNotif)) {
               const daysLeftForExpiry = Math.ceil((expiryDate.getTime() - currentDate.getTime()) / (24 * 60 * 60 * 1000));
@@ -213,7 +213,7 @@ const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
                 url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/inventory/products/all`,
                 message:`${product.quantity} Units of ${product.product?.itemName} are ${daysLeftForExpiry} days away from exipration. Evaluate your current inventory needs and consider adjusting levels accordingly.`
               };
-               sendexpiringNotification(notifData, product.product.id);
+              sendexpiringNotification(notifData, product.id);
             }
           }
           return expiryDate > currentDate && (expiryDate.getTime() - currentDate.getTime()) <= Number(30 * 24 * 60 * 60 * 1000);

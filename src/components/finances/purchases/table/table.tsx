@@ -5,7 +5,6 @@ import axios from 'axios';
 import FinancesPurchasesTableHeader from './header'
 import { Notif_Source } from "@prisma/client";
 import FinancesPurchasesTableItem from './item'
-import useSWR from 'swr';
 import { useAppSelector } from '@/lib/hooks';
 import { useSearchParams } from 'next/navigation';
 
@@ -163,7 +162,7 @@ const FinancesPurchasesTable = () => {
     oneWeekFromNow.setDate(currentDate.getDate() + 7);
     // console.log("one week date :" , oneWeekFromNow);
 
-    
+    console.log("purchases",purchases);
     const filteredPurchases = purchases?.filter((purchase) => {
       const dueDate = new Date(purchase.dueDate);
       const purchaseID = purchase.id;
@@ -171,11 +170,24 @@ const FinancesPurchasesTable = () => {
     
       const daysLeftForDue = Math.ceil((dueDate.getTime() - currentDate.getTime()) / (24 * 60 * 60 * 1000));
       
-
       const words= purchase.status.trim().split(' ');
+      const words2=purchase.status.trim().split(':');
+      console.log("words2",words2);
       console.log("words",words);
+      var bool2=false;
+      var prcost;
+      if(words2.length>1 && words2[0]==="Debited"){
+        bool2=true;
+        prcost=words2[1];
+      }
+      console.log("prcost",prcost);
       var bool=false;
       var pobool=true;
+      var totalcost;
+      if(words.length>2){
+        totalcost=words[2];
+      }
+      console.log("owed money",totalcost);
       if(words.length>1){
           if(words[1].toLowerCase()==='owe:'){
               bool =true;
@@ -213,7 +225,7 @@ const FinancesPurchasesTable = () => {
           return true; 
         } 
         if(dueDate.toDateString() === currentDate.toDateString() && purchase.lastDayNotif===null && bool){
-          message = `You owe ₹${purchase.totalCost} to ${purchase.distributor}. This payment is due today.`
+          message = `You owe ${totalcost} to ${purchase.distributor}. This payment is due today.`
           const notifData = {
             orgId: appState.currentOrgId,
             url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/finance/purchases/all?type=all`,
@@ -233,8 +245,8 @@ const FinancesPurchasesTable = () => {
           return true; 
 
         }
-        else if(daysLeftForDue <= 7 && daysLeftForDue >= 0 && isOlderThanOneWeek(purchase.lastSevenNotif) && bool){
-          message = `You owe ₹${purchase.totalCost} to ${purchase.distributor}. This payment is due on ${new Date(purchase.dueDate).toLocaleDateString()}.`;
+        else if(dueDate.toDateString() > currentDate.toDateString() && (dueDate.getTime() - currentDate.getTime()) <= Number(30 * 24 * 60 * 60 * 1000) && isOlderThanOneWeek(purchase.lastSevenNotif) && bool){
+          message = `You owe ${totalcost} to ${purchase.distributor}. This payment is due on ${new Date(purchase.dueDate).toLocaleDateString()}.`;
           const notifData = {
             orgId: appState.currentOrgId,
             url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/finance/purchases/all?type=all`,
@@ -255,7 +267,7 @@ const FinancesPurchasesTable = () => {
         }
       }
       else if(purchase.type === "Purchase_Invoice"){
-        message = `You owe ₹${purchase.totalCost} to ${purchase.distributor}. This payment is due today.`;
+        message = `You owe ${totalcost} to ${purchase.distributor}. This payment is due today.`;
         if(dueDate.toDateString() === currentDate.toDateString() && purchase.lastDayNotif===null && bool){
           const notifData = {
             orgId: appState.currentOrgId,
@@ -275,8 +287,8 @@ const FinancesPurchasesTable = () => {
           sendLastDueDateNotification(notifData, purchaseID);
           return true; 
         }
-        else if (daysLeftForDue <= 7 && daysLeftForDue >= 0 && isOlderThanOneWeek(purchase.lastSevenNotif) && bool) {
-          message = `You owe ₹${purchase.totalCost} to ${purchase.distributor}. This payment is due on ${new Date(purchase.dueDate).toLocaleDateString()}.`
+        else if (dueDate.toDateString() > currentDate.toDateString() && (dueDate.getTime() - currentDate.getTime()) <= Number(30 * 24 * 60 * 60 * 1000) && isOlderThanOneWeek(purchase.lastDueNotif) && bool) {
+          message = `You owe ${totalcost} to ${purchase.distributor}. This payment is due on ${new Date(purchase.dueDate).toLocaleDateString()}.`
           const notifData = {
             orgId: appState.currentOrgId,
             url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/finance/purchases/all?type=all`,
@@ -294,6 +306,32 @@ const FinancesPurchasesTable = () => {
     
           sendDueDateNotification(notifData, purchaseID);
           return true; 
+        }
+      }
+      else if(purchase.type==="Purchase_Return"){
+        // console.log("inside purchase return",purchase.id);
+        message = `You owe ${prcost} to ${purchase.distributor}. This payment is due on ${new Date(purchase.dueDate).toLocaleDateString()}.`;
+        if(dueDate.toDateString() >= currentDate.toDateString() && (dueDate.getTime() - currentDate.getTime()) <= Number(30 * 24 * 60 * 60 * 1000) && bool2){
+          // console.log("inside purchase return2",purchase.id);
+          if(isOlderThanOneWeek(purchase.lastDueNotif)){
+            const notifData = {
+              orgId: appState.currentOrgId,
+              url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/finance/purchases/all?type=all`,
+              message: message,
+              data: {
+                purchaseId: purchase.id,
+                invoiceNo: purchase.invoiceNo,
+                dueDate: purchase.dueDate,
+                distributor: purchase.distributor,
+                totalCost: purchase.totalCost,
+                status: purchase.status,
+              },
+              source: Notif_Source.Purchase_Order_Due,
+            };
+      
+            sendDueDateNotification(notifData, purchaseID);
+            return true; 
+          }
         }
       }
     }

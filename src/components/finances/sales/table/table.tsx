@@ -138,6 +138,7 @@ const FinancesSalesTable = () => {
 
 
   const sendDueNotification = async (notifData: any, invoiceID: number) => {
+    console.log("due notification started");
     try {
       await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData);
   
