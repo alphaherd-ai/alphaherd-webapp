@@ -422,6 +422,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
 
         if(selectedOption === Stock.StockIN){
             const validationResult = FormData.safeParse(updatedInventory[index]);
+            console.log("validation result",validationResult);
             if (!validationResult.success) {
                 setErrorValidation(true);
             } else {
@@ -585,9 +586,9 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
     const handleUpdateInventory = useCallback(async () => {
         try {
             setUpdating(true);
-            inventory.pop();
+            const updatedInventory = inventory.slice(0, -1);
 
-            for (const item of inventory) {
+            for (const item of updatedInventory) {
                 // Skip validation if Stock Out is selected
                 if (selectedOption === Stock.StockIN) {
                     FormData.parse(item);
@@ -639,7 +640,7 @@ const Popup2: React.FC<PopupProps> = ({ onClose, individualSelectedProduct }: an
                             data: {
                                 body1: body,
                                 productId: id,
-                                message: `Stock levels successfully updated for ${body.quantity} items. Click here to see items removed from inventory.`
+                                message: `Stock levels successfully updated for ${body.quantity} items. Click here to see items removed from updatedInventory.`
                             },
                         }
                         const notifPromise = axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData)
