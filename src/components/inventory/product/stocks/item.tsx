@@ -20,6 +20,7 @@ interface Products{
   lastExpiringNotif?: string;     // Last expiring soon notification sent
   excessNotif?: string;
   maxStock:number;
+  totalQuantity: number;
 }
 
 interface ProductBatch {
@@ -45,17 +46,25 @@ interface MergedProduct extends Products {
 
 const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
   const [products, setProducts] = useState<ProductBatch[]>([]);
+  const [allProducts, setAllProducts] = useState<Products[]>([]);
   const [currentPage] = useState(1);
   const [fetchdata, setFetchData] = useState();
   const [productsPerPage] = useState(10);
   const appState = useAppSelector((state) => state.app)
-  const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll?branchId=${appState.currentBranchId}`, fetcher)
+  const { data: batchData, error: batchError, isLoading: batchLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/getAll?branchId=${appState.currentBranchId}`, fetcher)
+  const { data: productData, error: productError, isLoading: productLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/getAll?branchId=${appState.currentBranchId}`, fetcher)
+  
   useEffect(() => {
-   if(!isLoading&&!error&&data){
-    setProducts(data);
+   if(!batchLoading && !batchError && batchData){
+    setProducts(batchData);
    }
-  }, [data,error,isLoading]);
+  }, [batchData, batchError, batchLoading]);
 
+  useEffect(() => {
+   if(!productLoading && !productError && productData){
+    setAllProducts(productData);
+   }
+  }, [productData, productError, productLoading]);
 
   const sendlowNotification = async (notifData: any, productID: number) => {
     //console.log("send notif triggered",notifData);
@@ -122,23 +131,30 @@ const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
   const filteredProducts = () => {
     if (activeTabValue === "Low Stock" || activeTabValue === "Excess") {
       const productMap = new Map<string, { product: Products; totalQuantity: number }>();
-      console.log("productmap:", productMap);
+      
+      // First add all products with their totalQuantity (which may be 0)
+      allProducts.forEach(product => {
+        productMap.set(product.itemName, { 
+          product: product, 
+          totalQuantity: product.totalQuantity || 0 
+        });
+      });
+
+      // Then update quantities from batches
       products.forEach(product => {
         const productName = product.product?.itemName;
         if (productMap.has(productName)) {
-          productMap.get(productName)!.totalQuantity += product.quantity;
-        } else {
-          productMap.set(productName, { product: product.product, totalQuantity: product.quantity });
+          const existing = productMap.get(productName)!;
+          existing.totalQuantity += product.quantity;
         }
       });
-
 
       const mergedProducts = Array.from(productMap.values()).map(({ product, totalQuantity }) => ({
         ...product,
         quantity: totalQuantity,
         batchNumber: '', // Remove batch number as they might be different
       }));
-      console.log("mergedProducts:", mergedProducts);
+
       if (activeTabValue === "Low Stock") {
         mergedProducts.forEach(product => {
           if (product.quantity <= product.minStock) {
@@ -232,7 +248,7 @@ const ServicesStockItem = ({ activeTabValue }: { activeTabValue: string }) => {
   console.log("productsPerPage : ",productsPerPage);
   console.log("filteredProducts length: ",filteredProducts()?.length);
   console.log("currentProducts : ",currentProducts);
-  if (isLoading) return (<Loading />)
+  if (batchLoading || productLoading) return (<Loading />)
   function paginate(pageNumber: number): void {
     throw new Error('Function not implemented.');
   }

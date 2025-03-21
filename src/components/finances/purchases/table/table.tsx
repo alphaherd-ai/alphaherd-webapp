@@ -367,7 +367,7 @@ const FinancesPurchasesTable = () => {
         <div className=' flex  text-base font-medium  w-[8rem] '>Total cost</div>
         <div className=' flex  text-base font-medium  w-[8rem] '>Total qty</div>
         <div className=' flex  text-base font-medium  w-[8rem] '>Due date</div>
-        <div className=' flex  text-base font-medium  w-[10rem]'>Status</div>
+        <div className=' flex  text-base font-medium  w-[13rem]'>Status</div>
         <div className=' flex  text-base font-medium  w-[3rem]'></div>
       </div>
       <FinancesPurchasesTableItem onCountsChange={handleCountsChange} purchases={purchases} data={data} isLoading={isLoading} />

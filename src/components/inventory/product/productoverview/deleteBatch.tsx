@@ -7,7 +7,7 @@ import axios from 'axios';
 import { useAppSelector } from '@/lib/hooks';
 import { useSearchParams } from 'next/navigation';
 import Loading2 from '@/app/loading2';
-
+import { mutate } from 'swr';
 interface CancellationPopupProps {
     setisDeleting:any;
     deleteBatch:any;
@@ -20,6 +20,8 @@ const ConfirmationPopup: React.FC<CancellationPopupProps> = ({setisDeleting,dele
     const appState = useAppSelector((state) => state.app);
 
     const url = useSearchParams();
+    const id = url.get('id');
+    const branchId=appState.currentBranchId;
     
     const [loading, setLoading] = useState(false);
 
@@ -37,7 +39,10 @@ const ConfirmationPopup: React.FC<CancellationPopupProps> = ({setisDeleting,dele
             });
             if(res.status===201){
                 //console.log('Patient Deleted');
+                mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${id}?branchId=${branchId}`)
+                mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/timeline/product/${id}?branchId=${branchId}`)
                 setisDeleting((prev:any)=>!prev);
+                window.location.reload();
             }
         }
         catch(err){

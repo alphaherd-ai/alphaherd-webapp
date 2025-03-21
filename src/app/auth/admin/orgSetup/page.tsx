@@ -7,7 +7,7 @@ import OrgNameSetup from '@/components/auth/admin/orgNameSetup';
 import OrgDetailsSetup from '@/components/auth/admin/orgDetailsSetup';
 import OrgAdminSetup from '@/components/auth/admin/orgAdminSetup';
 import { useRouter, useSearchParams } from 'next/navigation';
-
+import Loading2 from '@/app/loading2';
 import createAccountLogo from '@/assets/icons/loginsignup/CreateAccount.svg'
 import { Bounce, ToastContainer, toast } from 'react-toastify';
 import { z } from 'zod';
@@ -17,7 +17,7 @@ import capitalizeFirst from '@/utils/capitiliseFirst';
 const formSchema = z.object({
   orgImgUrl: z.string(),
   orgName: z.string()
-    .min(4, 'Organization Name must be at least 4 characters')
+    .min(4, 'Org. Name must be at least 4 characters')
     .transform((value) => capitalizeFirst(value)),
   gstNo: z.string().length(15, 'Invalid GST no. - must be 15 digits'),
   phoneNo: z.string().length(10, 'Invalid Phone No.'),
@@ -33,7 +33,7 @@ const formSchema = z.object({
   pincode: z.string()
   .regex(/^\d{6}$/, 'Invalid Pincode - must be exactly 6 digits'),
   description: z.string(),
-  adminName: z.string(),
+  adminName: z.string().min(1, 'Enter Name to continue'),
   adminEmail: z.string().email('Invalid Email Address'),
   adminPhoneNo: z.string().length(10, 'Invalid Phone No.'),
   adminAltPhoneNo: z.string().optional().refine((value) => !value || value.length === 10, {
@@ -88,14 +88,14 @@ const OrgSetup = () => {
 
   var stepFields = [
     ["orgName"],
-    ["orgEmail", "orgImgUrl", "gstNo", "phoneNo","altPhoneNo","website","panNo",  "branchName", "address", "state", "pincode", "description"],
+    ["orgName","orgEmail", "orgImgUrl", "gstNo", "phoneNo","altPhoneNo","website","panNo",  "branchName", "address", "state", "pincode", "description"],
     ["adminName", "adminEmail", "adminPhoneNo", "adminAltPhoneNo", "adminPassword", "reAdminPassword", "adminPicUrl"]
   ];
 
   const [data, setData] = useState(initialData);
 
   const [validationErrors, setValidationErrors] = useState(data);
-
+  const [isSaving,setIsSaving] = useState(false);
 
   const [activeTab, setActiveTab] = useState(0);
   const [resource, setResource] = useState<any>();
@@ -188,7 +188,7 @@ const OrgSetup = () => {
   const formSubmit = async (e: React.FormEvent) => {
 
     e.preventDefault();
-
+    setIsSaving(true);
 
     try {
 
@@ -210,6 +210,8 @@ const OrgSetup = () => {
               "pincode": data.pincode,
               "description": data.description,
               "phoneNo": data.phoneNo,
+              "panNo": data.panNo,
+              "altPhoneNo": data.altPhoneNo
             },
             "branchDetails": {
               email: data.orgEmail,
@@ -271,6 +273,8 @@ const OrgSetup = () => {
           transition: Bounce,
         });
       }
+    }finally{
+      setIsSaving(false);
     }
   }
 
@@ -327,14 +331,14 @@ const OrgSetup = () => {
                 </button> : null
               }
               {
-                activeTab === formElements.length - 1 ? <button className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0 cursor-pointer" onClick={formSubmit}>
-                  <div className="h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ">
-                    <img src={createAccountLogo?.src} alt=""></img>
+                activeTab === formElements.length - 1 ? <button className=" bg-gray-200 rounded-[5px] justify-start items-center gap-2 flex border-0 cursor-pointer" onClick={formSubmit} disabled={isSaving}>
+                  <div className={`h-[42px] px-4  bg-stone-900 rounded-[5px] justify-start items-center gap-2 flex ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                    <Image src={createAccountLogo} alt="Create Account Logo" width={24} height={24} />
                     <div className="text-white text-sm font-bold cursor-pointer ">
-                      Create Account
+                      {isSaving ? <Loading2 /> : "Create Account"}
                     </div>
                   </div>
-                </button > : null
+                </button> : null
               }
             </div>
           </div>

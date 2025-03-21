@@ -110,7 +110,7 @@ const FinancesExpensesTableItem = ({ onCountsChange,data,expenses,isLoading}:any
               </PopoverTrigger>
               <PopoverContent className="p-2 text-gray-500 bg-white text-sm  font-medium flex flex-row items-start rounded-lg border-2">
 
-                <div className='text-gray-500 cursor-pointer no-underline  item-center text-sm  font-medium flex ' onClick={() => setShowConfirmation(true)}>
+                <div className='text-gray-500 cursor-pointer no-underline  item-center text-sm  font-medium flex ' onClick={() => {setShowConfirmation(true) ; selectedExpensesId(expense?.id)}}>
                   Cancel</div>
 
 
@@ -119,11 +119,12 @@ const FinancesExpensesTableItem = ({ onCountsChange,data,expenses,isLoading}:any
 
 
 
-          {showConfirmation && <CancellationPopup setShowConfirmation={setShowConfirmation} expenseId={expense?.id}/>}
+          
           </div>
 
         </div>
       )}
+      {showConfirmation && <CancellationPopup setShowConfirmation={setShowConfirmation} expenseId={expensesId}/>}
     </div>
   )
 }

@@ -103,6 +103,9 @@ const NewsaleEstimateTable = () => {
     const [selectedBatch, setSelectedBatch] = useState<any>();
     const [currIndex, setCurrIndex] = useState<number>(0);
 
+    // Add unique row ID state
+    const [rowIds, setRowIds] = useState<string[]>([]);
+
     useEffect(() => {
         if (confirmAction === 'idle' || confirmAction === 'Save') {
             return;
@@ -170,6 +173,7 @@ const NewsaleEstimateTable = () => {
             {children}
         </label>
     );
+    
     const [disableButton, setDisableButton] = useState(true);
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [isChecked, setChecked] = useState<boolean>(false);
@@ -238,15 +242,7 @@ const NewsaleEstimateTable = () => {
         setTableData(updatedItems);
     }, [items, filteredBatches]);
 
-    // const handleGstSelect = (selectedGst: any, index: number) => {
-    //     const updatedItems = [...tableData];
-    //     console.log(selectedGst)
-    //     updatedItems[index] = {
-    //         ...updatedItems[index],
-    //         gst: selectedGst.value
-    //     };
-    //     setTableData(updatedItems);
-    // };
+    
 
     const handleEditButtonClick = () => {
         setDisableButton(!disableButton);
@@ -287,10 +283,10 @@ const NewsaleEstimateTable = () => {
         );
     };
 
-    const handleQuantityDecClick = (itemId: any) => {
+    const handleQuantityDecClick = (rowId: string) => {
         setItems((prevItems) =>
             prevItems.map((item) => {
-                if (item.id === itemId && item.quantity > 1) {
+                if (item.rowId === rowId && item.quantity > 1) {
                     return { ...item, quantity: item.quantity - 1 };
                 }
                 return item;
@@ -298,10 +294,10 @@ const NewsaleEstimateTable = () => {
         );
     };
 
-    const handleQuantityIncClick = (itemId: any) => {
+    const handleQuantityIncClick = (rowId: string) => {
         setItems((prevItems) =>
             prevItems.map((item) => {
-                if (item.id === itemId) {
+                if (item.rowId === rowId) {
                     return { ...item, quantity: item.quantity + 1 };
                 }
                 return item;
@@ -309,10 +305,10 @@ const NewsaleEstimateTable = () => {
         );
     };
 
-    const handleQuantityDecClick1 = (itemId: any) => {
+    const handleQuantityDecClick1 = (rowId: string) => {
         setItems((prevItems) =>
             prevItems.map((item) => {
-                if (item.id === itemId && item.lowQty > 1) {
+                if (item.rowId === rowId && item.lowQty > 1) {
                     return { ...item, lowQty: item.lowQty - 1 };
                 }
                 return item;
@@ -320,20 +316,20 @@ const NewsaleEstimateTable = () => {
         );
     };
 
-    const handleQuantityIncClick1 = (itemId: any) => {
+    const handleQuantityIncClick1 = (rowId: string) => {
         setItems((prevItems) =>
             prevItems.map((item) => {
-                if (item.id === itemId) {
+                if (item.rowId === rowId) {
                     return { ...item, lowQty: item.lowQty + 1 };
                 }
                 return item;
             })
         );
     };
-    const handleQuantityDecClick2 = (itemId: any) => {
+    const handleQuantityDecClick2 = (rowId: string) => {
         setItems((prevItems) =>
             prevItems.map((item) => {
-                if (item.id === itemId && item.highQty > 1) {
+                if (item.rowId === rowId && item.highQty > 1) {
                     return { ...item, highQty: item.highQty - 1 };
                 }
                 return item;
@@ -341,10 +337,10 @@ const NewsaleEstimateTable = () => {
         );
     };
 
-    const handleQuantityIncClick2 = (itemId: any) => {
+    const handleQuantityIncClick2 = (rowId: string) => {
         setItems((prevItems) =>
             prevItems.map((item) => {
-                if (item.id === itemId) {
+                if (item.rowId === rowId) {
                     return { ...item, highQty: item.highQty + 1 };
                 }
                 return item;
@@ -356,11 +352,14 @@ const NewsaleEstimateTable = () => {
     }, [items]);
 
     useEffect(() => {
+        const newId = `row-${Date.now()}-${items.length}`;
         items.push({
             productId: null,
             serviceId: null,
             itemName: "",
+            rowId: newId
         });
+        setRowIds(prev => [...prev, newId]);
         setItems(items);
     }, [])
 
@@ -372,14 +371,16 @@ const NewsaleEstimateTable = () => {
     }, [items]);
 
     const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
-        console.log(selectedProduct);
         if (selectedProduct.value) {
             if (index === items.length - 1) {
+                const newId = `row-${Date.now()}-${items.length}`;
                 items.push({
                     productId: null,
                     serviceId: null,
                     itemName: "",
+                    rowId: newId
                 });
+                setRowIds(prev => [...prev, newId]);
                 setItems(items);
             }
             try {
@@ -399,6 +400,7 @@ const NewsaleEstimateTable = () => {
                 const updatedItems = [...items];
                 updatedItems[index] = {
                     ...updatedItems[index],
+                    rowId: updatedItems[index].rowId || `row-${Date.now()}-${index}`,
                     quantity: 1,
                     defaultUnit: productdata ? selectedProduct?.value?.defaultUnit : "",
                     itemType: productdata ? "product" : "service",
@@ -460,7 +462,7 @@ const NewsaleEstimateTable = () => {
                 console.error("Error fetching product details from API:", error);
             }
         }
-    }, [items, products]);
+    }, [items, products, services]);
     const handleBatchSelect = useCallback(async (selectedProduct: any, index: number) => {
         if (selectedProduct.value) {
             try {
@@ -637,7 +639,7 @@ const NewsaleEstimateTable = () => {
 
                             </div>
                             {items.map((item: any, index: number) => (
-                                <div key={index + 1} className='flex flex-col w-full'>
+                                <div key={item.rowId || index} className='flex flex-col w-full'>
                                     <div className='flex justify-evenly items-center w-full box-border bg-white border-t-0 border-r-0 border-l-0 border-b border-solid border-borderGrey text-gray-400 py-2'>
                                         <div className={`${isChecked === true ? "ml-[5px]" : ""} w-[3rem] flex items-center text-neutral-400 text-base font-medium`}>{index + 1}</div>
                                         <div className={`${isChecked === true ? "px-4" : ""} w-[12rem] flex items-center text-neutral-400 text-base font-medium`}>
@@ -719,7 +721,7 @@ const NewsaleEstimateTable = () => {
                                         {!isChecked && (
                                             <div className='w-[8rem] flex justify-center items-center text-neutral-400 text-base font-medium gap-[12px]'>
                                                 <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
-                                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
+                                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.rowId)}>
                                                         <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
                                                     </button>
                                                     <input
@@ -731,7 +733,7 @@ const NewsaleEstimateTable = () => {
                                                     />
 
                                                     {/* {item.quantity} */}
-                                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
+                                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.rowId)}>
                                                         <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                                     </button>{item?.defaultUnit}
                                                 </div>
@@ -741,7 +743,7 @@ const NewsaleEstimateTable = () => {
                                             <>
                                                 <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
                                                     <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
-                                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick1(item.id)}>
+                                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick1(item.rowId)}>
                                                             <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
                                                         </button>
                                                         <input
@@ -753,14 +755,14 @@ const NewsaleEstimateTable = () => {
                                                         />
 
                                                         {/* {item.quantity} */}
-                                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick1(item.id)}>
+                                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick1(item.rowId)}>
                                                             <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                                         </button>
                                                     </div>
                                                 </div>
                                                 <div className='w-[8rem] flex items-center text-neutral-400 text-base font-medium gap-[12px]'>
                                                     <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
-                                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick2(item.id)}>
+                                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick2(item.rowId)}>
                                                             <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
                                                         </button>
                                                         <input
@@ -772,7 +774,7 @@ const NewsaleEstimateTable = () => {
                                                         />
 
                                                         {/* {item.quantity} */}
-                                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick2(item.id)}>
+                                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick2(item.rowId)}>
                                                             <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                                         </button>
                                                         {item?.defaultUnit}

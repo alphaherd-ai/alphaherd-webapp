@@ -17,8 +17,11 @@ import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 import Menu from '../../../../../assets/icons/finance/menu.svg'
 import EditRecordTransactionPopup from '@/components/finances/editTransaction/editTransaction';
 import CancellationPopup from '@/components/finances/cancelTransaaction/cancelTransaction';
+import { useSearchParams } from 'next/navigation';
 
 const InvoiceReturnTotalAmount = ({ otherData }: { otherData: any }) => {
+    const url=useSearchParams();
+    const id=url.get('id');
     const { tableData, headerData } = useContext(DataContext);
     const { transactionsData, setTransactionsData } = useContext(DataContext);
     const [selectedDiscount, setDiscount] = useState(0);
@@ -35,7 +38,7 @@ const InvoiceReturnTotalAmount = ({ otherData }: { otherData: any }) => {
 
     const handleSelectedTransaction = (transaction: any) => {
         const updatedTransaction = {
-            partyName: headerData?.customer?.label,
+            partyName: id===null ? headerData?.customer?.label : otherData.customer,
             invoiceLink: headerData.invoiceNo,
             ...transaction
         }

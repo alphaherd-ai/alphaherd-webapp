@@ -4,7 +4,7 @@ import Subtract from "../../../../../assets/icons/finance/Subtract.svg"
 import ClientPopup from '@/components/database/client/newclientpopoup';
 import Add from "../../../../../assets/icons/finance/add (2).svg"
 import addicon from "../../../../../assets/icons/finance/add.svg"
-
+import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import Select from 'react-select';
 import { useRef } from "react"
@@ -223,10 +223,26 @@ const NewPurchaseReturnNewTable = () => {
     }
     },[fetchedProducts,fetchedBathces])
   const handleDeleteRow = useCallback((index: number) => {
-    const updatedItems = [...items];
-    updatedItems.splice(index, 1);
+    // Keep the last empty row and remove the selected row
+    const updatedItems = items.filter((item, i) => {
+        if (i === items.length - 1) {
+            // Return the last row with reset values
+            return {
+                productId: null,
+                itemName: "",
+                quantity: 0,
+                sellingPrice: 0,
+                gst: 0,
+                batchNumber: "",
+                expiry: "",
+                id: null
+            };
+        }
+        return i !== index;
+    });
     setItems(updatedItems);
-}, [items]);
+    setTableData(updatedItems);
+}, [items, setTableData]);
 
 const handleGstSelect = (selectedGst: any, index: number) => {
     const updatedItems = [...tableData];
@@ -252,10 +268,10 @@ const handleCheckBoxChange = () => {
     );
 };
 
-const handleQuantityDecClick = (itemId: any) => {
+const handleQuantityDecClick = (itemId: any, index: number) => {
     setItems((prevItems) =>
-        prevItems.map((item) => {
-            if (item.id === itemId && item.quantity > 1) {
+        prevItems.map((item, i) => {
+            if (i === index && item.quantity > 1) {
                 return { ...item, quantity: item.quantity - 1 };
             }
             return item;
@@ -263,10 +279,10 @@ const handleQuantityDecClick = (itemId: any) => {
     );
 };
 
-const handleQuantityIncClick = (itemId: any) => {
+const handleQuantityIncClick = (itemId: any, index: number) => {
     setItems((prevItems) =>
-        prevItems.map((item) => {
-            if (item.id === itemId) {
+        prevItems.map((item, i) => {
+            if (i === index) {
                 return { ...item, quantity: item.quantity + 1 };
             }
             return item;
@@ -274,10 +290,10 @@ const handleQuantityIncClick = (itemId: any) => {
     );
 };
 
-const handleQuantityDecClick1 = (itemId: any) => {
+const handleQuantityDecClick1 = (itemId: any, index: number) => {
     setItems((prevItems) =>
-        prevItems.map((item) => {
-            if (item.id === itemId && item.quantity2 > 1) {
+        prevItems.map((item, i) => {
+            if (i === index && item.quantity2 > 1) {
                 return { ...item, quantity2: item.quantity2 - 1 };
             }
             return item;
@@ -285,10 +301,10 @@ const handleQuantityDecClick1 = (itemId: any) => {
     );
 };
 
-const handleQuantityIncClick1 = (itemId: any) => {
+const handleQuantityIncClick1 = (itemId: any, index: number) => {
     setItems((prevItems) =>
-        prevItems.map((item) => {
-            if (item.id === itemId) {
+        prevItems.map((item, i) => {
+            if (i === index) {
                 return { ...item, quantity2: item.quantity2 + 1 };
             }
             return item;
@@ -534,10 +550,10 @@ const customStyles = {
                                 <div className='flex text-gray-500 text-base font-medium w-[10rem]'>Tax %</div>
                                 <div className='flex text-gray-500 text-base font-medium  w-[10rem]'>Tax Amt.</div>
                                 <div className='flex text-gray-500 text-base font-medium w-1/12'>Total</div>
-                                
+                                <div className='flex text-gray-500 text-base font-medium w-[3rem]'></div>
                             </div>
                             {items.map((item:any,index:number) => (
-                                <div key={index+1} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400 py-2'>
+                                <div key={`${item.id || 'new'}-${item.productId || 'empty'}-${index}`} className='flex justify-evenly items-center w-full box-border bg-white border border-solid border-gray-200 text-gray-400 py-2'>
                                     <div className='w-[3rem] flex items-center text-textGrey2 text-base font-medium '>{index+1}.</div>
                                     <div className='w-[15rem] flex items-center text-textGrey2 text-base font-medium'>
                                     {id === null ? (
@@ -590,11 +606,11 @@ const customStyles = {
                                 
                                 <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium gap-[12px]'>
                                 <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
-                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id)}>
+                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.id, index)}>
                                         <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
                                     </button>
                                     <div className="w-[3rem] text-center border border-solid border-borderGrey h-7  rounded-md text-textGrey2 font-medium text-base">{item.quantity}</div>
-                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id)}>
+                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.id, index)}>
                                         <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                     </button>
                                     {item?.defaultUnit}
@@ -623,15 +639,14 @@ const customStyles = {
                                     </div>
                                 <div className='w-[10rem] flex items-center text-textGrey2 text-base font-medium'>{`₹${((item?.sellingPrice*item?.quantity * item?.gst)||0).toFixed(2)}`}</div>
                                     <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium'>{`₹${((item?.quantity * item?.sellingPrice +item?.sellingPrice*item.quantity*item.gst)||0).toFixed(2)}`}</div>
-                                    {/* <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[12px]'>
-                                        <button className="border-0 bg-transparent cursor-pointer gap-[20px] justify-end">
-                                            <Image className='w-5 h-5' src={sellicon} alt="sell" ></Image>
-                                        </button>
-                    
-                                        <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
-                                            <Image className='w-5 h-5' src={delicon} alt="delete" ></Image>
-                                        </button>
-                                    </div> */}
+                                    {index !== items.length - 1 && (
+                                        <div className='w-[3rem] flex items-center justify-center'>
+                                            <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
+                                                <Image className='w-5 h-5' src={delicon} alt="delete" />
+                                            </button>
+                                        </div>
+                                    )}
+                                    {index === items.length - 1 && <div className='w-[3rem]'></div>}
                                 </div>
                             ))}
                             <div className='flex w-full justify-evenly items-center box-border bg-gray-100 h-12 border-b border-textGrey2 text-gray-500 rounded-b-md'>
@@ -658,7 +673,7 @@ const customStyles = {
                                 </div>
                                 <div className='flex text-gray-500 text-base font-bold w-[10rem]'>{`₹${(items.reduce((acc:any, item:any) => {if(!item.itemName) return acc;return acc + item.quantity * item.gst*item.sellingPrice} , 0)||0).toFixed(2)}`}</div>
                                 <div className='flex text-gray-500 text-base font-bold w-1/12' >{`₹${(items.reduce((acc:any, item:any) => {if(!item.itemName) return acc;return acc + item.quantity * item.sellingPrice +item.quantity*item.gst*item.sellingPrice}, 0)||0).toFixed(2)}`}</div>
-
+                                <div className='w-[3rem]'></div>
                             </div>
                         </div>
                     </div>

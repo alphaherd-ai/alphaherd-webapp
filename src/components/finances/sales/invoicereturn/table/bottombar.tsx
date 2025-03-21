@@ -70,7 +70,7 @@ const InvoiceReturnBottomBar = ({ invoiceData }: any) => {
             recordTransaction: {
                 create: allData.transactionsData
             },
-            date:(id===null) ? allData.headerData.date : invoiceData.date,
+            date:allData.headerData?.date || new Date(),
             status: balanceDue <= -1 ? `You’re owed: ₹${parseFloat((-1*balanceDue).toFixed(2))}` : balanceDue >= 1 ? `You owe: ₹${parseFloat((balanceDue).toFixed(2))}` : 'Closed',
             type: FinanceCreationType.Sales_Return,
             items: {
@@ -126,7 +126,7 @@ const InvoiceReturnBottomBar = ({ invoiceData }: any) => {
 
             <div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
                 <div className="flex justify-between items-center gap-4 pl-4">
-                    <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
+                    {/* <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={printicon} alt="print"></Image>
                         <div>Print</div>
                     </div>
@@ -137,13 +137,13 @@ const InvoiceReturnBottomBar = ({ invoiceData }: any) => {
                     <div className="p-2 bg-white rounded-md border border-solid border-borderGrey justify-start items-center gap-2 flex cursor-pointer">
                         <Image src={shareicon} alt="share"></Image>
                         <div>Share</div>
-                    </div>
+                    </div> */}
                 </div>
                 <div className="flex justify-between items-center gap-4 pr-4">
-                    <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
+                    {/* <Button className="px-4 py-2.5 text-white text-base bg-zinc-900 rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer">
                         <Image src={drafticon} alt="draft"></Image>
                         <div>Save as Draft</div>
-                    </Button>
+                    </Button> */}
                     <Button   className={`px-4 py-2.5 text-white text-base ${tableData.length <= 0 ? 'bg-gray-500 cursor-not-allowed' : 'bg-zinc-900'} rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer`} onClick={handleSubmit} disabled={isSaving || tableData.length <= 0 }>
                         <Image src={checkicon} alt="check"></Image>
                         <div>{isSaving ? <Loading2></Loading2> : "Save"}</div>

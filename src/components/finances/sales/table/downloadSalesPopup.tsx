@@ -10,7 +10,7 @@ import download from "../../../../assets/icons/finance/downloadGreen.svg";
 import { Button } from '@nextui-org/react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-
+import { useEffect } from 'react';
 import { useAppSelector } from '@/lib/hooks';
 import formatDateAndTime from '@/utils/formateDateTime';
 
@@ -21,8 +21,16 @@ const DownloadPopup = ({ onClose, sales, type }: any) => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [selectedOption, setSelectedOption] = useState('Custom');
+  const [isDisabled, setIsDisabled] = useState(true);
 
-
+  useEffect(() => {
+    if (startDate && endDate) {
+      setIsDisabled(false)
+    }
+    else {
+      setIsDisabled(true)
+    }
+  }, [startDate, endDate])
 
   const handleOptionClick = (option: any) => {
     setSelectedOption(option);
@@ -44,6 +52,8 @@ const DownloadPopup = ({ onClose, sales, type }: any) => {
       handleFilter(start, end);
     }
   };
+
+
 
   const convertImageToBase64 = (imageSrc: string, callback: (base64: string | null) => void) => {
     if (!imageSrc) {
@@ -147,10 +157,10 @@ const DownloadPopup = ({ onClose, sales, type }: any) => {
         // GST, PAN, Contact Details
         doc.setFontSize(13);
         doc.text(`Gst No. :  ${appState.currentOrg.gstNo}`, 126, 12);
-        doc.text(`PAN No. :  5465465465465465`, 126, 18);
+        doc.text(`PAN No. :  ${appState.currentBranch.panNo}`, 126, 18);
         doc.text(`Email :  ${appState.currentOrg.orgEmail}`, 220, 12);
         doc.text(`Phone No. :  ${appState.currentOrg.phoneNo}`, 220, 18);
-        doc.text(`Website :  XYZ.com`, 220, 24);
+        doc.text(`Website :  ${appState.currentBranch.website}`, 220, 24);
 
         // Draw Separator Line
         doc.setLineWidth(0.2);
@@ -270,7 +280,7 @@ const DownloadPopup = ({ onClose, sales, type }: any) => {
         </div>
         <div className='flex gap-4 justify-end w-full'>
 
-          <Button className="cursor-pointer outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex" onClick={downloadPDF}>
+          <Button disabled={isDisabled} className={` outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex ${isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`} onClick={downloadPDF}>
 
             <div className="w-6 h-6">
               <Image src={download} alt="download" />
@@ -291,7 +301,7 @@ const DownloadPopup = ({ onClose, sales, type }: any) => {
               { label: 'Status', key: 'status' },
             ]}
           >
-            <Button className="cursor-pointer outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex">
+            <Button disabled={isDisabled} className={` outline-none border-0 px-4 py-2.5 bg-zinc-900 rounded-[5px] justify-start items-center gap-2 flex ${isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
 
               <div className="w-6 h-6">
                 <Image src={download} alt="download" />

@@ -58,14 +58,14 @@ const CreateGrnHeader = ({ existingHeaderData }: any) => {
     useEffect(() => {
 
         if (id) {
-            const updatedHeaderData = { ...existingHeaderData, invoiceNo };
-            setHeaderData(updatedHeaderData);
-             //console.log("this is header data",headerData)
+            setHeaderData((prevData) => ({...prevData, ...existingHeaderData, invoiceNo} ));
+            console.log("this is header data",headerData)
+            console.log("this is header data",existingHeaderData)
         }
         else {
             setHeaderData((prevData) => ({ ...prevData, invoiceNo: invoiceNo, dueDate: dueDate }))
         }
-    }, [])
+    }, [existingHeaderData])
     useEffect(() => {
         if (!isLoading && !error && data) {
             const distributors = data?.map((distributor: any) => ({
@@ -132,7 +132,7 @@ const CreateGrnHeader = ({ existingHeaderData }: any) => {
         }),
         menuPortal: (base: any) => ({ ...base, zIndex: 9999 })
     };
-    //console.log(headerData);
+    console.log("header Data",headerData);
     return (
         <>
 
@@ -187,18 +187,7 @@ const CreateGrnHeader = ({ existingHeaderData }: any) => {
                 <div className="px-6 py-2 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full mr-[16px]">
                     <div className="flex gap-[0.8rem] items-center w-full">
                         <div className="text-gray-500 text-base font-bold  w-1/8">Date:</div>
-                        {id === null ? (
-                            // <DatePicker
-                            //     className={"text-gray-500 text-base font-medium  w-full"}
-                            //     value={startDate}
-                            //     onChange={handleDateChange}
-                            //     clearIcon={() => null}
-                            //     calendarIcon={() => (
-                            //         <Image src={calicon} alt="Calendar Icon" width={20} height={20} />
-                            //     )}
-                            // />
-                            // <div className='w-full relative'>
-
+   
                             <div className="customDatePickerWidth">
                                 <DatePicker
                                     className="w-full"
@@ -209,7 +198,7 @@ const CreateGrnHeader = ({ existingHeaderData }: any) => {
                                         <div className='relative '>
                                             <input
                                                 className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                value={startDate.toLocaleDateString('en-GB')}
+                                                value={headerData?.date  ? new Date(headerData.date ).toLocaleDateString('en-GB') : startDate.toLocaleDateString('en-GB')}
                                                 readOnly
                                             />
                                             <Image
@@ -223,10 +212,6 @@ const CreateGrnHeader = ({ existingHeaderData }: any) => {
                                     }
                                 />
                             </div>
-                            // </div>
-                        ) : (
-                            formatDateAndTime(existingHeaderData.date).formattedDate
-                        )}
                     </div>
                 </div>
                 <div className="px-6 py-2 bg-white rounded-[10px] justify-between items-center gap-4 flex w-full ">
@@ -248,18 +233,17 @@ const CreateGrnHeader = ({ existingHeaderData }: any) => {
                                 <Image src={calicon} alt="Calendar Icon" width={20} height={20} />
                             )}
                         /> */}
-                        {id === null ? (
                             <div className="customDatePickerWidth">
                                 <DatePicker
                                     className="w-full"
-                                    selected={dueDate || new Date}
+                                    selected={ headerData?.dueDate ?headerData.dueDate:(dueDate || new Date())}
                                     onChange={(date) => handleDueDateChange(date)}
                                     calendarClassName="react-datepicker-custom"
                                     customInput={
                                         <div className='relative'>
                                             <input
-                                                className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                value={headerData?.dueDate?.toLocaleDateString('en-GB')}
+                                                className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
+                                                value={headerData?.dueDate ? new Date(headerData.dueDate).toLocaleDateString('en-GB') : dueDate.toLocaleDateString('en-GB')}
                                                 readOnly
                                             />
                                             <Image
@@ -276,9 +260,6 @@ const CreateGrnHeader = ({ existingHeaderData }: any) => {
                                     <div className="text-red-500 text-sm mt-1">Please select a due date.</div>
                                 )}
                             </div>
-                        ) : (
-                            formatDateAndTime(existingHeaderData.dueDate).formattedDate
-                        )}
 
 
                     </div>

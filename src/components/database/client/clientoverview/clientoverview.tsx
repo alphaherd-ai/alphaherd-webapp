@@ -127,7 +127,7 @@ const ClientDetails = () => {
             let totalAmt = 0;
             let totalIncomeByNow = 0;
             invoiceList.forEach((invoice: any) => {
-                if (invoice.status.includes("You’re owed")) {
+                if (invoice.status.includes("You owe")) {
                     const match = invoice.status.match(/[\d.]+/g); // Match both integers and floats
                     if (match) {
                         totalAmt += parseFloat(match[0]);
@@ -228,7 +228,7 @@ const ClientDetails = () => {
 
             <div className="w-full h-full  relative rounded-[20px] pr-[16px] pl-[16px] z-1">
                 <div className={`fixed inset-0 w-full h-full  bg-opacity-50 backdrop-blur-sm z-40 ${recordPaymentPopup ? 'block' : 'hidden'}`} >
-                    <RecordTransactionPopup setOpen={setOpen} formData={formData} setFormData={setFormData} clientName={client?.clientName} togglePopup={setRecordPaymentPopup} />
+                    <RecordTransactionPopup setOpen={setOpen} formData={formData} setFormData={setFormData} clientName={client?.clientName} togglePopup={setRecordPaymentPopup} toBePaid={toBePaid}/>
                 </div>
                 <div className="flex items-center justify-between">
                     <div className="flex gap-8">

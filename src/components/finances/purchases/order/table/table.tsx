@@ -4,7 +4,7 @@
 import addicon from "../../../../../assets/icons/finance/add.svg"
 
 import addicon1 from "../../../../../assets/icons/finance/add (3).svg"
-
+import delicon from "../../../../../assets/icons/finance/1. Icons-27.svg"
 import Subtract from "../../../../../assets/icons/finance/Subtract.svg"
 import Add from "../../../../../assets/icons/finance/add (2).svg"
 import React, { Dispatch, useCallback, useContext, useEffect, useRef, useState } from 'react';
@@ -205,14 +205,14 @@ const NewPurchasesTable = () => {
         };
     }
         const handleAddItem = useCallback(() => {
-            setItems([...items, {}]);
+            setItems([...items, { rowId: Date.now() }]);
         }, [items]);
 
-        const handleQuantityDecClick = (itemId: any) => {
+        const handleQuantityDecClick = (rowId: any) => {
             console.log(items);
             setItems((prevItems: any) =>
                 prevItems.map((item: any) => {
-                    if (item.productId === itemId && item.quantity >= 1) {
+                    if (item.rowId === rowId && item.quantity >= 1) {
                         const newQuantity = item.quantity - 1;
                         const updatedDiscountAmt = (item.unitPrice * newQuantity * item.discountPercent) / 100 || 0;
                         return { ...item, quantity: newQuantity, discountAmt: updatedDiscountAmt };
@@ -223,11 +223,11 @@ const NewPurchasesTable = () => {
             );
         };
 
-        const handleQuantityIncClick = (itemId: any) => {
-            console.log(itemId);
+        const handleQuantityIncClick = (rowId: any) => {
+            console.log(rowId);
             setItems((prevItems: any) =>
                 prevItems.map((item: any) => {
-                    if (item.productId === itemId && item.quantity >= 0) {
+                    if (item.rowId === rowId && item.quantity >= 0) {
                         const newQuantity = item.quantity + 1;
                         const updatedDiscountAmt = (item.unitPrice * newQuantity * item.discountPercent) / 100 || 0;
                         return { ...item, quantity: newQuantity, discountAmt: updatedDiscountAmt };
@@ -306,8 +306,10 @@ const NewPurchasesTable = () => {
             if (selectedProduct.value) {
                 if (index === items.length - 1) {
                     items.push({
+                        rowId: Date.now(),
                         productId: null,
                         itemName: "",
+                        quantity: 0
                     });
                     setItems(items);
                 }
@@ -342,8 +344,10 @@ const NewPurchasesTable = () => {
 
         useEffect(() => {
             items.push({
+                rowId: Date.now(),
                 productId: null,
                 itemName: "",
+                quantity: 0
             });
             setItems(items);
         }, [])
@@ -409,6 +413,11 @@ const NewPurchasesTable = () => {
         }),
         menuPortal: (base:any) => ({ ...base, zIndex: 9999 })
       };
+
+    const handleDeleteRow = (index: number) => {
+        const updatedItems = items.filter((_, i) => i !== index);
+        setItems(updatedItems);
+    };
 
     return (
         <>
@@ -497,7 +506,7 @@ const NewPurchasesTable = () => {
                                                 </div>
                                                 <div className=' flex text-textGrey2 text-base font-medium w-[15rem] items-center gap-2'>
                                                     <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
-                                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.productId)}>
+                                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.rowId)}>
                                                             <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
                                                         </button>
                                                         <input
@@ -509,7 +518,7 @@ const NewPurchasesTable = () => {
                                                         />
 
                                                         {/* {item.quantity} */}
-                                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.productId)}>
+                                                        <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.rowId)}>
                                                             <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                                         </button>
                                                         {item?.defaultUnit}
@@ -588,12 +597,11 @@ const NewPurchasesTable = () => {
                                                     />
                                                 </div>
                                                 <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[20px] justify-end pr-6'>
-                                                    {/* <button className="border-0 bg-transparent w-4 h-4">
-                                        <Image src={sellicon} alt="sell" className="w-4 h-4"></Image>
-                                    </button> */}
-                                                    {/* <button className="border-0 bg-transparent w-5 h-5 cursor-pointer" onClick={() => handleDeleteRow(index)}>
-                                                    <Image src={delicon} alt="delete" className="w-5 h-5" ></Image>
-                                                </button> */}
+                                                    {item.itemName && (
+                                                        <button className="border-0 bg-transparent w-5 h-5 cursor-pointer" onClick={() => handleDeleteRow(index)}>
+                                                            <Image src={delicon} alt="delete" className="w-5 h-5" />
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </div>
                                         ))}

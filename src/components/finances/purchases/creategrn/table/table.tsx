@@ -243,12 +243,13 @@ const CreateGrnTable = () => {
 
     }, [fetchedProducts])
     const handleDeleteRow = useCallback((index: number) => {
-        setItems((prevItems) => {
-            const updatedItems = [...prevItems];
+            const updatedItems = [...items];
+            console.log("updated items before deleting :", updatedItems);
             updatedItems.splice(index, 1);
-            return updatedItems;
-        });
-    }, []);
+            console.log("updated items after deleting :", updatedItems);
+            setItems(updatedItems);
+            setTableData(updatedItems);
+    }, [items]);
 
     const handleGstSelect = (selectedGst: any, index: number) => {
         const updatedItems = [...tableData];
@@ -263,63 +264,71 @@ const CreateGrnTable = () => {
         setItems([...items, {}]);
     }, [items]);
 
-    // useEffect(() => {
-    //     items.push({
-    //         productId: null,
-    //         serviceId: null,
-    //         itemName: "",
-    //     });
-    //     setItems(items);
-    // }, [])
+    useEffect(() => {
+        items.push({
+            productId: null,
+            itemName: "",
+            quantity: 0, // Set default quantity to 0
+        });
+        setItems(items);
+    }, [])
 
 
-    const handleQuantityDecClick = (itemId: any) => {
-        setItems((prevItems: any) =>
-            prevItems.map((item: any) => {
-                if (item.productId === itemId && item.quantity >= 1) {
-                    const newQuantity = item.quantity - 1;
-                    const updatedDiscountAmt = (item.unitPrice * newQuantity * item.discountPercent) / 100 || 0;
-                    return { ...item, quantity: newQuantity, discountAmount: updatedDiscountAmt };
-                }
-
-                return item;
-            })
-        );
+    const handleQuantityDecClick = (index: number) => {
+        setItems((prevItems: any) => {
+            const updatedItems = [...prevItems];
+            if (updatedItems[index] && updatedItems[index].quantity >= 1) {
+                const newQuantity = updatedItems[index].quantity - 1;
+                const updatedDiscountAmt = (updatedItems[index].unitPrice * newQuantity * updatedItems[index].discountPercent) / 100 || 0;
+                updatedItems[index] = { 
+                    ...updatedItems[index], 
+                    quantity: newQuantity, 
+                    discountAmount: updatedDiscountAmt 
+                };
+            }
+            return updatedItems;
+        });
     };
 
-    const handleQuantityIncClick = (itemId: any) => {
-        setItems((prevItems: any) =>
-            prevItems.map((item: any) => {
-                if (item.productId === itemId && item.quantity >= 0) {
-                    const newQuantity = item.quantity + 1;
-                    const updatedDiscountAmt = (item.unitPrice * newQuantity * item.discountPercent) / 100 || 0;
-                    return { ...item, quantity: newQuantity, discountAmount: updatedDiscountAmt };
-                }
-
-                return item;
-            })
-        );
+    const handleQuantityIncClick = (index: number) => {
+        setItems((prevItems: any) => {
+            const updatedItems = [...prevItems];
+            if (updatedItems[index] && updatedItems[index].quantity >= 0) {
+                const newQuantity = updatedItems[index].quantity + 1;
+                const updatedDiscountAmt = (updatedItems[index].unitPrice * newQuantity * updatedItems[index].discountPercent) / 100 || 0;
+                updatedItems[index] = { 
+                    ...updatedItems[index], 
+                    quantity: newQuantity, 
+                    discountAmount: updatedDiscountAmt 
+                };
+            }
+            return updatedItems;
+        });
     };
-    const handleFreeQuantityDecClick = (itemId: any) => {
-        setItems((prevItems: any) =>
-            prevItems.map((item: any) => {
-                if (item.id === itemId && item.freeQuantity > 1) {
-                    return { ...item, freeQuantity: item.freeQuantity - 1 };
-                }
-                return item;
-            })
-        );
+    const handleFreeQuantityDecClick = (index: number) => {
+        setItems((prevItems: any) => {
+            const updatedItems = [...prevItems];
+            if (updatedItems[index] && updatedItems[index].freeQuantity > 0) {
+                updatedItems[index] = { 
+                    ...updatedItems[index], 
+                    freeQuantity: updatedItems[index].freeQuantity - 1 
+                };
+            }
+            return updatedItems;
+        });
     };
 
-    const handleFreeQuantityIncClick = (itemId: any) => {
-        setItems((prevItems: any) =>
-            prevItems.map((item: any) => {
-                if (item.id === itemId) {
-                    return { ...item, freeQuantity: item.freeQuantity + 1 };
-                }
-                return item;
-            })
-        );
+    const handleFreeQuantityIncClick = (index: number) => {
+        setItems((prevItems: any) => {
+            const updatedItems = [...prevItems];
+            if (updatedItems[index]) {
+                updatedItems[index] = { 
+                    ...updatedItems[index], 
+                    freeQuantity: (updatedItems[index].freeQuantity || 0) + 1 
+                };
+            }
+            return updatedItems;
+        });
     };
     const handleDiscountSelect = (selectedDiscount: number, index: number) => {
         const updatedItems = [...tableData];
@@ -362,7 +371,7 @@ const CreateGrnTable = () => {
         const updatedItems = [...items];
         updatedItems[index][field] = value;
         setItems(updatedItems);
-        // console.log(items)
+        console.log("items after date change :",items)
     }, [items]);
 
     const handleProductSelect = useCallback(async (selectedProduct: any, index: number) => {
@@ -373,6 +382,7 @@ const CreateGrnTable = () => {
                     productId: null,
                     serviceId: null,
                     itemName: "",
+                    quantity: 0, // Set default quantity to 0 for new items
                 });
                 setItems(items);
             }
@@ -383,14 +393,14 @@ const CreateGrnTable = () => {
                 updatedItems[index] = {
                     ...updatedItems[index],
                     defaultUnit: selectedProduct?.value?.defaultUnit,
-                    quantity: data.value.quantity,
+                    quantity: 0, // Set quantity to 0 instead of data.value.quantity
                     productId: selectedProduct.value.id,
                     itemName: data.value.itemName,
                     gst: data.value.tax
                 };
                 setItems(updatedItems);
 
-                console.log("this is the item", items)
+                // console.log("this is the item", items)
             } catch (error) {
                 console.error("Error fetching product details from API:", error);
             }
@@ -558,13 +568,14 @@ const CreateGrnTable = () => {
                                         <div className=' flex text-gray-500 text-base font-medium w-[18rem]'>Quantity<span className="text-[red] ml-1 block">*</span></div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[18rem]'>Free Quantity</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Unit Price<span className="text-[red] ml-1 block">*</span></div>
-                                        <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Subtotal</div>
+                                        <div className=' flex text-gray-500 text-base font-medium w-[12rem] justify-center'>Subtotal</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>MRP<span className="text-[red] ml-1 block">*</span></div>
-                                        <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Tax %</div>
-                                        <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Tax Amt.</div>
+                                        <div className=' flex text-gray-500 text-base font-medium w-[12rem] justify-center'>Tax %</div>
+                                        <div className=' flex text-gray-500 text-base font-medium w-[12rem] justify-center'>Tax Amt.</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Discount %</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Discount Amt.</div>
                                         <div className=' flex text-gray-500 text-base font-medium w-[12rem]'>Location</div>
+                                        <div className=' flex text-gray-500 text-base font-medium w-1/12'></div>
 
                                     </div>
 
@@ -601,8 +612,7 @@ const CreateGrnTable = () => {
 
                                             </div>
 
-                                            <div
-                                                className="flex text-gray-500 text-base font-medium w-[15rem]"
+                                            <div className="flex text-gray-500 text-base font-medium w-[15rem]"
                                                 key={index}
                                             >
                                                 <input
@@ -662,7 +672,7 @@ const CreateGrnTable = () => {
 
                                             <div className=' flex text-textGrey2 text-base font-medium w-[18rem] items-center gap-2'>
                                                 <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
-                                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(item.productId)}>
+                                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityDecClick(index)}>
                                                         <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
                                                     </button>
                                                     <input
@@ -674,7 +684,7 @@ const CreateGrnTable = () => {
                                                     />
 
                                                     {/* {item.quantity} */}
-                                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(item.productId)}>
+                                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleQuantityIncClick(index)}>
                                                         <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                                     </button>{item?.defaultUnit}
                                                 </div>
@@ -682,7 +692,7 @@ const CreateGrnTable = () => {
                                             </div>
                                             <div className=' flex text-textGrey2 text-base font-medium w-[18rem] items-center gap-2'>
                                                 <div className='flex items-center text-textGrey2 text-base font-medium gap-1 bg-white'>
-                                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleFreeQuantityDecClick(item.productId)}>
+                                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleFreeQuantityDecClick(index)}>
                                                         <Image className='rounded-md w-6 h-4' src={Subtract} alt="-"></Image>
                                                     </button>
                                                     <input
@@ -694,7 +704,7 @@ const CreateGrnTable = () => {
                                                     />
 
                                                     {/* {item.quantity} */}
-                                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleFreeQuantityIncClick(item.productId)}>
+                                                    <button className="border-0 rounded-md cursor-pointer" onClick={() => handleFreeQuantityIncClick(index)}>
                                                         <Image className="rounded-md w-6 h-4" src={Add} alt="+"></Image>
                                                     </button>
                                                 </div>
@@ -712,16 +722,17 @@ const CreateGrnTable = () => {
 
                                                 />
                                             </div>
-                                            <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
+                                            <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1 justify-center'>
                                                 ₹
-                                                <input
+                                                {/* <input
                                                     type="number"
                                                     value={item.quantity * Number(item.unitPrice)}
                                                     className="w-[80%] border border-solid border-borderGrey outline-none h-8  rounded-md text-textGrey2 font-medium text-base focus:border focus:border-solid focus:border-textGreen px-2"
                                                     onChange={(e) => handleItemsDataChange(index, 'subTotal', e.target.value)}
                                                     name={`subTotal-${index + 1}`}
 
-                                                />
+                                                /> */}
+                                                {(item.quantity&&item.unitPrice)?item.quantity * Number(item.unitPrice):0}
                                             </div>
                                             <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
                                                 ₹
@@ -734,7 +745,7 @@ const CreateGrnTable = () => {
 
                                                 />
                                             </div>
-                                            <div className='w-[12rem] flex items-center text-textGrey2 text-base font-medium'>
+                                            <div className='w-[12rem] flex items-center text-textGrey2 text-base font-medium justify-center'>
                                                 {/* { id==null?(
                                         <Select
                                             className="text-textGrey2 text-base font-medium"
@@ -754,7 +765,7 @@ const CreateGrnTable = () => {
                                                 {(item.gst)?(item.gst * 100 ): 0}%
                                                 {/* )} */}
                                             </div>
-                                            <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1'>
+                                            <div className=' flex text-textGrey2 text-base font-medium w-[12rem] items-center gap-1 justify-center'>
                                                 ₹ {(item.quantity&&item.gst&&item.unitPrice)?(item.quantity * item.gst * Number(item.unitPrice)).toFixed(2) : 0}
 
                                             </div>
@@ -795,14 +806,14 @@ const CreateGrnTable = () => {
                                                 />
 
                                             </div>
-                                            <div className='w-1/12 flex items-center text-textGrey2 text-base font-medium gap-[20px] justify-end pr-4'>
-                                                {/* <button className="border-0 bg-transparent cursor-pointer">
-                                                    <Image className='w-5 h-5' src={sellicon} alt="sell" ></Image>
-                                                </button> */}
-                                                <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
-                                                    <Image className='w-5 h-5' src={delicon} alt="delete" ></Image>
-                                                </button>
-                                            </div>
+                                            {index !== items.length - 1 ?
+                                                <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[20px] justify-center'>
+                                                    
+                                                    <button className="border-0 bg-transparent cursor-pointer" onClick={() => handleDeleteRow(index)}>
+                                                        <Image className='w-5 h-5' src={delicon} alt="delete" ></Image>
+                                                    </button>
+                                                </div> : <div className='w-1/12 flex items-center text-neutral-400 text-base font-medium gap-[20px] justify-center'></div>
+                                            }
                                         </div>
                                     ))}
 

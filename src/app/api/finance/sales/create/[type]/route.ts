@@ -14,11 +14,18 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
   }
 
   try {
-    const {newCreditedToken,...otherBody}: any = await req.json();
+    const { newCreditedToken, ...otherBody }: any = await req.json();
     const inventoryId = await fetchInventoryId(req);
-    const financeId = await fetchFinanceId(req);    
-    console.log(otherBody);
-    const [sales, items,client] = await Promise.all([
+    const financeId = await fetchFinanceId(req);
+    //console.log(otherBody);
+
+
+
+    const creditTokenFromYouOweAmount = Number(otherBody?.status?.split('₹')[1]);
+    const isStatusIncludesYouOwe = otherBody.status.includes('You owe');
+    //console.log(creditTokenFromYouOweAmount, isStatusIncludesYouOwe);
+
+    const [sales, items, client] = await Promise.all([
       prismaClient.sales.create({
         data: {
           ...otherBody,
@@ -40,11 +47,12 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
         data: {
           invoiceNo: {
             push: otherBody.invoiceNo
-          }
+          },
+
         }
       })
     ]);
-     
+
     const finance = await prismaClient.financeTimeline.create({
       data: {
         type: params.type,
@@ -59,21 +67,21 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
     });
 
     if (params.type === FinanceCreationType.Sales_Invoice) {
-      
+
       if (newCreditedToken >= 0) {
         await prismaClient.clients.update({
           where: {
             id: Number(otherBody.clientId)
           },
           data: {
-            creditedToken: newCreditedToken
+            creditedToken: newCreditedToken + (isStatusIncludesYouOwe ? creditTokenFromYouOweAmount : 0)
           }
         });
       }
 
       await Promise.all(
         otherBody.items.create.map(async (item: any) => {
-          if(item.itemType==='product'){
+          if (item.itemType === 'product') {
             const batch = await prismaClient.productBatch.findUnique({
               where: {
                 id: Number(item.productBatchId),
@@ -82,7 +90,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
               cacheStrategy: { ttl: 60 },
             });
             console.log(batch);
-  
+
             await Promise.all([
               prismaClient.productBatch.update({
                 where: { id: batch?.id, inventorySectionId: inventoryId },
@@ -109,7 +117,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
                   quantityChange: item.quantity,
                   invoiceType: "Sales_Invoice",
                   invoiceNo: otherBody?.invoiceNo,
-                  party:client.clientName,
+                  party: client.clientName,
                   inventoryType: Inventory.Product,
                   productBatch: {
                     connect: {
@@ -125,7 +133,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
               }),
             ]);
           }
-          else{
+          else {
             const batch = await prismaClient.services.findUnique({
               where: {
                 id: Number(item.serviceId),
@@ -138,7 +146,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
               prismaClient.inventoryTimeline.create({
                 data: {
                   stockChange: Stock.StockOUT,
-                  party:client.clientName,
+                  party: client.clientName,
                   quantityChange: item.quantity,
                   invoiceType: "Sales_Invoice",
                   invoiceNo: otherBody?.invoiceNo,
@@ -157,19 +165,19 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
               }),
             ]);
           }
-          
+
         })
       );
     } else if (params.type === FinanceCreationType.Sales_Return) {
-      if(otherBody.status.includes('Credited')){
-        
+      if (otherBody.status.includes('Credited')) {
+
         await prismaClient.clients.update({
-          where:{
-            id:Number(otherBody.clientId),
+          where: {
+            id: Number(otherBody.clientId),
           },
-          data:{
-            creditedToken:{
-              increment:otherBody.totalCost
+          data: {
+            creditedToken: {
+              increment: otherBody.totalCost
             }
           }
         })
@@ -211,7 +219,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
                   quantityChange: item.quantity,
                   invoiceType: "Sales_Return",
                   invoiceNo: otherBody?.invoiceNo,
-                  party:client.clientName,
+                  party: client.clientName,
                   inventoryType: Inventory.Product,
                   productBatch: {
                     connect: {
@@ -227,7 +235,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
               }),
             ]);
           }
-          else{
+          else {
             const batch = await prismaClient.services.findUnique({
               where: {
                 id: Number(item.serviceId),
@@ -240,7 +248,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
               prismaClient.inventoryTimeline.create({
                 data: {
                   stockChange: Stock.StockIN,
-                  party:client.clientName,
+                  party: client.clientName,
                   quantityChange: item.quantity,
                   invoiceType: "Sales_Return",
                   invoiceNo: otherBody?.invoiceNo,
@@ -263,10 +271,28 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
         })
       );
     }
+
+
+    else if (params.type === FinanceCreationType.Sales_Estimate) {
+      //console.log('here');
+      await prismaClient.clients.update({
+        where: {
+          id: Number(otherBody.clientId)
+        },
+        data: {
+          creditedToken: {
+            increment: newCreditedToken
+          }
+        }
+      })
+    }
+
+
     //console.log(finance);
     return new Response(JSON.stringify({
       sales
-    , finance }), {
+      , finance
+    }), {
       status: 201,
       headers: {
         'Content-Type': 'application/json',

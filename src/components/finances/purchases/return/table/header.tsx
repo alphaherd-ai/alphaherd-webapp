@@ -58,7 +58,7 @@ const NewPurchaseReturnHeader = ({ existingHeaderData }: any) => {
     }
     useEffect(() => {
         if (id) {
-            const updatedHeaderData={...headerData,invoiceNo:invoiceNo}
+            const updatedHeaderData={...existingHeaderData}
             setHeaderData(updatedHeaderData);
             // ////console.log("this is header data",headerData)
         }
@@ -245,18 +245,17 @@ const NewPurchaseReturnHeader = ({ existingHeaderData }: any) => {
                                 <Image src={calicon} alt="Calendar Icon" width={20} height={20} />
                             )}
                         /> */}
-                        {id === null ? (
                             <div className="customDatePickerWidth">
                                 <DatePicker
                                     className="w-full"
-                                    selected={dueDate}
+                                    selected={headerData?.dueDate ?headerData.dueDate:dueDate}
                                     onChange={handleDueDateChange}
                                     calendarClassName="react-datepicker-custom"
                                     customInput={
                                         <div className='relative'>
                                             <input
                                                 className="w-full h-9 text-textGrey1 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                                value={dueDate.toLocaleDateString('en-GB')}
+                                                value={headerData?.dueDate ? new Date(headerData.dueDate).toLocaleDateString('en-GB') : dueDate.toLocaleDateString('en-GB')}
                                                 readOnly
                                             />
                                             <Image
@@ -270,9 +269,6 @@ const NewPurchaseReturnHeader = ({ existingHeaderData }: any) => {
                                     }
                                 />
                             </div>
-                        ) : (
-                            formatDateAndTime(existingHeaderData.dueDate).formattedDate
-                        )}
 
 
                     </div>

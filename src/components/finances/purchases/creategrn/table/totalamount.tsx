@@ -34,7 +34,7 @@ const CreateGrnTotalAmount = ({ orderData }: any) => {
     const onClose = () => {
         setPopup((prev: any) => !prev);
     }
-
+  
     const [showConfirmation, setShowConfirmation] = useState(false);
 
     const [transaction, setTransaction] = useState<any>();
@@ -108,6 +108,12 @@ const CreateGrnTotalAmount = ({ orderData }: any) => {
         }, [orderData.recordTransaction]);
     const [discountInput, setDiscountInput] = useState(0);
     const [selectedDiscountPer, setDiscountPer] = useState(0);
+    useEffect(() => {
+        if (headerData.overallDiscount) {
+            setDiscountInput(Math.floor(headerData.totalCost * headerData.overallDiscount / (1 - headerData.overallDiscount)));
+            setDiscountPer(headerData.overallDiscount);
+        }
+    }, [headerData])
     const handleDiscountChange = (value: number) => {
 
 
@@ -160,10 +166,16 @@ const CreateGrnTotalAmount = ({ orderData }: any) => {
         setDate(date);
         setTotalAmountData((prevData) => ({
             ...prevData,
-            lastDateOfReturn: date
+            returnLastDate: date
         }))
     }
-
+    useEffect(() => {
+        // by default last date should be todays date
+        setTotalAmountData((prevData) => ({
+            ...prevData,
+            returnLastDate: new Date()
+        }));
+    }, [])
     // const updateGrandTotal = () => {
     //     const discountedAmount = (totalAmount - totalAmount * overAllDiscount)||0;
     //     const shippingValue = parseFloat(shipping) || 0;

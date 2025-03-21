@@ -14,6 +14,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from "next/navigation";
 import { setValidationErrorsForForm } from "@/utils/setValidationErrorForForm";
 import { useSearchParams } from 'next/navigation';
+import { set } from "date-fns";
 const formSchema = z.object({
   orgName: z.string().min(4, 'Org Name must be at least 4 characters'),
   orgEmail: z.string().email('Invalid Email Address'),
@@ -36,6 +37,7 @@ const BranchEdit = () => {
     // console.log("appstate is :",appState)
     const searchParams = useSearchParams();
     const router = useRouter();
+    const [isSaving, setIsSaving] = useState(false);
     // console.log(appState.currentBranch);
     const branchName = searchParams.get('branchName');
     // console.log("branch name is :",branchName);
@@ -67,7 +69,7 @@ const BranchEdit = () => {
         orgEmail: appState.currentOrg.orgEmail || '',
         gstNo: appState.currentOrg.gstNo || '',
         phoneNo: appState.currentOrg.phoneNo || '',
-        altphoneNo: appState.currentOrg.altphoneNo || '',
+        altphoneNo: appState.currentOrg.alphoneNo || '',
         website: appState.currentOrg.website || '',
         panNo: appState.currentOrg.panNo || '',
         address: appState.currentOrg.address || '',
@@ -143,10 +145,11 @@ const BranchEdit = () => {
         
             const isCurrentBranchManager = isManagerOfBranch(orgBranch.id, user as UserState);
         
+            const updatedOrgBranch = { ...orgBranch };
             dispatch(
               updateApp({
-                currentBranch: orgBranch,
-                currentBranchId: orgBranch.id,
+                currentBranch: updatedOrgBranch,
+                currentBranchId: updatedOrgBranch.id,
                 currentOrg: appState.currentOrg, // Keep current organization since we only have one
                 currentOrgId: appState.currentOrgId,
                 isCurrentBranchManager: isCurrentBranchManager,
@@ -184,7 +187,7 @@ const BranchEdit = () => {
           },"userId":userState.id}),
         });
 
-        let json = await res.json();
+        const json = await res.json();
         if (res.ok) {
           toast.success(json.message, {
             position: "bottom-right",
@@ -193,7 +196,8 @@ const BranchEdit = () => {
             transition: Bounce,
           });
           // Select the branch 
-          handleOrgBranchSelect(json.orgBranch);
+          console.log(json.orgBranch)
+          // handleOrgBranchSelect(json.orgBranch);
           router.push(`/settings/organisation/myorg`);
         } else {
           throw new Error(json.message);

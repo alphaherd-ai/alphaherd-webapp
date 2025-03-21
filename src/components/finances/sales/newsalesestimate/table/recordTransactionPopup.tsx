@@ -268,7 +268,9 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({setFirstAdvancePaymentPai
                             className="w-[440px] h-9 rounded-[5px] text-textGrey2 text-base font-medium p-2 outline-none border border-solid border-gray-300 focus:border-teal-500"
                             type="number"
                             name="amountPaid"
-                            value={Math.abs(Number(formData.amountPaid || 0)).toFixed(2)}
+                            
+                            
+                            value={formData.amountPaid > 0 ? formData.amountPaid : -1 * formData.amountPaid}
                             onChange={(e) => handleChange("amountPaid", e.target.value)}
                         />
                     </div>

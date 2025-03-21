@@ -32,8 +32,7 @@ const NewsaleNavbar = () => {
         setHeaderData(resetHeaderData)
         setTotalAmountData(resetTotalAmountData);
         setTableData([{}]);
-
-
+        setTransactionsData([]);
     }
 
     return (

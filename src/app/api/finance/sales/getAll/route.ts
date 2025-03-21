@@ -24,7 +24,7 @@ export const GET = async (req: NextRequest) => {
       orderBy:{
         date:'desc',
       },
-      cacheStrategy:{ttl:30}
+      // cacheStrategy:{ttl:30}
     });
 
     return new Response(JSON.stringify(sales), {

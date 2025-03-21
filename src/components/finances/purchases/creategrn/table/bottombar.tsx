@@ -86,6 +86,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             productId: data.productId,
             quantity: data.quantity,
             sellingPrice: Number(data.maxRetailPrice),
+            maxRetailPrice:Number(data.maxRetailPrice),
             taxAmount: data.gst,
             name: data.itemName,
             discount: Number(data.discountPercent) / 100,
@@ -107,6 +108,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
             shipping: allData.totalAmountData.shipping,
             adjustment: allData.totalAmountData.adjustment,
             totalCost: allData.totalAmountData.totalCost,
+            returnLastDate:allData.totalAmountData.returnLastDate,
             overallDiscount: (id === null) ? allData.totalAmountData.overallDiscount : orderData.overallDiscount,
             totalQty: totalQty,
             recordTransaction: {
@@ -147,6 +149,7 @@ const CreateGrnBottomBar = ({ orderData }: any) => {
     return (
         <>
             <div className="flex justify-between items-center w-full  box-border  bg-white  border-t border-l-0 border-r-0 border-b-0 border-solid border-borderGrey text-gray-400 py-4 rounded-b-lg">
+                <div></div>
                 <div className="flex justify-between items-center gap-4 pr-4">
                     <Button className={`px-4 py-2.5 text-white text-base rounded-md justify-start items-center gap-2 flex border-0 outline-none cursor-pointer ${isDisabled ? 'bg-gray-400' : 'bg-zinc-900'
                         }`}

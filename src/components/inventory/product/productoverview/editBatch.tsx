@@ -7,12 +7,13 @@ import Select from 'react-select';
 import axios from "axios";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import CreatableSelect from "react-select/creatable";
+import { mutate } from "swr";
 
-import { useAppSelector } from '@/lib/hooks';
 import { toast, Bounce } from 'react-toastify';
-
+import { useSearchParams } from "next/navigation";
 import Loading2 from "@/app/loading2";
-
+import { useAppSelector } from "@/lib/hooks";
 type PopupProps = {
     setisEditing: any;
     editBatch: any,
@@ -25,15 +26,23 @@ interface Distributors {
 
 
 
-const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch}) => {
+const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch }) => {
     console.log(editBatch);
+    const app=useAppSelector((state)=>state.app);
+    const branchId=app.currentBranchId;
+    const url=useSearchParams();
+    const id=url.get("id");
     const [formData, setFormData] = useState<any>({});
+    const [locations, setLocations] = useState<any>([]);
     const [saving, isSaving] = useState(false);
     const appState = useAppSelector((state) => state.app);
     const [distributor, setDistributor] = useState<any>([]);
     
+    
+
     useEffect(() => {
-        console.log("Edit Batch",editBatch);
+        console.log("Edit Batch", editBatch);
+
         const fetchDistributors = async () => {
             try {
                 const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/distributors/getAll?branchId=${appState.currentBranchId}`);
@@ -41,24 +50,24 @@ const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch}) => {
                     value: distributor.id,
                     label: distributor.distributorName
                 }));
-               
+
                 setDistributor(filteredDistributors);
-            } catch (err : any) {
+            } catch (err: any) {
                 toast.error(err.message, {
-                  position: "bottom-right",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: undefined,
-                  theme: "colored",
-                  transition: Bounce,
+                    position: "bottom-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                    transition: Bounce,
                 });
             }
         }
         fetchDistributors();
-        if(editBatch){
+        if (editBatch) {
             setFormData({
                 batchNumber: editBatch.batchNumber,
                 expiry: editBatch.expiry,
@@ -68,40 +77,69 @@ const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch}) => {
                 quantity: editBatch.quantity,
                 location: editBatch.location,
             });
+            
         }
     }, []);
 
-    const handleSave = async() => {
-        const body=formData;
-        console.log('Body:', body);
-        try{
-            isSaving(true);
-            const res=await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/edit/${editBatch.id}?branchId=${appState.currentBranchId}`,body,
-            {
-                headers:{
-                    'Content-Type':'application/json'
+    useEffect(() => {
+        const getAllLocations = async () => {
+            try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/settings/LocationCategory/getAll?branchId=${appState.currentBranchId}`);
+                //console.log(response.data);
+                if (response.data) {
+                    setLocations((prev: any) => {
+                        return response.data.map((location: any) => {
+                            return {
+                                value: location.id,
+                                label: location.name
+                            }
+                        })
+                    })
                 }
-            });
-            if(res.status===201){
+            } catch (error) {
+                console.log("Error fetching species", error);
+            }
+        }
+        getAllLocations();
+
+    }, [appState.currentBranchId])
+
+    const handleSave = async () => {
+        const body = formData;
+        const changeInQuantity=(Number(formData.quantity)-Number(editBatch.quantity));
+        console.log(changeInQuantity);
+        console.log('Body:', body);
+        try {
+            isSaving(true);
+            const res = await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/productBatch/edit/${editBatch.id}?branchId=${appState.currentBranchId}`, {body, changeInQuantity},
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+            if (res.status === 201) {
+                mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/product/${id}?branchId=${branchId}`)
+                mutate(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/inventory/timeline/product/${id}?branchId=${branchId}`)
                 setisEditing((prev: any) => !prev);
+                window.location.reload();
             }
 
         }
-        catch(err : any){
+        catch (err: any) {
             console.error('Error:', err);
             toast.error(err.message, {
-              position: "bottom-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "colored",
-              transition: Bounce,
+                position: "bottom-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+                transition: Bounce,
             });
         }
-        finally{
+        finally {
             isSaving(false);
         }
     }
@@ -149,6 +187,9 @@ const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch}) => {
             color: '#A2A3A3',
         }),
     };
+
+
+
     console.log(formData);
 
     return <>
@@ -164,8 +205,8 @@ const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch}) => {
                 <div className="text-textGrey1 text-base font-medium ">Fill the respective Field to edit</div>
                 <div className="flex items-center">
                     {distributor.length > 0 && (<>
-                    <div className="text-gray-500 text-base font-medium  w-[8rem]">Distributor</div>
-                    <div className="w-[448px]">
+                        <div className="text-gray-500 text-base font-medium  w-[8rem]">Distributor</div>
+                        <div className="w-[448px]">
                             <Select
                                 className="text-gray-500 text-base font-medium border-0 boxShadow-0"
                                 placeholder="Select"
@@ -181,9 +222,9 @@ const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch}) => {
                                 }))}
                                 styles={customStyles}
                             />
-                    </div>
+                        </div>
                     </>
-                        )}
+                    )}
                 </div>
 
                 <div className="flex items-center gap-[20px]">
@@ -269,24 +310,33 @@ const EditBatchPopup: React.FC<PopupProps> = ({ setisEditing, editBatch}) => {
 
                     </div>
                 </div>
-                
+
                 <div className="flex items-center gap-[20px] w-full">
                     <div className="text-gray-500  text-base font-medium  w-2/12">Location</div>
                     <div className="flex w-10/12">
 
                         <div className="flex-1 ml-1">
-                            <input className="w-full px-2 h-9 text-textGrey2 text-base font-medium   focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]"
-                                defaultValue={editBatch.location}
-                                onChange={(e) => setFormData((prev: any) => ({
+                            <CreatableSelect
+                                className="text-neutral-400  outline-none border border-solid mt-2 border-borderGrey  rounded-md text-base font-medium w-full"
+                                placeholder="Select Category"
+                                isClearable={false}
+                                isSearchable={true}
+                                options={locations}
+                                isMulti={false}
+                                styles={customStyles}
+                                name="location"
+                                onChange={(selectedOption: any) => setFormData((prev: any) => ({
                                     ...prev,
-                                    location:e.target.value
-                                }))} />
+                                    location: selectedOption.label
+                                }))}
+
+                            />
 
                         </div>
 
                     </div>
                 </div>
-                
+
 
                 <div className="self-end items-start gap-6 flex">
 

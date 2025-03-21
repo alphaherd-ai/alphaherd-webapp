@@ -103,8 +103,15 @@ const OrgDetailsSetup = (props: any) => {
                     <div className="self-stretch justify-start items-start gap-10 inline-flex">
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">
                             <div className="w-[136px] text-gray-500 text-base font-medium ">Name<span className="text-red-500">*</span></div>
-                            <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400 flex-col justify-center items-start gap-2 inline-flex">
-                                <input type="text" className="text-textGrey2  text-base font-medium  h-full w-full px-2 border focus:outline-none border-solid border-borderGrey  focus:border focus:border-[#35BEB1] rounded-[5px]" id="orgName" name="orgName" value={props.data.orgName} onChange={props.handleChange} />
+                            <div className="grow shrink basis-0 h-11 bg-white rounded-[5px] border border-neutral-400">
+                                <input type="text" className="text-textGrey2 text-base font-medium h-full w-full px-2 focus:outline-none border border-solid border-borderGrey rounded-[5px] focus:border focus:border-[#35BEB1]" 
+                                id="orgName" name="orgName" 
+                                value={props.data.orgName} 
+                                onChange={props.handleChange} 
+                                />
+                                {props.validationErrors.orgName && (
+                                    <div className="text-[red] error">{props.validationErrors.orgName}</div>
+                                )}
                             </div>
                         </div>
                         <div className="grow shrink basis-0 h-11 justify-start items-center gap-4 flex">

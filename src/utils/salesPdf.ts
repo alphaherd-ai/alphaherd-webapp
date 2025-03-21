@@ -1,7 +1,10 @@
 import jsPDF from "jspdf";
 import formatDateAndTime from "./formateDateTime";
+import { add } from "date-fns";
 
 export function generatePdfForInvoice(data: any, appState: any, items: any): Promise<jsPDF> {
+  console.log(appState)
+  console.log(data);
   return new Promise((resolve, reject) => {
     var doc = new jsPDF({
       orientation: 'portrait',
@@ -28,11 +31,20 @@ export function generatePdfForInvoice(data: any, appState: any, items: any): Pro
 
     function addRow(data: any, y: any, columnPositions: any, rowHeight = 7) {
       y = checkPageBreak(doc, y, pageHeight, 0);
+      
       data.forEach((text: any, index: any) => {
-        addText(text, columnPositions[index], y);
+
+        const cleanedText = String(text || '')
+          .replace(/[^\x20-\x7E]/g, '') 
+          .trim()
+          .normalize('NFKD'); 
+        
+        addText(cleanedText, columnPositions[index], y);
       });
+      
       return y + rowHeight;
-    };
+    }
+    
 
     function addLine(startX: any, startY: any, endX: any, endY: any) {
       startY = checkPageBreak(doc, startY, pageHeight, 0);
@@ -95,16 +107,21 @@ export function generatePdfForInvoice(data: any, appState: any, items: any): Pro
 
       // Add header
       // Adjust y position to avoid overlap with image
-      addText(appState.currentBranch?.org.orgName!, 55, y, 20, 'center', 'bold');
+      addText(`${appState.currentOrg?.orgName!}`, 55, y, 20, 'center', 'bold');
       y += 8;
-      addText(`${appState.currentBranch?.branchName}`, 55, y, 11, 'center');
+      addText(`${appState.currentBranch?.branchName!}`, 55, y, 11, 'center');
       y += 5;
-      addText(`${appState.currentBranch?.org?.phoneNo!}`, 55, y, 11, 'center');
+      addText(`${appState.currentBranch?.phoneNo!}`, 55, y, 11, 'center');
       y += 5;
-      addText(`${appState.currentBranch?.org?.orgEmail!}`, 55, y, 11, 'center');
+      addText(`${appState.currentOrg?.orgEmail!}`, 55, y, 11, 'center');
       y += 5;
-      addText("petsfirsthospital.in", 55, y, 11, 'center');
-
+      addText(`${appState.currentBranch?.website!}`, 55, y, 11, 'center');
+      y+=5;
+      addText(`${appState.currentOrg?.gstNo!}`, 55, y, 11, 'center');
+      y+=5;
+      addText(`${appState.currentBranch?.panNo!}`, 55, y, 11, 'center');
+      y+=5;
+      addText(`${appState.currentOrg?.address!}`, 55, y, 11, 'center');
       y += lineHeight;
 
       // Add line below header
@@ -140,9 +157,10 @@ export function generatePdfForInvoice(data: any, appState: any, items: any): Pro
       addText('Invoice details', 10, y, 12);
       y += 5;
       y = addRow([`Invoice No.: ${data.invoiceNo}`, `Date: ${todayString}`], y, [10, 110]);
-      y = addRow([`Billed to: ${data.customer}`, `Phone No.: ${data.contact}`], y, [10, 110]);
+      y = addRow([`Billed to: ${data.customer}`, `Phone No.: ${data.contact || ''}`], y, [10, 110]);
       y = addRow([`Pay by: ${todayString}`, `Last date of return: ${formattedDueDate}`], y, [10, 110]);
       y = addRow([`Notes: ${data.notes}`], y, [10]);
+      y=addRow([`Status: ${data.status}`], y, [10]);
 
       // Add line below sales invoice details
       addLine(10, y + 1, 200, y + 1);
@@ -170,11 +188,13 @@ export function generatePdfForInvoice(data: any, appState: any, items: any): Pro
       y += lineHeight;
 
       // Add summary headers and values
-      y = addRow(['Subtotal', `${(items.reduce((acc: any, item: any) => acc + item.quantity * item.sellingPrice, 0) || 0).toFixed(2)}`], y, [130, 180]);
+      let subTotal=items.reduce((acc: any, item: any) => acc + item.quantity * item.sellingPrice, 0) || 0
+      y = addRow(['Subtotal', `${(subTotal).toFixed(2)}`], y, [130, 180]);
       addLine(200, y, 130, y);
       y += lineHeight;
       const summaryHeaders = ['Taxable Value', 'Tax Rate', 'Tax Amount'];
       const summaryValues = items.map((item: any) => [String(item.quantity * item.sellingPrice), String(`${item.taxAmount * 100}%`), String((item.taxAmount * item.quantity * item.sellingPrice).toFixed(2))]); // Tax rate not getting for now...
+      const totalTaxAmountSumarry=items.reduce((acc: any, item: any) => acc + item.taxAmount * item.quantity * item.sellingPrice, 0) || 0;
       y += lineHeight;
       addLine(200, y + 2, 100, y + 2);
       y = addRow(summaryHeaders, y, [100, 130, 160], lineHeight);
@@ -184,14 +204,16 @@ export function generatePdfForInvoice(data: any, appState: any, items: any): Pro
         y += lineHeight
       });
       addLine(200, y + 2, 130, y + 2);
-      y = addRow(['Shipping', `${data.shipping}`], y, [130, 160]);
+      y = addRow(['Shipping', `${(data.shipping + data.adjustment) || 0}`], y, [130, 160]);
       addLine(200, y + 2, 130, y + 2);
-      y = addRow(['Total Discounts', `${data.overallDiscount}`], y, [130, 160]);
+      y = addRow(['Total Discounts', `${Number(data.overallDiscount)*100}%`], y, [130, 160]);
 
       addText('Grand Total', 130, y, 12);
-      addText(`${(data.subTotal).toFixed(2)}`, 160, y, 12);
-
-      y += lineHeight;
+      addText(`${(((1-data.overallDiscount)*(subTotal+totalTaxAmountSumarry)+((data.shipping + data.adjustment) || 0))).toFixed(2)}`, 160, y, 12);
+      y+=lineHeight;
+     
+      
+     
 
       // Add line below summary
       addLine(10, y, 200, y);

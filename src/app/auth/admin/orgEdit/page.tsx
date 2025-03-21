@@ -1,6 +1,6 @@
 "use client";
 import OrgNameSetup from "@/components/auth/admin/orgNameSetup";
-import OrgDetailsSetup from "@/components/auth/orgDetailsSetup";
+import OrgDetailsSetup from "@/components/auth/admin/orgDetailsSetup";
 import Image from "next/image";
 import React, { useState } from "react";
 import { Bounce, ToastContainer, toast } from 'react-toastify';
@@ -14,7 +14,7 @@ import { useAppSelector } from "@/lib/hooks";
 import Loading from "@/app/loading2"
 import { updateCurrentOrg, updateCurrentBranch } from "@/lib/features/appSlice";
 const formSchema = z.object({
-  orgName: z.string(),
+  orgName: z.string().min(4, 'Org. Name must be at least 4 characters'),
   orgEmail: z.string().email('Invalid Email Address'),
   gstNo: z.string().length(15, 'Invalid GST no. - must be 15 digits'),
   phoneNo: z.string().length(10, 'Invalid Phone No.'),
@@ -35,26 +35,27 @@ const OrgEdit = () => {
 
     const router = useRouter();
 
-    var initialErrors = {
+    // Initialize validation errors to match the data structure
+    const initialErrors = {
         orgName: '',
         orgEmail: '',
-        orgImgUrl:'',
+        orgImgUrl: '',
         gstNo: '',
-        altphoneNo: "",
-        branchName: "",
+        phoneNo: '',
+        altphoneNo: '',
         website: '',
+        branchName: '',
         panNo: '',
-        phoneNo: "",
         address: '',
         state: '',
         pinCode: '',
         description: ''
-      }
+    };
     
-      var stepFields = [
-        ["orgName"],
-        ["orgEmail","orgImgUrl","gstNo","phoneNo","altPhoneNo","website","panNo","branchName","address","state","pinCode","description"]
-      ];
+    var stepFields = [
+      ["orgName"],
+      ["orgName","orgEmail","orgImgUrl","gstNo","phoneNo","altPhoneNo","website","panNo","branchName","address","state","pinCode","description"]
+    ];
 
     
     // console.log(appState);
@@ -83,45 +84,32 @@ const OrgEdit = () => {
     const [activeTab, setActiveTab] = useState(0);
     const handlePicChange=(imageUrl:any,source:string)=>{
       let name=source,value=imageUrl.secure_url;
-      // console.log(name,value)
-      try{
-        // console.log(name,value)
+      try {
         setData((prevData) => ({
           ...prevData,
           [name]: value,
         }));
-        // console.log("inside handle change 1");
-        formSchema.parse({...data,[name]: value});
-        // console.log("inside handle change 2");
-        setValidationErrors((prevErrors) => {
-          // console.log("here");
-          let newErrors = prevErrors;
-          newErrors[name as keyof typeof prevErrors] = '';
-          return newErrors;
-        });
+        formSchema.parse({...data, [name]: value});
+        setValidationErrors((prevErrors) => ({
+          ...prevErrors,
+          [name]: ''
+        }));
       }
       catch(err : any){
         if (err instanceof z.ZodError) {
-          // console.log(err.flatten());
-          let fieldErrors = err.flatten().fieldErrors;
-          // console.log(fieldErrors);
-          let fields: string[] = Object.keys(fieldErrors);
-          // console.log(name);
-          // console.log(fields);
+          const fieldErrors = err.flatten().fieldErrors;
+          const fields: string[] = Object.keys(fieldErrors);
           if(fields.includes(name)){
-            setValidationErrors((prevErrors) => {
-              let newErrors = prevErrors;
-              newErrors[name as keyof typeof prevErrors] = fieldErrors[name]!.length > 0 ? fieldErrors[name]![0] : '';
-              return newErrors;
-            });
+            setValidationErrors((prevErrors) => ({
+              ...prevErrors,
+              [name]: fieldErrors[name]![0]
+            }));
           }
-          else{
-            setValidationErrors((prevErrors) => {
-              // console.log("here");
-              let newErrors = prevErrors;
-              newErrors[name as keyof typeof prevErrors] = '';
-              return newErrors;
-            });
+          else {
+            setValidationErrors((prevErrors) => ({
+              ...prevErrors,
+              [name]: ''
+            }));
           }
         }
       }
@@ -134,51 +122,39 @@ const OrgEdit = () => {
       }
       else if (e?.target.name === 'orgName') {
         name = "orgName",
-          value =e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1);
+          value = e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1);
       }
       else {
         name = e.target.name;
         value = e.target.value.toString();
       }
       
-      try{
-        // console.log(name,value)
+      try {
         setData((prevData) => ({
           ...prevData,
           [name]: value,
         }));
-        // console.log("inside handle change 1");
-        formSchema.parse({...data,[name]: value});
-        // console.log("inside handle change 2");
-        setValidationErrors((prevErrors) => {
-          // console.log("here");
-          let newErrors = prevErrors;
-          newErrors[name as keyof typeof prevErrors] = '';
-          return newErrors;
-        });
+        formSchema.parse({...data, [name]: value});
+        setValidationErrors((prevErrors) => ({
+          ...prevErrors,
+          [name]: ''
+        }));
       }
       catch (err: any) {
         if (err instanceof z.ZodError) {
-          // console.log(err.flatten());
-          let fieldErrors = err.flatten().fieldErrors;
-          // console.log(fieldErrors);
-          let fields: string[] = Object.keys(fieldErrors);
-          // console.log(name);
-          // console.log(fields);
+          const fieldErrors = err.flatten().fieldErrors;
+          const fields: string[] = Object.keys(fieldErrors);
           if(fields.includes(name)){
-            setValidationErrors((prevErrors) => {
-              let newErrors = prevErrors;
-              newErrors[name as keyof typeof prevErrors] = fieldErrors[name]!.length > 0 ? fieldErrors[name]![0] : '';
-              return newErrors;
-            });
+            setValidationErrors((prevErrors) => ({
+              ...prevErrors,
+              [name]: fieldErrors[name]![0]
+            }));
           }
           else {
-            setValidationErrors((prevErrors) => {
-              // console.log("here");
-              let newErrors = prevErrors;
-              newErrors[name as keyof typeof prevErrors] = '';
-              return newErrors;
-            });
+            setValidationErrors((prevErrors) => ({
+              ...prevErrors,
+              [name]: ''
+            }));
           }
         }
       }
