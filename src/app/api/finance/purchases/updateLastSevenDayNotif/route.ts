@@ -5,7 +5,7 @@ export async function PATCH(req: Request) {
   try {
     // Parse the request body
     const { id, lastDueNotif } = await req.json();
-    // console.log("Request Body:", { id, lastDueNotif });
+    console.log("Request Body:", { id, lastDueNotif });
 
     // Validate `id` and `lastDueNotif`
     if (!id || !lastDueNotif) {
@@ -35,7 +35,7 @@ export async function PATCH(req: Request) {
       where: { id },
       data: { lastSevenNotif: notifDate },
     });
-
+    console.log("last seven day updated");
     return new Response(JSON.stringify({ message: 'Last notification date updated' }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },

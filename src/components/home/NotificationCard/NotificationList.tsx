@@ -246,11 +246,10 @@ const NotificationList =  ({ notifs, isLoading }) => {
 
   return (
     <>
-      {notifs?.map((notif: any, index: number) => (
+      {notifs?.filter((notif: any) => notif.message || notif.data?.message)?.map((notif: any, index: number) => (
         <div key={notif.id}>
           {(notif.source==Notif_Source.Payment_Delete_Approval_Request || notif.source==Notif_Source.Expenses_Approval_Request || notif.source==Notif_Source.Purchases_Approval_Request || notif.source == Notif_Source.Inventory_Update_Approval_Request || notif.source == Notif_Source.Payment_Edit_Approval_Request || notif.source == Notif_Source.Payment_Delete_Approval_Request || notif.source ==Notif_Source.Sales_Approval_Request) && isAdmin  ?  (
 
-            
             <div className=" px-5 py-4 bg-neutral-700 border border-neutral-700 rounded-[10px] justify-start items-start gap-4 inline-flex relative z-100">
               <div className="p-[4.50px] bg-amber-400 rounded-[5px] justify-center items-center gap-[11.25px] flex">
                 <div className="w-[27px] h-[27px] ">

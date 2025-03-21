@@ -32,7 +32,7 @@ const STATUS_STYLES: Record<string, StatusStyles> = {
         textColor: "text-[#FC6E20]",
         bgColor: "bg-[#FFF0E9]"
     },
-    "Debited":{
+    "Debited": {
         textColor: "text-[#3C50FF]",
         bgColor: "bg-[#EBEDFF]"
     }
