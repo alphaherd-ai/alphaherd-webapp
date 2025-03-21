@@ -334,7 +334,7 @@ if (user.name === "" || currentRoute.startsWith("/auth"))return null;
        <audio ref={notificationSound} src={notificationSoundFile} />
       <div className='flex flex-row items-center'>
         <div className=' px-4 py-2 border-0 border-r border-solid border-[#393939] '>
-          <button onClick={toggleDrawer(true)} className='rounded-full bg-[#38F8E6] flex items-center justify-center h-[3rem] w-[3rem] border-0'>
+          <button onClick={toggleDrawer(true)} className='rounded-full bg-[#38F8E6] flex items-center justify-center h-[3rem] w-[3rem] border-0 transition-all duration-150 hover:bg-[#2de6d0] active:bg-[#1cd4be] hover:scale-105 active:scale-95 active:shadow-inner active:shadow-black/20'>
             <Image src={addIcon} alt='addIcon' className='w-5 text-black important' />
           </button>
           <Drawer  open={open} onClose={toggleDrawer(false)}>
@@ -345,25 +345,25 @@ if (user.name === "" || currentRoute.startsWith("/auth"))return null;
       {showPopup2 && <Popup onClose={togglePopup2} clientData={undefined}/>}
       {showPopup3 && <DistributorPopup onClose={togglePopup3} />}
       {showPopup4 && <ExpensePopup onClose={togglePopup4} initialInvoiceNo={initialInvoiceNo} />}
-        <Link className='no-underline py-5 px-10 border-0 border-r-2 border-solid border-gray-800' href={`/`}>
+        {/* <Link className='no-underline py-5 px-10 border-0 border-r-2 border-solid border-gray-800 transition-all duration-150 hover:bg-[#2a2a2a] active:bg-[#3a3a3a] hover:text-white active:shadow-inner active:shadow-black/20' href={`/`}>
           <div className={currentRoute === "/" ? " text-white text-base font-medium leading-6 flex items-center justify-center" : " text-gray-400 text-base font-medium leading-6 flex items-center justify-center"}>
             <HomeIcon fill={currentRoute === "/" ? "#38F8E6" : "#A2A3A3"} />
             <div className="ml-1">Home</div>
           </div>
-        </Link>
-        <Link className='no-underline py-5 px-10 border-0 border-r-2 border-solid border-gray-800' href={`/finance/overview`}>
+        </Link> */}
+        <Link className='no-underline py-5 px-10 border-0 border-r-2 border-solid border-gray-800 transition-all duration-150 hover:bg-[#2a2a2a] active:bg-[#3a3a3a] hover:text-white active:shadow-inner active:shadow-black/20' href={`/finance/overview`}>
           <div className={currentRoute.startsWith("/finance") ? " text-white text-base font-medium leading-6 flex items-center justify-center" : " text-gray-400 text-base font-medium leading-6 flex items-center justify-center"}>
             <FinancesIcon fill={currentRoute.startsWith("/finance") ? "#38F8E6" : "#A2A3A3"} />
             <div className="ml-1">Finances</div>
           </div>
         </Link>
-        <Link className='no-underline py-5 px-10 border-0 border-r-2 border-solid border-gray-800' href={`/inventory/products/all`}>
+        <Link className='no-underline py-5 px-10 border-0 border-r-2 border-solid border-gray-800 transition-all duration-150 hover:bg-[#2a2a2a] active:bg-[#3a3a3a] hover:text-white active:shadow-inner active:shadow-black/20' href={`/inventory/products/all`}>
           <div className={currentRoute.startsWith("/inventory") ? " text-white text-base font-medium leading-6 flex items-center justify-center" : " text-gray-400 text-base font-medium leading-6 flex items-center justify-center"}>
             <InventoryIcon fill={currentRoute.startsWith("/inventory") ? "#38F8E6" : "#A2A3A3"} />
             <div className="ml-1">Inventory</div>
           </div>
         </Link>
-        <Link className='no-underline py-5 px-10 border-0 border-r-2 border-solid border-gray-800' href={`/database/clients`}>
+        <Link className='no-underline py-5 px-10 border-0 border-r-2 border-solid border-gray-800 transition-all duration-150 hover:bg-[#2a2a2a] active:bg-[#3a3a3a] hover:text-white active:shadow-inner active:shadow-black/20' href={`/database/clients`}>
           <div className={currentRoute.startsWith("/database") ? " text-white text-base font-medium leading-6 flex items-center justify-center" : " text-gray-400 text-base font-medium leading-6 flex items-center justify-center"}>
             <PatientlistIcon fill={currentRoute.startsWith("/database") ? "#38F8E6" : "#A2A3A3"} />
             <div className="ml-1">Database</div>
@@ -375,7 +375,7 @@ if (user.name === "" || currentRoute.startsWith("/auth"))return null;
             <Popover placement="bottom-end" showArrow offset={0}>
               <PopoverTrigger>
             <div
-              className='py-2 px-4 bg- border-none text-white rounded cursor-pointer transition-all flex items-center'
+              className='py-2 px-4 bg- border-none text-white rounded cursor-pointer transition-all duration-150 hover:bg-[#2a2a2a] active:bg-[#3a3a3a] active:shadow-inner active:shadow-black/20 flex items-center'
               onClick={toggleDropdown}
             >
               {appState.currentOrg.orgName}-{appState.currentBranch.branchName}
@@ -390,11 +390,9 @@ if (user.name === "" || currentRoute.startsWith("/auth"))return null;
     )}
   </PopoverContent>
             </Popover>
-            {/* {isDropdownOpen && (
-            )} */}
-          <Link className='no-underline flex pl-6' href='#'>
+          <Link className='no-underline flex pl-6 transition-all duration-150 hover:scale-110 active:scale-95 active:shadow-inner active:shadow-black/20' href='#'>
           <div className="flex items-center justify-center" onClick={handleClick}>
-            <div className="relative rounded-full ">  {/* Container styles */}
+            <div className="relative rounded-full">  {/* Container styles */}
             {newNotificationIndicator && (  
         <svg width="20" height="20" viewBox="0 0 10 8" className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
           <circle cx="7" cy="1" r="2" fill="red" />
@@ -403,18 +401,16 @@ if (user.name === "" || currentRoute.startsWith("/auth"))return null;
       <Image src={notification} alt="notification" className="w-full h-full object-cover" />
             </div>
           </div>
-
           </Link>
-          <Link className='no-underline flex pl-6' href='/profile'>
+          <Link className='no-underline flex pl-6 transition-all duration-150 hover:scale-110 active:scale-95 active:shadow-inner active:shadow-black/20' href='/profile'>
             <div className='text-sm flex items-center justify-center rounded-full overflow-hidden border border-solid border-gray-300'>
               {user.imageUrl?<Image className='w-7 h-7 relative rounded-full border border-neutral-400 object-cover' src={String(user?.imageUrl)} width={80} height={80} alt='profilePic' />:
               <Image className='w-7 h-7 relative rounded-full border border-neutral-400' src={profileicon} width={80} height={80} alt='profilePic' />
               }
-              
             </div>
           </Link>
         </div>
-        <Link className='no-underline p-4 flex items-center justify-center h-full' href='/settings/organisation/myorg'>
+        <Link className='no-underline p-4 flex items-center justify-center h-full transition-all duration-150 hover:bg-[#2a2a2a] active:bg-[#3a3a3a] active:shadow-inner active:shadow-black/20 rounded-full' href='/settings/organisation/myorg'>
           <div className='text-sm flex items-center justify-center rounded-full'>
             <Image src={setting} alt='alphaherd' className='w-7 h-7' />
           </div>
@@ -429,9 +425,6 @@ if (user.name === "" || currentRoute.startsWith("/auth"))return null;
             </div>
           </div>
         )}
-        {/* {newNotificationIndicator && (<NotificationPopUp newnotifs={newnotifs} />)} */}
-        
-
       </div>
     </div>
   );
