@@ -35,6 +35,12 @@ export const GET=async(req: NextRequest)=> {
             // }
         });
 
+        // const products = await prismaClient.products.findMany({
+        //     where: {
+        //         inventorySectionId: inventoryId
+        //     }
+        // });
+
         //console.log(inventory);
         
         return new Response(JSON.stringify(inventory), {

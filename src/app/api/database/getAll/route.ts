@@ -12,29 +12,25 @@ export const GET = async (req: NextRequest) => {
   try {
     const databaseSectionId=await fetchDatabaseId(req);
     const clients = await prismaClient.clients.findMany({
-      where:{
-        databaseSectionId:databaseSectionId
+      where: {
+        databaseSectionId: databaseSectionId
       },
       include: {
        patients:true
       },
-      // cacheStrategy:{ttl:30}
-
     });
-    const distributors =await prismaClient.distributors.findMany({
-        where:{
-            databaseSectionId:databaseSectionId
+    const distributors = await prismaClient.distributors.findMany({
+        where: {
+            databaseSectionId: databaseSectionId
         },
-        // cacheStrategy:{ttl:30}
     })
     const patients = await prismaClient.patients.findMany({
-        where:{
-            databaseSectionId:databaseSectionId
+        where: {
+            databaseSectionId: databaseSectionId
         },
         include:{
           clients:true
         },
-        // cacheStrategy:{ttl:30}
     })
  
     return new Response(JSON.stringify({clients,distributors,patients}), {

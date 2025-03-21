@@ -18,9 +18,6 @@ export const GET = async (req: NextRequest) => {
       },
       include: {
         product: true
-      },
-      cacheStrategy: {
-        ttl: 60
       }
     });
     return new Response(JSON.stringify(productBatches), {
