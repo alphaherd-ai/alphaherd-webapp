@@ -351,20 +351,20 @@ if (user.name === "" || currentRoute.startsWith("/auth"))return null;
             <div className="ml-1">Home</div>
           </div>
         </Link> */}
-        <Link className='no-underline py-5 px-10 border-0 border-r-2 border-solid border-gray-800 transition-all duration-150 hover:bg-[#2a2a2a] active:bg-[#3a3a3a] hover:text-white active:shadow-inner active:shadow-black/20' href={`/finance/overview`}>
-          <div className={currentRoute.startsWith("/finance") ? " text-white text-base font-medium leading-6 flex items-center justify-center" : " text-gray-400 text-base font-medium leading-6 flex items-center justify-center"}>
+        <Link className='no-underline py-5 px-10 border-0 border-r-2 border-solid border-gray-800 transition-all duration-150 hover:bg-[#2a2a2a] active:bg-[#3a3a3a] active:shadow-inner active:shadow-black/20 group' href={`/finance/overview`}>
+          <div className={currentRoute.startsWith("/finance") ? " text-white text-base font-medium leading-6 flex items-center justify-center" : " text-gray-400 text-base font-medium leading-6 flex items-center justify-center group-hover:text-[#38F8E6]"}>
             <FinancesIcon fill={currentRoute.startsWith("/finance") ? "#38F8E6" : "#A2A3A3"} />
             <div className="ml-1">Finances</div>
           </div>
         </Link>
-        <Link className='no-underline py-5 px-10 border-0 border-r-2 border-solid border-gray-800 transition-all duration-150 hover:bg-[#2a2a2a] active:bg-[#3a3a3a] hover:text-white active:shadow-inner active:shadow-black/20' href={`/inventory/products/all`}>
-          <div className={currentRoute.startsWith("/inventory") ? " text-white text-base font-medium leading-6 flex items-center justify-center" : " text-gray-400 text-base font-medium leading-6 flex items-center justify-center"}>
+        <Link className='no-underline py-5 px-10 border-0 border-r-2 border-solid border-gray-800 transition-all duration-150 hover:bg-[#2a2a2a] active:bg-[#3a3a3a] active:shadow-inner active:shadow-black/20 group' href={`/inventory/products/all`}>
+          <div className={currentRoute.startsWith("/inventory") ? " text-white text-base font-medium leading-6 flex items-center justify-center" : " text-gray-400 text-base font-medium leading-6 flex items-center justify-center group-hover:text-[#38F8E6]"}>
             <InventoryIcon fill={currentRoute.startsWith("/inventory") ? "#38F8E6" : "#A2A3A3"} />
             <div className="ml-1">Inventory</div>
           </div>
         </Link>
-        <Link className='no-underline py-5 px-10 border-0 border-r-2 border-solid border-gray-800 transition-all duration-150 hover:bg-[#2a2a2a] active:bg-[#3a3a3a] hover:text-white active:shadow-inner active:shadow-black/20' href={`/database/clients`}>
-          <div className={currentRoute.startsWith("/database") ? " text-white text-base font-medium leading-6 flex items-center justify-center" : " text-gray-400 text-base font-medium leading-6 flex items-center justify-center"}>
+        <Link className='no-underline py-5 px-10 border-0 border-r-2 border-solid border-gray-800 transition-all duration-150 hover:bg-[#2a2a2a] active:bg-[#3a3a3a] active:shadow-inner active:shadow-black/20 group' href={`/database/clients`}>
+          <div className={currentRoute.startsWith("/database") ? " text-white text-base font-medium leading-6 flex items-center justify-center" : " text-gray-400 text-base font-medium leading-6 flex items-center justify-center group-hover:text-[#38F8E6]"}>
             <PatientlistIcon fill={currentRoute.startsWith("/database") ? "#38F8E6" : "#A2A3A3"} />
             <div className="ml-1">Database</div>
           </div>

@@ -202,8 +202,8 @@ const FinancesNavbar = () => {
                 <div className='flex w-8/12 h-full '>
                     <Link className='no-underline ' href='/finance/overview'>
                         <div style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }} className={currentRoute === "/finance/overview"
-                            ? " flex items-center text-white px-4 py-2.5 bg-black border-r-0 text-base rounded-tl-lg rounded-bl-lg transition-all duration-200 hover:bg-[#1a1a1a] active:bg-[#2a2a2a]"
-                            : " flex items-center text-gray-400 bg-white px-4 py-2.5 border-r-0 text-base rounded-tl-lg rounded-bl-lg transition-all duration-200 hover:bg-[#f5f5f5] hover:text-[#35BEB1] active:bg-[#e5e5e5]"}>
+                            ? " flex items-center text-white px-4 py-2.5 bg-black border-r-0 text-base rounded-tl-lg rounded-bl-lg transition-all duration-150 hover:bg-[#2a2a2a] active:bg-[#3a3a3a] active:shadow-inner active:shadow-black/20"
+                            : " flex items-center text-gray-400 bg-white px-4 py-2.5 border-r-0 text-base rounded-tl-lg rounded-bl-lg transition-all duration-150 hover:bg-[#2a2a2a] hover:text-white active:bg-[#3a3a3a] active:shadow-inner active:shadow-black/20"}>
 
                             <div className='flex mr-2'><OverviewIcon fill={currentRoute === "/finance/overview"
                                 ? "#38F8E6"
@@ -213,8 +213,8 @@ const FinancesNavbar = () => {
                     </Link>
                     <Link className='no-underline ' href={{ pathname: '/finance/sales/all', query: { type: 'all' } }}>
                         <div style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }} className={currentRoute.startsWith("/finance/sales") 
-                            ? " flex items-center text-white text-base bg-black px-4 py-2.5 border-r-0 transition-all duration-200 hover:bg-[#1a1a1a] active:bg-[#2a2a2a]" 
-                            : " flex items-center text-gray-400 bg-white px-4 py-2.5 text-base border-r-0 transition-all duration-200 hover:bg-[#f5f5f5] hover:text-[#35BEB1] active:bg-[#e5e5e5]"}>
+                            ? " flex items-center text-white text-base bg-black px-4 py-2.5 border-r-0 transition-all duration-150 hover:bg-[#2a2a2a] active:bg-[#3a3a3a] active:shadow-inner active:shadow-black/20" 
+                            : " flex items-center text-gray-400 bg-white px-4 py-2.5 text-base border-r-0 transition-all duration-150 hover:bg-[#2a2a2a] hover:text-white active:bg-[#3a3a3a] active:shadow-inner active:shadow-black/20"}>
                             <div className='flex mr-2'><SalesIcon fill={currentRoute.startsWith("/finance/sales")
                                 ? "#38F8E6"
                                 : "#A2A3A3"} /></div>
@@ -223,8 +223,8 @@ const FinancesNavbar = () => {
                     </Link>
                     <Link className='no-underline ' href={{ pathname: '/finance/purchases/all', query: { type: 'all' } }}>
                         <div style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }} className={currentRoute.startsWith("/finance/purchases") 
-                            ? " flex items-center text-white text-base bg-black px-4 py-2.5 border-r-0 transition-all duration-200 hover:bg-[#1a1a1a] active:bg-[#2a2a2a]" 
-                            : " flex items-center text-gray-400 bg-white px-4 py-2.5 text-base border-r-0 transition-all duration-200 hover:bg-[#f5f5f5] hover:text-[#35BEB1] active:bg-[#e5e5e5]"}>
+                            ? " flex items-center text-white text-base bg-black px-4 py-2.5 border-r-0 transition-all duration-150 hover:bg-[#2a2a2a] active:bg-[#3a3a3a] active:shadow-inner active:shadow-black/20" 
+                            : " flex items-center text-gray-400 bg-white px-4 py-2.5 text-base border-r-0 transition-all duration-150 hover:bg-[#2a2a2a] hover:text-white active:bg-[#3a3a3a] active:shadow-inner active:shadow-black/20"}>
                             <div className='flex mr-2'><PurchaseIcon fill={currentRoute.startsWith("/finance/purchases")
                                 ? "#38F8E6"
                                 : "#A2A3A3"} /></div>
@@ -233,8 +233,8 @@ const FinancesNavbar = () => {
                     </Link>
                     <Link className='no-underline ' href={{ pathname: '/finance/expenses/all', query: { type: 'all' } }} >
                         <div style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }} className={currentRoute.startsWith("/finance/expenses") 
-                            ? " flex items-center text-white text-base bg-black px-4 py-2.5 border-r-0 transition-all duration-200 hover:bg-[#1a1a1a] active:bg-[#2a2a2a]" 
-                            : " flex items-center text-gray-400 bg-white px-4 py-2.5 text-base border-r-0 transition-all duration-200 hover:bg-[#f5f5f5] hover:text-[#35BEB1] active:bg-[#e5e5e5]"}>
+                            ? " flex items-center text-white text-base bg-black px-4 py-2.5 border-r-0 transition-all duration-150 hover:bg-[#2a2a2a] active:bg-[#3a3a3a] active:shadow-inner active:shadow-black/20" 
+                            : " flex items-center text-gray-400 bg-white px-4 py-2.5 text-base border-r-0 transition-all duration-150 hover:bg-[#2a2a2a] hover:text-white active:bg-[#3a3a3a] active:shadow-inner active:shadow-black/20"}>
                             <div className='flex mr-2'><ExpensesIcon fill={currentRoute.startsWith("/finance/expenses")
                                 ? "#38F8E6"
                                 : "#A2A3A3"} /></div>
@@ -243,8 +243,8 @@ const FinancesNavbar = () => {
                     </Link>
                     <Link className='no-underline' href={{ pathname: '/finance/transactions/all', query: { type: 'all' } }}>
                         <div style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }} className={currentRoute.startsWith("/finance/transactions")
-                            ? " flex items-center text-white bg-black px-4 py-2.5 border-r-0 text-base rounded-tr-lg rounded-br-lg transition-all duration-200 hover:bg-[#1a1a1a] active:bg-[#2a2a2a]"
-                            : " flex items-center text-gray-400 bg-white px-4 py-2.5 border-r-0 text-base rounded-tr-lg rounded-br-lg transition-all duration-200 hover:bg-[#f5f5f5] hover:text-[#35BEB1] active:bg-[#e5e5e5]"}>
+                            ? " flex items-center text-white bg-black px-4 py-2.5 border-r-0 text-base rounded-tr-lg rounded-br-lg transition-all duration-150 hover:bg-[#2a2a2a] active:bg-[#3a3a3a] active:shadow-inner active:shadow-black/20"
+                            : " flex items-center text-gray-400 bg-white px-4 py-2.5 border-r-0 text-base rounded-tr-lg rounded-br-lg transition-all duration-150 hover:bg-[#2a2a2a] hover:text-white active:bg-[#3a3a3a] active:shadow-inner active:shadow-black/20"}>
 
                             <div className='flex mr-2'><TransactionIcon fill={currentRoute.startsWith("/finance/transactions")
                                 ? "#38F8E6"
