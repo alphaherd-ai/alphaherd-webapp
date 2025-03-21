@@ -80,17 +80,15 @@ const InventoryProductTableHeader = ({ onSortChange }: any) => {
 
                 <div className='flex  text-gray-500 items-center w-5/12'>
                     <Link className='no-underline flex item-center' href='/inventory/products/timeline'>
-
                         <div className={currentRoute.startsWith("/inventory/products/timeline")
-                            ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white  rounded-tl-md rounded-bl-md"
-                            : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500  rounded-tl-md rounded-bl-md"}>Timeline</div>
+                            ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white rounded-tl-md rounded-bl-md"
+                            : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500 rounded-tl-md rounded-bl-md transition-all duration-150 hover:bg-[#2a2a2a] hover:text-white"}>Timeline</div>
                     </Link>
 
                     <Link className='no-underline flex item-center' href='/inventory/products/all'>
-
                         <div className={currentRoute.startsWith("/inventory/products/all")
-                            ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white  rounded-tr-md rounded-br-md"
-                            : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500  rounded-tr-md rounded-br-md"}>All</div>
+                            ? " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-black text-white rounded-tr-md rounded-br-md"
+                            : " flex items-center border border-solid border-gray-300 border-0.5 p-1 px-2 text-sm bg-gray-200 text-gray-500 rounded-tr-md rounded-br-md transition-all duration-150 hover:bg-[#2a2a2a] hover:text-white"}>All</div>
                     </Link>
                 </div>
                 <div className='flex items-center'>

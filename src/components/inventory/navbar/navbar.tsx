@@ -134,7 +134,7 @@ const InventoryNavbar = () => {
                             style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }}
                             className={currentRoute.startsWith("/inventory/products")
                                 ? "flex items-center text-white px-4 py-2.5 bg-black border-r-0 text-base rounded-tl-lg rounded-bl-lg"
-                                : "flex items-center text-gray-400 bg-white px-4 py-2.5 border-r-0 text-base rounded-tl-lg rounded-bl-lg"}>
+                                : "flex items-center text-gray-400 bg-white px-4 py-2.5 border-r-0 text-base rounded-tl-lg rounded-bl-lg transition-all duration-150 hover:bg-[#2a2a2a] hover:text-white"}>
                             <div className='flex mr-2'>
                                 <ProductsIcon fill={currentRoute.startsWith("/inventory/products") ? "#38F8E6" : "#A2A3A3"} />
                             </div>
@@ -146,7 +146,7 @@ const InventoryNavbar = () => {
                             style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }}
                             className={currentRoute.startsWith("/inventory/services")
                                 ? "flex items-center text-white text-base bg-black px-4 py-2.5 border-r-0 rounded-tr-lg rounded-br-lg"
-                                : "rounded-tr-lg rounded-br-lg flex items-center text-gray-400 bg-white px-4 py-2.5 text-base border-r-0"}>
+                                : "rounded-tr-lg rounded-br-lg flex items-center text-gray-400 bg-white px-4 py-2.5 text-base border-r-0 transition-all duration-150 hover:bg-[#2a2a2a] hover:text-white"}>
                             <div className='flex mr-2'>
                                 <ServicesIcon fill={currentRoute.startsWith("/inventory/services") ? "#38F8E6" : "#A2A3A3"} />
                             </div>
@@ -158,7 +158,7 @@ const InventoryNavbar = () => {
                         <div className='mr-1' />
                         {currentRoute.startsWith("/inventory/products") && (
                             <>
-                                <div className='flex items-center text-base p-4 bg-black text-white rounded-lg cursor-pointer py-2 w-[156px] h-[44px]' onClick={togglePopup}>
+                                <div className='flex items-center text-base p-4 bg-black text-white rounded-lg cursor-pointer py-2 w-[156px] h-[44px] transition-all duration-150 hover:bg-[#2a2a2a] active:bg-[#3a3a3a] active:shadow-inner active:shadow-black/20' onClick={togglePopup}>
                                     <div className='flex pr-2'>
                                         <Image src={Add} alt='Add' className='w-5 h-5' />
                                     </div>
@@ -167,7 +167,7 @@ const InventoryNavbar = () => {
                                     </button>
                                 </div>
 
-                                <div className='flex items-center justify-center capitalize border-none bg-black text-white rounded-lg cursor-pointer py-2 w-[168px] h-[44px]' onClick={togglePopup2}>
+                                <div className='flex items-center justify-center capitalize border-none bg-black text-white rounded-lg cursor-pointer py-2 w-[168px] h-[44px] transition-all duration-150 hover:bg-[#2a2a2a] active:bg-[#3a3a3a] active:shadow-inner active:shadow-black/20' onClick={togglePopup2}>
                                     <div className='flex items-center'>
                                         <Image src={Update} alt='Update' className='w-5 h-5 mr-2' />
                                         <button className='bg-transparent border-0 text-white text-base'>
@@ -176,7 +176,7 @@ const InventoryNavbar = () => {
                                     </div>
                                 </div>
 
-                                <div className='flex items-center mr-8   justify-center capitalize border-none bg-[#35BEB1] px-2  text-white rounded-lg cursor-pointer py-2 w-fit h-[44px]' onClick={() => router.push('/inventory/transfer')}>
+                                <div className='flex items-center mr-8 justify-center capitalize border-none bg-[#35BEB1] px-2 text-white rounded-lg cursor-pointer py-2 w-fit h-[44px] transition-all duration-150 hover:bg-[#2de6d0] active:bg-[#1cd4be] active:shadow-inner active:shadow-black/20' onClick={() => router.push('/inventory/transfer')}>
                                     <div className='flex items-center'>
                                         <Image src={InventoryTransferIcon} alt='Update' className='w-5 h-5 mr-2' />
                                         <button className='bg-transparent border-0 text-white text-base'>
@@ -184,11 +184,10 @@ const InventoryNavbar = () => {
                                         </button>
                                     </div>
                                 </div>
-
                             </>
                         )}
                         {currentRoute.startsWith("/inventory/services") && (
-                            <div className='flex items-center text-base p-4 bg-black text-white rounded-lg cursor-pointer py-2 w-[156px] h-[44px]' onClick={togglePopup3}>
+                            <div className='flex items-center text-base p-4 bg-black text-white rounded-lg cursor-pointer py-2 w-[156px] h-[44px] transition-all duration-150 hover:bg-[#2a2a2a] active:bg-[#3a3a3a] active:shadow-inner active:shadow-black/20' onClick={togglePopup3}>
                                 <div className='flex pr-2'>
                                     <Image src={Add} alt='Add' className='w-5 h-5' />
                                 </div>
