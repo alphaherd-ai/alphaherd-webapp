@@ -143,7 +143,7 @@ const NewsalesTable = () => {
             const { items, ...otherData } = estimateData;
             
             // Remove payment-related data before setting other data
-            const { recordTransaction, status, ...relevantData } = otherData;
+            const {  status, ...relevantData } = otherData;
             setOtherData(relevantData);
             const shallowDataCopy = [...items];
             const itemData = shallowDataCopy.map((item: any) => ({

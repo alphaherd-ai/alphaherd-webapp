@@ -79,6 +79,8 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
             },
         }),
     };
+
+    
     useEffect(() => {
         const fetchdata=async()=>{
             await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/getAll?branchId=${appState.currentBranchId}`)
@@ -265,6 +267,10 @@ const ClientPopup: React.FC<PopupProps> = ({ onClose,setIsNewClientClicked,setNe
     ]
 
     const handleNewPatientPopUp = async () => {
+        if (Object.values(errors).some(error => error !== '')) {
+            console.error('Form contains errors:', errors);
+            return;
+        }
         addAnotherPatient = true
         if (!isClientSaved) await handleSaveClick();
         // else {
