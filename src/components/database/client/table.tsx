@@ -26,6 +26,7 @@ interface Patients {
     patientName: string;
     species: string;
     breed: string;
+    isDeleted: boolean;
 }
 
 const DatabaseClientTable = () => {
@@ -43,7 +44,12 @@ const DatabaseClientTable = () => {
     
     useEffect(() => {
         if (!isLoading && data && !error) {
-            const sortedData = data.sort((a: Clients, b: Clients) => b.id - a.id);
+            const processedData = data.map((client: Clients) => ({
+                ...client,
+                patients: client.patients?.filter(patient => !patient.isDeleted) || []
+            }));
+            
+            const sortedData = processedData.sort((a: Clients, b: Clients) => b.id - a.id);
             setClients(sortedData);
             setSortedClients(sortedData);
         }

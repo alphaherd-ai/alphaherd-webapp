@@ -31,21 +31,22 @@ const OrganisationNavbar = () => {
 
             <div className="w-full p-6 bg-white rounded-tl-[10px] rounded-tr-[10px] border-0 border-b border-solid border-borderGrey justify-between items-center gap-6 flex">
                 <div className="flex">
-                    <Link className='no-underline ' href='/settings/organisation/myorg'>
-                        <div className={currentRoute.startsWith("/settings/organisation/myorg")
-                            ? "px-2 py-1 bg-zinc-900 rounded-tl-[5px] rounded-bl-[5px] border border-white justify-start items-center gap-1 flex text-white text-sm font-bold "
-                            : " px-2 py-1 bg-gray-100 rounded-tl-[5px] rounded-bl-[5px] border border-neutral-400 justify-start items-center gap-1 flex text-neutral-400 text-sm font-bold "} >
+                    <Link className='no-underline' href='/settings/organisation/myorg'>
+                        <div style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }}
+                            className={currentRoute.startsWith("/settings/organisation/myorg")
+                            ? "px-2 py-1 bg-zinc-900 rounded-tl-[5px] rounded-bl-[5px] justify-start items-center gap-1 flex text-white text-sm font-bold"
+                            : "px-2 py-1 bg-gray-100 rounded-tl-[5px] rounded-bl-[5px] justify-start items-center gap-1 flex text-neutral-400 text-sm font-bold transition-all duration-150 hover:bg-[#2a2a2a] hover:text-white"}>
                             My Organisation
                         </div>
                     </Link>
-                    <Link className='no-underline ' href='/settings/organisation/usersandrole'>
-                        <div className={currentRoute.startsWith("/settings/organisation/usersandrole")
-                            ? "px-2 py-1 bg-zinc-900 rounded-tr-[5px] rounded-br-[5px] border border-white justify-start items-center gap-1 flex text-white text-sm font-bold "
-                            : " px-2 py-1 bg-gray-100 rounded-tr-[5px] rounded-br-[5px] border border-neutral-400 justify-start items-center gap-1 flex text-neutral-400 text-sm font-bold "}>
+                    <Link className='no-underline' href='/settings/organisation/usersandrole'>
+                        <div style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }}
+                            className={currentRoute.startsWith("/settings/organisation/usersandrole")
+                            ? "px-2 py-1 bg-zinc-900 rounded-tr-[5px] rounded-br-[5px] justify-start items-center gap-1 flex text-white text-sm font-bold"
+                            : "px-2 py-1 bg-gray-100 rounded-tr-[5px] rounded-br-[5px] justify-start items-center gap-1 flex text-neutral-400 text-sm font-bold transition-all duration-150 hover:bg-[#2a2a2a] hover:text-white"}>
                             Users and Roles
                         </div>
                     </Link>
-
                 </div>
                 {/* <div className='flex items-center h-9 px-4 py-2.5 bg-black justify-between rounded-lg '> */}
 
@@ -76,10 +77,11 @@ const OrganisationNavbar = () => {
                   ):
                  ( currentRoute.startsWith("/settings/organisation/usersandrole"))?
                  ( <Button
-                  variant="solid"
-                  className="capitalize border-none bg-black py-2.5 text-white rounded-lg flex gap-2 justify-center items-center hover:cursor-pointer" onClick={togglePopup}>
-                  <div className='flex'><Image src={addUserIcon} alt='addUserIcon' className='w-6 h-6 ' /></div>
-                  <span>Add User</span>
+                    variant="solid"
+                    className="capitalize border-none bg-black py-2.5 text-white rounded-lg flex gap-2 justify-center items-center hover:cursor-pointer transition-all duration-150 hover:bg-[#2a2a2a] active:bg-[#3a3a3a] active:shadow-inner active:shadow-black/20"
+                    onClick={togglePopup}>
+                    <div className='flex'><Image src={addUserIcon} alt='addUserIcon' className='w-6 h-6' /></div>
+                    <span>Add User</span>
                   </Button>):""
                 
                     

@@ -31,14 +31,12 @@ export const fetchInventoryId = async (request:NextRequest) => {
     const orgBranch=await prismaClient.orgBranch.findUnique({
         where: {
             id : Number(branchId)
-        },
-        // cacheStrategy:{ttl:30}
+        }
     });
     let inventorySection = await prismaClient.inventorySection.findUnique({
         where: {
             branchId: Number(branchId),
         },
-        cacheStrategy: { ttl: 60 },
     });
     if (!inventorySection && orgBranch) {
         console.log("here");
@@ -67,16 +65,14 @@ export const fetchFinanceId = async (request:NextRequest) => {
     const orgBranch=await prismaClient.orgBranch.findUnique({
         where: {
             id : Number(branchId)
-        },
-        // cacheStrategy:{ttl:30}
+        }
     });
     // console.log(orgBranch)
 
     let financeSection = await prismaClient.financeSection.findUnique({
         where: {
             branchId: Number(branchId)
-        },
-        cacheStrategy: { ttl: 60 },
+        }
     });
     if (!financeSection && orgBranch) {
        financeSection= await prismaClient.financeSection.create({
@@ -104,15 +100,13 @@ export const fetchDatabaseId = async (request:NextRequest) => {
     const orgBranch=await prismaClient.orgBranch.findUnique({
         where: {
             id : Number(branchId)
-        },
-        // cacheStrategy:{ttl:30}
+        }
     });
     // console.log(orgBranch)
     let databaseSection = await prismaClient.databaseSection.findUnique({
         where: {
             branchId: Number(branchId)
-        },
-        cacheStrategy: { ttl: 60 },
+        }
     });
     if(!databaseSection&&orgBranch){
        databaseSection= await prismaClient.databaseSection.create({
