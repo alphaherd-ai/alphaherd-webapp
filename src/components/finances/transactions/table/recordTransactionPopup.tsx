@@ -719,7 +719,7 @@ const RecordTransactionPopup: React.FC<PopupProps> = ({ onClose, initialInvoiceN
 
                 </div>
                 <div className='w-full flex justify-between items-center'>
-                    <div><span className='text-gray-500 text-base font-medium '>Other<span className='text-red-600'>*</span></span></div>
+                    <div><span className='text-gray-500 text-base font-medium '>Amount<span className='text-red-600'>*</span></span></div>
                     <div className='w-[440px] flex justify-between items-center'>
                         <div>
                             <input

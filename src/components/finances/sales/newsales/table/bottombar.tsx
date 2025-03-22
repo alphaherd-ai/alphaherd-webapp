@@ -28,7 +28,7 @@ const NewsalesBottomBar = ({ estimateData }: any) => {
     const id = url.get('id');
     const router = useRouter();
     const [isSaving, setSaving] = useState(false);
-
+    console.log(totalAmountData);
 
 
 

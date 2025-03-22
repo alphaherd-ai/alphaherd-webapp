@@ -160,6 +160,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
             setCategories(uniqueCategories);
         }
     }, [isLoading, error, fetchedProducts]);
+    
 
     const [taxType, settaxType] = useState<any[]>([]);
     useEffect(() => {
@@ -229,7 +230,7 @@ const Popup: React.FC<PopupProps> = ({ onClose }:any) => {
                     defaultUnit: formData.unit ? formData.unit : undefined,
                     hsnCode: formData.hsnCode,
                     tax: formData.tax ? formData.tax : undefined,
-                    category: formData.category ? formData.category : undefined,
+                    category: formData.category ? formData.category[0] : undefined,
                     description: formData.description,
                     minStock: parseInt(formData.minStock),
                     maxStock: parseInt(formData.maxStock),

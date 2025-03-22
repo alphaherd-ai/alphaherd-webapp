@@ -8,7 +8,7 @@ export const POST = async (req: NextRequest) => {
     }
 
     const body = await req.json();
-    const inventoryId = await fetchInventoryId(req); // inventory id of reveiving branch
+    const inventoryId = await fetchInventoryId(req); // inventory id of receiving branch
     const inventorySectionId = body?.transferInventoryId; // inventory id of transferring branch
     const transferringBranch = body?.transferStatus === 'Transfer To' ? body?.defaultBranchName : body?.transferBranchName;
     const receivingBranch = body?.transferStatus === 'Transfer To' ? body?.transferBranchName : body?.defaultBranchName;
@@ -201,6 +201,7 @@ export const POST = async (req: NextRequest) => {
             }
         })
 
+        
         return new Response(
             JSON.stringify({ message: 'Transfer Successful' }),
             {

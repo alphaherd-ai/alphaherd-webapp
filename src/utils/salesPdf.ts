@@ -31,20 +31,20 @@ export function generatePdfForInvoice(data: any, appState: any, items: any): Pro
 
     function addRow(data: any, y: any, columnPositions: any, rowHeight = 7) {
       y = checkPageBreak(doc, y, pageHeight, 0);
-      
+
       data.forEach((text: any, index: any) => {
 
         const cleanedText = String(text || '')
-          .replace(/[^\x20-\x7E]/g, '') 
+          .replace(/[^\x20-\x7E]/g, '')
           .trim()
-          .normalize('NFKD'); 
-        
+          .normalize('NFKD');
+
         addText(cleanedText, columnPositions[index], y);
       });
-      
+
       return y + rowHeight;
     }
-    
+
 
     function addLine(startX: any, startY: any, endX: any, endY: any) {
       startY = checkPageBreak(doc, startY, pageHeight, 0);
@@ -101,7 +101,7 @@ export function generatePdfForInvoice(data: any, appState: any, items: any): Pro
       img.src = url;
     };
     const defaultBase64Image =
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP88x8AAusB97vdMxkAAAAASUVORK5CYII=";
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP88x8AAusB97vdMxkAAAAASUVORK5CYII=";
     getImageFromUrl(appState.currentOrg.orgImgUrl || defaultBase64Image, (base64Image: string) => {
       doc.addImage(base64Image, 'JPEG', 10, 0.5, 40, 38);
 
@@ -116,11 +116,11 @@ export function generatePdfForInvoice(data: any, appState: any, items: any): Pro
       addText(`${appState.currentOrg?.orgEmail!}`, 55, y, 11, 'center');
       y += 5;
       addText(`${appState.currentBranch?.website!}`, 55, y, 11, 'center');
-      y+=5;
+      y += 5;
       addText(`${appState.currentOrg?.gstNo!}`, 55, y, 11, 'center');
-      y+=5;
+      y += 5;
       addText(`${appState.currentBranch?.panNo!}`, 55, y, 11, 'center');
-      y+=5;
+      y += 5;
       addText(`${appState.currentOrg?.address!}`, 55, y, 11, 'center');
       y += lineHeight;
 
@@ -139,8 +139,37 @@ export function generatePdfForInvoice(data: any, appState: any, items: any): Pro
       addText('Transaction details', 10, y, 12);
       y += 5;
       // y = addRow(['Subject: Sale', 'Mode: Cash'], y, [10, 110]);
-      y = addRow([`Subject: ${data.type}`, 'Mode: Cash'], y, [10, 110]);
-      y = addRow([`Amount Received: ${data.totalCost}`, 'Balance due: 0'], y, [10, 110]);
+      const uniqueModes = Array.from(
+        new Set(
+          data.recordTransaction.map(function (tx: any) {
+            return tx.mode;
+          })
+        )
+      ).join(', ');
+
+      const totalMoneyIn = data.recordTransaction
+        .filter(function (tx: any) {
+          return tx.moneyChange === "In";
+        })
+        .reduce(function (sum: any, tx: any) {
+          return sum + tx.amountPaid;
+        }, 0);
+
+      const totalMoneyOut = data.recordTransaction
+        .filter(function (tx: any) {
+          return tx.moneyChange === "Out";
+        })
+        .reduce(function (sum: any, tx: any) {
+          return sum + tx.amountPaid;
+        }, 0);
+
+
+      const balanceDue = data.invoiceNo.startsWith('SR') ? data.totalCost - totalMoneyOut + totalMoneyIn : data.totalCost + totalMoneyOut - totalMoneyIn;
+
+
+      y = addRow([`Subject: ${data.type}`, `Mode Used: ${uniqueModes}`], y, [10, 110]);
+      y = addRow([`Total Money In: ${totalMoneyIn}`, `Balance due: ${balanceDue}`], y, [10, 110]);
+      y = addRow([`Total Money Out: ${totalMoneyOut}`], y, [10, 110]);
       y = addRow([`Date: ${todayString}`, `Receipt No.: ${data.invoiceNo}`], y, [10, 110]);
 
       // Add line below transaction details
@@ -160,7 +189,7 @@ export function generatePdfForInvoice(data: any, appState: any, items: any): Pro
       y = addRow([`Billed to: ${data.customer}`, `Phone No.: ${data.contact || ''}`], y, [10, 110]);
       y = addRow([`Pay by: ${todayString}`, `Last date of return: ${formattedDueDate}`], y, [10, 110]);
       y = addRow([`Notes: ${data.notes}`], y, [10]);
-      y=addRow([`Status: ${data.status}`], y, [10]);
+      y = addRow([`Status: ${data.status}`], y, [10]);
 
       // Add line below sales invoice details
       addLine(10, y + 1, 200, y + 1);
@@ -188,13 +217,13 @@ export function generatePdfForInvoice(data: any, appState: any, items: any): Pro
       y += lineHeight;
 
       // Add summary headers and values
-      let subTotal=items.reduce((acc: any, item: any) => acc + item.quantity * item.sellingPrice, 0) || 0
+      let subTotal = items.reduce((acc: any, item: any) => acc + item.quantity * item.sellingPrice, 0) || 0
       y = addRow(['Subtotal', `${(subTotal).toFixed(2)}`], y, [130, 180]);
       addLine(200, y, 130, y);
       y += lineHeight;
       const summaryHeaders = ['Taxable Value', 'Tax Rate', 'Tax Amount'];
       const summaryValues = items.map((item: any) => [String(item.quantity * item.sellingPrice), String(`${item.taxAmount * 100}%`), String((item.taxAmount * item.quantity * item.sellingPrice).toFixed(2))]); // Tax rate not getting for now...
-      const totalTaxAmountSumarry=items.reduce((acc: any, item: any) => acc + item.taxAmount * item.quantity * item.sellingPrice, 0) || 0;
+      const totalTaxAmountSumarry = items.reduce((acc: any, item: any) => acc + item.taxAmount * item.quantity * item.sellingPrice, 0) || 0;
       y += lineHeight;
       addLine(200, y + 2, 100, y + 2);
       y = addRow(summaryHeaders, y, [100, 130, 160], lineHeight);
@@ -206,14 +235,14 @@ export function generatePdfForInvoice(data: any, appState: any, items: any): Pro
       addLine(200, y + 2, 130, y + 2);
       y = addRow(['Shipping', `${(data.shipping + data.adjustment) || 0}`], y, [130, 160]);
       addLine(200, y + 2, 130, y + 2);
-      y = addRow(['Total Discounts', `${Number(data.overallDiscount)*100}%`], y, [130, 160]);
+      y = addRow(['Total Discounts', `${Number(data.overallDiscount) * 100}%`], y, [130, 160]);
 
       addText('Grand Total', 130, y, 12);
-      addText(`${(((1-data.overallDiscount)*(subTotal+totalTaxAmountSumarry)+((data.shipping + data.adjustment) || 0))).toFixed(2)}`, 160, y, 12);
-      y+=lineHeight;
-     
-      
-     
+      addText(`${(((1 - data.overallDiscount) * (subTotal + totalTaxAmountSumarry) + ((data.shipping + data.adjustment) || 0))).toFixed(2)}`, 160, y, 12);
+      y += lineHeight;
+
+
+
 
       // Add line below summary
       addLine(10, y, 200, y);

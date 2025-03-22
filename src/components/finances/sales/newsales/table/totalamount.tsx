@@ -121,6 +121,7 @@ const NewsalesTotalAmout = ({ otherData }: { otherData: any }) => {
     const { transactionsData, setTransactionsData } = useContext(DataContext);
 
     //console.log(transactionsData);
+    //console.log(otherData);
     useEffect(() => {
         if (otherData.recordTransaction) {
             setTransactionsData((prevTransactions: any) => {
@@ -184,6 +185,7 @@ const NewsalesTotalAmout = ({ otherData }: { otherData: any }) => {
             setAdjustment(otherData.adjustment.toString() || '0');
             setShipping(otherData.shipping.toString() || '0');
             setDiscountPer(otherData.overallDiscount || 0);
+            setDiscountInput(otherData.overallDiscount ? totalAmount * otherData.overallDiscount : 0);
         }
     },[otherData])
 
@@ -219,7 +221,7 @@ const NewsalesTotalAmout = ({ otherData }: { otherData: any }) => {
             totalCost: newGrandTotal,
             shipping: shippingValue,
             adjustment: adjustmentValue,
-            overAllDiscount:selectedDiscountPer,
+            gst:selectedDiscountPer,
         }));
     };
 

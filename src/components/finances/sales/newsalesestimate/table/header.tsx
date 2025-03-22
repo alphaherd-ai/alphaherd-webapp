@@ -201,7 +201,7 @@ const NewsaleEstimateHeader = ({ isNewClientClicked, newClient }: any) => {
                                     <div className='relative'>
                                         <input
                                             className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                            value={startDate.toLocaleDateString()}
+                                            value={startDate.toLocaleDateString('en-GB')}
                                             readOnly
                                         />
                                         <Image
@@ -239,7 +239,7 @@ const NewsaleEstimateHeader = ({ isNewClientClicked, newClient }: any) => {
                                     <div className='relative'>
                                         <input
                                             className="w-full h-9 text-textGrey2 text-base font-medium px-2 rounded border-0   focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none"
-                                            value={headerData?.dueDate?.toLocaleDateString() || dueDate.toLocaleDateString()}
+                                            value={headerData?.dueDate?.toLocaleDateString('en-GB') || dueDate.toLocaleDateString('en-GB')}
                                             readOnly
                                         />
                                         <Image
