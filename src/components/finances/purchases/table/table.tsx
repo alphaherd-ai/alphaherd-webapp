@@ -7,7 +7,7 @@ import { Notif_Source } from "@prisma/client";
 import FinancesPurchasesTableItem from './item'
 import { useAppSelector } from '@/lib/hooks';
 import { useSearchParams } from 'next/navigation';
-
+import useSWR from 'swr';
 
 //@ts-ignore
 const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
@@ -47,7 +47,6 @@ const FinancesPurchasesTable = () => {
   const selectedParties = useMemo(() => urlSearchParams.getAll('selectedParties'), [urlSearchParams]);
   const selectedStatus = useMemo(() => urlSearchParams.getAll('selectedStatus'), [urlSearchParams]);
   //const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/getAll?branchId=${appState.currentBranchId}`, fetcher, { revalidateOnFocus: true })
-
 
   useEffect(() => {
 
@@ -100,6 +99,22 @@ const FinancesPurchasesTable = () => {
     getAllFinancesPurchase();
 
   }, [startDate, endDate, selectedParties, selectedStatus, currentUrl.toString()])
+
+  const sendLastDateOfItemReturn = async (notifData: any, purchaseID: number) => {
+    try {
+
+      await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/notifications/create`, notifData);
+
+      await axios.patch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/finance/purchases/updateLastItemReturnNotif`, {
+        id: purchaseID,
+        lastDueNotif: new Date().toISOString(),
+      });
+
+      console.log(`Payment reminder notification sent for Purchase Id: ${purchaseID}`);
+    } catch (error) {
+      console.error("Failed to send due date notification:", error);
+    }
+  };
 
   const sendDueDateNotification = async (notifData: any, purchaseID: number) => {
     try {
@@ -165,9 +180,12 @@ const FinancesPurchasesTable = () => {
     console.log("purchases",purchases);
     const filteredPurchases = purchases?.filter((purchase) => {
       const dueDate = new Date(purchase.dueDate);
+      const deliveryDueDate = new Date(purchase.returnLastDate);
       const purchaseID = purchase.id;
       const currentDate = new Date();
-    
+      // console.log("delivery date",deliveryDueDate);
+      // console.log("current date",currentDate);
+      // console.log("due date",dueDate);
       const daysLeftForDue = Math.ceil((dueDate.getTime() - currentDate.getTime()) / (24 * 60 * 60 * 1000));
       
       const words= purchase.status.trim().split(' ');
@@ -200,6 +218,26 @@ const FinancesPurchasesTable = () => {
       }
       console.log(purchase.status,bool,pobool);
       let message = '';
+      let message2= `The last date to return items to ${purchase.distributor} for ${purchase.invoiceNo} is ${new Date(purchase.returnLastDate).toLocaleDateString()}. Create a purchase return now!`;
+      if(purchase.returnLastDate!==null){
+        if(deliveryDueDate.toDateString()>=currentDate.toDateString() && (deliveryDueDate.getTime() - currentDate.getTime()) <= Number(30 * 24 * 60 * 60 * 1000) && isOlderThanOneWeek(purchase.lastDateOfItemReturnNotif)){
+          console.log("inside lsat return",purchase.id);
+          const notifData = {
+            orgId: appState.currentOrgId,
+            url: `${process.env.NEXT_PUBLIC_API_BASE_PATH}/finance/purchases/all?type=all`,
+            message: message2,
+            data: {
+              purchaseId: purchase.id,
+              invoiceNo: purchase.invoiceNo,
+              lastDateOfItemReturn: purchase.returnLastDate,
+              distributor: purchase.distributor,
+            },
+            source: Notif_Source.Purchase_Order_Due,
+          };
+          sendLastDateOfItemReturn(notifData,purchaseID);
+
+        }
+      }
       if (purchase.type === "Purchase_Order") {
         // Check if the purchase order is due today
         if (dueDate.toDateString() === currentDate.toDateString() && purchase.lastDueNotif===null && pobool) {

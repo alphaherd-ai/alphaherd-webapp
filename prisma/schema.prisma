@@ -447,6 +447,7 @@ model Purchases {
   financeSectionId     Int?
   lastDayNotif         DateTime?
   lastSevenNotif       DateTime?
+  lastDateOfItemReturnNotif DateTime?
 
   @@index([financeSectionId, id])
   @@index([financeSectionId, invoiceNo])
