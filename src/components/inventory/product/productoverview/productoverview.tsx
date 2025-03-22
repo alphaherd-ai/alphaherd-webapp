@@ -742,47 +742,71 @@ const ProductDetails = () => {
                             <div className='flex text-textGrey2 text-base font-medium w-[3.5%]'></div>
                         </div>
 
-                        {product?.productBatches?.filter((item: any) => !item.isDeleted).sort((a: any, b: any) => a.id - b.id).map((item: any) => (
-                            <div key={item.id} className='flex  items-center w-full  box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 justify-evenly '>
-                                <div className='px-2 w-1/12  flex items-center text-borderGrey text-base font-medium'>{item.quantity} Strips</div>
-                                <div className='w-2/12  flex items-center text-borderGrey text-base font-medium'>{item.distributors[0]}</div>
-                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>{item.batchNumber}</div>
-                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>{item.expiry ? formatDateAndTime(item.expiry).formattedDate : ''}</div>
-                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>{item.hsnCode}</div>
+                        {(() => {
+                            const activeBatches = product?.productBatches?.filter((item: any) => !item.isDeleted) || [];
+                            if (activeBatches.length === 0) {
+                                return (
+                                    <div className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 justify-center'>
+                                        <div className='text-borderGrey text-base font-medium'>No active batches found</div>
+                                    </div>
+                                );
+                            }
 
-                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium'>₹{item.costPrice}</div>
-                                <div className='w-1/12  flex items-center text-borderGrey text-base font-medium pl-4'>₹{item.maxRetailPrice}</div>
-                                <div className='w-1/12 justify-center  flex items-center text-borderGrey text-base font-medium'>{((((item.maxRetailPrice) - (item.costPrice)) / (item.maxRetailPrice)) * 100).toFixed(2)}%</div>
-                                <div className="w-2/12 justify-center  flex items-center gap-2">
-                                    <div className="w-fit flex items-center text-orange-500 text-[0.8rem] font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center ">{item?.location}</div>
-                                </div>
-
-                                {!isEditing &&
-                                    <Popover placement="bottom" showArrow offset={10}>
-                                        <PopoverTrigger>
-                                            <Button variant="solid" className="capitalize flex border-none text-gray rounded-lg">
-                                                <div className='flex items-center'>
-                                                    <Image src={Menu} alt='Menu' className='w-5 h-5' />
-                                                </div>
-                                            </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="text-gray-500 bg-white text-sm p-2 font-medium flex flex-row items-start rounded-lg border-2 mt-2.5">
-                                            <div className="flex flex-col">
-                                                <div className='flex flex-col'>
-                                                    <div className='text-gray-500 text-sm p-3 font-medium flex hover:cursor-pointer' onClick={() => { setIsEditing(true); setIsEditingBatch(item) }}>
-                                                        Edit
-                                                    </div>
-                                                    <div className='text-gray-500 text-sm p-3 font-medium flex hover:cursor-pointer' onClick={() => { setIsDeleting(true); setIsEditingBatch(item) }}>
-                                                        Delete
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </PopoverContent>
-                                    </Popover>
+                            // Sort batches by expiry date if available, otherwise by creation date
+                            const sortedBatches = activeBatches.sort((a: any, b: any) => {
+                                if (a.expiry && b.expiry) {
+                                    return new Date(a.expiry).getTime() - new Date(b.expiry).getTime();
+                                } else if (a.expiry) {
+                                    return -1;
+                                } else if (b.expiry) {
+                                    return 1;
+                                } else {
+                                    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
                                 }
-                            </div>
+                            });
 
-                        ))}
+                            // Take only the first (earliest) batch
+                            const earliestBatch = sortedBatches[0];
+
+                            return (
+                                <div className='flex items-center w-full box-border py-4 bg-white border border-solid border-gray-300 text-gray-400 border-t-0.5 justify-evenly'>
+                                    <div className='px-2 w-1/12 flex items-center text-borderGrey text-base font-medium'>{earliestBatch.quantity} Strips</div>
+                                    <div className='w-2/12 flex items-center text-borderGrey text-base font-medium'>{earliestBatch.distributors[0]}</div>
+                                    <div className='w-1/12 flex items-center text-borderGrey text-base font-medium'>{earliestBatch.batchNumber}</div>
+                                    <div className='w-1/12 flex items-center text-borderGrey text-base font-medium'>{earliestBatch.expiry ? formatDateAndTime(earliestBatch.expiry).formattedDate : 'N/A'}</div>
+                                    <div className='w-1/12 flex items-center text-borderGrey text-base font-medium'>{earliestBatch.hsnCode}</div>
+                                    <div className='w-1/12 flex items-center text-borderGrey text-base font-medium'>₹{earliestBatch.costPrice}</div>
+                                    <div className='w-1/12 flex items-center text-borderGrey text-base font-medium pl-4'>₹{earliestBatch.maxRetailPrice}</div>
+                                    <div className='w-1/12 justify-center flex items-center text-borderGrey text-base font-medium'>{((((earliestBatch.maxRetailPrice) - (earliestBatch.costPrice)) / (earliestBatch.maxRetailPrice)) * 100).toFixed(2)}%</div>
+                                    <div className="w-2/12 justify-center flex items-center gap-2">
+                                        <div className="w-fit flex items-center text-orange-500 text-[0.8rem] font-medium px-2 py-1.5 bg-orange-50 rounded-[5px] justify-center">{earliestBatch?.location}</div>
+                                    </div>
+                                    {!isEditing && (
+                                        <Popover placement="bottom" showArrow offset={10}>
+                                            <PopoverTrigger>
+                                                <Button variant="solid" className="capitalize flex border-none text-gray rounded-lg">
+                                                    <div className='flex items-center'>
+                                                        <Image src={Menu} alt='Menu' className='w-5 h-5' />
+                                                    </div>
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="text-gray-500 bg-white text-sm p-2 font-medium flex flex-row items-start rounded-lg border-2 mt-2.5">
+                                                <div className="flex flex-col">
+                                                    <div className='flex flex-col'>
+                                                        <div className='text-gray-500 text-sm p-3 font-medium flex hover:cursor-pointer' onClick={() => { setIsEditing(true); setIsEditingBatch(earliestBatch) }}>
+                                                            Edit
+                                                        </div>
+                                                        <div className='text-gray-500 text-sm p-3 font-medium flex hover:cursor-pointer' onClick={() => { setIsDeleting(true); setIsEditingBatch(earliestBatch) }}>
+                                                            Delete
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </PopoverContent>
+                                        </Popover>
+                                    )}
+                                </div>
+                            );
+                        })()}
                     </div>
                 </div>
             </div>

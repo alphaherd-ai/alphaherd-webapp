@@ -52,7 +52,6 @@ const ClientDetails = () => {
     const appState = useAppSelector((state) => state.app)
     const id = url.get('id');
     const clientId = Number(id);
-    console.log("ClientId is ", clientId);
     const [clickedIndex, setClickedIndex] = useState(0);
     const { fetchedClient, isLoading, error } = useClientfetch(id, appState.currentBranchId);
     const [open, setOpen] = useState(false);
@@ -105,14 +104,12 @@ const ClientDetails = () => {
         setClientTimeLine(invoiceList?.slice(start, end));
     }, [currentPageNumber, invoiceList])
     
-    console.log("Client TimeLine", clientTimeLine);
     if (endInd > totalLen) setEndInd(totalLen);
 
     useEffect(() => {
         if (id) {
             const getAllInvoices = async () => {
                 const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/invoicesById/${id}`);
-                console.log(res.data);
                 setTotalLen(res.data?.length)
                 setInvoiceList(res.data);
             }
@@ -176,20 +173,26 @@ const ClientDetails = () => {
     };
 
     const handleDeleteClient = async () => {
+        // Check if client has any active patients
+        const hasActivePatients = patientList?.some((patient: any) => !patient.isDeleted);
+        
+        if (hasActivePatients) {
+            alert("Cannot delete client with active patients. Please delete or reassign all patients first.");
+            setShowDeletePopup(false);
+            return;
+        }
+
         try {
             setIsDeleting(true);
             const branchId = appState.currentBranchId;
-            //console.log("Branch ID being sent:", branchId);
 
-            // Ensure the 'Branch-ID' header is a string, not null or a number
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_PATH}/api/database/clients/${clientId}?branchId=${appState.currentBranchId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Branch-ID': branchId !== null && branchId !== undefined ? String(branchId) : '', // Ensure it's a string
+                    'Branch-ID': branchId !== null && branchId !== undefined ? String(branchId) : '',
                 },
             });
-
 
             if (response.ok) {
                 alert("Client deleted successfully.");
@@ -260,8 +263,15 @@ const ClientDetails = () => {
                                                     <div className='text-gray-500 text-sm p-3 font-medium flex '>
                                                         Edit</div>
                                                 </div>
-                                                <div className='no-underline flex cursor-pointer item-center' onClick={() => setShowDeletePopup(true)}>
-                                                    <div className='text-gray-500 text-sm p-3 font-medium flex '>
+                                                <div className='no-underline flex cursor-pointer item-center' onClick={() => {
+                                                    const hasActivePatients = patientList?.some((patient: any) => !patient.isDeleted);
+                                                    if (hasActivePatients) {
+                                                        alert("Cannot delete client with active patients. Please delete or reassign all patients first.");
+                                                        return;
+                                                    }
+                                                    setShowDeletePopup(true);
+                                                }}>
+                                                    <div className={`text-gray-500 text-sm p-3 font-medium flex ${patientList?.some((patient: any) => !patient.isDeleted) ? 'opacity-50 cursor-not-allowed' : ''}`}>
                                                         Delete</div>
                                                 </div>
                                             </div>

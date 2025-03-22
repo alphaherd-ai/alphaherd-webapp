@@ -28,22 +28,25 @@ const SettingsNavbar = () => {
                     <Image src={lefticon} alt="left" />
                 </div> */}
                     <Link className='no-underline ml-3' href='/settings/organisation/myorg'>
-                        <div  style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }}  className={currentRoute.startsWith("/settings/organisation")
-                            ? " flex items-center text-white px-4 py-2.5 bg-black   border-r-0 text-base rounded-tl-lg rounded-bl-lg "
-                            : " flex items-center text-gray-400 bg-white px-4 py-2.5   border-r-0 text-base rounded-tl-lg rounded-bl-lg"}>
-
-                            <div className='flex mr-2 rounded-md border-neutral-400'><OrganisationIcon fill={currentRoute.startsWith("/settings/organisation") 
-                                ? "#38F8E6"
-                                : "#A2A3A3"} /></div>
-                              Organisation
+                        <div style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }} 
+                            className={currentRoute.startsWith("/settings/organisation")
+                                ? "flex items-center text-white px-4 py-2.5 bg-black border-r-0 text-base rounded-tl-lg rounded-bl-lg"
+                                : "flex items-center text-gray-400 bg-white px-4 py-2.5 border-r-0 text-base rounded-tl-lg rounded-bl-lg transition-all duration-150 hover:bg-[#2a2a2a] hover:text-white"}>
+                            <div className='flex mr-2 rounded-md border-neutral-400'>
+                                <OrganisationIcon fill={currentRoute.startsWith("/settings/organisation") ? "#38F8E6" : "#A2A3A3"} />
+                            </div>
+                            Organisation
                         </div>
                     </Link>
-                    <Link className='no-underline ' href='/settings/general'>
-                        <div  style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }} className={currentRoute.startsWith("/settings/general") ? " flex items-center text-white  text-base bg-black px-4 py-2.5 border-r-0 rounded-tr-lg rounded-br-lg " : "rounded-tr-lg rounded-br-lg  flex items-center text-gray-400 bg-white px-4 py-2.5 text-base   border-r-0"}>
-                            <div className='flex mr-2'><SettingsIcon fill={currentRoute.startsWith("/settings/general")
-                                ? "#38F8E6"
-                                : "#A2A3A3"} /></div>
-                           General
+                    <Link className='no-underline' href='/settings/general'>
+                        <div style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }} 
+                            className={currentRoute.startsWith("/settings/general") 
+                                ? "flex items-center text-white text-base bg-black px-4 py-2.5 border-r-0 rounded-tr-lg rounded-br-lg"
+                                : "rounded-tr-lg rounded-br-lg flex items-center text-gray-400 bg-white px-4 py-2.5 text-base border-r-0 transition-all duration-150 hover:bg-[#2a2a2a] hover:text-white"}>
+                            <div className='flex mr-2'>
+                                <SettingsIcon fill={currentRoute.startsWith("/settings/general") ? "#38F8E6" : "#A2A3A3"} />
+                            </div>
+                            General
                         </div>
                     </Link>
 

@@ -18,7 +18,7 @@ import DistributorPopup from '../distributor/newdistributorpopup';
 const fetcher = (...args:any[]) => fetch(...args).then(res => res.json());
 
 
-const DatabaseNavbar = async () => {
+const DatabaseNavbar = () => {
     const appState = useAppSelector((state: { app: any; }) => state.app);
     const [searchData, setSearchData] = useState<any[]>([]);
     const [searchOptions, setSearchOptions] = useState<any[]>([]);
@@ -142,31 +142,37 @@ const DatabaseNavbar = async () => {
         <>
             <div className='flex h-12  w-full box-border justify-between rounded-tl-lg rounded-tr-lg'>
                 <div className='flex w-8/12 h-full '>
-                    <Link className='no-underline ' href='/database/clients'>
-                        <div  style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }} className={currentRoute.startsWith("/database/clients")
-                            ? " flex items-center text-white px-4 py-2.5 bg-black   border-r-0 text-base rounded-tl-lg rounded-bl-lg "
-                            : " flex items-center text-gray-400 bg-white px-4 py-2.5   border-r-0 text-base rounded-tl-lg rounded-bl-lg"}>
-
-                            <div className='flex mr-2'><ClientIcon fill={currentRoute.startsWith("/database/clients") 
-                                ? "#38F8E6"
-                                : "#A2A3A3"} /></div>
+                    <Link className='no-underline' href='/database/clients'>
+                        <div style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }} 
+                            className={currentRoute.startsWith("/database/clients")
+                                ? "flex items-center text-white px-4 py-2.5 bg-black border-r-0 text-base rounded-tl-lg rounded-bl-lg"
+                                : "flex items-center text-gray-400 bg-white px-4 py-2.5 border-r-0 text-base rounded-tl-lg rounded-bl-lg transition-all duration-150 hover:bg-[#2a2a2a] hover:text-white"}>
+                            <div className='flex mr-2'>
+                                <ClientIcon fill={currentRoute.startsWith("/database/clients") ? "#38F8E6" : "#A2A3A3"} />
+                            </div>
                             Clients
                         </div>
                     </Link>
                     <Link className='no-underline' href='/database/patient'>
-                        <div  style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }} className={currentRoute.startsWith("/database/patient") ? " flex items-center text-white  text-base bg-black px-4 py-2.5 border-r-0  " : "  flex items-center text-gray-400 bg-white px-4 py-2.5 text-base   border-r-0"}>
-                            <div className='flex mr-2'><PatientIcon fill={currentRoute.startsWith("/database/patient")
-                                ? "#38F8E6"
-                                : "#A2A3A3"} /></div>
-                           Patients
+                        <div style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }} 
+                            className={currentRoute.startsWith("/database/patient") 
+                                ? "flex items-center text-white text-base bg-black px-4 py-2.5 border-r-0"
+                                : "flex items-center text-gray-400 bg-white px-4 py-2.5 text-base border-r-0 transition-all duration-150 hover:bg-[#2a2a2a] hover:text-white"}>
+                            <div className='flex mr-2'>
+                                <PatientIcon fill={currentRoute.startsWith("/database/patient") ? "#38F8E6" : "#A2A3A3"} />
+                            </div>
+                            Patients
                         </div>
                     </Link>
-                    <Link className='no-underline ' href='/database/distributor'>
-                        <div  style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }} className={currentRoute.startsWith("/database/distributor") ? " flex items-center text-white  text-base bg-black px-4 py-2.5 border-r-0 rounded-tr-lg rounded-br-lg " : "rounded-tr-lg rounded-br-lg  flex items-center text-gray-400 bg-white px-4 py-2.5 text-base   border-r-0"}>
-                            <div className='flex mr-2'><DistIcon fill={currentRoute.startsWith("/database/distributor")
-                                ? "#38F8E6"
-                                : "#A2A3A3"} /></div>
-                           Distributors
+                    <Link className='no-underline' href='/database/distributor'>
+                        <div style={{ border: '0.5px solid rgba(209, 213, 219, 1)', borderRight: '0' }} 
+                            className={currentRoute.startsWith("/database/distributor") 
+                                ? "flex items-center text-white text-base bg-black px-4 py-2.5 border-r-0 rounded-tr-lg rounded-br-lg"
+                                : "rounded-tr-lg rounded-br-lg flex items-center text-gray-400 bg-white px-4 py-2.5 text-base border-r-0 transition-all duration-150 hover:bg-[#2a2a2a] hover:text-white"}>
+                            <div className='flex mr-2'>
+                                <DistIcon fill={currentRoute.startsWith("/database/distributor") ? "#38F8E6" : "#A2A3A3"} />
+                            </div>
+                            Distributors
                         </div>
                     </Link>
                     <div className='flex items-center space-x-2'> 
@@ -192,7 +198,7 @@ const DatabaseNavbar = async () => {
                          </div>
                         )}   
                         {currentRoute.startsWith("/database/distributor") && (
-                            <div className='flex items-center text-base p-4 bg-black text-white rounded-lg cursor-pointer py-2 w-[168px] h-[44px]' onClick={togglePopup3}>
+                            <div className='flex items-center text-base p-4 bg-black text-white rounded-lg cursor-pointer py-2 w-[168px] h-[44px] transition-all duration-150 hover:bg-[#2a2a2a] active:bg-[#3a3a3a] active:shadow-inner active:shadow-black/20' onClick={togglePopup3}>
                                 <div className='flex pr-2'>
                                     <Image src={Add} alt='Add' className='w-5 h-5' />
                                 </div>

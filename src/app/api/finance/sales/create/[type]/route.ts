@@ -86,10 +86,8 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
               where: {
                 id: Number(item.productBatchId),
                 inventorySectionId: inventoryId,
-              },
-              cacheStrategy: { ttl: 60 },
+              }
             });
-            console.log(batch);
 
             await Promise.all([
               prismaClient.productBatch.update({
@@ -138,8 +136,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
               where: {
                 id: Number(item.serviceId),
                 inventorySectionId: inventoryId,
-              },
-              cacheStrategy: { ttl: 60 },
+              }
             });
 
             await Promise.all([
@@ -189,8 +186,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
               where: {
                 id: Number(item.productBatchId),
                 inventorySectionId: inventoryId,
-              },
-              cacheStrategy: { ttl: 60 },
+              }
             });
 
             await Promise.all([
@@ -240,8 +236,7 @@ export const POST = async (req: NextRequest, { params }: { params: { type: Finan
               where: {
                 id: Number(item.serviceId),
                 inventorySectionId: inventoryId,
-              },
-              cacheStrategy: { ttl: 60 },
+              }
             });
 
             await Promise.all([
